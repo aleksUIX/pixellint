@@ -4,7 +4,7 @@ use pixellint_core::{
     ArtifactKind, Engine, ExpansionState, Severity, ValidationOptions, ValidationRequest,
 };
 use serde::Deserialize;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 const PROTOCOL_VERSION: &str = "2024-11-05";
 const INSTRUCTIONS: &str = "Pixellint validates pixels, postbacks, VAST tracking URLs, GTM templates, and related measurement artifacts. Use list_rulepacks to discover available rulepacks, then call validate_artifact with an artifact kind and artifact payload to get deterministic validation results.";
@@ -15,13 +15,19 @@ fn main() -> io::Result<()> {
     let mut reader = BufReader::new(stdin.lock());
     let mut writer = stdout.lock();
     let engine = Engine::default();
+    let mut raw_message = String::new();
 
     loop {
-        let Some(raw_message) = read_message(&mut reader)? else {
+        raw_message.clear();
+        if reader.read_line(&mut raw_message)? == 0 {
             break;
-        };
+        }
 
-        let action = handle_message(&raw_message, &engine);
+        if raw_message.trim().is_empty() {
+            continue;
+        }
+
+        let action = handle_message(raw_message.trim(), &engine);
         if let Some(response) = action.response {
             write_message(&mut writer, &response)?;
         }
@@ -74,7 +80,11 @@ fn handle_message(raw_message: &str, engine: &Engine) -> Action {
         Ok(request) => request,
         Err(error) => {
             return Action {
-                response: Some(error_response(Value::Null, -32700, &format!("parse error: {error}"))),
+                response: Some(error_response(
+                    Value::Null,
+                    -32700,
+                    &format!("parse error: {error}"),
+                )),
                 should_exit: false,
             };
         }
@@ -113,7 +123,8 @@ fn handle_message(raw_message: &str, engine: &Engine) -> Action {
             should_exit: true,
         },
         other => Action {
-            response: expects_response.then(|| error_response(id, -32601, &format!("method not found: {other}"))),
+            response: expects_response
+                .then(|| error_response(id, -32601, &format!("method not found: {other}"))),
             should_exit: false,
         },
     }
@@ -220,7 +231,11 @@ fn handle_validate_artifact(id: Value, arguments: Value, engine: &Engine) -> Val
     let args = match serde_json::from_value::<ValidateArtifactArgs>(arguments) {
         Ok(args) => args,
         Err(error) => {
-            return error_response(id, -32602, &format!("invalid validate_artifact arguments: {error}"));
+            return error_response(
+                id,
+                -32602,
+                &format!("invalid validate_artifact arguments: {error}"),
+            );
         }
     };
 
@@ -353,62 +368,10 @@ fn violation_counts(summary: &pixellint_core::ValidationSummary) -> ViolationCou
     counts
 }
 
-fn read_message<R: BufRead>(reader: &mut R) -> io::Result<Option<String>> {
-    let mut content_length = None;
-    let mut line = String::new();
-
-    loop {
-        line.clear();
-        let bytes_read = reader.read_line(&mut line)?;
-        if bytes_read == 0 {
-            if content_length.is_none() {
-                return Ok(None);
-            }
-
-            return Err(io::Error::new(
-                io::ErrorKind::UnexpectedEof,
-                "unexpected EOF while reading MCP headers",
-            ));
-        }
-
-        if line == "\r\n" || line == "\n" {
-            break;
-        }
-
-        if let Some((header_name, header_value)) = line.split_once(':') {
-            if header_name.eq_ignore_ascii_case("Content-Length") {
-                content_length = Some(header_value.trim().parse::<usize>().map_err(|error| {
-                    io::Error::new(
-                        io::ErrorKind::InvalidData,
-                        format!("invalid Content-Length header: {error}"),
-                    )
-                })?);
-            }
-        }
-    }
-
-    let Some(content_length) = content_length else {
-        return Err(io::Error::new(
-            io::ErrorKind::InvalidData,
-            "missing Content-Length header",
-        ));
-    };
-
-    let mut payload = vec![0; content_length];
-    reader.read_exact(&mut payload)?;
-
-    String::from_utf8(payload).map(Some).map_err(|error| {
-        io::Error::new(
-            io::ErrorKind::InvalidData,
-            format!("invalid UTF-8 payload: {error}"),
-        )
-    })
-}
-
 fn write_message<W: Write>(writer: &mut W, response: &Value) -> io::Result<()> {
     let payload = serde_json::to_vec(response).map_err(to_io_error)?;
-    write!(writer, "Content-Length: {}\r\n\r\n", payload.len())?;
     writer.write_all(&payload)?;
+    writer.write_all(b"\n")?;
     writer.flush()
 }
 

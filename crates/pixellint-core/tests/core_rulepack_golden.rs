@@ -52,13 +52,43 @@ fn golden_core_corpus_matches_expected_findings() {
         let actual_codes = violation_codes(&summary);
         let actual_counts = violation_counts(&summary);
 
-        assert_eq!(summary.reports.len(), 1, "fixture {} should emit exactly one report", case.id);
-        assert_eq!(summary.reports[0].plugin_id, "core", "fixture {} should run core", case.id);
-        assert_eq!(summary.is_ok(), case.expected_ok, "fixture {} ok mismatch", case.id);
-        assert_eq!(actual_counts.errors, case.expected_errors, "fixture {} error count mismatch", case.id);
-        assert_eq!(actual_counts.warnings, case.expected_warnings, "fixture {} warning count mismatch", case.id);
-        assert_eq!(actual_counts.infos, case.expected_infos, "fixture {} info count mismatch", case.id);
-        assert_eq!(actual_codes, case.expected_codes, "fixture {} violation code mismatch", case.id);
+        assert_eq!(
+            summary.reports.len(),
+            1,
+            "fixture {} should emit exactly one report",
+            case.id
+        );
+        assert_eq!(
+            summary.reports[0].plugin_id, "core",
+            "fixture {} should run core",
+            case.id
+        );
+        assert_eq!(
+            summary.is_ok(),
+            case.expected_ok,
+            "fixture {} ok mismatch",
+            case.id
+        );
+        assert_eq!(
+            actual_counts.errors, case.expected_errors,
+            "fixture {} error count mismatch",
+            case.id
+        );
+        assert_eq!(
+            actual_counts.warnings, case.expected_warnings,
+            "fixture {} warning count mismatch",
+            case.id
+        );
+        assert_eq!(
+            actual_counts.infos, case.expected_infos,
+            "fixture {} info count mismatch",
+            case.id
+        );
+        assert_eq!(
+            actual_codes, case.expected_codes,
+            "fixture {} violation code mismatch",
+            case.id
+        );
     }
 }
 

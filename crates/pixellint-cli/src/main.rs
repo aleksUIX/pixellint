@@ -216,5 +216,7 @@ fn has_errors(summary: &pixellint_core::ValidationSummary) -> bool {
 
 fn print_usage() {
     eprintln!("pixellint-cli list-rulepacks");
-    eprintln!("pixellint-cli validate <url|html|js|gtm|request|vast|postback|unknown> <inline-or-@path> [--json] [--state <unknown|template|fired>] [--rulepack <id>]... [--except <id>]...");
+    eprintln!(
+        "pixellint-cli validate <url|html|js|gtm|request|vast|postback|unknown> <inline-or-@path> [--json] [--state <unknown|template|fired>] [--rulepack <id>]... [--except <id>]..."
+    );
 }

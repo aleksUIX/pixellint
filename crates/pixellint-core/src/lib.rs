@@ -289,8 +289,9 @@ impl Default for CoreRulePack {
                 id: "core".to_string(),
                 display_name: "Core Cardinal Rules".to_string(),
                 version: env!("CARGO_PKG_VERSION").to_string(),
-                description: "Shared, spec-backed baseline checks for URL-like measurement artifacts."
-                    .to_string(),
+                description:
+                    "Shared, spec-backed baseline checks for URL-like measurement artifacts."
+                        .to_string(),
                 source_level: RuleSourceLevel::Normative,
             },
         }
@@ -317,8 +318,7 @@ impl ValidatorPlugin for CoreRulePack {
                 severity: Severity::Error,
                 field: None,
                 fix_hint: Some(
-                    "Provide a pixel URL, snippet, template, or request to validate."
-                        .to_string(),
+                    "Provide a pixel URL, snippet, template, or request to validate.".to_string(),
                 ),
                 source: RuleSource {
                     level: RuleSourceLevel::Heuristic,
@@ -352,12 +352,8 @@ fn validate_url_like_artifact(
     violations: &mut Vec<Violation>,
 ) {
     let macro_spans = detect_macro_spans(artifact);
-    let has_unsafe_macro_positions = apply_macro_rules(
-        artifact,
-        expansion_state,
-        &macro_spans,
-        violations,
-    );
+    let has_unsafe_macro_positions =
+        apply_macro_rules(artifact, expansion_state, &macro_spans, violations);
 
     if has_unsafe_macro_positions {
         return;
@@ -372,13 +368,11 @@ fn validate_url_like_artifact(
     if has_missing_network_host(&parse_artifact) {
         violations.push(Violation {
             code: "core.url.host_missing".to_string(),
-            message: "Network-delivered tracking URLs must include a host component."
-                .to_string(),
+            message: "Network-delivered tracking URLs must include a host component.".to_string(),
             severity: Severity::Error,
             field: Some("url".to_string()),
             fix_hint: Some(
-                "Provide a fully qualified endpoint such as https://example.com/pixel."
-                    .to_string(),
+                "Provide a fully qualified endpoint such as https://example.com/pixel.".to_string(),
             ),
             source: RuleSource::normative("URL Standard", "https://url.spec.whatwg.org/"),
             targets: Vec::new(),
@@ -432,19 +426,15 @@ fn validate_url_like_artifact(
             if url.host_str().is_none() {
                 violations.push(Violation {
                     code: "core.url.host_missing".to_string(),
-                    message:
-                        "Network-delivered tracking URLs must include a host component."
-                            .to_string(),
+                    message: "Network-delivered tracking URLs must include a host component."
+                        .to_string(),
                     severity: Severity::Error,
                     field: Some("url".to_string()),
                     fix_hint: Some(
                         "Provide a fully qualified endpoint such as https://example.com/pixel."
                             .to_string(),
                     ),
-                    source: RuleSource::normative(
-                        "URL Standard",
-                        "https://url.spec.whatwg.org/",
-                    ),
+                    source: RuleSource::normative("URL Standard", "https://url.spec.whatwg.org/"),
                     targets: Vec::new(),
                 });
             }
@@ -495,8 +485,7 @@ fn validate_url_like_artifact(
             severity: Severity::Error,
             field: Some("url".to_string()),
             fix_hint: Some(
-                "Provide a fully qualified URL such as https://example.com/pixel?x=1"
-                    .to_string(),
+                "Provide a fully qualified URL such as https://example.com/pixel?x=1".to_string(),
             ),
             source: RuleSource::normative("URL Standard", "https://url.spec.whatwg.org/"),
             targets: Vec::new(),
@@ -673,7 +662,10 @@ fn apply_macro_rules(
         .map(|position| position.label())
         .collect::<Vec<_>>()
         .join(", ");
-    let first_position = *unsafe_positions.iter().next().unwrap_or(&MacroPosition::WholeUrl);
+    let first_position = *unsafe_positions
+        .iter()
+        .next()
+        .unwrap_or(&MacroPosition::WholeUrl);
     let targets = unsafe_spans
         .iter()
         .map(|(span, _)| target_for_macro_span(artifact, span))
@@ -712,67 +704,47 @@ fn detect_macro_spans(artifact: &str) -> Vec<MacroSpan> {
     while index < artifact.len() {
         let remainder = &artifact[index..];
 
-        if remainder.starts_with("${") {
-            if let Some(close_offset) = remainder[2..].find('}') {
-                let body_start = index + 2;
-                let body_end = body_start + close_offset;
-                let body = &artifact[body_start..body_end];
-
-                if is_macro_body(body) {
-                    let end = body_end + 1;
-                    spans.push(MacroSpan {
-                        start: index,
-                        end,
-                        syntax: MacroSyntax::DollarBraces,
-                    });
-                    index = end;
-                    continue;
-                }
-            }
-        }
-
-        if remainder.starts_with("{{") {
-            if let Some(close_offset) = remainder[2..].find("}}") {
-                let body_start = index + 2;
-                let body_end = body_start + close_offset;
-                let body = &artifact[body_start..body_end];
-
-                if is_macro_body(body) {
-                    let end = body_end + 2;
-                    spans.push(MacroSpan {
-                        start: index,
-                        end,
-                        syntax: MacroSyntax::DoubleBraces,
-                    });
-                    index = end;
-                    continue;
-                }
-            }
-        }
-
-        if remainder.starts_with('[') {
-            if let Some(close_offset) = remainder[1..].find(']') {
-                let body_start = index + 1;
-                let body_end = body_start + close_offset;
-                let body = &artifact[body_start..body_end];
-
-                if is_macro_body(body) {
-                    let end = body_end + 1;
-                    spans.push(MacroSpan {
-                        start: index,
-                        end,
-                        syntax: MacroSyntax::Bracket,
-                    });
-                    index = end;
-                    continue;
-                }
-            }
+        if let Some(span) = match_macro_span(artifact, index, remainder) {
+            index = span.end;
+            spans.push(span);
+            continue;
         }
 
         index += 1;
     }
 
     spans
+}
+
+/// Macro delimiters recognized by the generic ad-tech macro scanner, in match order.
+const MACRO_DELIMITERS: [(&str, &str, MacroSyntax); 3] = [
+    ("${", "}", MacroSyntax::DollarBraces),
+    ("{{", "}}", MacroSyntax::DoubleBraces),
+    ("[", "]", MacroSyntax::Bracket),
+];
+
+fn match_macro_span(artifact: &str, index: usize, remainder: &str) -> Option<MacroSpan> {
+    for (open, close, syntax) in MACRO_DELIMITERS {
+        let Some(after_open) = remainder.strip_prefix(open) else {
+            continue;
+        };
+        let Some(close_offset) = after_open.find(close) else {
+            continue;
+        };
+
+        let body_start = index + open.len();
+        let body_end = body_start + close_offset;
+
+        if is_macro_body(&artifact[body_start..body_end]) {
+            return Some(MacroSpan {
+                start: index,
+                end: body_end + close.len(),
+                syntax,
+            });
+        }
+    }
+
+    None
 }
 
 fn is_macro_body(body: &str) -> bool {
@@ -1079,7 +1051,10 @@ mod tests {
 
         assert_eq!(summary.reports.len(), 1);
         assert_eq!(summary.reports[0].plugin_id, "core");
-        assert_eq!(summary.reports[0].violations[0].code, "core.url.fragment_ignored");
+        assert_eq!(
+            summary.reports[0].violations[0].code,
+            "core.url.fragment_ignored"
+        );
     }
 
     #[test]
@@ -1128,7 +1103,10 @@ mod tests {
             )
             .unwrap();
 
-        assert_eq!(summary.reports[0].violations[0].code, "core.url.userinfo_deprecated");
+        assert_eq!(
+            summary.reports[0].violations[0].code,
+            "core.url.userinfo_deprecated"
+        );
     }
 
     #[test]
@@ -1161,7 +1139,10 @@ mod tests {
             )
             .unwrap();
 
-        assert_eq!(violation_codes(&summary), vec!["core.url.unsupported_scheme"]);
+        assert_eq!(
+            violation_codes(&summary),
+            vec!["core.url.unsupported_scheme"]
+        );
     }
 
     #[test]
@@ -1174,7 +1155,10 @@ mod tests {
             )
             .unwrap();
 
-        assert_eq!(violation_codes(&summary), vec!["core.url.insecure_transport"]);
+        assert_eq!(
+            violation_codes(&summary),
+            vec!["core.url.insecure_transport"]
+        );
     }
 
     #[test]
@@ -1314,7 +1298,10 @@ mod tests {
             )
             .unwrap();
 
-        assert_eq!(violation_codes(&summary), vec!["core.url.unsupported_scheme"]);
+        assert_eq!(
+            violation_codes(&summary),
+            vec!["core.url.unsupported_scheme"]
+        );
     }
 
     #[test]
@@ -1330,7 +1317,10 @@ mod tests {
             )
             .unwrap();
 
-        assert_eq!(violation_codes(&summary), vec!["core.url.insecure_transport"]);
+        assert_eq!(
+            violation_codes(&summary),
+            vec!["core.url.insecure_transport"]
+        );
     }
 
     #[test]
@@ -1409,7 +1399,10 @@ mod tests {
             )
             .unwrap();
 
-        assert_eq!(violation_codes(&summary), vec!["core.macro.unsafe_position"]);
+        assert_eq!(
+            violation_codes(&summary),
+            vec!["core.macro.unsafe_position"]
+        );
         assert_eq!(
             summary.reports[0].violations[0].field.as_deref(),
             Some("url.host")
