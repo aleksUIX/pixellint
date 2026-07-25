@@ -458,6 +458,7 @@ impl ManifestRulePack {
                     .unwrap_or_else(|| env!("CARGO_PKG_VERSION").to_string()),
                 description: manifest.description.clone(),
                 source_level: manifest.source_level,
+                vendor: manifest.vendor.clone(),
             },
             code_prefix,
             vendor: manifest.vendor.clone(),

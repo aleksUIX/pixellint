@@ -143,6 +143,8 @@ pub struct RulePackMetadata {
     pub version: String,
     pub description: String,
     pub source_level: RuleSourceLevel,
+    /// Vendor slug the pack covers, when it covers one vendor's endpoints.
+    pub vendor: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -356,6 +358,7 @@ impl Default for CoreRulePack {
                     "Shared, spec-backed baseline checks for URL-like measurement artifacts."
                         .to_string(),
                 source_level: RuleSourceLevel::Normative,
+                vendor: None,
             },
         }
     }
@@ -401,9 +404,11 @@ impl ValidatorPlugin for CoreRulePack {
             }
         }
 
+        // `core` is vendor-neutral: it never claims to have detected a vendor,
+        // even when the caller says which one they expect.
         ValidationReport {
             plugin_id: self.metadata.id.clone(),
-            detected_vendor: request.claimed_vendor.clone(),
+            detected_vendor: None,
             violations,
         }
     }
@@ -1037,6 +1042,7 @@ mod tests {
                     version: "0.0.0".to_string(),
                     description: "Test helper rulepack".to_string(),
                     source_level: RuleSourceLevel::Heuristic,
+                    vendor: None,
                 },
             }
         }

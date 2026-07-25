@@ -7,7 +7,7 @@ use serde::Deserialize;
 use serde_json::{Value, json};
 
 const PROTOCOL_VERSION: &str = "2024-11-05";
-const INSTRUCTIONS: &str = "Pixellint validates pixels, postbacks, VAST tracking URLs, GTM templates, and related measurement artifacts. Use list_rulepacks to discover available rulepacks, then call validate_artifact with an artifact kind and artifact payload to get deterministic validation results.";
+const INSTRUCTIONS: &str = "Pixellint validates pixels, postbacks, VAST tracking URLs, and related measurement artifacts. The core rulepack applies spec-backed URL and macro checks to every artifact; vendor rulepacks add parameter contracts and only run when the artifact targets that vendor's endpoints. Use list_rulepacks to discover what is available, then call validate_artifact with an artifact kind and artifact payload. Every finding carries a stable code, a severity, an evidence level, and the documentation it came from.";
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -107,7 +107,7 @@ fn handle_message(raw_message: &str, engine: &Engine) -> Action {
             should_exit: false,
         },
         "tools/list" => Action {
-            response: expects_response.then(|| success_response(id, tools_list_result())),
+            response: expects_response.then(|| success_response(id, tools_list_result(engine))),
             should_exit: false,
         },
         "tools/call" => Action {
@@ -142,7 +142,13 @@ fn initialize_result() -> Value {
     })
 }
 
-fn tools_list_result() -> Value {
+fn tools_list_result(engine: &Engine) -> Value {
+    let rulepack_ids: Vec<String> = engine
+        .list_rulepacks()
+        .into_iter()
+        .map(|rulepack| rulepack.id)
+        .collect();
+
     json!({
         "tools": [
             {
@@ -180,12 +186,12 @@ fn tools_list_result() -> Value {
                         },
                         "rulepacks": {
                             "type": "array",
-                            "items": { "type": "string" },
-                            "description": "Optional allowlist of rulepack IDs to run."
+                            "items": { "type": "string", "enum": rulepack_ids },
+                            "description": "Optional allowlist of rulepack IDs to run. Leave empty to let Pixellint select packs by endpoint."
                         },
                         "except_rulepacks": {
                             "type": "array",
-                            "items": { "type": "string" },
+                            "items": { "type": "string", "enum": rulepack_ids },
                             "description": "Optional denylist of rulepack IDs to skip."
                         }
                     },
@@ -215,7 +221,15 @@ fn handle_tool_call(id: Value, params: Option<Value>, engine: &Engine) -> Value 
             json!({
                 "content": [{
                     "type": "text",
-                    "text": format!("{} rulepack(s) available.", engine.list_rulepacks().len())
+                    "text": engine
+                        .list_rulepacks()
+                        .iter()
+                        .map(|rulepack| match &rulepack.vendor {
+                            Some(vendor) => format!("{} ({vendor}): {}", rulepack.id, rulepack.description),
+                            None => format!("{}: {}", rulepack.id, rulepack.description),
+                        })
+                        .collect::<Vec<_>>()
+                        .join("\n")
                 }],
                 "structuredContent": {
                     "rulepacks": engine.list_rulepacks(),
@@ -278,6 +292,7 @@ fn handle_validate_artifact(id: Value, arguments: Value, engine: &Engine) -> Val
                     "structuredContent": {
                         "artifact_kind": args.artifact_kind,
                         "claimed_vendor": args.claimed_vendor,
+                        "detected_vendors": detected_vendors(&summary),
                         "expansion_state": expansion_state_label(expansion_state),
                         "ok": summary.is_ok(),
                         "summary": {
@@ -304,6 +319,23 @@ fn handle_validate_artifact(id: Value, arguments: Value, engine: &Engine) -> Val
             }),
         ),
     }
+}
+
+/// Vendors whose packs claimed the artifact, in report order and deduplicated.
+fn detected_vendors(summary: &pixellint_core::ValidationSummary) -> Vec<String> {
+    let mut vendors: Vec<String> = Vec::new();
+
+    for vendor in summary
+        .reports
+        .iter()
+        .filter_map(|report| report.detected_vendor.clone())
+    {
+        if !vendors.contains(&vendor) {
+            vendors.push(vendor);
+        }
+    }
+
+    vendors
 }
 
 fn parse_artifact_kind(value: &str) -> Result<ArtifactKind, String> {
