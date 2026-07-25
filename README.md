@@ -1,5 +1,10 @@
 # Pixellint
 
+[![Rust](https://github.com/aleksUIX/pixellint/actions/workflows/rust.yml/badge.svg)](https://github.com/aleksUIX/pixellint/actions/workflows/rust.yml)
+[![crates.io](https://img.shields.io/crates/v/pixellint.svg)](https://crates.io/crates/pixellint)
+[![docs.rs](https://img.shields.io/docsrs/pixellint-core)](https://docs.rs/pixellint-core)
+[![license](https://img.shields.io/crates/l/pixellint.svg)](LICENSE)
+
 Pixellint is a spec-first validator for pixels, postbacks, and other
 measurement artifacts. It runs in a terminal, in CI, and in agents, and every
 finding carries a stable id, a severity, an evidence level, and the document it
