@@ -1,19 +1,37 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
 use std::fmt;
+use std::path::Path;
 use std::sync::Arc;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use url::Url;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+pub mod manifest;
+
+pub use manifest::{
+    Assertion, ManifestError, ManifestRulePack, MatchSpec, PackRule, ParamContract, ParamStyle,
+    Requirement, RulePackManifest, ValueFormat,
+};
+
+/// First-party vendor rulepacks compiled into the crate, as (id, manifest JSON).
+pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[];
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum ArtifactKind {
     Url,
+    #[serde(rename = "html")]
     HtmlSnippet,
+    #[serde(rename = "js")]
     JavaScriptSnippet,
+    #[serde(rename = "gtm")]
     GtmTemplate,
+    #[serde(rename = "request")]
     NetworkRequest,
+    #[serde(rename = "vast")]
     VastTracker,
+    #[serde(rename = "postback")]
     ServerPostback,
     Unknown,
 }
@@ -27,7 +45,8 @@ pub enum ExpansionState {
     Fired,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum RuleSourceLevel {
     Normative,
     OfficialVendor,
@@ -36,7 +55,8 @@ pub enum RuleSourceLevel {
     Heuristic,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Severity {
     Error,
     Warning,
@@ -176,9 +196,19 @@ pub struct Engine {
 }
 
 impl Default for Engine {
+    /// An engine with the `core` pack and every first-party vendor pack
+    /// registered. Built-in manifests are compiled in tests, so a malformed one
+    /// is a build-time bug rather than a runtime surprise.
     fn default() -> Self {
         let mut engine = Self::new();
         engine.register(CoreRulePack::default());
+
+        for (id, json) in BUILTIN_VENDOR_MANIFESTS {
+            engine.register_manifest_json(json).unwrap_or_else(|error| {
+                panic!("built-in rulepack `{id}` failed to compile: {error}")
+            });
+        }
+
         engine
     }
 }
@@ -196,6 +226,18 @@ impl Engine {
     {
         self.plugins
             .insert(plugin.metadata().id.clone(), Arc::new(plugin));
+    }
+
+    /// Compiles a declarative rulepack manifest and registers it.
+    pub fn register_manifest_json(&mut self, json: &str) -> Result<(), ManifestError> {
+        self.register(ManifestRulePack::from_json(json)?);
+        Ok(())
+    }
+
+    /// Compiles a declarative rulepack manifest from disk and registers it.
+    pub fn register_manifest_path(&mut self, path: impl AsRef<Path>) -> Result<(), ManifestError> {
+        self.register(ManifestRulePack::from_path(path)?);
+        Ok(())
     }
 
     pub fn list_rulepacks(&self) -> Vec<RulePackMetadata> {
@@ -575,7 +617,7 @@ impl MacroPosition {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct MacroSpan {
+pub(crate) struct MacroSpan {
     start: usize,
     end: usize,
     syntax: MacroSyntax,
@@ -697,7 +739,7 @@ fn macro_rule_source() -> RuleSource {
     }
 }
 
-fn detect_macro_spans(artifact: &str) -> Vec<MacroSpan> {
+pub(crate) fn detect_macro_spans(artifact: &str) -> Vec<MacroSpan> {
     let mut spans = Vec::new();
     let mut index = 0;
 
@@ -768,7 +810,7 @@ fn is_macro_body(body: &str) -> bool {
     has_identifier_character
 }
 
-fn sanitize_macro_spans(artifact: &str, macro_spans: &[MacroSpan]) -> String {
+pub(crate) fn sanitize_macro_spans(artifact: &str, macro_spans: &[MacroSpan]) -> String {
     let mut sanitized = String::with_capacity(artifact.len());
     let mut cursor = 0;
 
