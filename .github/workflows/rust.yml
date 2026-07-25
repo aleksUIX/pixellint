@@ -1,0 +1,47 @@
+name: Rust
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache Rust artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check formatting
+        run: cargo fmt --all --check
+
+      - name: Run tests
+        run: cargo test --workspace
+
+      - name: Run clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+  msrv:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install the declared minimum toolchain
+        uses: dtolnay/rust-toolchain@1.88.0
+
+      - name: Cache Rust artifacts
+        uses: Swatinem/rust-cache@v2
+
+      # rust-version in Cargo.toml is a promise; this job is what keeps it true.
+      - name: Build with the minimum supported Rust version
+        run: cargo build --workspace --all-targets
