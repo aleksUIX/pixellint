@@ -1,0 +1,65 @@
+{
+  "id": "vendor/floodlight",
+  "display_name": "Google Campaign Manager Floodlight",
+  "description": "Floodlight activity tags, whose parameters ride on the path as semicolon-delimited pairs.",
+  "vendor": "google",
+  "source_level": "official_vendor",
+  "docs": "https://support.google.com/campaignmanager/answer/2823425",
+  "param_style": "matrix",
+  "match": {
+    "host_suffixes": ["doubleclick.net"],
+    "path_contains": ["activity"]
+  },
+  "params": [
+    {
+      "name": "src",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric Floodlight configuration ID for the advertiser.",
+      "fix_hint": "Set `src` to the advertiser's Floodlight configuration ID.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+    },
+    {
+      "name": "type",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the activity group tag string.",
+      "fix_hint": "Copy `type` from the Floodlight activity in Campaign Manager.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+    },
+    {
+      "name": "cat",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the activity tag string.",
+      "fix_hint": "Copy `cat` from the Floodlight activity in Campaign Manager.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+    },
+    {
+      "name": "ord",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the cache buster, so every fire is counted separately.",
+      "fix_hint": "Emit a fresh random value for `ord` on every fire, or `ord=1` with `num` for unique counting.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+    },
+    {
+      "name": "num",
+      "format": { "kind": "non_empty" },
+      "description": "Unique counting sends `ord=1` alongside a random `num`.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.floodlight.counting.unique_requires_ord",
+      "kind": "required_with",
+      "when": "num",
+      "requires": ["ord"],
+      "severity": "error",
+      "message": "The tag counts unique users with `num` but omits `ord`. Unique counting sends `ord=1` together with a random `num`.",
+      "fix_hint": "Add `ord=1` next to the random `num` value.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+    }
+  ]
+}

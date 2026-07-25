@@ -1,0 +1,71 @@
+{
+  "id": "vendor/meta",
+  "display_name": "Meta Pixel",
+  "description": "Browser pixel requests to the Meta Pixel collection endpoint at www.facebook.com/tr.",
+  "vendor": "meta",
+  "source_level": "official_vendor",
+  "docs": "https://developers.facebook.com/docs/meta-pixel/get-started",
+  "match": {
+    "host_suffixes": ["facebook.com"],
+    "path_prefixes": ["/tr"]
+  },
+  "params": [
+    {
+      "name": "id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric Pixel ID from Events Manager.",
+      "fix_hint": "Set `id` to the numeric Pixel ID shown in Events Manager.",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/get-started"
+    },
+    {
+      "name": "ev",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "PageView",
+          "AddPaymentInfo",
+          "AddToCart",
+          "AddToWishlist",
+          "CompleteRegistration",
+          "Contact",
+          "CustomizeProduct",
+          "Donate",
+          "FindLocation",
+          "InitiateCheckout",
+          "Lead",
+          "Purchase",
+          "Schedule",
+          "Search",
+          "StartTrial",
+          "SubmitApplication",
+          "Subscribe",
+          "ViewContent"
+        ]
+      },
+      "format_severity": "warning",
+      "description": "Custom event names are allowed, so check that this is a deliberate custom event and not a misspelled standard one.",
+      "fix_hint": "Use a standard event name, or confirm the custom event is registered in Events Manager.",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "noscript",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format_severity": "warning",
+      "description": "The base code sends `noscript=1` from the img fallback.",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/get-started"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.meta.pii.unhashed_email",
+      "kind": "forbid_value_pattern",
+      "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+      "severity": "error",
+      "message": "A parameter carries what looks like a raw email address. Meta requires customer information to be normalized and SHA-256 hashed before it is sent.",
+      "fix_hint": "Normalize the value, hash it with SHA-256, and send the hex digest instead of the plain address.",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/advanced/advanced-matching"
+    }
+  ]
+}

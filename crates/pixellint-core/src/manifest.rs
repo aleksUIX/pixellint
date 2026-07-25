@@ -123,6 +123,12 @@ pub struct ParamContract {
     /// Overrides the severity derived from `requirement`.
     #[serde(default)]
     pub severity: Option<Severity>,
+    /// Overrides the severity of value-format violations only. Lets a pack say
+    /// "this parameter is mandatory, but an unrecognized value is only worth a
+    /// warning", which is the common shape for event-name parameters that also
+    /// accept custom values.
+    #[serde(default)]
+    pub format_severity: Option<Severity>,
     /// Human-readable explanation appended to generated messages.
     #[serde(default)]
     pub description: Option<String>,
@@ -776,7 +782,10 @@ impl ManifestRulePack {
                         format!("`{}` {reason}", param.name),
                         contract.description.as_deref(),
                     ),
-                    severity: contract.severity.unwrap_or(Severity::Error),
+                    severity: contract
+                        .format_severity
+                        .or(contract.severity)
+                        .unwrap_or(Severity::Error),
                     field: Some(field.clone()),
                     fix_hint: contract.fix_hint.clone(),
                     source: source.clone(),
@@ -1122,10 +1131,19 @@ fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam> {
         if !segment.is_empty()
             && let Some((name, value)) = segment.split_once('=')
         {
+            // Matrix parameters ride on the path, so the first pair carries the
+            // path prefix with it: `/ddm/activity/src=123`. Trim everything up
+            // to the last slash in the name so the parameter is `src`, and move
+            // the reported span with it.
+            let (name, name_offset) = match name.rfind('/') {
+                Some(index) if style == ParamStyle::Matrix => (&name[index + 1..], index + 1),
+                _ => (name, 0),
+            };
+
             params.push(RawParam {
                 name: percent_decode(name),
                 value: percent_decode(value),
-                start: cursor,
+                start: cursor + name_offset,
                 end: segment_end,
             });
         }
@@ -1389,6 +1407,39 @@ mod tests {
 
         let report = pack.validate(&request("https://px.example.com/activity;id=12345"));
         assert_eq!(codes(&report), vec!["vendor.test.param.ev.missing"]);
+    }
+
+    #[test]
+    fn matrix_params_survive_a_path_prefix() {
+        let manifest = TEST_MANIFEST
+            .replace(r#""match": {"#, r#""param_style": "matrix", "match": {"#)
+            .replace(
+                r#""path_prefixes": ["/collect"]"#,
+                r#""path_prefixes": ["/ddm/activity"]"#,
+            );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile matrix manifest");
+        let artifact = "https://px.example.com/ddm/activity/id=12345;ev=Purchase;legacy=1?";
+        let report = pack.validate(&request(artifact));
+
+        assert_eq!(codes(&report), vec!["vendor.test.param.legacy.deprecated"]);
+        let target = &report.violations[0].targets[0];
+        assert_eq!(&artifact[target.start..target.end], "legacy=1");
+    }
+
+    #[test]
+    fn format_severity_overrides_only_value_findings() {
+        let manifest = TEST_MANIFEST.replace(
+            r#""format": { "kind": "enum", "values": ["PageView", "Purchase"] }"#,
+            r#""format": { "kind": "enum", "values": ["PageView", "Purchase"] }, "format_severity": "warning""#,
+        );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile manifest");
+
+        let report = pack.validate(&request("https://px.example.com/collect?id=123&ev=Custom"));
+        assert_eq!(report.violations[0].severity, Severity::Warning);
+        assert!(report.is_ok());
+
+        let report = pack.validate(&request("https://px.example.com/collect?id=123"));
+        assert_eq!(report.violations[0].severity, Severity::Error);
     }
 
     #[test]

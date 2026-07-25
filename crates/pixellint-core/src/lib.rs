@@ -15,7 +15,28 @@ pub use manifest::{
 };
 
 /// First-party vendor rulepacks compiled into the crate, as (id, manifest JSON).
-pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[];
+///
+/// Every pack here is a declarative manifest, the same format users write for
+/// their own packs. Nothing about a first-party pack is privileged.
+pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
+    (
+        "vendor/floodlight",
+        include_str!("../rulepacks/vendor/floodlight.json"),
+    ),
+    (
+        "vendor/google-analytics",
+        include_str!("../rulepacks/vendor/google-analytics.json"),
+    ),
+    (
+        "vendor/linkedin",
+        include_str!("../rulepacks/vendor/linkedin.json"),
+    ),
+    ("vendor/meta", include_str!("../rulepacks/vendor/meta.json")),
+    (
+        "vendor/tiktok",
+        include_str!("../rulepacks/vendor/tiktok.json"),
+    ),
+];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

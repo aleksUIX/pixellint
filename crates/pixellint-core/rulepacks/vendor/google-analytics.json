@@ -1,0 +1,55 @@
+{
+  "id": "vendor/google-analytics",
+  "display_name": "Google Analytics 4 Measurement Protocol",
+  "description": "Measurement Protocol requests to the Google Analytics 4 collection endpoint, including the regional and debug variants.",
+  "vendor": "google",
+  "source_level": "official_vendor",
+  "docs": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+  "match": {
+    "host_suffixes": ["google-analytics.com"],
+    "path_prefixes": ["/mp/collect", "/debug/mp/collect"]
+  },
+  "params": [
+    {
+      "name": "api_secret",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It authenticates the request and is created in the GA4 admin UI.",
+      "fix_hint": "Create a Measurement Protocol API secret for the stream and send it as `api_secret`.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+    },
+    {
+      "name": "measurement_id",
+      "format": { "kind": "regex", "pattern": "^G-[A-Za-z0-9]+$" },
+      "description": "Web stream measurement IDs start with `G-`.",
+      "fix_hint": "Use the web stream measurement ID, or send `firebase_app_id` for an app stream.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+    },
+    {
+      "name": "firebase_app_id",
+      "format": { "kind": "non_empty" },
+      "description": "It identifies an app stream and replaces `measurement_id`.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.google-analytics.stream.identifier_missing",
+      "kind": "require_one_of",
+      "params": ["measurement_id", "firebase_app_id"],
+      "severity": "error",
+      "message": "The request identifies no GA4 stream. Web streams send `measurement_id` and app streams send `firebase_app_id`.",
+      "fix_hint": "Add `measurement_id` for a web stream or `firebase_app_id` for an app stream.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+    },
+    {
+      "code": "vendor.google-analytics.stream.identifier_ambiguous",
+      "kind": "mutually_exclusive",
+      "params": ["measurement_id", "firebase_app_id"],
+      "severity": "error",
+      "message": "The request sends both `measurement_id` and `firebase_app_id`. One request targets one stream type.",
+      "fix_hint": "Keep the identifier that matches the stream this event belongs to and drop the other.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+    }
+  ]
+}

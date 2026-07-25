@@ -1,0 +1,39 @@
+{
+  "id": "vendor/linkedin",
+  "display_name": "LinkedIn image pixel",
+  "description": "LinkedIn conversion image pixels served from px.ads.linkedin.com/collect.",
+  "vendor": "linkedin",
+  "source_level": "ecosystem_reference",
+  "docs": "https://www.linkedin.com/help/lms/answer/a422796",
+  "match": {
+    "hosts": ["px.ads.linkedin.com"],
+    "path_prefixes": ["/collect"]
+  },
+  "params": [
+    {
+      "name": "pid",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric Partner ID of the Insight Tag. LinkedIn generates this pixel in Campaign Manager rather than publishing the parameter contract, so this rule is ecosystem evidence, not a published contract.",
+      "fix_hint": "Copy the image pixel from the conversion's Sources page so `pid` carries the Partner ID.",
+      "doc": "https://www.linkedin.com/help/lms/answer/a422796"
+    },
+    {
+      "name": "conversionId",
+      "requirement": "recommended",
+      "format": { "kind": "integer" },
+      "description": "Without it the fire is attributed to the Insight Tag rather than to a specific conversion.",
+      "fix_hint": "Add the numeric conversion ID from Campaign Manager.",
+      "doc": "https://www.linkedin.com/help/lms/answer/a422796"
+    },
+    {
+      "name": "fmt",
+      "requirement": "recommended",
+      "format": { "kind": "enum", "values": ["gif", "img", "js"] },
+      "format_severity": "warning",
+      "description": "Image pixels are generated with `fmt=gif`.",
+      "doc": "https://www.linkedin.com/help/lms/answer/a422796"
+    }
+  ],
+  "rules": []
+}
