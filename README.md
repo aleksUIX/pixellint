@@ -1,89 +1,198 @@
 # Pixellint
 
-Pixellint is a spec-first validator for pixels, tracking snippets, and measurement artifacts. The market gap is not debugging itself; teams already use vendor helpers, paid tag-audit platforms, and event-governance tools. The gap is the open validation layer that can run in code, CI, editors, and AI agents.
+Pixellint is a spec-first validator for pixels, postbacks, and other
+measurement artifacts. It runs in a terminal, in CI, and in agents, and every
+finding carries a stable id, a severity, an evidence level, and the document it
+came from.
 
-This repo starts with a Rust core that validates cardinal rules grounded in published specs and official vendor contracts. The product stack is: `pixellint-core` first, then `pixellint-cli` and `pixellint-mcp` on top of the same engine. GTM templates are useful inputs, but not the source of truth.
+Broken pixels cost attribution, QA time, and campaign money. The tooling that
+exists is fragmented: vendor-specific helpers, enterprise tag auditors, and
+schema linters that know nothing about ad tech. Pixellint is the open
+validation layer underneath all of that.
 
-## Why This Exists
+```bash
+$ pixellint validate url 'https://www.facebook.com/tr?ev=Purchse&em=buyer@example.com'
+rulepack: core
+  ok
+rulepack: vendor/meta (vendor: meta)
+  error   vendor.meta.param.id.missing   `id` is required on Meta Pixel requests but is not present. It is the numeric Pixel ID from Events Manager.
+    fix: Set `id` to the numeric Pixel ID shown in Events Manager.
+    docs: https://developers.facebook.com/docs/meta-pixel/get-started
+  warning vendor.meta.param.ev.invalid   `ev` is `Purchse`, which is not one of the documented values: PageView, AddPaymentInfo, ...
+    fix: Use a standard event name, or confirm the custom event is registered in Events Manager.
+    docs: https://developers.facebook.com/docs/meta-pixel/reference
+  error   vendor.meta.pii.unhashed_email A parameter carries what looks like a raw email address. Meta requires customer information to be normalized and SHA-256 hashed before it is sent.
+    fix: Normalize the value, hash it with SHA-256, and send the hex digest instead of the plain address.
+    docs: https://developers.facebook.com/docs/meta-pixel/advanced/advanced-matching
 
-- Demand is real: broken pixels cost attribution, QA time, and campaign money.
-- Current solutions are fragmented: vendor-specific helpers, enterprise auditors, and schema tools.
-- The missing layer is a neutral lint engine for conformance and deterministic fixes.
+2 error(s), 1 warning(s), 0 info message(s) across 2 rulepack(s).
+```
 
-## Source Of Truth
+## Install
 
-1. Formal specs and standards from the relevant standards body.
-2. Official vendor docs, APIs, and SDK behavior.
-3. Official vendor templates and tests.
-4. GTM and other template ecosystems as structured hints, not canonical law.
-5. Observed traffic and community examples only as heuristic input.
+```bash
+cargo install pixellint
+```
 
-Hard standards implemented today in the `core` rulepack: [docs/STANDARDS.md](docs/STANDARDS.md)
-Planned multi-pixel output model: [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md)
-
-## Product Shape
-
-- Rust core for fast, deterministic validation.
-- Core cardinal rulepack for broad spec-level checks.
-- Vendor rulepacks so users choose Google, Meta, TikTok, LinkedIn, GTM, VAST, or custom targets explicitly.
-- Rulepacks are toggleable per run, so CI or MCP clients can opt into only the packs they trust or need.
-- Thin surfaces on top: CLI and MCP now, editor or browser integrations later.
-
-## Use Today
+## Use it
 
 ### QA
 
-Run Pixellint locally against an inline artifact or a file path. Use `--json` when you want stable machine-readable output.
+Validate an inline artifact, a file with `@path`, or stdin with `-`:
 
 ```bash
-cargo run --quiet -p pixellint-cli -- validate url 'https://user:pass@example.com/pixel?id=1#frag' --json
+pixellint validate url 'https://px.ads.linkedin.com/collect?pid=123456&fmt=gif'
+pixellint validate postback @conversion-endpoint.txt --json
+curl -s "$TAG_URL" | pixellint validate vast -
 ```
 
-If the artifact is still a URL template with ad macros, tell Pixellint to validate it as a template rather than a fired request:
+If the artifact is still a template with unexpanded macros, say so, and macro
+rules adjust:
 
 ```bash
-cargo run --quiet -p pixellint-cli -- validate url 'https://example.com/pixel?cb=[CACHEBUSTING]' --state template --json
-```
-
-You can also validate a saved artifact by prefixing the path with `@`:
-
-```bash
-cargo run --quiet -p pixellint-cli -- validate postback @fixtures/core/clean-postback.txt --json
+pixellint validate url 'https://example.com/pixel?cb=[CACHEBUSTING]' --state template
 ```
 
 ### CI
 
-`pixellint-cli validate` exits non-zero when any error-severity violation is present, which makes it suitable for gating builds in CI.
+`pixellint validate` exits `0` when the artifact is clean or only produced
+warnings, `1` when any error-severity finding is present, and `2` on a usage or
+input problem. That makes it usable as a gate:
 
 ```yaml
-- name: Validate tracking artifact
-  run: cargo run --quiet -p pixellint-cli -- validate url @fixtures/core/clean-pixel.txt --json
+- name: Validate tracking artifacts
+  run: |
+    cargo install pixellint
+    pixellint validate url @fixtures/conversion-pixel.txt
 ```
 
-### Agent Workflows
-
-Start the stdio MCP server:
+### Agents
 
 ```bash
-cargo run --quiet -p pixellint-mcp
+cargo install pixellint-mcp
 ```
 
-It exposes two tools today:
+`pixellint-mcp` speaks MCP over stdio and exposes two tools:
 
 - `list_rulepacks`
-- `validate_artifact`
+- `validate_artifact`, taking `artifact_kind`, `artifact`, and optional
+  `claimed_vendor`, `expansion_state`, `rulepacks`, `except_rulepacks`
 
-`validate_artifact` accepts `artifact_kind`, `artifact`, optional `claimed_vendor`, optional `expansion_state`, optional `rulepacks`, and optional `except_rulepacks`.
+Responses include the structured findings, the detected vendors, and a
+severity summary, so an agent can act on the result without parsing prose.
 
-Today the available executable rulepack set is only `core`, which provides deterministic baseline checks for URL-like artifacts.
+### Library
 
-When a finding points at a specific URL component or query parameter, the structured output may include `targets` metadata with component, name, value, and byte offsets.
+```rust
+use pixellint_core::{ArtifactKind, Engine, ExpansionState, ValidationOptions, ValidationRequest};
 
-## Core Evidence
+let engine = Engine::default();
+let request = ValidationRequest {
+    artifact_kind: ArtifactKind::Url,
+    artifact: "https://www.facebook.com/tr?id=1234567890123456&ev=PageView".to_string(),
+    claimed_vendor: None,
+    expansion_state: ExpansionState::Unknown,
+};
 
-The current `core` rulepack is backed by two test layers:
+let summary = engine.validate(&request, &ValidationOptions::default())?;
+assert!(summary.is_ok());
+```
 
-- rule-level unit tests in `crates/pixellint-core/src/lib.rs`
-- a golden fixture corpus in `fixtures/core/`, enforced by `crates/pixellint-core/tests/core_rulepack_golden.rs`
+## Rulepacks
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the plugin and performance shape.
+`core` runs on every URL-like artifact. Vendor packs run only when the artifact
+targets their endpoints, so you get vendor checks without asking for them, and
+nothing fires on an endpoint it does not understand.
+
+| Rulepack | Covers | Evidence |
+| --- | --- | --- |
+| `core` | URL validity, transport, credentials, fragments, ad-tech macro handling | normative |
+| `vendor/meta` | `facebook.com/tr` pixel requests | official vendor |
+| `vendor/google-analytics` | GA4 Measurement Protocol collection endpoints | official vendor |
+| `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
+| `vendor/tiktok` | TikTok Pixel loader and collection requests | ecosystem reference |
+| `vendor/linkedin` | LinkedIn conversion image pixels | ecosystem reference |
+
+Select packs per run:
+
+```bash
+pixellint validate url "$ARTIFACT" --rulepack core
+pixellint validate url "$ARTIFACT" --except vendor/meta
+pixellint list-rulepacks --json
+```
+
+Full rule inventory with citations: [docs/STANDARDS.md](docs/STANDARDS.md).
+
+### Evidence levels
+
+Findings say where their authority comes from, and you can hold packs to
+different standards accordingly:
+
+- `normative`: a formal standard such as the WHATWG URL Standard or an RFC
+- `official_vendor`: a parameter contract the vendor publishes, with the URL
+- `official_template`: vendor-published templates or SDK behavior
+- `ecosystem_reference`: consistent real-world behavior the vendor generates in
+  its own UI but does not document
+- `heuristic`: Pixellint's judgment, labeled as such
+
+The manifest loader refuses to compile a pack that claims `official_vendor`
+without citing documentation.
+
+## Custom rulepacks
+
+Rulepacks are data, not code. First-party vendor packs are written in the same
+JSON format you can write for an internal endpoint:
+
+```json
+{
+  "id": "custom/acme",
+  "display_name": "Acme internal pixel",
+  "description": "Contract for the internal conversion endpoint.",
+  "vendor": "acme",
+  "source_level": "heuristic",
+  "match": { "hosts": ["px.acme.example"], "path_prefixes": ["/collect"] },
+  "params": [
+    { "name": "aid", "requirement": "required", "format": { "kind": "integer" } },
+    { "name": "ev", "requirement": "required", "format": { "kind": "enum", "values": ["view", "purchase"] } }
+  ]
+}
+```
+
+```bash
+pixellint validate url 'https://px.acme.example/collect?ev=purchase' --rulepack-file acme.json
+```
+
+The format is documented in [docs/RULEPACK_SCHEMA.md](docs/RULEPACK_SCHEMA.md).
+
+## What Pixellint does not do
+
+- It does not extract artifacts from documents. Callers such as Vastlint parse
+  VAST, HTML, or GTM containers and hand Pixellint the URLs they found. The
+  planned document-level result model is in
+  [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md).
+- It does not fire requests or check whether an endpoint responds.
+- It does not enforce privacy or consent frameworks yet.
+- It does not auto-fix. Findings carry fix hints; applying them is on you.
+
+## Evidence
+
+Every rule is backed by tests: unit tests in `crates/pixellint-core/src/`, a
+golden corpus in `fixtures/` with one directory per rulepack, and integration
+tests that drive the real CLI binary and the real MCP stdio transport.
+
+```bash
+cargo test --workspace
+```
+
+## Docs
+
+- [Standards and rule inventory](docs/STANDARDS.md)
+- [Rulepack manifest schema](docs/RULEPACK_SCHEMA.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Roadmap](ROADMAP.md)
+- [Multi-artifact output model](docs/MULTI_ARTIFACT_SCHEMA.md)
+
+## License
+
+Apache-2.0. Pixellint is not affiliated with or endorsed by any vendor named
+in its rulepacks; see [NOTICE](NOTICE).

@@ -23,9 +23,18 @@
 
 ## Current State
 
-- `core` is the only implemented rulepack today.
-- `pixellint-cli` exposes local QA and CI flows, including JSON output for machine-readable validation results.
-- `pixellint-mcp` exposes the same engine over stdio for agent workflows.
+- `core` is hand-written Rust and covers spec-level URL and macro checks.
+- Vendor packs are declarative manifests compiled into `pixellint-core` and interpreted by one `ManifestRulePack` plugin. Five ship today: Meta, GA4 Measurement Protocol, Floodlight, TikTok, LinkedIn.
+- User packs load from disk through `--rulepack-file` or `Engine::register_manifest_path`, using the same schema as the first-party packs.
+- The `pixellint` CLI exposes local QA and CI flows with JSON output and documented exit codes.
+- `pixellint-mcp` exposes the same engine over newline-delimited JSON-RPC stdio for agent workflows.
+
+## Dependencies
+
+The core carries three runtime dependencies, and each one earns its place:
+`url` for WHATWG-conformant parsing, `serde`/`serde_json` for the manifest and
+result schemas, and `regex` so declarative packs can express value formats
+without shipping code. Everything else is std.
 
 ## Plugin Model
 

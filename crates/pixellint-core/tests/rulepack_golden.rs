@@ -26,6 +26,12 @@ struct FixtureCase {
     expansion_state: Option<String>,
     #[serde(default)]
     claimed_vendor: Option<String>,
+    /// Rulepacks to force on for this case, as `--rulepack` does.
+    #[serde(default)]
+    rulepacks: Vec<String>,
+    /// Rulepacks to skip for this case, as `--except` does.
+    #[serde(default)]
+    except_rulepacks: Vec<String>,
     /// Rulepacks expected to produce a report, in engine order. Omit to accept
     /// whatever the engine selects.
     #[serde(default)]
@@ -76,8 +82,13 @@ fn golden_corpus_matches_expected_findings() {
                 expansion_state: parse_expansion_state(case.expansion_state.as_deref()),
             };
 
+            let options = ValidationOptions {
+                only_rulepacks: case.rulepacks.clone(),
+                except_rulepacks: case.except_rulepacks.clone(),
+            };
+
             let summary = engine
-                .validate(&request, &ValidationOptions::default())
+                .validate(&request, &options)
                 .unwrap_or_else(|error| panic!("validate fixture {label}: {error}"));
 
             if let Some(expected_plugins) = &case.expected_plugins {
