@@ -1,23 +1,280 @@
 {
   "id": "vendor/snapchat",
   "display_name": "Snapchat Conversions API",
-  "description": "Server-side event requests to the Snapchat Conversions API events endpoint.",
+  "description": "Server-side event requests to the Snapchat Conversions API v3 events endpoint, including the JSON event payload.",
   "vendor": "snapchat",
   "source_level": "official_vendor",
-  "docs": "https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI",
+  "docs": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
   "match": {
-    "hosts": ["tr.snapchat.com"],
-    "path_contains": ["/events"]
+    "hosts": [
+      "tr.snapchat.com"
+    ],
+    "path_contains": [
+      "/events"
+    ],
+    "json_paths": [
+      "data[].event_name",
+      {
+        "path": "data[].action_source",
+        "excludes": "^(email|website|app|phone_call|chat|physical_store|system_generated|business_messaging|other)$"
+      }
+    ]
   },
   "params": [
     {
       "name": "access_token",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "The events endpoint authenticates with an access token on the request.",
       "fix_hint": "Send the Conversions API access token, and keep it out of anything client-side.",
-      "doc": "https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI"
+      "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI"
     }
   ],
-  "rules": []
+  "rules": [],
+  "body": {
+    "scope": "data[]",
+    "params": [
+      {
+        "name": "event_name",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "PURCHASE",
+            "SAVE",
+            "START_CHECKOUT",
+            "ADD_CART",
+            "VIEW_CONTENT",
+            "ADD_BILLING",
+            "SIGN_UP",
+            "SEARCH",
+            "PAGE_VIEW",
+            "SUBSCRIBE",
+            "AD_CLICK",
+            "AD_VIEW",
+            "COMPLETE_TUTORIAL",
+            "LEVEL_COMPLETE",
+            "INVITE",
+            "LOGIN",
+            "SHARE",
+            "RESERVE",
+            "ACHIEVEMENT_UNLOCKED",
+            "ADD_TO_WISHLIST",
+            "SPENT_CREDITS",
+            "RATE",
+            "START_TRIAL",
+            "LIST_VIEW",
+            "APP_INSTALL",
+            "APP_OPEN",
+            "CUSTOM_EVENT_1",
+            "CUSTOM_EVENT_2",
+            "CUSTOM_EVENT_3",
+            "CUSTOM_EVENT_4",
+            "CUSTOM_EVENT_5"
+          ]
+        },
+        "description": "Snap documents a fixed set of event types, spelled in upper case with underscores.",
+        "fix_hint": "Use one of the documented event types, such as `PAGE_VIEW` or `PURCHASE`.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "event_time",
+        "requirement": "required",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is the epoch timestamp of the conversion, and Snap only accepts events from the last 7 days.",
+        "fix_hint": "Send the epoch timestamp of the conversion, not of the moment you forwarded it.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "action_source",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "WEB",
+            "OFFLINE",
+            "MOBILE_APP"
+          ]
+        },
+        "description": "It says where the event took place, and Snap accepts three values.",
+        "fix_hint": "Use `WEB`, `OFFLINE`, or `MOBILE_APP`. Snap spells these in upper case, unlike Meta.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "event_source_url",
+        "format": {
+          "kind": "url"
+        },
+        "description": "It is the URL of the page the event happened on, and Snap requires it for web events.",
+        "fix_hint": "Send the full page URL, including the scheme.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data",
+        "requirement": "required",
+        "description": "Snap matches the conversion on customer information, and the event needs at least one identifier.",
+        "fix_hint": "Add a `user_data` object carrying a hashed email, hashed phone, mobile ad id, or IP and user agent pair.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.em",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Email must be normalized and SHA-256 hashed before it is sent.",
+        "fix_hint": "Trim and lowercase the address, hash it with SHA-256, and send the hex digest.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.em[]",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Every email in the list must be normalized and SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.ph",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Phone must be normalized and SHA-256 hashed before it is sent.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.ph[]",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Every phone number in the list must be normalized and SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.fn",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "First name must be SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.ln",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Last name must be SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.ge",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Gender must be SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.ct",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "City must be SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.st",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "State must be SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.zp",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Postal code must be SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.country",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Country must be SHA-256 hashed.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.client_ip_address",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is sent unhashed, and it must be the address of the browser rather than of your server.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.client_user_agent",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is sent unhashed, and it must be the browser's user agent rather than your HTTP client's.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.snapchat.body.web_requires_source_url",
+        "kind": "required_when_value",
+        "when": "action_source",
+        "equals": [
+          "WEB"
+        ],
+        "requires": [
+          "event_source_url"
+        ],
+        "severity": "error",
+        "message": "The event is marked `action_source: WEB` but carries no `event_source_url`, which Snap requires for website events.",
+        "fix_hint": "Send the URL of the page the event took place on.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "code": "vendor.snapchat.body.unhashed_email",
+        "kind": "forbid_value_pattern",
+        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+        "severity": "error",
+        "message": "A field carries what looks like a raw email address. Snap requires customer information to be normalized and SHA-256 hashed.",
+        "fix_hint": "Trim the address, lowercase it, hash it with SHA-256, and send the hex digest.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "code": "vendor.snapchat.body.hashed_plaintext_field",
+        "kind": "forbid_value_pattern",
+        "pattern": "^[A-Fa-f0-9]{64}$",
+        "params": [
+          "user_data.client_ip_address",
+          "user_data.client_user_agent"
+        ],
+        "severity": "error",
+        "message": "This field looks like a SHA-256 digest, but Snap documents it as one of the parameters that is sent unhashed.",
+        "fix_hint": "Send the raw value. Hashing it makes the event unmatchable.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      }
+    ]
+  }
 }

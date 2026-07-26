@@ -28,5 +28,121 @@
     "expected_codes": [
       "vendor.snapchat.param.access_token.missing"
     ]
+  },
+  {
+    "id": "clean-web-event",
+    "kind": "json",
+    "fixture": "clean-web-event.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/snapchat"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "invalid-event-name",
+    "kind": "json",
+    "fixture": "invalid-event-name.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/snapchat"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.snapchat.body.event_name.invalid"
+    ]
+  },
+  {
+    "id": "web-without-source-url",
+    "kind": "json",
+    "fixture": "web-without-source-url.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/snapchat"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.snapchat.body.web_requires_source_url"
+    ]
+  },
+  {
+    "id": "unhashed-email",
+    "kind": "json",
+    "fixture": "unhashed-email.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/snapchat"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.snapchat.body.user_data.em[].invalid",
+      "vendor.snapchat.body.unhashed_email"
+    ]
+  },
+  {
+    "id": "hashed-user-agent",
+    "kind": "json",
+    "fixture": "hashed-user-agent.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/snapchat"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.snapchat.body.hashed_plaintext_field"
+    ]
+  },
+  {
+    "id": "missing-action-source",
+    "kind": "json",
+    "fixture": "missing-action-source.txt",
+    "rulepacks": [
+      "vendor/snapchat"
+    ],
+    "expected_plugins": [
+      "vendor/snapchat"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.snapchat.body.action_source.missing"
+    ]
+  },
+  {
+    "id": "ambiguous-envelope-is-claimed-by-both",
+    "kind": "json",
+    "fixture": "missing-action-source.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/meta-conversions-api",
+      "vendor/snapchat"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.meta-conversions-api.body.action_source.missing",
+      "vendor.meta-conversions-api.body.event_id.missing",
+      "vendor.snapchat.body.action_source.missing"
+    ]
   }
 ]

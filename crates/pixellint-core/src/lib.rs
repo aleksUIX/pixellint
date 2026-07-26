@@ -54,6 +54,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/linkedin",
         include_str!("../rulepacks/vendor/linkedin.json"),
     ),
+    (
+        "vendor/linkedin-conversions-api",
+        include_str!("../rulepacks/vendor/linkedin-conversions-api.json"),
+    ),
     ("vendor/meta", include_str!("../rulepacks/vendor/meta.json")),
     (
         "vendor/meta-conversions-api",

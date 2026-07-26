@@ -1,0 +1,157 @@
+{
+  "id": "vendor/linkedin-conversions-api",
+  "display_name": "LinkedIn Conversions API",
+  "description": "Conversion events streamed to the LinkedIn Conversions API, as a single event or as a batch under `elements`.",
+  "vendor": "linkedin",
+  "source_level": "official_vendor",
+  "docs": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+  "match": {
+    "host_suffixes": [
+      "api.linkedin.com"
+    ],
+    "path_contains": [
+      "/conversionEvents"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "conversion",
+          "conversionHappenedAt",
+          "elements[].conversion",
+          "elements[].conversionHappenedAt"
+        ]
+      }
+    ]
+  },
+  "body": {
+    "scope": [
+      "elements[]",
+      ""
+    ],
+    "params": [
+      {
+        "name": "conversion",
+        "requirement": "required",
+        "format": {
+          "kind": "regex",
+          "pattern": "^urn:lla:llaPartnerConversion:[0-9]+$"
+        },
+        "description": "It is the conversion rule URN the event is attributed to, in the form `urn:lla:llaPartnerConversion:ID`.",
+        "fix_hint": "Send the URN of a conversion rule created with `conversionMethod` set to `CONVERSIONS_API`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "conversionHappenedAt",
+        "requirement": "required",
+        "format": {
+          "kind": "integer",
+          "min_digits": 13,
+          "max_digits": 13
+        },
+        "description": "LinkedIn documents it as an epoch timestamp in milliseconds, and rejects events older than 90 days. A 10-digit value is seconds and lands in 1970.",
+        "fix_hint": "Send milliseconds, not seconds: a JavaScript `Date.now()` is already in the right unit.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "user.userIds",
+        "requirement": "required",
+        "severity": "error",
+        "description": "LinkedIn returns a 422 when `user.userIds` is absent. Identifying the person by `lead`, `externalIds`, or `userInfo` instead still requires it, sent as an empty list.",
+        "fix_hint": "Add `user.userIds`. If you match on something else, send it as an empty list: `\"userIds\": []`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "user.userIds[].idType",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "SHA256_EMAIL",
+            "LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID",
+            "ACXIOM_ID",
+            "PLAINTEXT_IP_ADDRESS",
+            "GOOGLE_AID"
+          ]
+        },
+        "format_severity": "warning",
+        "description": "It names the kind of identifier carried in `idValue`.",
+        "fix_hint": "Use one of the documented identifier types.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "user.userIds[].idValue",
+        "requirement": "required",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "LinkedIn rejects the event when an identifier is present but empty.",
+        "fix_hint": "Populate `idValue`, or drop the entry entirely rather than sending it blank.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "user.lead",
+        "format": {
+          "kind": "regex",
+          "pattern": "^urn:li:leadGenFormResponse:.+$"
+        },
+        "description": "LinkedIn rejects a `lead` that is not a valid URN.",
+        "fix_hint": "Send it as `urn:li:leadGenFormResponse:ID`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "conversionValue.currencyCode",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Za-z]{3}$"
+        },
+        "description": "It is the three-letter currency code of the conversion value.",
+        "fix_hint": "Use the ISO 4217 code, such as `USD`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "conversionValue.amount",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(\\.[0-9]+)?$"
+        },
+        "description": "LinkedIn documents the amount as a decimal string, as in `\"50.0\"`.",
+        "fix_hint": "Send the amount as a string holding a decimal number, without a currency symbol.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "eventId",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It identifies the event so repeated sends are not counted twice.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.linkedin-conversions-api.body.value_needs_both_fields",
+        "kind": "required_with",
+        "when": "conversionValue.amount",
+        "requires": [
+          "conversionValue.currencyCode"
+        ],
+        "severity": "error",
+        "message": "`conversionValue` carries an amount with no `currencyCode`. LinkedIn documents both fields together.",
+        "fix_hint": "Add `conversionValue.currencyCode` alongside the amount.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "code": "vendor.linkedin-conversions-api.body.unhashed_email",
+        "kind": "forbid_value_pattern",
+        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+        "params": [
+          "user.userIds[].idValue"
+        ],
+        "severity": "error",
+        "message": "An identifier carries what looks like a raw email address. LinkedIn matches on `SHA256_EMAIL`, which is the SHA-256 digest rather than the address.",
+        "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest with `idType` set to `SHA256_EMAIL`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      }
+    ]
+  }
+}

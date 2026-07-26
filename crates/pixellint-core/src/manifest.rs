@@ -108,11 +108,45 @@ pub struct MatchSpec {
     #[serde(default)]
     pub path_contains: Vec<String>,
     /// JSON body shapes the pack claims. A body artifact belongs to this pack
-    /// when every pattern here resolves to a field that is actually present, so
-    /// the shape of the payload stands in for the host that a bare body does not
-    /// carry.
+    /// when every entry here holds, so the shape of the payload stands in for
+    /// the host that a bare body does not carry.
     #[serde(default)]
-    pub json_paths: Vec<String>,
+    pub json_paths: Vec<ShapeMatch>,
+}
+
+/// One condition on the shape of a JSON body.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ShapeMatch {
+    /// The path resolves to a field that is present.
+    Present(String),
+    /// The path carries no value that belongs to a different vendor.
+    ///
+    /// Conversion APIs have converged on the same `{"data": [...]}` envelope,
+    /// so presence alone cannot tell a Meta payload from a Snap one. The values
+    /// can: Meta writes `action_source: "website"` where Snap writes `"WEB"`.
+    ///
+    /// This is written as an exclusion rather than as "my values match" on
+    /// purpose. The discriminating field is usually one the pack also contracts,
+    /// and a payload with a typo in it is the one that most needs validating, so
+    /// an unfamiliar value must leave the payload claimable. Only a value that
+    /// positively belongs to someone else rules the pack out.
+    Excludes { path: String, excludes: String },
+    /// At least one of the nested conditions holds. Endpoints that accept both
+    /// a single event and a batch envelope need it: the two shapes have no path
+    /// in common, but either one identifies the payload.
+    Any { any_of: Vec<ShapeMatch> },
+}
+
+impl ShapeMatch {
+    /// Every path this condition names, so they can all be checked at load.
+    fn paths(&self) -> Vec<&str> {
+        match self {
+            Self::Present(path) => vec![path],
+            Self::Excludes { path, .. } => vec![path],
+            Self::Any { any_of } => any_of.iter().flat_map(Self::paths).collect(),
+        }
+    }
 }
 
 /// A contracted parameter.
@@ -232,6 +266,28 @@ pub struct RulePackManifest {
     pub body: Option<BodySpec>,
 }
 
+/// Which part of a body the contracts are written against.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ScopeSpec {
+    /// One batch array, such as `data[]`.
+    One(String),
+    /// Alternative envelopes, tried in order, first one that resolves wins. An
+    /// empty string means the document itself. LinkedIn takes either a single
+    /// event at the root or a batch under `elements`, so its pack declares
+    /// `["elements[]", ""]`.
+    Any(Vec<String>),
+}
+
+impl ScopeSpec {
+    fn patterns(&self) -> Vec<&str> {
+        match self {
+            Self::One(pattern) => vec![pattern],
+            Self::Any(patterns) => patterns.iter().map(String::as_str).collect(),
+        }
+    }
+}
+
 /// Contracts applied to a JSON request body.
 ///
 /// Conversion APIs batch events into an array, and every element of that array
@@ -247,7 +303,7 @@ pub struct RulePackManifest {
 #[serde(deny_unknown_fields)]
 pub struct BodySpec {
     #[serde(default)]
-    pub scope: Option<String>,
+    pub scope: Option<ScopeSpec>,
     #[serde(default)]
     pub params: Vec<ParamContract>,
     #[serde(default)]
@@ -449,9 +505,31 @@ impl Scope<'_> {
     }
 }
 
+/// A shape condition with its patterns compiled.
+#[derive(Debug)]
+enum CompiledShape {
+    Present(String),
+    Excludes { path: String, regex: Regex },
+    Any(Vec<CompiledShape>),
+}
+
+impl CompiledShape {
+    fn holds(&self, document: &JsonDocument) -> bool {
+        match self {
+            Self::Present(path) => document.matches_pattern(path),
+            Self::Excludes { path, regex } => !document
+                .expand(path)
+                .iter()
+                .filter_map(|concrete| document.get(concrete))
+                .any(|field| regex.is_match(&field.text)),
+            Self::Any(alternatives) => alternatives.iter().any(|shape| shape.holds(document)),
+        }
+    }
+}
+
 #[derive(Debug)]
 struct CompiledBody {
-    scope: Option<String>,
+    scope: Option<ScopeSpec>,
     params: Vec<CompiledParam>,
     rules: Vec<CompiledRule>,
 }
@@ -469,6 +547,7 @@ pub struct ManifestRulePack {
     params: Vec<CompiledParam>,
     rules: Vec<CompiledRule>,
     body: Option<CompiledBody>,
+    shapes: Vec<CompiledShape>,
 }
 
 impl RulePackManifest {
@@ -476,6 +555,28 @@ impl RulePackManifest {
     pub fn from_json(json: &str) -> Result<Self, ManifestError> {
         serde_json::from_str(json).map_err(|error| ManifestError::Parse(error.to_string()))
     }
+}
+
+/// Compiles the shape conditions a pack claims its payloads by.
+fn compile_shapes(
+    pack_id: &str,
+    shapes: &[ShapeMatch],
+) -> Result<Vec<CompiledShape>, ManifestError> {
+    shapes
+        .iter()
+        .map(|shape| compile_shape(pack_id, shape))
+        .collect()
+}
+
+fn compile_shape(pack_id: &str, shape: &ShapeMatch) -> Result<CompiledShape, ManifestError> {
+    Ok(match shape {
+        ShapeMatch::Present(path) => CompiledShape::Present(path.clone()),
+        ShapeMatch::Excludes { path, excludes } => CompiledShape::Excludes {
+            path: path.clone(),
+            regex: compile_regex(pack_id, excludes)?,
+        },
+        ShapeMatch::Any { any_of } => CompiledShape::Any(compile_shapes(pack_id, any_of)?),
+    })
 }
 
 /// Compiles one list of parameter contracts, returning the names it defines so
@@ -616,6 +717,7 @@ impl ManifestRulePack {
             None => None,
         };
 
+        let mut shapes = Vec::new();
         let (params, url_names) = compile_params(&pack_id, &manifest, &manifest.params)?;
         let rules = compile_rules(
             &pack_id,
@@ -641,10 +743,20 @@ impl ManifestRulePack {
                     .matcher
                     .json_paths
                     .iter()
-                    .chain(spec.scope.iter())
-                    .chain(names.iter());
+                    .flat_map(ShapeMatch::paths)
+                    .map(str::to_string)
+                    .chain(
+                        spec.scope
+                            .iter()
+                            .flat_map(ScopeSpec::patterns)
+                            // The empty pattern names the document itself.
+                            .filter(|pattern| !pattern.is_empty())
+                            .map(str::to_string),
+                    )
+                    .chain(names.iter().cloned())
+                    .collect::<Vec<_>>();
 
-                for path in paths {
+                for path in &paths {
                     if !json::is_valid_pattern(path) {
                         return Err(ManifestError::InvalidJsonPath {
                             pack_id,
@@ -652,6 +764,8 @@ impl ManifestRulePack {
                         });
                     }
                 }
+
+                shapes = compile_shapes(&pack_id, &manifest.matcher.json_paths)?;
 
                 Some(CompiledBody {
                     scope: spec.scope.clone(),
@@ -688,6 +802,7 @@ impl ManifestRulePack {
             params,
             rules,
             body,
+            shapes,
         })
     }
 
@@ -744,12 +859,7 @@ impl ManifestRulePack {
     /// Whether the payload has the shape this pack claims. A bare body carries
     /// no host, so its shape is the only thing that can identify it.
     fn matches_shape(&self, document: &JsonDocument) -> bool {
-        !self.matcher.json_paths.is_empty()
-            && self
-                .matcher
-                .json_paths
-                .iter()
-                .all(|pattern| document.matches_pattern(pattern))
+        !self.shapes.is_empty() && self.shapes.iter().all(|shape| shape.holds(document))
     }
 
     fn matches_endpoint(&self, artifact: &str) -> bool {
@@ -963,7 +1073,7 @@ impl ManifestRulePack {
             };
         }
 
-        for scope_path in body_scopes(&document, body.scope.as_deref()) {
+        for scope_path in body_scopes(&document, body.scope.as_ref()) {
             let params = collect_body_params(&document, &scope_path, &body.params);
             let scope = Scope {
                 code_segment: "body",
@@ -1061,51 +1171,82 @@ impl ManifestRulePack {
         violations: &mut Vec<Violation>,
     ) {
         let contract = &compiled.contract;
-        let present: Vec<&RawParam> = params
+        let addressed: Vec<&RawParam> = params
             .iter()
             .filter(|param| compiled.names.iter().any(|name| name == &param.name))
+            .collect();
+        let present: Vec<&RawParam> = addressed
+            .iter()
+            .copied()
+            .filter(|param| !param.missing)
+            .collect();
+        let empty_slots: Vec<&RawParam> = addressed
+            .iter()
+            .copied()
+            .filter(|param| param.missing)
             .collect();
         let field = format!("{}.{}", scope.field_prefix, contract.name);
         let source = self.source_for(compiled.source_level, compiled.doc.as_deref());
 
         match contract.requirement {
             Requirement::Required | Requirement::Recommended => {
-                if present.is_empty() {
-                    let severity = contract.severity.unwrap_or(
-                        if contract.requirement == Requirement::Required {
+                let severity =
+                    contract
+                        .severity
+                        .unwrap_or(if contract.requirement == Requirement::Required {
                             Severity::Error
                         } else {
                             Severity::Warning
-                        },
-                    );
+                        });
 
-                    violations.push(Violation {
-                        code: format!(
-                            "{}.{}.{}.missing",
-                            self.code_prefix, scope.code_segment, contract.name
-                        ),
-                        message: describe(
-                            format!(
-                                "`{}` is {} on {} requests but is not present.",
-                                contract.name,
-                                if contract.requirement == Requirement::Required {
-                                    "required"
-                                } else {
-                                    "expected"
-                                },
-                                self.metadata.display_name
-                            ),
-                            contract.description.as_deref(),
-                        ),
-                        severity,
-                        field: Some(field.clone()),
-                        fix_hint: contract
-                            .fix_hint
-                            .clone()
-                            .or_else(|| Some(format!("Add the `{}` parameter.", contract.name))),
-                        source: source.clone(),
-                        targets: vec![scope.fallback_for(&contract.name)],
-                    });
+                let report_missing =
+                    |targets: Vec<ViolationTarget>, violations: &mut Vec<Violation>| {
+                        for target in targets {
+                            violations.push(Violation {
+                                code: format!(
+                                    "{}.{}.{}.missing",
+                                    self.code_prefix, scope.code_segment, contract.name
+                                ),
+                                message: describe(
+                                    format!(
+                                        "`{}` is {} on {} requests but is not present.",
+                                        contract.name,
+                                        if contract.requirement == Requirement::Required {
+                                            "required"
+                                        } else {
+                                            "expected"
+                                        },
+                                        self.metadata.display_name
+                                    ),
+                                    contract.description.as_deref(),
+                                ),
+                                severity,
+                                field: Some(field.clone()),
+                                fix_hint: contract.fix_hint.clone().or_else(|| {
+                                    Some(format!("Add the `{}` parameter.", contract.name))
+                                }),
+                                source: source.clone(),
+                                targets: vec![target],
+                            });
+                        }
+                    };
+
+                if scope.body.is_some() {
+                    // Nothing addressed the contract at all: something above it
+                    // is missing and has already been reported.
+                    if addressed.is_empty() {
+                        return;
+                    }
+
+                    // Every place the value belongs is checked on its own. One
+                    // identifier carrying `idType` does not excuse the next one
+                    // for leaving it out.
+                    report_missing(
+                        empty_slots.iter().map(|slot| slot.target()).collect(),
+                        violations,
+                    );
+                } else if present.is_empty() {
+                    report_missing(vec![scope.fallback_for(&contract.name)], violations);
                     return;
                 }
             }
@@ -1233,6 +1374,13 @@ impl ManifestRulePack {
     ) {
         let rule = &compiled.rule;
         let source = self.source_for(compiled.source_level, compiled.doc.as_deref());
+        // An empty slot is not a value, so a rule must not read it as one.
+        let live: Vec<RawParam> = params
+            .iter()
+            .filter(|param| !param.missing)
+            .cloned()
+            .collect();
+        let params: &[RawParam] = &live;
         let present = |name: &str| params.iter().any(|param| param.name == name);
 
         let (triggered, targets) = match &rule.assertion {
@@ -1500,6 +1648,13 @@ pub(crate) struct RawParam {
     /// these fields as either a scalar or a list of them, so a value contract
     /// written for the scalar form must not fire on the list.
     pub(crate) container: bool,
+    /// A slot the contract addresses where no value was found.
+    ///
+    /// Body contracts need to tell two absences apart. A field missing from an
+    /// event that exists is worth reporting, once per event. A field under a
+    /// container that is itself missing is not: the container has already been
+    /// reported, and the fields beneath it were never addressable.
+    pub(crate) missing: bool,
 }
 
 impl RawParam {
@@ -1513,6 +1668,7 @@ impl RawParam {
             component: ViolationTargetComponent::QueryParam,
             location: None,
             container: false,
+            missing: false,
         }
     }
 
@@ -1530,11 +1686,23 @@ impl RawParam {
 /// The concrete scopes a body spec evaluates over: one per element of the batch
 /// array, or a single empty scope covering the whole document when the endpoint
 /// takes one event per request.
-fn body_scopes(document: &JsonDocument, scope: Option<&str>) -> Vec<String> {
-    match scope {
-        Some(pattern) => document.expand(pattern),
-        None => vec![String::new()],
+fn body_scopes(document: &JsonDocument, scope: Option<&ScopeSpec>) -> Vec<String> {
+    let Some(scope) = scope else {
+        return vec![String::new()];
+    };
+
+    for pattern in scope.patterns() {
+        if pattern.is_empty() {
+            return vec![String::new()];
+        }
+
+        let scopes = document.expand(pattern);
+        if !scopes.is_empty() {
+            return scopes;
+        }
     }
+
+    Vec::new()
 }
 
 /// Reads one scope's contracted fields out of the document.
@@ -1559,6 +1727,20 @@ fn collect_body_params(
 
             for path in document.expand(&pattern) {
                 let Some(field) = document.get(&path) else {
+                    // The slot is addressable but empty. Recording it lets the
+                    // contract report once per place the value belongs.
+                    let anchor = document.nearest_present_ancestor(&path);
+
+                    params.push(RawParam {
+                        name: name.clone(),
+                        value: String::new(),
+                        start: anchor.map(|field| field.start).unwrap_or(0),
+                        end: anchor.map(|field| field.end).unwrap_or(0),
+                        component: ViolationTargetComponent::BodyField,
+                        location: Some(path),
+                        container: false,
+                        missing: true,
+                    });
                     continue;
                 };
 
@@ -1581,6 +1763,7 @@ fn collect_body_params(
                     component: ViolationTargetComponent::BodyField,
                     location: Some(path),
                     container: matches!(field.kind, JsonValueKind::Object | JsonValueKind::Array),
+                    missing: false,
                 });
             }
         }
@@ -2347,7 +2530,7 @@ mod body_tests {
     }
 
     #[test]
-    fn a_missing_field_points_at_the_nearest_thing_that_exists() {
+    fn a_missing_field_names_its_path_and_points_at_its_container() {
         let artifact = r#"{"data":[{"event_name":"A","user_data":{"em":["ffff"]}}]}"#;
         let report = body_pack().validate(&body_request(artifact));
 
@@ -2358,8 +2541,61 @@ mod body_tests {
             .expect("the missing timestamp is reported");
         let target = &violation.targets[0];
 
-        assert_eq!(target.name.as_deref(), Some("data[0]"));
-        assert!(artifact[target.start..target.end].starts_with('{'));
+        // The name says exactly which field is absent; the span is the event it
+        // belongs in, since the field itself has no bytes to point at.
+        assert_eq!(target.name.as_deref(), Some("data[0].event_time"));
+        assert_eq!(
+            &artifact[target.start..target.end],
+            r#"{"event_name":"A","user_data":{"em":["ffff"]}}"#
+        );
+    }
+
+    #[test]
+    fn a_field_missing_from_several_places_is_reported_from_each() {
+        let manifest = r#"{
+            "id": "vendor/multi",
+            "display_name": "Multi",
+            "description": "Contracts a field that repeats inside one event.",
+            "docs": "https://example.com/docs",
+            "match": { "hosts": ["api.example.com"], "json_paths": ["ids[].kind"] },
+            "body": {
+                "params": [{ "name": "ids[].kind", "requirement": "required" }]
+            }
+        }"#;
+        let pack = ManifestRulePack::from_json(manifest).expect("compiles");
+        let report = pack.validate(&body_request(r#"{"ids":[{"kind":"a"},{},{}]}"#));
+
+        // Two of the three entries omit it, so it is reported twice.
+        assert_eq!(
+            codes(&report),
+            vec![
+                "vendor.multi.body.ids[].kind.missing",
+                "vendor.multi.body.ids[].kind.missing",
+            ]
+        );
+    }
+
+    #[test]
+    fn a_field_under_a_missing_container_is_not_reported() {
+        let manifest = r#"{
+            "id": "vendor/nested",
+            "display_name": "Nested",
+            "description": "Contracts a container and the fields inside it.",
+            "docs": "https://example.com/docs",
+            "match": { "hosts": ["api.example.com"], "json_paths": ["event"] },
+            "body": {
+                "params": [
+                    { "name": "user.ids", "requirement": "required" },
+                    { "name": "user.ids[].kind", "requirement": "required" }
+                ]
+            }
+        }"#;
+        let pack = ManifestRulePack::from_json(manifest).expect("compiles");
+        let report = pack.validate(&body_request(r#"{"event":"x","user":{"name":"a"}}"#));
+
+        // `user.ids` is gone, so the contract on what lives inside it has
+        // nothing to say. Reporting it too would be one defect told twice.
+        assert_eq!(codes(&report), vec!["vendor.nested.body.user.ids.missing"]);
     }
 
     #[test]
