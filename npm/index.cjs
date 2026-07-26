@@ -1,5 +1,5 @@
 /**
- * Pixellint: validator for pixels, postbacks, and tracking URLs.
+ * Pixellint: validator for pixels, postbacks, conversion API payloads, and tracking URLs.
  * CommonJS entry point backed by the pixellint-core WASM build.
  */
 

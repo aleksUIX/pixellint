@@ -6,6 +6,7 @@ export type ArtifactKind =
   | "request"
   | "vast"
   | "postback"
+  | "json"
   | "unknown";
 
 export type ExpansionState = "unknown" | "template" | "fired";

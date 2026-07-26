@@ -27,6 +27,7 @@ fn parse_artifact_kind(value: &str) -> Result<ArtifactKind, JsValue> {
         "request" => Ok(ArtifactKind::NetworkRequest),
         "vast" => Ok(ArtifactKind::VastTracker),
         "postback" => Ok(ArtifactKind::ServerPostback),
+        "json" => Ok(ArtifactKind::JsonPayload),
         "unknown" => Ok(ArtifactKind::Unknown),
         other => Err(JsValue::from_str(&format!(
             "unknown artifact kind: {other}"

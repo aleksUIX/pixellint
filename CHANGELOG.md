@@ -4,6 +4,39 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.7.0 - 2026-07-26
+
+### Added
+
+- JSON request bodies are a first-class artifact. A new `json` artifact kind,
+  and an `unknown` artifact that opens like a document is read as one
+- Rulepack manifests can contract a JSON body with `body`, addressing fields by
+  path with `[]` for "every element". Contracts are written against one element
+  of a batch and evaluated per element, so three broken events report three
+  findings, each pointing at its own bytes
+- `match.json_paths` claims a payload by its shape, since a bare body carries no
+  host. Entries can require a path, exclude values that belong to another
+  vendor, or accept any of several alternatives
+- `vendor/meta-conversions-api` contracts the documented server event:
+  `event_name`, `event_time` in seconds rather than milliseconds, the
+  `action_source` enum, the hashed customer information fields, and the rules
+  that Purchase needs value and currency, that website events need a source URL,
+  and that `client_ip_address` must not arrive hashed
+- `vendor/snapchat` contracts the Snap Conversions API v3 payload
+- `vendor/linkedin-conversions-api`, covering conversion events sent singly or
+  batched under `elements`, including the millisecond timestamp LinkedIn
+  requires where Meta requires seconds
+- `core.json.parse_error`, which reports a body that does not parse and names
+  the byte where it stops
+
+### Changed
+
+- Findings about body fields carry `.body.` in their code rather than `.param.`,
+  because an endpoint may accept the same field in the query string and in the
+  payload under different rules
+- A finding about a missing field points at the container it belongs in and
+  names the exact path
+
 ## 0.6.0 - 2026-07-26
 
 ### Added

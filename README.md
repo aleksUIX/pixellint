@@ -5,8 +5,8 @@
 [![docs.rs](https://img.shields.io/docsrs/pixellint-core)](https://docs.rs/pixellint-core)
 [![license](https://img.shields.io/crates/l/pixellint.svg)](LICENSE)
 
-Pixellint is a spec-first validator for pixels, postbacks, and other
-measurement artifacts. It runs in a terminal, in CI, and in agents, and every
+Pixellint is a spec-first validator for pixels, postbacks, conversion API
+payloads, and other measurement artifacts. It runs in a terminal, in CI, and in agents, and every
 finding carries a stable id, a severity, an evidence level, and the document it
 came from.
 
@@ -31,6 +31,18 @@ rulepack: vendor/meta (vendor: meta)
     docs: https://developers.facebook.com/docs/meta-pixel/advanced/advanced-matching
 
 2 error(s), 1 warning(s), 0 info message(s) across 2 rulepack(s).
+```
+
+Server-side events are checked in the body, one event at a time:
+
+```bash
+$ pixellint validate json '{"data":[{"event_name":"Purchase","event_time":1770000000000,
+    "action_source":"website","user_data":{"em":"buyer@example.com"}}]}'
+rulepack: vendor/meta-conversions-api (vendor: meta)
+  error   vendor.meta-conversions-api.body.event_time.invalid `event_time` must be at most 10 digits, but `1770000000000` has 13. Meta documents it as a Unix timestamp in seconds...
+    fix: Send seconds, not milliseconds: divide a JavaScript `Date.now()` by 1000 and floor it.
+  error   vendor.meta-conversions-api.body.purchase_requires_value_and_currency A `Purchase` event is missing `custom_data.value` or `custom_data.currency`.
+  error   vendor.meta-conversions-api.body.website_requires_source_url The event is marked `action_source: website` but carries no `event_source_url`.
 ```
 
 ## Install
@@ -122,13 +134,14 @@ assert!(summary.is_ok());
 
 `core` runs on every URL-like artifact. Vendor packs run only when the artifact
 targets their endpoints, so you get vendor checks without asking for them, and
-nothing fires on an endpoint it does not understand.
+nothing fires on an endpoint it does not understand. A conversion API body has
+no endpoint to go by, so those packs claim it by the shape of the payload.
 
 | Rulepack | Covers | Evidence |
 | --- | --- | --- |
 | `core` | URL validity, transport, credentials, fragments, ad-tech macro handling, IAB consent signals | normative |
 | `vendor/meta` | `facebook.com/tr` pixel requests | official vendor |
-| `vendor/meta-conversions-api` | Graph API events edge for server-side events | official vendor |
+| `vendor/meta-conversions-api` | Graph API events edge, URL and JSON event payload | official vendor |
 | `vendor/google-analytics` | GA4 Measurement Protocol collection endpoints | official vendor |
 | `vendor/google-analytics-collect` | The `/g/collect` transport the Google tag uses in the browser | ecosystem reference |
 | `vendor/google-tag-manager` | `gtm.js`, `gtag/js`, and `ns.html` loader requests | official vendor |
@@ -136,9 +149,10 @@ nothing fires on an endpoint it does not understand.
 | `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
 | `vendor/adobe-analytics` | Adobe Analytics data collection beacons | official vendor |
 | `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
-| `vendor/snapchat` | Snapchat Conversions API events endpoint | official vendor |
+| `vendor/snapchat` | Snap Conversions API v3, URL and JSON event payload | official vendor |
 | `vendor/tiktok` | TikTok Pixel loader and collection requests | ecosystem reference |
 | `vendor/linkedin` | LinkedIn conversion image pixels | ecosystem reference |
+| `vendor/linkedin-conversions-api` | LinkedIn conversion events, single and batched | official vendor |
 | `vendor/microsoft-uet` | Microsoft Advertising Universal Event Tracking | ecosystem reference |
 | `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
 

@@ -37,6 +37,33 @@ assert.equal(
   "taboola",
 );
 
+// A conversion API body is validated per event, not as a URL.
+const payload = validate(
+  JSON.stringify({
+    data: [
+      { event_name: "Purchase", event_time: 1770000000000, action_source: "website", user_data: {} },
+    ],
+  }),
+  { kind: "json" },
+);
+const payloadCodes = payload.reports.flatMap((report) =>
+  report.violations.map((violation) => violation.code),
+);
+assert.ok(
+  payloadCodes.includes("vendor.meta-conversions-api.body.event_time.invalid"),
+  "millisecond timestamps should be caught in the body",
+);
+assert.ok(
+  payloadCodes.includes("vendor.meta-conversions-api.body.purchase_requires_value_and_currency"),
+  "cross-field body rules should run",
+);
+
+const brokenJson = validate('{"data":[{"event_name":}]}', { kind: "json" });
+assert.deepEqual(
+  brokenJson.reports.flatMap((report) => report.violations.map((violation) => violation.code)),
+  ["core.json.parse_error"],
+);
+
 assert.ok(rulepacks().length >= 15, "every rulepack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");

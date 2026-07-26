@@ -22,7 +22,8 @@ dressed up.
 ## `core`
 
 Applies to every URL-like artifact: `url`, `vast`, `postback`, `request`, and
-`unknown`.
+`unknown`. A `json` artifact, or an `unknown` one that opens like a document,
+gets the syntax check instead.
 
 | Standard | Enforced | Rule ids | Level |
 | --- | --- | --- | --- |
@@ -31,6 +32,7 @@ Applies to every URL-like artifact: `url`, `vast`, `postback`, `request`, and
 | [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986) | No embedded credentials; fragments never reach the server | `core.url.userinfo_deprecated`, `core.url.fragment_ignored` | normative |
 | Secure transport baseline | Plain `http` endpoints are flagged for upgrade | `core.url.insecure_transport` | best practice |
 | Input baseline | Empty artifacts are rejected before URL checks run | `core.input.empty` | heuristic |
+| [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259) | A JSON body parses, and the finding names the byte where it stops | `core.json.parse_error` | normative |
 | Macro handling | A fired URL carries no unresolved macros; macros never sit in scheme, authority, host, port, or userinfo; one artifact uses one macro syntax | `core.macro.unexpanded_in_fired_url`, `core.macro.unsafe_position`, `core.macro.mixed_syntax` | heuristic |
 
 Macro rules recognize `[NAME]`, `${NAME}`, and `{{NAME}}`, the three syntaxes
@@ -126,8 +128,33 @@ Server-side events posted to the Graph API events edge. Level:
 | `test_event_code` | Warns when present, since it diverts events to the test tool | `vendor.meta-conversions-api.testing.test_event_code_present` |
 | Unhashed PII | No query parameter carries a raw email address | `vendor.meta-conversions-api.pii.unhashed_email` |
 
+The event payload is checked per event in `data`. Codes carry `.body.` to keep
+them apart from the query parameters above, because the endpoint accepts some
+fields in either place.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `event_name` | Required | `vendor.meta-conversions-api.body.event_name.missing`, `.empty` |
+| `event_time` | Required, exactly 10 digits, since Meta documents seconds and a 13-digit value is milliseconds | `vendor.meta-conversions-api.body.event_time.missing`, `.invalid` |
+| `action_source` | Required, one of the nine documented values | `vendor.meta-conversions-api.body.action_source.missing`, `.invalid` |
+| `user_data` | Required | `vendor.meta-conversions-api.body.user_data.missing`, `.empty` |
+| `event_id` | Expected, for deduplication against the browser pixel | `vendor.meta-conversions-api.body.event_id.missing` |
+| Hashed identifiers | `em`, `ph`, `fn`, `ln`, `ge`, `db`, `ct`, `st`, `zp`, `country`, `external_id` must be SHA-256 hex digests, in either the scalar or the list form | `vendor.meta-conversions-api.body.user_data.<field>.invalid` |
+| `fbc`, `fbp` | Must match the documented `fb.N.timestamp.value` shape | `vendor.meta-conversions-api.body.user_data.fbc.invalid`, `.fbp.invalid` |
+| Purchase events | `custom_data.value` and `custom_data.currency` are required | `vendor.meta-conversions-api.body.purchase_requires_value_and_currency` |
+| Website events | `event_source_url` is required when `action_source` is `website` | `vendor.meta-conversions-api.body.website_requires_source_url` |
+| Limited Data Use | `data_processing_options_country` is required when `LDU` is sent | `vendor.meta-conversions-api.body.ldu_requires_country` |
+| Unhashed PII | No field carries a raw email address | `vendor.meta-conversions-api.body.unhashed_email` |
+| Over-hashing | `client_ip_address` and `client_user_agent` must not be digests | `vendor.meta-conversions-api.body.hashed_plaintext_field` |
+
 Source: [using the API](https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api),
-[customer information parameters](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters).
+[server event parameters](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event),
+[customer information parameters](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters),
+[custom data](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data).
+
+The hashed identifier contracts accept upper-case hex as well as lower-case.
+Meta documents lower-casing the input before hashing, not the digest, so
+rejecting an upper-case digest would be inventing a requirement.
 
 ## `vendor/google-tag-manager`
 
@@ -206,7 +233,26 @@ Snapchat Conversions API events requests on `tr.snapchat.com`. Level:
 | --- | --- | --- |
 | `access_token` | Required | `vendor.snapchat.param.access_token.missing`, `.empty` |
 
-Source: [using the API](https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI).
+The event payload is checked per event in `data`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `event_name` | Required, one of the documented upper-case event types | `vendor.snapchat.body.event_name.missing`, `.invalid` |
+| `event_time` | Required epoch timestamp | `vendor.snapchat.body.event_time.missing`, `.invalid` |
+| `action_source` | Required, one of `WEB`, `OFFLINE`, `MOBILE_APP` | `vendor.snapchat.body.action_source.missing`, `.invalid` |
+| `user_data` | Required | `vendor.snapchat.body.user_data.missing`, `.empty` |
+| Hashed identifiers | `em`, `ph`, `fn`, `ln`, `ge`, `ct`, `st`, `zp`, `country` must be SHA-256 hex digests | `vendor.snapchat.body.user_data.<field>.invalid` |
+| Web events | `event_source_url` is required when `action_source` is `WEB` | `vendor.snapchat.body.web_requires_source_url` |
+| Unhashed PII | No field carries a raw email address | `vendor.snapchat.body.unhashed_email` |
+| Over-hashing | `client_ip_address` and `client_user_agent` must not be digests | `vendor.snapchat.body.hashed_plaintext_field` |
+
+Source: [using the API](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI),
+[parameters](https://developers.snap.com/api/marketing-api/Conversions-API/Parameters).
+
+Snap and Meta post the same envelope, down to the field names. A bare payload
+carries no host, so the two packs tell each other apart by `action_source`:
+Snap writes `WEB` where Meta writes `website`. A payload whose `action_source`
+is missing or misspelled matches both, and both report it.
 
 ## `vendor/microsoft-uet`
 
@@ -268,6 +314,26 @@ Source: [image pixel conversions](https://www.linkedin.com/help/lms/answer/a4227
 LinkedIn generates this pixel in Campaign Manager and documents the workflow
 rather than the parameters, so the pack is labeled ecosystem evidence.
 
+## `vendor/linkedin-conversions-api`
+
+Conversion events streamed to `api.linkedin.com/rest/conversionEvents`, either
+as a single event or as a batch under `elements`. Level: `official_vendor`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `conversion` | Required, in the form `urn:lla:llaPartnerConversion:ID` | `vendor.linkedin-conversions-api.body.conversion.missing`, `.invalid` |
+| `conversionHappenedAt` | Required, exactly 13 digits, since LinkedIn documents milliseconds and a 10-digit value is seconds | `vendor.linkedin-conversions-api.body.conversionHappenedAt.missing`, `.invalid` |
+| `user.userIds` | Required, even when matching on `lead`, `externalIds`, or `userInfo`, where it is sent as an empty list | `vendor.linkedin-conversions-api.body.user.userIds.missing` |
+| `user.userIds[].idType` | Required; unrecognized types warn rather than error | `vendor.linkedin-conversions-api.body.user.userIds[].idType.missing`, `.invalid` |
+| `user.userIds[].idValue` | Required and non-empty | `vendor.linkedin-conversions-api.body.user.userIds[].idValue.missing`, `.empty` |
+| `conversionValue` | An amount needs a `currencyCode` | `vendor.linkedin-conversions-api.body.value_needs_both_fields` |
+| Unhashed PII | No identifier carries a raw email address | `vendor.linkedin-conversions-api.body.unhashed_email` |
+
+Source: [Conversions API](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api).
+
+The `idType` list is taken from LinkedIn's own validation error, which may not
+be exhaustive, so an unfamiliar value is a warning rather than an error.
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a
@@ -285,10 +351,17 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 | Rule id | Severity | Meaning |
 | --- | --- | --- |
 | `<pack>.endpoint_mismatch` | info | The pack was selected explicitly but the artifact targets a different endpoint |
+| `<pack>.payload_mismatch` | info | The pack was selected explicitly but the JSON body does not have the shape its endpoint accepts |
 | `<pack>.claimed_vendor_mismatch` | info | The caller's `claimed_vendor` disagrees with the endpoint that matched |
 
 ## Not implemented yet
 
+- TikTok Events API and Pinterest Conversions API payloads. Both endpoints are
+  in the directory and both vendors have browser packs, but their request
+  schemas are published behind rendered documentation portals that could not be
+  read at the time of writing. Writing the contracts from memory would mean
+  citing documentation nobody checked, so the packs stay URL-only until the
+  schemas can be read
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling
 - Duplicate or conflicting artifacts across a document
 - Document extraction: Pixellint validates artifacts a caller has already

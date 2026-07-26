@@ -7,7 +7,7 @@ use serde::Deserialize;
 use serde_json::{Value, json};
 
 const PROTOCOL_VERSION: &str = "2024-11-05";
-const INSTRUCTIONS: &str = "Pixellint validates pixels, postbacks, VAST tracking URLs, and related measurement artifacts. The core rulepack applies spec-backed URL and macro checks to every artifact; vendor rulepacks add parameter contracts and only run when the artifact targets that vendor's endpoints. Use list_rulepacks to discover what is available, then call validate_artifact with an artifact kind and artifact payload. Every finding carries a stable code, a severity, an evidence level, and the documentation it came from.";
+const INSTRUCTIONS: &str = "Pixellint validates pixels, postbacks, VAST tracking URLs, conversion API request bodies, and related measurement artifacts. The core rulepack applies spec-backed URL and macro checks to every artifact; vendor rulepacks add parameter contracts and only run when the artifact targets that vendor's endpoints. Use list_rulepacks to discover what is available, then call validate_artifact with an artifact kind and artifact payload. Every finding carries a stable code, a severity, an evidence level, and the documentation it came from.";
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -180,14 +180,14 @@ fn tools_list_result(engine: &Engine) -> Value {
             },
             {
                 "name": "validate_artifact",
-                "description": "Validate a measurement artifact such as a pixel URL, server postback, VAST tracking URL, GTM template, HTML snippet, or JavaScript snippet.",
+                "description": "Validate a measurement artifact such as a pixel URL, server postback, VAST tracking URL, conversion API JSON body, GTM template, HTML snippet, or JavaScript snippet.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "artifact_kind": {
                             "type": "string",
-                            "enum": ["url", "html", "js", "gtm", "request", "vast", "postback", "unknown"],
-                            "description": "Artifact type to validate. Use vast for VAST tracking URLs and postback for server-side conversion or attribution endpoints."
+                            "enum": ["url", "html", "js", "gtm", "request", "vast", "postback", "json", "unknown"],
+                            "description": "Artifact type to validate. Use vast for VAST tracking URLs, postback for server-side conversion or attribution endpoints, and json for a conversion API request body."
                         },
                         "artifact": {
                             "type": "string",
@@ -443,6 +443,7 @@ fn parse_artifact_kind(value: &str) -> Result<ArtifactKind, String> {
         "request" => Ok(ArtifactKind::NetworkRequest),
         "vast" => Ok(ArtifactKind::VastTracker),
         "postback" => Ok(ArtifactKind::ServerPostback),
+        "json" => Ok(ArtifactKind::JsonPayload),
         "unknown" => Ok(ArtifactKind::Unknown),
         other => Err(format!("unknown artifact kind: {other}")),
     }

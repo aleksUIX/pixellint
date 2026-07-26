@@ -6,7 +6,7 @@
     <title>Pixellint · validate a pixel</title>
     <meta
       name="description"
-      content="Paste a pixel, postback, or tracking URL and see what is wrong with it. Spec-backed rules, vendor parameter contracts, and IAB consent signal checks, running locally in your browser."
+      content="Paste a pixel, postback, tracking URL, or conversion API payload and see what is wrong with it. Spec-backed rules, vendor parameter contracts, and IAB consent signal checks, running locally in your browser."
     />
     <link rel="stylesheet" href="./style.css" />
     <link
@@ -33,7 +33,7 @@
       <section class="hero">
         <h1>Validate a pixel</h1>
         <p>
-          Paste a pixel, postback, VAST tracker, or tag URL. Pixellint checks it against web
+          Paste a pixel, postback, VAST tracker, tag URL, or conversion API JSON body. Pixellint checks it against web
           standards, the vendor's own documented parameters, and the IAB consent specs. Everything
           runs locally in this tab; nothing is sent anywhere.
         </p>
@@ -55,6 +55,7 @@
               <option value="url">url</option>
               <option value="vast">vast</option>
               <option value="postback">postback</option>
+              <option value="json">json body</option>
               <option value="request">request</option>
               <option value="unknown">unknown</option>
             </select>
@@ -80,6 +81,14 @@
           </button>
           <button class="example" type="button" data-artifact="https://ad.doubleclick.net/ddm/activity/src=1234567;type=conv;cat=purch;gdpr=1;ord=8675309?">
             Floodlight missing consent
+          </button>
+          <button
+            class="example"
+            type="button"
+            data-kind="json"
+            data-artifact='{"data":[{"event_name":"Purchase","event_time":1770000000000,"action_source":"website","user_data":{"em":"buyer@example.com"}}]}'
+          >
+            Conversions API payload
           </button>
           <button class="example" type="button" data-artifact="https://trc.taboola.com/actions?a=1">
             Unknown endpoint

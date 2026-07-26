@@ -63,10 +63,15 @@ Vendor packs are data. You do not need to write Rust.
 5. Document the pack in [docs/STANDARDS.md](docs/STANDARDS.md), including its
    evidence level.
 
+One pack per endpoint family. If an endpoint already has a pack covering its
+URL, add the body contract to that pack rather than creating a second one that
+claims the same host and path.
+
 Test with:
 
 ```bash
 cargo run -p pixellint -- validate url '<a real artifact>' --json
+cargo run -p pixellint -- validate json '<a real payload>'
 ```
 
 ## Evidence levels are not decoration

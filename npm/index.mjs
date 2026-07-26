@@ -1,5 +1,5 @@
 /**
- * Pixellint: validator for pixels, postbacks, and tracking URLs.
+ * Pixellint: validator for pixels, postbacks, conversion API payloads, and tracking URLs.
  * ESM entry point backed by the pixellint-core WASM build.
  */
 
@@ -12,7 +12,7 @@ const wasm = require("./wasm/pixellint.js");
  * Validate a measurement artifact.
  * @param {string} artifact - The artifact, usually a URL.
  * @param {object} [options]
- * @param {"url"|"html"|"js"|"gtm"|"request"|"vast"|"postback"|"unknown"} [options.kind] - Artifact kind, default "url".
+ * @param {"url"|"html"|"js"|"gtm"|"request"|"vast"|"postback"|"json"|"unknown"} [options.kind] - Artifact kind, default "url".
  * @param {"unknown"|"template"|"fired"} [options.state] - Whether macros are still unexpanded.
  * @param {string} [options.vendor] - Vendor the caller believes the artifact belongs to.
  * @returns {{reports: Array<{plugin_id: string, detected_vendor: string|null, violations: Array<object>}>}}

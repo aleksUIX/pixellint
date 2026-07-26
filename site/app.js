@@ -26,6 +26,8 @@ artifactInput.addEventListener("keydown", (event) => {
 for (const button of document.querySelectorAll(".example")) {
   button.addEventListener("click", () => {
     artifactInput.value = button.dataset.artifact;
+    // Examples carry their own kind, since a conversion API body is not a URL.
+    kindSelect.value = button.dataset.kind ?? "url";
     run();
   });
 }
