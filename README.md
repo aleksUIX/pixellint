@@ -155,6 +155,11 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/linkedin-conversions-api` | LinkedIn conversion events, single and batched | official vendor |
 | `vendor/microsoft-uet` | Microsoft Advertising Universal Event Tracking | ecosystem reference |
 | `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
+| `vendor/amplitude` | Amplitude HTTP V2 event uploads | official vendor |
+| `vendor/mixpanel` | Mixpanel track ingestion | official vendor |
+| `vendor/posthog` | PostHog capture, single and batched | official vendor |
+| `vendor/klaviyo` | Klaviyo event creation | official vendor |
+| `vendor/braze` | Braze user track: events, purchases, attributes | official vendor |
 
 ### Vendor directory
 

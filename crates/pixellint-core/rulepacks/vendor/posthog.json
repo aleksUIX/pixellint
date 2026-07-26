@@ -1,0 +1,86 @@
+{
+  "id": "vendor/posthog",
+  "display_name": "PostHog capture",
+  "vendor": "posthog",
+  "description": "Event capture requests to PostHog, as a single event or as a batch.",
+  "source_level": "official_vendor",
+  "docs": "https://posthog.com/docs/api/capture",
+  "match": {
+    "host_suffixes": [
+      "posthog.com"
+    ],
+    "path_contains": [
+      "/e/",
+      "/capture/",
+      "/batch/",
+      "/i/v0/e"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "distinct_id",
+          "event",
+          "batch[].distinct_id",
+          "batch[].event",
+          "batch[].properties.distinct_id"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "api_key",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the project API key, and PostHog rejects the request without it.",
+          "fix_hint": "Send the project API key from your PostHog project settings.",
+          "doc": "https://posthog.com/docs/api/capture"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": [
+        "batch[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "event",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the name of the event being captured.",
+          "fix_hint": "Name the event, such as `user signed up`.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "distinct_id",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the person the event belongs to.",
+          "fix_hint": "Send the same `distinct_id` you use elsewhere for this person.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "timestamp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+          },
+          "description": "PostHog documents the timestamp as ISO 8601. An epoch number is read as the ingestion time instead.",
+          "fix_hint": "Send an ISO 8601 timestamp, such as `2026-07-26T06:00:00Z`.",
+          "doc": "https://posthog.com/docs/api/capture"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}

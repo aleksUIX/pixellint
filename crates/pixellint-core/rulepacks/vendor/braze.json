@@ -1,0 +1,217 @@
+{
+  "id": "vendor/braze",
+  "display_name": "Braze user track",
+  "vendor": "braze",
+  "description": "Attribute, event, and purchase uploads to the Braze /users/track endpoint.",
+  "source_level": "official_vendor",
+  "docs": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+  "match": {
+    "host_suffixes": [
+      "braze.com",
+      "braze.eu"
+    ],
+    "path_contains": [
+      "/users/track"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "purchases[].product_id",
+          "purchases[].currency",
+          "attributes[].external_id",
+          "attributes[].email",
+          "attributes[].braze_id",
+          "events[].external_id",
+          "events[].braze_id",
+          "events[].user_alias",
+          "events[].email",
+          "events[].phone"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "scope": "events[]",
+      "params": [
+        {
+          "name": "external_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "user_alias",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "braze_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "email",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "phone",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "name",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents the event name as required.",
+          "fix_hint": "Name the custom event.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "time",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+          },
+          "description": "Braze documents the event time as an ISO 8601 datetime, such as `2026-07-26T06:00:00+00:00`.",
+          "fix_hint": "Send an ISO 8601 datetime rather than an epoch number.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.braze.body.event_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "external_id",
+            "user_alias",
+            "braze_id",
+            "email",
+            "phone"
+          ],
+          "severity": "error",
+          "message": "The object carries none of `external_id`, `user_alias`, `braze_id`, `email`, or `phone`. Braze documents one of them as required, and cannot attach the data to a user without one.",
+          "fix_hint": "Add one of the documented identifiers to the object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        }
+      ]
+    },
+    {
+      "scope": "purchases[]",
+      "params": [
+        {
+          "name": "external_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "user_alias",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "braze_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "email",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "phone",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "product_id",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents the product id as required on a purchase.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "currency",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "description": "Braze documents the currency as required on a purchase, as an ISO 4217 code.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "price",
+          "requirement": "required",
+          "description": "Braze documents the price as required on a purchase.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "time",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+          },
+          "description": "Braze documents the purchase time as an ISO 8601 datetime.",
+          "fix_hint": "Send an ISO 8601 datetime rather than an epoch number.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.braze.body.purchase_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "external_id",
+            "user_alias",
+            "braze_id",
+            "email",
+            "phone"
+          ],
+          "severity": "error",
+          "message": "The object carries none of `external_id`, `user_alias`, `braze_id`, `email`, or `phone`. Braze documents one of them as required, and cannot attach the data to a user without one.",
+          "fix_hint": "Add one of the documented identifiers to the object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        }
+      ]
+    }
+  ]
+}

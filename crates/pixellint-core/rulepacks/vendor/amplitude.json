@@ -1,0 +1,120 @@
+{
+  "id": "vendor/amplitude",
+  "display_name": "Amplitude HTTP V2",
+  "vendor": "amplitude",
+  "description": "Event uploads to the Amplitude HTTP V2 API, including the JSON event payload.",
+  "source_level": "official_vendor",
+  "docs": "https://amplitude.com/docs/apis/analytics/http-v2",
+  "match": {
+    "host_suffixes": [
+      "amplitude.com"
+    ],
+    "path_contains": [
+      "/2/httpapi"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "events[].event_type",
+          "events[].user_id",
+          "events[].device_id",
+          "events[].insert_id",
+          "events[].event_properties"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "api_key",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the project API key the upload is attributed to.",
+          "fix_hint": "Send the API key of the Amplitude project, and keep it server-side.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "events",
+          "requirement": "required",
+          "description": "Amplitude reads the events to ingest from this array.",
+          "fix_hint": "Send an `events` array holding at least one event.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Amplitude documents the event type as required on every event.",
+          "fix_hint": "Name the event, such as `Purchase Completed`.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "user_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{5,}$"
+          },
+          "description": "Amplitude documents user IDs as strings of 5 characters or more, and silently drops shorter ones unless `min_id_length` is set.",
+          "fix_hint": "Use an identifier of at least 5 characters, or set the `min_id_length` option.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "device_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{5,}$"
+          },
+          "description": "Amplitude documents device IDs as strings of 5 characters or more, and silently drops shorter ones unless `min_id_length` is set.",
+          "fix_hint": "Use an identifier of at least 5 characters, or set the `min_id_length` option.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "time",
+          "format": {
+            "kind": "integer",
+            "min_digits": 13,
+            "max_digits": 13
+          },
+          "description": "Amplitude documents this as milliseconds since epoch. A 10-digit value is seconds and lands in 1970.",
+          "fix_hint": "Send milliseconds: a JavaScript `Date.now()` is already in the right unit.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "insert_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Amplitude uses it to drop duplicate events on retry.",
+          "fix_hint": "Send a stable id per event so a retried upload is not counted twice.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.amplitude.body.event_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "user_id",
+            "device_id"
+          ],
+          "severity": "error",
+          "message": "The event carries neither `user_id` nor `device_id`. Amplitude documents one of the two as required, and rejects the event without them.",
+          "fix_hint": "Send `user_id` for a known user, or `device_id` for an anonymous one.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        }
+      ]
+    }
+  ]
+}

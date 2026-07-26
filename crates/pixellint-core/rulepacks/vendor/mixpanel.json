@@ -1,0 +1,79 @@
+{
+  "id": "vendor/mixpanel",
+  "display_name": "Mixpanel track",
+  "vendor": "mixpanel",
+  "description": "Event ingestion requests to the Mixpanel track endpoint, which posts a bare array of events.",
+  "source_level": "official_vendor",
+  "docs": "https://docs.mixpanel.com/reference/track-event",
+  "match": {
+    "host_suffixes": [
+      "mixpanel.com"
+    ],
+    "path_contains": [
+      "/track",
+      "/import"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "[].properties.token",
+          "[].event",
+          "[].properties.distinct_id"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "scope": "[]",
+      "params": [
+        {
+          "name": "event",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel documents the event name as required.",
+          "fix_hint": "Name the event, such as `Signed Up`.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        },
+        {
+          "name": "properties",
+          "requirement": "required",
+          "description": "Mixpanel documents the properties object as required, since the project token rides inside it.",
+          "fix_hint": "Add a `properties` object carrying at least `token`.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        },
+        {
+          "name": "properties.token",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the project token the event is attributed to.",
+          "fix_hint": "Send the project token from your Mixpanel project settings.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        },
+        {
+          "name": "properties.distinct_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the user who performed the event. Without it the event is not tied to a person.",
+          "fix_hint": "Send the same `distinct_id` you use elsewhere for this user.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        },
+        {
+          "name": "properties.$insert_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel uses it to drop duplicates, so a retried request is not counted twice.",
+          "fix_hint": "Send a stable id per event.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}

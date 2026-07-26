@@ -371,6 +371,84 @@ Source: [Conversions API](https://learn.microsoft.com/en-us/linkedin/marketing/i
 The `idType` list is taken from LinkedIn's own validation error, which may not
 be exhaustive, so an unfamiliar value is a warning rather than an error.
 
+## `vendor/amplitude`
+
+Event uploads to the Amplitude HTTP V2 API on `amplitude.com`. Level:
+`official_vendor`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `api_key` | Required | `vendor.amplitude.body.api_key.missing`, `.empty` |
+| `events` | Required | `vendor.amplitude.body.events.missing`, `.empty` |
+| `events[].event_type` | Required | `vendor.amplitude.body.event_type.missing` |
+| `user_id`, `device_id` | 5 characters or more, which Amplitude documents as the minimum it accepts | `vendor.amplitude.body.user_id.invalid`, `.device_id.invalid` |
+| `time` | 13 digits, since Amplitude documents milliseconds | `vendor.amplitude.body.time.invalid` |
+| Identity | One of `user_id` or `device_id` is required | `vendor.amplitude.body.event_needs_an_identifier` |
+
+Source: [HTTP V2 API](https://amplitude.com/docs/apis/analytics/http-v2).
+
+## `vendor/posthog`
+
+Capture requests to PostHog, single or batched under `batch`. Level:
+`official_vendor`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `api_key` | Required | `vendor.posthog.body.api_key.missing`, `.empty` |
+| `event` | Required, per event | `vendor.posthog.body.event.missing`, `.empty` |
+| `distinct_id` | Required, per event | `vendor.posthog.body.distinct_id.missing`, `.empty` |
+| `timestamp` | ISO 8601, since an epoch number is read as the ingestion time instead | `vendor.posthog.body.timestamp.invalid` |
+
+Source: [capture API](https://posthog.com/docs/api/capture).
+
+## `vendor/mixpanel`
+
+Ingestion requests to the Mixpanel track endpoint, which posts a bare array of
+events rather than an envelope. Level: `official_vendor`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `event` | Required, per event | `vendor.mixpanel.body.event.missing`, `.empty` |
+| `properties` | Required, since the project token rides inside it | `vendor.mixpanel.body.properties.missing`, `.empty` |
+| `properties.token` | Required | `vendor.mixpanel.body.properties.token.missing` |
+| `properties.distinct_id` | Flagged when present and empty | `vendor.mixpanel.body.properties.distinct_id.empty` |
+| `properties.$insert_id` | Flagged when present and empty | `vendor.mixpanel.body.properties.$insert_id.empty` |
+
+Source: [track event](https://docs.mixpanel.com/reference/track-event).
+
+## `vendor/klaviyo`
+
+Event creation on the Klaviyo events API, in JSON:API shape. Level:
+`official_vendor`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `data.type` | Required, and must be `event` | `vendor.klaviyo.body.data.type.missing`, `.invalid` |
+| Metric name | Required at `data.attributes.metric.data.attributes.name` | `vendor.klaviyo.body.data.attributes.metric.data.attributes.name.missing`, `.empty` |
+| Profile identity | One of id, email, phone number, or external id is required | `vendor.klaviyo.body.profile_needs_an_identifier` |
+
+Source: [create event](https://developers.klaviyo.com/en/reference/create_event).
+
+## `vendor/braze`
+
+Attribute, event, and purchase uploads to the Braze `/users/track` endpoint.
+Level: `official_vendor`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `events[].name` | Required | `vendor.braze.body.name.missing`, `.empty` |
+| `events[].time`, `purchases[].time` | Required, ISO 8601 datetime | `vendor.braze.body.time.missing`, `.invalid` |
+| `purchases[].product_id` | Required | `vendor.braze.body.product_id.missing` |
+| `purchases[].currency` | Required, ISO 4217 three-letter code | `vendor.braze.body.currency.missing`, `.invalid` |
+| `purchases[].price` | Required | `vendor.braze.body.price.missing` |
+| Identity | Every event and purchase needs one of `external_id`, `user_alias`, `braze_id`, `email`, or `phone` | `vendor.braze.body.event_needs_an_identifier`, `.purchase_needs_an_identifier` |
+
+Source: [POST /users/track](https://www.braze.com/docs/api/endpoints/user_data/post_user_track/).
+
+An object carrying no identifier at all is only reported when something else in
+the payload identifies it as Braze's, since the identifier fields are part of
+what tells this endpoint's payload from another's.
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a
@@ -393,6 +471,10 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 
 ## Not implemented yet
 
+- Segment's HTTP Tracking API. Its documentation returns 403 to automated
+  fetches, so the contract could not be read
+- HubSpot's events API. The endpoint in the directory is the `__ptq.gif`
+  tracking pixel, which is a URL rather than a payload
 - TikTok Events API and Pinterest Conversions API payloads. Both endpoints are
   in the directory and both vendors have browser packs, but their request
   schemas are published behind rendered documentation portals that could not be

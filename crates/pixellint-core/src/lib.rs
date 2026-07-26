@@ -31,8 +31,20 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/adobe-analytics.json"),
     ),
     (
+        "vendor/amplitude",
+        include_str!("../rulepacks/vendor/amplitude.json"),
+    ),
+    (
+        "vendor/braze",
+        include_str!("../rulepacks/vendor/braze.json"),
+    ),
+    (
         "vendor/floodlight",
         include_str!("../rulepacks/vendor/floodlight.json"),
+    ),
+    (
+        "vendor/google-ads-conversion",
+        include_str!("../rulepacks/vendor/google-ads-conversion.json"),
     ),
     (
         "vendor/google-analytics",
@@ -43,12 +55,12 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/google-analytics-collect.json"),
     ),
     (
-        "vendor/google-ads-conversion",
-        include_str!("../rulepacks/vendor/google-ads-conversion.json"),
-    ),
-    (
         "vendor/google-tag-manager",
         include_str!("../rulepacks/vendor/google-tag-manager.json"),
+    ),
+    (
+        "vendor/klaviyo",
+        include_str!("../rulepacks/vendor/klaviyo.json"),
     ),
     (
         "vendor/linkedin",
@@ -68,8 +80,16 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/microsoft-uet.json"),
     ),
     (
+        "vendor/mixpanel",
+        include_str!("../rulepacks/vendor/mixpanel.json"),
+    ),
+    (
         "vendor/pinterest",
         include_str!("../rulepacks/vendor/pinterest.json"),
+    ),
+    (
+        "vendor/posthog",
+        include_str!("../rulepacks/vendor/posthog.json"),
     ),
     (
         "vendor/reddit",

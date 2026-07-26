@@ -4,6 +4,31 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.9.0 - 2026-07-26
+
+### Added
+
+- Five packs for the analytics and marketing tier, each contracting the JSON
+  body its endpoint actually takes: `vendor/amplitude`, `vendor/posthog`,
+  `vendor/mixpanel`, `vendor/klaviyo`, and `vendor/braze`. They were directory
+  entries with nothing checking them
+- Path patterns can address a bare root array with a leading `[]`, which is the
+  shape Mixpanel posts
+- The Braze REST endpoints are in the vendor directory, so a URL hitting one is
+  attributed even where no pack claims it
+
+### Changed
+
+- Shape matching is stricter where the tier overlaps. Amplitude, Braze, and GA4
+  all post an `events` array, and Braze and GA4 both use `events[].name`, so
+  each pack now keys on paths that are actually its own: GA4 pairs the envelope
+  with a Measurement Protocol field, and Braze keys on the identifier every
+  object it accepts has to carry
+
+Every unit here differs from its neighbours: Amplitude wants milliseconds,
+PostHog and Braze want ISO 8601, Mixpanel takes either, and the three conversion
+APIs from 0.7.0 want seconds, milliseconds, and microseconds respectively.
+
 ## 0.8.0 - 2026-07-26
 
 ### Added

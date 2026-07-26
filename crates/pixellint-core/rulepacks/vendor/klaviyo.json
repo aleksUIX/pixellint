@@ -1,0 +1,116 @@
+{
+  "id": "vendor/klaviyo",
+  "display_name": "Klaviyo Create Event",
+  "vendor": "klaviyo",
+  "description": "Event creation requests to the Klaviyo events API, in JSON:API shape.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.klaviyo.com/en/reference/create_event",
+  "match": {
+    "host_suffixes": [
+      "klaviyo.com"
+    ],
+    "path_contains": [
+      "/api/events"
+    ],
+    "json_paths": [
+      "data.attributes.metric.data.attributes.name"
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "data.type",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "event"
+            ]
+          },
+          "description": "JSON:API resource type, which Klaviyo documents as `event` for this endpoint.",
+          "fix_hint": "Set `data.type` to `event`.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.metric.data.type",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "metric"
+            ]
+          },
+          "description": "The nested metric resource is typed `metric`.",
+          "fix_hint": "Set the metric's `type` to `metric`.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.metric.data.attributes.name",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the name of the metric the event is recorded against.",
+          "fix_hint": "Name the metric, such as `Placed Order`.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.email",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "One of email, phone number, external id, or id identifies the profile.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.phone_number",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "One of email, phone number, external id, or id identifies the profile.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.external_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "One of email, phone number, external id, or id identifies the profile.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "One of email, phone number, external id, or id identifies the profile.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.unique_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Klaviyo deduplicates on it, so a retried request is not counted twice.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.klaviyo.body.profile_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "data.attributes.profile.data.attributes.email",
+            "data.attributes.profile.data.attributes.phone_number",
+            "data.attributes.profile.data.attributes.external_id",
+            "data.attributes.profile.data.id"
+          ],
+          "severity": "error",
+          "message": "The event carries no profile identifier. Klaviyo documents at least one of id, email, phone number, or external id as required.",
+          "fix_hint": "Add an identifier under `data.attributes.profile.data`.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        }
+      ]
+    }
+  ]
+}

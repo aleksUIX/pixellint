@@ -228,7 +228,7 @@ struct PatternStep {
 fn parse_pattern(pattern: &str) -> Vec<PatternStep> {
     let mut steps = Vec::new();
 
-    for token in pattern.split('.') {
+    for (index, token) in pattern.split('.').enumerate() {
         if token.is_empty() {
             return Vec::new();
         }
@@ -240,7 +240,11 @@ fn parse_pattern(pattern: &str) -> Vec<PatternStep> {
             subscripts += 1;
         }
 
-        if key.is_empty() {
+        // A leading `[]` with no key names the document itself, for the endpoints
+        // that post a bare array rather than wrapping it in an envelope.
+        let names_the_root = index == 0 && subscripts > 0;
+
+        if key.is_empty() && !names_the_root {
             return Vec::new();
         }
 
@@ -783,6 +787,33 @@ mod tests {
             .nearest_present_ancestor("data[0].user_data.em")
             .expect("ancestor");
         assert_eq!(ancestor.path, "data[0]");
+    }
+
+    #[test]
+    fn a_bare_root_array_is_addressable() {
+        let document = JsonDocument::parse(r#"[{"event":"a"},{"event":"b"}]"#).expect("parses");
+
+        assert_eq!(document.expand("[].event"), vec!["[0].event", "[1].event"]);
+        assert_eq!(document.get("[1].event").expect("field").text, "b");
+        assert!(document.matches_pattern("[].event"));
+    }
+
+    #[test]
+    fn a_root_array_pattern_finds_nothing_in_an_object() {
+        let document = JsonDocument::parse(r#"{"event":"a"}"#).expect("parses");
+
+        assert!(document.expand("[].event").is_empty());
+        assert!(!document.matches_pattern("[].event"));
+    }
+
+    #[test]
+    fn an_empty_key_is_still_rejected_anywhere_else() {
+        for pattern in ["a..b", "a.[]", ".a", "a."] {
+            assert!(
+                !is_valid_pattern(pattern),
+                "expected `{pattern}` to be rejected"
+            );
+        }
     }
 
     #[test]
