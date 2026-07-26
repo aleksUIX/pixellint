@@ -24,27 +24,33 @@ All three must pass; CI enforces them.
 - `crates/pixellint-mcp`: MCP server over stdio
 - `crates/pixellint-wasm`: wasm-bindgen bindings
 - `npm/`: the Node package, wrapping a committed WASM build in `npm/wasm/`
-- `site/`: the pixellint.org playground, wrapping a committed WASM build in
-  `site/wasm/`
 - `fixtures/`: golden corpus, one directory per rulepack
 
-## The committed WASM builds
+## The committed WASM build
 
-`npm/wasm/` and `site/wasm/` are build output kept in the repository so the
-package and the site work without a Rust toolchain. Regenerate both when
-`pixellint-core` changes:
+`npm/wasm/` is build output kept in the repository so the package works without
+a Rust toolchain. Regenerate it when `pixellint-core` changes:
 
 ```bash
 wasm-pack build crates/pixellint-wasm --target nodejs --out-dir ../../npm/wasm --out-name pixellint
-wasm-pack build crates/pixellint-wasm --target web --out-dir ../../site/wasm --out-name pixellint
 rm -f npm/wasm/package.json npm/wasm/README.md npm/wasm/.gitignore
-rm -f site/wasm/package.json site/wasm/README.md site/wasm/.gitignore
 node npm/test.mjs
 ```
 
-CI rebuilds them from source and runs the package tests against the fresh
-output, and both the release and the site deploy build fresh rather than
-trusting what is committed.
+CI rebuilds it from source and runs the package tests against the fresh output,
+and the release builds fresh rather than trusting what is committed.
+
+## The website
+
+pixellint.org lives in `pixellint-infra`, which vendors its own WASM build and
+deploys itself. After a release, refresh the engine it serves:
+
+```bash
+cd ../pixellint-infra && PIXELLINT_REPO=../pixellint npm run refresh:wasm
+```
+
+Its deploy refuses to ship an engine older than the released crate, so a
+forgotten refresh fails loudly rather than leaving a stale validator online.
 
 ## Adding a vendor rulepack
 

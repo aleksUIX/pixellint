@@ -251,7 +251,7 @@ cargo test --workspace
 
 - [Standards and rule inventory](docs/STANDARDS.md)
 - [Vendor directory](docs/VENDOR_DIRECTORY.md)
-- [Playground and npm package](site/)
+- [npm package](npm/)
 - [Rulepack manifest schema](docs/RULEPACK_SCHEMA.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](ROADMAP.md)
