@@ -46,6 +46,29 @@ carry them, and the failure modes do not vary by vendor, so they are `core`
 rules rather than vendor ones. They are read from the query string and from
 Floodlight-style path parameters.
 
+The strings are decoded, not just pattern-matched. Base64 is a permissive
+alphabet: `gdpr_consent=1` and `gdpr_consent=true` are both well-formed base64
+segments, and both pass any check that only looks at characters. What separates
+a consent string from a string is the fields the specs fix.
+
+| Field read | Spec says | Rule id |
+| --- | --- | --- |
+| TC String Version, first 6 bits | "the value is 2 for this format" | `core.privacy.tc_string_version` |
+| TC String core segment length | The fields through PublisherCC need 213 bits, so 36 characters is the floor | `core.privacy.tc_string_truncated` |
+| US Privacy version, first character | Version 1 is the only one published | `core.privacy.us_privacy_version` |
+| GPP header type, first 6 bits | "Fixed to 3 as GPP Header field" | `core.privacy.gpp_header_type` |
+| GPP header version, next 6 bits | Currently 1 | `core.privacy.gpp_header_version` |
+
+A TCF v1 string decodes to version 1 and is reported as sunset rather than as
+malformed, since it is a real consent string that no v2 vendor can read. A TC
+String pasted into `gpp` decodes to header type 2 and is reported as such,
+because putting the right string in the wrong parameter is the commonest way to
+get this wrong.
+
+Section IDs are not cross-checked against the GPP string's own section list.
+`gpp_sid` carries "the section ID(s) in force for the current transaction",
+which the spec does not require to match the sections the string contains.
+
 | Standard | Enforced | Rule ids | Level |
 | --- | --- | --- | --- |
 | [TCF v2](https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework/blob/master/TCFv2/IAB%20Tech%20Lab%20-%20Consent%20string%20and%20vendor%20list%20formats%20v2.md) | `gdpr` is `0` or `1` | `core.privacy.gdpr_invalid` | normative |

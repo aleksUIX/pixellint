@@ -4,6 +4,28 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.10.0 - 2026-07-26
+
+### Added
+
+- Consent strings are decoded rather than pattern-matched. Base64 is permissive
+  enough that `gdpr_consent=1` and `gdpr_consent=true` both passed an alphabet
+  check, so the fields the specs fix are now read: the TC String version, its
+  core segment length, the US Privacy version digit, and the GPP header type and
+  version
+- `core.privacy.tc_string_version`, which separates a TC String from a
+  placeholder and reports a TCF v1 string as sunset rather than malformed
+- `core.privacy.tc_string_truncated`, for a string too short to hold the fields
+  the spec makes mandatory
+- `core.privacy.us_privacy_version`, `core.privacy.gpp_header_type`, and
+  `core.privacy.gpp_header_version`. The header type catches a TC String pasted
+  into `gpp`, which is the commonest way to get this wrong
+
+### Fixed
+
+- Test and fixture consent strings were shortened stand-ins that the new
+  truncation rule correctly rejects. They are full-length strings now
+
 ## 0.9.0 - 2026-07-26
 
 ### Added

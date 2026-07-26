@@ -185,7 +185,71 @@ fn check_tcf(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
                 source("IAB Tech Lab TCF v2", TCF_SPEC),
                 vec![param.target()],
             ));
+        } else {
+            check_tc_string_contents(param, violations);
         }
+    }
+}
+
+/// Reads the fields the TC String spec fixes, once the value is known to be
+/// base64.
+///
+/// The alphabet check above passes anything spelled with base64 characters, and
+/// plenty of things are: `gdpr_consent=1` is a well-formed base64 segment that
+/// decodes to nothing resembling consent. What separates a TC String from a
+/// string is the Version field the spec pins to 2, and enough length to hold the
+/// fields it lists as mandatory.
+fn check_tc_string_contents(param: &RawParam, violations: &mut Vec<Violation>) {
+    // Only the core segment is fixed. Optional segments follow a dot and carry
+    // their own layout.
+    let core = param.value.split('.').next().unwrap_or_default();
+
+    match read_bits(core, 0, 6) {
+        Some(2) => {}
+        Some(1) => {
+            violations.push(violation(
+                "core.privacy.tc_string_version",
+                "`gdpr_consent` carries a TCF v1 TC String. IAB Tech Lab sunset v1 on 15 August 2020, and v2 vendors cannot read it."
+                    .to_string(),
+                Severity::Error,
+                "param.gdpr_consent",
+                "Take the TC String from a TCF v2 CMP.",
+                source("IAB Tech Lab TCF v2", TCF_SPEC),
+                vec![param.target()],
+            ));
+            return;
+        }
+        Some(version) => {
+            violations.push(violation(
+                "core.privacy.tc_string_version",
+                format!(
+                    "`gdpr_consent` is `{}`, whose first six bits decode to version {version}. The TC String spec fixes the version to 2, so this is not a TC String.",
+                    truncate(&param.value)
+                ),
+                Severity::Error,
+                "param.gdpr_consent",
+                "Pass the TC String from the CMP. A placeholder such as `1` is base64-shaped but carries no consent.",
+                source("IAB Tech Lab TCF v2", TCF_SPEC),
+                vec![param.target()],
+            ));
+            return;
+        }
+        None => return,
+    }
+
+    if core.len() < TC_CORE_MIN_CHARS {
+        violations.push(violation(
+            "core.privacy.tc_string_truncated",
+            format!(
+                "`gdpr_consent` has a {}-character core segment. The mandatory fields through PublisherCC need {TC_CORE_MANDATORY_BITS} bits, so a TC String cannot be shorter than {TC_CORE_MIN_CHARS} characters.",
+                core.len()
+            ),
+            Severity::Error,
+            "param.gdpr_consent",
+            "Pass the whole TC String. Truncation usually comes from a length limit on a macro or a database column.",
+            source("IAB Tech Lab TCF v2", TCF_SPEC),
+            vec![param.target()],
+        ));
     }
 }
 
@@ -221,6 +285,21 @@ fn check_us_privacy(params: &[RawParam], violations: &mut Vec<Violation>) {
             source("IAB Tech Lab US Privacy String", USP_SPEC),
             vec![param.target()],
         ));
+    } else if !param.value.starts_with('1') {
+        // The shape is right, so the leading character is a version claim rather
+        // than noise. Only version 1 was ever published.
+        violations.push(violation(
+            "core.privacy.us_privacy_version",
+            format!(
+                "`us_privacy` claims specification version `{}`. Only version 1 was published before the signal was deprecated.",
+                &param.value[..1]
+            ),
+            Severity::Warning,
+            "param.us_privacy",
+            "Send `1` as the first character, or move to `gpp` and `gpp_sid`.",
+            source("IAB Tech Lab US Privacy String", USP_SPEC),
+            vec![param.target()],
+        ));
     }
 }
 
@@ -245,6 +324,8 @@ fn check_gpp(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
                 source("IAB Tech Lab GPP", GPP_SPEC),
                 vec![param.target()],
             ));
+        } else {
+            check_gpp_header(param, violations);
         }
 
         if sid.is_none() {
@@ -274,6 +355,52 @@ fn check_gpp(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
             Severity::Warning,
             "param.gpp_sid",
             "Send the section ID the CMP reports, such as `gpp_sid=2`.",
+            source("IAB Tech Lab GPP", GPP_SPEC),
+            vec![param.target()],
+        ));
+    }
+}
+
+/// Reads the GPP header, which the spec pins to a fixed type and version.
+///
+/// The header is the first section, and its first six bits are "fixed to 3 as
+/// GPP Header field". That makes a value in `gpp` that is not a GPP string
+/// cheap to spot: a TC String pasted into the wrong parameter decodes to type 2
+/// and stops here.
+fn check_gpp_header(param: &RawParam, violations: &mut Vec<Violation>) {
+    let header = param.value.split('~').next().unwrap_or_default();
+
+    match read_bits(header, 0, 6) {
+        Some(3) => {}
+        Some(kind) => {
+            violations.push(violation(
+                "core.privacy.gpp_header_type",
+                format!(
+                    "`gpp` is `{}`, whose header decodes to type {kind}. The GPP spec fixes the header type to 3, so this is not a GPP string.",
+                    truncate(&param.value)
+                ),
+                Severity::Error,
+                "param.gpp",
+                "Send the GPP string from the CMP. A TC String belongs in `gdpr_consent`, not here.",
+                source("IAB Tech Lab GPP", GPP_SPEC),
+                vec![param.target()],
+            ));
+            return;
+        }
+        None => return,
+    }
+
+    if let Some(version) = read_bits(header, 6, 6)
+        && version != 1
+    {
+        violations.push(violation(
+            "core.privacy.gpp_header_version",
+            format!(
+                "`gpp` declares GPP specification version {version}. Version 1 is the published one, and a callee reading the header will stop at an unknown version."
+            ),
+            Severity::Warning,
+            "param.gpp",
+            "Send a version 1 GPP string, which starts `DB`.",
             source("IAB Tech Lab GPP", GPP_SPEC),
             vec![param.target()],
         ));
@@ -310,6 +437,49 @@ fn is_base64url_segment(segment: &str) -> bool {
 fn is_tc_string(value: &str) -> bool {
     value.split('.').all(is_base64url_segment)
 }
+
+/// The value of one URL-safe base64 character, as the 6 bits it stands for.
+fn base64url_bits(character: u8) -> Option<u32> {
+    Some(match character {
+        b'A'..=b'Z' => u32::from(character - b'A'),
+        b'a'..=b'z' => u32::from(character - b'a') + 26,
+        b'0'..=b'9' => u32::from(character - b'0') + 52,
+        b'-' => 62,
+        b'_' => 63,
+        _ => return None,
+    })
+}
+
+/// Reads a big-endian bit field out of a URL-safe base64 segment.
+///
+/// The consent specs describe their strings as bit fields that happen to be
+/// base64 for transport, so reading a field means going back to the bits rather
+/// than decoding to bytes.
+fn read_bits(segment: &str, start: usize, length: usize) -> Option<u64> {
+    if length == 0 || length > 64 {
+        return None;
+    }
+
+    let bytes = segment.as_bytes();
+    let mut value: u64 = 0;
+
+    for offset in start..start + length {
+        let character = *bytes.get(offset / 6)?;
+        let bits = base64url_bits(character)?;
+        let bit = (bits >> (5 - (offset % 6))) & 1;
+        value = (value << 1) | u64::from(bit);
+    }
+
+    Some(value)
+}
+
+/// Bits the core segment needs for the fields the spec lists as mandatory, from
+/// Version through PublisherCC. The segment carries more after that, so this is
+/// a floor rather than a size.
+const TC_CORE_MANDATORY_BITS: usize = 213;
+
+/// Characters those bits take once encoded.
+const TC_CORE_MIN_CHARS: usize = TC_CORE_MANDATORY_BITS.div_ceil(6);
 
 /// A GPP string is URL-safe base64 with sections separated by `~`.
 fn is_gpp_string(value: &str) -> bool {
@@ -363,7 +533,7 @@ mod tests {
     #[test]
     fn a_complete_tcf_signal_is_clean() {
         assert!(
-            codes("https://example.com/px?gdpr=1&gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA").is_empty()
+            codes("https://example.com/px?gdpr=1&gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAAAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA").is_empty()
         );
         assert!(codes("https://example.com/px?gdpr=0").is_empty());
     }
@@ -371,7 +541,9 @@ mod tests {
     #[test]
     fn gdpr_flag_values_are_constrained() {
         assert_eq!(
-            codes("https://example.com/px?gdpr=true&gdpr_consent=CPXxRfAPXxRf"),
+            codes(
+                "https://example.com/px?gdpr=true&gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+            ),
             vec!["core.privacy.gdpr_invalid"]
         );
     }
@@ -391,7 +563,9 @@ mod tests {
     #[test]
     fn a_tc_string_without_a_flag_is_ambiguous() {
         assert_eq!(
-            codes("https://example.com/px?gdpr_consent=CPXxRfAPXxRf"),
+            codes(
+                "https://example.com/px?gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+            ),
             vec!["core.privacy.gdpr_consent_without_flag"]
         );
     }
@@ -399,8 +573,72 @@ mod tests {
     #[test]
     fn a_tc_string_outside_gdpr_is_informational() {
         assert_eq!(
-            codes("https://example.com/px?gdpr=0&gdpr_consent=CPXxRfAPXxRf"),
+            codes(
+                "https://example.com/px?gdpr=0&gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+            ),
             vec!["core.privacy.gdpr_consent_ignored"]
+        );
+    }
+
+    #[test]
+    fn a_placeholder_in_the_consent_slot_is_not_a_tc_string() {
+        // Base64 characters, so the alphabet check passes it. The version field
+        // is what gives it away.
+        assert_eq!(
+            codes("https://example.com/px?gdpr=1&gdpr_consent=1"),
+            ["core.privacy.tc_string_version"]
+        );
+        assert_eq!(
+            codes("https://example.com/px?gdpr=1&gdpr_consent=true"),
+            ["core.privacy.tc_string_version"]
+        );
+    }
+
+    #[test]
+    fn a_tcf_v1_string_is_reported_as_sunset() {
+        assert_eq!(
+            codes("https://example.com/px?gdpr=1&gdpr_consent=BOxxRfAOxxRfAAfKABENAAAAAAAAoAAA"),
+            ["core.privacy.tc_string_version"]
+        );
+    }
+
+    #[test]
+    fn a_truncated_tc_string_is_flagged() {
+        // Right version, too short to hold the fields the spec makes mandatory.
+        assert_eq!(
+            codes("https://example.com/px?gdpr=1&gdpr_consent=CPXxRfAPXxRf"),
+            ["core.privacy.tc_string_truncated"]
+        );
+    }
+
+    #[test]
+    fn a_us_privacy_version_other_than_one_is_flagged() {
+        assert_eq!(
+            codes("https://example.com/px?us_privacy=2YNN"),
+            [
+                "core.privacy.us_privacy_deprecated",
+                "core.privacy.us_privacy_version"
+            ]
+        );
+    }
+
+    #[test]
+    fn a_tc_string_in_the_gpp_slot_is_flagged() {
+        // The commonest way to get this wrong is to put the right string in the
+        // wrong parameter. The header type says so.
+        assert_eq!(
+            codes(
+                "https://example.com/px?gpp=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA&gpp_sid=2"
+            ),
+            ["core.privacy.gpp_header_type"]
+        );
+    }
+
+    #[test]
+    fn an_unknown_gpp_version_is_flagged() {
+        assert_eq!(
+            codes("https://example.com/px?gpp=DCABMA&gpp_sid=2"),
+            ["core.privacy.gpp_header_version"]
         );
     }
 
@@ -446,11 +684,13 @@ mod tests {
     #[test]
     fn gpp_needs_a_section_id() {
         assert_eq!(
-            codes("https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRf~1YNN"),
+            codes(
+                "https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN"
+            ),
             vec!["core.privacy.gpp_sid_missing"]
         );
-        assert!(codes("https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRf~1YNN&gpp_sid=2").is_empty());
-        assert!(codes("https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRf&gpp_sid=2,6").is_empty());
+        assert!(codes("https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN&gpp_sid=2").is_empty());
+        assert!(codes("https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA&gpp_sid=2,6").is_empty());
     }
 
     #[test]
@@ -460,7 +700,9 @@ mod tests {
             vec!["core.privacy.gpp_malformed"]
         );
         assert_eq!(
-            codes("https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRf&gpp_sid=usnat"),
+            codes(
+                "https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA&gpp_sid=usnat"
+            ),
             vec!["core.privacy.gpp_sid_malformed"]
         );
         assert_eq!(
@@ -472,7 +714,9 @@ mod tests {
     #[test]
     fn repeated_signals_are_flagged_once_per_parameter() {
         assert_eq!(
-            codes("https://example.com/px?gdpr=1&gdpr=0&gdpr_consent=CPXxRfAPXxRf"),
+            codes(
+                "https://example.com/px?gdpr=1&gdpr=0&gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+            ),
             vec!["core.privacy.duplicate_signal"]
         );
     }
