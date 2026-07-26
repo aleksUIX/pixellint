@@ -2,6 +2,7 @@
 
 [![Rust](https://github.com/aleksUIX/pixellint/actions/workflows/rust.yml/badge.svg)](https://github.com/aleksUIX/pixellint/actions/workflows/rust.yml)
 [![crates.io](https://img.shields.io/crates/v/pixellint.svg)](https://crates.io/crates/pixellint)
+[![npm](https://img.shields.io/npm/v/pixellint.svg)](https://www.npmjs.com/package/pixellint)
 [![docs.rs](https://img.shields.io/docsrs/pixellint-core)](https://docs.rs/pixellint-core)
 [![license](https://img.shields.io/crates/l/pixellint.svg)](LICENSE)
 

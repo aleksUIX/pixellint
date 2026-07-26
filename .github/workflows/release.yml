@@ -175,11 +175,24 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Re-running the workflow is the normal way to finish a release that was
+      # gated on a missing secret, so creating the release has to be safe to
+      # repeat. Without this the whole run fails on `tag_name already exists`
+      # long after the publish steps have done their work.
       - name: Create the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+
+          notes="See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/CHANGELOG.md)."
+
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            echo "$GITHUB_REF_NAME already exists; refreshing its notes."
+            gh release edit "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "$notes"
+            exit 0
+          fi
+
           gh release create "$GITHUB_REF_NAME" \
             --title "$GITHUB_REF_NAME" \
-            --notes "See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/CHANGELOG.md)."
+            --notes "$notes"
