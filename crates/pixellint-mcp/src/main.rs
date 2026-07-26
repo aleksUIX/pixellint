@@ -161,6 +161,24 @@ fn tools_list_result(engine: &Engine) -> Value {
                 },
             },
             {
+                "name": "list_vendors",
+                "description": "List the vendor endpoint directory: which vendors Pixellint can attribute an endpoint to, and which of them have a rulepack. Use it to find out who owns a pixel host.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "category": {
+                            "type": "string",
+                            "description": "Optional category filter, for example social, programmatic, analytics, consent."
+                        },
+                        "host": {
+                            "type": "string",
+                            "description": "Optional host to attribute instead of listing everything."
+                        }
+                    },
+                    "additionalProperties": false,
+                },
+            },
+            {
                 "name": "validate_artifact",
                 "description": "Validate a measurement artifact such as a pixel URL, server postback, VAST tracking URL, GTM template, HTML snippet, or JavaScript snippet.",
                 "inputSchema": {
@@ -236,9 +254,87 @@ fn handle_tool_call(id: Value, params: Option<Value>, engine: &Engine) -> Value 
                 }
             }),
         ),
+        "list_vendors" => handle_list_vendors(id, tool_call.arguments, engine),
         "validate_artifact" => handle_validate_artifact(id, tool_call.arguments, engine),
         other => error_response(id, -32602, &format!("unknown tool: {other}")),
     }
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct ListVendorsArgs {
+    #[serde(default)]
+    category: Option<String>,
+    #[serde(default)]
+    host: Option<String>,
+}
+
+fn handle_list_vendors(id: Value, arguments: Value, engine: &Engine) -> Value {
+    let args = if arguments.is_null() {
+        ListVendorsArgs::default()
+    } else {
+        match serde_json::from_value::<ListVendorsArgs>(arguments) {
+            Ok(args) => args,
+            Err(error) => {
+                return error_response(
+                    id,
+                    -32602,
+                    &format!("invalid list_vendors arguments: {error}"),
+                );
+            }
+        }
+    };
+
+    let directory = engine.directory();
+
+    if let Some(host) = args.host.as_deref() {
+        return match directory.lookup_host(host) {
+            Some(entry) => success_response(
+                id,
+                json!({
+                    "content": [{
+                        "type": "text",
+                        "text": format!("{host} belongs to {} ({}).", entry.display_name, entry.category),
+                    }],
+                    "structuredContent": { "host": host, "vendor": entry },
+                }),
+            ),
+            None => success_response(
+                id,
+                json!({
+                    "content": [{
+                        "type": "text",
+                        "text": format!("{host} is not in the vendor directory."),
+                    }],
+                    "structuredContent": { "host": host, "vendor": Value::Null },
+                }),
+            ),
+        };
+    }
+
+    let vendors: Vec<&pixellint_core::VendorEntry> = directory
+        .entries()
+        .iter()
+        .filter(|entry| {
+            args.category
+                .as_deref()
+                .is_none_or(|category| entry.category.eq_ignore_ascii_case(category))
+        })
+        .collect();
+
+    success_response(
+        id,
+        json!({
+            "content": [{
+                "type": "text",
+                "text": format!(
+                    "{} vendor(s) in the directory, {} covered by a rulepack.",
+                    vendors.len(),
+                    vendors.iter().filter(|entry| entry.rulepack.is_some()).count(),
+                ),
+            }],
+            "structuredContent": { "vendors": vendors },
+        }),
+    )
 }
 
 fn handle_validate_artifact(id: Value, arguments: Value, engine: &Engine) -> Value {

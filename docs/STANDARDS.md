@@ -210,6 +210,18 @@ Source: [image pixel conversions](https://www.linkedin.com/help/lms/answer/a4227
 LinkedIn generates this pixel in Campaign Manager and documents the workflow
 rather than the parameters, so the pack is labeled ecosystem evidence.
 
+## Vendor directory
+
+The directory attributes endpoints no rulepack claims. It asserts only that a
+host belongs to a vendor, so it produces one finding and never raises severity
+above `info`.
+
+| Rule id | Severity | Meaning |
+| --- | --- | --- |
+| `directory.no_rulepack_coverage` | info | The endpoint belongs to a known vendor that no rulepack covers |
+
+Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
+
 ## Findings every manifest pack can produce
 
 | Rule id | Severity | Meaning |

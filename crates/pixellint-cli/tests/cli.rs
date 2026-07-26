@@ -132,8 +132,10 @@ fn rulepack_selection_is_respected() {
         "core",
     ]);
     assert!(stdout.contains("rulepack: core"), "{stdout}");
-    assert!(!stdout.contains("vendor/meta"), "{stdout}");
+    assert!(!stdout.contains("rulepack: vendor/meta"), "{stdout}");
 
+    // Excluding the pack stops it running, but the directory still says whose
+    // endpoint this is, so assert on the report header rather than the string.
     let (_, stdout, _) = run(&[
         "validate",
         "url",
@@ -141,7 +143,11 @@ fn rulepack_selection_is_respected() {
         "--except",
         "vendor/meta",
     ]);
-    assert!(!stdout.contains("vendor/meta"), "{stdout}");
+    assert!(!stdout.contains("rulepack: vendor/meta"), "{stdout}");
+    assert!(
+        stdout.contains("rulepack: directory (vendor: meta)"),
+        "{stdout}"
+    );
 
     let (code, _, stderr) = run(&[
         "validate",
@@ -234,4 +240,45 @@ fn list_rulepacks_reports_every_builtin_pack() {
         packs.as_array().expect("array").len(),
         pixellint_core::BUILTIN_VENDOR_MANIFESTS.len() + 1
     );
+}
+
+#[test]
+fn list_vendors_reports_the_directory() {
+    let (code, stdout, stderr) = run(&["list-vendors"]);
+    assert_eq!(code, 0);
+    assert!(stdout.contains("taboola"), "{stdout}");
+    assert!(stdout.contains("vendor/meta"), "{stdout}");
+    assert!(stderr.contains("vendors"), "{stderr}");
+
+    let (code, stdout, _) = run(&["list-vendors", "--json"]);
+    assert_eq!(code, 0);
+    let vendors: serde_json::Value = serde_json::from_str(&stdout).expect("parse json");
+    assert_eq!(
+        vendors.as_array().expect("array").len(),
+        pixellint_core::VendorDirectory::builtin().len()
+    );
+}
+
+#[test]
+fn unknown_endpoints_are_attributed_to_their_vendor() {
+    let (code, stdout, _) = run(&["validate", "url", "https://trc.taboola.com/actions?a=1"]);
+
+    assert_eq!(code, 0, "attribution must never fail an artifact");
+    assert!(
+        stdout.contains("rulepack: directory (vendor: taboola)"),
+        "{stdout}"
+    );
+    assert!(
+        stdout.contains("directory.no_rulepack_coverage"),
+        "{stdout}"
+    );
+
+    let (_, stdout, _) = run(&[
+        "validate",
+        "url",
+        "https://trc.taboola.com/actions?a=1",
+        "--except",
+        "directory",
+    ]);
+    assert!(!stdout.contains("directory"), "{stdout}");
 }

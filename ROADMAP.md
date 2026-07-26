@@ -18,6 +18,8 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   Manager and gtag.js, Campaign Manager Floodlight, Pinterest, Snapchat
   Conversions API, TikTok Pixel, LinkedIn image pixel, Microsoft UET, and the
   Reddit Pixel
+- Vendor endpoint directory: 89 vendors and 217 hosts attributed by host, so
+  endpoints without a rulepack still get identified
 - Custom rulepacks from disk, the same format the first-party packs use
 - CLI with JSON output, stdin and file input, rulepack selection, and CI-ready
   exit codes
@@ -30,8 +32,10 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   since a signal's requirement depends on another parameter's value
 - Parameters carried on the path, which unlocks Google Ads conversion pixels
   (`/pagead/conversion/<id>/`) and Adobe Analytics (`/b/ss/<rsid>/...`)
-- More endpoint families: X, Criteo, Taboola, Outbrain, Amazon Ads. Each is
-  blocked on finding a published parameter contract rather than on engineering
+- Promote directory entries to full rulepacks as parameter contracts surface:
+  X, Criteo, Taboola, Outbrain, Amazon Ads are attributed today and would gain
+  rules the moment a citable contract exists
+- Community-contributed directory entries and corrections
 - Document-level results: the wrapper described in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), so callers
   that extract many artifacts get one coherent report

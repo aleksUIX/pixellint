@@ -7,12 +7,17 @@ use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
+pub mod directory;
 pub mod manifest;
 
+pub use directory::{DIRECTORY_ID, DirectoryError, VendorDirectory, VendorEntry};
 pub use manifest::{
     Assertion, ManifestError, ManifestRulePack, MatchSpec, PackRule, ParamContract, ParamStyle,
     Requirement, RulePackManifest, ValueFormat,
 };
+
+/// The vendor endpoint directory compiled into the crate.
+pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.json");
 
 /// First-party vendor rulepacks compiled into the crate, as (id, manifest JSON).
 ///
@@ -244,6 +249,7 @@ impl Error for EngineError {}
 
 pub struct Engine {
     plugins: BTreeMap<String, Arc<dyn ValidatorPlugin>>,
+    directory: VendorDirectory,
 }
 
 impl Default for Engine {
@@ -252,6 +258,7 @@ impl Default for Engine {
     /// is a build-time bug rather than a runtime surprise.
     fn default() -> Self {
         let mut engine = Self::new();
+        engine.set_directory(VendorDirectory::builtin());
         engine.register(CoreRulePack::default());
 
         for (id, json) in BUILTIN_VENDOR_MANIFESTS {
@@ -268,7 +275,19 @@ impl Engine {
     pub fn new() -> Self {
         Self {
             plugins: BTreeMap::new(),
+            directory: VendorDirectory::default(),
         }
+    }
+
+    /// Replaces the vendor directory. An empty directory disables endpoint
+    /// attribution entirely.
+    pub fn set_directory(&mut self, directory: VendorDirectory) {
+        self.directory = directory;
+    }
+
+    /// The vendor directory this engine attributes endpoints with.
+    pub fn directory(&self) -> &VendorDirectory {
+        &self.directory
     }
 
     pub fn register<P>(&mut self, plugin: P)
@@ -304,10 +323,14 @@ impl Engine {
         options: &ValidationOptions,
     ) -> Result<ValidationSummary, EngineError> {
         let plugins = self.select_plugins(request, options)?;
-        let reports = plugins
+        let mut reports: Vec<ValidationReport> = plugins
             .into_iter()
             .map(|plugin| plugin.validate(request))
             .collect();
+
+        if let Some(report) = self.directory_report(request, options, &reports) {
+            reports.push(report);
+        }
 
         Ok(ValidationSummary { reports })
     }
@@ -326,10 +349,21 @@ impl Engine {
             .map(String::as_str)
             .collect();
 
+        // The directory is not a plugin, so it never takes part in plugin
+        // selection. Asking for it alone is legitimate and yields no plugins.
+        let only_packs: Vec<&String> = options
+            .only_rulepacks
+            .iter()
+            .filter(|rulepack_id| rulepack_id.as_str() != DIRECTORY_ID)
+            .collect();
+
         if !options.only_rulepacks.is_empty() {
-            let selected = options
-                .only_rulepacks
-                .iter()
+            if only_packs.is_empty() {
+                return Ok(Vec::new());
+            }
+
+            let selected = only_packs
+                .into_iter()
                 .filter(|rulepack_id| !excluded.contains(rulepack_id.as_str()))
                 .filter_map(|rulepack_id| self.plugins.get(rulepack_id).map(Arc::clone))
                 .collect::<Vec<_>>();
@@ -360,8 +394,94 @@ impl Engine {
         }
     }
 
+    /// Attributes an endpoint no rulepack claimed.
+    ///
+    /// This runs only when nothing else detected a vendor: a matching vendor
+    /// pack is strictly better information than a directory hit.
+    fn directory_report(
+        &self,
+        request: &ValidationRequest,
+        options: &ValidationOptions,
+        reports: &[ValidationReport],
+    ) -> Option<ValidationReport> {
+        if options.except_rulepacks.iter().any(|id| id == DIRECTORY_ID) {
+            return None;
+        }
+
+        if !options.only_rulepacks.is_empty()
+            && !options.only_rulepacks.iter().any(|id| id == DIRECTORY_ID)
+        {
+            return None;
+        }
+
+        if reports
+            .iter()
+            .any(|report| report.detected_vendor.is_some())
+        {
+            return None;
+        }
+
+        let artifact = request.artifact.trim();
+        let host = manifest::artifact_host(artifact)?;
+        let entry = self.directory.lookup_host(&host)?;
+
+        let mut message = format!(
+            "This endpoint belongs to {} ({}). No Pixellint rulepack covers it, so only the core checks ran.",
+            entry.display_name, entry.category
+        );
+
+        if let Some(rulepack) = &entry.rulepack {
+            message.push_str(&format!(
+                " The `{rulepack}` rulepack covers other {} endpoints, not this one.",
+                entry.display_name
+            ));
+        }
+
+        let target = artifact
+            .find(&host)
+            .map(|start| ViolationTarget {
+                component: ViolationTargetComponent::Host,
+                name: None,
+                value: Some(host.clone()),
+                start,
+                end: start + host.len(),
+            })
+            .unwrap_or(ViolationTarget {
+                component: ViolationTargetComponent::WholeUrl,
+                name: None,
+                value: None,
+                start: 0,
+                end: artifact.len(),
+            });
+
+        Some(ValidationReport {
+            plugin_id: DIRECTORY_ID.to_string(),
+            detected_vendor: Some(entry.vendor.clone()),
+            violations: vec![Violation {
+                code: "directory.no_rulepack_coverage".to_string(),
+                message,
+                severity: Severity::Info,
+                field: Some("url.host".to_string()),
+                fix_hint: Some(
+                    "Write a custom rulepack for this endpoint, or ask for first-party coverage."
+                        .to_string(),
+                ),
+                source: RuleSource {
+                    level: RuleSourceLevel::EcosystemReference,
+                    name: "Pixellint vendor directory".to_string(),
+                    reference: None,
+                },
+                targets: vec![target],
+            }],
+        })
+    }
+
     fn ensure_known_rulepacks(&self, rulepack_ids: &[String]) -> Result<(), EngineError> {
         for rulepack_id in rulepack_ids {
+            if rulepack_id == DIRECTORY_ID {
+                continue;
+            }
+
             if !self.plugins.contains_key(rulepack_id) {
                 return Err(EngineError::PluginNotFound(rulepack_id.clone()));
             }
@@ -1513,5 +1633,149 @@ mod tests {
             summary.reports[0].violations[0].targets[0].value.as_deref(),
             Some("${HOST}")
         );
+    }
+
+    fn directory_request(artifact: &str) -> ValidationRequest {
+        ValidationRequest {
+            artifact_kind: ArtifactKind::Url,
+            artifact: artifact.to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Unknown,
+        }
+    }
+
+    #[test]
+    fn the_directory_attributes_endpoints_no_rulepack_claims() {
+        let summary = Engine::default()
+            .validate(
+                &directory_request("https://trc.taboola.com/actions?a=1"),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+
+        let report = summary
+            .reports
+            .iter()
+            .find(|report| report.plugin_id == DIRECTORY_ID)
+            .expect("directory report");
+        assert_eq!(report.detected_vendor.as_deref(), Some("taboola"));
+        assert_eq!(report.violations[0].code, "directory.no_rulepack_coverage");
+        assert_eq!(report.violations[0].severity, Severity::Info);
+        assert!(report.is_ok(), "attribution must never fail an artifact");
+    }
+
+    #[test]
+    fn a_matching_rulepack_suppresses_the_directory() {
+        let summary = Engine::default()
+            .validate(
+                &directory_request("https://www.facebook.com/tr?id=1234567890123456&ev=PageView"),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+
+        assert!(
+            summary
+                .reports
+                .iter()
+                .all(|report| report.plugin_id != DIRECTORY_ID),
+            "a vendor pack is better information than an attribution"
+        );
+    }
+
+    #[test]
+    fn a_known_vendor_on_an_uncovered_endpoint_still_gets_attributed() {
+        let summary = Engine::default()
+            .validate(
+                &directory_request("https://www.facebook.com/some/other/path"),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+
+        let report = summary
+            .reports
+            .iter()
+            .find(|report| report.plugin_id == DIRECTORY_ID)
+            .expect("directory report");
+        assert_eq!(report.detected_vendor.as_deref(), Some("meta"));
+        assert!(
+            report.violations[0].message.contains("`vendor/meta`"),
+            "{}",
+            report.violations[0].message
+        );
+    }
+
+    #[test]
+    fn unknown_hosts_get_no_directory_report() {
+        let summary = Engine::default()
+            .validate(
+                &directory_request("https://pixel.example.com/collect?id=1"),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+
+        assert_eq!(summary.reports.len(), 1);
+        assert_eq!(summary.reports[0].plugin_id, "core");
+    }
+
+    #[test]
+    fn the_directory_honors_rulepack_toggles() {
+        let engine = Engine::default();
+        let request = directory_request("https://trc.taboola.com/actions?a=1");
+
+        let summary = engine
+            .validate(
+                &request,
+                &ValidationOptions {
+                    except_rulepacks: vec![DIRECTORY_ID.to_string()],
+                    ..ValidationOptions::default()
+                },
+            )
+            .unwrap();
+        assert!(
+            summary
+                .reports
+                .iter()
+                .all(|report| report.plugin_id != DIRECTORY_ID)
+        );
+
+        let summary = engine
+            .validate(
+                &request,
+                &ValidationOptions {
+                    only_rulepacks: vec![DIRECTORY_ID.to_string()],
+                    ..ValidationOptions::default()
+                },
+            )
+            .unwrap();
+        assert_eq!(summary.reports.len(), 1);
+        assert_eq!(summary.reports[0].plugin_id, DIRECTORY_ID);
+
+        let summary = engine
+            .validate(
+                &request,
+                &ValidationOptions {
+                    only_rulepacks: vec!["core".to_string()],
+                    ..ValidationOptions::default()
+                },
+            )
+            .unwrap();
+        assert_eq!(summary.reports.len(), 1);
+        assert_eq!(summary.reports[0].plugin_id, "core");
+    }
+
+    #[test]
+    fn an_engine_without_a_directory_attributes_nothing() {
+        let mut engine = Engine::default();
+        engine.set_directory(VendorDirectory::default());
+
+        let summary = engine
+            .validate(
+                &directory_request("https://trc.taboola.com/actions?a=1"),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+
+        assert_eq!(summary.reports.len(), 1);
+        assert_eq!(summary.reports[0].plugin_id, "core");
     }
 }

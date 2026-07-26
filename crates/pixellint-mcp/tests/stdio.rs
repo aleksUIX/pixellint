@@ -71,7 +71,7 @@ fn notifications_get_no_response() {
 }
 
 #[test]
-fn tools_list_advertises_both_tools_with_live_rulepack_ids() {
+fn tools_list_advertises_every_tool_with_live_rulepack_ids() {
     let responses = exchange(&[json!({ "jsonrpc": "2.0", "id": 1, "method": "tools/list" })]);
     let tools = responses[0]["result"]["tools"].as_array().expect("tools");
 
@@ -79,9 +79,12 @@ fn tools_list_advertises_both_tools_with_live_rulepack_ids() {
         .iter()
         .map(|tool| tool["name"].as_str().expect("tool name"))
         .collect();
-    assert_eq!(names, vec!["list_rulepacks", "validate_artifact"]);
+    assert_eq!(
+        names,
+        vec!["list_rulepacks", "list_vendors", "validate_artifact"]
+    );
 
-    let rulepacks = tools[1]["inputSchema"]["properties"]["rulepacks"]["items"]["enum"]
+    let rulepacks = tools[2]["inputSchema"]["properties"]["rulepacks"]["items"]["enum"]
         .as_array()
         .expect("rulepack enum");
     assert!(rulepacks.iter().any(|id| id == "core"));
@@ -209,4 +212,70 @@ fn malformed_json_gets_a_parse_error_and_the_server_keeps_going() {
 
     assert_eq!(responses[0]["error"]["code"], -32700);
     assert_eq!(responses[1]["id"], 2);
+}
+
+#[test]
+fn list_vendors_attributes_a_host_and_filters_by_category() {
+    let responses = exchange(&[
+        json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "tools/call",
+            "params": {
+                "name": "list_vendors",
+                "arguments": { "host": "pixel.mathtag.com" }
+            }
+        }),
+        json!({
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/call",
+            "params": {
+                "name": "list_vendors",
+                "arguments": { "category": "consent" }
+            }
+        }),
+        json!({
+            "jsonrpc": "2.0",
+            "id": 3,
+            "method": "tools/call",
+            "params": {
+                "name": "list_vendors",
+                "arguments": { "host": "pixel.nobody-knows-this.example" }
+            }
+        }),
+    ]);
+
+    assert_eq!(
+        responses[0]["result"]["structuredContent"]["vendor"]["vendor"],
+        "mediamath"
+    );
+
+    let consent = responses[1]["result"]["structuredContent"]["vendors"]
+        .as_array()
+        .expect("vendors");
+    assert!(!consent.is_empty());
+    assert!(consent.iter().all(|entry| entry["category"] == "consent"));
+
+    assert!(responses[2]["result"]["structuredContent"]["vendor"].is_null());
+}
+
+#[test]
+fn validation_reports_a_directory_attribution_when_no_pack_matches() {
+    let responses = exchange(&[json!({
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+            "name": "validate_artifact",
+            "arguments": {
+                "artifact_kind": "url",
+                "artifact": "https://trc.taboola.com/actions?a=1"
+            }
+        }
+    })]);
+
+    let content = &responses[0]["result"]["structuredContent"];
+    assert_eq!(content["ok"], true);
+    assert_eq!(content["detected_vendors"], json!(["taboola"]));
 }

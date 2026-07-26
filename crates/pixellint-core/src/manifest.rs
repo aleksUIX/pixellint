@@ -1068,6 +1068,11 @@ struct ArtifactUrl {
     path: String,
 }
 
+/// The host of an artifact, with macros neutralized first.
+pub(crate) fn artifact_host(artifact: &str) -> Option<String> {
+    parse_artifact_url(artifact)?.host
+}
+
 /// Parses an artifact URL with macros neutralized, so a templated URL still
 /// resolves to a host and path.
 fn parse_artifact_url(artifact: &str) -> Option<ArtifactUrl> {

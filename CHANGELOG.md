@@ -4,6 +4,26 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.0 - 2026-07-26
+
+### Added
+
+- Vendor endpoint directory: 89 vendors across 217 hosts, covering social,
+  search, programmatic, identity, verification, measurement, analytics,
+  martech, affiliate, mobile attribution, and consent platforms. An endpoint no
+  rulepack covers now reports `directory.no_rulepack_coverage` at info severity
+  with the vendor that owns it
+- `pixellint list-vendors`, with `--json`
+- `list_vendors` MCP tool, filterable by category or resolving a single host
+- `Engine::set_directory` and `VendorDirectory::from_path`, so callers can
+  supply or disable attribution
+- `directory` is togglable like a rulepack through `--rulepack` and `--except`
+
+### Notes
+
+- Directory entries make one claim, that a host belongs to a vendor. They carry
+  no parameter contracts, and attribution never changes an exit code
+
 ## 0.2.0 - 2026-07-26
 
 Coverage release. Twelve rulepacks, up from six.

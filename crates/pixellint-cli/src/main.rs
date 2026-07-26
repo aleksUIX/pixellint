@@ -48,6 +48,7 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         [command, rest @ ..] if command == "list-rulepacks" => run_list_rulepacks(rest),
+        [command, rest @ ..] if command == "list-vendors" => run_list_vendors(rest),
         [command, rest @ ..] if command == "validate" => run_validate(rest),
         [command, ..] => {
             eprintln!("unknown command: {command}");
@@ -86,6 +87,53 @@ fn run_list_rulepacks(args: &[String]) -> ExitCode {
             rulepack.description
         );
     }
+
+    ExitCode::SUCCESS
+}
+
+fn run_list_vendors(args: &[String]) -> ExitCode {
+    let options = match parse_cli_options(args) {
+        Ok(options) => options,
+        Err(message) => return usage_error(&message),
+    };
+
+    let engine = match build_engine(&options) {
+        Ok(engine) => engine,
+        Err(message) => return usage_error(&message),
+    };
+
+    let directory = engine.directory();
+
+    if options.output_format == OutputFormat::Json {
+        match serde_json::to_string_pretty(directory.entries()) {
+            Ok(payload) => println!("{payload}"),
+            Err(error) => return usage_error(&error.to_string()),
+        }
+
+        return ExitCode::SUCCESS;
+    }
+
+    for entry in directory.entries() {
+        println!(
+            "{}\t{}\t{}\t{}\t{}",
+            entry.vendor,
+            entry.display_name,
+            entry.category,
+            entry.rulepack.as_deref().unwrap_or("-"),
+            entry.hosts.join(",")
+        );
+    }
+
+    eprintln!(
+        "\n{} vendors, {} hosts, {} with a rulepack.",
+        directory.len(),
+        directory.host_count(),
+        directory
+            .entries()
+            .iter()
+            .filter(|entry| entry.rulepack.is_some())
+            .count()
+    );
 
     ExitCode::SUCCESS
 }
@@ -353,6 +401,7 @@ Spec-first validator for pixels, postbacks, and other measurement artifacts.
 USAGE
   pixellint validate <kind> <artifact> [options]
   pixellint list-rulepacks [--json] [--rulepack-file <path>]...
+  pixellint list-vendors [--json]
   pixellint help
   pixellint version
 
@@ -366,7 +415,8 @@ OPTIONS
   --json                  Machine-readable output
   --state <state>         unknown (default), template, or fired
   --vendor <slug>         Vendor the caller believes the artifact belongs to
-  --rulepack <id>         Run only these rulepacks (repeatable)
+  --rulepack <id>         Run only these rulepacks (repeatable). `directory`
+                          selects endpoint attribution
   --except <id>           Skip these rulepacks (repeatable)
   --rulepack-file <path>  Load a custom rulepack manifest (repeatable)
 

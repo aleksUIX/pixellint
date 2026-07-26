@@ -77,9 +77,10 @@ input problem. That makes it usable as a gate:
 cargo install pixellint-mcp
 ```
 
-`pixellint-mcp` speaks MCP over stdio and exposes two tools:
+`pixellint-mcp` speaks MCP over stdio and exposes three tools:
 
 - `list_rulepacks`
+- `list_vendors`, optionally filtered by `category` or attributing a single `host`
 - `validate_artifact`, taking `artifact_kind`, `artifact`, and optional
   `claimed_vendor`, `expansion_state`, `rulepacks`, `except_rulepacks`
 
@@ -124,6 +125,27 @@ nothing fires on an endpoint it does not understand.
 | `vendor/linkedin` | LinkedIn conversion image pixels | ecosystem reference |
 | `vendor/microsoft-uet` | Microsoft Advertising Universal Event Tracking | ecosystem reference |
 | `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
+
+### Vendor directory
+
+Rulepacks cover twelve endpoint families in depth. The vendor directory covers
+the rest by attribution: 89 vendors and 217 hosts, so an unrecognized pixel
+still gets a name.
+
+```bash
+$ pixellint validate url 'https://trc.taboola.com/actions?a=1'
+rulepack: directory (vendor: taboola)
+  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No Pixellint rulepack covers it, so only the core checks ran.
+```
+
+Directory entries make one claim, that a host belongs to a vendor. They carry
+no parameter contracts, the finding is always `info`, and attribution never
+changes an exit code. See [docs/VENDOR_DIRECTORY.md](docs/VENDOR_DIRECTORY.md).
+
+```bash
+pixellint list-vendors
+pixellint list-vendors --json
+```
 
 Select packs per run:
 
@@ -199,6 +221,7 @@ cargo test --workspace
 ## Docs
 
 - [Standards and rule inventory](docs/STANDARDS.md)
+- [Vendor directory](docs/VENDOR_DIRECTORY.md)
 - [Rulepack manifest schema](docs/RULEPACK_SCHEMA.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](ROADMAP.md)
