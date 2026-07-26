@@ -4,6 +4,27 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.8.0 - 2026-07-26
+
+### Added
+
+- `vendor/meta` requires `value` and `currency` on `Purchase`. Meta documents
+  both as required, and a Purchase without them reports no revenue. The
+  requirement is the vendor's; the wire spelling of custom data is not
+  documented, so the rule carries ecosystem evidence
+- `vendor/google-analytics` contracts the Measurement Protocol request body at
+  two levels: the envelope once, and each event in `events` on its own. It
+  catches `timestamp_micros` in milliseconds rather than microseconds, a `value`
+  with no `currency`, and the ecommerce fields Google documents as required for
+  `purchase`, `refund`, `add_to_cart`, and `begin_checkout`
+- A manifest's `body` may be a list of specs, so one pack can contract both the
+  envelope and the elements inside it
+
+### Fixed
+
+- The `clean-purchase` fixture was not clean: it fired a Meta `Purchase` with no
+  value or currency, which the new rule reports
+
 ## 0.7.0 - 2026-07-26
 
 ### Added

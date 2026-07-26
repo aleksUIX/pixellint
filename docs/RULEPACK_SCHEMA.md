@@ -169,6 +169,10 @@ its own bytes.
 | `params` | no | Parameter contracts, named by path relative to the scope. |
 | `rules` | no | Cross-field rules, using the same names. |
 
+`body` may also be a list of specs. That is how a pack contracts more than one
+level of the same payload: one spec with no scope for the envelope, another
+scoped to the batch array for the events inside it.
+
 Body contracts get their own name space and their own code segment, `body`
 rather than `param`, because an endpoint may accept the same field in the query
 string and in the payload under different rules.

@@ -1,33 +1,53 @@
 {
   "id": "vendor/google-analytics",
   "display_name": "Google Analytics 4 Measurement Protocol",
-  "description": "Measurement Protocol requests to the Google Analytics 4 collection endpoint, including the regional and debug variants.",
+  "description": "Measurement Protocol requests to the Google Analytics 4 collection endpoint, including the regional and debug variants and the JSON event payload.",
   "vendor": "google",
   "source_level": "official_vendor",
   "docs": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
   "match": {
-    "host_suffixes": ["google-analytics.com"],
-    "path_prefixes": ["/mp/collect", "/debug/mp/collect"]
+    "host_suffixes": [
+      "google-analytics.com"
+    ],
+    "path_prefixes": [
+      "/mp/collect",
+      "/debug/mp/collect"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "events[].name",
+          "events"
+        ]
+      }
+    ]
   },
   "params": [
     {
       "name": "api_secret",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It authenticates the request and is created in the GA4 admin UI.",
       "fix_hint": "Create a Measurement Protocol API secret for the stream and send it as `api_secret`.",
       "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
     },
     {
       "name": "measurement_id",
-      "format": { "kind": "regex", "pattern": "^G-[A-Za-z0-9]+$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^G-[A-Za-z0-9]+$"
+      },
       "description": "Web stream measurement IDs start with `G-`.",
       "fix_hint": "Use the web stream measurement ID, or send `firebase_app_id` for an app stream.",
       "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
     },
     {
       "name": "firebase_app_id",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It identifies an app stream and replaces `measurement_id`.",
       "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
     }
@@ -36,7 +56,10 @@
     {
       "code": "vendor.google-analytics.stream.identifier_missing",
       "kind": "require_one_of",
-      "params": ["measurement_id", "firebase_app_id"],
+      "params": [
+        "measurement_id",
+        "firebase_app_id"
+      ],
       "severity": "error",
       "message": "The request identifies no GA4 stream. Web streams send `measurement_id` and app streams send `firebase_app_id`.",
       "fix_hint": "Add `measurement_id` for a web stream or `firebase_app_id` for an app stream.",
@@ -45,11 +68,165 @@
     {
       "code": "vendor.google-analytics.stream.identifier_ambiguous",
       "kind": "mutually_exclusive",
-      "params": ["measurement_id", "firebase_app_id"],
+      "params": [
+        "measurement_id",
+        "firebase_app_id"
+      ],
       "severity": "error",
       "message": "The request sends both `measurement_id` and `firebase_app_id`. One request targets one stream type.",
       "fix_hint": "Keep the identifier that matches the stream this event belongs to and drop the other.",
       "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+    }
+  ],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "client_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the browser or device the event belongs to, and events without it are not joined to a user.",
+          "fix_hint": "Send the `_ga` cookie's client id, or a stable id of your own.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "events",
+          "description": "Google documents the events array as the one required field of the request body. An empty array sends no events at all.",
+          "fix_hint": "Send an `events` array holding at least one event.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "timestamp_micros",
+          "format": {
+            "kind": "integer",
+            "min_digits": 16,
+            "max_digits": 16
+          },
+          "description": "Google documents this as a Unix timestamp in microseconds, not milliseconds. A 13-digit value is milliseconds and a 10-digit value is seconds.",
+          "fix_hint": "Multiply a millisecond timestamp by 1000, or a second timestamp by 1000000.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "non_personalized_ads",
+          "requirement": "deprecated",
+          "description": "Google marks it deprecated in the Measurement Protocol reference.",
+          "fix_hint": "Use the `consent` object instead.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "events[]",
+      "params": [
+        {
+          "name": "name",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,39}$"
+          },
+          "format_severity": "warning",
+          "description": "Google documents event names as 40 characters or fewer.",
+          "fix_hint": "Use a short name of letters, digits, and underscores, starting with a letter.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "params.currency",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "description": "It is the ISO 4217 currency code, and Google requires it whenever `value` is set.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        },
+        {
+          "name": "params.value",
+          "description": "It is the monetary value of the event.",
+          "fix_hint": "Set it to the sum of price times quantity across the items, excluding shipping and tax.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        },
+        {
+          "name": "params.transaction_id",
+          "description": "It identifies the transaction, and Google requires it for purchase and refund events.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        },
+        {
+          "name": "params.items",
+          "description": "It lists the items the event covers.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.google-analytics.body.value_requires_currency",
+          "kind": "required_with",
+          "when": "params.value",
+          "requires": [
+            "params.currency"
+          ],
+          "severity": "error",
+          "message": "The event carries a `value` with no `currency`. Google documents currency as required whenever value is set, and drops the revenue otherwise.",
+          "fix_hint": "Add `currency` as an ISO 4217 code alongside the value.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        },
+        {
+          "code": "vendor.google-analytics.body.purchase_requires_ecommerce_fields",
+          "kind": "required_when_value",
+          "when": "name",
+          "equals": [
+            "purchase"
+          ],
+          "requires": [
+            "params.currency",
+            "params.value",
+            "params.transaction_id",
+            "params.items"
+          ],
+          "severity": "error",
+          "message": "A `purchase` event is missing fields Google documents as required for it, so it will not report revenue correctly.",
+          "fix_hint": "Add the required ecommerce parameters to the event.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        },
+        {
+          "code": "vendor.google-analytics.body.refund_requires_ecommerce_fields",
+          "kind": "required_when_value",
+          "when": "name",
+          "equals": [
+            "refund"
+          ],
+          "requires": [
+            "params.currency",
+            "params.value",
+            "params.transaction_id"
+          ],
+          "severity": "error",
+          "message": "A `refund` event is missing fields Google documents as required for it, so it will not report revenue correctly.",
+          "fix_hint": "Add the required ecommerce parameters to the event.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        },
+        {
+          "code": "vendor.google-analytics.body.cart_requires_ecommerce_fields",
+          "kind": "required_when_value",
+          "when": "name",
+          "equals": [
+            "add_to_cart",
+            "begin_checkout"
+          ],
+          "requires": [
+            "params.currency",
+            "params.value",
+            "params.items"
+          ],
+          "severity": "error",
+          "message": "Google documents `currency`, `value`, and `items` as required for this ecommerce event.",
+          "fix_hint": "Add `currency`, `value`, and the `items` array to the event.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        }
+      ]
     }
   ]
 }

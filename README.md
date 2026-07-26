@@ -142,7 +142,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `core` | URL validity, transport, credentials, fragments, ad-tech macro handling, IAB consent signals | normative |
 | `vendor/meta` | `facebook.com/tr` pixel requests | official vendor |
 | `vendor/meta-conversions-api` | Graph API events edge, URL and JSON event payload | official vendor |
-| `vendor/google-analytics` | GA4 Measurement Protocol collection endpoints | official vendor |
+| `vendor/google-analytics` | GA4 Measurement Protocol, URL and JSON event payload | official vendor |
 | `vendor/google-analytics-collect` | The `/g/collect` transport the Google tag uses in the browser | ecosystem reference |
 | `vendor/google-tag-manager` | `gtm.js`, `gtag/js`, and `ns.html` loader requests | official vendor |
 | `vendor/google-ads-conversion` | Google Ads conversion and view-through pixels | official vendor |

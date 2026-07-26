@@ -99,6 +99,24 @@
       },
       "description": "It is the state code for Limited Data Use, or `0` to let Meta geolocate.",
       "doc": "https://developers.facebook.com/docs/marketing-apis/data-processing-options"
+    },
+    {
+      "name": "cd[value]",
+      "description": "It is the monetary value of the conversion. Meta documents `value` as required for Purchase events.",
+      "fix_hint": "Send the value as a number, without a currency symbol.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "cd[currency]",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{3}$"
+      },
+      "description": "It is the ISO 4217 currency code of the conversion value. Meta documents `currency` as required for Purchase events.",
+      "fix_hint": "Send the three-letter code, such as `USD`.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
     }
   ],
   "rules": [
@@ -122,6 +140,23 @@
       "message": "Limited Data Use sends a country without a state. Meta requires both together, otherwise it geolocates the user instead of honoring the values you sent.",
       "fix_hint": "Send `dpost` alongside `dpoco`, or drop both and let Meta geolocate.",
       "doc": "https://developers.facebook.com/docs/marketing-apis/data-processing-options"
+    },
+    {
+      "code": "vendor.meta.purchase_requires_value_and_currency",
+      "kind": "required_when_value",
+      "when": "ev",
+      "equals": [
+        "Purchase"
+      ],
+      "requires": [
+        "cd[value]",
+        "cd[currency]"
+      ],
+      "severity": "error",
+      "message": "A `Purchase` event is missing its value or currency. Meta documents both as required for Purchase, and without them the conversion reports no revenue.",
+      "fix_hint": "Pass `value` and `currency` in the event data: fbq('track', 'Purchase', { value: 12.34, currency: 'USD' }).",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
     }
   ]
 }

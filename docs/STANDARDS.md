@@ -85,6 +85,19 @@ Sources: [pixel base code](https://developers.facebook.com/docs/meta-pixel/get-s
 [advanced matching](https://developers.facebook.com/docs/meta-pixel/advanced/advanced-matching),
 [data processing options](https://developers.facebook.com/docs/marketing-apis/data-processing-options).
 
+### Purchase value
+
+Meta documents `currency` and `value` as required for `Purchase`. It does not
+document how the browser pixel spells custom data on the wire, so the parameter
+names are ecosystem evidence even though the requirement is Meta's own.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `cd[value]` | Required on `Purchase` | `vendor.meta.purchase_requires_value_and_currency` |
+| `cd[currency]` | Required on `Purchase`, ISO 4217 three-letter code | `vendor.meta.purchase_requires_value_and_currency`, `vendor.meta.param.cd[currency].invalid` |
+
+Source: [standard events reference](https://developers.facebook.com/docs/meta-pixel/reference).
+
 ## `vendor/google-analytics`
 
 GA4 Measurement Protocol requests to `google-analytics.com`, including the
@@ -155,6 +168,30 @@ Source: [using the API](https://developers.facebook.com/docs/marketing-api/conve
 The hashed identifier contracts accept upper-case hex as well as lower-case.
 Meta documents lower-casing the input before hashing, not the digest, so
 rejecting an upper-case digest would be inventing a requirement.
+
+### Measurement Protocol payload
+
+The request body is contracted at two levels: the envelope once, and each event
+in `events` on its own.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `client_id` | Expected, since events without it are not joined to a user | `vendor.google-analytics.body.client_id.missing` |
+| `events` | Flagged when present and empty, which sends nothing | `vendor.google-analytics.body.events.empty` |
+| `timestamp_micros` | Exactly 16 digits, since Google documents microseconds and a 13-digit value is milliseconds | `vendor.google-analytics.body.timestamp_micros.invalid` |
+| `non_personalized_ads` | Deprecated in favor of the `consent` object | `vendor.google-analytics.body.non_personalized_ads.deprecated` |
+| `events[].name` | Required; 40 characters or fewer warns when longer | `vendor.google-analytics.body.name.missing`, `.invalid` |
+| Value without currency | `currency` is required whenever `value` is set | `vendor.google-analytics.body.value_requires_currency` |
+| `purchase` | Needs `currency`, `value`, `transaction_id`, and `items` | `vendor.google-analytics.body.purchase_requires_ecommerce_fields` |
+| `refund` | Needs `currency`, `value`, and `transaction_id` | `vendor.google-analytics.body.refund_requires_ecommerce_fields` |
+| `add_to_cart`, `begin_checkout` | Need `currency`, `value`, and `items` | `vendor.google-analytics.body.cart_requires_ecommerce_fields` |
+
+Source: [Measurement Protocol reference](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference),
+[recommended events](https://developers.google.com/analytics/devguides/collection/ga4/reference/events).
+
+A payload with no `events` at all carries nothing that identifies it as GA4, so
+it is not claimed and not reported on. An `events` that is present and empty is
+identifiable, and is flagged.
 
 ## `vendor/google-tag-manager`
 

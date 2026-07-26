@@ -261,9 +261,28 @@ pub struct RulePackManifest {
     #[serde(default)]
     pub rules: Vec<PackRule>,
     /// Contracts on the JSON request body, for endpoints that carry their
-    /// payload there rather than in the query string.
+    /// payload there rather than in the query string. A list declares more than
+    /// one, which is how a pack contracts both the envelope and the events
+    /// inside it.
     #[serde(default)]
-    pub body: Option<BodySpec>,
+    pub body: Option<BodySpecs>,
+}
+
+/// One body contract, or several at different levels of the same payload.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum BodySpecs {
+    One(BodySpec),
+    Many(Vec<BodySpec>),
+}
+
+impl BodySpecs {
+    fn specs(&self) -> &[BodySpec] {
+        match self {
+            Self::One(spec) => std::slice::from_ref(spec),
+            Self::Many(specs) => specs,
+        }
+    }
 }
 
 /// Which part of a body the contracts are written against.
@@ -546,7 +565,7 @@ pub struct ManifestRulePack {
     matcher: MatchSpec,
     params: Vec<CompiledParam>,
     rules: Vec<CompiledRule>,
-    body: Option<CompiledBody>,
+    bodies: Vec<CompiledBody>,
     shapes: Vec<CompiledShape>,
 }
 
@@ -730,56 +749,60 @@ impl ManifestRulePack {
         // Body contracts get their own name space, because an endpoint is free
         // to accept the same field in the query string and in the payload, and
         // the two are different contracts with different findings.
-        let body = match &manifest.body {
-            Some(spec) => {
+        let mut bodies = Vec::new();
+
+        match &manifest.body {
+            Some(specs) => {
                 if manifest.matcher.json_paths.is_empty() {
                     return Err(ManifestError::BodyWithoutShape(pack_id));
                 }
 
-                let (params, names) = compile_params(&pack_id, &manifest, &spec.params)?;
-                let rules = compile_rules(&pack_id, &code_prefix, &manifest, &spec.rules, &names)?;
+                for spec in specs.specs() {
+                    let (params, names) = compile_params(&pack_id, &manifest, &spec.params)?;
+                    let rules =
+                        compile_rules(&pack_id, &code_prefix, &manifest, &spec.rules, &names)?;
 
-                let paths = manifest
-                    .matcher
-                    .json_paths
-                    .iter()
-                    .flat_map(ShapeMatch::paths)
-                    .map(str::to_string)
-                    .chain(
-                        spec.scope
-                            .iter()
-                            .flat_map(ScopeSpec::patterns)
-                            // The empty pattern names the document itself.
-                            .filter(|pattern| !pattern.is_empty())
-                            .map(str::to_string),
-                    )
-                    .chain(names.iter().cloned())
-                    .collect::<Vec<_>>();
+                    let paths = manifest
+                        .matcher
+                        .json_paths
+                        .iter()
+                        .flat_map(ShapeMatch::paths)
+                        .map(str::to_string)
+                        .chain(
+                            spec.scope
+                                .iter()
+                                .flat_map(ScopeSpec::patterns)
+                                // The empty pattern names the document itself.
+                                .filter(|pattern| !pattern.is_empty())
+                                .map(str::to_string),
+                        )
+                        .chain(names.iter().cloned())
+                        .collect::<Vec<_>>();
 
-                for path in &paths {
-                    if !json::is_valid_pattern(path) {
-                        return Err(ManifestError::InvalidJsonPath {
-                            pack_id,
-                            path: path.clone(),
-                        });
+                    for path in &paths {
+                        if !json::is_valid_pattern(path) {
+                            return Err(ManifestError::InvalidJsonPath {
+                                pack_id,
+                                path: path.clone(),
+                            });
+                        }
                     }
+
+                    bodies.push(CompiledBody {
+                        scope: spec.scope.clone(),
+                        params,
+                        rules,
+                    });
                 }
 
                 shapes = compile_shapes(&pack_id, &manifest.matcher.json_paths)?;
-
-                Some(CompiledBody {
-                    scope: spec.scope.clone(),
-                    params,
-                    rules,
-                })
             }
             None => {
                 if !manifest.matcher.json_paths.is_empty() {
                     return Err(ManifestError::ShapeWithoutBody(pack_id));
                 }
-                None
             }
-        };
+        }
 
         Ok(Self {
             metadata: RulePackMetadata {
@@ -801,7 +824,7 @@ impl ManifestRulePack {
             matcher: manifest.matcher.clone(),
             params,
             rules,
-            body,
+            bodies,
             shapes,
         })
     }
@@ -838,7 +861,7 @@ impl ManifestRulePack {
                     | ArtifactKind::ServerPostback
                     | ArtifactKind::NetworkRequest
                     | ArtifactKind::Unknown
-            ) || (kind == ArtifactKind::JsonPayload && self.body.is_some());
+            ) || (kind == ArtifactKind::JsonPayload && !self.bodies.is_empty());
         }
 
         self.matcher.artifact_kinds.contains(&kind)
@@ -848,7 +871,7 @@ impl ManifestRulePack {
     /// An explicit `json` kind says so outright; an unstated kind is treated as
     /// a body when it opens like one and the pack has body contracts to apply.
     fn reads_as_body(&self, kind: ArtifactKind, artifact: &str) -> bool {
-        if self.body.is_none() {
+        if self.bodies.is_empty() {
             return false;
         }
 
@@ -1025,14 +1048,6 @@ impl ManifestRulePack {
     /// misses the endpoint is, since both mean the caller aimed the pack at the
     /// wrong artifact.
     fn validate_body(&self, request: &ValidationRequest, artifact: &str) -> ValidationReport {
-        let Some(body) = &self.body else {
-            return ValidationReport {
-                plugin_id: self.metadata.id.clone(),
-                detected_vendor: None,
-                violations: Vec::new(),
-            };
-        };
-
         // A body that does not parse is the core pack's finding to report, and
         // it has nothing this pack can contract.
         let Ok(document) = JsonDocument::parse(artifact) else {
@@ -1073,27 +1088,29 @@ impl ManifestRulePack {
             };
         }
 
-        for scope_path in body_scopes(&document, body.scope.as_ref()) {
-            let params = collect_body_params(&document, &scope_path, &body.params);
-            let scope = Scope {
-                code_segment: "body",
-                field_prefix: match scope_path.is_empty() {
-                    true => "body".to_string(),
-                    false => format!("body.{scope_path}"),
-                },
-                fallback: body_target(&document, &scope_path, artifact),
-                body: Some(BodyScope {
-                    document: &document,
-                    path: &scope_path,
-                }),
-            };
+        for body in &self.bodies {
+            for scope_path in body_scopes(&document, body.scope.as_ref()) {
+                let params = collect_body_params(&document, &scope_path, &body.params);
+                let scope = Scope {
+                    code_segment: "body",
+                    field_prefix: match scope_path.is_empty() {
+                        true => "body".to_string(),
+                        false => format!("body.{scope_path}"),
+                    },
+                    fallback: body_target(&document, &scope_path, artifact),
+                    body: Some(BodyScope {
+                        document: &document,
+                        path: &scope_path,
+                    }),
+                };
 
-            for compiled in &body.params {
-                self.check_param(&scope, compiled, &params, &mut violations);
-            }
+                for compiled in &body.params {
+                    self.check_param(&scope, compiled, &params, &mut violations);
+                }
 
-            for compiled in &body.rules {
-                self.check_rule(&scope, compiled, &params, &mut violations);
+                for compiled in &body.rules {
+                    self.check_rule(&scope, compiled, &params, &mut violations);
+                }
             }
         }
 
@@ -2733,6 +2750,36 @@ mod body_tests {
             ManifestRulePack::from_json(manifest),
             Err(ManifestError::InvalidJsonPath { .. })
         ));
+    }
+
+    #[test]
+    fn a_pack_can_contract_the_envelope_and_the_events_inside_it() {
+        let manifest = r#"{
+            "id": "vendor/two-level",
+            "display_name": "Two Level",
+            "description": "Contracts the envelope and each event.",
+            "docs": "https://example.com/docs",
+            "match": { "hosts": ["api.example.com"], "json_paths": ["events[].name"] },
+            "body": [
+                { "params": [{ "name": "client_id", "requirement": "required" }] },
+                {
+                    "scope": "events[]",
+                    "params": [{ "name": "name", "requirement": "required" }]
+                }
+            ]
+        }"#;
+
+        let pack = ManifestRulePack::from_json(manifest).expect("compiles");
+        let report = pack.validate(&body_request(r#"{"events":[{"name":"a"},{"id":1}]}"#));
+
+        // The envelope is checked once and each event on its own.
+        assert_eq!(
+            codes(&report),
+            vec![
+                "vendor.two-level.body.client_id.missing",
+                "vendor.two-level.body.name.missing",
+            ]
+        );
     }
 
     #[test]
