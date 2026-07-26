@@ -4,6 +4,19 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.0 - 2026-07-26
+
+### Added
+
+- `pixellint-wasm`: wasm-bindgen bindings over the same engine, exposing
+  validation, the rulepack list, and the vendor directory
+- `pixellint` npm package, WASM-backed, with TypeScript types and a
+  dependency-free smoke test suite
+- Playground at [pixellint.org](https://pixellint.org), served from `site/` in
+  this repository. It runs entirely in the browser and sends nothing anywhere
+- CI builds the WASM crate and runs the npm package tests against a fresh build,
+  so the committed artifacts stay honest
+
 ## 0.5.0 - 2026-07-26
 
 ### Added

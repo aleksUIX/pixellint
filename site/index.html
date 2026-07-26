@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pixellint · validate a pixel</title>
+    <meta
+      name="description"
+      content="Paste a pixel, postback, or tracking URL and see what is wrong with it. Spec-backed rules, vendor parameter contracts, and IAB consent signal checks, running locally in your browser."
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ff4fa3'/%3E%3Crect x='9' y='9' width='6' height='6' fill='%23fff'/%3E%3Crect x='17' y='17' width='6' height='6' fill='%23fff'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap">
+        <a class="brand" href="/">
+          <span class="mark" aria-hidden="true"></span>
+          <span>pixellint</span>
+        </a>
+        <nav>
+          <a href="https://github.com/aleksUIX/pixellint">GitHub</a>
+          <a href="https://crates.io/crates/pixellint">crates.io</a>
+          <a href="https://www.npmjs.com/package/pixellint">npm</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="hero">
+        <h1>Validate a pixel</h1>
+        <p>
+          Paste a pixel, postback, VAST tracker, or tag URL. Pixellint checks it against web
+          standards, the vendor's own documented parameters, and the IAB consent specs. Everything
+          runs locally in this tab; nothing is sent anywhere.
+        </p>
+      </section>
+
+      <section class="panel">
+        <label class="field-label" for="artifact">Artifact</label>
+        <textarea
+          id="artifact"
+          rows="3"
+          spellcheck="false"
+          placeholder="https://www.facebook.com/tr?id=1234567890123456&amp;ev=Purchase"
+        ></textarea>
+
+        <div class="controls">
+          <label>
+            Kind
+            <select id="kind">
+              <option value="url">url</option>
+              <option value="vast">vast</option>
+              <option value="postback">postback</option>
+              <option value="request">request</option>
+              <option value="unknown">unknown</option>
+            </select>
+          </label>
+          <label>
+            Macros
+            <select id="state">
+              <option value="unknown">unknown</option>
+              <option value="template">template, not fired</option>
+              <option value="fired">already fired</option>
+            </select>
+          </label>
+          <button id="validate" type="button">Validate</button>
+        </div>
+
+        <div class="examples">
+          <span>Try:</span>
+          <button class="example" type="button" data-artifact="https://www.facebook.com/tr?ev=Purchse&amp;em=buyer@example.com">
+            Meta pixel with PII
+          </button>
+          <button class="example" type="button" data-artifact="https://www.google-analytics.com/g/collect?v=1&amp;tid=UA-12345-1&amp;cid=555">
+            Tag on a dead UA property
+          </button>
+          <button class="example" type="button" data-artifact="https://ad.doubleclick.net/ddm/activity/src=1234567;type=conv;cat=purch;gdpr=1;ord=8675309?">
+            Floodlight missing consent
+          </button>
+          <button class="example" type="button" data-artifact="https://trc.taboola.com/actions?a=1">
+            Unknown endpoint
+          </button>
+        </div>
+      </section>
+
+      <section id="results" class="results" aria-live="polite"></section>
+
+      <section class="coverage">
+        <h2>What it knows</h2>
+        <div class="coverage-grid">
+          <div>
+            <h3>Rulepacks <span id="rulepack-count" class="count"></span></h3>
+            <p class="muted">
+              Deep validation. Each rule carries an evidence level and links to the document it came
+              from.
+            </p>
+            <ul id="rulepacks" class="list"></ul>
+          </div>
+          <div>
+            <h3>Vendor directory <span id="vendor-count" class="count"></span></h3>
+            <p class="muted">
+              Endpoint attribution for everything else. One claim per entry: this host belongs to
+              this vendor.
+            </p>
+            <input id="vendor-filter" type="search" placeholder="Filter vendors or hosts" />
+            <ul id="vendors" class="list"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <p>
+        <code id="version"></code> · Apache-2.0 ·
+        <a href="https://github.com/aleksUIX/pixellint/blob/main/docs/STANDARDS.md">rule inventory</a>
+        ·
+        <a href="https://github.com/aleksUIX/pixellint/blob/main/docs/RULEPACK_SCHEMA.md">write a rulepack</a>
+      </p>
+      <p class="muted">
+        Pixellint is not affiliated with any vendor named in its rulepacks.
+      </p>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

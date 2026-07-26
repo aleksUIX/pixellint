@@ -45,3 +45,36 @@ jobs:
       # rust-version in Cargo.toml is a promise; this job is what keeps it true.
       - name: Build with the minimum supported Rust version
         run: cargo build --workspace --all-targets
+
+  wasm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache Rust artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install wasm-pack
+        uses: jetli/wasm-pack-action@v0.4.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # The npm package ships a committed WASM build. Rebuilding it here and
+      # running the package tests against the fresh output is what keeps the
+      # committed artifact honest.
+      - name: Build the WASM bundle
+        run: wasm-pack build crates/pixellint-wasm --target nodejs --out-dir ../../npm/wasm --out-name pixellint
+
+      - name: Run the npm package tests
+        working-directory: npm
+        run: node test.mjs

@@ -81,7 +81,7 @@ jobs:
           version=$(cargo metadata --no-deps --format-version 1 \
             | jq -r '.packages[] | select(.name=="pixellint-core") | .version')
 
-          for crate in pixellint-core pixellint pixellint-mcp; do
+          for crate in pixellint-core pixellint pixellint-mcp pixellint-wasm; do
             if published "$crate" "$version"; then
               echo "$crate $version is already on crates.io; skipping."
               continue
@@ -103,8 +103,70 @@ jobs:
             done
           done
 
+  publish-npm:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache Rust artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install wasm-pack
+        uses: jetli/wasm-pack-action@v0.4.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      # Build fresh rather than publishing the committed artifact, so the npm
+      # package always matches the crate it is cut from.
+      - name: Build the WASM bundle
+        run: wasm-pack build crates/pixellint-wasm --target nodejs --out-dir ../../npm/wasm --out-name pixellint
+
+      - name: Drop the generated package metadata
+        run: rm -f npm/wasm/package.json npm/wasm/README.md npm/wasm/.gitignore
+
+      - name: Stamp the package version from the tag
+        working-directory: npm
+        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
+
+      - name: Test the package
+        working-directory: npm
+        run: node test.mjs
+
+      - name: Publish
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "NPM_TOKEN is not set; skipping npm publish."
+            exit 0
+          fi
+
+          version=$(node -p "require('./package.json').version")
+          if npm view "pixellint@$version" version > /dev/null 2>&1; then
+            echo "pixellint $version is already on npm; skipping."
+            exit 0
+          fi
+
+          npm publish --access public
+
   github-release:
-    needs: publish-crates
+    needs: [publish-crates, publish-npm]
     runs-on: ubuntu-latest
     permissions:
       contents: write

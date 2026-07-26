@@ -36,8 +36,13 @@ rulepack: vendor/meta (vendor: meta)
 ## Install
 
 ```bash
-cargo install pixellint
+cargo install pixellint          # CLI
+cargo install pixellint-mcp      # MCP server
+npm install pixellint            # library, WASM-backed
 ```
+
+Or paste a URL into the playground at [pixellint.org](https://pixellint.org),
+which runs the same engine in your browser and sends nothing anywhere.
 
 ## Use it
 
@@ -86,6 +91,15 @@ cargo install pixellint-mcp
 
 Responses include the structured findings, the detected vendors, and a
 severity summary, so an agent can act on the result without parsing prose.
+
+### Node and the browser
+
+```js
+import { validate, isOk } from "pixellint";
+
+const summary = validate("https://www.facebook.com/tr?ev=Purchase");
+isOk(summary); // false, the pixel id is missing
+```
 
 ### Library
 
@@ -223,6 +237,7 @@ cargo test --workspace
 
 - [Standards and rule inventory](docs/STANDARDS.md)
 - [Vendor directory](docs/VENDOR_DIRECTORY.md)
+- [Playground and npm package](site/)
 - [Rulepack manifest schema](docs/RULEPACK_SCHEMA.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](ROADMAP.md)
