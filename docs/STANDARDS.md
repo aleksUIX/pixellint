@@ -157,6 +157,33 @@ Protocol but not this request format.
 
 Source: [GA4 collection](https://developers.google.com/analytics/devguides/collection/ga4).
 
+## `vendor/google-ads-conversion`
+
+Google Ads conversion and view-through conversion image pixels. The conversion
+ID travels in the path. Level: `official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `conversion_id` | Required numeric ID, read from the path | `vendor.google-ads-conversion.param.conversion_id.missing`, `.empty`, `.invalid` |
+| `label` | Expected. Without it the hit lands on the account rather than a conversion action | `vendor.google-ads-conversion.param.label.missing`, `.empty` |
+| `guid` | The generated tag sends `ON` | `vendor.google-ads-conversion.param.guid.invalid` |
+| `script` | The image fallback sends `0` | `vendor.google-ads-conversion.param.script.invalid` |
+
+Source: [Google Ads conversion tracking errors](https://support.google.com/tagassistant/answer/2947038).
+
+## `vendor/adobe-analytics`
+
+Adobe Analytics data collection beacons on `omtrdc.net` and `2o7.net`. The
+report suite rides on the path after `/b/ss/`. Level: `official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `report_suite` | Required, read from the path | `vendor.adobe-analytics.param.report_suite.missing`, `.empty` |
+| `mid` | When present, not empty | `vendor.adobe-analytics.param.mid.empty` |
+
+Sources: [identify your tracking server and report suites](https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites),
+[A4T reporting](https://experienceleague.adobe.com/en/docs/target-dev/developer/server-side/integration/a4t-reporting).
+
 ## `vendor/pinterest`
 
 Pinterest tag requests on `ct.pinterest.com`, including the noscript image.

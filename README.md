@@ -118,7 +118,9 @@ nothing fires on an endpoint it does not understand.
 | `vendor/google-analytics` | GA4 Measurement Protocol collection endpoints | official vendor |
 | `vendor/google-analytics-collect` | The `/g/collect` transport the Google tag uses in the browser | ecosystem reference |
 | `vendor/google-tag-manager` | `gtm.js`, `gtag/js`, and `ns.html` loader requests | official vendor |
+| `vendor/google-ads-conversion` | Google Ads conversion and view-through pixels | official vendor |
 | `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
+| `vendor/adobe-analytics` | Adobe Analytics data collection beacons | official vendor |
 | `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
 | `vendor/snapchat` | Snapchat Conversions API events endpoint | official vendor |
 | `vendor/tiktok` | TikTok Pixel loader and collection requests | ecosystem reference |
@@ -128,7 +130,7 @@ nothing fires on an endpoint it does not understand.
 
 ### Vendor directory
 
-Rulepacks cover twelve endpoint families in depth. The vendor directory covers
+Rulepacks cover fifteen endpoint families in depth. The vendor directory covers
 the rest by attribution: 89 vendors and 217 hosts, so an unrecognized pixel
 still gets a name.
 

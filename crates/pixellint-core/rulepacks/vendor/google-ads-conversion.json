@@ -1,0 +1,51 @@
+{
+  "id": "vendor/google-ads-conversion",
+  "display_name": "Google Ads conversion and remarketing pixel",
+  "description": "Google Ads conversion and view-through conversion image pixels, whose conversion ID rides on the path.",
+  "vendor": "google",
+  "source_level": "official_vendor",
+  "docs": "https://support.google.com/tagassistant/answer/2947038",
+  "path_pattern": "/pagead/(?:viewthrough)?conversion/(?<conversion_id>[^/?]*)",
+  "match": {
+    "host_suffixes": ["googleadservices.com", "googleads.g.doubleclick.net"],
+    "path_contains": ["/pagead/conversion", "/pagead/viewthroughconversion"]
+  },
+  "params": [
+    {
+      "name": "conversion_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric conversion ID, unique per Google Ads account, and it travels in the path rather than the query.",
+      "fix_hint": "Copy the conversion ID from the conversion action's tag setup.",
+      "doc": "https://support.google.com/tagassistant/answer/2947038"
+    },
+    {
+      "name": "label",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It identifies which conversion action fired. Without it, the hit lands on the account rather than on a specific action.",
+      "fix_hint": "Add the conversion label from the conversion action's tag setup.",
+      "doc": "https://support.google.com/tagassistant/answer/2947038"
+    },
+    {
+      "name": "value",
+      "description": "It is the conversion value.",
+      "doc": "https://support.google.com/tagassistant/answer/2947038"
+    },
+    {
+      "name": "guid",
+      "format": { "kind": "enum", "values": ["ON"] },
+      "format_severity": "warning",
+      "description": "The generated image tag sends `guid=ON`.",
+      "doc": "https://support.google.com/tagassistant/answer/2947038"
+    },
+    {
+      "name": "script",
+      "format": { "kind": "enum", "values": ["0"] },
+      "format_severity": "warning",
+      "description": "The image fallback sends `script=0` to say no JavaScript ran.",
+      "doc": "https://support.google.com/tagassistant/answer/2947038"
+    }
+  ],
+  "rules": []
+}

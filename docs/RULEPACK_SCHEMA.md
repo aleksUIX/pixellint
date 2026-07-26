@@ -29,6 +29,7 @@ engine.register_manifest_path("acme.json")?;
 | `source_level` | no | Evidence level for every rule in the pack. Defaults to `official_vendor`. |
 | `docs` | no | Pack-wide documentation URL. Rules inherit it when they omit their own. |
 | `param_style` | no | `query` (default) or `matrix`. |
+| `path_pattern` | no | Regular expression with named captures, run against the path. Each named group becomes a parameter. |
 | `match` | yes | Which artifacts the pack claims. |
 | `params` | no | Parameter contracts. |
 | `rules` | no | Rules that span more than one parameter. |
@@ -43,6 +44,20 @@ is rejected at load time.
 - `query` reads `?a=1&b=2`.
 - `matrix` reads semicolon-delimited pairs carried on the path, the shape
   Floodlight uses: `/ddm/activity/src=123;type=abc;cat=xyz;ord=1?`.
+
+### `path_pattern`
+
+Some endpoints carry their identifier as a path segment. A pattern with named
+captures turns those segments into parameters you can contract like any other:
+
+```json
+"path_pattern": "/pagead/(?:viewthrough)?conversion/(?<conversion_id>[^/?]*)"
+```
+
+`conversion_id` then takes a `requirement` and a `format` in `params`, and its
+findings point at the matched span of the path. A pattern with no named capture
+group is rejected at load time. When the pattern does not match, the captured
+parameters are simply absent, so a `required` contract reports `.missing`.
 
 ## `match`
 

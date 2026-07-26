@@ -23,6 +23,8 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - Consent and privacy signals against the IAB specs: TCF v2 `gdpr` and
   `gdpr_consent`, the deprecated US Privacy string, and GPP `gpp` and `gpp_sid`,
   read from both query and path parameters
+- Parameters carried on the path, so endpoints that put their identifier in a
+  path segment can be contracted like any other
 - Custom rulepacks from disk, the same format the first-party packs use
 - CLI with JSON output, stdin and file input, rulepack selection, and CI-ready
   exit codes
@@ -30,8 +32,6 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 
 ## Next
 
-- Parameters carried on the path, which unlocks Google Ads conversion pixels
-  (`/pagead/conversion/<id>/`) and Adobe Analytics (`/b/ss/<rsid>/...`)
 - Promote directory entries to full rulepacks as parameter contracts surface:
   X, Criteo, Taboola, Outbrain, Amazon Ads are attributed today and would gain
   rules the moment a citable contract exists

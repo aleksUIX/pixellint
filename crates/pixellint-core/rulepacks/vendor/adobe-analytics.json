@@ -1,0 +1,30 @@
+{
+  "id": "vendor/adobe-analytics",
+  "display_name": "Adobe Analytics",
+  "description": "Adobe Analytics data collection beacons, whose report suite IDs ride on the path after /b/ss/.",
+  "vendor": "adobe_analytics",
+  "source_level": "official_vendor",
+  "docs": "https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites",
+  "path_pattern": "/b/ss/(?<report_suite>[^/?]*)",
+  "match": {
+    "host_suffixes": ["omtrdc.net", "2o7.net"],
+    "path_contains": ["/b/ss/"]
+  },
+  "params": [
+    {
+      "name": "report_suite",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the report suite ID, or a comma-separated list of them, and it sits immediately after `/b/ss/` in the path.",
+      "fix_hint": "Point the beacon at a report suite ID from the Adobe Analytics admin.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites"
+    },
+    {
+      "name": "mid",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Experience Cloud ID that ties the hit to a visitor.",
+      "doc": "https://experienceleague.adobe.com/en/docs/target-dev/developer/server-side/integration/a4t-reporting"
+    }
+  ],
+  "rules": []
+}

@@ -26,6 +26,10 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/adobe-analytics",
+        include_str!("../rulepacks/vendor/adobe-analytics.json"),
+    ),
+    (
         "vendor/floodlight",
         include_str!("../rulepacks/vendor/floodlight.json"),
     ),
@@ -36,6 +40,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/google-analytics-collect",
         include_str!("../rulepacks/vendor/google-analytics-collect.json"),
+    ),
+    (
+        "vendor/google-ads-conversion",
+        include_str!("../rulepacks/vendor/google-ads-conversion.json"),
     ),
     (
         "vendor/google-tag-manager",

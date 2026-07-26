@@ -208,6 +208,11 @@ pub struct RulePackManifest {
     pub docs: Option<String>,
     #[serde(default)]
     pub param_style: ParamStyle,
+    /// Regular expression with named capture groups, run against the artifact's
+    /// path. Each named group becomes a parameter, which is how endpoints that
+    /// carry an identifier in the path rather than the query get contracted.
+    #[serde(default)]
+    pub path_pattern: Option<String>,
     #[serde(rename = "match")]
     pub matcher: MatchSpec,
     #[serde(default)]
@@ -257,6 +262,10 @@ pub enum ManifestError {
     EmptyFormatValues {
         pack_id: String,
         name: String,
+    },
+    PathPatternWithoutCaptures {
+        pack_id: String,
+        pattern: String,
     },
 }
 
@@ -312,6 +321,10 @@ impl fmt::Display for ManifestError {
                 f,
                 "rulepack `{pack_id}` parameter `{name}` declares an enum format with no values"
             ),
+            Self::PathPatternWithoutCaptures { pack_id, pattern } => write!(
+                f,
+                "rulepack `{pack_id}` path pattern `{pattern}` has no named capture groups, so it contributes no parameters"
+            ),
         }
     }
 }
@@ -343,6 +356,7 @@ pub struct ManifestRulePack {
     vendor: Option<String>,
     docs: Option<String>,
     param_style: ParamStyle,
+    path_pattern: Option<Regex>,
     matcher: MatchSpec,
     params: Vec<CompiledParam>,
     rules: Vec<CompiledRule>,
@@ -376,6 +390,23 @@ impl ManifestRulePack {
         }
 
         let code_prefix = pack_id.replace('/', ".");
+
+        let path_pattern = match &manifest.path_pattern {
+            Some(pattern) => {
+                let regex = compile_regex(&pack_id, pattern)?;
+
+                if regex.capture_names().flatten().count() == 0 {
+                    return Err(ManifestError::PathPatternWithoutCaptures {
+                        pack_id,
+                        pattern: pattern.clone(),
+                    });
+                }
+
+                Some(regex)
+            }
+            None => None,
+        };
+
         let mut seen_names = BTreeSet::new();
         let mut params = Vec::with_capacity(manifest.params.len());
 
@@ -472,6 +503,7 @@ impl ManifestRulePack {
             vendor: manifest.vendor.clone(),
             docs: manifest.docs.clone(),
             param_style: manifest.param_style,
+            path_pattern,
             matcher: manifest.matcher.clone(),
             params,
             rules,
@@ -606,7 +638,8 @@ impl ValidatorPlugin for ManifestRulePack {
             };
         }
 
-        let params = extract_params(artifact, self.param_style);
+        let mut params = extract_params(artifact, self.param_style);
+        params.extend(self.extract_path_params(artifact));
 
         for compiled in &self.params {
             self.check_param(artifact, compiled, &params, &mut violations);
@@ -647,6 +680,35 @@ impl ValidatorPlugin for ManifestRulePack {
 }
 
 impl ManifestRulePack {
+    /// Pulls named captures out of the path so an identifier carried there can
+    /// be contracted like any query parameter.
+    fn extract_path_params(&self, artifact: &str) -> Vec<RawParam> {
+        let Some(pattern) = &self.path_pattern else {
+            return Vec::new();
+        };
+
+        let (path_start, path_end) = path_span(artifact);
+        let path = &artifact[path_start..path_end];
+        let Some(captures) = pattern.captures(path) else {
+            return Vec::new();
+        };
+
+        pattern
+            .capture_names()
+            .flatten()
+            .filter_map(|name| {
+                let capture = captures.name(name)?;
+
+                Some(RawParam {
+                    name: name.to_string(),
+                    value: percent_decode(capture.as_str()),
+                    start: path_start + capture.start(),
+                    end: path_start + capture.end(),
+                })
+            })
+            .collect()
+    }
+
     fn source_for(&self, level: RuleSourceLevel, doc: Option<&str>) -> RuleSource {
         RuleSource {
             level,
@@ -1135,15 +1197,7 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
             Some(start) => (start + 1, fragment_start),
             None => return Vec::new(),
         },
-        ParamStyle::Matrix => {
-            let path_end = query_start.unwrap_or(fragment_start);
-            let scheme_end = artifact.find("://").map(|index| index + 3).unwrap_or(0);
-            let path_start = artifact[scheme_end..path_end]
-                .find('/')
-                .map(|offset| scheme_end + offset)
-                .unwrap_or(path_end);
-            (path_start, path_end)
-        }
+        ParamStyle::Matrix => path_span(artifact),
     };
 
     if region_start >= region_end {
@@ -1193,6 +1247,22 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
     }
 
     params
+}
+
+/// Byte range of the path within a raw artifact, excluding query and fragment.
+pub(crate) fn path_span(artifact: &str) -> (usize, usize) {
+    let length = artifact.len();
+    let fragment_start = artifact.find('#').unwrap_or(length);
+    let path_end = artifact[..fragment_start]
+        .find('?')
+        .unwrap_or(fragment_start);
+    let scheme_end = artifact.find("://").map(|index| index + 3).unwrap_or(0);
+    let path_start = artifact[scheme_end..path_end]
+        .find('/')
+        .map(|offset| scheme_end + offset)
+        .unwrap_or(path_end);
+
+    (path_start, path_end)
 }
 
 /// Minimal percent-decoding for parameter names and values. `+` is decoded as a
@@ -1522,6 +1592,53 @@ mod tests {
             "https://px.example.com/collect?id=123&ev=[EVENT_NAME]",
         ));
         assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+    }
+
+    #[test]
+    fn path_captures_become_contracted_parameters() {
+        let manifest = TEST_MANIFEST
+            .replace(
+                r#""match": {"#,
+                r#""path_pattern": "^/conversion/(?<id>[^/]*)/", "match": {"#,
+            )
+            .replace(
+                r#""path_prefixes": ["/collect"]"#,
+                r#""path_prefixes": ["/conversion"]"#,
+            );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile manifest");
+
+        // The path capture satisfies the `id` contract.
+        let artifact = "https://px.example.com/conversion/12345/?ev=PageView";
+        let report = pack.validate(&request(artifact));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        // It is checked like any other parameter, and points at the path span.
+        let artifact = "https://px.example.com/conversion/not-numeric/?ev=PageView";
+        let report = pack.validate(&request(artifact));
+        assert_eq!(codes(&report), vec!["vendor.test.param.id.invalid"]);
+        let target = &report.violations[0].targets[0];
+        assert_eq!(&artifact[target.start..target.end], "not-numeric");
+
+        // An empty capture reads as an empty value, not a missing parameter.
+        let report = pack.validate(&request("https://px.example.com/conversion//?ev=PageView"));
+        assert_eq!(codes(&report), vec!["vendor.test.param.id.empty"]);
+
+        // A path that does not match the pattern leaves the parameter missing.
+        let report = pack.validate(&request("https://px.example.com/conversion?ev=PageView"));
+        assert_eq!(codes(&report), vec!["vendor.test.param.id.missing"]);
+    }
+
+    #[test]
+    fn path_patterns_must_capture_something() {
+        let manifest = TEST_MANIFEST.replace(
+            r#""match": {"#,
+            r#""path_pattern": "^/conversion/[0-9]+", "match": {"#,
+        );
+        let error = ManifestRulePack::from_json(&manifest).expect_err("captures are required");
+        assert!(
+            matches!(error, ManifestError::PathPatternWithoutCaptures { .. }),
+            "{error}"
+        );
     }
 
     #[test]

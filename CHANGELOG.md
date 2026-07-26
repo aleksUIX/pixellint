@@ -4,6 +4,17 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.5.0 - 2026-07-26
+
+### Added
+
+- `path_pattern` in rulepack manifests: a regular expression with named captures
+  run against the path, turning path segments into contractable parameters
+- `vendor/google-ads-conversion`: Google Ads conversion and view-through
+  conversion image pixels, whose conversion ID rides on the path
+- `vendor/adobe-analytics`: Adobe Analytics beacons, whose report suite rides on
+  the path after `/b/ss/`
+
 ## 0.4.0 - 2026-07-26
 
 Consent and privacy signals.
