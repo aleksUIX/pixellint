@@ -222,9 +222,10 @@ fn parse_artifact_kind(value: &str) -> Result<ArtifactKind, String> {
         "request" => Ok(ArtifactKind::NetworkRequest),
         "vast" => Ok(ArtifactKind::VastTracker),
         "postback" => Ok(ArtifactKind::ServerPostback),
+        "json" => Ok(ArtifactKind::JsonPayload),
         "unknown" => Ok(ArtifactKind::Unknown),
         other => Err(format!(
-            "unknown artifact kind: {other} (expected url, html, js, gtm, request, vast, postback, or unknown)"
+            "unknown artifact kind: {other} (expected url, html, js, gtm, request, vast, postback, json, or unknown)"
         )),
     }
 }
@@ -406,7 +407,7 @@ USAGE
   pixellint version
 
 KINDS
-  url, html, js, gtm, request, vast, postback, unknown
+  url, html, js, gtm, request, vast, postback, json, unknown
 
 ARTIFACT
   inline value, @path to read a file, or - to read stdin

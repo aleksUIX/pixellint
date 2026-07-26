@@ -15,6 +15,7 @@ use std::path::Path;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 
+use crate::json::{self, JsonDocument, JsonValueKind};
 use crate::{
     ArtifactKind, RulePackMetadata, RuleSource, RuleSourceLevel, Severity, ValidationReport,
     ValidationRequest, ValidatorPlugin, Violation, ViolationTarget, ViolationTargetComponent,
@@ -106,6 +107,12 @@ pub struct MatchSpec {
     /// Path substring matches.
     #[serde(default)]
     pub path_contains: Vec<String>,
+    /// JSON body shapes the pack claims. A body artifact belongs to this pack
+    /// when every pattern here resolves to a field that is actually present, so
+    /// the shape of the payload stands in for the host that a bare body does not
+    /// carry.
+    #[serde(default)]
+    pub json_paths: Vec<String>,
 }
 
 /// A contracted parameter.
@@ -219,6 +226,32 @@ pub struct RulePackManifest {
     pub params: Vec<ParamContract>,
     #[serde(default)]
     pub rules: Vec<PackRule>,
+    /// Contracts on the JSON request body, for endpoints that carry their
+    /// payload there rather than in the query string.
+    #[serde(default)]
+    pub body: Option<BodySpec>,
+}
+
+/// Contracts applied to a JSON request body.
+///
+/// Conversion APIs batch events into an array, and every element of that array
+/// has to satisfy the same contract. `scope` names that array, and the packs
+/// underneath it are written relative to one element, so a manifest reads
+/// `event_name` rather than repeating `data[].event_name` on every line. Each
+/// element is then evaluated on its own: three events with no `event_name`
+/// produce three findings, each pointing at its own bytes.
+///
+/// Omitting `scope` evaluates the document once as a single scope, which is the
+/// shape of an API that posts one event per request.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BodySpec {
+    #[serde(default)]
+    pub scope: Option<String>,
+    #[serde(default)]
+    pub params: Vec<ParamContract>,
+    #[serde(default)]
+    pub rules: Vec<PackRule>,
 }
 
 fn default_source_level() -> RuleSourceLevel {
@@ -266,6 +299,12 @@ pub enum ManifestError {
     PathPatternWithoutCaptures {
         pack_id: String,
         pattern: String,
+    },
+    BodyWithoutShape(String),
+    ShapeWithoutBody(String),
+    InvalidJsonPath {
+        pack_id: String,
+        path: String,
     },
 }
 
@@ -325,6 +364,18 @@ impl fmt::Display for ManifestError {
                 f,
                 "rulepack `{pack_id}` path pattern `{pattern}` has no named capture groups, so it contributes no parameters"
             ),
+            Self::BodyWithoutShape(pack_id) => write!(
+                f,
+                "rulepack `{pack_id}` contracts a JSON body but declares no `match.json_paths`, so it would claim every payload it is shown"
+            ),
+            Self::ShapeWithoutBody(pack_id) => write!(
+                f,
+                "rulepack `{pack_id}` declares `match.json_paths` but contracts no body, so the shape match would check nothing"
+            ),
+            Self::InvalidJsonPath { pack_id, path } => write!(
+                f,
+                "rulepack `{pack_id}` has the malformed JSON path `{path}`: use dotted keys with `[]` for arrays, as in `data[].user_data.em[]`"
+            ),
         }
     }
 }
@@ -348,6 +399,63 @@ struct CompiledRule {
     source_level: RuleSourceLevel,
 }
 
+/// Where a set of contracts is being evaluated, so one checker can serve both
+/// the query string and a JSON body without either borrowing the other's
+/// vocabulary.
+struct Scope<'a> {
+    /// Segment used in violation codes: `param` for the URL, `body` for a
+    /// payload. Keeping them apart matters because an endpoint may accept the
+    /// same field in both places under different rules.
+    code_segment: &'static str,
+    /// Prefix for the reported `field`, such as `param` or `body.data[1]`.
+    field_prefix: String,
+    /// Where to point when there is nothing more specific to point at, such as
+    /// a field that is missing entirely.
+    fallback: ViolationTarget,
+    /// The payload being read, when this scope is a body rather than a URL.
+    body: Option<BodyScope<'a>>,
+}
+
+/// The document and the element a body scope is evaluating.
+struct BodyScope<'a> {
+    document: &'a JsonDocument,
+    path: &'a str,
+}
+
+impl Scope<'_> {
+    /// Where to point for a finding about a field that carries no value of its
+    /// own. A missing `user_data.em` is most useful pointed at the `user_data`
+    /// that does exist, rather than at the whole event.
+    fn fallback_for(&self, name: &str) -> ViolationTarget {
+        let Some(body) = &self.body else {
+            return self.fallback.clone();
+        };
+
+        let path = match body.path.is_empty() {
+            true => name.to_string(),
+            false => format!("{}.{name}", body.path),
+        };
+
+        match body.document.nearest_present_ancestor(&path) {
+            Some(field) => ViolationTarget {
+                component: ViolationTargetComponent::BodyField,
+                name: Some(field.path.clone()),
+                value: None,
+                start: field.start,
+                end: field.end,
+            },
+            None => self.fallback.clone(),
+        }
+    }
+}
+
+#[derive(Debug)]
+struct CompiledBody {
+    scope: Option<String>,
+    params: Vec<CompiledParam>,
+    rules: Vec<CompiledRule>,
+}
+
 /// A rulepack compiled from a [`RulePackManifest`].
 #[derive(Debug)]
 pub struct ManifestRulePack {
@@ -360,6 +468,7 @@ pub struct ManifestRulePack {
     matcher: MatchSpec,
     params: Vec<CompiledParam>,
     rules: Vec<CompiledRule>,
+    body: Option<CompiledBody>,
 }
 
 impl RulePackManifest {
@@ -367,6 +476,106 @@ impl RulePackManifest {
     pub fn from_json(json: &str) -> Result<Self, ManifestError> {
         serde_json::from_str(json).map_err(|error| ManifestError::Parse(error.to_string()))
     }
+}
+
+/// Compiles one list of parameter contracts, returning the names it defines so
+/// rules can be checked against them.
+fn compile_params(
+    pack_id: &str,
+    manifest: &RulePackManifest,
+    contracts: &[ParamContract],
+) -> Result<(Vec<CompiledParam>, BTreeSet<String>), ManifestError> {
+    let mut seen_names = BTreeSet::new();
+    let mut params = Vec::with_capacity(contracts.len());
+
+    for contract in contracts {
+        let mut names = vec![contract.name.clone()];
+        names.extend(contract.aliases.iter().cloned());
+
+        for name in &names {
+            if !seen_names.insert(name.clone()) {
+                return Err(ManifestError::DuplicateParam {
+                    pack_id: pack_id.to_string(),
+                    name: name.clone(),
+                });
+            }
+        }
+
+        let source_level = contract.source_level.unwrap_or(manifest.source_level);
+        let doc = contract.doc.clone().or_else(|| manifest.docs.clone());
+        require_citation(pack_id, &contract.name, source_level, doc.as_deref())?;
+
+        let regex = match &contract.format {
+            Some(ValueFormat::Regex { pattern }) => Some(compile_regex(pack_id, pattern)?),
+            Some(ValueFormat::Enum { values, .. }) if values.is_empty() => {
+                return Err(ManifestError::EmptyFormatValues {
+                    pack_id: pack_id.to_string(),
+                    name: contract.name.clone(),
+                });
+            }
+            _ => None,
+        };
+
+        params.push(CompiledParam {
+            contract: contract.clone(),
+            names,
+            regex,
+            doc,
+            source_level,
+        });
+    }
+
+    Ok((params, seen_names))
+}
+
+/// Compiles one list of cross-parameter rules against the names available to
+/// them, so a rule can never reference a parameter the pack does not contract.
+fn compile_rules(
+    pack_id: &str,
+    code_prefix: &str,
+    manifest: &RulePackManifest,
+    pack_rules: &[PackRule],
+    available: &BTreeSet<String>,
+) -> Result<Vec<CompiledRule>, ManifestError> {
+    let mut rules = Vec::with_capacity(pack_rules.len());
+
+    for rule in pack_rules {
+        if !rule.code.starts_with(&format!("{code_prefix}.")) {
+            return Err(ManifestError::CodePrefix {
+                pack_id: pack_id.to_string(),
+                code: rule.code.clone(),
+                expected_prefix: format!("{code_prefix}."),
+            });
+        }
+
+        for name in assertion_params(&rule.assertion) {
+            if !available.contains(name) {
+                return Err(ManifestError::UnknownParam {
+                    pack_id: pack_id.to_string(),
+                    code: rule.code.clone(),
+                    name: name.clone(),
+                });
+            }
+        }
+
+        let source_level = rule.source_level.unwrap_or(manifest.source_level);
+        let doc = rule.doc.clone().or_else(|| manifest.docs.clone());
+        require_citation(pack_id, &rule.code, source_level, doc.as_deref())?;
+
+        let regex = match &rule.assertion {
+            Assertion::ForbidValuePattern { pattern, .. } => Some(compile_regex(pack_id, pattern)?),
+            _ => None,
+        };
+
+        rules.push(CompiledRule {
+            rule: rule.clone(),
+            regex,
+            doc,
+            source_level,
+        });
+    }
+
+    Ok(rules)
 }
 
 impl ManifestRulePack {
@@ -407,85 +616,56 @@ impl ManifestRulePack {
             None => None,
         };
 
-        let mut seen_names = BTreeSet::new();
-        let mut params = Vec::with_capacity(manifest.params.len());
+        let (params, url_names) = compile_params(&pack_id, &manifest, &manifest.params)?;
+        let rules = compile_rules(
+            &pack_id,
+            &code_prefix,
+            &manifest,
+            &manifest.rules,
+            &url_names,
+        )?;
 
-        for contract in &manifest.params {
-            let mut names = vec![contract.name.clone()];
-            names.extend(contract.aliases.iter().cloned());
-
-            for name in &names {
-                if !seen_names.insert(name.clone()) {
-                    return Err(ManifestError::DuplicateParam {
-                        pack_id,
-                        name: name.clone(),
-                    });
+        // Body contracts get their own name space, because an endpoint is free
+        // to accept the same field in the query string and in the payload, and
+        // the two are different contracts with different findings.
+        let body = match &manifest.body {
+            Some(spec) => {
+                if manifest.matcher.json_paths.is_empty() {
+                    return Err(ManifestError::BodyWithoutShape(pack_id));
                 }
+
+                let (params, names) = compile_params(&pack_id, &manifest, &spec.params)?;
+                let rules = compile_rules(&pack_id, &code_prefix, &manifest, &spec.rules, &names)?;
+
+                let paths = manifest
+                    .matcher
+                    .json_paths
+                    .iter()
+                    .chain(spec.scope.iter())
+                    .chain(names.iter());
+
+                for path in paths {
+                    if !json::is_valid_pattern(path) {
+                        return Err(ManifestError::InvalidJsonPath {
+                            pack_id,
+                            path: path.clone(),
+                        });
+                    }
+                }
+
+                Some(CompiledBody {
+                    scope: spec.scope.clone(),
+                    params,
+                    rules,
+                })
             }
-
-            let source_level = contract.source_level.unwrap_or(manifest.source_level);
-            let doc = contract.doc.clone().or_else(|| manifest.docs.clone());
-            require_citation(&pack_id, &contract.name, source_level, doc.as_deref())?;
-
-            let regex = match &contract.format {
-                Some(ValueFormat::Regex { pattern }) => Some(compile_regex(&pack_id, pattern)?),
-                Some(ValueFormat::Enum { values, .. }) if values.is_empty() => {
-                    return Err(ManifestError::EmptyFormatValues {
-                        pack_id,
-                        name: contract.name.clone(),
-                    });
+            None => {
+                if !manifest.matcher.json_paths.is_empty() {
+                    return Err(ManifestError::ShapeWithoutBody(pack_id));
                 }
-                _ => None,
-            };
-
-            params.push(CompiledParam {
-                contract: contract.clone(),
-                names,
-                regex,
-                doc,
-                source_level,
-            });
-        }
-
-        let mut rules = Vec::with_capacity(manifest.rules.len());
-
-        for rule in &manifest.rules {
-            if !rule.code.starts_with(&format!("{code_prefix}.")) {
-                return Err(ManifestError::CodePrefix {
-                    pack_id,
-                    code: rule.code.clone(),
-                    expected_prefix: format!("{code_prefix}."),
-                });
+                None
             }
-
-            for name in assertion_params(&rule.assertion) {
-                if !seen_names.contains(name) {
-                    return Err(ManifestError::UnknownParam {
-                        pack_id,
-                        code: rule.code.clone(),
-                        name: name.clone(),
-                    });
-                }
-            }
-
-            let source_level = rule.source_level.unwrap_or(manifest.source_level);
-            let doc = rule.doc.clone().or_else(|| manifest.docs.clone());
-            require_citation(&pack_id, &rule.code, source_level, doc.as_deref())?;
-
-            let regex = match &rule.assertion {
-                Assertion::ForbidValuePattern { pattern, .. } => {
-                    Some(compile_regex(&pack_id, pattern)?)
-                }
-                _ => None,
-            };
-
-            rules.push(CompiledRule {
-                rule: rule.clone(),
-                regex,
-                doc,
-                source_level,
-            });
-        }
+        };
 
         Ok(Self {
             metadata: RulePackMetadata {
@@ -507,6 +687,7 @@ impl ManifestRulePack {
             matcher: manifest.matcher.clone(),
             params,
             rules,
+            body,
         })
     }
 
@@ -542,10 +723,33 @@ impl ManifestRulePack {
                     | ArtifactKind::ServerPostback
                     | ArtifactKind::NetworkRequest
                     | ArtifactKind::Unknown
-            );
+            ) || (kind == ArtifactKind::JsonPayload && self.body.is_some());
         }
 
         self.matcher.artifact_kinds.contains(&kind)
+    }
+
+    /// Whether this artifact should be read as a JSON body rather than a URL.
+    /// An explicit `json` kind says so outright; an unstated kind is treated as
+    /// a body when it opens like one and the pack has body contracts to apply.
+    fn reads_as_body(&self, kind: ArtifactKind, artifact: &str) -> bool {
+        if self.body.is_none() {
+            return false;
+        }
+
+        kind == ArtifactKind::JsonPayload
+            || (kind == ArtifactKind::Unknown && JsonDocument::looks_like_json(artifact))
+    }
+
+    /// Whether the payload has the shape this pack claims. A bare body carries
+    /// no host, so its shape is the only thing that can identify it.
+    fn matches_shape(&self, document: &JsonDocument) -> bool {
+        !self.matcher.json_paths.is_empty()
+            && self
+                .matcher
+                .json_paths
+                .iter()
+                .all(|pattern| document.matches_pattern(pattern))
     }
 
     fn matches_endpoint(&self, artifact: &str) -> bool {
@@ -603,13 +807,28 @@ impl ValidatorPlugin for ManifestRulePack {
     }
 
     fn supports(&self, request: &ValidationRequest) -> bool {
-        self.matches_artifact_kind(request.artifact_kind)
-            && self.matches_endpoint(request.artifact.trim())
+        let artifact = request.artifact.trim();
+
+        if !self.matches_artifact_kind(request.artifact_kind) {
+            return false;
+        }
+
+        if self.reads_as_body(request.artifact_kind, artifact) {
+            return JsonDocument::parse(artifact)
+                .map(|document| self.matches_shape(&document))
+                .unwrap_or(false);
+        }
+
+        self.matches_endpoint(artifact)
     }
 
     fn validate(&self, request: &ValidationRequest) -> ValidationReport {
         let artifact = request.artifact.trim();
         let mut violations = Vec::new();
+
+        if self.reads_as_body(request.artifact_kind, artifact) {
+            return self.validate_body(request, artifact);
+        }
 
         if !self.matches_endpoint(artifact) {
             violations.push(Violation {
@@ -641,12 +860,19 @@ impl ValidatorPlugin for ManifestRulePack {
         let mut params = extract_params(artifact, self.param_style);
         params.extend(self.extract_path_params(artifact));
 
+        let scope = Scope {
+            code_segment: "param",
+            field_prefix: "param".to_string(),
+            fallback: whole_url_target(artifact),
+            body: None,
+        };
+
         for compiled in &self.params {
-            self.check_param(artifact, compiled, &params, &mut violations);
+            self.check_param(&scope, compiled, &params, &mut violations);
         }
 
         for compiled in &self.rules {
-            self.check_rule(artifact, compiled, &params, &mut violations);
+            self.check_rule(&scope, compiled, &params, &mut violations);
         }
 
         if let (Some(claimed), Some(vendor)) = (request.claimed_vendor.as_deref(), self.vendor())
@@ -680,6 +906,116 @@ impl ValidatorPlugin for ManifestRulePack {
 }
 
 impl ManifestRulePack {
+    /// Validates a JSON request body.
+    ///
+    /// The contracts are written against one element of the batch, so the body
+    /// is evaluated once per element: an array of three events that all omit
+    /// `event_name` reports three findings, each pointing at its own event. A
+    /// payload the pack does not recognize is reported the same way a URL that
+    /// misses the endpoint is, since both mean the caller aimed the pack at the
+    /// wrong artifact.
+    fn validate_body(&self, request: &ValidationRequest, artifact: &str) -> ValidationReport {
+        let Some(body) = &self.body else {
+            return ValidationReport {
+                plugin_id: self.metadata.id.clone(),
+                detected_vendor: None,
+                violations: Vec::new(),
+            };
+        };
+
+        // A body that does not parse is the core pack's finding to report, and
+        // it has nothing this pack can contract.
+        let Ok(document) = JsonDocument::parse(artifact) else {
+            return ValidationReport {
+                plugin_id: self.metadata.id.clone(),
+                detected_vendor: None,
+                violations: Vec::new(),
+            };
+        };
+
+        let mut violations = Vec::new();
+
+        if !self.matches_shape(&document) {
+            violations.push(Violation {
+                code: format!("{}.payload_mismatch", self.code_prefix),
+                message: format!(
+                    "{} was requested explicitly, but this payload does not have the shape its endpoint accepts.",
+                    self.metadata.display_name
+                ),
+                severity: Severity::Info,
+                field: None,
+                fix_hint: Some(
+                    "Drop the rulepack selection to let Pixellint pick packs by payload shape."
+                        .to_string(),
+                ),
+                source: RuleSource {
+                    level: RuleSourceLevel::Heuristic,
+                    name: format!("{} payload matcher", self.metadata.display_name),
+                    reference: self.docs.clone(),
+                },
+                targets: Vec::new(),
+            });
+
+            return ValidationReport {
+                plugin_id: self.metadata.id.clone(),
+                detected_vendor: None,
+                violations,
+            };
+        }
+
+        for scope_path in body_scopes(&document, body.scope.as_deref()) {
+            let params = collect_body_params(&document, &scope_path, &body.params);
+            let scope = Scope {
+                code_segment: "body",
+                field_prefix: match scope_path.is_empty() {
+                    true => "body".to_string(),
+                    false => format!("body.{scope_path}"),
+                },
+                fallback: body_target(&document, &scope_path, artifact),
+                body: Some(BodyScope {
+                    document: &document,
+                    path: &scope_path,
+                }),
+            };
+
+            for compiled in &body.params {
+                self.check_param(&scope, compiled, &params, &mut violations);
+            }
+
+            for compiled in &body.rules {
+                self.check_rule(&scope, compiled, &params, &mut violations);
+            }
+        }
+
+        if let (Some(claimed), Some(vendor)) = (request.claimed_vendor.as_deref(), self.vendor())
+            && !claimed.eq_ignore_ascii_case(vendor)
+        {
+            violations.push(Violation {
+                code: format!("{}.claimed_vendor_mismatch", self.code_prefix),
+                message: format!(
+                    "Artifact was submitted as `{claimed}` but is a {vendor} payload."
+                ),
+                severity: Severity::Info,
+                field: None,
+                fix_hint: Some(format!(
+                    "Set claimed_vendor to `{vendor}` or check that the payload is the intended one."
+                )),
+                source: RuleSource {
+                    level: RuleSourceLevel::Heuristic,
+                    name: format!("{} payload matcher", self.metadata.display_name),
+                    reference: self.docs.clone(),
+                },
+                targets: Vec::new(),
+            });
+        }
+
+        ValidationReport {
+            plugin_id: self.metadata.id.clone(),
+            detected_vendor: self.vendor.clone(),
+            violations,
+        }
+    }
+
     /// Pulls named captures out of the path so an identifier carried there can
     /// be contracted like any query parameter.
     fn extract_path_params(&self, artifact: &str) -> Vec<RawParam> {
@@ -699,12 +1035,12 @@ impl ManifestRulePack {
             .filter_map(|name| {
                 let capture = captures.name(name)?;
 
-                Some(RawParam {
-                    name: name.to_string(),
-                    value: percent_decode(capture.as_str()),
-                    start: path_start + capture.start(),
-                    end: path_start + capture.end(),
-                })
+                Some(RawParam::query(
+                    name.to_string(),
+                    percent_decode(capture.as_str()),
+                    path_start + capture.start(),
+                    path_start + capture.end(),
+                ))
             })
             .collect()
     }
@@ -719,7 +1055,7 @@ impl ManifestRulePack {
 
     fn check_param(
         &self,
-        artifact: &str,
+        scope: &Scope,
         compiled: &CompiledParam,
         params: &[RawParam],
         violations: &mut Vec<Violation>,
@@ -729,7 +1065,7 @@ impl ManifestRulePack {
             .iter()
             .filter(|param| compiled.names.iter().any(|name| name == &param.name))
             .collect();
-        let field = format!("param.{}", contract.name);
+        let field = format!("{}.{}", scope.field_prefix, contract.name);
         let source = self.source_for(compiled.source_level, compiled.doc.as_deref());
 
         match contract.requirement {
@@ -744,7 +1080,10 @@ impl ManifestRulePack {
                     );
 
                     violations.push(Violation {
-                        code: format!("{}.param.{}.missing", self.code_prefix, contract.name),
+                        code: format!(
+                            "{}.{}.{}.missing",
+                            self.code_prefix, scope.code_segment, contract.name
+                        ),
                         message: describe(
                             format!(
                                 "`{}` is {} on {} requests but is not present.",
@@ -765,7 +1104,7 @@ impl ManifestRulePack {
                             .clone()
                             .or_else(|| Some(format!("Add the `{}` parameter.", contract.name))),
                         source: source.clone(),
-                        targets: vec![whole_url_target(artifact)],
+                        targets: vec![scope.fallback_for(&contract.name)],
                     });
                     return;
                 }
@@ -773,7 +1112,10 @@ impl ManifestRulePack {
             Requirement::Forbidden => {
                 for param in &present {
                     violations.push(Violation {
-                        code: format!("{}.param.{}.forbidden", self.code_prefix, contract.name),
+                        code: format!(
+                            "{}.{}.{}.forbidden",
+                            self.code_prefix, scope.code_segment, contract.name
+                        ),
                         message: describe(
                             format!(
                                 "`{}` must not be sent to {}.",
@@ -796,7 +1138,10 @@ impl ManifestRulePack {
             Requirement::Deprecated => {
                 for param in &present {
                     violations.push(Violation {
-                        code: format!("{}.param.{}.deprecated", self.code_prefix, contract.name),
+                        code: format!(
+                            "{}.{}.{}.deprecated",
+                            self.code_prefix, scope.code_segment, contract.name
+                        ),
                         message: describe(
                             format!(
                                 "`{}` is deprecated by {}.",
@@ -818,7 +1163,10 @@ impl ManifestRulePack {
         for param in present {
             if param.value.is_empty() {
                 violations.push(Violation {
-                    code: format!("{}.param.{}.empty", self.code_prefix, contract.name),
+                    code: format!(
+                        "{}.{}.{}.empty",
+                        self.code_prefix, scope.code_segment, contract.name
+                    ),
                     message: format!("`{}` is present but has an empty value.", param.name),
                     severity: contract.severity.unwrap_or(match contract.requirement {
                         Requirement::Required => Severity::Error,
@@ -842,13 +1190,23 @@ impl ManifestRulePack {
                 continue;
             }
 
+            // A value format describes a scalar. When the same field is also
+            // accepted as a list, the list itself is checked element by element
+            // by the contract written for it.
+            if param.container {
+                continue;
+            }
+
             let Some(format) = &contract.format else {
                 continue;
             };
 
             if let Some(reason) = format_violation(format, compiled.regex.as_ref(), &param.value) {
                 violations.push(Violation {
-                    code: format!("{}.param.{}.invalid", self.code_prefix, contract.name),
+                    code: format!(
+                        "{}.{}.{}.invalid",
+                        self.code_prefix, scope.code_segment, contract.name
+                    ),
                     message: describe(
                         format!("`{}` {reason}", param.name),
                         contract.description.as_deref(),
@@ -868,7 +1226,7 @@ impl ManifestRulePack {
 
     fn check_rule(
         &self,
-        artifact: &str,
+        scope: &Scope,
         compiled: &CompiledRule,
         params: &[RawParam],
         violations: &mut Vec<Violation>,
@@ -882,7 +1240,7 @@ impl ManifestRulePack {
                 if names.iter().any(|name| present(name)) {
                     (false, Vec::new())
                 } else {
-                    (true, vec![whole_url_target(artifact)])
+                    (true, vec![scope.fallback.clone()])
                 }
             }
             Assertion::MutuallyExclusive { params: names } => {
@@ -903,7 +1261,7 @@ impl ManifestRulePack {
                         .iter()
                         .find(|param| &param.name == when)
                         .map(RawParam::target)
-                        .unwrap_or_else(|| whole_url_target(artifact));
+                        .unwrap_or_else(|| scope.fallback_for(when));
                     (true, vec![target])
                 } else {
                     (false, Vec::new())
@@ -925,7 +1283,7 @@ impl ManifestRulePack {
                         .iter()
                         .find(|param| &param.name == when)
                         .map(RawParam::target)
-                        .unwrap_or_else(|| whole_url_target(artifact));
+                        .unwrap_or_else(|| scope.fallback_for(when));
                     (true, vec![target])
                 } else {
                     (false, Vec::new())
@@ -1132,17 +1490,123 @@ pub(crate) struct RawParam {
     pub(crate) value: String,
     pub(crate) start: usize,
     pub(crate) end: usize,
+    /// Where the value was carried, so a finding about a body field is not
+    /// reported as if it were a query parameter.
+    pub(crate) component: ViolationTargetComponent,
+    /// The concrete location for a body field, such as `data[1].event_name`.
+    /// Query parameters have no need for it and leave it empty.
+    pub(crate) location: Option<String>,
+    /// Whether the value is an object or an array. Vendors accept several of
+    /// these fields as either a scalar or a list of them, so a value contract
+    /// written for the scalar form must not fire on the list.
+    pub(crate) container: bool,
 }
 
 impl RawParam {
+    /// A query parameter, the common case.
+    pub(crate) fn query(name: String, value: String, start: usize, end: usize) -> Self {
+        Self {
+            name,
+            value,
+            start,
+            end,
+            component: ViolationTargetComponent::QueryParam,
+            location: None,
+            container: false,
+        }
+    }
+
     pub(crate) fn target(&self) -> ViolationTarget {
         ViolationTarget {
-            component: ViolationTargetComponent::QueryParam,
-            name: Some(self.name.clone()),
+            component: self.component,
+            name: Some(self.location.clone().unwrap_or_else(|| self.name.clone())),
             value: Some(self.value.clone()),
             start: self.start,
             end: self.end,
         }
+    }
+}
+
+/// The concrete scopes a body spec evaluates over: one per element of the batch
+/// array, or a single empty scope covering the whole document when the endpoint
+/// takes one event per request.
+fn body_scopes(document: &JsonDocument, scope: Option<&str>) -> Vec<String> {
+    match scope {
+        Some(pattern) => document.expand(pattern),
+        None => vec![String::new()],
+    }
+}
+
+/// Reads one scope's contracted fields out of the document.
+///
+/// Each contract name is a path relative to the scope, so `user_data.em[]`
+/// under `data[1]` reads `data[1].user_data.em[0]` and up. Every hit keeps the
+/// contract's own name so the existing checkers match it, and carries its
+/// concrete path along for the finding.
+fn collect_body_params(
+    document: &JsonDocument,
+    scope: &str,
+    contracts: &[CompiledParam],
+) -> Vec<RawParam> {
+    let mut params = Vec::new();
+
+    for compiled in contracts {
+        for name in &compiled.names {
+            let pattern = match scope.is_empty() {
+                true => name.clone(),
+                false => format!("{scope}.{name}"),
+            };
+
+            for path in document.expand(&pattern) {
+                let Some(field) = document.get(&path) else {
+                    continue;
+                };
+
+                // Containers have no text of their own. Standing in the label
+                // keeps a populated object from being reported as empty, while
+                // an empty one still is.
+                let value = match (field.kind, field.is_blank()) {
+                    (_, true) => String::new(),
+                    (JsonValueKind::Object | JsonValueKind::Array, false) => {
+                        field.kind.label().to_string()
+                    }
+                    _ => field.text.clone(),
+                };
+
+                params.push(RawParam {
+                    name: name.clone(),
+                    value,
+                    start: field.start,
+                    end: field.end,
+                    component: ViolationTargetComponent::BodyField,
+                    location: Some(path),
+                    container: matches!(field.kind, JsonValueKind::Object | JsonValueKind::Array),
+                });
+            }
+        }
+    }
+
+    params
+}
+
+/// Where to point when a body finding has no field of its own to blame: the
+/// enclosing event if there is one, otherwise the whole payload.
+fn body_target(document: &JsonDocument, scope: &str, artifact: &str) -> ViolationTarget {
+    match document.get(scope) {
+        Some(field) => ViolationTarget {
+            component: ViolationTargetComponent::BodyField,
+            name: Some(scope.to_string()),
+            value: None,
+            start: field.start,
+            end: field.end,
+        },
+        None => ViolationTarget {
+            component: ViolationTargetComponent::WholeBody,
+            name: None,
+            value: None,
+            start: 0,
+            end: artifact.len(),
+        },
     }
 }
 
@@ -1231,12 +1695,12 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
                 _ => (name, 0),
             };
 
-            params.push(RawParam {
-                name: percent_decode(name),
-                value: percent_decode(value),
-                start: cursor + name_offset,
-                end: segment_end,
-            });
+            params.push(RawParam::query(
+                percent_decode(name),
+                percent_decode(value),
+                cursor + name_offset,
+                segment_end,
+            ));
         }
 
         if segment_end >= region_end {
@@ -1757,5 +2221,306 @@ mod tests {
         assert_eq!(percent_decode("buyer%40example.com"), "buyer@example.com");
         assert_eq!(percent_decode("a+b"), "a b");
         assert_eq!(percent_decode("100%"), "100%");
+    }
+}
+
+#[cfg(test)]
+mod body_tests {
+    use super::*;
+    use crate::ExpansionState;
+
+    const BODY_MANIFEST: &str = r#"{
+        "id": "vendor/test-api",
+        "display_name": "Test Conversions API",
+        "description": "Fixture pack used by the body loader tests.",
+        "vendor": "test",
+        "source_level": "official_vendor",
+        "docs": "https://example.com/docs",
+        "match": {
+            "hosts": ["api.example.com"],
+            "json_paths": ["data[].event_name"]
+        },
+        "body": {
+            "scope": "data[]",
+            "params": [
+                { "name": "event_name", "requirement": "required" },
+                {
+                    "name": "event_time",
+                    "requirement": "required",
+                    "format": { "kind": "integer", "max_digits": 10 }
+                },
+                { "name": "user_data", "requirement": "required" },
+                {
+                    "name": "user_data.em[]",
+                    "format": { "kind": "regex", "pattern": "^[a-f0-9]{4}$" }
+                },
+                { "name": "custom_data.value" }
+            ],
+            "rules": [
+                {
+                    "code": "vendor.test-api.body.purchase_needs_value",
+                    "kind": "required_when_value",
+                    "when": "event_name",
+                    "equals": ["Purchase"],
+                    "requires": ["custom_data.value"],
+                    "severity": "error",
+                    "message": "A purchase needs a value."
+                }
+            ]
+        }
+    }"#;
+
+    fn body_pack() -> ManifestRulePack {
+        ManifestRulePack::from_json(BODY_MANIFEST).expect("compile body manifest")
+    }
+
+    fn body_request(artifact: &str) -> ValidationRequest {
+        ValidationRequest {
+            artifact_kind: ArtifactKind::JsonPayload,
+            artifact: artifact.to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Unknown,
+        }
+    }
+
+    fn codes(report: &ValidationReport) -> Vec<String> {
+        report
+            .violations
+            .iter()
+            .map(|violation| violation.code.clone())
+            .collect()
+    }
+
+    #[test]
+    fn a_body_pack_claims_a_payload_by_shape() {
+        let pack = body_pack();
+
+        assert!(pack.supports(&body_request(r#"{"data":[{"event_name":"Purchase"}]}"#)));
+        // Same kind, different API: the shape is what keeps packs apart when
+        // there is no host to go by.
+        assert!(!pack.supports(&body_request(r#"{"events":[{"name":"Purchase"}]}"#)));
+        assert!(!pack.supports(&body_request("not json at all")));
+    }
+
+    #[test]
+    fn an_unstated_kind_is_read_as_a_body_when_it_opens_like_one() {
+        let mut request = body_request(r#"{"data":[{"event_name":"Purchase"}]}"#);
+        request.artifact_kind = ArtifactKind::Unknown;
+
+        assert!(body_pack().supports(&request));
+    }
+
+    #[test]
+    fn every_element_of_the_batch_is_checked_on_its_own() {
+        let report = body_pack().validate(&body_request(
+            r#"{"data":[{"event_name":"A"},{"event_name":"B"}]}"#,
+        ));
+
+        // Two events, each missing the same two fields: four findings, not two.
+        assert_eq!(
+            codes(&report),
+            vec![
+                "vendor.test-api.body.event_time.missing",
+                "vendor.test-api.body.user_data.missing",
+                "vendor.test-api.body.event_time.missing",
+                "vendor.test-api.body.user_data.missing",
+            ]
+        );
+    }
+
+    #[test]
+    fn a_finding_points_at_the_bytes_it_is_about() {
+        let artifact =
+            r#"{"data":[{"event_name":"A","event_time":17700000000000,"user_data":{}}]}"#;
+        let report = body_pack().validate(&body_request(artifact));
+
+        let violation = report
+            .violations
+            .iter()
+            .find(|violation| violation.code.ends_with("event_time.invalid"))
+            .expect("the timestamp is reported");
+        let target = &violation.targets[0];
+
+        assert_eq!(target.component, ViolationTargetComponent::BodyField);
+        assert_eq!(target.name.as_deref(), Some("data[0].event_time"));
+        assert_eq!(&artifact[target.start..target.end], "17700000000000");
+    }
+
+    #[test]
+    fn a_missing_field_points_at_the_nearest_thing_that_exists() {
+        let artifact = r#"{"data":[{"event_name":"A","user_data":{"em":["ffff"]}}]}"#;
+        let report = body_pack().validate(&body_request(artifact));
+
+        let violation = report
+            .violations
+            .iter()
+            .find(|violation| violation.code.ends_with("event_time.missing"))
+            .expect("the missing timestamp is reported");
+        let target = &violation.targets[0];
+
+        assert_eq!(target.name.as_deref(), Some("data[0]"));
+        assert!(artifact[target.start..target.end].starts_with('{'));
+    }
+
+    #[test]
+    fn a_missing_container_does_not_cascade() {
+        let report = body_pack().validate(&body_request(
+            r#"{"data":[{"event_name":"A","event_time":1}]}"#,
+        ));
+
+        // `user_data` is absent, so it is reported once. The contract on
+        // `user_data.em[]` underneath it stays quiet.
+        assert_eq!(
+            codes(&report),
+            vec!["vendor.test-api.body.user_data.missing"]
+        );
+    }
+
+    #[test]
+    fn a_scalar_format_does_not_fire_on_the_list_form() {
+        let report = body_pack().validate(&body_request(
+            r#"{"data":[{"event_name":"A","event_time":1,"user_data":{"em":["ffff","zzzz"]}}]}"#,
+        ));
+
+        // The good element passes and the bad one is reported: the array itself
+        // is never measured against a contract written for one value.
+        assert_eq!(
+            codes(&report),
+            vec!["vendor.test-api.body.user_data.em[].invalid"]
+        );
+    }
+
+    #[test]
+    fn cross_field_rules_run_per_element() {
+        let report = body_pack().validate(&body_request(
+            r#"{"data":[
+                {"event_name":"Purchase","event_time":1,"user_data":{"em":["ffff"]},"custom_data":{"value":1}},
+                {"event_name":"Purchase","event_time":1,"user_data":{"em":["ffff"]}}
+            ]}"#,
+        ));
+
+        assert_eq!(
+            codes(&report),
+            vec!["vendor.test-api.body.purchase_needs_value"]
+        );
+    }
+
+    #[test]
+    fn an_empty_batch_claims_nothing() {
+        let pack = body_pack();
+        let request = body_request(r#"{"data":[]}"#);
+
+        // An empty array satisfies no shape, so the pack does not claim the
+        // payload. Forcing it on anyway says so rather than inventing findings
+        // about events that are not there.
+        assert!(!pack.supports(&request));
+        assert_eq!(
+            codes(&pack.validate(&request)),
+            vec!["vendor.test-api.payload_mismatch"]
+        );
+    }
+
+    #[test]
+    fn a_payload_of_the_wrong_shape_is_reported_when_the_pack_is_forced() {
+        let report = body_pack().validate(&body_request(r#"{"events":[{"name":"A"}]}"#));
+
+        assert_eq!(codes(&report), vec!["vendor.test-api.payload_mismatch"]);
+        assert_eq!(report.detected_vendor, None);
+    }
+
+    #[test]
+    fn a_body_that_does_not_parse_is_left_to_the_core_pack() {
+        let report = body_pack().validate(&body_request(r#"{"data":[{"event_name":}]}"#));
+
+        assert!(report.violations.is_empty());
+    }
+
+    #[test]
+    fn a_url_artifact_still_takes_the_url_path() {
+        let pack = body_pack();
+        let request = ValidationRequest {
+            artifact_kind: ArtifactKind::Url,
+            artifact: "https://api.example.com/v1/events".to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Unknown,
+        };
+
+        assert!(pack.supports(&request));
+        assert!(pack.validate(&request).violations.is_empty());
+    }
+
+    #[test]
+    fn a_body_without_a_shape_to_match_is_rejected_at_load() {
+        let manifest = r#"{
+            "id": "vendor/loose",
+            "display_name": "Loose",
+            "description": "Claims every payload it is shown.",
+            "docs": "https://example.com/docs",
+            "match": { "hosts": ["api.example.com"] },
+            "body": { "params": [{ "name": "a" }] }
+        }"#;
+
+        assert!(matches!(
+            ManifestRulePack::from_json(manifest),
+            Err(ManifestError::BodyWithoutShape(_))
+        ));
+    }
+
+    #[test]
+    fn a_shape_with_nothing_to_check_is_rejected_at_load() {
+        let manifest = r#"{
+            "id": "vendor/idle",
+            "display_name": "Idle",
+            "description": "Matches a shape and checks nothing.",
+            "docs": "https://example.com/docs",
+            "match": { "hosts": ["api.example.com"], "json_paths": ["data[].a"] }
+        }"#;
+
+        assert!(matches!(
+            ManifestRulePack::from_json(manifest),
+            Err(ManifestError::ShapeWithoutBody(_))
+        ));
+    }
+
+    #[test]
+    fn a_malformed_path_is_rejected_at_load() {
+        let manifest = r#"{
+            "id": "vendor/typo",
+            "display_name": "Typo",
+            "description": "Has a path that addresses nothing.",
+            "docs": "https://example.com/docs",
+            "match": { "hosts": ["api.example.com"], "json_paths": ["data[]."] },
+            "body": { "params": [{ "name": "a" }] }
+        }"#;
+
+        assert!(matches!(
+            ManifestRulePack::from_json(manifest),
+            Err(ManifestError::InvalidJsonPath { .. })
+        ));
+    }
+
+    #[test]
+    fn url_and_body_may_contract_the_same_name() {
+        let manifest = r#"{
+            "id": "vendor/both",
+            "display_name": "Both",
+            "description": "Accepts the token in either place.",
+            "docs": "https://example.com/docs",
+            "match": { "hosts": ["api.example.com"], "json_paths": ["data[].a"] },
+            "params": [{ "name": "access_token", "requirement": "required" }],
+            "body": {
+                "scope": "data[]",
+                "params": [{ "name": "access_token", "requirement": "required" }]
+            }
+        }"#;
+
+        let pack = ManifestRulePack::from_json(manifest).expect("compiles");
+        let report = pack.validate(&body_request(r#"{"data":[{"a":1}]}"#));
+
+        // Same field name, different carrier, so the codes have to differ.
+        assert_eq!(
+            codes(&report),
+            vec!["vendor.both.body.access_token.missing"]
+        );
     }
 }

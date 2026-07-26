@@ -217,6 +217,7 @@ fn parse_artifact_kind(value: &str) -> ArtifactKind {
         "request" => ArtifactKind::NetworkRequest,
         "vast" => ArtifactKind::VastTracker,
         "postback" => ArtifactKind::ServerPostback,
+        "json" => ArtifactKind::JsonPayload,
         "unknown" => ArtifactKind::Unknown,
         other => panic!("unknown artifact kind in fixture manifest: {other}"),
     }

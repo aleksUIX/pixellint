@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 
 pub mod directory;
+mod json;
 pub mod manifest;
 mod privacy;
 
@@ -96,6 +97,9 @@ pub enum ArtifactKind {
     VastTracker,
     #[serde(rename = "postback")]
     ServerPostback,
+    /// A JSON request body, as the conversion APIs carry their events.
+    #[serde(rename = "json")]
+    JsonPayload,
     Unknown,
 }
 
@@ -155,6 +159,10 @@ pub enum ViolationTargetComponent {
     Path,
     QueryParam,
     Fragment,
+    /// A field inside a JSON request body, named by its path.
+    BodyField,
+    /// The request body as a whole.
+    WholeBody,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -558,6 +566,12 @@ impl ValidatorPlugin for CoreRulePack {
                     validate_url_like_artifact(artifact, request.expansion_state, &mut violations);
                     privacy::apply_privacy_rules(artifact, &mut violations);
                 }
+                ArtifactKind::JsonPayload => validate_json_artifact(artifact, &mut violations),
+                // An unstated kind that opens like a document is read as one, so
+                // a pasted payload still gets its syntax checked.
+                ArtifactKind::Unknown if json::JsonDocument::looks_like_json(artifact) => {
+                    validate_json_artifact(artifact, &mut violations);
+                }
                 _ => {}
             }
         }
@@ -570,6 +584,36 @@ impl ValidatorPlugin for CoreRulePack {
             violations,
         }
     }
+}
+
+/// A body that does not parse cannot be contracted by any vendor pack, so the
+/// syntax error is the whole finding and it is worth saying precisely.
+fn validate_json_artifact(artifact: &str, violations: &mut Vec<Violation>) {
+    let Err(error) = json::JsonDocument::parse(artifact) else {
+        return;
+    };
+
+    violations.push(Violation {
+        code: "core.json.parse_error".to_string(),
+        message: format!("Request body is not valid JSON: {error}."),
+        severity: Severity::Error,
+        field: Some("body".to_string()),
+        fix_hint: Some(
+            "Fix the payload so it parses, then validate it again. Serializers that emit trailing commas or unquoted keys are the usual cause."
+                .to_string(),
+        ),
+        source: RuleSource::normative(
+            "RFC 8259: The JavaScript Object Notation (JSON) Data Interchange Format",
+            "https://www.rfc-editor.org/rfc/rfc8259",
+        ),
+        targets: vec![ViolationTarget {
+            component: ViolationTargetComponent::WholeBody,
+            name: None,
+            value: None,
+            start: error.offset.min(artifact.len()),
+            end: artifact.len(),
+        }],
+    });
 }
 
 fn validate_url_like_artifact(
