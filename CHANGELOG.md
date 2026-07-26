@@ -4,6 +4,29 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.2.0 - 2026-07-26
+
+Coverage release. Twelve rulepacks, up from six.
+
+### Added
+
+- `vendor/google-tag-manager`: container and tag loader requests, covering
+  `gtm.js`, `gtag/js`, and the `ns.html` noscript iframe
+- `vendor/google-analytics-collect`: the browser `/g/collect` transport the
+  Google tag actually uses, including a check that catches Universal Analytics
+  hits still pointed at a dead property
+- `vendor/pinterest`: Pinterest tag requests with the documented event set
+- `vendor/microsoft-uet`: Microsoft Advertising Universal Event Tracking
+- `vendor/reddit`: Reddit Pixel conversion requests
+- `vendor/meta-conversions-api`: the Graph API events edge, including a warning
+  when `test_event_code` reaches live traffic and a raw-email guard
+- `vendor/snapchat`: Snapchat Conversions API events endpoint
+
+### Changed
+
+- The CLI rulepack listing test now derives its expectations from the built-in
+  pack list, so adding a pack cannot leave a stale assertion behind
+
 ## 0.1.0 - 2026-07-25
 
 First release.

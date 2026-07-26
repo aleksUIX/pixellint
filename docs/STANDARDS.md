@@ -84,6 +84,99 @@ on the path as semicolon-delimited pairs. Level: `official_vendor`.
 
 Source: [Floodlight tag structure](https://support.google.com/campaignmanager/answer/2823425).
 
+## `vendor/meta-conversions-api`
+
+Server-side events posted to the Graph API events edge. Level:
+`official_vendor`.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `access_token` | Required | `vendor.meta-conversions-api.param.access_token.missing`, `.empty` |
+| `test_event_code` | Warns when present, since it diverts events to the test tool | `vendor.meta-conversions-api.testing.test_event_code_present` |
+| Unhashed PII | No query parameter carries a raw email address | `vendor.meta-conversions-api.pii.unhashed_email` |
+
+Source: [using the API](https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api),
+[customer information parameters](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters).
+
+## `vendor/google-tag-manager`
+
+Container and tag loader requests on `googletagmanager.com`: `gtm.js`,
+`gtag/js`, and the `ns.html` noscript iframe. Level: `official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `id` | Required. An unrecognized product prefix warns, because the prefix set is observed rather than published | `vendor.google-tag-manager.param.id.missing`, `.empty`, `.invalid` |
+| `l` | When present, not empty | `vendor.google-tag-manager.param.l.empty` |
+
+Sources: [install a web container](https://support.google.com/tagmanager/answer/14847097),
+[install gtag.js](https://developers.google.com/tag-platform/gtagjs/install).
+
+## `vendor/google-analytics-collect`
+
+The `/g/collect` transport the Google tag uses in the browser. Level:
+`ecosystem_reference`, because Google documents the tag and the Measurement
+Protocol but not this request format.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `v` | Required. A value other than `2` warns, since `v=1` is Universal Analytics | `vendor.google-analytics-collect.param.v.missing`, `.empty`, `.invalid` |
+| `tid` | Required. A non `G-` value warns, which is what a stale Universal Analytics property looks like | `vendor.google-analytics-collect.param.tid.missing`, `.empty`, `.invalid` |
+| `cid` | Required client ID | `vendor.google-analytics-collect.param.cid.missing`, `.empty` |
+| `en` | Expected event name | `vendor.google-analytics-collect.param.en.missing`, `.empty` |
+
+Source: [GA4 collection](https://developers.google.com/analytics/devguides/collection/ga4).
+
+## `vendor/pinterest`
+
+Pinterest tag requests on `ct.pinterest.com`, including the noscript image.
+Level: `official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `tid` | Required tag ID | `vendor.pinterest.param.tid.missing`, `.empty` |
+| `event` | When present, one of the documented events. Custom names warn rather than error | `vendor.pinterest.param.event.invalid`, `.empty` |
+| `noscript` | When present, `0` or `1` | `vendor.pinterest.param.noscript.invalid` |
+
+Source: [Pinterest tag](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/).
+
+## `vendor/snapchat`
+
+Snapchat Conversions API events requests on `tr.snapchat.com`. Level:
+`official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `access_token` | Required | `vendor.snapchat.param.access_token.missing`, `.empty` |
+
+Source: [using the API](https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI).
+
+## `vendor/microsoft-uet`
+
+Universal Event Tracking requests on `bat.bing.com` and `bat.bing.net`. Level:
+`ecosystem_reference`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `ti` | Required numeric tag ID | `vendor.microsoft-uet.param.ti.missing`, `.empty`, `.invalid` |
+| `Ver` | When present, numeric | `vendor.microsoft-uet.param.Ver.invalid`, `.empty` |
+| `evt` | When present, not empty | `vendor.microsoft-uet.param.evt.empty` |
+
+Source: [Universal Event Tracking](https://learn.microsoft.com/en-us/advertising/guides/universal-event-tracking).
+
+Microsoft documents how to create and install a UET tag, not the request
+format, which is why this pack is ecosystem evidence.
+
+## `vendor/reddit`
+
+Reddit Pixel requests on `alb.reddit.com`. Level: `ecosystem_reference`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `id` | Required advertiser ID | `vendor.reddit.param.id.missing`, `.empty` |
+| `event` | Expected event name | `vendor.reddit.param.event.missing`, `.empty` |
+
+Source: [verify the Reddit Pixel](https://business.reddithelp.com/en/categories/measurement/verify-reddit-pixel).
+
 ## `vendor/tiktok`
 
 TikTok Pixel loader and collection requests on `analytics.tiktok.com`. Level:

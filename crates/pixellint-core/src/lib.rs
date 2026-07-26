@@ -28,10 +28,38 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/google-analytics.json"),
     ),
     (
+        "vendor/google-analytics-collect",
+        include_str!("../rulepacks/vendor/google-analytics-collect.json"),
+    ),
+    (
+        "vendor/google-tag-manager",
+        include_str!("../rulepacks/vendor/google-tag-manager.json"),
+    ),
+    (
         "vendor/linkedin",
         include_str!("../rulepacks/vendor/linkedin.json"),
     ),
     ("vendor/meta", include_str!("../rulepacks/vendor/meta.json")),
+    (
+        "vendor/meta-conversions-api",
+        include_str!("../rulepacks/vendor/meta-conversions-api.json"),
+    ),
+    (
+        "vendor/microsoft-uet",
+        include_str!("../rulepacks/vendor/microsoft-uet.json"),
+    ),
+    (
+        "vendor/pinterest",
+        include_str!("../rulepacks/vendor/pinterest.json"),
+    ),
+    (
+        "vendor/reddit",
+        include_str!("../rulepacks/vendor/reddit.json"),
+    ),
+    (
+        "vendor/snapchat",
+        include_str!("../rulepacks/vendor/snapchat.json"),
+    ),
     (
         "vendor/tiktok",
         include_str!("../rulepacks/vendor/tiktok.json"),

@@ -1,0 +1,48 @@
+{
+  "id": "vendor/google-analytics-collect",
+  "display_name": "Google Analytics 4 gtag collect",
+  "description": "Browser collection requests the Google tag sends to the GA4 /g/collect transport.",
+  "vendor": "google",
+  "source_level": "ecosystem_reference",
+  "docs": "https://developers.google.com/analytics/devguides/collection/ga4",
+  "match": {
+    "host_suffixes": ["google-analytics.com"],
+    "hosts": ["analytics.google.com"],
+    "path_prefixes": ["/g/collect", "/debug/g/collect"]
+  },
+  "params": [
+    {
+      "name": "v",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["2"] },
+      "format_severity": "warning",
+      "description": "GA4 collection uses protocol version 2. Version 1 is Universal Analytics, which stopped processing data.",
+      "fix_hint": "Send `v=2` from a Google tag configured for a GA4 property.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+    },
+    {
+      "name": "tid",
+      "requirement": "required",
+      "format": { "kind": "regex", "pattern": "^G-[A-Za-z0-9]+$" },
+      "format_severity": "warning",
+      "description": "It is the GA4 measurement ID, which starts with `G-`. A `UA-` value here is a Universal Analytics property that no longer collects data.",
+      "fix_hint": "Point the tag at a GA4 measurement ID.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+    },
+    {
+      "name": "cid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the client ID that ties events to one browser. Without it, hits cannot be attributed to a session.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+    },
+    {
+      "name": "en",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the event name.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+    }
+  ],
+  "rules": []
+}

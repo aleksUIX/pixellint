@@ -222,19 +222,16 @@ fn list_rulepacks_reports_every_builtin_pack() {
     let (code, stdout, _) = run(&["list-rulepacks"]);
     assert_eq!(code, 0);
 
-    for id in [
-        "core",
-        "vendor/floodlight",
-        "vendor/google-analytics",
-        "vendor/linkedin",
-        "vendor/meta",
-        "vendor/tiktok",
-    ] {
+    assert!(stdout.contains("core"), "{stdout}");
+    for (id, _) in pixellint_core::BUILTIN_VENDOR_MANIFESTS {
         assert!(stdout.contains(id), "missing {id} in {stdout}");
     }
 
     let (code, stdout, _) = run(&["list-rulepacks", "--json"]);
     assert_eq!(code, 0);
     let packs: serde_json::Value = serde_json::from_str(&stdout).expect("parse json");
-    assert_eq!(packs.as_array().expect("array").len(), 6);
+    assert_eq!(
+        packs.as_array().expect("array").len(),
+        pixellint_core::BUILTIN_VENDOR_MANIFESTS.len() + 1
+    );
 }

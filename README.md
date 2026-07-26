@@ -113,10 +113,17 @@ nothing fires on an endpoint it does not understand.
 | --- | --- | --- |
 | `core` | URL validity, transport, credentials, fragments, ad-tech macro handling | normative |
 | `vendor/meta` | `facebook.com/tr` pixel requests | official vendor |
+| `vendor/meta-conversions-api` | Graph API events edge for server-side events | official vendor |
 | `vendor/google-analytics` | GA4 Measurement Protocol collection endpoints | official vendor |
+| `vendor/google-analytics-collect` | The `/g/collect` transport the Google tag uses in the browser | ecosystem reference |
+| `vendor/google-tag-manager` | `gtm.js`, `gtag/js`, and `ns.html` loader requests | official vendor |
 | `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
+| `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
+| `vendor/snapchat` | Snapchat Conversions API events endpoint | official vendor |
 | `vendor/tiktok` | TikTok Pixel loader and collection requests | ecosystem reference |
 | `vendor/linkedin` | LinkedIn conversion image pixels | ecosystem reference |
+| `vendor/microsoft-uet` | Microsoft Advertising Universal Event Tracking | ecosystem reference |
+| `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
 
 Select packs per run:
 

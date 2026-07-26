@@ -1,0 +1,73 @@
+{
+  "id": "vendor/pinterest",
+  "display_name": "Pinterest Tag",
+  "description": "Pinterest conversion tag requests to ct.pinterest.com, including the noscript image fallback.",
+  "vendor": "pinterest",
+  "source_level": "official_vendor",
+  "docs": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/",
+  "match": {
+    "hosts": [
+      "ct.pinterest.com"
+    ],
+    "path_prefixes": [
+      "/v3"
+    ]
+  },
+  "params": [
+    {
+      "name": "tid",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the Pinterest conversion tag ID.",
+      "fix_hint": "Copy the tag ID from Ads Manager into `tid`.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    },
+    {
+      "name": "event",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "init",
+          "pagevisit",
+          "checkout",
+          "addtocart",
+          "signup",
+          "lead",
+          "search",
+          "viewcategory",
+          "watchvideo",
+          "addtowishlist",
+          "initiateCheckout",
+          "addpaymentinfo",
+          "contact",
+          "customizeproduct",
+          "findlocation",
+          "schedule",
+          "starttrial",
+          "subscribe",
+          "submitapplication",
+          "custom"
+        ]
+      },
+      "format_severity": "warning",
+      "description": "The base code omits it; event code sends one. Custom event names are allowed, so check that an unrecognized value is deliberate and not a misspelled standard event.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    },
+    {
+      "name": "noscript",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "format_severity": "warning",
+      "description": "The image fallback in the base code sends `noscript=1`.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    }
+  ],
+  "rules": []
+}

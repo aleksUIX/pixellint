@@ -1,0 +1,60 @@
+{
+  "id": "vendor/meta-conversions-api",
+  "display_name": "Meta Conversions API",
+  "description": "Server-side event requests to the Meta Conversions API events edge on the Graph API.",
+  "vendor": "meta",
+  "source_level": "official_vendor",
+  "docs": "https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api",
+  "match": {
+    "host_suffixes": [
+      "graph.facebook.com"
+    ],
+    "path_contains": [
+      "/events"
+    ]
+  },
+  "params": [
+    {
+      "name": "access_token",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The events edge authenticates with an access token on the request.",
+      "fix_hint": "Send a system user access token, and keep it server-side.",
+      "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api"
+    },
+    {
+      "name": "test_event_code",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It routes events to the Events Manager test tool instead of production reporting, so it should not appear on live traffic.",
+      "fix_hint": "Drop `test_event_code` outside of testing.",
+      "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.meta-conversions-api.pii.unhashed_email",
+      "kind": "forbid_value_pattern",
+      "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+      "severity": "error",
+      "message": "A query parameter carries what looks like a raw email address. Conversions API customer information must be normalized and SHA-256 hashed.",
+      "fix_hint": "Hash the value with SHA-256 and send it in the event payload rather than on the URL.",
+      "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters"
+    },
+    {
+      "code": "vendor.meta-conversions-api.testing.test_event_code_present",
+      "kind": "forbid_value_pattern",
+      "pattern": ".",
+      "params": [
+        "test_event_code"
+      ],
+      "severity": "warning",
+      "message": "The request carries `test_event_code`, which routes events to the Events Manager test tool instead of production reporting.",
+      "fix_hint": "Drop `test_event_code` before this runs against live traffic.",
+      "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api"
+    }
+  ]
+}

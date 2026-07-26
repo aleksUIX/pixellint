@@ -1,0 +1,33 @@
+{
+  "id": "vendor/google-tag-manager",
+  "display_name": "Google Tag Manager and gtag.js",
+  "description": "Container and tag loader requests to googletagmanager.com: gtm.js, gtag/js, and the ns.html noscript iframe.",
+  "vendor": "google",
+  "source_level": "official_vendor",
+  "docs": "https://support.google.com/tagmanager/answer/14847097",
+  "match": {
+    "host_suffixes": ["googletagmanager.com"],
+    "path_prefixes": ["/gtm.js", "/gtag/js", "/ns.html"]
+  },
+  "params": [
+    {
+      "name": "id",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(GTM|G|AW|DC|GT|MC)-[A-Za-z0-9]+$"
+      },
+      "format_severity": "warning",
+      "description": "Container and tag IDs carry a product prefix: GTM for a container, G for Analytics, AW for Google Ads, DC for Floodlight. The prefix set is observed rather than published, so an unrecognized prefix is only a warning.",
+      "fix_hint": "Use the container or tag ID from the install snippet.",
+      "doc": "https://support.google.com/tagmanager/answer/14847097"
+    },
+    {
+      "name": "l",
+      "format": { "kind": "non_empty" },
+      "description": "It names a custom data layer variable and is omitted when the default `dataLayer` is used.",
+      "doc": "https://support.google.com/tagmanager/answer/14847097"
+    }
+  ],
+  "rules": []
+}

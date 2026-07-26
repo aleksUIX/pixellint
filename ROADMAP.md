@@ -13,8 +13,11 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - Declarative rulepack manifests: host and path matchers, parameter contracts,
   value formats, cross-parameter rules, and load-time validation including a
   citation requirement for vendor-documented rules
-- Five first-party vendor packs: Meta Pixel, GA4 Measurement Protocol,
-  Campaign Manager Floodlight, TikTok Pixel, LinkedIn image pixel
+- Eleven first-party vendor packs: Meta Pixel and Conversions API, GA4
+  Measurement Protocol and the browser `/g/collect` transport, Google Tag
+  Manager and gtag.js, Campaign Manager Floodlight, Pinterest, Snapchat
+  Conversions API, TikTok Pixel, LinkedIn image pixel, Microsoft UET, and the
+  Reddit Pixel
 - Custom rulepacks from disk, the same format the first-party packs use
 - CLI with JSON output, stdin and file input, rulepack selection, and CI-ready
   exit codes
@@ -22,10 +25,13 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 
 ## Next
 
-- More endpoint families: Google Ads conversion pixels, the `g/collect` gtag
-  transport, Snap, Reddit, Pinterest, X
 - Consent and privacy signal checks where vendors document them: `gdpr`,
-  `gdpr_consent`, `npa`, `us_privacy`, GPP
+  `gdpr_consent`, `npa`, `us_privacy`, GPP. This needs a conditional rule kind,
+  since a signal's requirement depends on another parameter's value
+- Parameters carried on the path, which unlocks Google Ads conversion pixels
+  (`/pagead/conversion/<id>/`) and Adobe Analytics (`/b/ss/<rsid>/...`)
+- More endpoint families: X, Criteo, Taboola, Outbrain, Amazon Ads. Each is
+  blocked on finding a published parameter contract rather than on engineering
 - Document-level results: the wrapper described in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), so callers
   that extract many artifacts get one coherent report
