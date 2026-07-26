@@ -4,6 +4,23 @@ One-day plan to take Pixellint from local prototype to a published open source r
 
 Target date: 2026-07-25
 
+## Status
+
+Phases 0 through 5 are done except the crates.io publish. The repository is
+public at https://github.com/aleksUIX/pixellint with CI green, and the release
+workflow is wired and waiting on a `CARGO_REGISTRY_TOKEN` repository secret.
+Tagging `v0.1.0` after that secret exists publishes `pixellint-core`,
+`pixellint`, and `pixellint-mcp` and cuts the GitHub release.
+
+Delivered beyond the original plan: a second Google pack, because Floodlight
+and the GA4 Measurement Protocol have materially different wire formats;
+`--rulepack-file` for custom packs; a rulepack schema reference; and
+integration tests that drive the real CLI and MCP binaries.
+
+Two defects surfaced and were fixed on the way: the MCP server framed messages
+LSP-style with `Content-Length` headers, which no MCP client sends, and the
+`core` pack echoed the caller's claimed vendor as if it had detected one.
+
 ## Definition Of Done
 
 0.1.0 is release ready when all of these are true:
