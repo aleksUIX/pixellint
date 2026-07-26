@@ -37,6 +37,32 @@ Macro rules recognize `[NAME]`, `${NAME}`, and `{{NAME}}`, the three syntaxes
 in common ad-tech use. They are deliberately generic: per-vendor macro
 vocabularies belong in vendor packs.
 
+### Consent and privacy signals
+
+IAB Tech Lab specifies these parameters, every party in the chain is expected to
+carry them, and the failure modes do not vary by vendor, so they are `core`
+rules rather than vendor ones. They are read from the query string and from
+Floodlight-style path parameters.
+
+| Standard | Enforced | Rule ids | Level |
+| --- | --- | --- | --- |
+| [TCF v2](https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework/blob/master/TCFv2/IAB%20Tech%20Lab%20-%20Consent%20string%20and%20vendor%20list%20formats%20v2.md) | `gdpr` is `0` or `1` | `core.privacy.gdpr_invalid` | normative |
+| TCF v2 | `gdpr=1` is accompanied by a TC String | `core.privacy.gdpr_consent_missing` | normative |
+| TCF v2 | A TC String without a `gdpr` flag leaves the callee guessing | `core.privacy.gdpr_consent_without_flag` | normative |
+| TCF v2 | A TC String is only meaningful when `gdpr=1` | `core.privacy.gdpr_consent_ignored` | normative |
+| TCF v2 | The TC String is URL-safe base64 | `core.privacy.gdpr_consent_malformed` | normative |
+| [US Privacy](https://github.com/InteractiveAdvertisingBureau/USPrivacy/blob/master/CCPA/US%20Privacy%20String.md) | The string is a version digit and three `Y`, `N`, or `-` characters | `core.privacy.us_privacy_malformed` | normative |
+| US Privacy | The signal was deprecated on 31 January 2024 in favor of GPP | `core.privacy.us_privacy_deprecated` | normative |
+| [GPP](https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md) | The GPP string is URL-safe base64 with `~` between sections | `core.privacy.gpp_malformed` | normative |
+| GPP | `gpp` is accompanied by the section IDs in force | `core.privacy.gpp_sid_missing` | normative |
+| GPP | `gpp_sid` carries one section ID, at most two separated by a comma | `core.privacy.gpp_sid_malformed` | normative |
+| TCF v2, GPP | Each signal appears only once in a URL | `core.privacy.duplicate_signal` | normative |
+
+Two deliberate exemptions keep these rules quiet where trafficking is correct:
+a value carrying an unexpanded macro is the macro rules' business, and an empty
+value is an unfilled template slot, which is how Floodlight and VAST tags ship
+before an ad server populates them.
+
 ## `vendor/meta`
 
 Meta Pixel browser requests to `facebook.com/tr`. Level: `official_vendor`.
@@ -46,11 +72,16 @@ Meta Pixel browser requests to `facebook.com/tr`. Level: `official_vendor`.
 | `id` | Required, numeric Pixel ID | `vendor.meta.param.id.missing`, `.empty`, `.invalid` |
 | `ev` | Required. Unrecognized values warn, because custom events are legal | `vendor.meta.param.ev.missing`, `.empty`, `.invalid` |
 | `noscript` | When present, `0` or `1` | `vendor.meta.param.noscript.invalid` |
+| `dpo` | Limited Data Use is enabled with `LDU` | `vendor.meta.param.dpo.invalid` |
+| `dpoco` | `1` for the United States, `0` to let Meta geolocate | `vendor.meta.param.dpoco.invalid` |
+| `dpost` | Numeric state code, or `0` to let Meta geolocate | `vendor.meta.param.dpost.invalid` |
+| Limited Data Use | A country requires a state, otherwise Meta geolocates instead | `vendor.meta.ldu.country_without_state` |
 | Unhashed PII | No parameter carries a raw email address | `vendor.meta.pii.unhashed_email` |
 
 Sources: [pixel base code](https://developers.facebook.com/docs/meta-pixel/get-started),
 [standard events](https://developers.facebook.com/docs/meta-pixel/reference),
-[advanced matching](https://developers.facebook.com/docs/meta-pixel/advanced/advanced-matching).
+[advanced matching](https://developers.facebook.com/docs/meta-pixel/advanced/advanced-matching),
+[data processing options](https://developers.facebook.com/docs/marketing-apis/data-processing-options).
 
 ## `vendor/google-analytics`
 
@@ -231,7 +262,6 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 
 ## Not implemented yet
 
-- Privacy and consent framework enforcement (GDPR signals, GPP, US Privacy)
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling
 - Duplicate or conflicting artifacts across a document
 - Document extraction: Pixellint validates artifacts a caller has already

@@ -4,6 +4,28 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.4.0 - 2026-07-26
+
+Consent and privacy signals.
+
+### Added
+
+- Eleven `core` rules for the IAB consent signals, checked against the specs
+  that define them: TCF v2 `gdpr` and `gdpr_consent` coherence and format, US
+  Privacy string format plus its January 2024 deprecation, GPP string and
+  section id format, and the specs' single-occurrence requirement
+- Signals are read from Floodlight-style path parameters as well as the query
+  string
+- Meta Limited Data Use parameters `dpo`, `dpoco`, and `dpost`, with a rule for
+  Meta's requirement that a country is sent with a state
+- `required_when_value` rule kind for manifests: a requirement that applies only
+  when another parameter carries a given value
+
+### Notes
+
+- Values carrying an unexpanded macro and empty values never trigger a privacy
+  finding. Both are normal in templates that an ad server fills at serve time
+
 ## 0.3.0 - 2026-07-26
 
 ### Added

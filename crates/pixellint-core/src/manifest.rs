@@ -153,6 +153,14 @@ pub enum Assertion {
     MutuallyExclusive { params: Vec<String> },
     /// When `when` is present, every parameter in `requires` must be present.
     RequiredWith { when: String, requires: Vec<String> },
+    /// When `when` carries one of `equals`, every parameter in `requires` must
+    /// be present. This is the shape consent signals take: a flag value decides
+    /// whether the rest of the signal is mandatory.
+    RequiredWhenValue {
+        when: String,
+        equals: Vec<String>,
+        requires: Vec<String>,
+    },
     /// No parameter value may match `pattern`. Empty `params` means every
     /// parameter is checked.
     ForbidValuePattern {
@@ -839,6 +847,28 @@ impl ManifestRulePack {
                     (false, Vec::new())
                 }
             }
+            Assertion::RequiredWhenValue {
+                when,
+                equals,
+                requires,
+            } => {
+                let triggered = params
+                    .iter()
+                    .filter(|param| &param.name == when)
+                    .filter(|param| !contains_macro(&param.value))
+                    .any(|param| equals.contains(&param.value));
+
+                if triggered && !requires.iter().all(|name| present(name)) {
+                    let target = params
+                        .iter()
+                        .find(|param| &param.name == when)
+                        .map(RawParam::target)
+                        .unwrap_or_else(|| whole_url_target(artifact));
+                    (true, vec![target])
+                } else {
+                    (false, Vec::new())
+                }
+            }
             Assertion::ForbidValuePattern {
                 params: names,
                 pattern: _,
@@ -890,7 +920,8 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
         Assertion::RequireOneOf { params } | Assertion::MutuallyExclusive { params } => {
             params.iter().collect()
         }
-        Assertion::RequiredWith { when, requires } => {
+        Assertion::RequiredWith { when, requires }
+        | Assertion::RequiredWhenValue { when, requires, .. } => {
             let mut names = vec![when];
             names.extend(requires.iter());
             names
@@ -1027,22 +1058,22 @@ fn format_violation(format: &ValueFormat, regex: Option<&Regex>, value: &str) ->
     }
 }
 
-fn contains_macro(value: &str) -> bool {
+pub(crate) fn contains_macro(value: &str) -> bool {
     !detect_macro_spans(value).is_empty()
 }
 
 /// A parameter as it appears in the raw artifact, with byte offsets preserved so
 /// findings can point at the exact span.
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct RawParam {
-    name: String,
-    value: String,
-    start: usize,
-    end: usize,
+pub(crate) struct RawParam {
+    pub(crate) name: String,
+    pub(crate) value: String,
+    pub(crate) start: usize,
+    pub(crate) end: usize,
 }
 
 impl RawParam {
-    fn target(&self) -> ViolationTarget {
+    pub(crate) fn target(&self) -> ViolationTarget {
         ViolationTarget {
             component: ViolationTargetComponent::QueryParam,
             name: Some(self.name.clone()),
@@ -1094,7 +1125,7 @@ fn parse_artifact_url(artifact: &str) -> Option<ArtifactUrl> {
 /// Splits the raw artifact into parameters, keeping byte offsets into the
 /// original string. Query style reads `?a=1&b=2`; matrix style reads the
 /// semicolon-delimited pairs Floodlight puts in the path.
-fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam> {
+pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam> {
     let length = artifact.len();
     let fragment_start = artifact.find('#').unwrap_or(length);
     let query_start = artifact[..fragment_start].find('?');
@@ -1446,6 +1477,51 @@ mod tests {
 
         let report = pack.validate(&request("https://px.example.com/collect?id=123"));
         assert_eq!(report.violations[0].severity, Severity::Error);
+    }
+
+    #[test]
+    fn conditional_rules_fire_on_the_triggering_value_only() {
+        let manifest = TEST_MANIFEST.replace(
+            r#"        "rules": ["#,
+            r#"        "rules": [
+            {
+                "code": "vendor.test.consent.state_requires_country",
+                "kind": "required_when_value",
+                "when": "ev",
+                "equals": ["Purchase"],
+                "requires": ["legacy"],
+                "severity": "error",
+                "message": "Purchase events must carry the legacy identifier."
+            },"#,
+        );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile manifest");
+
+        // The trigger value is present and the required parameter is not.
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=Purchase",
+        ));
+        assert_eq!(
+            codes(&report),
+            vec!["vendor.test.consent.state_requires_country"]
+        );
+
+        // Trigger value present, requirement satisfied.
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=Purchase&legacy=1",
+        ));
+        assert_eq!(codes(&report), vec!["vendor.test.param.legacy.deprecated"]);
+
+        // A different value does not trigger the rule.
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=PageView",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        // An unexpanded macro is not a value claim, so it cannot trigger.
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=[EVENT_NAME]",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
     }
 
     #[test]

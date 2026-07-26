@@ -30,9 +30,110 @@
     "expected_codes": []
   },
   {
-    "id": "trimmed-url",
+    "id": "empty-url",
     "kind": "url",
-    "fixture": "trimmed-url.txt",
+    "fixture": "empty-url.txt",
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.input.empty"
+    ]
+  },
+  {
+    "id": "fired-unexpanded-macro",
+    "kind": "url",
+    "fixture": "fired-unexpanded-macro.txt",
+    "expansion_state": "fired",
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.macro.unexpanded_in_fired_url"
+    ]
+  },
+  {
+    "id": "fragment-only",
+    "kind": "url",
+    "fixture": "fragment-only.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.url.fragment_ignored"
+    ]
+  },
+  {
+    "id": "host-macro",
+    "kind": "url",
+    "fixture": "host-macro.txt",
+    "expansion_state": "template",
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.macro.unsafe_position"
+    ]
+  },
+  {
+    "id": "http-fragment",
+    "kind": "url",
+    "fixture": "http-fragment.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 2,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.url.insecure_transport",
+      "core.url.fragment_ignored"
+    ]
+  },
+  {
+    "id": "http-userinfo-fragment",
+    "kind": "url",
+    "fixture": "http-userinfo-fragment.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 3,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.url.insecure_transport",
+      "core.url.userinfo_deprecated",
+      "core.url.fragment_ignored"
+    ]
+  },
+  {
+    "id": "insecure-http",
+    "kind": "url",
+    "fixture": "insecure-http.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.url.insecure_transport"
+    ]
+  },
+  {
+    "id": "invalid-url",
+    "kind": "url",
+    "fixture": "invalid-url.txt",
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.url.invalid"
+    ]
+  },
+  {
+    "id": "ipv6-host",
+    "kind": "url",
+    "fixture": "ipv6-host.txt",
     "expected_ok": true,
     "expected_errors": 0,
     "expected_warnings": 0,
@@ -50,84 +151,16 @@
     "expected_codes": []
   },
   {
-    "id": "ipv6-host",
+    "id": "missing-host-port-only",
     "kind": "url",
-    "fixture": "ipv6-host.txt",
-    "expected_ok": true,
-    "expected_errors": 0,
-    "expected_warnings": 0,
-    "expected_infos": 0,
-    "expected_codes": []
-  },
-  {
-    "id": "insecure-http",
-    "kind": "url",
-    "fixture": "insecure-http.txt",
-    "expected_ok": true,
-    "expected_errors": 0,
-    "expected_warnings": 1,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.insecure_transport"]
-  },
-  {
-    "id": "http-fragment",
-    "kind": "url",
-    "fixture": "http-fragment.txt",
-    "expected_ok": true,
-    "expected_errors": 0,
-    "expected_warnings": 2,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.insecure_transport", "core.url.fragment_ignored"]
-  },
-  {
-    "id": "http-userinfo-fragment",
-    "kind": "url",
-    "fixture": "http-userinfo-fragment.txt",
-    "expected_ok": true,
-    "expected_errors": 0,
-    "expected_warnings": 3,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.insecure_transport", "core.url.userinfo_deprecated", "core.url.fragment_ignored"]
-  },
-  {
-    "id": "empty-url",
-    "kind": "url",
-    "fixture": "empty-url.txt",
+    "fixture": "missing-host-port-only.txt",
     "expected_ok": false,
     "expected_errors": 1,
     "expected_warnings": 0,
     "expected_infos": 0,
-    "expected_codes": ["core.input.empty"]
-  },
-  {
-    "id": "invalid-url",
-    "kind": "url",
-    "fixture": "invalid-url.txt",
-    "expected_ok": false,
-    "expected_errors": 1,
-    "expected_warnings": 0,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.invalid"]
-  },
-  {
-    "id": "unsupported-scheme",
-    "kind": "url",
-    "fixture": "unsupported-scheme.txt",
-    "expected_ok": false,
-    "expected_errors": 1,
-    "expected_warnings": 0,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.unsupported_scheme"]
-  },
-  {
-    "id": "missing-host",
-    "kind": "url",
-    "fixture": "missing-host.txt",
-    "expected_ok": false,
-    "expected_errors": 1,
-    "expected_warnings": 0,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.host_missing"]
+    "expected_codes": [
+      "core.url.host_missing"
+    ]
   },
   {
     "id": "missing-host-query-only",
@@ -137,57 +170,34 @@
     "expected_errors": 1,
     "expected_warnings": 0,
     "expected_infos": 0,
-    "expected_codes": ["core.url.host_missing"]
+    "expected_codes": [
+      "core.url.host_missing"
+    ]
   },
   {
-    "id": "missing-host-port-only",
+    "id": "missing-host",
     "kind": "url",
-    "fixture": "missing-host-port-only.txt",
+    "fixture": "missing-host.txt",
     "expected_ok": false,
     "expected_errors": 1,
     "expected_warnings": 0,
     "expected_infos": 0,
-    "expected_codes": ["core.url.host_missing"]
+    "expected_codes": [
+      "core.url.host_missing"
+    ]
   },
   {
-    "id": "userinfo-only",
+    "id": "mixed-macro-syntax",
     "kind": "url",
-    "fixture": "userinfo-only.txt",
+    "fixture": "mixed-macro-syntax.txt",
+    "expansion_state": "template",
     "expected_ok": true,
     "expected_errors": 0,
     "expected_warnings": 1,
     "expected_infos": 0,
-    "expected_codes": ["core.url.userinfo_deprecated"]
-  },
-  {
-    "id": "fragment-only",
-    "kind": "url",
-    "fixture": "fragment-only.txt",
-    "expected_ok": true,
-    "expected_errors": 0,
-    "expected_warnings": 1,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.fragment_ignored"]
-  },
-  {
-    "id": "userinfo-and-fragment",
-    "kind": "url",
-    "fixture": "userinfo-and-fragment.txt",
-    "expected_ok": true,
-    "expected_errors": 0,
-    "expected_warnings": 2,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.userinfo_deprecated", "core.url.fragment_ignored"]
-  },
-  {
-    "id": "vast-http-fragment",
-    "kind": "vast",
-    "fixture": "vast-http-fragment.txt",
-    "expected_ok": true,
-    "expected_errors": 0,
-    "expected_warnings": 2,
-    "expected_infos": 0,
-    "expected_codes": ["core.url.insecure_transport", "core.url.fragment_ignored"]
+    "expected_codes": [
+      "core.macro.mixed_syntax"
+    ]
   },
   {
     "id": "postback-http",
@@ -197,7 +207,149 @@
     "expected_errors": 0,
     "expected_warnings": 1,
     "expected_infos": 0,
-    "expected_codes": ["core.url.insecure_transport"]
+    "expected_codes": [
+      "core.url.insecure_transport"
+    ]
+  },
+  {
+    "id": "privacy-clean-gpp",
+    "kind": "url",
+    "fixture": "privacy-clean-gpp.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "privacy-clean-tcf",
+    "kind": "url",
+    "fixture": "privacy-clean-tcf.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "privacy-consent-outside-gdpr",
+    "kind": "url",
+    "fixture": "privacy-consent-outside-gdpr.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 1,
+    "expected_codes": [
+      "core.privacy.gdpr_consent_ignored"
+    ]
+  },
+  {
+    "id": "privacy-consent-without-flag",
+    "kind": "url",
+    "fixture": "privacy-consent-without-flag.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.privacy.gdpr_consent_without_flag"
+    ]
+  },
+  {
+    "id": "privacy-duplicate-signal",
+    "kind": "url",
+    "fixture": "privacy-duplicate-signal.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.privacy.duplicate_signal"
+    ]
+  },
+  {
+    "id": "privacy-gdpr-invalid-flag",
+    "kind": "url",
+    "fixture": "privacy-gdpr-invalid-flag.txt",
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.privacy.gdpr_invalid"
+    ]
+  },
+  {
+    "id": "privacy-gdpr-without-consent",
+    "kind": "url",
+    "fixture": "privacy-gdpr-without-consent.txt",
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.privacy.gdpr_consent_missing"
+    ]
+  },
+  {
+    "id": "privacy-gpp-section-id-malformed",
+    "kind": "url",
+    "fixture": "privacy-gpp-section-id-malformed.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.privacy.gpp_sid_malformed"
+    ]
+  },
+  {
+    "id": "privacy-gpp-without-section-id",
+    "kind": "url",
+    "fixture": "privacy-gpp-without-section-id.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.privacy.gpp_sid_missing"
+    ]
+  },
+  {
+    "id": "privacy-macro-template",
+    "kind": "url",
+    "fixture": "privacy-macro-template.txt",
+    "expansion_state": "template",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "privacy-us-privacy-deprecated",
+    "kind": "url",
+    "fixture": "privacy-us-privacy-deprecated.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.privacy.us_privacy_deprecated"
+    ]
+  },
+  {
+    "id": "privacy-us-privacy-malformed",
+    "kind": "url",
+    "fixture": "privacy-us-privacy-malformed.txt",
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.privacy.us_privacy_deprecated",
+      "core.privacy.us_privacy_malformed"
+    ]
   },
   {
     "id": "template-query-macro",
@@ -211,36 +363,63 @@
     "expected_codes": []
   },
   {
-    "id": "fired-unexpanded-macro",
+    "id": "trimmed-url",
     "kind": "url",
-    "fixture": "fired-unexpanded-macro.txt",
-    "expansion_state": "fired",
+    "fixture": "trimmed-url.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "unsupported-scheme",
+    "kind": "url",
+    "fixture": "unsupported-scheme.txt",
     "expected_ok": false,
     "expected_errors": 1,
     "expected_warnings": 0,
     "expected_infos": 0,
-    "expected_codes": ["core.macro.unexpanded_in_fired_url"]
+    "expected_codes": [
+      "core.url.unsupported_scheme"
+    ]
   },
   {
-    "id": "mixed-macro-syntax",
+    "id": "userinfo-and-fragment",
     "kind": "url",
-    "fixture": "mixed-macro-syntax.txt",
-    "expansion_state": "template",
+    "fixture": "userinfo-and-fragment.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 2,
+    "expected_infos": 0,
+    "expected_codes": [
+      "core.url.userinfo_deprecated",
+      "core.url.fragment_ignored"
+    ]
+  },
+  {
+    "id": "userinfo-only",
+    "kind": "url",
+    "fixture": "userinfo-only.txt",
     "expected_ok": true,
     "expected_errors": 0,
     "expected_warnings": 1,
     "expected_infos": 0,
-    "expected_codes": ["core.macro.mixed_syntax"]
+    "expected_codes": [
+      "core.url.userinfo_deprecated"
+    ]
   },
   {
-    "id": "host-macro",
-    "kind": "url",
-    "fixture": "host-macro.txt",
-    "expansion_state": "template",
-    "expected_ok": false,
-    "expected_errors": 1,
-    "expected_warnings": 0,
+    "id": "vast-http-fragment",
+    "kind": "vast",
+    "fixture": "vast-http-fragment.txt",
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 2,
     "expected_infos": 0,
-    "expected_codes": ["core.macro.unsafe_position"]
+    "expected_codes": [
+      "core.url.insecure_transport",
+      "core.url.fragment_ignored"
+    ]
   }
 ]

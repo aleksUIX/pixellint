@@ -9,6 +9,7 @@ use url::Url;
 
 pub mod directory;
 pub mod manifest;
+mod privacy;
 
 pub use directory::{DIRECTORY_ID, DirectoryError, VendorDirectory, VendorEntry};
 pub use manifest::{
@@ -547,6 +548,7 @@ impl ValidatorPlugin for CoreRulePack {
             match request.artifact_kind {
                 ArtifactKind::Url | ArtifactKind::VastTracker | ArtifactKind::ServerPostback => {
                     validate_url_like_artifact(artifact, request.expansion_state, &mut violations);
+                    privacy::apply_privacy_rules(artifact, &mut violations);
                 }
                 _ => {}
             }

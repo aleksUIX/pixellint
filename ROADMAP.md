@@ -20,6 +20,9 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   Reddit Pixel
 - Vendor endpoint directory: 89 vendors and 217 hosts attributed by host, so
   endpoints without a rulepack still get identified
+- Consent and privacy signals against the IAB specs: TCF v2 `gdpr` and
+  `gdpr_consent`, the deprecated US Privacy string, and GPP `gpp` and `gpp_sid`,
+  read from both query and path parameters
 - Custom rulepacks from disk, the same format the first-party packs use
 - CLI with JSON output, stdin and file input, rulepack selection, and CI-ready
   exit codes
@@ -27,9 +30,6 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 
 ## Next
 
-- Consent and privacy signal checks where vendors document them: `gdpr`,
-  `gdpr_consent`, `npa`, `us_privacy`, GPP. This needs a conditional rule kind,
-  since a signal's requirement depends on another parameter's value
 - Parameters carried on the path, which unlocks Google Ads conversion pixels
   (`/pagead/conversion/<id>/`) and Adobe Analytics (`/b/ss/<rsid>/...`)
 - Promote directory entries to full rulepacks as parameter contracts surface:

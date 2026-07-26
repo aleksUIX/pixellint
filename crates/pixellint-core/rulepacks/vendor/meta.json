@@ -6,14 +6,20 @@
   "source_level": "official_vendor",
   "docs": "https://developers.facebook.com/docs/meta-pixel/get-started",
   "match": {
-    "host_suffixes": ["facebook.com"],
-    "path_prefixes": ["/tr"]
+    "host_suffixes": [
+      "facebook.com"
+    ],
+    "path_prefixes": [
+      "/tr"
+    ]
   },
   "params": [
     {
       "name": "id",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric Pixel ID from Events Manager.",
       "fix_hint": "Set `id` to the numeric Pixel ID shown in Events Manager.",
       "doc": "https://developers.facebook.com/docs/meta-pixel/get-started"
@@ -51,10 +57,48 @@
     },
     {
       "name": "noscript",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "format_severity": "warning",
       "description": "The base code sends `noscript=1` from the img fallback.",
       "doc": "https://developers.facebook.com/docs/meta-pixel/get-started"
+    },
+    {
+      "name": "dpo",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "LDU"
+        ]
+      },
+      "format_severity": "warning",
+      "description": "Limited Data Use is enabled by sending `dpo=LDU`.",
+      "doc": "https://developers.facebook.com/docs/marketing-apis/data-processing-options"
+    },
+    {
+      "name": "dpoco",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "description": "It is the country for Limited Data Use: `1` for the United States, `0` to let Meta geolocate.",
+      "doc": "https://developers.facebook.com/docs/marketing-apis/data-processing-options"
+    },
+    {
+      "name": "dpost",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "It is the state code for Limited Data Use, or `0` to let Meta geolocate.",
+      "doc": "https://developers.facebook.com/docs/marketing-apis/data-processing-options"
     }
   ],
   "rules": [
@@ -66,6 +110,18 @@
       "message": "A parameter carries what looks like a raw email address. Meta requires customer information to be normalized and SHA-256 hashed before it is sent.",
       "fix_hint": "Normalize the value, hash it with SHA-256, and send the hex digest instead of the plain address.",
       "doc": "https://developers.facebook.com/docs/meta-pixel/advanced/advanced-matching"
+    },
+    {
+      "code": "vendor.meta.ldu.country_without_state",
+      "kind": "required_with",
+      "when": "dpoco",
+      "requires": [
+        "dpost"
+      ],
+      "severity": "error",
+      "message": "Limited Data Use sends a country without a state. Meta requires both together, otherwise it geolocates the user instead of honoring the values you sent.",
+      "fix_hint": "Send `dpost` alongside `dpoco`, or drop both and let Meta geolocate.",
+      "doc": "https://developers.facebook.com/docs/marketing-apis/data-processing-options"
     }
   ]
 }

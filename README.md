@@ -112,7 +112,7 @@ nothing fires on an endpoint it does not understand.
 
 | Rulepack | Covers | Evidence |
 | --- | --- | --- |
-| `core` | URL validity, transport, credentials, fragments, ad-tech macro handling | normative |
+| `core` | URL validity, transport, credentials, fragments, ad-tech macro handling, IAB consent signals | normative |
 | `vendor/meta` | `facebook.com/tr` pixel requests | official vendor |
 | `vendor/meta-conversions-api` | Graph API events edge for server-side events | official vendor |
 | `vendor/google-analytics` | GA4 Measurement Protocol collection endpoints | official vendor |
@@ -205,7 +205,6 @@ The format is documented in [docs/RULEPACK_SCHEMA.md](docs/RULEPACK_SCHEMA.md).
   planned document-level result model is in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md).
 - It does not fire requests or check whether an endpoint responds.
-- It does not enforce privacy or consent frameworks yet.
 - It does not auto-fix. Findings carry fix hints; applying them is on you.
 
 ## Evidence

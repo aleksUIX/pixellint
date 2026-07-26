@@ -134,6 +134,7 @@ rule names must also appear in `params`.
 | `require_one_of` | `params` | none of the named parameters is present |
 | `mutually_exclusive` | `params` | more than one is present |
 | `required_with` | `when`, `requires` | `when` is present and something in `requires` is not |
+| `required_when_value` | `when`, `equals`, `requires` | `when` carries one of `equals` and something in `requires` is not present. Macro values never trigger it |
 | `forbid_value_pattern` | `pattern`, `params` | a value matches `pattern`. Empty `params` checks every parameter, macro values excluded |
 
 ## What the loader rejects
