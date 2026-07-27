@@ -4,6 +4,19 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.11.0 - 2026-07-26
+
+### Added
+
+- `vendor/segment`, covering the HTTP Tracking API single and batched: the call
+  type enum, a `track` with no event name, a call with neither `userId` nor
+  `anonymousId`, and a timestamp that is not ISO 8601
+
+### Changed
+
+- `vendor/posthog` no longer claims Segment payloads. Both post a root `event`,
+  so each now rules the other out by the keys only it uses
+
 ## 0.10.0 - 2026-07-26
 
 ### Added

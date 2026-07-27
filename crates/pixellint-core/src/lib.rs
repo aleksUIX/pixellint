@@ -96,6 +96,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/reddit.json"),
     ),
     (
+        "vendor/segment",
+        include_str!("../rulepacks/vendor/segment.json"),
+    ),
+    (
         "vendor/snapchat",
         include_str!("../rulepacks/vendor/snapchat.json"),
     ),

@@ -1,0 +1,148 @@
+{
+  "id": "vendor/segment",
+  "display_name": "Segment HTTP Tracking API",
+  "vendor": "segment",
+  "description": "Calls to the Segment HTTP Tracking API, single or batched under `batch`.",
+  "source_level": "official_vendor",
+  "docs": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+  "match": {
+    "host_suffixes": [
+      "api.segment.io",
+      "segmentapis.com"
+    ],
+    "path_contains": [
+      "/v1/"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "writeKey",
+          "userId",
+          "anonymousId",
+          "batch[].type"
+        ]
+      },
+      {
+        "path": "api_key",
+        "excludes": "^.+$"
+      },
+      {
+        "path": "distinct_id",
+        "excludes": "^.+$"
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "writeKey",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the source the data lands in. Segment also accepts it as HTTP basic auth, so it is not required in the body.",
+          "fix_hint": "Send the source write key in the body or as the basic auth username.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "batch[]",
+      "params": [
+        {
+          "name": "type",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "identify",
+              "track",
+              "page",
+              "screen",
+              "group",
+              "alias"
+            ]
+          },
+          "description": "Segment documents that each call in a batch must carry a `type` naming a valid method.",
+          "fix_hint": "Set `type` to one of identify, track, page, screen, group, or alias.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+        },
+        {
+          "name": "event",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the name of the action the user performed, and Segment documents it as required on a track call.",
+          "fix_hint": "Name the event, such as `Item Purchased`.",
+          "doc": "https://segment.com/docs/connections/spec/track/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.segment.body.track_requires_an_event_name",
+          "kind": "required_when_value",
+          "when": "type",
+          "equals": [
+            "track"
+          ],
+          "requires": [
+            "event"
+          ],
+          "severity": "error",
+          "message": "A `track` call carries no `event`. Segment documents the event name as required, and drops the call without it.",
+          "fix_hint": "Add the event name to the call.",
+          "doc": "https://segment.com/docs/connections/spec/track/"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "batch[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "userId",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is your own identifier for the user. Segment documents that a call needs either this or `anonymousId`.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+        },
+        {
+          "name": "anonymousId",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It stands in for a user id when there is none. Segment documents that a call needs either this or `userId`.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+        },
+        {
+          "name": "timestamp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+          },
+          "description": "Segment documents the timestamp as an ISO 8601 date string. Leave it out for events happening now.",
+          "fix_hint": "Send an ISO 8601 timestamp, or omit it and let Segment stamp the call.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.segment.body.call_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "userId",
+            "anonymousId"
+          ],
+          "severity": "error",
+          "message": "The call carries neither `userId` nor `anonymousId`. Segment documents one of the two as required on every call.",
+          "fix_hint": "Send `userId` for a known user, or `anonymousId` for an unidentified one.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+        }
+      ]
+    }
+  ]
+}

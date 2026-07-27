@@ -472,6 +472,35 @@ An object carrying no identifier at all is only reported when something else in
 the payload identifies it as Braze's, since the identifier fields are part of
 what tells this endpoint's payload from another's.
 
+## `vendor/segment`
+
+Calls to the Segment HTTP Tracking API on `api.segment.io` and the regional
+`segmentapis.com` hosts, single or batched under `batch`. Level:
+`official_vendor`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `writeKey` | Flagged when present and empty. Segment also accepts it as basic auth, so it is not required in the body | `vendor.segment.body.writeKey.empty` |
+| `batch[].type` | Required, and one of identify, track, page, screen, group, alias | `vendor.segment.body.type.missing`, `.invalid` |
+| Track calls | A `track` in a batch needs an `event` | `vendor.segment.body.track_requires_an_event_name` |
+| Identity | Every call needs `userId` or `anonymousId` | `vendor.segment.body.call_needs_an_identifier` |
+| `timestamp` | ISO 8601 date string | `vendor.segment.body.timestamp.invalid` |
+
+Source: [HTTP API source](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/),
+[track spec](https://segment.com/docs/connections/spec/track/).
+
+The rendered documentation returns 403 to automated fetches, so the contract was
+read from the source the site is built from, Segment's own published docs
+repository. The citation points at the live page.
+
+A single call carries its type in the URL path rather than the body, so the
+`type` contract is scoped to the batch and stays quiet on a single call.
+
+Segment and PostHog both post a root `event`, and a bare body has no URL to tell
+them apart. Each rules the other out by the keys only it uses: `writeKey`,
+`userId`, and `anonymousId` for Segment, `api_key` and `distinct_id` for
+PostHog.
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a
@@ -494,10 +523,9 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 
 ## Not implemented yet
 
-- Segment's HTTP Tracking API. Its documentation returns 403 to automated
-  fetches, so the contract could not be read
-- HubSpot's events API. The endpoint in the directory is the `__ptq.gif`
-  tracking pixel, which is a URL rather than a payload
+- HubSpot. The endpoint in the directory is the `__ptq.gif` tracking pixel, and
+  HubSpot documents the `_hsq` client-side calls rather than the request that
+  pixel makes, so its parameters have no citable contract
 - TikTok Events API and Pinterest Conversions API payloads. Both endpoints are
   in the directory and both vendors have browser packs, but their request
   schemas are published behind rendered documentation portals that could not be

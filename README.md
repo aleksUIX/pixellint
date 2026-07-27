@@ -161,6 +161,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/posthog` | PostHog capture, single and batched | official vendor |
 | `vendor/klaviyo` | Klaviyo event creation | official vendor |
 | `vendor/braze` | Braze user track: events, purchases, attributes | official vendor |
+| `vendor/segment` | Segment HTTP Tracking API, single and batched | official vendor |
 
 ### Vendor directory
 
