@@ -1,0 +1,231 @@
+{
+  "id": "vendor/pinterest-conversions-api",
+  "display_name": "Pinterest Conversions API",
+  "description": "Server-side conversion events posted to api.pinterest.com/v5/ad_accounts/{ad_account_id}/events.",
+  "vendor": "pinterest",
+  "source_level": "official_vendor",
+  "docs": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+  "path_pattern": "/v5/ad_accounts/(?<ad_account_id>[^/]+)/events",
+  "match": {
+    "hosts": [
+      "api.pinterest.com"
+    ],
+    "path_contains": [
+      "/ad_accounts/",
+      "/events"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "data[].event_name",
+          "data[].event_id"
+        ]
+      },
+      "data[].action_source",
+      {
+        "path": "data[].action_source",
+        "excludes": "^(email|website|app|phone_call|chat|physical_store|system_generated|business_messaging|other|WEB|OFFLINE|MOBILE_APP)$"
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "ad_account_id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the Pinterest ad account ID, and it travels in the path.",
+      "fix_hint": "Put the ad account ID in the path as `/v5/ad_accounts/{ad_account_id}/events`.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+    }
+  ],
+  "rules": [],
+  "body": {
+    "scope": "data[]",
+    "params": [
+      {
+        "name": "event_name",
+        "requirement": "required",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the conversion event name. Pinterest documents a set of standard names and also allows a custom name of up to 100 characters.",
+        "fix_hint": "Send a documented name such as `checkout`, or a custom name mapped to a standard event in Ads Manager.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "action_source",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "app_android",
+            "app_ios",
+            "web",
+            "offline"
+          ]
+        },
+        "description": "It is the platform the event was ingested from. Pinterest documents `web`, `app_android`, `app_ios`, and `offline`.",
+        "fix_hint": "Send `web`, `app_android`, `app_ios`, or `offline`. Pinterest spells `web` in lower case, unlike Snap.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "event_id",
+        "requirement": "required",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It identifies the event for deduplication against the Pinterest tag.",
+        "fix_hint": "Send a stable id per conversion, such as an order number.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "event_time",
+        "requirement": "required",
+        "format": {
+          "kind": "integer",
+          "min_digits": 10,
+          "max_digits": 10
+        },
+        "description": "Pinterest documents a Unix timestamp in seconds. A 13-digit value is milliseconds.",
+        "fix_hint": "Send seconds, not milliseconds: divide a JavaScript `Date.now()` by 1000 and floor it.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data",
+        "requirement": "required",
+        "description": "Pinterest requires a `user_data` object, and it must include at least one of `em`, `hashed_maids`, or an IP and user agent pair.",
+        "fix_hint": "Add `user_data` with a hashed email, hashed MAIDs, or `client_ip_address` and `client_user_agent`.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data.em",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Email must be lowercased and SHA-256 hashed before it is sent.",
+        "fix_hint": "Lowercase the address, hash it with SHA-256, and send the hex digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data.em[]",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Every email in the list must be lowercased and SHA-256 hashed.",
+        "fix_hint": "Hash each address with SHA-256 and send the hex digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data.ph",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Phone must be digits-only with country code, then SHA-256 hashed.",
+        "fix_hint": "Strip symbols, keep the country code, hash with SHA-256, and send the hex digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data.external_id",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "External IDs must be SHA-256 hashed.",
+        "fix_hint": "Hash the customer id with SHA-256 and send the hex digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data.client_ip_address",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the visitor IP address, sent unhashed.",
+        "fix_hint": "Send the browser's public IP, not a digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data.client_user_agent",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the visitor user agent, sent unhashed.",
+        "fix_hint": "Send the browser's user agent string, not a digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data.hashed_maids",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Hashed GAID or IDFA. Pinterest documents SHA-256.",
+        "fix_hint": "Hash the MAID with SHA-256 and send the hex digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "user_data.hashed_maids[]",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Every MAID in the list must be SHA-256 hashed.",
+        "fix_hint": "Hash each MAID with SHA-256 and send the hex digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.currency",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Za-z]{3}$"
+        },
+        "description": "It is an ISO 4217 currency code.",
+        "fix_hint": "Use the three-letter code, such as `USD`.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.pinterest-conversions-api.body.user_needs_an_identifier",
+        "kind": "require_one_of",
+        "params": [
+          "user_data.em",
+          "user_data.em[]",
+          "user_data.hashed_maids",
+          "user_data.hashed_maids[]",
+          "user_data.client_ip_address"
+        ],
+        "severity": "error",
+        "message": "`user_data` carries none of the identifiers Pinterest requires. Send `em`, `hashed_maids`, or `client_ip_address` with `client_user_agent`.",
+        "fix_hint": "Add a hashed email, hashed MAIDs, or the IP and user agent pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "code": "vendor.pinterest-conversions-api.body.unhashed_email",
+        "kind": "forbid_value_pattern",
+        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+        "severity": "error",
+        "message": "A field carries what looks like a raw email address. Pinterest requires `user_data.em` to be a SHA-256 hex digest.",
+        "fix_hint": "Lowercase the address, hash it with SHA-256, and send the hex digest.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "code": "vendor.pinterest-conversions-api.body.hashed_plaintext_field",
+        "kind": "forbid_value_pattern",
+        "pattern": "^[A-Fa-f0-9]{64}$",
+        "params": [
+          "user_data.client_ip_address",
+          "user_data.client_user_agent"
+        ],
+        "severity": "error",
+        "message": "This field looks like a SHA-256 digest, but Pinterest documents `client_ip_address` and `client_user_agent` as unhashed.",
+        "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      }
+    ]
+  }
+}

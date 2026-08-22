@@ -248,6 +248,7 @@ fn list_vendors_reports_the_directory() {
     assert_eq!(code, 0);
     assert!(stdout.contains("taboola"), "{stdout}");
     assert!(stdout.contains("vendor/meta"), "{stdout}");
+    assert!(stdout.contains("vendor/amplitude"), "{stdout}");
     assert!(stderr.contains("vendors"), "{stderr}");
 
     let (code, stdout, _) = run(&["list-vendors", "--json"]);

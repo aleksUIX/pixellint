@@ -4,6 +4,47 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.12.0 - 2026-08-21
+
+### Added
+
+- GitHub Action (`uses: aleksUIX/pixellint@<tag>`) and musl / macOS CLI tarballs
+  on GitHub Releases, the same install path RTBlint uses in CI
+- `vendor/tiktok-events-api`, covering the Events API track and batch calls on
+  `business-api.tiktok.com`: required `pixel_code` and `event`, ISO 8601
+  timestamps, SHA-256 customer identifiers, and unhashed IP / user agent
+- `vendor/adjust`, covering S2S events on `s2s.adjust.com`: required `app_token`,
+  `event_token`, `s2s=1`, and a documented device ID
+- `vendor/appsflyer`, covering S2S in-app events on `api3.appsflyer.com`:
+  required `appsflyer_id` and `eventName`, UTC `eventTime`, hashed PII, and the
+  iOS `id` path prefix
+- `vendor/branch`, covering the Events API standard and custom calls: required
+  `branch_key`, `name`, `user_data`, and at least one documented identifier
+- `vendor/pinterest-conversions-api`, covering `api.pinterest.com` events:
+  required `event_name`, `action_source`, `event_id`, `event_time` in seconds,
+  and hashed `user_data`
+- `vendor/reddit-conversions-api`, covering CAPI v3 on `ads-api.reddit.com`:
+  required `event_at` in milliseconds, `action_source`, and `type.tracking_type`
+- `vendor/x-conversions-api`, covering measurement conversions on
+  `ads-api.x.com` and `ads-api.twitter.com`: required `conversion_time`,
+  `event_id`, and at least one of `twclid`, `hashed_email`, or
+  `hashed_phone_number`
+
+### Fixed
+
+- The vendor directory now points at the analytics and martech packs that
+  already shipped: Amplitude, Mixpanel, PostHog, Segment, Klaviyo, Braze, and
+  Adobe Analytics. `list-vendors` and `directory.no_rulepack_coverage` were
+  still describing those hosts as uncovered
+- ROADMAP, ARCHITECTURE, and STANDARDS caught up with what 0.6.0 through 0.11.0
+  actually shipped, including GA4 Measurement Protocol body contracts
+- `vendor/posthog` no longer claims TikTok Events API or Amplitude payloads.
+  Those share an `event` or `api_key` field; PostHog now rules them out by the
+  keys only they use
+- Meta and Snap `action_source` matchers now rule out Pinterest's `web`,
+  `app_android`, `app_ios`, and `offline`, so a Pinterest CAPI payload is not
+  claimed as theirs
+
 ## 0.11.0 - 2026-07-26
 
 ### Added

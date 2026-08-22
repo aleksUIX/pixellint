@@ -80,7 +80,20 @@ pixellint validate url 'https://example.com/pixel?cb=[CACHEBUSTING]' --state tem
 
 `pixellint validate` exits `0` when the artifact is clean or only produced
 warnings, `1` when any error-severity finding is present, and `2` on a usage or
-input problem. That makes it usable as a gate:
+input problem.
+
+```yaml
+- uses: aleksUIX/pixellint@v0.12.0
+  with:
+    path: fixtures/conversion-pixel.txt
+    kind: url
+```
+
+`version` selects the CLI release (`auto` follows the action's own `v*` tag).
+Linux and macOS runners, x86_64 and aarch64. The Action downloads a prebuilt
+tarball from GitHub Releases.
+
+Or install the CLI:
 
 ```yaml
 - name: Validate tracking artifacts
@@ -150,24 +163,31 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
 | `vendor/adobe-analytics` | Adobe Analytics data collection beacons | official vendor |
 | `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
+| `vendor/pinterest-conversions-api` | Conversions API events, URL and JSON event payload | official vendor |
 | `vendor/snapchat` | Snap Conversions API v3, URL and JSON event payload | official vendor |
 | `vendor/tiktok` | TikTok Pixel loader and collection requests | ecosystem reference |
+| `vendor/tiktok-events-api` | Events API pixel track and batch, URL and JSON event payload | official vendor |
 | `vendor/linkedin` | LinkedIn conversion image pixels | ecosystem reference |
 | `vendor/linkedin-conversions-api` | LinkedIn conversion events, single and batched | official vendor |
 | `vendor/microsoft-uet` | Microsoft Advertising Universal Event Tracking | ecosystem reference |
 | `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
+| `vendor/reddit-conversions-api` | Conversions API v3 events, URL and JSON event payload | official vendor |
+| `vendor/x-conversions-api` | X conversion API measurement events, URL and JSON payload | official vendor |
 | `vendor/amplitude` | Amplitude HTTP V2 event uploads | official vendor |
 | `vendor/mixpanel` | Mixpanel track ingestion | official vendor |
 | `vendor/posthog` | PostHog capture, single and batched | official vendor |
 | `vendor/klaviyo` | Klaviyo event creation | official vendor |
 | `vendor/braze` | Braze user track: events, purchases, attributes | official vendor |
 | `vendor/segment` | Segment HTTP Tracking API, single and batched | official vendor |
+| `vendor/adjust` | Adjust S2S events on s2s.adjust.com | official vendor |
+| `vendor/appsflyer` | AppsFlyer S2S in-app events, URL and JSON payload | official vendor |
+| `vendor/branch` | Branch Events API standard and custom events | official vendor |
 
 ### Vendor directory
 
-Rulepacks cover fifteen endpoint families in depth. The vendor directory covers
-the rest by attribution: 89 vendors and 217 hosts, so an unrecognized pixel
-still gets a name.
+Rulepacks cover twenty-eight endpoint families in depth. The vendor directory
+covers the rest by attribution: 89 vendors and 223 hosts, so an unrecognized
+pixel still gets a name.
 
 ```bash
 $ pixellint validate url 'https://trc.taboola.com/actions?a=1'

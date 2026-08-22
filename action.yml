@@ -1,0 +1,111 @@
+name: pixellint Pixel Validator
+description: Validate pixels, postbacks, and conversion payloads in CI using the pixellint CLI
+branding:
+  icon: check-circle
+  color: green
+
+inputs:
+  path:
+    description: File passed to `pixellint validate` (read as `@path`)
+    required: true
+  kind:
+    description: Artifact kind (url, html, js, gtm, request, vast, postback, json, unknown)
+    required: false
+    default: url
+  version:
+    description: >
+      pixellint release tag (for example v0.12.0), latest, or auto. auto uses the
+      action's own v* tag when pinned, otherwise latest.
+    required: false
+    default: auto
+  state:
+    description: Expansion state (unknown, template, or fired)
+    required: false
+    default: ""
+  vendor:
+    description: Vendor the caller believes the artifact belongs to
+    required: false
+    default: ""
+  format:
+    description: Output format (human or json)
+    required: false
+    default: ""
+  extra-args:
+    description: Additional args appended to `pixellint validate` (space-separated)
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Install pixellint
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        case "$(uname -s)" in
+          Linux)  os="linux" ;;
+          Darwin) os="macos" ;;
+          *)
+            echo "Unsupported runner OS: $(uname -s)"
+            exit 1
+            ;;
+        esac
+
+        case "$(uname -m)" in
+          x86_64|amd64) arch="x86_64" ;;
+          arm64|aarch64) arch="aarch64" ;;
+          *)
+            echo "Unsupported runner architecture: $(uname -m)"
+            exit 1
+            ;;
+        esac
+
+        requested="${{ inputs.version }}"
+        action_ref="${{ github.action_ref }}"
+        if [[ -n "$requested" && "$requested" != "auto" ]]; then
+          version="$requested"
+        elif [[ "$action_ref" == v* ]]; then
+          version="$action_ref"
+        else
+          version="latest"
+        fi
+
+        artifact="pixellint-${os}-${arch}.tar.gz"
+        if [[ "$version" == "latest" ]]; then
+          url="https://github.com/aleksUIX/pixellint/releases/latest/download/${artifact}"
+        else
+          url="https://github.com/aleksUIX/pixellint/releases/download/${version}/${artifact}"
+        fi
+
+        mkdir -p "$RUNNER_TEMP/pixellint-bin"
+        curl -fsSL "$url" -o "$RUNNER_TEMP/pixellint.tar.gz"
+        tar -xzf "$RUNNER_TEMP/pixellint.tar.gz" -C "$RUNNER_TEMP/pixellint-bin"
+        chmod +x "$RUNNER_TEMP/pixellint-bin/pixellint"
+        echo "$RUNNER_TEMP/pixellint-bin" >> "$GITHUB_PATH"
+
+    - name: Run pixellint validate
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        cmd=(pixellint validate "${{ inputs.kind }}" "@${{ inputs.path }}")
+
+        if [[ -n "${{ inputs.state }}" ]]; then
+          cmd+=(--state "${{ inputs.state }}")
+        fi
+
+        if [[ -n "${{ inputs.vendor }}" ]]; then
+          cmd+=(--vendor "${{ inputs.vendor }}")
+        fi
+
+        if [[ "${{ inputs.format }}" == "json" ]]; then
+          cmd+=(--json)
+        fi
+
+        if [[ -n "${{ inputs.extra-args }}" ]]; then
+          read -r -a extra <<< "${{ inputs.extra-args }}"
+          cmd+=("${extra[@]}")
+        fi
+
+        "${cmd[@]}"

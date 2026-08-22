@@ -1,0 +1,147 @@
+{
+  "id": "vendor/branch",
+  "display_name": "Branch Events API",
+  "description": "Standard and custom events posted to the Branch Events API on api2.branch.io.",
+  "vendor": "branch",
+  "source_level": "official_vendor",
+  "docs": "https://help.branch.io/developers-hub/reference/events-api",
+  "match": {
+    "hosts": [
+      "api2.branch.io"
+    ],
+    "path_contains": [
+      "/v2/event/standard",
+      "/v2/event/custom"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "branch_key",
+          "user_data.developer_identity",
+          "user_data.idfa",
+          "user_data.aaid"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "branch_key",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Branch Key for the application, and the Events API requires it.",
+          "fix_hint": "Send the Branch Key from Account settings or Configuration, Security and Access.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "name",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the event name. On `/v2/event/standard` it must be a documented Branch standard event; `/v2/event/custom` accepts any name.",
+          "fix_hint": "Set `name` to a standard event such as `PURCHASE`, or post a custom name to `/v2/event/custom`.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data",
+          "requirement": "required",
+          "description": "Branch requires a `user_data` object with device and identity fields.",
+          "fix_hint": "Add `user_data` with at least one documented identifier.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the device IP address where the event occurred, sent unhashed.",
+          "fix_hint": "Send the device IP, not a digest.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.developer_identity",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Developer-specified identity for the user. Branch requires at least one documented identifier in `user_data`.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.browser_fingerprint_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Branch browser fingerprint. One of the identifiers that can satisfy the identity requirement.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.idfa",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "iOS advertising ID. Branch requires it together with `os=iOS` when it is the identifier in use.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.idfv",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "iOS vendor ID. Branch requires it together with `os=iOS` when it is the identifier in use.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.android_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Android hardware ID. Branch requires it together with `os=Android` when it is the identifier in use.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.aaid",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Android advertising ID. Branch requires it together with `os=Android` when it is the identifier in use.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.branch.body.user_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "user_data.developer_identity",
+            "user_data.browser_fingerprint_id",
+            "user_data.idfa",
+            "user_data.idfv",
+            "user_data.android_id",
+            "user_data.aaid"
+          ],
+          "severity": "error",
+          "message": "`user_data` carries none of the identifiers Branch requires. At least one of `developer_identity`, `browser_fingerprint_id`, `idfa`, `idfv`, `android_id`, or `aaid` must be present.",
+          "fix_hint": "Send `user_data.developer_identity`, or a platform advertising ID such as `idfa` or `aaid`.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "code": "vendor.branch.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "user_data.ip"
+          ],
+          "severity": "error",
+          "message": "`user_data.ip` looks like a SHA-256 digest, but Branch documents it as the device IP address, unhashed.",
+          "fix_hint": "Send the raw IP address.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        }
+      ]
+    }
+  ]
+}

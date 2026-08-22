@@ -53,8 +53,7 @@ Over MCP, the `list_vendors` tool takes an optional `category` filter or a
   "vendor": "taboola",
   "display_name": "Taboola",
   "category": "native",
-  "hosts": ["cdn.taboola.com", "trc.taboola.com"],
-  "rulepack": "vendor/meta"
+  "hosts": ["cdn.taboola.com", "trc.taboola.com"]
 }
 ```
 

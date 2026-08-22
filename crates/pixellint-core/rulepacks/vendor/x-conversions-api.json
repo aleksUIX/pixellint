@@ -1,0 +1,168 @@
+{
+  "id": "vendor/x-conversions-api",
+  "display_name": "X conversion API",
+  "description": "Website conversion events posted to the X Ads measurement conversions endpoint.",
+  "vendor": "x",
+  "source_level": "official_vendor",
+  "docs": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions",
+  "path_pattern": "/[0-9]+/measurement/conversions/(?<pixel_id>[^/?]+)",
+  "match": {
+    "hosts": [
+      "ads-api.twitter.com",
+      "ads-api.x.com"
+    ],
+    "path_contains": [
+      "/measurement/conversions/"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "conversions[].conversion_time",
+          "conversions[].event_id"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "pixel_id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the X Pixel ID, and it travels in the path.",
+      "fix_hint": "Put the Pixel ID in the path as `/12/measurement/conversions/{pixel_id}`.",
+      "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+    }
+  ],
+  "rules": [],
+  "body": {
+    "scope": "conversions[]",
+    "params": [
+      {
+        "name": "conversion_time",
+        "requirement": "required",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+        },
+        "description": "X documents the conversion time as an ISO 8601 timestamp.",
+        "fix_hint": "Send an ISO 8601 timestamp, such as `2022-02-18T01:14:00.603Z`.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "name": "event_id",
+        "requirement": "required",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the conversion event UUID from Ads Manager, not a per-hit dedup key.",
+        "fix_hint": "Send the conversion event ID from Ads Manager as `event_id`. Use `conversion_id` for dedup.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "name": "conversion_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the per-event id used to deduplicate the pixel and the conversion API.",
+        "fix_hint": "Send the same `conversion_id` the website tag fired.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "name": "identifiers[].twclid",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "X click identifier from the landing URL. One of the identifiers X requires, along with hashed email or hashed phone.",
+        "fix_hint": "Send the `twclid` query parameter captured from the click.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "name": "identifiers[].hashed_email",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Email must be trimmed, lowercased, and SHA-256 hashed before it is sent.",
+        "fix_hint": "Trim and lowercase the address, hash it with SHA-256, and send the hex digest.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "name": "identifiers[].hashed_phone_number",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "description": "Phone must be normalized to E.164 and SHA-256 hashed before it is sent.",
+        "fix_hint": "Normalize to E.164, hash with SHA-256, and send the hex digest.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "name": "identifiers[].ip_address",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the visitor IP address, sent unhashed. X documents that IP or user agent must be paired with a second identifier.",
+        "fix_hint": "Send the raw IP address, and also send `twclid`, `hashed_email`, or `hashed_phone_number`.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "name": "identifiers[].user_agent",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the visitor user agent, sent unhashed.",
+        "fix_hint": "Send the browser's user agent string, not a digest.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "name": "price_currency",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Za-z]{3}$"
+        },
+        "description": "It is an ISO 4217 currency code.",
+        "fix_hint": "Use the three-letter code, such as `USD`.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.x-conversions-api.body.identifier_required",
+        "kind": "require_one_of",
+        "params": [
+          "identifiers[].twclid",
+          "identifiers[].hashed_email",
+          "identifiers[].hashed_phone_number"
+        ],
+        "severity": "error",
+        "message": "The conversion carries none of the identifiers X requires. Send `twclid`, `hashed_email`, or `hashed_phone_number`. IP and user agent are not enough on their own.",
+        "fix_hint": "Add a `twclid`, a SHA-256 hashed email, or a SHA-256 hashed phone number.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "code": "vendor.x-conversions-api.body.unhashed_email",
+        "kind": "forbid_value_pattern",
+        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+        "severity": "error",
+        "message": "A field carries what looks like a raw email address. X requires email as `hashed_email`, SHA-256 hashed on the client side.",
+        "fix_hint": "Trim the address, lowercase it, hash it with SHA-256, and send it as `hashed_email`.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      },
+      {
+        "code": "vendor.x-conversions-api.body.hashed_plaintext_field",
+        "kind": "forbid_value_pattern",
+        "pattern": "^[A-Fa-f0-9]{64}$",
+        "params": [
+          "identifiers[].ip_address",
+          "identifiers[].user_agent"
+        ],
+        "severity": "error",
+        "message": "This field looks like a SHA-256 digest, but X documents `ip_address` and `user_agent` as unhashed.",
+        "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+        "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions"
+      }
+    ]
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "id": "vendor/tiktok-events-api",
+  "display_name": "TikTok Events API",
+  "description": "Server-to-server pixel track and batch requests to the TikTok Events API on business-api.tiktok.com.",
+  "vendor": "tiktok",
+  "source_level": "official_vendor",
+  "docs": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+  "match": {
+    "hosts": [
+      "business-api.tiktok.com"
+    ],
+    "path_contains": [
+      "/pixel/track",
+      "/pixel/batch"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "pixel_code",
+          "context.user.email",
+          "context.user.phone_number",
+          "context.user.external_id"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "pixel_code",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Pixel ID from Events Manager. TikTok documents it as required on both the single-event track call and the batch call.",
+          "fix_hint": "Set `pixel_code` to the Pixel ID shown in Events Manager.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "batch",
+          "description": "The batch endpoint posts events under `batch`. The track endpoint posts a single event at the root instead.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": [
+        "batch[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "event",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the conversion event name. TikTok documents it as required on every track payload.",
+          "fix_hint": "Set `event` to a documented web event name, such as `CompletePayment` or `ViewContent`.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "event_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the event for deduplication against the browser pixel. TikTok documents it as required when the same conversion is sent from both.",
+          "fix_hint": "Send the same `event_id` the Pixel fired, so the pair collapses to one conversion.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584864945154"
+        },
+        {
+          "name": "timestamp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+          },
+          "description": "TikTok documents the event time as an ISO 8601 timestamp. An epoch number is not that format, and TikTok then stamps the event with the time it arrived.",
+          "fix_hint": "Send an ISO 8601 timestamp, such as `2026-07-26T06:00:00Z`.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "context.ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the visitor's public IP address, sent unhashed.",
+          "fix_hint": "Send the browser's public IP, not a SHA-256 digest and not your server's address.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "context.user_agent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the visitor's user agent, sent unhashed.",
+          "fix_hint": "Send the browser's user agent string, not a digest.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "context.user.email",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Email must be SHA-256 hashed on the client side before it is sent.",
+          "fix_hint": "Trim and lowercase the address, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "context.user.phone_number",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Phone must be SHA-256 hashed on the client side before it is sent.",
+          "fix_hint": "Normalize the number, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "context.user.external_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Advertiser-side identifiers must be SHA-256 hashed on the client side.",
+          "fix_hint": "Hash the identifier with SHA-256 and send the hex digest.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "properties.currency",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "description": "It is an ISO 4217 currency code.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "properties.value",
+          "description": "It is the total value of the order or items, not the unit price.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.tiktok-events-api.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. TikTok requires customer email to be SHA-256 hashed on the client side.",
+          "fix_hint": "Trim the address, lowercase it, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "code": "vendor.tiktok-events-api.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "context.ip",
+            "context.user_agent"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but TikTok documents `context.ip` and `context.user_agent` as unhashed.",
+          "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        }
+      ]
+    }
+  ]
+}

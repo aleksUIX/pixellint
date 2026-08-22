@@ -1,0 +1,228 @@
+{
+  "id": "vendor/adjust",
+  "display_name": "Adjust S2S events",
+  "description": "Server-to-server event requests to s2s.adjust.com/event, as query or form parameters.",
+  "vendor": "adjust",
+  "source_level": "official_vendor",
+  "docs": "https://dev.adjust.com/en/api/s2s-api/events/",
+  "match": {
+    "hosts": [
+      "s2s.adjust.com"
+    ],
+    "path_contains": [
+      "/event"
+    ]
+  },
+  "params": [
+    {
+      "name": "app_token",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the Adjust app token from the dashboard, and the endpoint requires it on every request.",
+      "fix_hint": "Send the app token from the Adjust dashboard as `app_token`.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "event_token",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the Adjust event token from the dashboard, and the endpoint requires it on every request.",
+      "fix_hint": "Send the event token from the Adjust dashboard as `event_token`.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "s2s",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "description": "Adjust documents a hardcoded `s2s=1` so the endpoint treats the request as server-to-server.",
+      "fix_hint": "Add `s2s=1`.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "created_at",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+      },
+      "description": "Adjust documents `created_at` as an ISO 8601 timestamp. `created_at_unix` is the Unix-seconds alternative.",
+      "fix_hint": "Send ISO 8601, such as `2017-01-02T15:04:05.000+0000`, or send `created_at_unix` instead.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "created_at_unix",
+      "format": {
+        "kind": "integer",
+        "min_digits": 10,
+        "max_digits": 10
+      },
+      "description": "Adjust documents it as a Unix timestamp in seconds.",
+      "fix_hint": "Send seconds, not milliseconds.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "currency",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{3}$"
+      },
+      "description": "It is the ISO 4217 currency code for a revenue event.",
+      "fix_hint": "Use the three-letter code, such as `EUR`.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "environment",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "sandbox",
+          "production"
+        ]
+      },
+      "format_severity": "warning",
+      "description": "Adjust documents `sandbox` or `production`, and defaults to production when it is omitted.",
+      "fix_hint": "Send `environment=sandbox` for testing, or `environment=production` for live traffic.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "ip_address",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the device IP address, sent unhashed. Adjust documents IPv4 only.",
+      "fix_hint": "Send the device IPv4 address, not a digest and not an IPv6 address.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "idfa",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "iOS Identifier for Advertisers. Adjust requires a device ID such as `idfa` or `gps_adid`.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "gps_adid",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Android advertising ID. Adjust requires a device ID such as `idfa` or `gps_adid`.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "idfv",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "iOS Identifier for Vendor.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "android_id",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Raw Android ID, lowercase, without hyphens.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "android_id_lower_md5",
+      "description": "Hashed Android ID, lowercase MD5.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "android_id_lower_sha1",
+      "description": "Hashed Android ID, lowercase SHA1.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "android_id_upper_md5",
+      "description": "Hashed Android ID, uppercase MD5.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "android_id_upper_sha1",
+      "description": "Hashed Android ID, uppercase SHA1.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "imei",
+      "description": "Raw IMEI, without hyphens.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "imei_lower_md5",
+      "description": "Hashed IMEI, lowercase MD5.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "meid",
+      "description": "Raw MEID, uppercase, without hyphens.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "win_naid",
+      "description": "Windows network adapter ID.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "win_hwid",
+      "description": "Windows Store hardware ID.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "adid",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The Adjust identifier associated with the device. Useful for identifying LAT users on iOS without IDFA.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.adjust.device_id_required",
+      "kind": "require_one_of",
+      "params": [
+        "idfa",
+        "gps_adid",
+        "idfv",
+        "android_id",
+        "android_id_lower_md5",
+        "android_id_lower_sha1",
+        "android_id_upper_md5",
+        "android_id_upper_sha1",
+        "imei",
+        "imei_lower_md5",
+        "meid",
+        "win_naid",
+        "win_hwid",
+        "adid"
+      ],
+      "severity": "error",
+      "message": "The request carries no device identifier. Adjust requires an advertising ID such as `idfa` or `gps_adid`, or one of the other documented device IDs.",
+      "fix_hint": "Send `idfa` for iOS or `gps_adid` for Android, or another documented device ID.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "code": "vendor.adjust.hashed_plaintext_field",
+      "kind": "forbid_value_pattern",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "params": [
+        "ip_address"
+      ],
+      "severity": "error",
+      "message": "`ip_address` looks like a SHA-256 digest, but Adjust documents it as the device IPv4 address, unhashed.",
+      "fix_hint": "Send the raw IPv4 address. Hashing it makes the event unmatchable.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    }
+  ]
+}

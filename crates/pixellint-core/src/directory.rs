@@ -283,7 +283,10 @@ mod tests {
             );
         }
 
-        // Every rulepack an entry points at has to exist.
+        // Every rulepack an entry points at has to exist, and every first-party
+        // pack's vendor has to point at some pack. Directory hits on a covered
+        // vendor should say coverage exists elsewhere, not that the vendor is
+        // unknown to the rulepacks.
         let pack_ids: Vec<&str> = crate::BUILTIN_VENDOR_MANIFESTS
             .iter()
             .map(|(id, _)| *id)
@@ -296,6 +299,25 @@ mod tests {
                     entry.vendor
                 );
             }
+        }
+
+        for (id, json) in crate::BUILTIN_VENDOR_MANIFESTS {
+            let manifest: serde_json::Value =
+                serde_json::from_str(json).unwrap_or_else(|error| panic!("{id}: {error}"));
+            let vendor = manifest["vendor"]
+                .as_str()
+                .unwrap_or_else(|| panic!("{id} is missing vendor"));
+            let entry = directory
+                .entries()
+                .iter()
+                .find(|entry| entry.vendor == vendor);
+            let Some(entry) = entry else {
+                panic!("no directory entry for pack `{id}` vendor `{vendor}`");
+            };
+            assert!(
+                entry.rulepack.is_some(),
+                "directory entry `{vendor}` has pack `{id}` but no rulepack pointer"
+            );
         }
     }
 }

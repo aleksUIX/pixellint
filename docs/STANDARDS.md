@@ -134,8 +134,29 @@ regional and debug endpoints. Level: `official_vendor`.
 
 Source: [sending events](https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events).
 
-Pixellint validates the request line. The Measurement Protocol payload travels
-in the POST body, which Pixellint does not see.
+### Measurement Protocol payload
+
+The request body is contracted at two levels: the envelope once, and each event
+in `events` on its own.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `client_id` | Expected, since events without it are not joined to a user | `vendor.google-analytics.body.client_id.missing` |
+| `events` | Flagged when present and empty, which sends nothing | `vendor.google-analytics.body.events.empty` |
+| `timestamp_micros` | Exactly 16 digits, since Google documents microseconds and a 13-digit value is milliseconds | `vendor.google-analytics.body.timestamp_micros.invalid` |
+| `non_personalized_ads` | Deprecated in favor of the `consent` object | `vendor.google-analytics.body.non_personalized_ads.deprecated` |
+| `events[].name` | Required; 40 characters or fewer warns when longer | `vendor.google-analytics.body.name.missing`, `.invalid` |
+| Value without currency | `currency` is required whenever `value` is set | `vendor.google-analytics.body.value_requires_currency` |
+| `purchase` | Needs `currency`, `value`, `transaction_id`, and `items` | `vendor.google-analytics.body.purchase_requires_ecommerce_fields` |
+| `refund` | Needs `currency`, `value`, and `transaction_id` | `vendor.google-analytics.body.refund_requires_ecommerce_fields` |
+| `add_to_cart`, `begin_checkout` | Need `currency`, `value`, and `items` | `vendor.google-analytics.body.cart_requires_ecommerce_fields` |
+
+Source: [Measurement Protocol reference](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference),
+[recommended events](https://developers.google.com/analytics/devguides/collection/ga4/reference/events).
+
+A payload with no `events` at all carries nothing that identifies it as GA4, so
+it is not claimed and not reported on. An `events` that is present and empty is
+identifiable, and is flagged.
 
 ## `vendor/floodlight`
 
@@ -191,30 +212,6 @@ Source: [using the API](https://developers.facebook.com/docs/marketing-api/conve
 The hashed identifier contracts accept upper-case hex as well as lower-case.
 Meta documents lower-casing the input before hashing, not the digest, so
 rejecting an upper-case digest would be inventing a requirement.
-
-### Measurement Protocol payload
-
-The request body is contracted at two levels: the envelope once, and each event
-in `events` on its own.
-
-| Body field or rule | Enforced | Rule ids |
-| --- | --- | --- |
-| `client_id` | Expected, since events without it are not joined to a user | `vendor.google-analytics.body.client_id.missing` |
-| `events` | Flagged when present and empty, which sends nothing | `vendor.google-analytics.body.events.empty` |
-| `timestamp_micros` | Exactly 16 digits, since Google documents microseconds and a 13-digit value is milliseconds | `vendor.google-analytics.body.timestamp_micros.invalid` |
-| `non_personalized_ads` | Deprecated in favor of the `consent` object | `vendor.google-analytics.body.non_personalized_ads.deprecated` |
-| `events[].name` | Required; 40 characters or fewer warns when longer | `vendor.google-analytics.body.name.missing`, `.invalid` |
-| Value without currency | `currency` is required whenever `value` is set | `vendor.google-analytics.body.value_requires_currency` |
-| `purchase` | Needs `currency`, `value`, `transaction_id`, and `items` | `vendor.google-analytics.body.purchase_requires_ecommerce_fields` |
-| `refund` | Needs `currency`, `value`, and `transaction_id` | `vendor.google-analytics.body.refund_requires_ecommerce_fields` |
-| `add_to_cart`, `begin_checkout` | Need `currency`, `value`, and `items` | `vendor.google-analytics.body.cart_requires_ecommerce_fields` |
-
-Source: [Measurement Protocol reference](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference),
-[recommended events](https://developers.google.com/analytics/devguides/collection/ga4/reference/events).
-
-A payload with no `events` at all carries nothing that identifies it as GA4, so
-it is not claimed and not reported on. An `events` that is present and empty is
-identifiable, and is flagged.
 
 ## `vendor/google-tag-manager`
 
@@ -284,6 +281,31 @@ Level: `official_vendor`.
 
 Source: [Pinterest tag](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/).
 
+## `vendor/pinterest-conversions-api`
+
+Server-side events posted to `api.pinterest.com/v5/ad_accounts/{ad_account_id}/events`.
+Level: `official_vendor`.
+
+The ad account ID rides on the path. The event payload is checked per event in
+`data`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `event_name` | Required | `vendor.pinterest-conversions-api.body.event_name.missing`, `.empty` |
+| `action_source` | Required, one of `web`, `app_android`, `app_ios`, `offline` | `vendor.pinterest-conversions-api.body.action_source.missing`, `.invalid` |
+| `event_id` | Required, for deduplication against the tag | `vendor.pinterest-conversions-api.body.event_id.missing`, `.empty` |
+| `event_time` | Required Unix timestamp in seconds. A 13-digit value is milliseconds | `vendor.pinterest-conversions-api.body.event_time.missing`, `.invalid` |
+| `user_data` | Required, with at least `em`, `hashed_maids`, or `client_ip_address` | `vendor.pinterest-conversions-api.body.user_data.missing`, `.user_needs_an_identifier` |
+| Hashed identifiers | `em`, `ph`, `external_id`, `hashed_maids` must be SHA-256 hex digests | `vendor.pinterest-conversions-api.body.user_data.<field>.invalid` |
+| Unhashed PII | No field carries a raw email address | `vendor.pinterest-conversions-api.body.unhashed_email` |
+| Over-hashing | `client_ip_address` and `client_user_agent` must not be digests | `vendor.pinterest-conversions-api.body.hashed_plaintext_field` |
+
+Source: [track conversion events in the API](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/).
+
+Custom event names are allowed, so `event_name` is not enum-checked. Pinterest
+spells `web` in lower case; that is how this pack is told apart from Meta
+(`website`) and Snap (`WEB`).
+
 ## `vendor/snapchat`
 
 Snapchat Conversions API events requests on `tr.snapchat.com`. Level:
@@ -309,10 +331,11 @@ The event payload is checked per event in `data`.
 Source: [using the API](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI),
 [parameters](https://developers.snap.com/api/marketing-api/Conversions-API/Parameters).
 
-Snap and Meta post the same envelope, down to the field names. A bare payload
-carries no host, so the two packs tell each other apart by `action_source`:
-Snap writes `WEB` where Meta writes `website`. A payload whose `action_source`
-is missing or misspelled matches both, and both report it.
+Snap, Meta, and Pinterest post the same `data[]` envelope. A bare payload
+carries no host, so the packs tell each other apart by `action_source`:
+Snap writes `WEB`, Meta writes `website`, Pinterest writes `web`. A payload
+whose `action_source` is missing or misspelled matches more than one, and
+each reports it.
 
 ## `vendor/microsoft-uet`
 
@@ -341,6 +364,29 @@ Reddit Pixel requests on `alb.reddit.com`. Level: `ecosystem_reference`.
 
 Source: [verify the Reddit Pixel](https://business.reddithelp.com/en/categories/measurement/verify-reddit-pixel).
 
+## `vendor/reddit-conversions-api`
+
+CAPI v3 events posted to `ads-api.reddit.com/api/v3/pixels/{pixel_id}/conversion_events`.
+Level: `official_vendor`.
+
+The Pixel ID rides on the path. The event payload is checked per event in
+`data.events`. The v2 envelope (`events` at the root, ISO 8601 `event_at`) is
+a different shape and is not contracted here.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `event_at` | Required, exactly 13 digits, since v3 documents milliseconds | `vendor.reddit-conversions-api.body.event_at.missing`, `.invalid` |
+| `action_source` | Required, one of `WEBSITE`, `APP`, `PHYSICAL_STORE`, `OTHER` | `vendor.reddit-conversions-api.body.action_source.missing`, `.invalid` |
+| `type.tracking_type` | Required; unrecognized types warn rather than error | `vendor.reddit-conversions-api.body.type.tracking_type.missing`, `.invalid` |
+| Over-hashing | `user.ip_address` and `user.user_agent` must not be digests | `vendor.reddit-conversions-api.body.hashed_plaintext_field` |
+
+Sources: [direct integration](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration),
+[v2 to v3 migration](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/migration),
+[About the Conversions API](https://business.reddithelp.com/s/article/Conversions-API).
+
+Reddit accepts email and phone unhashed or SHA-256 hashed, so this pack does
+not require a digest on those fields.
+
 ## `vendor/tiktok`
 
 TikTok Pixel loader and collection requests on `analytics.tiktok.com`. Level:
@@ -357,6 +403,31 @@ Source: [pixel setup](https://ads.tiktok.com/help/article/get-started-pixel),
 TikTok documents its events and parameters for the JavaScript and server APIs,
 not the wire format of the loader URL. The pack is scoped to what its
 Events Manager generates, and is labeled ecosystem evidence for that reason.
+
+## `vendor/tiktok-events-api`
+
+Server-to-server track and batch requests to `business-api.tiktok.com`. Level:
+`official_vendor`.
+
+The track call posts one event at the root. The batch call posts the same
+event object under `batch`, with `pixel_code` on the envelope.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `pixel_code` | Required Pixel ID | `vendor.tiktok-events-api.body.pixel_code.missing`, `.empty` |
+| `event` | Required conversion event name, per event | `vendor.tiktok-events-api.body.event.missing`, `.empty` |
+| `timestamp` | ISO 8601, since an epoch number is stamped as the arrival time instead | `vendor.tiktok-events-api.body.timestamp.invalid` |
+| `context.user.email`, `phone_number`, `external_id` | SHA-256 hex digests | `vendor.tiktok-events-api.body.context.user.<field>.invalid` |
+| `context.ip`, `context.user_agent` | Sent unhashed | `vendor.tiktok-events-api.body.hashed_plaintext_field` |
+| Unhashed PII | No field carries a raw email address | `vendor.tiktok-events-api.body.unhashed_email` |
+| `properties.currency` | ISO 4217 three-letter code when present | `vendor.tiktok-events-api.body.properties.currency.invalid` |
+
+Sources: [where to find pixel_code](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929),
+[event deduplication](https://ads.tiktok.com/marketing_api/docs?id=1739584864945154),
+[official Events API SDK models](https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelTrackBody.md).
+
+The `/open_api/v1.3/event/track/` Events 2.0 envelope is a different shape and
+is not contracted here.
 
 ## `vendor/linkedin`
 
@@ -500,6 +571,79 @@ Segment and PostHog both post a root `event`, and a bare body has no URL to tell
 them apart. Each rules the other out by the keys only it uses: `writeKey`,
 `userId`, and `anonymousId` for Segment, `api_key` and `distinct_id` for
 PostHog.
+
+## `vendor/adjust`
+
+Server-to-server events on `s2s.adjust.com/event`, as query or form parameters.
+Level: `official_vendor`.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `app_token` | Required | `vendor.adjust.param.app_token.missing`, `.empty` |
+| `event_token` | Required | `vendor.adjust.param.event_token.missing`, `.empty` |
+| `s2s` | Required, and must be `1` | `vendor.adjust.param.s2s.missing`, `.invalid` |
+| Device ID | One of `idfa`, `gps_adid`, or the other documented device IDs | `vendor.adjust.device_id_required` |
+| `created_at` | ISO 8601 when present | `vendor.adjust.param.created_at.invalid` |
+| Over-hashing | `ip_address` must not be a digest | `vendor.adjust.hashed_plaintext_field` |
+
+Source: [S2S events](https://dev.adjust.com/en/api/s2s-api/events/).
+
+## `vendor/appsflyer`
+
+In-app events posted to `api3.appsflyer.com/inappevent/{app_id}`. Level:
+`official_vendor`.
+
+The app ID rides on the path. iOS IDs must be prefixed with `id`; without it
+the call still returns 200 and the event is not recorded.
+
+| Parameter or body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `app_id` | Required, from the path. Digits-only IDs warn that the iOS prefix is missing | `vendor.appsflyer.param.app_id.missing`, `.empty`, `.ios_app_id_unprefixed` |
+| `appsflyer_id` | Required | `vendor.appsflyer.body.appsflyer_id.missing`, `.empty` |
+| `eventName` | Required | `vendor.appsflyer.body.eventName.missing`, `.empty` |
+| `eventTime` | UTC as `yyyy-mm-dd hh:mm:ss.sss` when present | `vendor.appsflyer.body.eventTime.invalid` |
+| Hashed PII | `email_hashed`, `phone_number_hashed`, and name fields must be SHA-256 | `vendor.appsflyer.body.<field>.invalid` |
+| Unhashed PII | No field carries a raw email address | `vendor.appsflyer.body.unhashed_email` |
+| Over-hashing | `ip` must not be a digest | `vendor.appsflyer.body.hashed_plaintext_field` |
+
+Source: [S2S events API 3](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview).
+
+`eventValue` is documented as required, including as an empty string when there
+is no value. Empty is a legal payload, so the pack does not contract it.
+
+## `vendor/branch`
+
+Standard and custom events posted to `api2.branch.io/v2/event/standard` and
+`/v2/event/custom`. Level: `official_vendor`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `branch_key` | Required | `vendor.branch.body.branch_key.missing`, `.empty` |
+| `name` | Required | `vendor.branch.body.name.missing`, `.empty` |
+| `user_data` | Required | `vendor.branch.body.user_data.missing` |
+| Identity | At least one of `developer_identity`, `browser_fingerprint_id`, `idfa`, `idfv`, `android_id`, or `aaid` | `vendor.branch.body.user_needs_an_identifier` |
+| Over-hashing | `user_data.ip` must not be a digest | `vendor.branch.body.hashed_plaintext_field` |
+
+Source: [Events API](https://help.branch.io/developers-hub/reference/events-api).
+
+## `vendor/x-conversions-api`
+
+Website conversions posted to `ads-api.x.com` and `ads-api.twitter.com`
+`/{version}/measurement/conversions/{pixel_id}`. Level: `official_vendor`.
+
+The Pixel ID rides on the path. The event payload is checked per event in
+`conversions`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `conversion_time` | Required ISO 8601 timestamp | `vendor.x-conversions-api.body.conversion_time.missing`, `.invalid` |
+| `event_id` | Required conversion event UUID from Ads Manager | `vendor.x-conversions-api.body.event_id.missing`, `.empty` |
+| Identifiers | At least one of `twclid`, `hashed_email`, or `hashed_phone_number`. IP and user agent are not enough on their own | `vendor.x-conversions-api.body.identifier_required` |
+| Hashed PII | `hashed_email` and `hashed_phone_number` must be SHA-256 hex digests | `vendor.x-conversions-api.body.identifiers[].<field>.invalid` |
+| Unhashed PII | No field carries a raw email address | `vendor.x-conversions-api.body.unhashed_email` |
+| Over-hashing | `ip_address` and `user_agent` must not be digests | `vendor.x-conversions-api.body.hashed_plaintext_field` |
+
+Source: [conversion API](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions).
 
 ## Vendor directory
 

@@ -7,46 +7,50 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - Rust core with a plugin engine, stable rule ids, typed severities, evidence
   levels, documentation citations, and byte-offset targets on findings
 - `core` rulepack: URL validity and host presence, transport scheme, embedded
-  credentials, ignored fragments, insecure transport, and generic ad-tech macro
-  handling (unexpanded macros in fired URLs, unsafe macro placement, mixed
-  macro syntax)
+  credentials, ignored fragments, insecure transport, generic ad-tech macro
+  handling, and IAB consent strings decoded against TCF v2, US Privacy, and GPP
 - Declarative rulepack manifests: host and path matchers, parameter contracts,
-  value formats, cross-parameter rules, and load-time validation including a
-  citation requirement for vendor-documented rules
-- Eleven first-party vendor packs: Meta Pixel and Conversions API, GA4
+  JSON body contracts, value formats, cross-parameter rules, and load-time
+  validation including a citation requirement for vendor-documented rules
+- Twenty-eight first-party vendor packs: Meta Pixel and Conversions API, GA4
   Measurement Protocol and the browser `/g/collect` transport, Google Tag
-  Manager and gtag.js, Campaign Manager Floodlight, Pinterest, Snapchat
-  Conversions API, TikTok Pixel, LinkedIn image pixel, Microsoft UET, and the
-  Reddit Pixel
-- Vendor endpoint directory: 89 vendors and 217 hosts attributed by host, so
-  endpoints without a rulepack still get identified
-- Consent and privacy signals against the IAB specs: TCF v2 `gdpr` and
-  `gdpr_consent`, the deprecated US Privacy string, and GPP `gpp` and `gpp_sid`,
-  read from both query and path parameters
+  Manager and gtag.js, Google Ads conversion pixels, Campaign Manager
+  Floodlight, Adobe Analytics, Pinterest Tag and Conversions API, Snapchat
+  Conversions API, TikTok Pixel and Events API, LinkedIn image pixel and
+  Conversions API, Microsoft UET, Reddit Pixel and Conversions API, X conversion
+  API, Amplitude, Mixpanel, PostHog, Segment, Klaviyo, Braze, AppsFlyer S2S,
+  Adjust S2S, and Branch Events API
+- Vendor endpoint directory: hosts attributed by vendor, so endpoints without a
+  matching pack still get identified, and vendors that do have a pack are
+  marked as covered
 - Parameters carried on the path, so endpoints that put their identifier in a
   path segment can be contracted like any other
 - Custom rulepacks from disk, the same format the first-party packs use
 - CLI with JSON output, stdin and file input, rulepack selection, and CI-ready
   exit codes
-- MCP server over stdio with live rulepack ids in its tool schema
+- MCP server over stdio with `validate_artifact`, `list_rulepacks`, and
+  `list_vendors`
+- WASM bindings, an npm package, and the playground at
+  [pixellint.org](https://pixellint.org)
+- GitHub Action in this repo (`uses: aleksUIX/pixellint@<tag>`). Prebuilt musl
+  / macOS CLI tarballs on GitHub Releases
 
 ## Next
 
 - Promote directory entries to full rulepacks as parameter contracts surface:
-  X, Criteo, Taboola, Outbrain, Amazon Ads are attributed today and would gain
-  rules the moment a citable contract exists
+  Criteo, Taboola, Outbrain, and Amazon Ads stay attributed until a citable
+  contract exists
 - Community-contributed directory entries and corrections
 - Document-level results: the wrapper described in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), so callers
   that extract many artifacts get one coherent report
 - Deterministic autofix for the mechanical findings, behind an explicit flag
-- WASM bindings and an npm package, then a browser playground
 - Duplicate and conflict detection across a set of artifacts
 
 ## Later
 
 - Vendor packs contributed and maintained by the vendors themselves
-- GitHub Action, pre-commit hook, Homebrew tap, Docker image, prebuilt binaries
+- Pre-commit hook, Homebrew tap, Docker image
 - Editor integration that lints tracking URLs in place
 - Network mode: replay a HAR or captured request stream and lint what fired
 - Python and Go bindings over the Rust core

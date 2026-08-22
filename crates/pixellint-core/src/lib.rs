@@ -27,12 +27,24 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/adjust",
+        include_str!("../rulepacks/vendor/adjust.json"),
+    ),
+    (
         "vendor/adobe-analytics",
         include_str!("../rulepacks/vendor/adobe-analytics.json"),
     ),
     (
         "vendor/amplitude",
         include_str!("../rulepacks/vendor/amplitude.json"),
+    ),
+    (
+        "vendor/appsflyer",
+        include_str!("../rulepacks/vendor/appsflyer.json"),
+    ),
+    (
+        "vendor/branch",
+        include_str!("../rulepacks/vendor/branch.json"),
     ),
     (
         "vendor/braze",
@@ -88,12 +100,20 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/pinterest.json"),
     ),
     (
+        "vendor/pinterest-conversions-api",
+        include_str!("../rulepacks/vendor/pinterest-conversions-api.json"),
+    ),
+    (
         "vendor/posthog",
         include_str!("../rulepacks/vendor/posthog.json"),
     ),
     (
         "vendor/reddit",
         include_str!("../rulepacks/vendor/reddit.json"),
+    ),
+    (
+        "vendor/reddit-conversions-api",
+        include_str!("../rulepacks/vendor/reddit-conversions-api.json"),
     ),
     (
         "vendor/segment",
@@ -106,6 +126,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/tiktok",
         include_str!("../rulepacks/vendor/tiktok.json"),
+    ),
+    (
+        "vendor/tiktok-events-api",
+        include_str!("../rulepacks/vendor/tiktok-events-api.json"),
+    ),
+    (
+        "vendor/x-conversions-api",
+        include_str!("../rulepacks/vendor/x-conversions-api.json"),
     ),
 ];
 

@@ -1,0 +1,137 @@
+{
+  "id": "vendor/reddit-conversions-api",
+  "display_name": "Reddit Conversions API",
+  "description": "Server-to-server conversion events posted to ads-api.reddit.com CAPI v3.",
+  "vendor": "reddit",
+  "source_level": "official_vendor",
+  "docs": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+  "path_pattern": "/api/v3/pixels/(?<pixel_id>[^/]+)/conversion_events",
+  "match": {
+    "hosts": [
+      "ads-api.reddit.com"
+    ],
+    "path_contains": [
+      "/conversion_events"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "data.events[].event_at",
+          "data.events[].action_source",
+          "data.events[].type.tracking_type"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "pixel_id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the Reddit Pixel ID, and it travels in the v3 path.",
+      "fix_hint": "Put the Pixel ID from Events Manager in the path as `/api/v3/pixels/{pixel_id}/conversion_events`.",
+      "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+    }
+  ],
+  "rules": [],
+  "body": {
+    "scope": "data.events[]",
+    "params": [
+      {
+        "name": "event_at",
+        "requirement": "required",
+        "format": {
+          "kind": "integer",
+          "min_digits": 13,
+          "max_digits": 13
+        },
+        "description": "Reddit CAPI v3 documents `event_at` as Unix time in milliseconds. A 10-digit value is seconds and lands in 1970.",
+        "fix_hint": "Send milliseconds: a JavaScript `Date.now()` is already in the right unit.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/migration"
+      },
+      {
+        "name": "action_source",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "WEBSITE",
+            "APP",
+            "PHYSICAL_STORE",
+            "OTHER"
+          ]
+        },
+        "description": "v3 makes `action_source` required. Reddit documents `WEBSITE`, `APP`, `PHYSICAL_STORE`, and `OTHER`.",
+        "fix_hint": "Send `WEBSITE`, `APP`, `PHYSICAL_STORE`, or `OTHER`.",
+        "doc": "https://business.reddithelp.com/s/article/Conversions-API"
+      },
+      {
+        "name": "type.tracking_type",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "PAGE_VISIT",
+            "VIEW_CONTENT",
+            "SEARCH",
+            "ADD_TO_CART",
+            "ADD_TO_WISHLIST",
+            "PURCHASE",
+            "LEAD",
+            "SIGN_UP",
+            "CUSTOM"
+          ]
+        },
+        "format_severity": "warning",
+        "description": "v3 spells standard events in UPPER_SNAKE_CASE. Custom events use `CUSTOM` plus `custom_event_name`.",
+        "fix_hint": "Send `PURCHASE` or another documented type. For a custom event, send `CUSTOM` and `type.custom_event_name`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.currency",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Za-z]{3}$"
+        },
+        "description": "It is an ISO 4217 currency code.",
+        "fix_hint": "Use the three-letter code, such as `USD`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.ip_address",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the visitor IP address. Reddit accepts it unhashed.",
+        "fix_hint": "Send the browser's public IP, not a digest.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.user_agent",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the visitor user agent. Reddit accepts it unhashed.",
+        "fix_hint": "Send the browser's user agent string, not a digest.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.reddit-conversions-api.body.hashed_plaintext_field",
+        "kind": "forbid_value_pattern",
+        "pattern": "^[A-Fa-f0-9]{64}$",
+        "params": [
+          "user.ip_address",
+          "user.user_agent"
+        ],
+        "severity": "error",
+        "message": "This field looks like a SHA-256 digest, but Reddit documents `user.ip_address` and `user.user_agent` as unhashed match keys.",
+        "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      }
+    ]
+  }
+}
