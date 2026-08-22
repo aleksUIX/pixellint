@@ -1,0 +1,117 @@
+{
+  "id": "vendor/openai-conversions-api",
+  "display_name": "OpenAI Ads Conversions API",
+  "description": "Server-side conversion events posted to bzr.openai.com/v1/events, including the JSON event payload.",
+  "vendor": "openai",
+  "source_level": "official_vendor",
+  "docs": "https://developers.openai.com/ads/conversions-api",
+  "match": {
+    "hosts": ["bzr.openai.com"],
+    "path_prefixes": ["/v1/events"],
+    "json_paths": [
+      {
+        "any_of": [
+          "events[].timestamp_ms",
+          "events[].id",
+          "events[].type"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "pid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Pixel ID, and it travels on the query string.",
+      "fix_hint": "Send `pid` as a query parameter on `/v1/events`.",
+      "doc": "https://developers.openai.com/ads/conversions-api"
+    }
+  ],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "events",
+          "requirement": "required",
+          "description": "The Conversions API posts events under `events`, and OpenAI documents that array as required.",
+          "fix_hint": "Send at least one event in `events`.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "events[]",
+      "params": [
+        {
+          "name": "id",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It identifies the event for deduplication. OpenAI documents it as required on every event.",
+          "fix_hint": "Set `id` to the same value the image tag sent as `event_id`.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        },
+        {
+          "name": "type",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "appointment_scheduled",
+              "app_installed",
+              "app_opened",
+              "checkout_started",
+              "contents_viewed",
+              "custom",
+              "items_added",
+              "lead_created",
+              "order_created",
+              "page_viewed",
+              "registration_completed",
+              "subscription_created",
+              "trial_started"
+            ]
+          },
+          "description": "It is the event type. OpenAI documents it as required. `app_installed` and `app_opened` are CAPI-only with `action_source=mobile_app`.",
+          "fix_hint": "Set `type` to a documented event name.",
+          "doc": "https://developers.openai.com/ads/supported-events"
+        },
+        {
+          "name": "timestamp_ms",
+          "requirement": "required",
+          "format": { "kind": "integer", "min_digits": 13, "max_digits": 13 },
+          "description": "It is the event time in milliseconds. OpenAI documents `timestamp_ms`, so a 10-digit seconds value is the wrong unit.",
+          "fix_hint": "Send milliseconds, a 13-digit Unix timestamp.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        },
+        {
+          "name": "action_source",
+          "format": { "kind": "non_empty" },
+          "description": "It names where the event happened. `source_url` is required when this is `web`.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        },
+        {
+          "name": "source_url",
+          "format": { "kind": "url", "require_https": true },
+          "description": "It is the page URL. OpenAI documents it as required when `action_source` is `web`.",
+          "fix_hint": "Send `source_url` on web events.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.openai-conversions-api.body.web_requires_source_url",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": ["web"],
+          "requires": ["source_url"],
+          "severity": "error",
+          "message": "The event is marked `action_source: web` but carries no `source_url`. OpenAI documents the page URL as required for web events.",
+          "fix_hint": "Set `source_url` to the HTTPS page URL.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        }
+      ]
+    }
+  ]
+}

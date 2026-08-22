@@ -1,0 +1,55 @@
+{
+  "id": "vendor/yahoo-dot",
+  "display_name": "Yahoo Dot pixel",
+  "description": "Yahoo DSP Dot image pixels on sp.analytics.yahoo.com/spp.pl, as generated in the pixel instrumentation code.",
+  "vendor": "yahoo",
+  "source_level": "official_vendor",
+  "docs": "https://help.yahooinc.com/dsp-api/docs/pixels",
+  "match": {
+    "hosts": ["sp.analytics.yahoo.com"],
+    "path_prefixes": ["/spp.pl"]
+  },
+  "params": [
+    {
+      "name": "a",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the project ID. Every official image pixel Yahoo returns includes `a`, and the JavaScript twin sends it as `projectId`.",
+      "fix_hint": "Copy the image pixel from Yahoo DSP so `a` carries the project ID.",
+      "doc": "https://help.yahooinc.com/dsp-api/docs/pixels"
+    },
+    {
+      "name": ".yp",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the Yahoo Dot pixel ID. Every official image pixel includes `.yp`, and the Conversions API docs identify Dot firings by that parameter.",
+      "fix_hint": "Copy the image pixel from Yahoo DSP so `.yp` carries the pixel ID.",
+      "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+    },
+    {
+      "name": "he",
+      "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+      "description": "Enhanced matching sends the email as a SHA-256 hex digest.",
+      "fix_hint": "Hash the email with SHA-256 and send the hex digest as `he`.",
+      "doc": "https://help.yahooinc.com/identity/docs/enhanced-matching"
+    },
+    {
+      "name": "hph",
+      "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+      "description": "Enhanced matching sends the phone number hashed.",
+      "fix_hint": "Hash the phone number and send the digest as `hph`.",
+      "doc": "https://help.yahooinc.com/identity/docs/enhanced-matching"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.yahoo-dot.unhashed_email",
+      "kind": "forbid_value_pattern",
+      "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+      "severity": "error",
+      "message": "A parameter carries what looks like a raw email address. Yahoo documents enhanced matching as `he`, a SHA-256 digest.",
+      "fix_hint": "Hash the email with SHA-256 and send it as `he`.",
+      "doc": "https://help.yahooinc.com/identity/docs/enhanced-matching"
+    }
+  ]
+}

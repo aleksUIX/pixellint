@@ -4,6 +4,30 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.13.0 - 2026-08-21
+
+### Added
+
+- `vendor/yandex-metrica`, covering Measurement Protocol requests to
+  `mc.yandex.ru/collect`: required `tid`, `cid`, and `t`, page fields on
+  `pageview`, and transaction fields on `pa=purchase`
+- `vendor/yahoo-dot`, covering Yahoo DSP Dot image pixels on
+  `sp.analytics.yahoo.com/spp.pl`: required `a` and `.yp`, hashed `he`
+- `vendor/openai`, covering the Ads image tag on `bzr.openai.com/v1/sdk/events`:
+  required `pid`, `event`, and `data[type]`
+- `vendor/openai-conversions-api`, covering `/v1/events`: required event `id`,
+  `type`, and `timestamp_ms` in milliseconds, plus `source_url` on web events
+- `vendor/kochava`, covering S2S JSON on `control.kochava.com/track/json`:
+  required `kochava_app_id`, `action`, `data`, and `data.event_name`
+- `vendor/singular`, covering S2S EVENT on `s2s.singular.net`: required SDK key
+  `a`, platform `p`, app id `i`, event name `n`, and `ip` or `use_ip`
+- `vendor/google-ads-click-conversions`, covering UploadClickConversions JSON:
+  required `conversionAction` and `conversionDateTime`, plus a click ID or
+  hashed `userIdentifiers`
+
+Snap Pixel, the X website tag, Amazon Ad Tag, Baidu Tongji, and Kwai stay
+directory-only. Those vendors document a JS API, not an HTTP parameter contract.
+
 ## 0.12.0 - 2026-08-21
 
 ### Added

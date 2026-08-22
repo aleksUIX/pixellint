@@ -1,0 +1,80 @@
+{
+  "id": "vendor/openai",
+  "display_name": "OpenAI Ads image tag",
+  "description": "OpenAI Ads Measurement Pixel image fallback requests to bzr.openai.com/v1/sdk/events.",
+  "vendor": "openai",
+  "source_level": "official_vendor",
+  "docs": "https://developers.openai.com/ads/image-tag",
+  "match": {
+    "hosts": ["bzr.openai.com"],
+    "path_prefixes": ["/v1/sdk/events"]
+  },
+  "params": [
+    {
+      "name": "pid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Pixel ID, and the image tag requires it.",
+      "fix_hint": "Set `pid` to the Pixel ID from OpenAI Ads.",
+      "doc": "https://developers.openai.com/ads/image-tag"
+    },
+    {
+      "name": "event",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "appointment_scheduled",
+          "checkout_started",
+          "contents_viewed",
+          "custom",
+          "items_added",
+          "lead_created",
+          "order_created",
+          "page_viewed",
+          "registration_completed",
+          "subscription_created",
+          "trial_started"
+        ]
+      },
+      "description": "It is a supported event name, or `custom`. OpenAI documents the image tag as requiring it.",
+      "fix_hint": "Set `event` to a documented name such as `page_viewed`, or to `custom` with `custom_event_name`.",
+      "doc": "https://developers.openai.com/ads/supported-events"
+    },
+    {
+      "name": "data[type]",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It names the data shape for the event. OpenAI documents it as required on the image tag, and unknown fields are rejected.",
+      "fix_hint": "Set `data[type]` to the shape documented for this event, such as `contents`.",
+      "doc": "https://developers.openai.com/ads/image-tag"
+    },
+    {
+      "name": "custom_event_name",
+      "format": { "kind": "non_empty" },
+      "description": "It names a custom event. OpenAI documents it as required when `event` is `custom`.",
+      "fix_hint": "Send `custom_event_name` when `event=custom`.",
+      "doc": "https://developers.openai.com/ads/image-tag"
+    },
+    {
+      "name": "event_id",
+      "format": { "kind": "non_empty" },
+      "description": "It identifies the event for deduplication against the Conversions API. Use the same value as CAPI `id`.",
+      "fix_hint": "Send the same `event_id` the Conversions API event uses as `id`.",
+      "doc": "https://developers.openai.com/ads/image-tag"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.openai.custom_requires_name",
+      "kind": "required_when_value",
+      "when": "event",
+      "equals": ["custom"],
+      "requires": ["custom_event_name"],
+      "severity": "error",
+      "message": "`event` is `custom` but `custom_event_name` is missing. OpenAI documents that name as required for custom events.",
+      "fix_hint": "Add `custom_event_name` with the custom event name.",
+      "doc": "https://developers.openai.com/ads/image-tag"
+    }
+  ]
+}

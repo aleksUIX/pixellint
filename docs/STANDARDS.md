@@ -255,6 +255,26 @@ ID travels in the path. Level: `official_vendor`.
 
 Source: [Google Ads conversion tracking errors](https://support.google.com/tagassistant/answer/2947038).
 
+## `vendor/google-ads-click-conversions`
+
+Click conversions posted to `googleads.googleapis.com` `UploadClickConversions`.
+Level: `official_vendor`. The image pixel is a different pack.
+
+The payload is checked per conversion in `conversions`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `conversions` | Required | `vendor.google-ads-click-conversions.body.conversions.missing` |
+| `partialFailure` | Required `true` | `vendor.google-ads-click-conversions.body.partialFailure.missing`, `.invalid` |
+| `conversionAction` | Required resource name | `vendor.google-ads-click-conversions.body.conversionAction.missing`, `.empty` |
+| `conversionDateTime` | Required, `yyyy-mm-dd hh:mm:ss+|-hh:mm` | `vendor.google-ads-click-conversions.body.conversionDateTime.missing`, `.invalid` |
+| Click ID or user | One of `gclid`, `gbraid`, `wbraid`, or `userIdentifiers` | `vendor.google-ads-click-conversions.body.click_id_or_user_required` |
+| Hashed PII | `hashedEmail` and `hashedPhoneNumber` must be SHA-256 | `vendor.google-ads-click-conversions.body.userIdentifiers[].<field>.invalid` |
+| Unhashed PII | No field carries a raw email address | `vendor.google-ads-click-conversions.body.unhashed_email` |
+
+Sources: [upload offline conversions](https://developers.google.com/google-ads/api/docs/conversions/upload-offline),
+[ClickConversion](https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion).
+
 ## `vendor/adobe-analytics`
 
 Adobe Analytics data collection beacons on `omtrdc.net` and `2o7.net`. The
@@ -645,6 +665,106 @@ The Pixel ID rides on the path. The event payload is checked per event in
 
 Source: [conversion API](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions).
 
+## `vendor/yahoo-dot`
+
+Yahoo DSP Dot image pixels on `sp.analytics.yahoo.com/spp.pl`. Level:
+`official_vendor`. The contract is the instrumentation code Yahoo returns from
+the pixels API.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `a` | Required project ID | `vendor.yahoo-dot.param.a.missing`, `.empty` |
+| `.yp` | Required numeric pixel ID | `vendor.yahoo-dot.param..yp.missing`, `.empty`, `.invalid` |
+| `he` | SHA-256 hex digest when present | `vendor.yahoo-dot.param.he.invalid` |
+| Unhashed PII | No parameter carries a raw email address | `vendor.yahoo-dot.unhashed_email` |
+
+Sources: [pixels](https://help.yahooinc.com/dsp-api/docs/pixels),
+[enhanced matching](https://help.yahooinc.com/identity/docs/enhanced-matching).
+
+## `vendor/yandex-metrica`
+
+Measurement Protocol requests to `mc.yandex.ru/collect`. Level:
+`official_vendor`. The browser tag on `/watch` is not contracted.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `tid` | Required numeric tag ID | `vendor.yandex-metrica.param.tid.missing`, `.empty`, `.invalid` |
+| `cid` | Required ClientID | `vendor.yandex-metrica.param.cid.missing`, `.empty` |
+| `t` | Required `pageview` or `event` | `vendor.yandex-metrica.param.t.missing`, `.invalid` |
+| Pageview fields | `dl`, `dr`, and `dt` when `t=pageview` | `vendor.yandex-metrica.pageview_requires_page_fields` |
+| Purchase fields | `ti` and `tr` when `pa=purchase` | `vendor.yandex-metrica.purchase_requires_transaction` |
+| `ms` | Expected Measurement Protocol token | `vendor.yandex-metrica.param.ms.missing`, `.empty` |
+
+Source: [uploading data](https://yandex.com/dev/metrika/en/data-import/measurement-upload).
+
+The parameter table marks `ea` and `pa` as required on `event`, but the official
+goal examples omit `pa` and the ecommerce examples omit `ea`. Those fields are
+checked when present, not required on every event.
+
+## `vendor/openai`
+
+OpenAI Ads image tag requests to `bzr.openai.com/v1/sdk/events`. Level:
+`official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `pid` | Required Pixel ID | `vendor.openai.param.pid.missing`, `.empty` |
+| `event` | Required documented event name | `vendor.openai.param.event.missing`, `.invalid` |
+| `data[type]` | Required data shape | `vendor.openai.param.data[type].missing`, `.empty` |
+| Custom name | `custom_event_name` when `event=custom` | `vendor.openai.custom_requires_name` |
+
+Sources: [image tag](https://developers.openai.com/ads/image-tag),
+[supported events](https://developers.openai.com/ads/supported-events).
+
+## `vendor/openai-conversions-api`
+
+Server-side events posted to `bzr.openai.com/v1/events`. Level:
+`official_vendor`. The payload is checked per event in `events`.
+
+| Parameter or body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `pid` | Required on the URL | `vendor.openai-conversions-api.param.pid.missing`, `.empty` |
+| `id` | Required event id | `vendor.openai-conversions-api.body.id.missing`, `.empty` |
+| `type` | Required documented event type | `vendor.openai-conversions-api.body.type.missing`, `.invalid` |
+| `timestamp_ms` | Required, exactly 13 digits | `vendor.openai-conversions-api.body.timestamp_ms.missing`, `.invalid` |
+| Web events | `source_url` when `action_source` is `web` | `vendor.openai-conversions-api.body.web_requires_source_url` |
+
+Source: [Conversions API](https://developers.openai.com/ads/conversions-api).
+
+## `vendor/kochava`
+
+Post-install events posted as JSON to `control.kochava.com/track/json`. Level:
+`official_vendor`.
+
+| Body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `kochava_app_id` | Required | `vendor.kochava.body.kochava_app_id.missing`, `.empty` |
+| `action` | Required | `vendor.kochava.body.action.missing`, `.empty` |
+| `data` | Required | `vendor.kochava.body.data.missing` |
+| `data.event_name` | Required | `vendor.kochava.body.data.event_name.missing`, `.empty` |
+
+Source: [post-install event setup](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/).
+
+The article's field table and JSON sample disagree on whether `device_ids` and
+`origination_ip` sit at the root or inside `data`. Those fields are not
+required here.
+
+## `vendor/singular`
+
+EVENT requests to `s2s.singular.net/api/v1/evt` and `/api/v2/evt`. Level:
+`official_vendor`. Parameters are query or form fields, not JSON.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `a` | Required SDK Key | `vendor.singular.param.a.missing`, `.empty` |
+| `p` | Required documented platform spelling | `vendor.singular.param.p.missing`, `.invalid` |
+| `i` | Required app identifier | `vendor.singular.param.i.missing`, `.empty` |
+| `n` | Required, 1 to 32 ASCII characters | `vendor.singular.param.n.missing`, `.invalid` |
+| IP | Exactly one of `ip` or `use_ip` | `vendor.singular.ip_required`, `.ip_ambiguous` |
+| Over-hashing | `ip` must not be a digest | `vendor.singular.hashed_plaintext_field` |
+
+Source: [S2S EVENT endpoint](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference).
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a
@@ -670,12 +790,8 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 - HubSpot. The endpoint in the directory is the `__ptq.gif` tracking pixel, and
   HubSpot documents the `_hsq` client-side calls rather than the request that
   pixel makes, so its parameters have no citable contract
-- TikTok Events API and Pinterest Conversions API payloads. Both endpoints are
-  in the directory and both vendors have browser packs, but their request
-  schemas are published behind rendered documentation portals that could not be
-  read at the time of writing. Writing the contracts from memory would mean
-  citing documentation nobody checked, so the packs stay URL-only until the
-  schemas can be read
+- Snap Pixel, the X website tag, Amazon Ad Tag, Baidu Tongji, and Kwai. Those
+  vendors document a JavaScript API, not an HTTP query or JSON body contract
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling
 - Duplicate or conflicting artifacts across a document
 - Document extraction: Pixellint validates artifacts a caller has already

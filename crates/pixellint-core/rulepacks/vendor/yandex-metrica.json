@@ -1,0 +1,132 @@
+{
+  "id": "vendor/yandex-metrica",
+  "display_name": "Yandex Metrica Measurement Protocol",
+  "description": "Measurement Protocol requests to mc.yandex.ru/collect. The browser tag on /watch and /metrika/tag.js is a different surface and is not contracted here.",
+  "vendor": "yandex",
+  "source_level": "official_vendor",
+  "docs": "https://yandex.com/dev/metrika/en/data-import/measurement-upload",
+  "match": {
+    "hosts": ["mc.yandex.ru"],
+    "path_prefixes": ["/collect"]
+  },
+  "params": [
+    {
+      "name": "tid",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the Yandex Metrica tag ID, and the Measurement Protocol requires it on every request.",
+      "fix_hint": "Set `tid` to the numeric tag ID from the Metrica interface.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "cid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the ClientID of the Metrica user, and the Measurement Protocol requires it on every request.",
+      "fix_hint": "Send the ClientID the browser tag assigned, as `cid`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "t",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": ["pageview", "event"]
+      },
+      "description": "It is the interaction type. Yandex documents `pageview` and `event`.",
+      "fix_hint": "Set `t` to `pageview` or `event`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "dl",
+      "format": { "kind": "url" },
+      "description": "It is the page URL. Yandex documents it as required on `pageview`.",
+      "fix_hint": "Send the page URL as `dl`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "dr",
+      "format": { "kind": "url" },
+      "description": "It is the referrer. Yandex documents it as required on `pageview`.",
+      "fix_hint": "Send the referrer as `dr`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "dt",
+      "format": { "kind": "non_empty" },
+      "description": "It is the page title. Yandex documents it as required on `pageview`.",
+      "fix_hint": "Send the page title as `dt`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "ea",
+      "format": { "kind": "non_empty" },
+      "description": "It is the JavaScript goal identifier, sent with `t=event`. Ecommerce examples send `pa` instead.",
+      "fix_hint": "Send the goal ID as `ea`, or send an ecommerce action as `pa`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "pa",
+      "format": {
+        "kind": "enum",
+        "values": ["detail", "add", "remove", "purchase"]
+      },
+      "description": "It is the ecommerce action. Yandex documents `detail`, `add`, `remove`, and `purchase`.",
+      "fix_hint": "Set `pa` to `detail`, `add`, `remove`, or `purchase`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "ti",
+      "format": { "kind": "non_empty" },
+      "description": "It is the ecommerce transaction ID. Yandex documents it as required when `pa=purchase`.",
+      "fix_hint": "Send the transaction ID as `ti` on purchase events.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "tr",
+      "format": { "kind": "non_empty" },
+      "description": "It is the ecommerce transaction revenue. Yandex documents it as required when `pa=purchase`.",
+      "fix_hint": "Send the transaction revenue as `tr` on purchase events.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "cu",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+      "description": "It is the currency for a valued goal or an ecommerce event.",
+      "fix_hint": "Use the three-letter code, such as `RUB`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "name": "ms",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Measurement Protocol secret token. The parameter table does not mark it required, but every upload example sends it, and the support article says to send the token obtained when the feature is enabled.",
+      "fix_hint": "Enable Measurement Protocol in the tag settings and send the token as `ms`.",
+      "doc": "https://yandex.com/support/metrica/en/general/measurement-protocol"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.yandex-metrica.pageview_requires_page_fields",
+      "kind": "required_when_value",
+      "when": "t",
+      "equals": ["pageview"],
+      "requires": ["dl", "dr", "dt"],
+      "severity": "error",
+      "message": "A `pageview` is missing `dl`, `dr`, or `dt`. Yandex documents the page URL, referrer, and title as required on that interaction.",
+      "fix_hint": "Send `dl` (page URL), `dr` (referrer), and `dt` (title) with `t=pageview`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    },
+    {
+      "code": "vendor.yandex-metrica.purchase_requires_transaction",
+      "kind": "required_when_value",
+      "when": "pa",
+      "equals": ["purchase"],
+      "requires": ["ti", "tr"],
+      "severity": "error",
+      "message": "A `pa=purchase` event is missing `ti` or `tr`. Yandex documents the transaction ID and revenue as required on purchase.",
+      "fix_hint": "Send `ti` (transaction ID) and `tr` (revenue) with `pa=purchase`.",
+      "doc": "https://yandex.com/dev/metrika/en/data-import/measurement-upload"
+    }
+  ]
+}

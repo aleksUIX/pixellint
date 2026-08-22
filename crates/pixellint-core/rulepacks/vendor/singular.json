@@ -1,0 +1,125 @@
+{
+  "id": "vendor/singular",
+  "display_name": "Singular S2S EVENT",
+  "description": "Server-to-server EVENT requests to s2s.singular.net/api/v1/evt and /api/v2/evt, as form or query parameters. JSON bodies are not this API.",
+  "vendor": "singular",
+  "source_level": "official_vendor",
+  "docs": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+  "match": {
+    "hosts": ["s2s.singular.net"],
+    "path_contains": ["/api/v1/evt", "/api/v2/evt"]
+  },
+  "params": [
+    {
+      "name": "a",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Singular SDK Key, not the Reporting API Key, and every EVENT request requires it.",
+      "fix_hint": "Send the SDK Key as `a`.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "p",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "Android",
+          "iOS",
+          "Web",
+          "PC",
+          "Xbox",
+          "Playstation",
+          "Nintendo",
+          "MetaQuest",
+          "CTV"
+        ]
+      },
+      "description": "It is the platform, case-sensitive. Singular documents the values Android, iOS, Web, PC, Xbox, Playstation, Nintendo, MetaQuest, and CTV.",
+      "fix_hint": "Set `p` to the documented platform spelling, such as `iOS`.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "i",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the app identifier, case-sensitive, and every EVENT request requires it.",
+      "fix_hint": "Send the app ID as `i`.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "n",
+      "requirement": "required",
+      "format": { "kind": "regex", "pattern": "^[ -~]{1,32}$" },
+      "description": "It is the event name, at most 32 ASCII characters, and every EVENT request requires it.",
+      "fix_hint": "Set `n` to an event name of 32 ASCII characters or fewer.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "ip",
+      "format": { "kind": "non_empty" },
+      "description": "It is the public device IP. Singular requires `ip` or `use_ip`, and they are mutually exclusive.",
+      "fix_hint": "Send the device IPv4 as `ip`, or send `use_ip` instead.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "use_ip",
+      "format": { "kind": "non_empty" },
+      "description": "It tells Singular to use the request IP. Mutually exclusive with `ip`.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "sdid",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+      },
+      "description": "It is the Singular device ID, a UUIDv4. V2 requires it. New accounts as of 15 July 2026 must use V2.",
+      "fix_hint": "On `/api/v2/evt`, send `sdid` as a UUIDv4.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "cur",
+      "format": { "kind": "regex", "pattern": "^[A-Z]{3}$" },
+      "description": "It is an ISO 4217 currency code, uppercase, used with `amt` on revenue events.",
+      "fix_hint": "Send `cur` as `USD` together with `amt`.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "amt",
+      "format": { "kind": "non_empty" },
+      "description": "It is the revenue amount. Sending it makes the call a revenue event.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.singular.ip_required",
+      "kind": "require_one_of",
+      "params": ["ip", "use_ip"],
+      "severity": "error",
+      "message": "The request has neither `ip` nor `use_ip`. Singular requires one of them on every EVENT.",
+      "fix_hint": "Send the device IP as `ip`, or send `use_ip` to use the request address.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "code": "vendor.singular.ip_ambiguous",
+      "kind": "mutually_exclusive",
+      "params": ["ip", "use_ip"],
+      "severity": "error",
+      "message": "The request sends both `ip` and `use_ip`. Singular documents them as mutually exclusive.",
+      "fix_hint": "Send only `ip` or only `use_ip`.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "code": "vendor.singular.hashed_plaintext_field",
+      "kind": "forbid_value_pattern",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "params": ["ip"],
+      "severity": "error",
+      "message": "`ip` looks like a SHA-256 digest, but Singular documents it as the public device IP, unhashed.",
+      "fix_hint": "Send the raw IP address.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    }
+  ]
+}

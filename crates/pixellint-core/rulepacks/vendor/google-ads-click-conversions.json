@@ -1,0 +1,130 @@
+{
+  "id": "vendor/google-ads-click-conversions",
+  "display_name": "Google Ads click conversion upload",
+  "description": "Offline and enhanced-for-leads click conversions posted to the Google Ads API UploadClickConversions method, including the JSON Conversion payload. The image pixel on /pagead/conversion is a different pack.",
+  "vendor": "google",
+  "source_level": "official_vendor",
+  "docs": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+  "match": {
+    "hosts": ["googleads.googleapis.com"],
+    "path_contains": ["uploadClickConversions"],
+    "json_paths": [
+      {
+        "any_of": [
+          "conversions[].conversionAction",
+          "conversions[].conversionDateTime"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "conversions",
+          "requirement": "required",
+          "description": "UploadClickConversions requires a `conversions` array.",
+          "fix_hint": "Send at least one ClickConversion in `conversions`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/UploadClickConversionsRequest"
+        },
+        {
+          "name": "partialFailure",
+          "requirement": "required",
+          "format": { "kind": "enum", "values": ["true"] },
+          "description": "Google documents `partial_failure` as required, and the upload guides say to always send true.",
+          "fix_hint": "Set `partialFailure` to `true`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "conversions[]",
+      "params": [
+        {
+          "name": "conversionAction",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the conversion action resource name, and every uploaded click conversion requires it.",
+          "fix_hint": "Set `conversionAction` to `customers/{id}/conversionActions/{id}`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "name": "conversionDateTime",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"
+          },
+          "description": "Google documents the conversion time with a timezone offset as `yyyy-mm-dd hh:mm:ss+|-hh:mm`.",
+          "fix_hint": "Send a timestamp such as `2026-08-21 12:00:00+00:00`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "name": "gclid",
+          "format": { "kind": "non_empty" },
+          "description": "Google click ID. A click-ID upload needs exactly one of `gclid`, `gbraid`, or `wbraid`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "name": "gbraid",
+          "format": { "kind": "non_empty" },
+          "description": "App-to-web click identifier from iOS. Alternative to `gclid`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "name": "wbraid",
+          "format": { "kind": "non_empty" },
+          "description": "Web-to-app click identifier. Alternative to `gclid`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "name": "userIdentifiers",
+          "description": "Hashed user identifiers for enhanced conversions for leads. The upload service accepts `hashedEmail` and `hashedPhoneNumber` only, at most five.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "name": "userIdentifiers[].hashedEmail",
+          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "description": "Email must be normalized and SHA-256 hashed before it is sent.",
+          "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/enhanced-conversions/web"
+        },
+        {
+          "name": "userIdentifiers[].hashedPhoneNumber",
+          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "description": "Phone must be E.164 and SHA-256 hashed before it is sent.",
+          "fix_hint": "Normalize to E.164, hash with SHA-256, and send the hex digest.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "name": "currencyCode",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "description": "It is an ISO 4217 currency code for `conversionValue`.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.google-ads-click-conversions.body.click_id_or_user_required",
+          "kind": "require_one_of",
+          "params": ["gclid", "gbraid", "wbraid", "userIdentifiers"],
+          "severity": "error",
+          "message": "The conversion has no click ID and no `userIdentifiers`. Google documents a `gclid`, `gbraid`, or `wbraid` for click-ID uploads, or hashed user identifiers for enhanced conversions for leads.",
+          "fix_hint": "Send `gclid` (or `gbraid` / `wbraid`), or send hashed `userIdentifiers`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. Google requires email as `hashedEmail`, SHA-256 hashed after normalization.",
+          "fix_hint": "Normalize the address, hash it with SHA-256, and send `userIdentifiers[].hashedEmail`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/enhanced-conversions/web"
+        }
+      ]
+    }
+  ]
+}

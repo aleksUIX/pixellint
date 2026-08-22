@@ -24,7 +24,7 @@
 ## Current State
 
 - `core` is hand-written Rust and covers spec-level URL, macro, and IAB consent checks.
-- Vendor packs are declarative manifests compiled into `pixellint-core` and interpreted by one `ManifestRulePack` plugin. Twenty-one ship today, including conversion API JSON bodies where the vendor documents them.
+- Vendor packs are declarative manifests compiled into `pixellint-core` and interpreted by one `ManifestRulePack` plugin. Thirty-five ship today, including conversion API JSON bodies where the vendor documents them.
 - A host directory attributes the long tail. It names the vendor and, when a first-party pack exists for that vendor, points at it. It never invents parameter rules.
 - User packs load from disk through `--rulepack-file` or `Engine::register_manifest_path`, using the same schema as the first-party packs.
 - The `pixellint` CLI exposes local QA and CI flows with JSON output and documented exit codes.

@@ -59,6 +59,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/google-ads-conversion.json"),
     ),
     (
+        "vendor/google-ads-click-conversions",
+        include_str!("../rulepacks/vendor/google-ads-click-conversions.json"),
+    ),
+    (
         "vendor/google-analytics",
         include_str!("../rulepacks/vendor/google-analytics.json"),
     ),
@@ -73,6 +77,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/klaviyo",
         include_str!("../rulepacks/vendor/klaviyo.json"),
+    ),
+    (
+        "vendor/kochava",
+        include_str!("../rulepacks/vendor/kochava.json"),
     ),
     (
         "vendor/linkedin",
@@ -94,6 +102,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/mixpanel",
         include_str!("../rulepacks/vendor/mixpanel.json"),
+    ),
+    (
+        "vendor/openai",
+        include_str!("../rulepacks/vendor/openai.json"),
+    ),
+    (
+        "vendor/openai-conversions-api",
+        include_str!("../rulepacks/vendor/openai-conversions-api.json"),
     ),
     (
         "vendor/pinterest",
@@ -120,6 +136,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/segment.json"),
     ),
     (
+        "vendor/singular",
+        include_str!("../rulepacks/vendor/singular.json"),
+    ),
+    (
         "vendor/snapchat",
         include_str!("../rulepacks/vendor/snapchat.json"),
     ),
@@ -134,6 +154,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/x-conversions-api",
         include_str!("../rulepacks/vendor/x-conversions-api.json"),
+    ),
+    (
+        "vendor/yahoo-dot",
+        include_str!("../rulepacks/vendor/yahoo-dot.json"),
+    ),
+    (
+        "vendor/yandex-metrica",
+        include_str!("../rulepacks/vendor/yandex-metrica.json"),
     ),
 ];
 

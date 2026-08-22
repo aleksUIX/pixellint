@@ -1,0 +1,64 @@
+{
+  "id": "vendor/kochava",
+  "display_name": "Kochava S2S events",
+  "description": "Server-to-server post-install events posted as JSON to control.kochava.com/track/json.",
+  "vendor": "kochava",
+  "source_level": "official_vendor",
+  "docs": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+  "match": {
+    "hosts": ["control.kochava.com"],
+    "path_contains": ["/track/json"],
+    "json_paths": [
+      {
+        "any_of": [
+          "kochava_app_id",
+          "data.event_name"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "kochava_app_id",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Kochava app GUID, and the S2S event article requires it on every post-install payload.",
+          "fix_hint": "Set `kochava_app_id` to the app GUID from the Kochava dashboard.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "action",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It names the S2S call. The event article's sample sends `event`.",
+          "fix_hint": "Set `action` to `event` for a post-install event.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "kochava_device_id",
+          "format": { "kind": "non_empty" },
+          "description": "It is a Kochava device identifier. The article requires the key; the value may be empty when `device_ids` carries an ID instead.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data",
+          "requirement": "required",
+          "description": "Kochava documents a `data` object on every post-install event payload.",
+          "fix_hint": "Add a `data` object with `event_name`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.event_name",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the event name. The article places `event_name` inside `data`.",
+          "fix_hint": "Set `data.event_name` to the event the marketer expects.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}
