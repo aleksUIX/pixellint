@@ -56,7 +56,9 @@ npm install pixellint            # library, WASM-backed
 
 Or paste a URL into the playground at [pixellint.org](https://pixellint.org),
 which runs the same engine in your browser and sends nothing anywhere. Vendor
-contracts are documented at [pixellint.org/packs/](https://pixellint.org/packs/).
+contracts are at [pixellint.org/packs/](https://pixellint.org/packs/). Guides
+for pixels, conversion APIs, and consent are at
+[pixellint.org/docs/](https://pixellint.org/docs/).
 
 ## Use it
 
@@ -161,6 +163,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/google-analytics-collect` | The `/g/collect` transport the Google tag uses in the browser | ecosystem reference |
 | `vendor/google-tag-manager` | `gtm.js`, `gtag/js`, and `ns.html` loader requests | official vendor |
 | `vendor/google-ads-conversion` | Google Ads conversion and view-through pixels | official vendor |
+| `vendor/google-ads-click-conversions` | Google Ads UploadClickConversions JSON | official vendor |
 | `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
 | `vendor/adobe-analytics` | Adobe Analytics data collection beacons | official vendor |
 | `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
@@ -174,6 +177,12 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
 | `vendor/reddit-conversions-api` | Conversions API v3 events, URL and JSON event payload | official vendor |
 | `vendor/x-conversions-api` | X conversion API measurement events, URL and JSON payload | official vendor |
+| `vendor/yahoo-dot` | Yahoo DSP Dot image pixels | official vendor |
+| `vendor/yandex-metrica` | Yandex Metrica Measurement Protocol | official vendor |
+| `vendor/openai` | OpenAI Ads image tag | official vendor |
+| `vendor/openai-conversions-api` | OpenAI Ads Conversions API, URL and JSON payload | official vendor |
+| `vendor/kochava` | Kochava S2S events, JSON payload | official vendor |
+| `vendor/singular` | Singular S2S EVENT, query parameters | official vendor |
 | `vendor/amplitude` | Amplitude HTTP V2 event uploads | official vendor |
 | `vendor/mixpanel` | Mixpanel track ingestion | official vendor |
 | `vendor/posthog` | PostHog capture, single and batched | official vendor |
@@ -186,8 +195,8 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover twenty-eight endpoint families in depth. The vendor directory
-covers the rest by attribution: 89 vendors and 223 hosts, so an unrecognized
+Rulepacks cover thirty-five endpoint families in depth. The vendor directory
+covers the rest by attribution: 90 vendors and 228 hosts, so an unrecognized
 pixel still gets a name.
 
 ```bash
