@@ -765,6 +765,46 @@ EVENT requests to `s2s.singular.net/api/v1/evt` and `/api/v2/evt`. Level:
 
 Source: [S2S EVENT endpoint](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference).
 
+## `vendor/brevo`
+
+Marketing Automation `trackEvent` posts to `in-automate.brevo.com` and
+`in-automate.sendinblue.com`. Level: `official_vendor`. The JavaScript tracker
+on `sibautomation.com` is not contracted.
+
+| Body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `email` | Required | `vendor.brevo.body.email.missing`, `.empty` |
+| `event` | Required | `vendor.brevo.body.event.missing`, `.empty` |
+
+Source: [track custom events (REST)](https://developers.brevo.com/docs/track-custom-events-rest).
+
+`properties` and `eventdata` are optional. The identify endpoint is a different
+call and is not contracted here.
+
+## `vendor/rudderstack`
+
+HTTP Tracking API JSON, plus Pixel API GET `/pixel/v1/track` on hosted
+data planes. Level: `official_vendor`. Self-hosted data planes on other hosts
+stay directory-only.
+
+The HTTP API is Segment-compatible. Bare payloads are told apart by
+`context.library.name` as in RudderStack's HTTP samples (`http`), and by
+leaving `writeKey` out of the JSON body (Pixel and HTTP POST put it in the
+query or in basic auth).
+
+| Parameter or body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `writeKey` | Required on the pixel URL | `vendor.rudderstack.param.writeKey.missing`, `.empty` |
+| Pixel `event` | Required on `/pixel/v1/track` | `vendor.rudderstack.param.event.missing`, `.empty` |
+| Pixel identity | `userId` or `anonymousId` | `vendor.rudderstack.identifier_required` |
+| Batch `type` | Required documented method | `vendor.rudderstack.body.type.missing`, `.invalid` |
+| Track `event` | Required when `type` is `track` | `vendor.rudderstack.body.track_requires_an_event_name` |
+| Call identity | `userId` or `anonymousId` | `vendor.rudderstack.body.call_needs_an_identifier` |
+| `timestamp` | ISO 8601 when present | `vendor.rudderstack.body.timestamp.invalid` |
+
+Sources: [HTTP API](https://www.rudderstack.com/docs/api/http-api/),
+[Pixel API](https://www.rudderstack.com/docs/api/pixel-api/).
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a
@@ -790,8 +830,9 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 - HubSpot. The endpoint in the directory is the `__ptq.gif` tracking pixel, and
   HubSpot documents the `_hsq` client-side calls rather than the request that
   pixel makes, so its parameters have no citable contract
-- Snap Pixel, the X website tag, Amazon Ad Tag, Baidu Tongji, and Kwai. Those
-  vendors document a JavaScript API, not an HTTP query or JSON body contract
+- Snap Pixel, the X website tag, Amazon Ad Tag, Baidu Tongji, Kwai, and the
+  Brevo JavaScript tracker. Those vendors document a JavaScript API, not an
+  HTTP query or JSON body contract
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling
 - Duplicate or conflicting artifacts across a document
 - Document extraction: Pixellint validates artifacts a caller has already

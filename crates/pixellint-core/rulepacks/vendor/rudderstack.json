@@ -1,0 +1,151 @@
+{
+  "id": "vendor/rudderstack",
+  "display_name": "RudderStack HTTP and Pixel API",
+  "description": "HTTP Tracking API JSON on the data plane, and Pixel API GET /pixel/v1/track. Self-hosted data planes on other hosts are directory-only.",
+  "vendor": "rudderstack",
+  "source_level": "official_vendor",
+  "docs": "https://www.rudderstack.com/docs/api/http-api/",
+  "match": {
+    "hosts": ["hosted.rudderlabs.com"],
+    "host_suffixes": ["dataplane.rudderstack.com", "rudderlabs.com"],
+    "path_contains": ["/pixel/v1/track"],
+    "json_paths": [
+      {
+        "any_of": [
+          "context.library.name",
+          "batch[].context.library.name"
+        ]
+      },
+      {
+        "any_of": ["event", "batch[].type", "batch[].event"]
+      },
+      { "path": "writeKey", "excludes": "^.+$" },
+      { "path": "api_key", "excludes": "^.+$" },
+      { "path": "distinct_id", "excludes": "^.+$" }
+    ]
+  },
+  "params": [
+    {
+      "name": "writeKey",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "The Pixel API authenticates with the source write key in the query. HTTP POST uses basic auth instead, and is a JSON artifact.",
+      "fix_hint": "Add `writeKey` from the HTTP source in the dashboard.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "event",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "Name of the event being tracked. Required on /pixel/v1/track.",
+      "fix_hint": "Set `event` to the action name, such as `Product Viewed`.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "anonymousId",
+      "format": { "kind": "non_empty" },
+      "description": "Anonymous identifier. The Pixel API requires `userId` or `anonymousId`.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "userId",
+      "format": { "kind": "non_empty" },
+      "description": "Known-user identifier. Alternative to `anonymousId`.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.rudderstack.identifier_required",
+      "kind": "require_one_of",
+      "params": ["userId", "anonymousId"],
+      "severity": "error",
+      "message": "The pixel has neither `userId` nor `anonymousId`. RudderStack documents one of the two as required.",
+      "fix_hint": "Send `userId` for a known user, or `anonymousId` for an unidentified one.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    }
+  ],
+  "body": [
+    {
+      "scope": "batch[]",
+      "params": [
+        {
+          "name": "type",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": ["identify", "track", "page", "screen", "group", "alias"]
+          },
+          "description": "Each batched call names a documented method.",
+          "fix_hint": "Set `type` to identify, track, page, screen, group, or alias.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "event",
+          "format": { "kind": "non_empty" },
+          "description": "Name of the user action. Required on a track call.",
+          "fix_hint": "Set `event` to the action name, such as `Product Purchased`.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.rudderstack.body.track_requires_an_event_name",
+          "kind": "required_when_value",
+          "when": "type",
+          "equals": ["track"],
+          "requires": ["event"],
+          "severity": "error",
+          "message": "A `track` call carries no `event`. RudderStack documents the event name as required.",
+          "fix_hint": "Add the event name to the call.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        }
+      ]
+    },
+    {
+      "scope": ["batch[]", ""],
+      "params": [
+        {
+          "name": "event",
+          "format": { "kind": "non_empty" },
+          "description": "Name of the user action. Required on a track call.",
+          "fix_hint": "Set `event` to the action name, such as `Product Purchased`.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "userId",
+          "format": { "kind": "non_empty" },
+          "description": "Unique identifier for the user. Either this or `anonymousId` is required.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "anonymousId",
+          "format": { "kind": "non_empty" },
+          "description": "Stands in for a user id when there is none. Either this or `userId` is required.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "timestamp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+          },
+          "description": "RudderStack documents timestamp as ISO 8601 `yyyy-MM-ddTHH:mm:ss.SSSZ`.",
+          "fix_hint": "Send an ISO 8601 timestamp such as `2022-02-01T19:14:18.381Z`.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.rudderstack.body.call_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": ["userId", "anonymousId"],
+          "severity": "error",
+          "message": "The call carries neither `userId` nor `anonymousId`. RudderStack documents one of the two as required.",
+          "fix_hint": "Send `userId` for a known user, or `anonymousId` for an unidentified one.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        }
+      ]
+    }
+  ]
+}

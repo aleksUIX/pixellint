@@ -12,7 +12,7 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - Declarative rulepack manifests: host and path matchers, parameter contracts,
   JSON body contracts, value formats, cross-parameter rules, and load-time
   validation including a citation requirement for vendor-documented rules
-- Thirty-five first-party vendor packs: Meta Pixel and Conversions API, GA4
+- Thirty-seven first-party vendor packs: Meta Pixel and Conversions API, GA4
   Measurement Protocol and the browser `/g/collect` transport, Google Tag
   Manager and gtag.js, Google Ads conversion pixels and click conversion
   uploads, Campaign Manager Floodlight, Adobe Analytics, Pinterest Tag and
@@ -20,8 +20,9 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   LinkedIn image pixel and Conversions API, Microsoft UET, Reddit Pixel and
   Conversions API, X conversion API, Yahoo Dot, Yandex Metrica Measurement
   Protocol, OpenAI Ads image tag and Conversions API, Amplitude, Mixpanel,
-  PostHog, Segment, Klaviyo, Braze, AppsFlyer S2S, Adjust S2S, Branch Events
-  API, Kochava S2S, and Singular S2S EVENT
+  PostHog, Segment, RudderStack HTTP and Pixel API, Klaviyo, Braze, Brevo
+  Tracker REST, AppsFlyer S2S, Adjust S2S, Branch Events API, Kochava S2S, and
+  Singular S2S EVENT
 - Vendor endpoint directory: hosts attributed by vendor, so endpoints without a
   matching pack still get identified, and vendors that do have a pack are
   marked as covered

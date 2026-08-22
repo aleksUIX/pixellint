@@ -1,0 +1,52 @@
+{
+  "id": "vendor/brevo",
+  "display_name": "Brevo Tracker REST events",
+  "description": "Marketing Automation trackEvent calls posted to in-automate.brevo.com. The JavaScript tracker on sibautomation.com is a different surface and is not contracted here.",
+  "vendor": "brevo",
+  "source_level": "official_vendor",
+  "docs": "https://developers.brevo.com/docs/track-custom-events-rest",
+  "match": {
+    "hosts": [
+      "in-automate.brevo.com",
+      "in-automate.sendinblue.com"
+    ],
+    "path_contains": ["/api/v2/trackEvent"],
+    "json_paths": [
+      "email",
+      "event"
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "email",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "Brevo identifies the contact by email on every REST trackEvent call.",
+          "fix_hint": "Send the contact email in `email`.",
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest"
+        },
+        {
+          "name": "event",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the event name to record. Any value is legal except the reserved keys inside `properties`.",
+          "fix_hint": "Set `event` to the name you want in Automation, such as `cart_updated`.",
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest"
+        },
+        {
+          "name": "properties",
+          "description": "Optional contact properties. Do not put `email` or `event` inside this object; those keys are reserved.",
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest"
+        },
+        {
+          "name": "eventdata",
+          "description": "Optional event payload, such as cart contents under `eventdata.data`.",
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}

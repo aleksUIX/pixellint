@@ -35,9 +35,9 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 - URL conformance, transport, credentials, fragments, and ad-tech macro handling
 - IAB consent signals: TCF `gdpr` and `gdpr_consent`, the deprecated US Privacy
   string, and GPP `gpp` and `gpp_sid`
-- Vendor parameter contracts for thirty-five endpoint families, each cited to the
+- Vendor parameter contracts for thirty-seven endpoint families, each cited to the
   vendor's own documentation
-- Endpoint attribution for 90 vendors, so an unrecognized pixel still gets a name.
+- Endpoint attribution for 92 vendors, so an unrecognized pixel still gets a name.
 
 ## API
 

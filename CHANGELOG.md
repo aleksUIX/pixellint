@@ -4,6 +4,21 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.14.0 - 2026-08-21
+
+### Added
+
+- `vendor/brevo`, covering Marketing Automation `trackEvent` JSON on
+  `in-automate.brevo.com`: required `email` and `event`
+- `vendor/rudderstack`, covering the Pixel API on hosted data planes
+  (`writeKey`, `event`, and `userId` or `anonymousId`) and the HTTP Tracking
+  API JSON (Segment-compatible, claimed by `context.library.name`)
+- Directory entries for Brevo and RudderStack. Matomo Cloud now matches
+  `*.matomo.cloud`, not only `cdn.matomo.cloud`
+
+The Brevo JS tracker, HubSpot `__ptq.gif`, Criteo, Taboola, Outbrain, and The
+Trade Desk stay directory-only.
+
 ## 0.13.0 - 2026-08-21
 
 ### Added

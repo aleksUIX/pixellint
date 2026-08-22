@@ -51,6 +51,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/braze.json"),
     ),
     (
+        "vendor/brevo",
+        include_str!("../rulepacks/vendor/brevo.json"),
+    ),
+    (
         "vendor/floodlight",
         include_str!("../rulepacks/vendor/floodlight.json"),
     ),
@@ -130,6 +134,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/reddit-conversions-api",
         include_str!("../rulepacks/vendor/reddit-conversions-api.json"),
+    ),
+    (
+        "vendor/rudderstack",
+        include_str!("../rulepacks/vendor/rudderstack.json"),
     ),
     (
         "vendor/segment",

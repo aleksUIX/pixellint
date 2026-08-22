@@ -86,7 +86,7 @@ warnings, `1` when any error-severity finding is present, and `2` on a usage or
 input problem.
 
 ```yaml
-- uses: aleksUIX/pixellint@v0.13.0
+- uses: aleksUIX/pixellint@v0.14.0
   with:
     path: fixtures/conversion-pixel.txt
     kind: url
@@ -188,15 +188,17 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/posthog` | PostHog capture, single and batched | official vendor |
 | `vendor/klaviyo` | Klaviyo event creation | official vendor |
 | `vendor/braze` | Braze user track: events, purchases, attributes | official vendor |
+| `vendor/brevo` | Brevo Tracker REST `trackEvent` | official vendor |
 | `vendor/segment` | Segment HTTP Tracking API, single and batched | official vendor |
+| `vendor/rudderstack` | RudderStack HTTP Tracking API and Pixel API | official vendor |
 | `vendor/adjust` | Adjust S2S events on s2s.adjust.com | official vendor |
 | `vendor/appsflyer` | AppsFlyer S2S in-app events, URL and JSON payload | official vendor |
 | `vendor/branch` | Branch Events API standard and custom events | official vendor |
 
 ### Vendor directory
 
-Rulepacks cover thirty-five endpoint families in depth. The vendor directory
-covers the rest by attribution: 90 vendors and 228 hosts, so an unrecognized
+Rulepacks cover thirty-seven endpoint families in depth. The vendor directory
+covers the rest by attribution: 92 vendors and 235 hosts, so an unrecognized
 pixel still gets a name.
 
 ```bash
