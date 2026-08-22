@@ -55,7 +55,8 @@ npm install pixellint            # library, WASM-backed
 ```
 
 Or paste a URL into the playground at [pixellint.org](https://pixellint.org),
-which runs the same engine in your browser and sends nothing anywhere.
+which runs the same engine in your browser and sends nothing anywhere. Vendor
+contracts are documented at [pixellint.org/packs/](https://pixellint.org/packs/).
 
 ## Use it
 
