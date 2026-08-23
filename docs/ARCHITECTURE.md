@@ -24,7 +24,7 @@
 ## Current State
 
 - `core` is hand-written Rust and covers spec-level URL, macro, and IAB consent checks.
-- Vendor packs are declarative manifests compiled into `pixellint-core` and interpreted by one `ManifestRulePack` plugin. Thirty-seven ship today, including conversion API JSON bodies where the vendor documents them.
+- Vendor packs are declarative manifests compiled into `pixellint-core` and interpreted by one `ManifestRulePack` plugin. Fifty-three ship today, including conversion API JSON bodies where the vendor documents them.
 - A host directory attributes the long tail. It names the vendor and, when a first-party pack exists for that vendor, points at it. It never invents parameter rules.
 - User packs load from disk through `--rulepack-file` or `Engine::register_manifest_path`, using the same schema as the first-party packs.
 - The `pixellint` CLI exposes local QA and CI flows with JSON output and documented exit codes.
@@ -56,7 +56,7 @@ without shipping code. Everything else is std.
 
 - Plan around endpoint families, not vendor logos or template catalogs.
 - A single vendor may require multiple rulepacks when its wire-level surfaces differ materially, for example Google Ads, Floodlight, and generic VAST trackers.
-- The practical goal is first-party coverage for the common families that get Pixellint to roughly p90 usefulness, while leaving niche, regional, private, or customer-specific integrations to custom packs.
+- The practical goal is first-party coverage for the common families that get Pixellint to roughly p99 of identifiable measurement traffic, while leaving niche, regional, private, or customer-specific integrations to custom packs.
 - Coverage expansion should follow observed traffic and real demand, not a scrape of every public vendor library.
 
 ## Rulepack Format

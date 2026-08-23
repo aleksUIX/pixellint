@@ -22,6 +22,7 @@ VENDORS = {
     "x": ("X (Twitter)", "social", ["analytics.twitter.com", "static.ads-twitter.com", "ads-api.twitter.com", "ads-api.x.com", "t.co"], "vendor/x-conversions-api"),
     "quora": ("Quora", "social", ["a.quora.com", "q.quora.com"], None),
     "nextdoor": ("Nextdoor", "social", ["ads.nextdoor.com"], None),
+    "kwai": ("Kwai", "social", ["s1.kwai.net"], "vendor/kwai"),
 
     # Search and large ad platforms
     "google": ("Google", "search", [
@@ -35,13 +36,13 @@ VENDORS = {
     "microsoft": ("Microsoft Advertising", "search", ["bat.bing.com", "bat.bing.net", "c.clarity.ms", "www.clarity.ms"], "vendor/microsoft-uet"),
     "yahoo": ("Yahoo", "search", ["sp.analytics.yahoo.com", "s.yimg.com", "ads.yahoo.com"], None),
     "yandex": ("Yandex", "search", ["mc.yandex.ru", "mc.yandex.com", "an.yandex.ru"], None),
-    "baidu": ("Baidu", "search", ["hm.baidu.com", "cpro.baidustatic.com"], None),
+    "baidu": ("Baidu", "search", ["hm.baidu.com", "cpro.baidustatic.com"], "vendor/baidu"),
     "naver": ("Naver", "search", ["wcs.naver.net", "wcs.naver.com"], None),
 
     # Demand and supply side platforms
-    "thetradedesk": ("The Trade Desk", "programmatic", ["insight.adsrvr.org", "js.adsrvr.org", "match.adsrvr.org"], None),
-    "amazon": ("Amazon Ads", "programmatic", ["s.amazon-adsystem.com", "aax.amazon-adsystem.com", "c.amazon-adsystem.com", "fls-na.amazon-adsystem.com"], None),
-    "criteo": ("Criteo", "programmatic", ["sslwidget.criteo.com", "static.criteo.net", "gum.criteo.com", "dis.criteo.com", "widget.criteo.com"], None),
+    "thetradedesk": ("The Trade Desk", "programmatic", ["insight.adsrvr.org", "js.adsrvr.org", "match.adsrvr.org"], "vendor/the-trade-desk"),
+    "amazon": ("Amazon Ads", "programmatic", ["s.amazon-adsystem.com", "aax.amazon-adsystem.com", "c.amazon-adsystem.com", "fls-na.amazon-adsystem.com"], "vendor/amazon-ads"),
+    "criteo": ("Criteo", "programmatic", ["sslwidget.criteo.com", "static.criteo.net", "gum.criteo.com", "dis.criteo.com", "widget.criteo.com", "dynamic.criteo.com"], "vendor/criteo"),
     "adform": ("Adform", "programmatic", ["track.adform.net", "s1.adform.net", "server.adform.net"], None),
     "xandr": ("Xandr", "programmatic", ["ib.adnxs.com", "secure.adnxs.com", "acdn.adnxs.com"], None),
     "pubmatic": ("PubMatic", "programmatic", ["ads.pubmatic.com", "image6.pubmatic.com", "simage2.pubmatic.com"], None),
@@ -50,8 +51,8 @@ VENDORS = {
     "indexexchange": ("Index Exchange", "programmatic", ["js-sec.indexww.com", "htlb.casalemedia.com"], None),
     "tripleLift": ("TripleLift", "programmatic", ["eb2.3lift.com", "tlx.3lift.com"], None),
     "mediamath": ("MediaMath", "programmatic", ["pixel.mathtag.com", "sync.mathtag.com"], None),
-    "taboola": ("Taboola", "native", ["trc.taboola.com", "cdn.taboola.com"], None),
-    "outbrain": ("Outbrain", "native", ["tr.outbrain.com", "widgets.outbrain.com", "amplify.outbrain.com"], None),
+    "taboola": ("Taboola", "native", ["trc.taboola.com", "cdn.taboola.com"], "vendor/taboola"),
+    "outbrain": ("Outbrain", "native", ["tr.outbrain.com", "widgets.outbrain.com", "amplify.outbrain.com"], "vendor/outbrain"),
     "sharethrough": ("Sharethrough", "programmatic", ["btlr.sharethrough.com", "match.sharethrough.com"], None),
 
     # Identity, data, and onboarding
@@ -80,7 +81,7 @@ VENDORS = {
     "mixpanel": ("Mixpanel", "analytics", ["api.mixpanel.com", "cdn.mxpnl.com", "api-js.mixpanel.com"], "vendor/mixpanel"),
     "segment": ("Segment", "analytics", ["api.segment.io", "cdn.segment.com"], "vendor/segment"),
     "heap": ("Heap", "analytics", ["heapanalytics.com", "cdn.heapanalytics.com"], None),
-    "hotjar": ("Hotjar", "analytics", ["script.hotjar.com", "in.hotjar.com", "static.hotjar.com"], None),
+    "hotjar": ("Hotjar", "analytics", ["script.hotjar.com", "in.hotjar.com", "static.hotjar.com"], "vendor/hotjar"),
     "fullstory": ("FullStory", "analytics", ["edge.fullstory.com", "rs.fullstory.com"], None),
     "crazyegg": ("Crazy Egg", "analytics", ["script.crazyegg.com", "tracking.crazyegg.com"], None),
     "chartbeat": ("Chartbeat", "analytics", ["ping.chartbeat.net", "static.chartbeat.com"], None),
@@ -93,7 +94,7 @@ VENDORS = {
     "statcounter": ("StatCounter", "analytics", ["www.statcounter.com", "c.statcounter.com"], None),
 
     # Marketing automation, CRM, and commerce
-    "hubspot": ("HubSpot", "martech", ["js.hs-scripts.com", "track.hubspot.com", "js.hs-analytics.net"], None),
+    "hubspot": ("HubSpot", "martech", ["js.hs-scripts.com", "track.hubspot.com", "js.hs-analytics.net"], "vendor/hubspot"),
     "marketo": ("Adobe Marketo", "martech", ["munchkin.marketo.net"], None),
     "pardot": ("Salesforce Account Engagement", "martech", ["pi.pardot.com", "pi.demand.salesforce.com"], None),
     "klaviyo": ("Klaviyo", "martech", ["static.klaviyo.com", "a.klaviyo.com"], "vendor/klaviyo"),
@@ -106,10 +107,10 @@ VENDORS = {
     "zendesk": ("Zendesk", "martech", ["static.zdassets.com", "ekr.zdassets.com"], None),
 
     # Affiliate and mobile attribution
-    "impact": ("impact.com", "affiliate", ["utt.impactcdn.com", "app.impact.com"], None),
-    "cj": ("CJ Affiliate", "affiliate", ["www.emjcd.com", "www.mczbf.com"], None),
-    "rakuten": ("Rakuten Advertising", "affiliate", ["track.linksynergy.com", "click.linksynergy.com"], None),
-    "awin": ("Awin", "affiliate", ["www.awin1.com", "www.dwin1.com"], None),
+    "impact": ("impact.com", "affiliate", ["utt.impactcdn.com", "app.impact.com"], "vendor/impact"),
+    "cj": ("CJ Affiliate", "affiliate", ["www.emjcd.com", "www.mczbf.com"], "vendor/cj"),
+    "rakuten": ("Rakuten Advertising", "affiliate", ["track.linksynergy.com", "click.linksynergy.com"], "vendor/rakuten"),
+    "awin": ("Awin", "affiliate", ["www.awin1.com", "www.dwin1.com"], "vendor/awin"),
     "shareasale": ("ShareASale", "affiliate", ["www.shareasale.com", "shareasale.com"], None),
     "partnerize": ("Partnerize", "affiliate", ["prf.hn", "cdn.performancehorizon.com"], None),
     "appsflyer": ("AppsFlyer", "mobile", ["impression.appsflyer.com", "launches.appsflyer.com", "onelink.me", "api3.appsflyer.com"], "vendor/appsflyer"),

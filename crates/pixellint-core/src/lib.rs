@@ -35,12 +35,21 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/adobe-analytics.json"),
     ),
     (
+        "vendor/amazon-ads",
+        include_str!("../rulepacks/vendor/amazon-ads.json"),
+    ),
+    (
         "vendor/amplitude",
         include_str!("../rulepacks/vendor/amplitude.json"),
     ),
     (
         "vendor/appsflyer",
         include_str!("../rulepacks/vendor/appsflyer.json"),
+    ),
+    ("vendor/awin", include_str!("../rulepacks/vendor/awin.json")),
+    (
+        "vendor/baidu",
+        include_str!("../rulepacks/vendor/baidu.json"),
     ),
     (
         "vendor/branch",
@@ -53,6 +62,15 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/brevo",
         include_str!("../rulepacks/vendor/brevo.json"),
+    ),
+    (
+        "vendor/brevo-js",
+        include_str!("../rulepacks/vendor/brevo-js.json"),
+    ),
+    ("vendor/cj", include_str!("../rulepacks/vendor/cj.json")),
+    (
+        "vendor/criteo",
+        include_str!("../rulepacks/vendor/criteo.json"),
     ),
     (
         "vendor/floodlight",
@@ -79,6 +97,22 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/google-tag-manager.json"),
     ),
     (
+        "vendor/hotjar",
+        include_str!("../rulepacks/vendor/hotjar.json"),
+    ),
+    (
+        "vendor/hubspot",
+        include_str!("../rulepacks/vendor/hubspot.json"),
+    ),
+    (
+        "vendor/hubspot-pixel",
+        include_str!("../rulepacks/vendor/hubspot-pixel.json"),
+    ),
+    (
+        "vendor/impact",
+        include_str!("../rulepacks/vendor/impact.json"),
+    ),
+    (
         "vendor/klaviyo",
         include_str!("../rulepacks/vendor/klaviyo.json"),
     ),
@@ -86,6 +120,7 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/kochava",
         include_str!("../rulepacks/vendor/kochava.json"),
     ),
+    ("vendor/kwai", include_str!("../rulepacks/vendor/kwai.json")),
     (
         "vendor/linkedin",
         include_str!("../rulepacks/vendor/linkedin.json"),
@@ -116,6 +151,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/openai-conversions-api.json"),
     ),
     (
+        "vendor/outbrain",
+        include_str!("../rulepacks/vendor/outbrain.json"),
+    ),
+    (
         "vendor/pinterest",
         include_str!("../rulepacks/vendor/pinterest.json"),
     ),
@@ -126,6 +165,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/posthog",
         include_str!("../rulepacks/vendor/posthog.json"),
+    ),
+    (
+        "vendor/rakuten",
+        include_str!("../rulepacks/vendor/rakuten.json"),
     ),
     (
         "vendor/reddit",
@@ -152,6 +195,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/snapchat.json"),
     ),
     (
+        "vendor/taboola",
+        include_str!("../rulepacks/vendor/taboola.json"),
+    ),
+    (
+        "vendor/the-trade-desk",
+        include_str!("../rulepacks/vendor/the-trade-desk.json"),
+    ),
+    (
         "vendor/tiktok",
         include_str!("../rulepacks/vendor/tiktok.json"),
     ),
@@ -159,6 +210,7 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/tiktok-events-api",
         include_str!("../rulepacks/vendor/tiktok-events-api.json"),
     ),
+    ("vendor/x", include_str!("../rulepacks/vendor/x.json")),
     (
         "vendor/x-conversions-api",
         include_str!("../rulepacks/vendor/x-conversions-api.json"),

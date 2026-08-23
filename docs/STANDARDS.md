@@ -769,7 +769,7 @@ Source: [S2S EVENT endpoint](https://support.singular.net/hc/en-us/articles/3149
 
 Marketing Automation `trackEvent` posts to `in-automate.brevo.com` and
 `in-automate.sendinblue.com`. Level: `official_vendor`. The JavaScript tracker
-on `sibautomation.com` is not contracted.
+on `sibautomation.com` is `vendor/brevo-js`.
 
 | Body field | Enforced | Rule ids |
 | --- | --- | --- |
@@ -805,6 +805,211 @@ query or in basic auth).
 Sources: [HTTP API](https://www.rudderstack.com/docs/api/http-api/),
 [Pixel API](https://www.rudderstack.com/docs/api/pixel-api/).
 
+## `vendor/the-trade-desk`
+
+Universal pixel iframe fires to `insight.adsrvr.org/track/up`. Level:
+`official_vendor`. The JS loader on `js.adsrvr.org` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `adv` | Required advertiser ID | `vendor.the-trade-desk.param.adv.missing`, `.empty` |
+| `upid` | Required universal pixel ID | `vendor.the-trade-desk.param.upid.missing`, `.empty` |
+| `ref` | Required absolute page URL | `vendor.the-trade-desk.param.ref.missing`, `.empty`, `.invalid` |
+| `upv` | Required pixel version | `vendor.the-trade-desk.param.upv.missing`, `.empty` |
+
+Source: [universal pixel](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/data/doc/TrackingTagsUniversalPixel).
+
+## `vendor/criteo`
+
+Criteo OneTag loader on `dynamic.criteo.com` and `static.criteo.net`
+`/js/ld/ld.js`. Level: `official_vendor`. Cookie sync on `gum.criteo.com` is
+not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `a` | Required numeric Partner ID | `vendor.criteo.param.a.missing`, `.empty`, `.invalid` |
+
+Source: [OneTag](https://developers.criteo.com/retailer-integration/docs/onetag).
+
+## `vendor/taboola`
+
+Taboola base pixel loader on `cdn.taboola.com/libtrc/unip/{account_id}/tfa.js`.
+Level: `official_vendor`. Collection on `trc.taboola.com` stays directory-only.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `account_id` | Required numeric Account ID in the path | `vendor.taboola.param.account_id.missing` |
+
+Source: [add the base pixel manually](https://developers.taboola.com/pixel/docs/add-the-base-pixel-manually).
+
+## `vendor/hotjar`
+
+Hotjar site loader on `static.hotjar.com/c/hotjar-{hjid}.js`. Level:
+`official_template`. Session traffic on `in.hotjar.com` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `hjid` | Required numeric site ID in the path | `vendor.hotjar.param.hjid.missing` |
+| `sv` | Recommended snippet version | `vendor.hotjar.param.sv.missing`, `.invalid` |
+
+Source: [What is the Hotjar Tracking Code](https://help.hotjar.com/hc/en-us/articles/115011639927-What-is-the-Hotjar-Tracking-Code).
+
+## `vendor/hubspot`
+
+HubSpot embed loader on `js.hs-scripts.com/{hubId}.js` and
+`js.hs-analytics.net/{hubId}.js`. Level: `official_template`. Collect fires
+on `track.hubspot.com/__ptq.gif` are `vendor/hubspot-pixel`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `hub_id` | Required numeric Hub ID in the path | `vendor.hubspot.param.hub_id.missing` |
+
+Source: [tracking code API](https://developers.hubspot.com/docs/api-reference/latest/account/settings/tracking-code/overview).
+
+## `vendor/awin`
+
+Awin fall-back conversion image on `www.awin1.com/sread.img` and S2S on
+`/sread.php`. Level: `official_vendor`. The MasterTag on `www.dwin1.com` is
+not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `merchant` | Required numeric advertiser ID | `vendor.awin.param.merchant.missing`, `.empty`, `.invalid` |
+| `tt` | Required `ns` or `ss` | `vendor.awin.param.tt.missing`, `.invalid` |
+| `tv` | Required `2` | `vendor.awin.param.tv.missing`, `.invalid` |
+| `amount` | Required sale subtotal | `vendor.awin.param.amount.missing`, `.empty` |
+| `ch` | Required last-click channel | `vendor.awin.param.ch.missing`, `.empty` |
+| `parts` | Required commission group plus amount | `vendor.awin.param.parts.missing`, `.empty` |
+| `ref` | Required unique order reference | `vendor.awin.param.ref.missing`, `.empty` |
+| `cr` | Recommended ISO 4217 currency | `vendor.awin.param.cr.missing`, `.invalid` |
+
+Source: [fall-back conversion pixel](https://help.awin.com/developers/docs/fall-back-conversion-pixel).
+
+## `vendor/x`
+
+X website tag image pixels on `analytics.twitter.com/i/adsct`. Level:
+`ecosystem_reference`. X documents `twq` and `uwt.js`, not this query. The
+conversion API is `vendor/x-conversions-api`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `txn_id` | Required conversion ID | `vendor.x.param.txn_id.missing`, `.empty` |
+| `p_id` | Recommended; generated pixels send `Twitter` | `vendor.x.param.p_id.missing` |
+
+Source: [conversion tracking for websites](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html).
+
+## `vendor/amazon-ads`
+
+Amazon Ad Tag conversion loader on
+`s.amazon-adsystem.com/iu3/conversion/{id}.js`. Level: `ecosystem_reference`.
+Amazon documents Tag IDs in the Advertising Tag GTM template. Generated
+loaders put that ID in the path. APS `apstag.js` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `advertiser_id` | Required Tag ID in the path | `vendor.amazon-ads.param.advertiser_id.missing` |
+
+Source: [Amazon Advertising Tag GTM template](https://github.com/amzn/ads-pao-amznjs-gtm-template).
+
+## `vendor/outbrain`
+
+Outbrain conversion pixels on `tr.outbrain.com/pixel`. Level:
+`ecosystem_reference`. Outbrain documents the Marketer ID in GTM, not this
+query. The JS loader on `amplify.outbrain.com` is not contracted.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| Identifier | `ob_adv_id` or `ob_click_id` | `vendor.outbrain.identifier_required` |
+
+Source: [install Outbrain pixel on GTM](https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/).
+
+## `vendor/baidu`
+
+Baidu Tongji collect hits on `hm.baidu.com/hm.gif`. Level:
+`ecosystem_reference`. Baidu documents the site ID on `hm.js?{siteId}` as a
+nameless query string. Collect hits send it as `si`. The loader is not
+contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `si` | Required 32-hex site ID | `vendor.baidu.param.si.missing`, `.empty`, `.invalid` |
+
+Source: [Baidu Tongji code introduction](https://tongji.baidu.com/web/help/article?id=174).
+
+## `vendor/kwai`
+
+Kwai Pixel loader on `s1.kwai.net` paths that contain `/pixel/`. Level:
+`ecosystem_reference`. Kwai documents `kwaiq.load(pixelId)`, not this query.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `sdkid` | Required Pixel ID | `vendor.kwai.param.sdkid.missing`, `.empty` |
+| `lib` | Recommended; generated loaders send `kwaiq` | `vendor.kwai.param.lib.missing`, `.invalid` |
+
+Source: [install developer-mode Pixel](https://docs.qingque.cn/d/home/eZQCNZ1wBFnEpQEAMmOhfoVwI?identityId=1pTerwwOjbg).
+
+## `vendor/hubspot-pixel`
+
+HubSpot collect pixel on `track.hubspot.com/__ptq.gif`. Level:
+`ecosystem_reference`. HubSpot tells you to look for `__ptq.gif` and documents
+`_hsq`, not this query. The embed loader is `vendor/hubspot`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `a` | Required numeric Hub ID | `vendor.hubspot-pixel.param.a.missing`, `.empty`, `.invalid` |
+
+Source: [troubleshoot the HubSpot tracking code](https://knowledge.hubspot.com/reports/how-do-i-know-if-my-hubspot-tracking-code-is-working).
+
+## `vendor/cj`
+
+CJ Affiliate conversion image and S2S on `www.emjcd.com/u`. Level:
+`official_vendor`. Click-redirect hosts are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `CID` | Required numeric Enterprise ID | `vendor.cj.param.CID.missing`, `.empty`, `.invalid` |
+| `TYPE` | Recommended Action ID | `vendor.cj.param.TYPE.missing`, `.invalid` |
+| `OID` | Recommended order reference | `vendor.cj.param.OID.missing` |
+
+Source: [MMP Adjust plugin](https://developers.cj.com/docs/plugins/mmp---adjust).
+
+## `vendor/impact`
+
+impact.com Universal Tracking Tag on `utt.impactcdn.com/{UUID}.js`. Level:
+`official_template`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `account_id` | Required account UUID in the path | `vendor.impact.param.account_id.missing` |
+
+Source: [UTT installation](https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/javascript-tag-utt/installation).
+
+## `vendor/rakuten`
+
+Rakuten Advertising conversion image on `track.linksynergy.com/ep`. Level:
+`ecosystem_reference`. Rakuten documents tracking methods rather than this
+query. Click redirects on `click.linksynergy.com` are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `mid` | Required numeric merchant ID | `vendor.rakuten.param.mid.missing`, `.empty`, `.invalid` |
+| `ord` | Required order ID | `vendor.rakuten.param.ord.missing`, `.empty` |
+| `skulist` | Recommended item SKUs | `vendor.rakuten.param.skulist.missing` |
+
+Source: [tracking methods](https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4403182382861-Tracking-Methods-and-Transaction-Reports).
+
+## `vendor/brevo-js`
+
+Legacy Brevo JavaScript tracker on `sibautomation.com/sa.js`. Level:
+`official_template`. The V2 loader on `cdn.brevo.com/js/sdk-loader.js` has no
+key on the URL and is not contracted. REST events are `vendor/brevo`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `key` | Required client key | `vendor.brevo-js.param.key.missing`, `.empty` |
+
+Source: [JS implementation](https://tracker-doc.brevo.com/docs/installation).
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a
@@ -827,12 +1032,9 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 
 ## Not implemented yet
 
-- HubSpot. The endpoint in the directory is the `__ptq.gif` tracking pixel, and
-  HubSpot documents the `_hsq` client-side calls rather than the request that
-  pixel makes, so its parameters have no citable contract
-- Snap Pixel, the X website tag, Amazon Ad Tag, Baidu Tongji, Kwai, and the
-  Brevo JavaScript tracker. Those vendors document a JavaScript API, not an
-  HTTP query or JSON body contract
+- Snap Pixel (`sc-static.net/scevent.min.js` and `tr.snapchat.com/p`). The
+  loader has no pixel ID on the URL. Collection is a POST without a published
+  query. Snap Conversions API is `vendor/snapchat`
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling
 - Duplicate or conflicting artifacts across a document
 - Document extraction: Pixellint validates artifacts a caller has already

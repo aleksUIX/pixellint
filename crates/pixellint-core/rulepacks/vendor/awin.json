@@ -1,0 +1,99 @@
+{
+  "id": "vendor/awin",
+  "display_name": "Awin conversion pixel",
+  "description": "Awin fall-back conversion image and S2S reads on www.awin1.com/sread.img and /sread.php.",
+  "vendor": "awin",
+  "source_level": "official_vendor",
+  "docs": "https://help.awin.com/developers/docs/fall-back-conversion-pixel",
+  "match": {
+    "hosts": ["www.awin1.com"],
+    "path_prefixes": ["/sread.img", "/sread.php"]
+  },
+  "params": [
+    {
+      "name": "merchant",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric Awin advertiser ID. The published pixel template requires it.",
+      "fix_hint": "Set `merchant` to the Advertiser ID from the Awin UI.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "tt",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["ns", "ss"] },
+      "description": "It is the tracking type. The image pixel sends `ns`; server-to-server sends `ss`.",
+      "fix_hint": "Use `tt=ns` on the image pixel and `tt=ss` on the S2S read.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "tv",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["2"] },
+      "description": "It is the tracking version. The published template sends `tv=2`.",
+      "fix_hint": "Set `tv=2`.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "amount",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the sale subtotal after discounts, excluding tax and shipping. Awin documents it as a float with a dot decimal.",
+      "fix_hint": "Set `amount` to the order subtotal, with a dot decimal and no thousands separator.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "ch",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It names the last-click channel. Awin documents `aw` for Awin traffic.",
+      "fix_hint": "Set `ch=aw` for Awin last-click, or the documented channel for that conversion.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "parts",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the commission group code plus amount, such as `DEFAULT:8.33`. Awin documents it as required.",
+      "fix_hint": "Set `parts` to `{group}:{amount}`, using `DEFAULT` when no group is configured.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "ref",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the unique order reference. Awin documents it as required and unique per conversion.",
+      "fix_hint": "Set `ref` to a unique, URL-encoded order identifier.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "cr",
+      "requirement": "recommended",
+      "format": { "kind": "regex", "pattern": "^[A-Z]{3}$" },
+      "format_severity": "warning",
+      "description": "It is the ISO 4217 currency code. The published template includes it.",
+      "fix_hint": "Set `cr` to a three-letter currency code such as `GBP`.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "testmode",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format_severity": "warning",
+      "description": "Awin documents `0` for live conversions and `1` to skip processing.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "vc",
+      "format": { "kind": "non_empty" },
+      "description": "It is the voucher code when a discount was used.",
+      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+    },
+    {
+      "name": "cks",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Awin click identifier (`awc`) on server-to-server reads.",
+      "doc": "https://help.awin.com/developers/docs/direct-s2s"
+    }
+  ],
+  "rules": []
+}

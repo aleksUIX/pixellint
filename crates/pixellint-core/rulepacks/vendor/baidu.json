@@ -1,0 +1,23 @@
+{
+  "id": "vendor/baidu",
+  "display_name": "Baidu Tongji collect",
+  "description": "Baidu Tongji collect hits on hm.baidu.com/hm.gif, whose site ID rides as si. The loader hm.js?{siteId} puts that ID in a nameless query string and is not contracted.",
+  "vendor": "baidu",
+  "source_level": "ecosystem_reference",
+  "docs": "https://tongji.baidu.com/web/help/article?id=174",
+  "match": {
+    "hosts": ["hm.baidu.com"],
+    "paths": ["/hm.gif"]
+  },
+  "params": [
+    {
+      "name": "si",
+      "requirement": "required",
+      "format": { "kind": "regex", "pattern": "^[a-fA-F0-9]{32}$" },
+      "description": "It is the 32-hex Tongji site ID. Baidu documents that ID on `hm.js?{siteId}`. Collect hits send it as `si`, so this rule is ecosystem evidence.",
+      "fix_hint": "Set `si` to the 32-character site ID from Tongji code installation.",
+      "doc": "https://tongji.baidu.com/web/help/article?id=174"
+    }
+  ],
+  "rules": []
+}

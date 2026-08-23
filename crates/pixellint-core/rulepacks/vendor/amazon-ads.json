@@ -1,0 +1,24 @@
+{
+  "id": "vendor/amazon-ads",
+  "display_name": "Amazon Ad Tag loader",
+  "description": "Amazon Ad Tag conversion loader on s.amazon-adsystem.com/iu3/conversion, whose Tag ID rides in the path. APS apstag.js and Firefly hosts are not contracted.",
+  "vendor": "amazon",
+  "source_level": "ecosystem_reference",
+  "docs": "https://github.com/amzn/ads-pao-amznjs-gtm-template",
+  "path_pattern": "/iu3/conversion/(?<advertiser_id>[^/]+)\\.js",
+  "match": {
+    "hosts": ["s.amazon-adsystem.com"],
+    "path_contains": ["/iu3/conversion/"]
+  },
+  "params": [
+    {
+      "name": "advertiser_id",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Amazon DSP Tag ID. Amazon documents Tag IDs in the Advertising Tag GTM template. Generated loaders put that ID in `/iu3/conversion/{id}.js`, so this rule is ecosystem evidence.",
+      "fix_hint": "Copy the Tag ID from Amazon DSP so the path is `/iu3/conversion/{Tag ID}.js`.",
+      "doc": "https://github.com/amzn/ads-pao-amznjs-gtm-template"
+    }
+  ],
+  "rules": []
+}

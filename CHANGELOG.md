@@ -4,6 +4,42 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.15.0 - 2026-08-22
+
+### Added
+
+- `vendor/the-trade-desk`, covering universal pixel iframe fires on
+  `insight.adsrvr.org/track/up`: required `adv`, `upid`, `ref`, and `upv`
+- `vendor/criteo`, covering the OneTag loader on `dynamic.criteo.com` and
+  `static.criteo.net` `/js/ld/ld.js`: required partner ID `a`
+- `vendor/taboola`, covering the base pixel loader on
+  `cdn.taboola.com/libtrc/unip/{account_id}/tfa.js`
+- `vendor/hotjar`, covering `static.hotjar.com/c/hotjar-{hjid}.js`: required
+  site ID in the path, recommended `sv`
+- `vendor/hubspot`, covering `js.hs-scripts.com/{hubId}.js` and
+  `js.hs-analytics.net/{hubId}.js`
+- `vendor/awin`, covering `/sread.img` and `/sread.php`: required `merchant`,
+  `tt`, `tv`, `amount`, `ch`, `parts`, and `ref`
+- `vendor/x`, covering website tag image pixels on
+  `analytics.twitter.com/i/adsct`: required `txn_id`
+- `vendor/amazon-ads`, covering the Ad Tag conversion loader on
+  `s.amazon-adsystem.com/iu3/conversion/{id}.js`
+- `vendor/outbrain`, covering `tr.outbrain.com/pixel`: `ob_adv_id` or
+  `ob_click_id`
+- `vendor/baidu`, covering Tongji collect on `hm.baidu.com/hm.gif`: required
+  `si`
+- `vendor/kwai`, covering Pixel loaders on `s1.kwai.net`: required `sdkid`
+- `vendor/hubspot-pixel`, covering `track.hubspot.com/__ptq.gif`: required `a`
+- `vendor/cj`, covering `www.emjcd.com/u`: required `CID`
+- `vendor/impact`, covering `utt.impactcdn.com/{UUID}.js`
+- `vendor/rakuten`, covering `track.linksynergy.com/ep`: required `mid` and
+  `ord`
+- `vendor/brevo-js`, covering `sibautomation.com/sa.js`: required `key`
+
+Snap Pixel stays directory-only. `scevent.min.js` has no pixel ID on the URL,
+and `tr.snapchat.com/p` is a POST without a published query. Snap CAPI remains
+`vendor/snapchat`. `trc.taboola.com` stays attributed.
+
 ## 0.14.0 - 2026-08-21
 
 ### Added

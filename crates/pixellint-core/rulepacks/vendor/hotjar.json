@@ -1,0 +1,32 @@
+{
+  "id": "vendor/hotjar",
+  "display_name": "Hotjar tracking code",
+  "description": "Hotjar site loader on static.hotjar.com/c/hotjar-{hjid}.js, whose site ID rides in the path.",
+  "vendor": "hotjar",
+  "source_level": "official_template",
+  "docs": "https://help.hotjar.com/hc/en-us/articles/115011639927-What-is-the-Hotjar-Tracking-Code",
+  "path_pattern": "/c/hotjar-(?<hjid>[0-9]+)\\.js",
+  "match": {
+    "hosts": ["static.hotjar.com"],
+    "path_contains": ["/c/hotjar-"]
+  },
+  "params": [
+    {
+      "name": "hjid",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric Hotjar site ID. The published tracking code loads `hotjar-{hjid}.js`.",
+      "fix_hint": "Copy the tracking code from Hotjar so the path carries your site ID.",
+      "doc": "https://help.hotjar.com/hc/en-us/articles/115011639927-What-is-the-Hotjar-Tracking-Code"
+    },
+    {
+      "name": "sv",
+      "requirement": "recommended",
+      "format": { "kind": "integer" },
+      "description": "It is the snippet version (`hjsv`) the generated tracking code sends as `sv`.",
+      "fix_hint": "Keep `sv` from the generated Hotjar snippet.",
+      "doc": "https://help.hotjar.com/hc/en-us/articles/115011639927-What-is-the-Hotjar-Tracking-Code"
+    }
+  ],
+  "rules": []
+}

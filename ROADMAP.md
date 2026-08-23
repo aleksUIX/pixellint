@@ -12,17 +12,21 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - Declarative rulepack manifests: host and path matchers, parameter contracts,
   JSON body contracts, value formats, cross-parameter rules, and load-time
   validation including a citation requirement for vendor-documented rules
-- Thirty-seven first-party vendor packs: Meta Pixel and Conversions API, GA4
+- Fifty-three first-party vendor packs: Meta Pixel and Conversions API, GA4
   Measurement Protocol and the browser `/g/collect` transport, Google Tag
   Manager and gtag.js, Google Ads conversion pixels and click conversion
   uploads, Campaign Manager Floodlight, Adobe Analytics, Pinterest Tag and
   Conversions API, Snapchat Conversions API, TikTok Pixel and Events API,
   LinkedIn image pixel and Conversions API, Microsoft UET, Reddit Pixel and
-  Conversions API, X conversion API, Yahoo Dot, Yandex Metrica Measurement
-  Protocol, OpenAI Ads image tag and Conversions API, Amplitude, Mixpanel,
-  PostHog, Segment, RudderStack HTTP and Pixel API, Klaviyo, Braze, Brevo
-  Tracker REST, AppsFlyer S2S, Adjust S2S, Branch Events API, Kochava S2S, and
-  Singular S2S EVENT
+  Conversions API, X website tag and conversion API, Yahoo Dot, Yandex Metrica
+  Measurement Protocol, OpenAI Ads image tag and Conversions API, Amplitude,
+  Mixpanel, PostHog, Segment, RudderStack HTTP and Pixel API, Klaviyo, Braze,
+  Brevo Tracker REST and JavaScript tracker, AppsFlyer S2S, Adjust S2S, Branch
+  Events API, Kochava S2S, Singular S2S EVENT, The Trade Desk universal pixel,
+  Criteo OneTag loader, Amazon Ad Tag loader, Taboola Pixel loader, Outbrain
+  pixel, Baidu Tongji collect, Kwai Pixel loader, Hotjar tracking code,
+  HubSpot tracking code and collect pixel, Awin conversion pixel, CJ Affiliate
+  conversion pixel, impact.com UTT, and Rakuten Advertising conversion pixel
 - Vendor endpoint directory: hosts attributed by vendor, so endpoints without a
   matching pack still get identified, and vendors that do have a pack are
   marked as covered
@@ -40,9 +44,9 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 
 ## Next
 
-- Promote directory entries to full rulepacks as parameter contracts surface:
-  Criteo, Taboola, Outbrain, Amazon Ads, Snap Pixel, the X website tag, Baidu
-  Tongji, and Kwai stay attributed until a citable HTTP contract exists
+- Promote directory entries to full rulepacks as parameter contracts surface.
+  Snap Pixel stays attributed until a citable HTTP identifier exists on
+  `scevent.min.js` or `tr.snapchat.com/p`
 - Community-contributed directory entries and corrections
 - Document-level results: the wrapper described in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), so callers

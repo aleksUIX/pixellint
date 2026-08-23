@@ -1,0 +1,39 @@
+{
+  "id": "vendor/outbrain",
+  "display_name": "Outbrain pixel",
+  "description": "Outbrain conversion image and S2S pixels on tr.outbrain.com/pixel. The JS loader on amplify.outbrain.com is a different surface and is not contracted.",
+  "vendor": "outbrain",
+  "source_level": "ecosystem_reference",
+  "docs": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/",
+  "match": {
+    "hosts": ["tr.outbrain.com"],
+    "paths": ["/pixel"]
+  },
+  "params": [
+    {
+      "name": "ob_adv_id",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Outbrain Advertiser ID. Generated noscript pixels send it. Outbrain documents the Marketer ID in GTM rather than this query, so the rule is ecosystem evidence.",
+      "fix_hint": "Set `ob_adv_id` to the Advertiser ID from Amplify Tracking.",
+      "doc": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/"
+    },
+    {
+      "name": "ob_click_id",
+      "format": { "kind": "non_empty" },
+      "description": "It is the click identifier S2S conversions send instead of `ob_adv_id`.",
+      "fix_hint": "Set `ob_click_id` to the `ob_click_id` captured from the landing URL.",
+      "doc": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.outbrain.identifier_required",
+      "kind": "require_one_of",
+      "params": ["ob_adv_id", "ob_click_id"],
+      "severity": "error",
+      "message": "The pixel has neither `ob_adv_id` nor `ob_click_id`. Generated fires carry one of the two.",
+      "fix_hint": "Send `ob_adv_id` for a noscript or page-view pixel, or `ob_click_id` for an S2S conversion.",
+      "doc": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/"
+    }
+  ]
+}

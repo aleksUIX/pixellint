@@ -86,7 +86,7 @@ warnings, `1` when any error-severity finding is present, and `2` on a usage or
 input problem.
 
 ```yaml
-- uses: aleksUIX/pixellint@v0.14.0
+- uses: aleksUIX/pixellint@v0.15.0
   with:
     path: fixtures/conversion-pixel.txt
     kind: url
@@ -177,6 +177,22 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
 | `vendor/reddit-conversions-api` | Conversions API v3 events, URL and JSON event payload | official vendor |
 | `vendor/x-conversions-api` | X conversion API measurement events, URL and JSON payload | official vendor |
+| `vendor/x` | X website tag image pixels on analytics.twitter.com/i/adsct | ecosystem reference |
+| `vendor/the-trade-desk` | The Trade Desk universal pixel iframe on insight.adsrvr.org/track/up | official vendor |
+| `vendor/criteo` | Criteo OneTag loader `ld.js?a=` | official vendor |
+| `vendor/taboola` | Taboola Pixel loader, account ID in the path | official vendor |
+| `vendor/hotjar` | Hotjar tracking code, site ID in the path | official template |
+| `vendor/hubspot` | HubSpot tracking code, Hub ID in the path | official template |
+| `vendor/awin` | Awin fall-back conversion pixel and S2S read | official vendor |
+| `vendor/amazon-ads` | Amazon Ad Tag conversion loader, Tag ID in the path | ecosystem reference |
+| `vendor/outbrain` | Outbrain conversion pixel, ob_adv_id or ob_click_id | ecosystem reference |
+| `vendor/baidu` | Baidu Tongji collect `hm.gif?si=` | ecosystem reference |
+| `vendor/kwai` | Kwai Pixel loader, sdkid on s1.kwai.net | ecosystem reference |
+| `vendor/hubspot-pixel` | HubSpot `__ptq.gif` collect pixel | ecosystem reference |
+| `vendor/cj` | CJ Affiliate conversion pixel on emjcd.com/u | official vendor |
+| `vendor/impact` | impact.com Universal Tracking Tag, UUID in the path | official template |
+| `vendor/rakuten` | Rakuten Advertising conversion pixel on /ep | ecosystem reference |
+| `vendor/brevo-js` | Brevo JavaScript tracker `sa.js?key=` | official template |
 | `vendor/yahoo-dot` | Yahoo DSP Dot image pixels | official vendor |
 | `vendor/yandex-metrica` | Yandex Metrica Measurement Protocol | official vendor |
 | `vendor/openai` | OpenAI Ads image tag | official vendor |
@@ -197,14 +213,14 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover thirty-seven endpoint families in depth. The vendor directory
-covers the rest by attribution: 92 vendors and 235 hosts, so an unrecognized
+Rulepacks cover fifty-three endpoint families in depth. The vendor directory
+covers the rest by attribution: 93 vendors and 237 hosts, so an unrecognized
 pixel still gets a name.
 
 ```bash
 $ pixellint validate url 'https://trc.taboola.com/actions?a=1'
 rulepack: directory (vendor: taboola)
-  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No Pixellint rulepack covers it, so only the core checks ran.
+  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No Pixellint rulepack covers it, so only the core checks ran. The `vendor/taboola` rulepack covers other Taboola endpoints, not this one.
 ```
 
 Directory entries make one claim, that a host belongs to a vendor. They carry

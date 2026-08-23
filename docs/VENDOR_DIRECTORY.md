@@ -12,7 +12,7 @@ $ pixellint validate url 'https://trc.taboola.com/actions?a=1'
 rulepack: core
   ok
 rulepack: directory (vendor: taboola)
-  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No Pixellint rulepack covers it, so only the core checks ran.
+  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No Pixellint rulepack covers it, so only the core checks ran. The `vendor/taboola` rulepack covers other Taboola endpoints, not this one.
     fix: Write a custom rulepack for this endpoint, or ask for first-party coverage.
 ```
 
@@ -53,7 +53,8 @@ Over MCP, the `list_vendors` tool takes an optional `category` filter or a
   "vendor": "taboola",
   "display_name": "Taboola",
   "category": "native",
-  "hosts": ["cdn.taboola.com", "trc.taboola.com"]
+  "hosts": ["cdn.taboola.com", "trc.taboola.com"],
+  "rulepack": "vendor/taboola"
 }
 ```
 
