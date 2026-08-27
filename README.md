@@ -111,7 +111,9 @@ Or install the CLI:
 cargo install pixellint-mcp
 ```
 
-`pixellint-mcp` speaks MCP over stdio and exposes three tools:
+`pixellint-mcp` speaks MCP over stdio and exposes three tools. It does not
+send artifacts; there is no hosted MCP on pixellint.org. Playground artifacts
+on pixellint.org may be stored; see [pixellint.org/privacy](https://pixellint.org/privacy/).
 
 - `list_rulepacks`
 - `list_vendors`, optionally filtered by `category` or attributing a single `host`
