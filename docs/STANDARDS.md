@@ -1010,6 +1010,92 @@ key on the URL and is not contracted. REST events are `vendor/brevo`.
 
 Source: [JS implementation](https://tracker-doc.brevo.com/docs/installation).
 
+## `vendor/adform`
+
+Adform video, impression, and click tags on `track.adform.net`. Level:
+`official_vendor`. Verification scripts on `s2.adform.net` stay directory-only.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `bn` | Required banner ID, leading digits | `vendor.adform.param.bn.missing`, `.empty`, `.invalid` |
+
+Source: [serve third-party banners](https://www.adformhelp.com/hc/en-us/articles/9738565242385-Serve-Third-Party-Banners-with-Adform-Ad-Server).
+
+## `vendor/comscore`
+
+Comscore Direct collect beacons on `b.scorecardresearch.com/b` and `/p`. Level:
+`official_vendor`. The `beacon.js` loader is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `c1` | Required `2` | `vendor.comscore.param.c1.missing`, `.empty`, `.invalid` |
+| `c2` | Required client ID, at least seven digits | `vendor.comscore.param.c2.missing`, `.empty`, `.invalid` |
+| `c7` | Required absolute page URL | `vendor.comscore.param.c7.missing`, `.empty`, `.invalid` |
+
+Source: [validate the tag](https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended).
+
+## `vendor/quantcast`
+
+Quantcast Measure pixels on `pixel.quantserve.com/pixel`. Parameters ride on
+the path as semicolon-delimited pairs. Level: `official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `a` | Required p-code starting with `p-` | `vendor.quantcast.param.a.missing`, `.empty`, `.invalid` |
+
+Source: [inspect your tag](https://help.quantcast.com/docs/inspect-your-tag).
+
+## `vendor/plausible`
+
+Plausible Events API JSON posted to `plausible.io/api/event`. Level:
+`official_vendor`. Self-hosted endpoints stay directory-only. Short keys `n`,
+`u`, and `d` satisfy the same contracts as `name`, `url`, and `domain`.
+
+| Body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `name` | Required event name (`n` accepted) | `vendor.plausible.event_name_required`, `.body.name.empty` |
+| `url` | Required absolute page URL (`u` accepted) | `vendor.plausible.page_url_required`, `.body.url.empty`, `.invalid` |
+| `domain` | Required site domain (`d` accepted) | `vendor.plausible.domain_required`, `.body.domain.empty` |
+
+Source: [Events API](https://plausible.io/docs/events-api).
+
+## `vendor/matomo`
+
+Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
+`official_vendor`. Self-hosted `matomo.php` on other hosts stays directory-only.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `idsite` | Required numeric site ID | `vendor.matomo.param.idsite.missing`, `.empty`, `.invalid` |
+| `rec` | Required `1` | `vendor.matomo.param.rec.missing`, `.empty`, `.invalid` |
+
+Source: [Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api).
+
+## `vendor/parsely`
+
+Parse.ly tracker loader on `cdn.parsely.com/keys/{site_id}/p.js`. Level:
+`official_vendor`. Collect on `p1.parsely.com` stays directory-only.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `site_id` | Required Site ID in the path | `vendor.parsely.param.site_id.missing` |
+
+Source: [tracking code setup](https://docs.parse.ly/installation-resources/parsely-integration/tracking-code-setup/).
+
+## `vendor/crazyegg`
+
+Crazy Egg account script on
+`script.crazyegg.com/pages/scripts/{account_id}/{script_id}.js`. Level:
+`official_template`. Session traffic on `tracking.crazyegg.com` is not
+contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `account_id` | Required numeric account folder | `vendor.crazyegg.param.account_id.missing` |
+| `script_id` | Required numeric script file | `vendor.crazyegg.param.script_id.missing` |
+
+Source: [check that Crazy Egg is installed](https://support.crazyegg.com/knowledge-base/how-to-check-that-crazy-egg-is-installed/).
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a

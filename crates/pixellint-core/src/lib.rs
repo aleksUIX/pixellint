@@ -27,6 +27,10 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/adform",
+        include_str!("../rulepacks/vendor/adform.json"),
+    ),
+    (
         "vendor/adjust",
         include_str!("../rulepacks/vendor/adjust.json"),
     ),
@@ -68,6 +72,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/brevo-js.json"),
     ),
     ("vendor/cj", include_str!("../rulepacks/vendor/cj.json")),
+    (
+        "vendor/comscore",
+        include_str!("../rulepacks/vendor/comscore.json"),
+    ),
+    (
+        "vendor/crazyegg",
+        include_str!("../rulepacks/vendor/crazyegg.json"),
+    ),
     (
         "vendor/criteo",
         include_str!("../rulepacks/vendor/criteo.json"),
@@ -129,6 +141,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/linkedin-conversions-api",
         include_str!("../rulepacks/vendor/linkedin-conversions-api.json"),
     ),
+    (
+        "vendor/matomo",
+        include_str!("../rulepacks/vendor/matomo.json"),
+    ),
     ("vendor/meta", include_str!("../rulepacks/vendor/meta.json")),
     (
         "vendor/meta-conversions-api",
@@ -155,6 +171,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/outbrain.json"),
     ),
     (
+        "vendor/parsely",
+        include_str!("../rulepacks/vendor/parsely.json"),
+    ),
+    (
         "vendor/pinterest",
         include_str!("../rulepacks/vendor/pinterest.json"),
     ),
@@ -163,8 +183,16 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/pinterest-conversions-api.json"),
     ),
     (
+        "vendor/plausible",
+        include_str!("../rulepacks/vendor/plausible.json"),
+    ),
+    (
         "vendor/posthog",
         include_str!("../rulepacks/vendor/posthog.json"),
+    ),
+    (
+        "vendor/quantcast",
+        include_str!("../rulepacks/vendor/quantcast.json"),
     ),
     (
         "vendor/rakuten",

@@ -4,6 +4,29 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.16.0 - 2026-08-29
+
+### Added
+
+- `vendor/adform`, covering video, impression, and click tags on
+  `track.adform.net`: required banner number `bn`
+- `vendor/comscore`, covering Direct collect on `b.scorecardresearch.com/b`
+  and `/p`: required `c1=2`, client ID `c2`, and page URL `c7`
+- `vendor/quantcast`, covering Measure pixels on `pixel.quantserve.com/pixel`:
+  required p-code `a`
+- `vendor/plausible`, covering Events API JSON on `plausible.io/api/event`:
+  required `name`, `url`, and `domain`
+- `vendor/matomo`, covering `matomo.php` on Matomo Cloud: required `idsite`
+  and `rec=1`
+- `vendor/parsely`, covering the tracker loader on
+  `cdn.parsely.com/keys/{site_id}/p.js`
+- `vendor/crazyegg`, covering `script.crazyegg.com/pages/scripts/{account_id}/{script_id}.js`
+
+Directory hosts from vastlint.org VAST samples: `ade.googlesyndication.com`,
+`unified.adsafeprotected.com`, `vast.doubleverify.com`, plus Flashtalking,
+Kantar, Epsilon, and iSpot. IAS skeleton, DV wrappers, and Floodlight `dc_oe`
+fires stay attributed; those URLs have no published query contract.
+
 ## 0.15.0 - 2026-08-22
 
 ### Added

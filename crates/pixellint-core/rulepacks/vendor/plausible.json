@@ -1,0 +1,100 @@
+{
+  "id": "vendor/plausible",
+  "display_name": "Plausible Events API",
+  "description": "Plausible Events API posts to plausible.io/api/event. Self-hosted endpoints on other hosts are not contracted.",
+  "vendor": "plausible",
+  "source_level": "official_vendor",
+  "docs": "https://plausible.io/docs/events-api",
+  "match": {
+    "hosts": ["plausible.io"],
+    "path_prefixes": ["/api/event"],
+    "json_paths": [
+      { "any_of": ["name", "n"] },
+      { "any_of": ["url", "u"] },
+      { "any_of": ["domain", "d"] }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "name",
+          "severity": "error",
+          "format": { "kind": "non_empty" },
+          "description": "It is the event name. `pageview` is the special page-view event; any other value is a custom event. The tracker also sends this as `n`.",
+          "fix_hint": "Set `name` to `pageview` or to a custom event name.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "n",
+          "severity": "error",
+          "format": { "kind": "non_empty" },
+          "description": "Short key for `name`, used by the JavaScript tracker.",
+          "fix_hint": "Set `n` or `name` to the event name.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "url",
+          "severity": "error",
+          "format": { "kind": "url" },
+          "description": "It is the page URL where the event fired. Plausible documents it as required and extracts UTM parameters from it. The tracker also sends this as `u`.",
+          "fix_hint": "Set `url` to an absolute URL, including the scheme and host.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "u",
+          "severity": "error",
+          "format": { "kind": "url" },
+          "description": "Short key for `url`, used by the JavaScript tracker.",
+          "fix_hint": "Set `u` or `url` to an absolute page URL.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "domain",
+          "severity": "error",
+          "format": { "kind": "non_empty" },
+          "description": "It is the site domain as configured in the Plausible account. The tracker also sends this as `d`.",
+          "fix_hint": "Set `domain` to the domain you added in Plausible, such as `example.com`.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "d",
+          "severity": "error",
+          "format": { "kind": "non_empty" },
+          "description": "Short key for `domain`, used by the JavaScript tracker.",
+          "fix_hint": "Set `d` or `domain` to the Plausible site domain.",
+          "doc": "https://plausible.io/docs/events-api"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.plausible.event_name_required",
+          "kind": "require_one_of",
+          "params": ["name", "n"],
+          "severity": "error",
+          "message": "The event has neither `name` nor `n`. Plausible documents `name` as required.",
+          "fix_hint": "Set `name` (or `n`) to `pageview` or to a custom event name.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "code": "vendor.plausible.page_url_required",
+          "kind": "require_one_of",
+          "params": ["url", "u"],
+          "severity": "error",
+          "message": "The event has neither `url` nor `u`. Plausible documents `url` as required.",
+          "fix_hint": "Set `url` (or `u`) to an absolute page URL.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "code": "vendor.plausible.domain_required",
+          "kind": "require_one_of",
+          "params": ["domain", "d"],
+          "severity": "error",
+          "message": "The event has neither `domain` nor `d`. Plausible documents `domain` as required.",
+          "fix_hint": "Set `domain` (or `d`) to the site domain configured in Plausible.",
+          "doc": "https://plausible.io/docs/events-api"
+        }
+      ]
+    }
+  ]
+}
