@@ -55,10 +55,22 @@ npm install pixellint            # library, WASM-backed
 ```
 
 Or paste a URL into the playground at [pixellint.org](https://pixellint.org),
-which runs the same engine in your browser and sends nothing anywhere. Vendor
-contracts are at [pixellint.org/packs/](https://pixellint.org/packs/). Guides
-for pixels, conversion APIs, and consent are at
+which runs the same engine in your browser. Artifacts you test may be stored;
+see [privacy](https://pixellint.org/privacy/). Vendor contracts are at
+[pixellint.org/packs/](https://pixellint.org/packs/). Guides for pixels,
+conversion APIs, and consent are at
 [pixellint.org/docs/](https://pixellint.org/docs/).
+
+Start with the contracts people actually hit:
+
+- [What is a conversion API](https://pixellint.org/docs/what-is-a-conversion-api/)
+- [Reddit CAPI](https://pixellint.org/docs/reddit-pixel-and-capi/)
+- [DART Floodlight tags](https://pixellint.org/docs/floodlight-and-campaign-manager/)
+- [Adobe Analytics sendBeacon](https://pixellint.org/docs/adobe-analytics/)
+- [GTM loader](https://pixellint.org/docs/gtm-preview/)
+- [_fbc cookie](https://pixellint.org/docs/fbp-fbc/)
+- [Pinterest standard events](https://pixellint.org/docs/pinterest-tag-and-capi/)
+- [IDFA vs GAID](https://pixellint.org/docs/idfa-vs-idfv-vs-gaid/)
 
 ## Use it
 
