@@ -63,14 +63,14 @@ conversion APIs, and consent are at
 
 Start with the contracts people actually hit:
 
+- [Conversion API validator](https://pixellint.org/docs/conversion-api-validator/)
+- [Pixel not firing](https://pixellint.org/docs/pixel-not-firing/)
+- [Conversions API not working](https://pixellint.org/docs/conversions-api-not-working/)
 - [What is a conversion API](https://pixellint.org/docs/what-is-a-conversion-api/)
 - [Reddit CAPI](https://pixellint.org/docs/reddit-pixel-and-capi/)
 - [DART Floodlight tags](https://pixellint.org/docs/floodlight-and-campaign-manager/)
-- [Adobe Analytics sendBeacon](https://pixellint.org/docs/adobe-analytics/)
-- [GTM loader](https://pixellint.org/docs/gtm-preview/)
-- [_fbc cookie](https://pixellint.org/docs/fbp-fbc/)
+- [Facebook Pixel Helper vs Network](https://pixellint.org/docs/facebook-pixel-debugger/)
 - [Pinterest standard events](https://pixellint.org/docs/pinterest-tag-and-capi/)
-- [IDFA vs GAID](https://pixellint.org/docs/idfa-vs-idfv-vs-gaid/)
 
 ## Use it
 
