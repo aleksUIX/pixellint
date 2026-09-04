@@ -50,6 +50,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/appsflyer",
         include_str!("../rulepacks/vendor/appsflyer.json"),
     ),
+    (
+        "vendor/appsflyer-onelink-impression",
+        include_str!("../rulepacks/vendor/appsflyer-onelink-impression.json"),
+    ),
     ("vendor/awin", include_str!("../rulepacks/vendor/awin.json")),
     (
         "vendor/baidu",
@@ -72,6 +76,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/brevo-js.json"),
     ),
     ("vendor/cj", include_str!("../rulepacks/vendor/cj.json")),
+    (
+        "vendor/cm360-tracking-ad",
+        include_str!("../rulepacks/vendor/cm360-tracking-ad.json"),
+    ),
     (
         "vendor/comscore",
         include_str!("../rulepacks/vendor/comscore.json"),
@@ -123,6 +131,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/impact",
         include_str!("../rulepacks/vendor/impact.json"),
+    ),
+    (
+        "vendor/ispot",
+        include_str!("../rulepacks/vendor/ispot.json"),
     ),
     (
         "vendor/klaviyo",

@@ -4,6 +4,24 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.17.0 - 2026-09-03
+
+### Added
+
+- `vendor/cm360-tracking-ad`, covering Campaign Manager 360 `/ddm/trackimp`
+  and `/ddm/trackclk` tags: required `dc_trk_aid` and `dc_trk_cid`
+- `vendor/appsflyer-onelink-impression`, covering OneLink impression URLs on
+  `impressions.onelink.me`: required template ID in the path and `pid`
+- `vendor/ispot`, covering Unified Measurement impression GIFs on
+  `pi.ispot.tv/v2`: required `TC-####-#` tracking code in the path
+
+### Changed
+
+- `vendor/adform` now matches video, impression, and click tags on every
+  `*.adform.net` host that uses `/videoad`, `/C/`, or `/adfserve`, including
+  the Americas domain `a2.adform.net`. Directory hosts add `a1`, `a2`, and
+  `asia`.
+
 ## 0.16.0 - 2026-08-29
 
 ### Added

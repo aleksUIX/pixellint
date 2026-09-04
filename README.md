@@ -98,7 +98,7 @@ warnings, `1` when any error-severity finding is present, and `2` on a usage or
 input problem.
 
 ```yaml
-- uses: aleksUIX/pixellint@v0.16.0
+- uses: aleksUIX/pixellint@v0.17.0
   with:
     path: fixtures/conversion-pixel.txt
     kind: url
@@ -179,6 +179,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/google-ads-conversion` | Google Ads conversion and view-through pixels | official vendor |
 | `vendor/google-ads-click-conversions` | Google Ads UploadClickConversions JSON | official vendor |
 | `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
+| `vendor/cm360-tracking-ad` | CM360 tracking ads, `dc_trk_aid` and `dc_trk_cid` | official vendor |
 | `vendor/adobe-analytics` | Adobe Analytics data collection beacons | official vendor |
 | `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
 | `vendor/pinterest-conversions-api` | Conversions API events, URL and JSON event payload | official vendor |
@@ -223,8 +224,10 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/rudderstack` | RudderStack HTTP Tracking API and Pixel API | official vendor |
 | `vendor/adjust` | Adjust S2S events on s2s.adjust.com | official vendor |
 | `vendor/appsflyer` | AppsFlyer S2S in-app events, URL and JSON payload | official vendor |
+| `vendor/appsflyer-onelink-impression` | AppsFlyer OneLink impression URLs, template ID and pid | official vendor |
 | `vendor/branch` | Branch Events API standard and custom events | official vendor |
-| `vendor/adform` | Adform video and click tags, banner number `bn` | official vendor |
+| `vendor/adform` | Adform video and click tags on regional domains, banner number `bn` | official vendor |
+| `vendor/ispot` | iSpot OTT impression pixel, `TC-####-#` in the path | official vendor |
 | `vendor/comscore` | Comscore Direct collect `c1`, `c2`, `c7` | official vendor |
 | `vendor/quantcast` | Quantcast Measure pixel, p-code `a` | official vendor |
 | `vendor/plausible` | Plausible Events API JSON | official vendor |
@@ -234,8 +237,8 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover sixty endpoint families in depth. The vendor directory
-covers the rest by attribution: 97 vendors and 263 hosts, so an unrecognized
+Rulepacks cover sixty-three endpoint families in depth. The vendor directory
+covers the rest by attribution: 97 vendors and 266 hosts, so an unrecognized
 pixel still gets a name.
 
 ```bash

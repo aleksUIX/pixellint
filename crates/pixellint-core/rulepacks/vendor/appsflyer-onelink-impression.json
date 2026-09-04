@@ -1,0 +1,34 @@
+{
+  "id": "vendor/appsflyer-onelink-impression",
+  "display_name": "AppsFlyer OneLink impression URLs",
+  "description": "OneLink view-through impression URLs on impressions.onelink.me, whose template ID rides in the path and whose media source rides as pid.",
+  "vendor": "appsflyer",
+  "source_level": "official_vendor",
+  "docs": "https://support.appsflyer.com/hc/en-us/articles/208874366",
+  "path_pattern": "^/(?<template_id>[^/?]+)$",
+  "match": {
+    "hosts": ["impressions.onelink.me"]
+  },
+  "params": [
+    {
+      "name": "template_id",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9_]+$"
+      },
+      "description": "It is the OneLink template ID, and it travels in the path after impressions.onelink.me. AppsFlyer documents impression URLs as that host plus the template ID from the long URL.",
+      "fix_hint": "Copy the template ID from the OneLink long URL so the path is /{template ID}.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/208874366"
+    },
+    {
+      "name": "pid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the media source. AppsFlyer documents pid as the value under which the impression is reported.",
+      "fix_hint": "Set pid to the media source name from the OneLink.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/208874366"
+    }
+  ],
+  "rules": []
+}

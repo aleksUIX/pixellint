@@ -174,6 +174,21 @@ on the path as semicolon-delimited pairs. Level: `official_vendor`.
 
 Source: [Floodlight tag structure](https://support.google.com/campaignmanager/answer/2823425).
 
+## `vendor/cm360-tracking-ad`
+
+Campaign Manager 360 impression and click tracking tags on
+`doubleclick.net` `/ddm/trackimp` and `/ddm/trackclk`. Parameters ride on the
+path as semicolon-delimited pairs. Level: `official_vendor`. Floodlight
+activity tags (`src;type;cat;ord`) stay `vendor/floodlight`. GAM/CM360 VAST
+`dc_oe` event pixels stay directory-only.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `dc_trk_aid` | Required numeric tracking ad ID | `vendor.cm360-tracking-ad.param.dc_trk_aid.missing`, `.empty`, `.invalid` |
+| `dc_trk_cid` | Required numeric tracking creative ID | `vendor.cm360-tracking-ad.param.dc_trk_cid.missing`, `.empty`, `.invalid` |
+
+Source: [Tagging issues in Campaign Manager 360](https://support.google.com/campaignmanager/answer/2829774). Placement-tag examples with `/trackimp` and `/trackclk` are in [placement tags](https://support.google.com/campaignmanager/answer/2826636).
+
 ## `vendor/meta-conversions-api`
 
 Server-side events posted to the Graph API events edge. Level:
@@ -631,6 +646,18 @@ Source: [S2S events API 3](https://dev.appsflyer.com/hc/reference/s2s-events-api
 `eventValue` is documented as required, including as an empty string when there
 is no value. Empty is a legal payload, so the pack does not contract it.
 
+## `vendor/appsflyer-onelink-impression`
+
+OneLink view-through impression URLs on `impressions.onelink.me/{template_id}`.
+Level: `official_vendor`. The S2S in-app event API stays `vendor/appsflyer`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `template_id` | Required in the path. Letters, digits, and underscores | `vendor.appsflyer-onelink-impression.param.template_id.missing`, `.empty`, `.invalid` |
+| `pid` | Required media source | `vendor.appsflyer-onelink-impression.param.pid.missing`, `.empty` |
+
+Source: [Create deep linking and redirection links with OneLink](https://support.appsflyer.com/hc/en-us/articles/208874366).
+
 ## `vendor/branch`
 
 Standard and custom events posted to `api2.branch.io/v2/event/standard` and
@@ -1012,14 +1039,17 @@ Source: [JS implementation](https://tracker-doc.brevo.com/docs/installation).
 
 ## `vendor/adform`
 
-Adform video, impression, and click tags on `track.adform.net`. Level:
-`official_vendor`. Verification scripts on `s2.adform.net` stay directory-only.
+Adform video, impression, and click tags on `*.adform.net` paths `/videoad`,
+`/C/`, and `/adfserve`. Level: `official_vendor`. That includes the regional
+tracking domains (`a2` Americas, `track` EMEA, `a1` global, `asia` APAC).
+Verification scripts on `s2.adform.net` stay directory-only; they do not use
+those paths.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `bn` | Required banner ID, leading digits | `vendor.adform.param.bn.missing`, `.empty`, `.invalid` |
 
-Source: [serve third-party banners](https://www.adformhelp.com/hc/en-us/articles/9738565242385-Serve-Third-Party-Banners-with-Adform-Ad-Server).
+Source: [serve third-party banners](https://www.adformhelp.com/hc/en-us/articles/9738565242385-Serve-Third-Party-Banners-with-Adform-Ad-Server). Regional hosts: [site-tracking privacy information](https://www.adformhelp.com/hc/en-us/articles/9740578281873-Learn-About-Site-Tracking-Privacy-Information).
 
 ## `vendor/comscore`
 
@@ -1095,6 +1125,18 @@ contracted.
 | `script_id` | Required numeric script file | `vendor.crazyegg.param.script_id.missing` |
 
 Source: [check that Crazy Egg is installed](https://support.crazyegg.com/knowledge-base/how-to-check-that-crazy-egg-is-installed/).
+
+## `vendor/ispot`
+
+iSpot Unified Measurement impression GIFs on `pi.ispot.tv/v2/{tracking_code}.gif`.
+Level: `official_vendor`. Conversion pixels on `pt.ispot.tv` stay directory-only
+until that path is contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `tracking_code` | Required in the path as `TC-{digits}-{digits}` | `vendor.ispot.param.tracking_code.missing`, `.empty`, `.invalid` |
+
+Source: [OTT Unified Measurement](https://developer.ispot.tv/documentation/unified-measurement) and the [pixel technical spec](https://developer.ispot.tv/sites/default/files/iSpot_Pixel_Technical_Documentation_1.pdf). Query extras such as `campaignid` are client-optional and not contracted.
 
 ## Vendor directory
 

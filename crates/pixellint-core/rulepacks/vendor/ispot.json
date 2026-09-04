@@ -1,0 +1,27 @@
+{
+  "id": "vendor/ispot",
+  "display_name": "iSpot.tv OTT impression pixel",
+  "description": "iSpot Unified Measurement impression GIFs on pi.ispot.tv/v2, whose client tracking code rides in the path as TC-####-#.",
+  "vendor": "ispot",
+  "source_level": "official_vendor",
+  "docs": "https://developer.ispot.tv/documentation/unified-measurement",
+  "path_pattern": "^/v2/(?<tracking_code>[^/]+?)\\.gif$",
+  "match": {
+    "hosts": ["pi.ispot.tv"],
+    "path_prefixes": ["/v2/"]
+  },
+  "params": [
+    {
+      "name": "tracking_code",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^TC-[0-9]+-[0-9]+$"
+      },
+      "description": "It is the client-specific tracking code. iSpot documents the impression pixel path as /v2/TC-####-#.gif.",
+      "fix_hint": "Put the tracking code from iSpot in the path so it reads /v2/TC-{account}-{pixel}.gif.",
+      "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Pixel_Technical_Documentation_1.pdf"
+    }
+  ],
+  "rules": []
+}
