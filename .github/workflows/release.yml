@@ -123,7 +123,6 @@ jobs:
     needs: verify
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    environment: production
     permissions:
       contents: read
       id-token: write
@@ -150,7 +149,6 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
 
       - name: Use npm 11 for trusted publishing
         run: npm install -g npm@11
@@ -173,9 +171,10 @@ jobs:
         working-directory: npm
         run: node test.mjs
 
-      # NPM_TOKEN PUT 404s for this package (token is not a maintainer).
-      # Publish with OIDC. On npmjs.com: Trusted Publisher, GitHub Actions,
-      # aleksUIX/pixellint, workflow Release, environment production.
+      # Do not pass registry-url or NODE_AUTH_TOKEN. setup-node would write an
+      # empty _authToken and npm would PUT 404 instead of using OIDC.
+      # One-time: npmjs.com → pixellint → Trusted Publisher → GitHub Actions
+      #   repo aleksUIX/pixellint, workflow release.yml
       - name: Publish
         working-directory: npm
         run: |
