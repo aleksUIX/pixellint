@@ -121,15 +121,19 @@ jobs:
 
   publish-npm:
     needs: verify
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment: production
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.sha }}
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -145,8 +149,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           registry-url: https://registry.npmjs.org
+
+      - name: Use npm 11 for trusted publishing
+        run: npm install -g npm@11
 
       # Build fresh rather than publishing the committed artifact, so the npm
       # package always matches the crate it is cut from.
@@ -158,23 +165,21 @@ jobs:
 
       - name: Stamp the package version from the tag
         working-directory: npm
-        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
+        env:
+          TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+        run: npm version "${TAG#v}" --no-git-tag-version --allow-same-version
 
       - name: Test the package
         working-directory: npm
         run: node test.mjs
 
+      # NPM_TOKEN PUT 404s for this package (token is not a maintainer).
+      # Publish with OIDC. On npmjs.com: Trusted Publisher, GitHub Actions,
+      # aleksUIX/pixellint, workflow Release, environment production.
       - name: Publish
         working-directory: npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
-
-          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
-            echo "NPM_TOKEN is not set; skipping npm publish."
-            exit 0
-          fi
 
           version=$(node -p "require('./package.json').version")
           if npm view "pixellint@$version" version > /dev/null 2>&1; then
@@ -182,7 +187,7 @@ jobs:
             exit 0
           fi
 
-          npm publish --access public
+          npm publish --access public --provenance
 
   build:
     name: Build ${{ matrix.target }}
