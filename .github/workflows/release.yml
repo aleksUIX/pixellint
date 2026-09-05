@@ -123,6 +123,7 @@ jobs:
     needs: verify
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       id-token: write
@@ -145,13 +146,20 @@ jobs:
       - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.4.0
 
+      # Node 24 ships npm 11.5+, which is the floor for trusted publishing.
+      # Do not set registry-url: setup-node would write an empty _authToken
+      # and npm would skip OIDC.
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
+          package-manager-cache: false
 
-      - name: Use npm 11 for trusted publishing
-        run: npm install -g npm@11
+      - name: Use current npm for trusted publishing
+        run: |
+          set -euo pipefail
+          npm install -g npm@latest
+          echo "npm $(npm --version)"
 
       # Build fresh rather than publishing the committed artifact, so the npm
       # package always matches the crate it is cut from.
@@ -171,10 +179,10 @@ jobs:
         working-directory: npm
         run: node test.mjs
 
-      # Do not pass registry-url or NODE_AUTH_TOKEN. setup-node would write an
-      # empty _authToken and npm would PUT 404 instead of using OIDC.
-      # One-time: npmjs.com → pixellint → Trusted Publisher → GitHub Actions
-      #   repo aleksUIX/pixellint, workflow release.yml
+      # Trusted publisher on npmjs.com must match this job:
+      #   GitHub Actions, aleksUIX/pixellint, workflow filename release.yml,
+      #   environment production, allowed action npm publish (not stage-only).
+      # Do not pass registry-url or NODE_AUTH_TOKEN.
       - name: Publish
         working-directory: npm
         run: |
