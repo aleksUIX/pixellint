@@ -290,6 +290,16 @@ mod tests {
             "cs10.connected-stories.com",
             "postback.iqm.com",
             "tr.blismedia.com",
+            "www.googletagmanager.com",
+            "ad.doubleclick.net",
+            "ade.googlesyndication.com",
+            "pubads.g.doubleclick.net",
+            "vfw.amazon-adsystem.com",
+            "s.amazon-adsystem.com",
+            "e-11428.adzerk.net",
+            "eu-adsrv.rtbsuperhub.com",
+            "event.havasedge.com",
+            "beeswax-ipv4-prod.telemetry.vaultdcr.com",
         ] {
             assert!(
                 directory.lookup_host(host).is_some(),
@@ -297,10 +307,36 @@ mod tests {
             );
         }
 
+        let gtm = directory
+            .lookup_host("www.googletagmanager.com")
+            .expect("gtm");
+        assert_eq!(gtm.rulepack.as_deref(), Some("vendor/google-tag-manager"));
+
+        let cm360 = directory.lookup_host("ad.doubleclick.net").expect("cm360");
+        assert_eq!(cm360.rulepack.as_deref(), Some("vendor/floodlight"));
+
+        let gam = directory
+            .lookup_host("ade.googlesyndication.com")
+            .expect("gam");
+        assert_eq!(gam.display_name, "Google Ad Manager");
+        assert_eq!(gam.rulepack, None);
+
+        let firefly = directory
+            .lookup_host("vfw.amazon-adsystem.com")
+            .expect("vfw");
+        assert_eq!(firefly.rulepack.as_deref(), Some("vendor/amazon-vfw"));
+
+        let ad_tag = directory
+            .lookup_host("s.amazon-adsystem.com")
+            .expect("ad tag");
+        assert_eq!(ad_tag.rulepack.as_deref(), Some("vendor/amazon-ads"));
+
         // Every rulepack an entry points at has to exist, and every first-party
         // pack's vendor has to point at some pack. Directory hits on a covered
         // vendor should say coverage exists elsewhere, not that the vendor is
-        // unknown to the rulepacks.
+        // unknown to the rulepacks. A vendor may have several directory rows
+        // (Google Tag Manager vs Google Ad Manager); only one of them needs a
+        // pointer.
         let pack_ids: Vec<&str> = crate::BUILTIN_VENDOR_MANIFESTS
             .iter()
             .map(|(id, _)| *id)
@@ -321,16 +357,18 @@ mod tests {
             let vendor = manifest["vendor"]
                 .as_str()
                 .unwrap_or_else(|| panic!("{id} is missing vendor"));
-            let entry = directory
+            let entries: Vec<_> = directory
                 .entries()
                 .iter()
-                .find(|entry| entry.vendor == vendor);
-            let Some(entry) = entry else {
-                panic!("no directory entry for pack `{id}` vendor `{vendor}`");
-            };
+                .filter(|entry| entry.vendor == vendor)
+                .collect();
             assert!(
-                entry.rulepack.is_some(),
-                "directory entry `{vendor}` has pack `{id}` but no rulepack pointer"
+                !entries.is_empty(),
+                "no directory entry for pack `{id}` vendor `{vendor}`"
+            );
+            assert!(
+                entries.iter().any(|entry| entry.rulepack.is_some()),
+                "directory vendor `{vendor}` has pack `{id}` but no rulepack pointer"
             );
         }
     }

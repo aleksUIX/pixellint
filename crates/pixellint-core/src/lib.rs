@@ -43,6 +43,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/amazon-ads.json"),
     ),
     (
+        "vendor/amazon-vfw",
+        include_str!("../rulepacks/vendor/amazon-vfw.json"),
+    ),
+    (
         "vendor/amplitude",
         include_str!("../rulepacks/vendor/amplitude.json"),
     ),
@@ -79,6 +83,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/cm360-tracking-ad",
         include_str!("../rulepacks/vendor/cm360-tracking-ad.json"),
+    ),
+    (
+        "vendor/cm360-vast-event",
+        include_str!("../rulepacks/vendor/cm360-vast-event.json"),
     ),
     (
         "vendor/comscore",

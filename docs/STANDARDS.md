@@ -180,7 +180,7 @@ Campaign Manager 360 impression and click tracking tags on
 `doubleclick.net` `/ddm/trackimp` and `/ddm/trackclk`. Parameters ride on the
 path as semicolon-delimited pairs. Level: `official_vendor`. Floodlight
 activity tags (`src;type;cat;ord`) stay `vendor/floodlight`. GAM/CM360 VAST
-`dc_oe` event pixels stay directory-only.
+`dc_oe` event pixels are `vendor/cm360-vast-event`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -188,6 +188,22 @@ activity tags (`src;type;cat;ord`) stay `vendor/floodlight`. GAM/CM360 VAST
 | `dc_trk_cid` | Required numeric tracking creative ID | `vendor.cm360-tracking-ad.param.dc_trk_cid.missing`, `.empty`, `.invalid` |
 
 Source: [Tagging issues in Campaign Manager 360](https://support.google.com/campaignmanager/answer/2829774). Placement-tag examples with `/trackimp` and `/trackclk` are in [placement tags](https://support.google.com/campaignmanager/answer/2826636).
+
+## `vendor/cm360-vast-event`
+
+Campaign Manager 360 VAST event pixels on `googlesyndication.com`
+`/ddm/activity`, whose event payload rides as `dc_oe`. Level:
+`ecosystem_reference`. Google generates these in exported VAST and does not
+publish a parameter table for `dc_oe` or `eid1`. The pack requires `dc_oe`
+non-empty so a truncated export is visible. `eid1` is not contracted.
+Floodlight `src;type;cat;ord` tags stay `vendor/floodlight`. GAM
+`pagead/interaction` and `pcs/view` stay directory-only.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `dc_oe` | Required, non-empty event payload | `vendor.cm360-vast-event.param.dc_oe.missing`, `.empty` |
+
+Source: [placement tags](https://support.google.com/campaignmanager/answer/2826636), observed CM360-exported VAST.
 
 ## `vendor/meta-conversions-api`
 
@@ -930,13 +946,29 @@ Source: [conversion tracking for websites](https://business.twitter.com/en/help/
 Amazon Ad Tag conversion loader on
 `s.amazon-adsystem.com/iu3/conversion/{id}.js`. Level: `ecosystem_reference`.
 Amazon documents Tag IDs in the Advertising Tag GTM template. Generated
-loaders put that ID in the path. APS `apstag.js` is not contracted.
+loaders put that ID in the path. APS `apstag.js` is not contracted. Firefly
+`/dv/` hops are `vendor/amazon-vfw`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `advertiser_id` | Required Tag ID in the path | `vendor.amazon-ads.param.advertiser_id.missing` |
 
 Source: [Amazon Advertising Tag GTM template](https://github.com/amzn/ads-pao-amznjs-gtm-template).
+
+## `vendor/amazon-vfw`
+
+Amazon DSP Firefly viewability hops on `vfw.amazon-adsystem.com` `/dv/`, which
+wrap DoubleVerify measurement. Level: `ecosystem_reference`. Amazon documents
+DSP third-party verification with DoubleVerify and IAS, not this query.
+Generated `/dv/event.png` and `/dv/proxy` tags always send `vstevt`. IAS
+`/ias/` hops on the same host stay directory-only. The Ad Tag loader is
+`vendor/amazon-ads`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `vstevt` | Required, non-empty Firefly event code | `vendor.amazon-vfw.param.vstevt.missing`, `.empty` |
+
+Source: [approved third-party providers](https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers), observed Firefly VAST.
 
 ## `vendor/outbrain`
 

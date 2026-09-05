@@ -4,6 +4,28 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- `vendor/cm360-vast-event`, covering Campaign Manager VAST event pixels on
+  `googlesyndication.com` `/ddm/activity`: required non-empty `dc_oe`. `eid1`
+  is not contracted. Floodlight `src;type;cat;ord` and GAM `pagead` hops stay
+  on their own packs or the directory.
+- `vendor/amazon-vfw`, covering Amazon DSP Firefly DoubleVerify hops on
+  `vfw.amazon-adsystem.com` `/dv/`: required `vstevt`. IAS `/ias/` hops on
+  the same host stay directory-only.
+
+### Changed
+
+- Vendor directory splits Google and Amazon by product host group so
+  `directory.no_rulepack_coverage` names the pack that actually covers sibling
+  endpoints. GTM, Floodlight, Ads, Analytics, and Ad Manager are separate
+  Google rows. Amazon Ad Tag, Firefly, and the remaining amazon-adsystem
+  hosts are separate Amazon rows. GAM `pubads` / `googlesyndication` rows
+  carry no pack pointer.
+- Directory hosts for Adzerk, RTB SuperHub, Havas Edge, and Vault DCR.
+
 ## 0.17.1 - 2026-09-04
 
 ### Fixed

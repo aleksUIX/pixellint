@@ -61,7 +61,8 @@ Over MCP, the `list_vendors` tool takes an optional `category` filter or a
 `vendor` is the slug reported as `detected_vendor`. `hosts` match exactly and
 also cover subdomains, so `sc-static.net` covers `cdn.sc-static.net`.
 `rulepack` is present only when a first-party pack covers some of that vendor's
-endpoints.
+endpoints. One vendor slug can have several rows (Google Tag Manager vs Google
+Ad Manager) so the pointer names the pack that actually covers sibling hosts.
 
 Categories in use: `social`, `search`, `programmatic`, `native`, `identity`,
 `verification`, `measurement`, `video`, `analytics`, `martech`, `commerce`,

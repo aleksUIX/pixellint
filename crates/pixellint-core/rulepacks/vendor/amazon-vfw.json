@@ -1,0 +1,23 @@
+{
+  "id": "vendor/amazon-vfw",
+  "display_name": "Amazon DSP Firefly DV measurement",
+  "description": "Amazon DSP Firefly viewability hops on vfw.amazon-adsystem.com /dv/, which wrap DoubleVerify measurement. IAS /ias/ hops on the same host are not contracted. The Ad Tag loader is vendor/amazon-ads.",
+  "vendor": "amazon",
+  "source_level": "ecosystem_reference",
+  "docs": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers",
+  "match": {
+    "hosts": ["vfw.amazon-adsystem.com"],
+    "path_contains": ["/dv/"]
+  },
+  "params": [
+    {
+      "name": "vstevt",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Firefly viewability event code on Amazon-hosted DoubleVerify hops. Amazon documents DSP third-party verification with DoubleVerify, not this query; generated /dv/event.png and /dv/proxy tags always send vstevt, so an empty or missing value is a truncated wrapper.",
+      "fix_hint": "Export the Firefly VAST again from Amazon DSP so vstevt is present on the /dv/ hop.",
+      "doc": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers"
+    }
+  ],
+  "rules": []
+}

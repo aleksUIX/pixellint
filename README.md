@@ -180,6 +180,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/google-ads-click-conversions` | Google Ads UploadClickConversions JSON | official vendor |
 | `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
 | `vendor/cm360-tracking-ad` | CM360 tracking ads, `dc_trk_aid` and `dc_trk_cid` | official vendor |
+| `vendor/cm360-vast-event` | CM360 VAST event pixels, `dc_oe` on googlesyndication | ecosystem reference |
 | `vendor/adobe-analytics` | Adobe Analytics data collection beacons | official vendor |
 | `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
 | `vendor/pinterest-conversions-api` | Conversions API events, URL and JSON event payload | official vendor |
@@ -200,6 +201,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/hubspot` | HubSpot tracking code, Hub ID in the path | official template |
 | `vendor/awin` | Awin fall-back conversion pixel and S2S read | official vendor |
 | `vendor/amazon-ads` | Amazon Ad Tag conversion loader, Tag ID in the path | ecosystem reference |
+| `vendor/amazon-vfw` | Amazon DSP Firefly DV measurement, `vstevt` on `/dv/` | ecosystem reference |
 | `vendor/outbrain` | Outbrain conversion pixel, ob_adv_id or ob_click_id | ecosystem reference |
 | `vendor/baidu` | Baidu Tongji collect `hm.gif?si=` | ecosystem reference |
 | `vendor/kwai` | Kwai Pixel loader, sdkid on s1.kwai.net | ecosystem reference |
@@ -237,8 +239,8 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover sixty-three endpoint families in depth. The vendor directory
-covers the rest by attribution: 97 vendors and 266 hosts, so an unrecognized
+Rulepacks cover sixty-five endpoint families in depth. The vendor directory
+covers the rest by attribution: 116 vendor rows and 283 hosts, so an unrecognized
 pixel still gets a name.
 
 ```bash

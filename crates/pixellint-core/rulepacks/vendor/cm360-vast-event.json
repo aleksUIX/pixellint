@@ -1,0 +1,24 @@
+{
+  "id": "vendor/cm360-vast-event",
+  "display_name": "Campaign Manager 360 VAST event pixels",
+  "description": "CM360-exported VAST event pixels on googlesyndication.com /ddm/activity, whose event payload rides as dc_oe. Floodlight src;type;cat;ord tags and GAM pagead hops are different packs.",
+  "vendor": "google",
+  "source_level": "ecosystem_reference",
+  "docs": "https://support.google.com/campaignmanager/answer/2826636",
+  "param_style": "matrix",
+  "match": {
+    "host_suffixes": ["googlesyndication.com"],
+    "path_contains": ["/ddm/activity"]
+  },
+  "params": [
+    {
+      "name": "dc_oe",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the event payload Campaign Manager writes into exported VAST. Google does not publish a table for dc_oe; generated tags always include it, so an empty or missing value is a truncated export. eid1 is not contracted.",
+      "fix_hint": "Export the VAST tag again from Campaign Manager 360 so dc_oe is present and non-empty.",
+      "doc": "https://support.google.com/campaignmanager/answer/2826636"
+    }
+  ],
+  "rules": []
+}
