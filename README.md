@@ -98,7 +98,7 @@ warnings, `1` when any error-severity finding is present, and `2` on a usage or
 input problem.
 
 ```yaml
-- uses: aleksUIX/pixellint@v0.17.0
+- uses: aleksUIX/pixellint@v0.17.1
   with:
     path: fixtures/conversion-pixel.txt
     kind: url

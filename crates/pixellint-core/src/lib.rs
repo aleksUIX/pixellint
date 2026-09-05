@@ -1164,7 +1164,9 @@ pub(crate) fn detect_macro_spans(artifact: &str) -> Vec<MacroSpan> {
             continue;
         }
 
-        index += 1;
+        // Step by Unicode scalar so a non-ASCII byte (a replacement char in a
+        // D1 sample, a decoded UTF-8 query) cannot land `index` inside a char.
+        index += remainder.chars().next().map(|c| c.len_utf8()).unwrap_or(1);
     }
 
     spans
@@ -1870,6 +1872,26 @@ mod tests {
         assert_eq!(
             summary.reports[0].violations[0].targets[0].value.as_deref(),
             Some("${HOST}")
+        );
+    }
+
+    #[test]
+    fn detect_macro_spans_walks_utf8_char_boundaries() {
+        let artifact = "https://example.com/event.png?cb=abc\u{FFFD}def&id=1";
+        let spans = detect_macro_spans(artifact);
+        assert!(spans.is_empty());
+
+        // Broken vendor macro `{` + replacement char + `name}` as seen on
+        // Amazon VFW IAS wrappers after D1 storage.
+        let broken = "https://example.com/ias.gif?campId={\u{FFFD}mpaign_cfid}&x=1";
+        assert!(detect_macro_spans(broken).is_empty());
+
+        let with_macro = "https://example.com/event.png?cb=abc\u{FFFD}def&price=${AUCTION_PRICE}";
+        let spans = detect_macro_spans(with_macro);
+        assert_eq!(spans.len(), 1);
+        assert_eq!(
+            &with_macro[spans[0].start..spans[0].end],
+            "${AUCTION_PRICE}"
         );
     }
 

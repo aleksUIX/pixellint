@@ -6,7 +6,9 @@
 //!
 //! Every rule here cites the spec that defines the parameter. Values carrying an
 //! unexpanded macro are skipped, because `gdpr=${GDPR}` in a template is correct
-//! trafficking, not a malformed signal.
+//! trafficking, not a malformed signal. The playground storage sentinel
+//! `REDACTED` is skipped the same way: it is a scrubbed copy, not a consent
+//! string, and must not be decoded as TCF, USP, or GPP.
 
 use crate::manifest::{ParamStyle, RawParam, contains_macro, extract_params};
 use crate::{RuleSource, RuleSourceLevel, Severity, Violation, ViolationTarget};
@@ -36,6 +38,15 @@ pub(crate) fn apply_privacy_rules(artifact: &str, violations: &mut Vec<Violation
 
 fn find<'a>(params: &'a [RawParam], name: &str) -> Option<&'a RawParam> {
     params.iter().find(|param| param.name == name)
+}
+
+/// Playground D1 replaces consent strings with this sentinel before storage.
+fn is_redacted_sentinel(value: &str) -> bool {
+    value.eq_ignore_ascii_case("REDACTED")
+}
+
+fn skip_signal_value(value: &str) -> bool {
+    contains_macro(value) || is_redacted_sentinel(value)
 }
 
 fn source(name: &str, reference: &str) -> RuleSource {
@@ -96,7 +107,7 @@ fn check_tcf(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
     // An empty signal is a template waiting to be filled by an ad server, which
     // is how Floodlight and VAST tags ship. Only a populated value is a claim.
     let applies = match gdpr {
-        Some(param) if !contains_macro(&param.value) && !param.value.is_empty() => {
+        Some(param) if !skip_signal_value(&param.value) && !param.value.is_empty() => {
             match param.value.as_str() {
                 "0" => Some(false),
                 "1" => Some(true),
@@ -142,7 +153,9 @@ fn check_tcf(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
                 vec![param.target()],
             ));
         }
-        (Some(false), Some(param)) if !param.value.is_empty() && !contains_macro(&param.value) => {
+        (Some(false), Some(param))
+            if !param.value.is_empty() && !skip_signal_value(&param.value) =>
+        {
             violations.push(violation(
                 "core.privacy.gdpr_consent_ignored",
                 "`gdpr=0` says GDPR does not apply, so the TC String in `gdpr_consent` is not meaningful for this call.".to_string(),
@@ -158,7 +171,7 @@ fn check_tcf(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
 
     if let Some(param) = consent
         && !param.value.is_empty()
-        && !contains_macro(&param.value)
+        && !skip_signal_value(&param.value)
     {
         if gdpr.is_none() {
             violations.push(violation(
@@ -272,6 +285,12 @@ fn check_us_privacy(params: &[RawParam], violations: &mut Vec<Violation>) {
         vec![param.target()],
     ));
 
+    // D1 stores `us_privacy=REDACTED`. The param was present (deprecated still
+    // applies); the sentinel is not a USP string to format-check.
+    if is_redacted_sentinel(&param.value) {
+        return;
+    }
+
     if !is_us_privacy_string(&param.value) {
         violations.push(violation(
             "core.privacy.us_privacy_malformed",
@@ -309,7 +328,7 @@ fn check_gpp(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
 
     if let Some(param) = gpp
         && !param.value.is_empty()
-        && !contains_macro(&param.value)
+        && !skip_signal_value(&param.value)
     {
         if !is_gpp_string(&param.value) {
             violations.push(violation(
@@ -343,7 +362,7 @@ fn check_gpp(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
 
     if let Some(param) = sid
         && !param.value.is_empty()
-        && !contains_macro(&param.value)
+        && !skip_signal_value(&param.value)
         && !is_gpp_sid(&param.value)
     {
         violations.push(violation(
@@ -659,6 +678,29 @@ mod tests {
         assert!(codes("https://example.com/px?us_privacy=${US_PRIVACY}").is_empty());
         assert!(
             codes("https://example.com/px?gpp=${GPP_STRING_123}&gpp_sid=${GPP_SID}").is_empty()
+        );
+    }
+
+    #[test]
+    fn redacted_storage_sentinels_are_not_decoded_as_consent_strings() {
+        assert!(
+            codes("https://example.com/px?gdpr=1&gdpr_consent=REDACTED").is_empty(),
+            "REDACTED is not a TC String"
+        );
+        assert_eq!(
+            codes("https://example.com/px?us_privacy=REDACTED"),
+            vec!["core.privacy.us_privacy_deprecated"]
+        );
+        assert!(
+            codes("https://example.com/px?gpp=REDACTED").is_empty(),
+            "REDACTED is not a GPP string"
+        );
+        assert!(
+            codes(
+                "https://beacons.extremereach.io/duration?gdpr_consent=REDACTED&us_privacy=REDACTED&gpp=REDACTED"
+            )
+            .iter()
+            .all(|code| code == "core.privacy.us_privacy_deprecated")
         );
     }
 

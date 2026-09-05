@@ -4,6 +4,24 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.17.1 - 2026-09-04
+
+### Fixed
+
+- Macro scanner no longer panics on non-ASCII bytes in a tracking URL
+- Consent format rules skip the playground storage sentinel `REDACTED`, so a
+  scrubbed `gdpr_consent` or `gpp` is not reported as a malformed TC or GPP
+  string. `us_privacy=REDACTED` still warns that the deprecated param was
+  present; it no longer claims the sentinel is a malformed USP string.
+
+### Changed
+
+- Vendor directory hosts from the 4 Sep 2026 D1 dump: Celtra, AdCanvas,
+  Smartclip, Extreme Reach, XPLN, Connected Stories, IQM, Blis. Host extends
+  for DoubleVerify `tpsc-video-as` / `tpsc-video-eu`, Flashtalking `d9` and
+  `qa-xre.flashtalking.net`, TripleLift `s.update.3lift.com`, and LinkedIn
+  RTB `/lax` hosts. Attribution only; no new rulepacks.
+
 ## 0.17.0 - 2026-09-03
 
 ### Added
