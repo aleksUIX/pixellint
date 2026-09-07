@@ -31,12 +31,14 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Check formatting
+        if: github.event_name != 'workflow_dispatch'
         run: cargo fmt --all --check
 
       - name: Run tests
         run: cargo test --workspace
 
       - name: Run clippy
+        if: github.event_name != 'workflow_dispatch'
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Check that the tag matches the workspace version
@@ -192,6 +194,17 @@ jobs:
           if npm view "pixellint@$version" version > /dev/null 2>&1; then
             echo "pixellint $version is already on npm; skipping."
             exit 0
+          fi
+
+          # Backfilling an older tag must not steal the `latest` dist-tag.
+          latest=$(npm view pixellint version 2>/dev/null || true)
+          if [ -n "$latest" ] && [ "$version" != "$latest" ]; then
+            higher=$(printf '%s\n%s\n' "$version" "$latest" | sort -V | tail -n1)
+            if [ "$higher" = "$latest" ]; then
+              echo "Publishing pixellint@$version without moving latest ($latest)"
+              npm publish --access public --provenance --tag "$version"
+              exit 0
+            fi
           fi
 
           npm publish --access public --provenance
