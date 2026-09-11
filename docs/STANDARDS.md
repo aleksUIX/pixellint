@@ -404,6 +404,42 @@ Source: [Universal Event Tracking](https://learn.microsoft.com/en-us/advertising
 Microsoft documents how to create and install a UET tag, not the request
 format, which is why this pack is ecosystem evidence.
 
+## `vendor/microsoft-conversions-api`
+
+Server-side UET events posted to
+`capi.uet.microsoft.com/v1/{tagId}/events`. Level: `official_vendor`. Browser
+UET is `vendor/microsoft-uet`. Clarity is `vendor/microsoft-clarity`.
+
+The tag ID rides on the path. The event payload is checked per event in
+`data`. Microsoft documents `eventTime` as Unix seconds, so a 13-digit value
+is milliseconds.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `tag_id` | Required numeric UET tag ID in the path | `vendor.microsoft-conversions-api.param.tag_id.missing`, `.empty`, `.invalid` |
+| `eventType` | Required `pageLoad` or `custom` | `vendor.microsoft-conversions-api.body.eventType.missing`, `.invalid` |
+| `eventTime` | Required Unix seconds, 10 digits | `vendor.microsoft-conversions-api.body.eventTime.missing`, `.invalid` |
+| `eventId` | Recommended for UET and CAPI deduplication | `vendor.microsoft-conversions-api.body.eventId.missing` |
+| `userData` | Required | `vendor.microsoft-conversions-api.body.userData.missing` |
+| User identifiers | At least one of `anonymousId`, `externalId`, `em`, `ph`, `msclkid`, `idfa`, `gaid` | `vendor.microsoft-conversions-api.body.user_needs_an_identifier` |
+| `eventSourceUrl` | Required on `pageLoad` | `vendor.microsoft-conversions-api.body.page_load_requires_url` |
+| `userData.em` | SHA-256 hex when present; raw email is an error | `vendor.microsoft-conversions-api.body.userData.em.invalid`, `.unhashed_email` |
+
+Source: [Conversions API](https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration).
+
+## `vendor/microsoft-clarity`
+
+Microsoft Clarity tag loader on `www.clarity.ms/tag/{projectId}`. Level:
+`official_template`. Microsoft documents copying the generated tracking code
+and comparing `src`. Collect POSTs on `/collect` are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `project_id` | Required in the path | `vendor.microsoft-clarity.param.project_id.missing`, `.empty` |
+
+Source: [setup](https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-setup),
+[troubleshooting](https://learn.microsoft.com/en-us/clarity/setup-and-installation/troubleshooting-installation).
+
 ## `vendor/reddit`
 
 Reddit Pixel requests on `alb.reddit.com`. Level: `ecosystem_reference`.
@@ -928,6 +964,21 @@ not contracted.
 
 Source: [fall-back conversion pixel](https://help.awin.com/developers/docs/fall-back-conversion-pixel).
 
+## `vendor/partnerize`
+
+Partnerize S2S and clickref conversion URLs on `prf.hn/conversion`. Level:
+`official_vendor`. Parameters ride as colon-delimited path segments. The
+loader on `cdn.performancehorizon.com` is not contracted. Basket item
+containers (`[category:.../sku:...]`) are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `campaign` | Required campaign id in the path | `vendor.partnerize.param.campaign.missing`, `.empty` |
+| `clickref` | Required click reference | `vendor.partnerize.param.clickref.missing`, `.empty` |
+| `currency` | Required ISO 4217 three-letter code | `vendor.partnerize.param.currency.missing`, `.invalid` |
+
+Source: [S2S integration](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration). Clickref pixel: [clickref pixel](https://help.phgsupport.com/hc/en-us/articles/4834811308957-Tracking-Partnerize-Clickref-Pixel-Integration).
+
 ## `vendor/x`
 
 X website tag image pixels on `analytics.twitter.com/i/adsct`. Level:
@@ -1169,6 +1220,77 @@ until that path is contracted.
 | `tracking_code` | Required in the path as `TC-{digits}-{digits}` | `vendor.ispot.param.tracking_code.missing`, `.empty`, `.invalid` |
 
 Source: [OTT Unified Measurement](https://developer.ispot.tv/documentation/unified-measurement) and the [pixel technical spec](https://developer.ispot.tv/sites/default/files/iSpot_Pixel_Technical_Documentation_1.pdf). Query extras such as `campaignid` are client-optional and not contracted.
+
+## `vendor/chartbeat`
+
+Chartbeat engagement pings on `ping.chartbeat.net/ping`. Level:
+`official_vendor`. The `chartbeat.js` loader on `static.chartbeat.com` is
+not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `h` | Required site id (dashboard host) | `vendor.chartbeat.param.h.missing`, `.empty` |
+| `g` | Required numeric account UID | `vendor.chartbeat.param.g.missing`, `.empty`, `.invalid` |
+
+Source: [QA a web integration](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration).
+
+## `vendor/heap`
+
+Heap.js 5 configuration loader on `cdn.us.heap-api.com` and
+`cdn.eu.heap-api.com`, path `/config/{envId}/heap_config.js`. Level:
+`official_vendor`. Classic `heap-{id}.js` on `cdn.heapanalytics.com` is not
+contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `env_id` | Required numeric environment ID in the path | `vendor.heap.param.env_id.missing`, `.empty`, `.invalid` |
+
+Source: [web installation](https://developers.heap.io/docs/web).
+
+## `vendor/mouseflow`
+
+Mouseflow project script on `cdn.mouseflow.com/projects/{website_id}.js`.
+Level: `official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `website_id` | Required in the path | `vendor.mouseflow.param.website_id.missing`, `.empty` |
+
+Source: [custom variables](https://help.mouseflow.com/en/articles/4312070-custom-variables).
+
+## `vendor/intercom`
+
+Intercom Messenger loader on `widget.intercom.io/widget/{app_id}`. Level:
+`official_vendor`. The IAM API host is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `app_id` | Required workspace ID in the path | `vendor.intercom.param.app_id.missing`, `.empty` |
+
+Source: [web installation](https://developers.intercom.com/installing-intercom/web/installation).
+
+## `vendor/nextdoor-conversions-api`
+
+Server-side conversion events posted to
+`ads.nextdoor.com/v2/api/conversions/track`. Level: `official_vendor`.
+`event_time` and `pixel_id` are deprecated; the pack contracts
+`event_time_epoch` and `data_source_id`.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `event_name` | Required documented event | `vendor.nextdoor-conversions-api.body.event_name.missing`, `.invalid` |
+| `action_source` | Required channel | `vendor.nextdoor-conversions-api.body.action_source.missing`, `.invalid` |
+| `event_id` | Required dedup id | `vendor.nextdoor-conversions-api.body.event_id.missing` |
+| `event_time_epoch` | Required Unix seconds, 10 digits | `vendor.nextdoor-conversions-api.body.event_time_epoch.missing`, `.invalid` |
+| `data_source_id` | Required Pixel ID | `vendor.nextdoor-conversions-api.body.data_source_id.missing` |
+| `customer` | Required | `vendor.nextdoor-conversions-api.body.customer.missing` |
+| User identifiers | At least one of hashed `email`, hashed `phone_number`, or `click_id` | `vendor.nextdoor-conversions-api.body.user_needs_an_identifier` |
+| `action_source_url` | Required on `website` | `vendor.nextdoor-conversions-api.body.website_requires_url` |
+| `custom.order_value` | Required on `purchase` | `vendor.nextdoor-conversions-api.body.purchase_requires_order_value` |
+| `customer.email` | SHA-256 hex when present; raw email is an error | `vendor.nextdoor-conversions-api.body.customer.email.invalid`, `.unhashed_email` |
+
+Source: [conversions/track](https://developer.nextdoor.com/reference/conversions-track),
+[data types](https://developer.nextdoor.com/reference/conversion-data-types).
 
 ## Vendor directory
 

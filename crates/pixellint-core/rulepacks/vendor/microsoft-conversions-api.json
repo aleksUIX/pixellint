@@ -1,0 +1,196 @@
+{
+  "id": "vendor/microsoft-conversions-api",
+  "display_name": "Microsoft Advertising Conversions API",
+  "description": "Server-side UET events posted to capi.uet.microsoft.com/v1/{tagId}/events, including the JSON event payload. Browser UET is vendor/microsoft-uet.",
+  "vendor": "microsoft",
+  "source_level": "official_vendor",
+  "docs": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+  "path_pattern": "^/v1/(?<tag_id>[^/]+)/events$",
+  "match": {
+    "hosts": ["capi.uet.microsoft.com"],
+    "path_prefixes": ["/v1/"],
+    "json_paths": [
+      {
+        "any_of": [
+          "data[].eventType",
+          "data[].eventTime",
+          "data[].userData"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "tag_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric UET tag ID, and it travels in the path as /v1/{tagId}/events.",
+      "fix_hint": "Put the UET tag ID from Microsoft Advertising in the path as /v1/{tagId}/events.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+    }
+  ],
+  "rules": [],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "data",
+          "requirement": "required",
+          "description": "Microsoft documents `data` as the list of events. An empty list sends nothing.",
+          "fix_hint": "Send at least one event in `data`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "data[]",
+      "params": [
+        {
+          "name": "eventType",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": ["pageLoad", "custom"]
+          },
+          "description": "It is the event type. Microsoft documents `pageLoad` or `custom`.",
+          "fix_hint": "Set `eventType` to `pageLoad` or `custom`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "eventTime",
+          "requirement": "required",
+          "format": { "kind": "integer", "min_digits": 10, "max_digits": 10 },
+          "description": "It is Unix epoch time in seconds UTC. Microsoft documents seconds, so a 13-digit value is milliseconds and the wrong unit.",
+          "fix_hint": "Send seconds, a 10-digit Unix timestamp, not milliseconds.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "eventId",
+          "requirement": "recommended",
+          "format": { "kind": "non_empty" },
+          "description": "It identifies the event so UET JavaScript and CAPI can deduplicate. Microsoft documents it as required for deduplication.",
+          "fix_hint": "Set `eventId` to the same value the UET tag sent.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "eventName",
+          "format": { "kind": "non_empty" },
+          "description": "It is the custom conversion action. Microsoft documents it for custom conversion goals.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "eventSourceUrl",
+          "format": { "kind": "url" },
+          "description": "It is the page URL. Microsoft documents it as required on `pageLoad` events.",
+          "fix_hint": "Set `eventSourceUrl` to the absolute page URL.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData",
+          "requirement": "required",
+          "description": "Microsoft documents `userData` as required, with at least one supported identifier.",
+          "fix_hint": "Add a `userData` object with at least one of `anonymousId`, `externalId`, `em`, `ph`, `msclkid`, `idfa`, or `gaid`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData.anonymousId",
+          "format": { "kind": "non_empty" },
+          "description": "It is the guest visitor ID, also used for ID Sync.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData.externalId",
+          "format": { "kind": "non_empty" },
+          "description": "It is an anonymized signed-in user ID.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData.em",
+          "format": { "kind": "hex", "length": 64 },
+          "format_severity": "warning",
+          "description": "It is the SHA-256 hex digest of the email. Microsoft documents lowercase hex after trim and lowercase.",
+          "fix_hint": "Trim, lowercase, SHA-256, and send 64 lowercase hex characters.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData.ph",
+          "format": { "kind": "hex", "length": 64 },
+          "format_severity": "warning",
+          "description": "It is the SHA-256 hex digest of the phone number.",
+          "fix_hint": "Normalize the phone, SHA-256, and send 64 lowercase hex characters.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData.msclkid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "description": "It is the Microsoft Click ID. Microsoft documents it as a UUID.",
+          "fix_hint": "Send the `msclkid` captured from the landing URL as a UUID.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData.idfa",
+          "format": { "kind": "non_empty" },
+          "description": "It is the iOS Identifier for Advertisers.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData.gaid",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Android advertising ID.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.currency",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "description": "It is the ISO 4217 currency of `customData.value`.",
+          "fix_hint": "Use a three-letter code such as `USD`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.microsoft-conversions-api.body.user_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "userData.anonymousId",
+            "userData.externalId",
+            "userData.em",
+            "userData.ph",
+            "userData.msclkid",
+            "userData.idfa",
+            "userData.gaid"
+          ],
+          "severity": "error",
+          "message": "`userData` carries none of the identifiers Microsoft requires. Send `anonymousId`, `externalId`, `em`, `ph`, `msclkid`, `idfa`, or `gaid`.",
+          "fix_hint": "Add at least one supported identifier inside `userData`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "code": "vendor.microsoft-conversions-api.body.page_load_requires_url",
+          "kind": "required_when_value",
+          "when": "eventType",
+          "equals": ["pageLoad"],
+          "requires": ["eventSourceUrl"],
+          "severity": "error",
+          "message": "The event is `pageLoad` but carries no `eventSourceUrl`. Microsoft documents the page URL as required on page load events.",
+          "fix_hint": "Set `eventSourceUrl` to the absolute page URL.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "code": "vendor.microsoft-conversions-api.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "params": ["userData.em"],
+          "severity": "error",
+          "message": "`userData.em` carries what looks like a raw email address. Microsoft documents SHA-256 lowercase hex.",
+          "fix_hint": "Trim, lowercase, hash with SHA-256, and send the 64-character hex digest.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        }
+      ]
+    }
+  ]
+}

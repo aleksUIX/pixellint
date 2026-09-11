@@ -4,6 +4,40 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- `vendor/microsoft-conversions-api`, covering Microsoft Advertising CAPI on
+  `capi.uet.microsoft.com` `/v1/{tagId}/events`: required `eventType`,
+  `eventTime` in seconds, `userData` with at least one identifier, and
+  `eventSourceUrl` on `pageLoad`. Browser UET stays `vendor/microsoft-uet`.
+- `vendor/nextdoor-conversions-api`, covering `/v2/api/conversions/track`:
+  required `event_name`, `action_source`, `event_id`, `event_time_epoch`,
+  `data_source_id`, and a `customer` match key. `action_source_url` on
+  website events. `custom.order_value` on purchase.
+- `vendor/partnerize`, covering `prf.hn/conversion`: required `campaign`,
+  `clickref`, and ISO 4217 `currency` in colon-delimited path segments. The
+  Performance Horizon loader stays directory-only.
+- `vendor/chartbeat`, covering `ping.chartbeat.net/ping`: required site id
+  `h` and numeric account UID `g`. `chartbeat.js` stays directory-only.
+- `vendor/heap`, covering Heap.js 5 `heap_config.js` on `cdn.us.heap-api.com`
+  and `cdn.eu.heap-api.com`: required numeric environment ID in the path.
+  Classic `heap-{id}.js` stays directory-only.
+- `vendor/microsoft-clarity`, covering `www.clarity.ms/tag/{projectId}`:
+  required project ID in the path. Collect POSTs stay directory-only.
+- `vendor/mouseflow`, covering `cdn.mouseflow.com/projects/{website_id}.js`:
+  required website ID in the path.
+- `vendor/intercom`, covering `widget.intercom.io/widget/{app_id}`: required
+  workspace ID in the path. The IAM API host stays directory-only.
+
+### Changed
+
+- Vendor directory splits Microsoft by product: UET on `bat.bing.com`, CAPI
+  on `capi.uet.microsoft.com`, and Clarity on `clarity.ms` pointing at
+  `vendor/microsoft-clarity`.
+- Heap directory row adds `heap-api.com` and points at `vendor/heap`.
+
 ## 0.17.2 - 2026-09-04
 
 ### Added

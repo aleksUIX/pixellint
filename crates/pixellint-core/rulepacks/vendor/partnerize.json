@@ -1,0 +1,39 @@
+{
+  "id": "vendor/partnerize",
+  "display_name": "Partnerize conversion tracking",
+  "description": "Partnerize S2S and clickref conversion URLs on prf.hn/conversion, whose campaign, clickref, and currency ride as colon-delimited path segments. The loader on cdn.performancehorizon.com is not contracted.",
+  "vendor": "partnerize",
+  "source_level": "official_vendor",
+  "docs": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration",
+  "path_pattern": "campaign:(?<campaign>[^/]*)(?:.*clickref:(?<clickref>[^/]*))?(?:.*currency:(?<currency>[^/]*))?",
+  "match": {
+    "hosts": ["prf.hn"],
+    "path_prefixes": ["/conversion"]
+  },
+  "params": [
+    {
+      "name": "campaign",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Partnerize campaign id, written as campaign:{CAMPAIGNID} on the conversion path.",
+      "fix_hint": "Put the campaign id from Partnerize in the path as campaign:{id}.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "clickref",
+      "requirement": "required",
+      "description": "It is the click reference captured at the landing page. Partnerize documents it as required for attributed conversions. Exclusive-code tracking may send it blank; that still fails attribution.",
+      "fix_hint": "Replay the stored clickref in the path as clickref:{value}.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "currency",
+      "requirement": "required",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+      "description": "It is the ISO 4217 currency of the conversion. Partnerize documents it as required when the event has a monetary value.",
+      "fix_hint": "Put a three-letter currency code in the path as currency:GBP.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    }
+  ],
+  "rules": []
+}

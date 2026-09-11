@@ -79,6 +79,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/brevo-js",
         include_str!("../rulepacks/vendor/brevo-js.json"),
     ),
+    (
+        "vendor/chartbeat",
+        include_str!("../rulepacks/vendor/chartbeat.json"),
+    ),
     ("vendor/cj", include_str!("../rulepacks/vendor/cj.json")),
     (
         "vendor/cm360-tracking-ad",
@@ -124,6 +128,7 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/google-tag-manager",
         include_str!("../rulepacks/vendor/google-tag-manager.json"),
     ),
+    ("vendor/heap", include_str!("../rulepacks/vendor/heap.json")),
     (
         "vendor/hotjar",
         include_str!("../rulepacks/vendor/hotjar.json"),
@@ -139,6 +144,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/impact",
         include_str!("../rulepacks/vendor/impact.json"),
+    ),
+    (
+        "vendor/intercom",
+        include_str!("../rulepacks/vendor/intercom.json"),
     ),
     (
         "vendor/ispot",
@@ -171,12 +180,28 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/meta-conversions-api.json"),
     ),
     (
+        "vendor/microsoft-clarity",
+        include_str!("../rulepacks/vendor/microsoft-clarity.json"),
+    ),
+    (
+        "vendor/microsoft-conversions-api",
+        include_str!("../rulepacks/vendor/microsoft-conversions-api.json"),
+    ),
+    (
         "vendor/microsoft-uet",
         include_str!("../rulepacks/vendor/microsoft-uet.json"),
     ),
     (
         "vendor/mixpanel",
         include_str!("../rulepacks/vendor/mixpanel.json"),
+    ),
+    (
+        "vendor/mouseflow",
+        include_str!("../rulepacks/vendor/mouseflow.json"),
+    ),
+    (
+        "vendor/nextdoor-conversions-api",
+        include_str!("../rulepacks/vendor/nextdoor-conversions-api.json"),
     ),
     (
         "vendor/openai",
@@ -193,6 +218,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/parsely",
         include_str!("../rulepacks/vendor/parsely.json"),
+    ),
+    (
+        "vendor/partnerize",
+        include_str!("../rulepacks/vendor/partnerize.json"),
     ),
     (
         "vendor/pinterest",

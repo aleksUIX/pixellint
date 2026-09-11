@@ -1,0 +1,198 @@
+{
+  "id": "vendor/nextdoor-conversions-api",
+  "display_name": "Nextdoor Conversions API",
+  "description": "Server-side conversion events posted to ads.nextdoor.com/v2/api/conversions/track.",
+  "vendor": "nextdoor",
+  "source_level": "official_vendor",
+  "docs": "https://developer.nextdoor.com/reference/conversions-track",
+  "match": {
+    "hosts": ["ads.nextdoor.com"],
+    "path_prefixes": ["/v2/api/conversions/track"],
+    "json_paths": [
+      {
+        "any_of": [
+          "data_source_id",
+          "event_time_epoch",
+          "event_name"
+        ]
+      },
+      "customer"
+    ]
+  },
+  "body": {
+    "params": [
+      {
+        "name": "event_name",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "purchase",
+            "lead",
+            "sign_up",
+            "add_to_cart",
+            "initiate_checkout",
+            "page_view",
+            "search",
+            "view_content",
+            "add_to_wishlist",
+            "subscribe",
+            "custom_conversion_1",
+            "custom_conversion_2",
+            "custom_conversion_3",
+            "custom_conversion_4",
+            "custom_conversion_5",
+            "custom_conversion_6",
+            "custom_conversion_7",
+            "custom_conversion_8",
+            "custom_conversion_9",
+            "custom_conversion_10"
+          ]
+        },
+        "description": "It is the conversion event name. Nextdoor documents a fixed lowercase set.",
+        "fix_hint": "Set `event_name` to a documented value such as `purchase` or `page_view`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "action_source",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "email",
+            "website",
+            "app",
+            "phone_call",
+            "chat",
+            "physical_store",
+            "system_generated",
+            "other"
+          ]
+        },
+        "description": "It names the channel the conversion happened on.",
+        "fix_hint": "Set `action_source` to a documented channel such as `website`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "event_id",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It identifies the event so Pixel and CAPI can deduplicate.",
+        "fix_hint": "Set `event_id` to the same deterministic id the Pixel sent.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "event_time_epoch",
+        "requirement": "required",
+        "format": { "kind": "integer", "min_digits": 10, "max_digits": 10 },
+        "description": "It is Unix time in seconds. Nextdoor documents no milliseconds. `event_time` is deprecated.",
+        "fix_hint": "Send `event_time_epoch` as a 10-digit Unix timestamp in seconds.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "data_source_id",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the Pixel ID. Nextdoor documents `data_source_id` and deprecated `pixel_id`.",
+        "fix_hint": "Set `data_source_id` to the Pixel ID from Nextdoor Ads.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "customer",
+        "requirement": "required",
+        "description": "It holds matching identifiers. Nextdoor documents it as required.",
+        "fix_hint": "Send a `customer` object with at least one of hashed `email`, hashed `phone_number`, or `click_id`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "action_source_url",
+        "format": { "kind": "url" },
+        "description": "It is the page URL. Nextdoor documents it as required for website events.",
+        "fix_hint": "Set `action_source_url` to the absolute page URL.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "customer.email",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the email after trim and lowercase.",
+        "fix_hint": "Trim, lowercase, SHA-256, and send 64 lowercase hex characters.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "name": "customer.phone_number",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the phone number.",
+        "fix_hint": "Hash the ten-digit phone and send 64 lowercase hex characters.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "name": "customer.click_id",
+        "format": { "kind": "non_empty" },
+        "description": "It is the `ndclid` from the Nextdoor click URL.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "name": "customer.client_user_agent",
+        "format": { "kind": "non_empty" },
+        "description": "It is the raw browser user agent. Nextdoor documents it as required for website events, and not hashed.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "custom.order_value",
+        "format": { "kind": "non_empty" },
+        "description": "It is ISO 4217 currency then the amount, such as `USD49.99`. Nextdoor documents it as required on purchase.",
+        "fix_hint": "Set `custom.order_value` to a currency code followed by the amount, such as `USD49.99`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.nextdoor-conversions-api.body.user_needs_an_identifier",
+        "kind": "require_one_of",
+        "params": [
+          "customer.email",
+          "customer.phone_number",
+          "customer.click_id"
+        ],
+        "severity": "error",
+        "message": "`customer` carries none of the match keys Nextdoor requires. Send hashed `email`, hashed `phone_number`, or `click_id`.",
+        "fix_hint": "Add at least one of hashed email, hashed phone, or `ndclid`.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-getting-started"
+      },
+      {
+        "code": "vendor.nextdoor-conversions-api.body.website_requires_url",
+        "kind": "required_when_value",
+        "when": "action_source",
+        "equals": ["website"],
+        "requires": ["action_source_url"],
+        "severity": "error",
+        "message": "The event is `action_source: website` but carries no `action_source_url`. Nextdoor documents the page URL as required for website events.",
+        "fix_hint": "Set `action_source_url` to the absolute page URL.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "code": "vendor.nextdoor-conversions-api.body.purchase_requires_order_value",
+        "kind": "required_when_value",
+        "when": "event_name",
+        "equals": ["purchase"],
+        "requires": ["custom.order_value"],
+        "severity": "error",
+        "message": "The event is `purchase` but carries no `custom.order_value`. Nextdoor documents order value as required on purchase.",
+        "fix_hint": "Set `custom.order_value` to a currency code followed by the amount, such as `USD49.99`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "code": "vendor.nextdoor-conversions-api.body.unhashed_email",
+        "kind": "forbid_value_pattern",
+        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+        "params": ["customer.email"],
+        "severity": "error",
+        "message": "`customer.email` carries what looks like a raw email address. Nextdoor documents SHA-256 after trim and lowercase.",
+        "fix_hint": "Trim, lowercase, hash with SHA-256, and send the 64-character hex digest.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      }
+    ]
+  }
+}

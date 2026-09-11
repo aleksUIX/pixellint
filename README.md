@@ -190,8 +190,11 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/linkedin` | LinkedIn conversion image pixels | ecosystem reference |
 | `vendor/linkedin-conversions-api` | LinkedIn conversion events, single and batched | official vendor |
 | `vendor/microsoft-uet` | Microsoft Advertising Universal Event Tracking | ecosystem reference |
+| `vendor/microsoft-conversions-api` | Microsoft Advertising CAPI, URL and JSON event payload | official vendor |
+| `vendor/microsoft-clarity` | Microsoft Clarity tag loader, project ID in the path | official template |
 | `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
 | `vendor/reddit-conversions-api` | Conversions API v3 events, URL and JSON event payload | official vendor |
+| `vendor/nextdoor-conversions-api` | Nextdoor Conversions API JSON on /v2/api/conversions/track | official vendor |
 | `vendor/x-conversions-api` | X conversion API measurement events, URL and JSON payload | official vendor |
 | `vendor/x` | X website tag image pixels on analytics.twitter.com/i/adsct | ecosystem reference |
 | `vendor/the-trade-desk` | The Trade Desk universal pixel iframe on insight.adsrvr.org/track/up | official vendor |
@@ -200,6 +203,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/hotjar` | Hotjar tracking code, site ID in the path | official template |
 | `vendor/hubspot` | HubSpot tracking code, Hub ID in the path | official template |
 | `vendor/awin` | Awin fall-back conversion pixel and S2S read | official vendor |
+| `vendor/partnerize` | Partnerize conversion URL, campaign, clickref, and currency in the path | official vendor |
 | `vendor/amazon-ads` | Amazon Ad Tag conversion loader, Tag ID in the path | ecosystem reference |
 | `vendor/amazon-vfw` | Amazon DSP Firefly DV measurement, `vstevt` on `/dv/` | ecosystem reference |
 | `vendor/outbrain` | Outbrain conversion pixel, ob_adv_id or ob_click_id | ecosystem reference |
@@ -236,11 +240,15 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/matomo` | Matomo Cloud `matomo.php`, `idsite` and `rec` | official vendor |
 | `vendor/parsely` | Parse.ly tracker loader, Site ID in the path | official vendor |
 | `vendor/crazyegg` | Crazy Egg tracking script, account and script IDs in the path | official template |
+| `vendor/chartbeat` | Chartbeat ping, site id `h` and account UID `g` | official vendor |
+| `vendor/heap` | Heap.js 5 configuration loader, environment ID in the path | official vendor |
+| `vendor/mouseflow` | Mouseflow project script, website ID in the path | official vendor |
+| `vendor/intercom` | Intercom Messenger loader, workspace ID in the path | official vendor |
 
 ### Vendor directory
 
-Rulepacks cover sixty-five endpoint families in depth. The vendor directory
-covers the rest by attribution: 116 vendor rows and 283 hosts, so an unrecognized
+Rulepacks cover seventy-three endpoint families in depth. The vendor directory
+covers the rest by attribution: 118 vendor rows and 285 hosts, so an unrecognized
 pixel still gets a name.
 
 ```bash
