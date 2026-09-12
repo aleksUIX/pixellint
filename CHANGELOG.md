@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.22.0 - 2026-09-11
+
 ### Added
 
 - `vendor/google-ad-manager`, covering Ad Manager
