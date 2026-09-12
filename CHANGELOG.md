@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.26.0 - 2026-09-12
+
 ### Changed
 
 - `html`, `js`, and `gtm` are not validation kinds. CLI exit 2, MCP `-32602`,
