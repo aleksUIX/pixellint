@@ -51,6 +51,7 @@ VENDORS = {
     "indexexchange": ("Index Exchange", "programmatic", ["js-sec.indexww.com", "htlb.casalemedia.com"], None),
     "tripleLift": ("TripleLift", "programmatic", ["eb2.3lift.com", "tlx.3lift.com"], None),
     "mediamath": ("MediaMath", "programmatic", ["pixel.mathtag.com", "sync.mathtag.com"], "vendor/mediamath"),
+    "iqm": ("IQM", "programmatic", ["iqm.com"], "vendor/iqm"),
     "adzerk": ("Adzerk", "programmatic", ["adzerk.net"], "vendor/kevel"),
     "taboola": ("Taboola", "native", ["trc.taboola.com", "cdn.taboola.com", "trc-events.taboola.com"], "vendor/taboola"),
     "outbrain": ("Outbrain", "native", ["tr.outbrain.com", "widgets.outbrain.com", "amplify.outbrain.com"], "vendor/outbrain"),

@@ -1913,7 +1913,7 @@ Source: [Connecting to third-party measurement partners](https://learn.microsoft
 
 MediaMath MathTag pixels on `pixel.mathtag.com/event/js` and `/event/img`.
 Level: `official_vendor`. Cookie sync on `sync.mathtag.com` is not contracted.
-Mobile `/event/mob` is not contracted.
+Mobile `/event/mob` is `vendor/mediamath-mobile`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -1956,8 +1956,8 @@ Source: [VAST ad tag parameters for web](https://support.google.com/admanager/an
 ## `vendor/trustarc`
 
 TrustArc CCM Pro on `consent.trustarc.com/v2/notice/{cmId}`. Level:
-`official_vendor`. CCM Advanced `/notice?domain=` is not contracted.
-`consent-st.trustarc.com` is not contracted.
+`official_vendor`. CCM Advanced `/notice?domain=` is
+`vendor/trustarc-notice`. `consent-st.trustarc.com` is not contracted.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -2112,6 +2112,48 @@ Level: `ecosystem_reference`. Other Flashtalking hosts are not contracted.
 | `spotlight_group_id` | Required integer Spotlight Group ID in the path | `vendor.flashtalking.param.spotlight_group_id.missing`, `.empty`, `.invalid` |
 
 Source: [Flashtalking OneTag Tag Setup Guide](https://docs.tealium.com/client-side-tags/flashtalking-onetag-tag/).
+
+## `vendor/iqm`
+
+IQM Pixel conversion scripts on `pxl.iqm.com/i/pixel/{uuid}` and
+`pxl.stage.iqm.com/i/pixel/{uuid}`. Level: `official_vendor`. Postback
+conversions are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `conversion_id` | Required conversion ID in the path | `vendor.iqm.param.conversion_id.missing`, `.empty` |
+
+Source: [Create a Conversion](https://developers.iqm.com/tutorials/create-a-conversion/).
+
+## `vendor/mediamath-mobile`
+
+MediaMath mobile in-app pixels on `pixel.mathtag.com/event/mob`. Level:
+`official_vendor`. Browser `/event/js` and `/event/img` stay
+`vendor/mediamath`. Cookie sync on `sync.mathtag.com` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `mt_id` | Required integer Pixel ID | `vendor.mediamath-mobile.param.mt_id.missing`, `.empty`, `.invalid` |
+| `mt_adid` | Required integer Advertiser ID | `vendor.mediamath-mobile.param.mt_adid.missing`, `.empty`, `.invalid` |
+| `mt_uuid` | Required device advertising ID | `vendor.mediamath-mobile.param.mt_uuid.missing`, `.empty` |
+| `mt_idt` | Required `idfa`, `aaid`, or `waid` | `vendor.mediamath-mobile.param.mt_idt.missing`, `.empty`, `.invalid` |
+| `mt_exem` | Optional SHA-256 hashed email | `vendor.mediamath-mobile.param.mt_exem.empty`, `.invalid` |
+| `mt_excl` | Optional SHA-256 hashed account ID | `vendor.mediamath-mobile.param.mt_excl.empty`, `.invalid` |
+| unhashed email | Forbidden | `vendor.mediamath-mobile.unhashed_email` |
+
+Source: [Mobile Pixel SDK](https://apidocs.mediamath.com/guides/mobile-pixel-sdk).
+
+## `vendor/trustarc-notice`
+
+TrustArc CCM Advanced on `consent.trustarc.com/notice?domain=`. Level:
+`official_vendor`. CCM Pro `/v2/notice/{cmId}` stays `vendor/trustarc`.
+`consent-st.trustarc.com` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `domain` | Required instance identifier | `vendor.trustarc-notice.param.domain.missing`, `.empty` |
+
+Source: [trustarc-segment-wrapper](https://github.com/trustarc/trustarc-segment-wrapper).
 
 ## Vendor directory
 

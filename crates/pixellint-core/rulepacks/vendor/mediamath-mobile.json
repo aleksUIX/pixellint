@@ -1,0 +1,71 @@
+{
+  "id": "vendor/mediamath-mobile",
+  "display_name": "MediaMath mobile pixel",
+  "vendor": "mediamath",
+  "description": "MediaMath mobile in-app pixels on pixel.mathtag.com/event/mob. MediaMath documents mt_adid, mt_id, mt_uuid, and mt_idt on the native URL. Browser /event/js and /event/img stay vendor/mediamath. Cookie sync on sync.mathtag.com is not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://apidocs.mediamath.com/guides/mobile-pixel-sdk",
+  "match": {
+    "hosts": ["pixel.mathtag.com"],
+    "paths": ["/event/mob"]
+  },
+  "params": [
+    {
+      "name": "mt_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the TerminalOne Pixel ID. MediaMath documents mt_id as required on /event/mob.",
+      "fix_hint": "Set mt_id to the Pixel ID from the MathTag on the website.",
+      "doc": "https://apidocs.mediamath.com/guides/mobile-pixel-sdk"
+    },
+    {
+      "name": "mt_adid",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the TerminalOne Advertiser ID. MediaMath documents mt_adid as required on /event/mob.",
+      "fix_hint": "Set mt_adid to the Advertiser ID from the MathTag on the website.",
+      "doc": "https://apidocs.mediamath.com/guides/mobile-pixel-sdk"
+    },
+    {
+      "name": "mt_uuid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the device advertising ID. MediaMath documents mt_uuid on every native /event/mob URL. Use a random UUID when Limit Ad Tracking is on.",
+      "fix_hint": "Send the IDFA, AAID, or Windows Advertising ID as mt_uuid. Randomize it when Limit Ad Tracking is enabled.",
+      "doc": "https://apidocs.mediamath.com/guides/mobile-pixel-sdk"
+    },
+    {
+      "name": "mt_idt",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["idfa", "aaid", "waid"] },
+      "description": "It is the advertising-ID type. MediaMath documents idfa on iOS, aaid on Android, and waid on Windows.",
+      "fix_hint": "Set mt_idt=idfa, aaid, or waid to match the OS that minted mt_uuid.",
+      "doc": "https://apidocs.mediamath.com/guides/mobile-pixel-sdk"
+    },
+    {
+      "name": "mt_exem",
+      "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+      "description": "It is a SHA-256 hashed email for MediaMath ConnectedID. MediaMath documents that hashing is not performed by the pixel.",
+      "fix_hint": "Hash the email with SHA-256 and send the hex digest as mt_exem.",
+      "doc": "https://apidocs.mediamath.com/guides/mobile-pixel-sdk"
+    },
+    {
+      "name": "mt_excl",
+      "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+      "description": "It is a SHA-256 hashed account ID for MediaMath ConnectedID.",
+      "fix_hint": "Hash the account ID with SHA-256 and send the hex digest as mt_excl.",
+      "doc": "https://apidocs.mediamath.com/guides/mobile-pixel-sdk"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.mediamath-mobile.unhashed_email",
+      "kind": "forbid_value_pattern",
+      "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+      "severity": "error",
+      "message": "A parameter carries what looks like a raw email address. MediaMath documents mt_exem as a SHA-256 digest and says personally identifiable information must not be sent.",
+      "fix_hint": "Hash the email with SHA-256 and send it as mt_exem.",
+      "doc": "https://apidocs.mediamath.com/guides/mobile-pixel-sdk"
+    }
+  ]
+}

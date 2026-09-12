@@ -6,6 +6,22 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/iqm`, covering IQM Pixel conversion scripts on
+  `pxl.iqm.com/i/pixel/{uuid}` and `pxl.stage.iqm.com/i/pixel/{uuid}`:
+  required conversion ID in the path. IQM documents that generated
+  snippet. Postback conversions are not contracted.
+- `vendor/mediamath-mobile`, covering MediaMath mobile pixels on
+  `pixel.mathtag.com/event/mob`: required integer `mt_adid` and
+  `mt_id`, required `mt_uuid`, and `mt_idt` as `idfa`, `aaid`, or
+  `waid`. SHA-256 `mt_exem` when present. Browser `/event/js` and
+  `/event/img` stay `vendor/mediamath`. Cookie sync is not contracted.
+- `vendor/trustarc-notice`, covering TrustArc CCM Advanced on
+  `consent.trustarc.com/notice?domain=`: required `domain`. CCM Pro
+  `/v2/notice/{cmId}` stays `vendor/trustarc`. `consent-st.trustarc.com`
+  is not contracted.
+
 ## 0.24.0 - 2026-09-11
 
 ### Added

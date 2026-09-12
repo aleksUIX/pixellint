@@ -239,6 +239,7 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/intercom-events",
         include_str!("../rulepacks/vendor/intercom-events.json"),
     ),
+    ("vendor/iqm", include_str!("../rulepacks/vendor/iqm.json")),
     (
         "vendor/ispot",
         include_str!("../rulepacks/vendor/ispot.json"),
@@ -295,6 +296,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/mediamath",
         include_str!("../rulepacks/vendor/mediamath.json"),
+    ),
+    (
+        "vendor/mediamath-mobile",
+        include_str!("../rulepacks/vendor/mediamath-mobile.json"),
     ),
     ("vendor/meta", include_str!("../rulepacks/vendor/meta.json")),
     (
@@ -464,6 +469,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/trustarc",
         include_str!("../rulepacks/vendor/trustarc.json"),
+    ),
+    (
+        "vendor/trustarc-notice",
+        include_str!("../rulepacks/vendor/trustarc-notice.json"),
     ),
     ("vendor/x", include_str!("../rulepacks/vendor/x.json")),
     (
