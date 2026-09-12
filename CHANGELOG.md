@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.23.0 - 2026-09-11
+
 ### Added
 
 - `vendor/xandr`, covering Microsoft Monetize conversion pixels on
