@@ -168,6 +168,15 @@ fn rulepack_selection_and_bad_input_are_reported_without_crashing() {
         }),
         json!({
             "jsonrpc": "2.0",
+            "id": 5,
+            "method": "tools/call",
+            "params": {
+                "name": "validate_artifact",
+                "arguments": { "artifact_kind": "html", "artifact": "<script src=https://example.com/px.js></script>" }
+            }
+        }),
+        json!({
+            "jsonrpc": "2.0",
             "id": 3,
             "method": "tools/call",
             "params": { "name": "no_such_tool", "arguments": {} }
@@ -185,7 +194,15 @@ fn rulepack_selection_and_bad_input_are_reported_without_crashing() {
 
     assert_eq!(responses[1]["error"]["code"], -32602);
     assert_eq!(responses[2]["error"]["code"], -32602);
-    assert_eq!(responses[3]["error"]["code"], -32601);
+    assert!(
+        responses[2]["error"]["message"]
+            .as_str()
+            .expect("message")
+            .contains("not a validation kind"),
+        "{responses:?}"
+    );
+    assert_eq!(responses[3]["error"]["code"], -32602);
+    assert_eq!(responses[4]["error"]["code"], -32601);
 }
 
 #[test]

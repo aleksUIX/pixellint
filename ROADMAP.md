@@ -12,7 +12,7 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - Declarative rulepack manifests: host and path matchers, parameter contracts,
   JSON body contracts, value formats, cross-parameter rules, and load-time
   validation including a citation requirement for vendor-documented rules
-- Seventy-three first-party vendor packs: Meta Pixel and Conversions API, GA4
+- 127 first-party vendor packs: Meta Pixel and Conversions API, GA4
   Measurement Protocol and the browser `/g/collect` transport, Google Tag
   Manager and gtag.js, Google Ads conversion pixels and click conversion
   uploads, Campaign Manager Floodlight, Adobe Analytics, Pinterest Tag and
@@ -47,9 +47,12 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 
 ## Next
 
-- Promote directory entries to full rulepacks as parameter contracts surface.
-  Snap Pixel stays attributed until a citable HTTP identifier exists on
-  `scevent.min.js` or `tr.snapchat.com/p`
+- Deepen packs that already match before adding another `/{id}.js` loader.
+  Cookie sync, RTB, and JS-only IDs stay attributed.
+- Snap Pixel stays attributed until a citable HTTP identifier exists on
+  `scevent.min.js` or `tr.snapchat.com/p`. Spiked 2026-09-12: none published.
+- DoubleVerify, Moat, Innovid: pack only if a generated tag URL table exists
+  (same bar as IAS).
 - Community-contributed directory entries and corrections
 - Document-level results: the wrapper described in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), so callers

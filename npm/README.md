@@ -41,9 +41,9 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 - URL conformance, transport, credentials, fragments, and ad-tech macro handling
 - IAB consent signals: TCF `gdpr` and `gdpr_consent`, the deprecated US Privacy
   string, and GPP `gpp` and `gpp_sid`
-- Vendor parameter contracts for seventy-three endpoint families, including Meta
+- Vendor parameter contracts for 127 endpoint families, including Meta
   Conversions API, TikTok Events API, Reddit CAPI, and the browser pixels
-- Endpoint attribution for 118 vendor rows, so an unrecognized pixel still gets a name.
+- Endpoint attribution for 119 vendor rows, so an unrecognized pixel still gets a name.
 
 ## API
 
@@ -57,8 +57,9 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 | `version()` | The `pixellint-core` version this build wraps |
 
 `options` takes `kind` (`url` by default, plus `json`, `vast`, `postback`, `request`,
-`html`, `js`, `gtm`, `unknown`), `state` (`unknown`, `template`, `fired`), and
-`vendor` for a caller's claimed vendor.
+`unknown`), `state` (`unknown`, `template`, `fired`), and
+`vendor` for a caller's claimed vendor. `html`, `js`, and `gtm` throw: extract
+URLs first.
 
 Templates keep their macros: pass `{ state: "template" }` and unexpanded macros
 stop being findings.

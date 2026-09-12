@@ -6,6 +6,20 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Changed
+
+- `html`, `js`, and `gtm` are not validation kinds. CLI exit 2, MCP `-32602`,
+  WASM throws. Extract tracking URLs, then `validate url`. Pixellint does
+  not parse HTML, JavaScript, or GTM containers.
+- `vendor/tiktok` matches only `/i18n/pixel/events.js` on
+  `analytics.tiktok.com` and `analytics.us.tiktok.com`. Collect POST
+  `/api/v2/pixel` is not contracted.
+- `vendor/reddit`: `event` warns unless it is a documented standard name
+  (PageVisit, Purchase, Custom, …).
+- `vendor/linkedin`: `eventId` when present, from LinkedIn's dedup image URL.
+- `vendor/x`: `p_id` expected `Twitter`; `tw_sale_amount` is a number with no
+  `$`; `tw_order_quantity` is integer when present.
+
 ## 0.25.0 - 2026-09-11
 
 ### Added

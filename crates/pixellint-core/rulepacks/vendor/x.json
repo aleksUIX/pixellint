@@ -1,7 +1,7 @@
 {
   "id": "vendor/x",
   "display_name": "X website tag",
-  "description": "X conversion image pixels on analytics.twitter.com/i/adsct, whose conversion ID rides as txn_id.",
+  "description": "X conversion image pixels on analytics.twitter.com/i/adsct. txn_id is the conversion ID. Generated pixels send p_id=Twitter. tw_sale_amount and tw_order_quantity ride on purchase fires. X documents twq, not this query. The conversion API stays vendor/x-conversions-api.",
   "vendor": "x",
   "source_level": "ecosystem_reference",
   "docs": "https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html",
@@ -21,8 +21,26 @@
     {
       "name": "p_id",
       "requirement": "recommended",
-      "format": { "kind": "non_empty" },
+      "format": { "kind": "enum", "values": ["Twitter"] },
+      "format_severity": "warning",
       "description": "Generated image pixels send `p_id=Twitter`.",
+      "fix_hint": "Keep `p_id=Twitter` from the generated website tag.",
+      "doc": "https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html"
+    },
+    {
+      "name": "tw_sale_amount",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "format_severity": "warning",
+      "description": "Purchase fires send the revenue amount. Generated pixels use a number with no currency symbol.",
+      "fix_hint": "Set tw_sale_amount to a number such as 10 or 10.50, not $10.",
+      "doc": "https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html"
+    },
+    {
+      "name": "tw_order_quantity",
+      "format": { "kind": "integer" },
+      "format_severity": "warning",
+      "description": "Purchase fires send the item count as an integer.",
+      "fix_hint": "Set tw_order_quantity to the item count, digits only.",
       "doc": "https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html"
     }
   ],

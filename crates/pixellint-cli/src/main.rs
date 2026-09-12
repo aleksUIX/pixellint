@@ -213,19 +213,23 @@ fn is_version(value: &str) -> bool {
     matches!(value, "version" | "--version" | "-V")
 }
 
+fn snippet_kind_rejected(kind: &str) -> String {
+    format!(
+        "{kind} is not a validation kind. Extract tracking URLs from the snippet, then pixellint validate url. Pixellint does not parse HTML, JavaScript, or GTM containers."
+    )
+}
+
 fn parse_artifact_kind(value: &str) -> Result<ArtifactKind, String> {
     match value {
         "url" => Ok(ArtifactKind::Url),
-        "html" => Ok(ArtifactKind::HtmlSnippet),
-        "js" => Ok(ArtifactKind::JavaScriptSnippet),
-        "gtm" => Ok(ArtifactKind::GtmTemplate),
+        "html" | "js" | "gtm" => Err(snippet_kind_rejected(value)),
         "request" => Ok(ArtifactKind::NetworkRequest),
         "vast" => Ok(ArtifactKind::VastTracker),
         "postback" => Ok(ArtifactKind::ServerPostback),
         "json" => Ok(ArtifactKind::JsonPayload),
         "unknown" => Ok(ArtifactKind::Unknown),
         other => Err(format!(
-            "unknown artifact kind: {other} (expected url, html, js, gtm, request, vast, postback, json, or unknown)"
+            "unknown artifact kind: {other} (expected url, request, vast, postback, json, or unknown)"
         )),
     }
 }
@@ -407,7 +411,7 @@ USAGE
   pixellint version
 
 KINDS
-  url, html, js, gtm, request, vast, postback, json, unknown
+  url, request, vast, postback, json, unknown
 
 ARTIFACT
   inline value, @path to read a file, or - to read stdin

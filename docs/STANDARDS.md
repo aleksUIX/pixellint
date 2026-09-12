@@ -546,14 +546,22 @@ Source: [setup](https://learn.microsoft.com/en-us/clarity/setup-and-installation
 
 ## `vendor/reddit`
 
-Reddit Pixel requests on `alb.reddit.com`. Level: `ecosystem_reference`.
+Reddit Pixel requests on `alb.reddit.com/rp.gif`. Level: `ecosystem_reference`.
+CAPI v3 is `vendor/reddit-conversions-api`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `id` | Required advertiser ID | `vendor.reddit.param.id.missing`, `.empty` |
-| `event` | Expected event name | `vendor.reddit.param.event.missing`, `.empty` |
+| `event` | Recommended. Unrecognized values warn, because `Custom` is legal | `vendor.reddit.param.event.missing`, `.empty`, `.invalid` |
 
-Source: [verify the Reddit Pixel](https://business.reddithelp.com/en/categories/measurement/verify-reddit-pixel).
+Standard names: `PageVisit`, `ViewContent`, `Search`, `AddToCart`,
+`AddToWishlist`, `Purchase`, `Lead`, `SignUp`, `Custom`. Reddit documents those
+on `rdt('track')`. The query spelling `event` is generated, not a published
+table. Purchase metadata on the wire (`m.value`) is unpublished and is not
+contracted.
+
+Sources: [manual conversion events](https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel),
+[install the Reddit Pixel](https://business.reddithelp.com/s/article/Install-the-Reddit-Pixel-on-your-website).
 
 ## `vendor/reddit-conversions-api`
 
@@ -584,20 +592,20 @@ not require a digest on those fields.
 
 ## `vendor/tiktok`
 
-TikTok Pixel loader and collection requests on `analytics.tiktok.com`. Level:
-`ecosystem_reference`.
+TikTok Pixel loader on `analytics.tiktok.com/i18n/pixel/events.js` and
+`analytics.us.tiktok.com/i18n/pixel/events.js`. Level: `ecosystem_reference`.
+Collect POST `/api/v2/pixel` has no published body and is not contracted.
+Events API is `vendor/tiktok-events-api`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `sdkid` | Required Pixel ID | `vendor.tiktok.param.sdkid.missing`, `.empty` |
 | `lib` | Expected `ttq` | `vendor.tiktok.param.lib.missing`, `.invalid` |
 
-Source: [pixel setup](https://ads.tiktok.com/help/article/get-started-pixel),
-[standard events](https://ads.tiktok.com/help/article/standard-events-parameters).
+Source: [pixel setup](https://ads.tiktok.com/help/article/get-started-pixel).
 
-TikTok documents its events and parameters for the JavaScript and server APIs,
-not the wire format of the loader URL. The pack is scoped to what its
-Events Manager generates, and is labeled ecosystem evidence for that reason.
+TikTok documents events for the JavaScript and server APIs, not this loader
+query. The pack is scoped to what Events Manager generates.
 
 ## `vendor/tiktok-events-api`
 
@@ -653,18 +661,21 @@ Source: [report app, web, offline, or CRM events](https://business-api.tiktok.co
 ## `vendor/linkedin`
 
 LinkedIn conversion image pixels on `px.ads.linkedin.com/collect`. Level:
-`ecosystem_reference`.
+`ecosystem_reference`. CAPI is `vendor/linkedin-conversions-api`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `pid` | Required numeric Partner ID | `vendor.linkedin.param.pid.missing`, `.empty`, `.invalid` |
-| `conversionId` | Expected numeric conversion ID | `vendor.linkedin.param.conversionId.missing`, `.invalid` |
+| `conversionId` | Expected numeric conversion ID. Page-load noscript omits it | `vendor.linkedin.param.conversionId.missing`, `.invalid` |
 | `fmt` | Expected `gif`, `img`, or `js` | `vendor.linkedin.param.fmt.missing`, `.invalid` |
+| `eventId` | When present, non-empty. Dedup key LinkedIn documents on the image URL | `vendor.linkedin.param.eventId.empty` |
 
-Source: [image pixel conversions](https://www.linkedin.com/help/lms/answer/a422796).
+Sources: [image pixel conversions](https://www.linkedin.com/help/lms/answer/a422796),
+[deduplication](https://learn.microsoft.com/en-us/linkedin/marketing/conversions/deduplication).
 
-LinkedIn generates this pixel in Campaign Manager and documents the workflow
-rather than the parameters, so the pack is labeled ecosystem evidence.
+`pid`, `conversionId`, and `fmt` are generated in Campaign Manager. `eventId` is
+`official_vendor`. Page-load noscript is `pid` and `fmt` only, so
+`conversionId` stays recommended.
 
 ## `vendor/linkedin-conversions-api`
 
@@ -1276,7 +1287,9 @@ conversion API is `vendor/x-conversions-api`.
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `txn_id` | Required conversion ID | `vendor.x.param.txn_id.missing`, `.empty` |
-| `p_id` | Recommended; generated pixels send `Twitter` | `vendor.x.param.p_id.missing` |
+| `p_id` | Recommended `Twitter` | `vendor.x.param.p_id.missing`, `.invalid` |
+| `tw_sale_amount` | When present, a number with no currency symbol | `vendor.x.param.tw_sale_amount.invalid` |
+| `tw_order_quantity` | When present, integer item count | `vendor.x.param.tw_order_quantity.invalid` |
 
 Source: [conversion tracking for websites](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html).
 
@@ -2177,17 +2190,16 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 
 ## Not implemented yet
 
-- Snap Pixel (`sc-static.net/scevent.min.js` and `tr.snapchat.com/p`). The
-  loader has no pixel ID on the URL. Collection is a POST without a published
-  query. Snap Conversions API is `vendor/snapchat`. Taboola unip events are
-  `vendor/taboola-unip`. S2S is `vendor/taboola-s2s`. iSpot conversion GIFs are
-  `vendor/ispot-conversion`. LiveRamp Envelope is
-  `vendor/liveramp-envelope`. Refresh is `vendor/liveramp-envelope-refresh`.
-  Cookie sync on `idsync.rlcdn.com` stays directory-only.
+- Snap Pixel (`sc-static.net/scevent.min.js` and `tr.snapchat.com/p`). Spiked
+  2026-09-12. The loader has no pixel ID on the URL. Collection is a POST to
+  `/p` without a published query or body. Snap Conversions API is
+  `vendor/snapchat`.
+- TikTok collect POST `analytics.tiktok.com/api/v2/pixel`. No published body.
+  The loader is `vendor/tiktok`.
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling
 - Duplicate or conflicting artifacts across a document
 - Document extraction: Pixellint validates artifacts a caller has already
-  extracted
+  extracted. `html`, `js`, and `gtm` are not validation kinds.
 - VAST XML semantics beyond the tracking URLs a caller passes in
 
 Those belong in future vendor packs, in the document-level model described in

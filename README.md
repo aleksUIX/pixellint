@@ -185,7 +185,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
 | `vendor/pinterest-conversions-api` | Conversions API events, URL and JSON event payload | official vendor |
 | `vendor/snapchat` | Snap Conversions API v3, URL and JSON event payload | official vendor |
-| `vendor/tiktok` | TikTok Pixel loader and collection requests | ecosystem reference |
+| `vendor/tiktok` | TikTok Pixel loader `events.js?sdkid=` | ecosystem reference |
 | `vendor/tiktok-events-api` | Events API pixel track and batch, URL and JSON event payload | official vendor |
 | `vendor/linkedin` | LinkedIn conversion image pixels | ecosystem reference |
 | `vendor/linkedin-conversions-api` | LinkedIn conversion events, single and batched | official vendor |
@@ -247,9 +247,9 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover seventy-three endpoint families in depth. The vendor directory
-covers the rest by attribution: 118 vendor rows and 285 hosts, so an unrecognized
-pixel still gets a name.
+Rulepacks cover 127 endpoint families across 75 vendors. The vendor directory
+covers the rest by attribution: 119 vendor rows and 296 hosts, so an unrecognized
+pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 
 ```bash
 $ pixellint validate url 'https://trc.taboola.com/actions?a=1'
@@ -319,9 +319,10 @@ The format is documented in [docs/RULEPACK_SCHEMA.md](docs/RULEPACK_SCHEMA.md).
 
 ## What Pixellint does not do
 
-- It does not extract artifacts from documents. Callers such as Vastlint parse
-  VAST, HTML, or GTM containers and hand Pixellint the URLs they found. The
-  planned document-level result model is in
+- It does not extract artifacts from documents. `html`, `js`, and `gtm` are
+  not validation kinds; the CLI exits 2 if you pass them. Callers such as
+  Vastlint parse VAST, HTML, or GTM containers and hand Pixellint the URLs they
+  found. The planned document-level result model is in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md).
 - It does not fire requests or check whether an endpoint responds.
 - It does not auto-fix. Findings carry fix hints; applying them is on you.

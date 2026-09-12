@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 VENDORS = {
     # Social and platform pixels
     "meta": ("Meta", "social", ["connect.facebook.net", "www.facebook.com", "graph.facebook.com", "business.facebook.com"], "vendor/meta"),
-    "tiktok": ("TikTok", "social", ["analytics.tiktok.com", "business-api.tiktok.com"], "vendor/tiktok"),
+    "tiktok": ("TikTok", "social", ["analytics.tiktok.com", "analytics.us.tiktok.com", "business-api.tiktok.com"], "vendor/tiktok"),
     "snapchat": ("Snapchat", "social", ["tr.snapchat.com", "sc-static.net", "tr6.snapchat.com"], "vendor/snapchat"),
     "pinterest": ("Pinterest", "social", ["ct.pinterest.com", "s.pinimg.com", "api.pinterest.com"], "vendor/pinterest"),
     "linkedin": ("LinkedIn", "social", ["px.ads.linkedin.com", "snap.licdn.com"], "vendor/linkedin"),

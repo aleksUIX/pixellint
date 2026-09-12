@@ -61,6 +61,13 @@ fn error_severity_findings_exit_one() {
 fn usage_problems_exit_two() {
     for args in [
         vec!["validate", "banana", "https://example.com/pixel"],
+        vec![
+            "validate",
+            "html",
+            "<script src=https://example.com/px.js></script>",
+        ],
+        vec!["validate", "js", "fbq('track','PageView')"],
+        vec!["validate", "gtm", "<script>gtag('config','G-XXX')</script>"],
         vec!["validate", "url", "https://example.com/pixel", "--nope"],
         vec!["validate", "url", "https://example.com/pixel", "--state"],
         vec!["validate", "url", "@/definitely/missing/fixture.txt"],

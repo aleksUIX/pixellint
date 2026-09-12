@@ -70,4 +70,9 @@ assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
 assert.match(version(), /^\d+\.\d+\.\d+$/);
 
+assert.throws(
+  () => validate("<script src=https://example.com/px.js></script>", { kind: "html" }),
+  /not a validation kind/,
+);
+
 console.log(`pixellint ${version()}: npm smoke tests passed`);

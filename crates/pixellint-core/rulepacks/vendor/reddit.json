@@ -1,10 +1,10 @@
 {
   "id": "vendor/reddit",
   "display_name": "Reddit Pixel",
-  "description": "Reddit Pixel conversion requests to alb.reddit.com.",
+  "description": "Reddit Pixel conversion requests to alb.reddit.com/rp.gif. Reddit documents standard event names on rdt('track'). The query spelling event is ecosystem evidence. CAPI v3 stays vendor/reddit-conversions-api.",
   "vendor": "reddit",
   "source_level": "ecosystem_reference",
-  "docs": "https://business.reddithelp.com/en/categories/measurement/verify-reddit-pixel",
+  "docs": "https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel",
   "match": {
     "hosts": ["alb.reddit.com"],
     "path_prefixes": ["/rp.gif"]
@@ -14,16 +14,31 @@
       "name": "id",
       "requirement": "required",
       "format": { "kind": "non_empty" },
-      "description": "It is the Reddit advertiser ID. Reddit documents how to verify the request rather than publishing the parameter contract, so this rule is ecosystem evidence.",
+      "description": "It is the Reddit advertiser ID. Reddit documents how to install the pixel rather than this query name, so this rule is ecosystem evidence.",
       "fix_hint": "Copy the advertiser ID from Reddit Ads into the pixel snippet.",
-      "doc": "https://business.reddithelp.com/en/categories/measurement/verify-reddit-pixel"
+      "doc": "https://business.reddithelp.com/s/article/Install-the-Reddit-Pixel-on-your-website"
     },
     {
       "name": "event",
       "requirement": "recommended",
-      "format": { "kind": "non_empty" },
-      "description": "It names the tracked event, such as PageVisit or Purchase.",
-      "doc": "https://business.reddithelp.com/en/categories/measurement/verify-reddit-pixel"
+      "format": {
+        "kind": "enum",
+        "values": [
+          "PageVisit",
+          "ViewContent",
+          "Search",
+          "AddToCart",
+          "AddToWishlist",
+          "Purchase",
+          "Lead",
+          "SignUp",
+          "Custom"
+        ]
+      },
+      "format_severity": "warning",
+      "description": "Reddit documents these standard names on rdt('track'). Custom events use Custom. Unrecognized values warn because a misspelling (Purchse) otherwise ships as a new event.",
+      "fix_hint": "Use a standard event name, or Custom with customEventName in the pixel call.",
+      "doc": "https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel"
     }
   ],
   "rules": []

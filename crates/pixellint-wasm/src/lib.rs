@@ -21,9 +21,9 @@ fn to_js<T: serde::Serialize + ?Sized>(value: &T) -> Result<JsValue, JsValue> {
 fn parse_artifact_kind(value: &str) -> Result<ArtifactKind, JsValue> {
     match value {
         "url" => Ok(ArtifactKind::Url),
-        "html" => Ok(ArtifactKind::HtmlSnippet),
-        "js" => Ok(ArtifactKind::JavaScriptSnippet),
-        "gtm" => Ok(ArtifactKind::GtmTemplate),
+        "html" | "js" | "gtm" => Err(JsValue::from_str(&format!(
+            "{value} is not a validation kind. Extract tracking URLs from the snippet, then validate as url. Pixellint does not parse HTML, JavaScript, or GTM containers."
+        ))),
         "request" => Ok(ArtifactKind::NetworkRequest),
         "vast" => Ok(ArtifactKind::VastTracker),
         "postback" => Ok(ArtifactKind::ServerPostback),
