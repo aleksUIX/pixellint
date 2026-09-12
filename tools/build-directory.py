@@ -34,7 +34,7 @@ VENDORS = {
         "www.google.com", "adservice.google.com",
     ], "vendor/google-tag-manager"),
     "microsoft": ("Microsoft Advertising", "search", ["bat.bing.com", "bat.bing.net", "c.clarity.ms", "www.clarity.ms"], "vendor/microsoft-uet"),
-    "yahoo": ("Yahoo", "search", ["sp.analytics.yahoo.com", "s.yimg.com", "ads.yahoo.com"], None),
+    "yahoo": ("Yahoo", "search", ["sp.analytics.yahoo.com", "s.yimg.com", "ads.yahoo.com", "batch.datax.yahoo.com"], "vendor/yahoo-dot"),
     "yandex": ("Yandex", "search", ["mc.yandex.ru", "mc.yandex.com", "an.yandex.ru"], None),
     "baidu": ("Baidu", "search", ["hm.baidu.com", "cpro.baidustatic.com"], "vendor/baidu"),
     "naver": ("Naver", "search", ["wcs.naver.net", "wcs.naver.com"], None),
@@ -57,7 +57,7 @@ VENDORS = {
 
     # Identity, data, and onboarding
     "liveramp": ("LiveRamp", "identity", ["idsync.rlcdn.com", "api.rlcdn.com", "ats.rlcdn.com"], "vendor/liveramp-envelope"),
-    "id5": ("ID5", "identity", ["id5-sync.com", "lb.eu-1-id5-sync.com"], None),
+    "id5": ("ID5", "identity", ["id5-sync.com", "lb.eu-1-id5-sync.com"], "vendor/id5"),
     "lotame": ("Lotame", "identity", ["tags.crwdcntrl.net", "bcp.crwdcntrl.net"], "vendor/lotame"),
     "oracle": ("Oracle Advertising", "identity", ["tags.bluekai.com", "stags.bluekai.com"], "vendor/oracle-bluekai"),
     "salesforce": ("Salesforce", "identity", ["beacon.krxd.net", "cdn.krxd.net"], None),
@@ -123,7 +123,7 @@ VENDORS = {
 
     # Consent management
     "onetrust": ("OneTrust", "consent", ["cdn.cookielaw.org", "geolocation.onetrust.com"], None),
-    "trustarc": ("TrustArc", "consent", ["consent.trustarc.com", "consent-st.trustarc.com"], None),
+    "trustarc": ("TrustArc", "consent", ["consent.trustarc.com", "consent-st.trustarc.com"], "vendor/trustarc"),
     "sourcepoint": ("Sourcepoint", "consent", ["cdn.privacy-mgmt.com"], None),
     "didomi": ("Didomi", "consent", ["sdk.privacy-center.org", "api.privacy-center.org"], "vendor/didomi"),
     "usercentrics": ("Usercentrics", "consent", ["app.usercentrics.eu", "web.cmp.usercentrics.eu"], None),

@@ -319,7 +319,7 @@ mod tests {
             .lookup_host("ade.googlesyndication.com")
             .expect("gam");
         assert_eq!(gam.display_name, "Google Ad Manager");
-        assert_eq!(gam.rulepack, None);
+        assert_eq!(gam.rulepack.as_deref(), Some("vendor/google-ad-manager"));
 
         let firefly = directory
             .lookup_host("vfw.amazon-adsystem.com")

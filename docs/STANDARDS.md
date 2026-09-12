@@ -1939,6 +1939,72 @@ Oracle BlueKai site tags on `tags.bluekai.com/site/{siteId}` and
 
 Source: [Sending oHashes to the Oracle Data Cloud Platform](https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html).
 
+## `vendor/google-ad-manager`
+
+Google Ad Manager ad requests on `pubads.g.doubleclick.net/gampad/ads`
+and `securepubads.g.doubleclick.net/gampad/ads`. Level: `official_vendor`.
+Floodlight activity tags stay `vendor/floodlight`. CM360 VAST events stay
+`vendor/cm360-vast-event`. Display GPT and VAST tags share this hop; only
+`iu` is contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `iu` | Required ad unit path `/network_code/.../ad_unit` | `vendor.google-ad-manager.param.iu.missing`, `.empty`, `.invalid` |
+
+Source: [VAST ad tag parameters for web](https://support.google.com/admanager/answer/10655276).
+
+## `vendor/trustarc`
+
+TrustArc CCM Pro on `consent.trustarc.com/v2/notice/{cmId}`. Level:
+`official_vendor`. CCM Advanced `/notice?domain=` is not contracted.
+`consent-st.trustarc.com` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `notice_id` | Required Consent Manager ID in the path | `vendor.trustarc.param.notice_id.missing`, `.empty` |
+
+Source: [Cookie Consent Manager Professional Implementation Guide](https://consent.trustarc.com/asset/TrustArc_Cookie_Consent_Manager_Implementation_Guide.pdf).
+
+## `vendor/id5`
+
+ID5 mobile in-app S2S on `api.id5-sync.com/ga/v1`. Level:
+`official_vendor`. Cookie sync on `/i/` and `/s/` is not contracted. CTV
+`/gc/v1` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `partner` | Required integer Partner Number | `vendor.id5.body.partner.missing`, `.empty`, `.invalid` |
+| `ts` | Required timestamp | `vendor.id5.body.ts.missing`, `.empty` |
+| `bundle` | Required app identifier | `vendor.id5.body.bundle.missing`, `.empty` |
+| `ver` | Required app version | `vendor.id5.body.ver.missing`, `.empty` |
+| `ip` | Required IPv4 closest to the device | `vendor.id5.body.ip.missing`, `.empty` |
+| `ua` | Required user agent | `vendor.id5.body.ua.missing`, `.empty` |
+| `hem` | Optional SHA-256 hashed email | `vendor.id5.body.hem.empty`, `.invalid` |
+| `phone` | Optional SHA-256 hashed phone | `vendor.id5.body.phone.empty`, `.invalid` |
+| unhashed email | Forbidden | `vendor.id5.body.unhashed_email` |
+
+Source: [Mobile In-App Integration](https://wiki.id5.io/docs/mobile-in-app-integration).
+
+## `vendor/yahoo-conversions-api`
+
+Yahoo Standard Conversion API on
+`batch.datax.yahoo.com/v1/events/{pixelId}`. Level: `official_vendor`.
+Dot image pixels stay `vendor/yahoo-dot`. Product CAPI, which requires
+`eventId`, is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `pixel_id` | Required integer pixel ID in the path | `vendor.yahoo-conversions-api.param.pixel_id.missing`, `.empty`, `.invalid` |
+| `eventTs` | Required integer timestamp | `vendor.yahoo-conversions-api.body.eventTs.missing`, `.empty`, `.invalid` |
+| `eventName` | Required event action name | `vendor.yahoo-conversions-api.body.eventName.missing`, `.empty` |
+| `actionSource` | Required event source | `vendor.yahoo-conversions-api.body.actionSource.missing`, `.empty` |
+| `userData` | Required user-data object | `vendor.yahoo-conversions-api.body.userData.missing`, `.empty` |
+| `userData.email` / `email[]` | Optional SHA-256 hashed email | `vendor.yahoo-conversions-api.body.userData.email.invalid`, `vendor.yahoo-conversions-api.body.userData.email[].invalid` |
+| match key | At least one of hashed email, phone, gpsaid, idfa, pxid, or clickData | `vendor.yahoo-conversions-api.body.user_needs_an_identifier` |
+| unhashed email | Forbidden | `vendor.yahoo-conversions-api.body.unhashed_email` |
+
+Source: [Standard Yahoo Conversion API](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api).
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a

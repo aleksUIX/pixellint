@@ -149,6 +149,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/floodlight.json"),
     ),
     (
+        "vendor/google-ad-manager",
+        include_str!("../rulepacks/vendor/google-ad-manager.json"),
+    ),
+    (
         "vendor/google-ads-conversion",
         include_str!("../rulepacks/vendor/google-ads-conversion.json"),
     ),
@@ -210,6 +214,7 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/ias-video",
         include_str!("../rulepacks/vendor/ias-video.json"),
     ),
+    ("vendor/id5", include_str!("../rulepacks/vendor/id5.json")),
     (
         "vendor/impact",
         include_str!("../rulepacks/vendor/impact.json"),
@@ -436,10 +441,18 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/tiktok-events-2",
         include_str!("../rulepacks/vendor/tiktok-events-2.json"),
     ),
+    (
+        "vendor/trustarc",
+        include_str!("../rulepacks/vendor/trustarc.json"),
+    ),
     ("vendor/x", include_str!("../rulepacks/vendor/x.json")),
     (
         "vendor/x-conversions-api",
         include_str!("../rulepacks/vendor/x-conversions-api.json"),
+    ),
+    (
+        "vendor/yahoo-conversions-api",
+        include_str!("../rulepacks/vendor/yahoo-conversions-api.json"),
     ),
     (
         "vendor/yahoo-dot",

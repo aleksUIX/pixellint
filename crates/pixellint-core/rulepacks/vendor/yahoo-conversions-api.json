@@ -1,0 +1,152 @@
+{
+  "id": "vendor/yahoo-conversions-api",
+  "display_name": "Yahoo Conversion API",
+  "vendor": "yahoo",
+  "description": "Server-side events posted to batch.datax.yahoo.com/v1/events/{pixelId}. The pixel ID rides in the path. Dot image pixels stay vendor/yahoo-dot. Product CAPI, which requires eventId, is not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+  "path_pattern": "/v1/events/(?<pixel_id>[^/]*)",
+  "match": {
+    "hosts": ["batch.datax.yahoo.com"],
+    "path_prefixes": ["/v1/events"],
+    "json_paths": [
+      {
+        "any_of": [
+          "[].eventName",
+          "[].eventTs",
+          "[].actionSource",
+          "[].userData"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "pixel_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the Yahoo DSP pixel ID. Yahoo documents the batch endpoint as /v1/events/{pixelId}.",
+      "fix_hint": "Put the DSP pixel ID in the path, such as /v1/events/10157549. Do not reuse a live Dot pixel ID.",
+      "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+    }
+  ],
+  "body": {
+    "scope": "[]",
+    "params": [
+      {
+        "name": "eventTs",
+        "requirement": "required",
+        "format": { "kind": "integer" },
+        "description": "It is the event time in seconds or milliseconds. Yahoo documents eventTs as required.",
+        "fix_hint": "Set eventTs to a Unix timestamp in seconds or milliseconds.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "eventName",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the event action name. Yahoo documents eventName as required.",
+        "fix_hint": "Set eventName to the action the DSP rule matches, such as addToCart or Purchase.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "actionSource",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the digital or physical source of the event. Yahoo documents actionSource as required.",
+        "fix_hint": "Set actionSource to a source such as web, app, phone, email, online, or physical_store.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData",
+        "requirement": "required",
+        "description": "It is the wrapper for match keys. Yahoo documents userData as required, with at least one ID or clickData.",
+        "fix_hint": "Send a userData object with hashed email, phone, device ID, or pxid, or send clickData.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.email",
+        "format": { "kind": "hex", "length": 64 },
+        "description": "Email must be lowercased and SHA-256 hashed. Yahoo documents userData.email as a list of hashes.",
+        "fix_hint": "Lowercase the email, hash it with SHA-256, and send 64 lowercase hex characters.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.email[]",
+        "format": { "kind": "hex", "length": 64 },
+        "description": "Every email in the list must be SHA-256 hashed.",
+        "fix_hint": "Lowercase each email, hash it with SHA-256, and send the hex digests.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.phone",
+        "format": { "kind": "hex", "length": 64 },
+        "description": "Phone numbers must be SHA-256 hashed. Yahoo documents userData.phone as a list of hashes.",
+        "fix_hint": "Hash the phone number with SHA-256 and send 64 lowercase hex characters.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.phone[]",
+        "format": { "kind": "hex", "length": 64 },
+        "description": "Every phone number in the list must be SHA-256 hashed.",
+        "fix_hint": "Hash each phone number with SHA-256 and send the hex digests.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.gpsaid",
+        "description": "It is a list of Android advertising IDs.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.idfa",
+        "description": "It is a list of Apple advertising IDs.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.pxid",
+        "description": "It is a list of partner match IDs in the form sourceId:value.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "clickData.vmcid",
+        "format": { "kind": "non_empty" },
+        "description": "It is the Yahoo Click ID. Yahoo documents clickData as a match key when user IDs are not available.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "clickData.tblci",
+        "format": { "kind": "non_empty" },
+        "description": "It is the Taboola Click ID.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.yahoo-conversions-api.body.unhashed_email",
+        "kind": "forbid_value_pattern",
+        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+        "severity": "error",
+        "message": "A field carries what looks like a raw email address. Yahoo documents userData.email as SHA-256 hashed, lowercased values.",
+        "fix_hint": "Lowercase the email, hash it with SHA-256, and send the hex digest in userData.email.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "code": "vendor.yahoo-conversions-api.body.user_needs_an_identifier",
+        "kind": "require_one_of",
+        "params": [
+          "userData.email",
+          "userData.phone",
+          "userData.gpsaid",
+          "userData.idfa",
+          "userData.pxid",
+          "clickData.vmcid",
+          "clickData.tblci"
+        ],
+        "severity": "error",
+        "message": "The event has no match key. Yahoo documents at least one of hashed email, phone, gpsaid, idfa, pxid, or clickData.",
+        "fix_hint": "Send hashed userData.email, phone, gpsaid, idfa, or pxid, or send clickData.vmcid or clickData.tblci.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      }
+    ]
+  }
+}

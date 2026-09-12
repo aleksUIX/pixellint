@@ -6,6 +6,24 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/google-ad-manager`, covering Ad Manager
+  `pubads.g.doubleclick.net/gampad/ads` and
+  `securepubads.g.doubleclick.net/gampad/ads`: required `iu` as
+  `/network_code/.../ad_unit`. Floodlight stays `vendor/floodlight`.
+- `vendor/trustarc`, covering CCM Pro
+  `consent.trustarc.com/v2/notice/{cmId}`: required Consent Manager ID in
+  the path. CCM Advanced `/notice?domain=` is not contracted.
+- `vendor/id5`, covering mobile in-app S2S `api.id5-sync.com/ga/v1`:
+  required `partner`, `ts`, `bundle`, `ver`, `ip`, and `ua`. SHA-256
+  `hem` when present. Cookie sync on `/i/` and `/s/` is not contracted.
+- `vendor/yahoo-conversions-api`, covering Standard CAPI
+  `batch.datax.yahoo.com/v1/events/{pixelId}`: required integer pixel ID
+  in the path, and `eventTs`, `eventName`, `actionSource`, and `userData`
+  in the body, with at least one match key. Dot pixels stay
+  `vendor/yahoo-dot`.
+
 ## 0.21.0 - 2026-09-11
 
 ### Added
