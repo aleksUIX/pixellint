@@ -50,7 +50,7 @@ VENDORS = {
     "openx": ("OpenX", "programmatic", ["us-ads.openx.net", "rtb.openx.net"], None),
     "indexexchange": ("Index Exchange", "programmatic", ["js-sec.indexww.com", "htlb.casalemedia.com"], None),
     "tripleLift": ("TripleLift", "programmatic", ["eb2.3lift.com", "tlx.3lift.com"], None),
-    "mediamath": ("MediaMath", "programmatic", ["pixel.mathtag.com", "sync.mathtag.com"], None),
+    "mediamath": ("MediaMath", "programmatic", ["pixel.mathtag.com", "sync.mathtag.com"], "vendor/mediamath"),
     "taboola": ("Taboola", "native", ["trc.taboola.com", "cdn.taboola.com", "trc-events.taboola.com"], "vendor/taboola"),
     "outbrain": ("Outbrain", "native", ["tr.outbrain.com", "widgets.outbrain.com", "amplify.outbrain.com"], "vendor/outbrain"),
     "sharethrough": ("Sharethrough", "programmatic", ["btlr.sharethrough.com", "match.sharethrough.com"], None),
@@ -58,8 +58,8 @@ VENDORS = {
     # Identity, data, and onboarding
     "liveramp": ("LiveRamp", "identity", ["idsync.rlcdn.com", "api.rlcdn.com", "ats.rlcdn.com"], "vendor/liveramp-envelope"),
     "id5": ("ID5", "identity", ["id5-sync.com", "lb.eu-1-id5-sync.com"], None),
-    "lotame": ("Lotame", "identity", ["tags.crwdcntrl.net", "bcp.crwdcntrl.net"], None),
-    "oracle": ("Oracle Advertising", "identity", ["tags.bluekai.com", "stags.bluekai.com"], None),
+    "lotame": ("Lotame", "identity", ["tags.crwdcntrl.net", "bcp.crwdcntrl.net"], "vendor/lotame"),
+    "oracle": ("Oracle Advertising", "identity", ["tags.bluekai.com", "stags.bluekai.com"], "vendor/oracle-bluekai"),
     "salesforce": ("Salesforce", "identity", ["beacon.krxd.net", "cdn.krxd.net"], None),
     "neustar": ("TransUnion (Neustar)", "identity", ["aa.agkn.com"], None),
     "tapad": ("Tapad", "identity", ["pixel.tapad.com"], None),
@@ -68,7 +68,7 @@ VENDORS = {
 
     # Verification and measurement
     "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "rtb0.doubleverify.com"], None),
-    "ias": ("Integral Ad Science", "verification", ["pixel.adsafeprotected.com", "static.adsafeprotected.com", "dt.adsafeprotected.com"], None),
+    "ias": ("Integral Ad Science", "verification", ["pixel.adsafeprotected.com", "static.adsafeprotected.com", "dt.adsafeprotected.com"], "vendor/ias"),
     "moat": ("Oracle Moat", "verification", ["px.moatads.com", "z.moatads.com", "js.moatads.com"], None),
     "nielsen": ("Nielsen", "measurement", ["secure-dcr.imrworldwide.com", "secure-gl.imrworldwide.com"], None),
     "comscore": ("Comscore", "measurement", ["sb.scorecardresearch.com", "b.scorecardresearch.com"], None),
@@ -125,7 +125,7 @@ VENDORS = {
     "onetrust": ("OneTrust", "consent", ["cdn.cookielaw.org", "geolocation.onetrust.com"], None),
     "trustarc": ("TrustArc", "consent", ["consent.trustarc.com", "consent-st.trustarc.com"], None),
     "sourcepoint": ("Sourcepoint", "consent", ["cdn.privacy-mgmt.com"], None),
-    "didomi": ("Didomi", "consent", ["sdk.privacy-center.org", "api.privacy-center.org"], None),
+    "didomi": ("Didomi", "consent", ["sdk.privacy-center.org", "api.privacy-center.org"], "vendor/didomi"),
     "usercentrics": ("Usercentrics", "consent", ["app.usercentrics.eu", "web.cmp.usercentrics.eu"], None),
     "cookiebot": ("Cookiebot", "consent", ["consent.cookiebot.com", "consentcdn.cookiebot.com"], None),
 }

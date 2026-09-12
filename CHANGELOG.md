@@ -6,6 +6,27 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/didomi`, covering Didomi `sdk.privacy-center.org/{Public API Key}/loader.js`:
+  required Public API Key in the path. Core and UI SDK files are not
+  contracted.
+- `vendor/lotame`, covering Lightning Tag
+  `tags.crwdcntrl.net/lt/c/{clientId}/lt.min.js`: required integer client ID
+  in the path. `bcp.crwdcntrl.net` stays directory-only.
+- `vendor/ias`, covering IAS Signal display
+  `pixel.adsafeprotected.com/rjss/st/{advertiserId}/{publisherId}/skeleton.js`:
+  required integer advertiser and publisher IDs in the path.
+- `vendor/ias-video`, covering IAS Signal video
+  `unified.adsafeprotected.com/v2/{advertiserId}/{publisherId}`: the same two
+  IDs. Display stays `vendor/ias`.
+- `vendor/mediamath`, covering MathTag `pixel.mathtag.com/event/js` and
+  `/event/img`: required integer `mt_id` and `mt_adid`. Hashed `mt_exem` /
+  `mt_excl` when present. `sync.mathtag.com` stays directory-only.
+- `vendor/oracle-bluekai`, covering `tags.bluekai.com/site/{siteId}` and
+  `stags.bluekai.com/site/{siteId}`: required integer site ID. SHA-256
+  `e_id_s` when present.
+
 ## 0.20.0 - 2026-09-11
 
 ### Added

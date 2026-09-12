@@ -1,0 +1,41 @@
+{
+  "id": "vendor/oracle-bluekai",
+  "display_name": "Oracle BlueKai site tag",
+  "vendor": "oracle",
+  "description": "Oracle BlueKai site tags on tags.bluekai.com/site/{siteId} and stags.bluekai.com/site/{siteId}. The site ID rides in the path. Oracle documents the ID swap tag on stags. The JS Return tag uses the same path on tags. CoreTag on tags.bkrtx.com is not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html",
+  "path_pattern": "/site/(?<site_id>[^/]*)",
+  "match": {
+    "hosts": ["tags.bluekai.com", "stags.bluekai.com"],
+    "path_prefixes": ["/site/"]
+  },
+  "params": [
+    {
+      "name": "site_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the BlueKai site ID. Oracle documents the ID swap tag as stags.bluekai.com/site/{YOUR_SITE_ID}.",
+      "fix_hint": "Copy the container site ID from BlueKai so the path is /site/{siteId}.",
+      "doc": "https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "name": "e_id_s",
+      "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+      "description": "It is a SHA-256 oHash for email. Oracle documents that no personally identifiable information may be sent; IDs derived from PII must be hashed first.",
+      "fix_hint": "Hash the email with SHA-256 and send the digest as e_id_s.",
+      "doc": "https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.oracle-bluekai.unhashed_email",
+      "kind": "forbid_value_pattern",
+      "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+      "severity": "error",
+      "message": "A parameter carries what looks like a raw email address. Oracle documents oHashes as SHA-256 digests and forbids sending personally identifiable information.",
+      "fix_hint": "Hash the email with SHA-256 and send it as e_id_s.",
+      "doc": "https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    }
+  ]
+}

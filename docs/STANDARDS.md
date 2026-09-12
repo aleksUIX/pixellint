@@ -1859,6 +1859,86 @@ contracted.
 
 Source: [DCR Static Browser SDK](https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(5.1.1)).
 
+## `vendor/didomi`
+
+Didomi Web SDK loader on `sdk.privacy-center.org/{Public API Key}/loader.js`.
+Level: `official_vendor`. Core and UI files under `/sdk/` are not contracted.
+`api.privacy-center.org` events are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `api_key` | Required Public API Key in the path | `vendor.didomi.param.api_key.missing`, `.empty` |
+
+Source: [reverse proxy](https://developers.didomi.io/api-and-platform/domains/reverse-proxy).
+
+## `vendor/lotame`
+
+Lotame Lightning Tag on `tags.crwdcntrl.net/lt/c/{clientId}/lt.min.js`. Level:
+`official_vendor`. Collect on `bcp.crwdcntrl.net` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `client_id` | Required integer client ID in the path | `vendor.lotame.param.client_id.missing`, `.empty`, `.invalid` |
+
+Source: [LT.js basic implementation](https://my.lotame.com/t/83hxvnt/lt-js-basic-implementation).
+
+## `vendor/ias`
+
+IAS Signal display tag on
+`pixel.adsafeprotected.com/rjss/st/{advertiserId}/{publisherId}/skeleton.js`.
+Level: `ecosystem_reference`. Video tags are `vendor/ias-video`. Other IAS
+paths are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `advertiser_id` | Required integer advertiser ID in the path | `vendor.ias.param.advertiser_id.missing`, `.empty`, `.invalid` |
+| `publisher_id` | Required integer publisher ID in the path | `vendor.ias.param.publisher_id.missing`, `.empty`, `.invalid` |
+
+Source: [Connecting to third-party measurement partners](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_connectingthirdparty).
+
+## `vendor/ias-video`
+
+IAS Signal video tag on
+`unified.adsafeprotected.com/v2/{advertiserId}/{publisherId}`. Level:
+`ecosystem_reference`. Display tags stay `vendor/ias`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `advertiser_id` | Required integer advertiser ID in the path | `vendor.ias-video.param.advertiser_id.missing`, `.empty`, `.invalid` |
+| `publisher_id` | Required integer publisher ID in the path | `vendor.ias-video.param.publisher_id.missing`, `.empty`, `.invalid` |
+
+Source: [Connecting to third-party measurement partners](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_connectingthirdparty).
+
+## `vendor/mediamath`
+
+MediaMath MathTag pixels on `pixel.mathtag.com/event/js` and `/event/img`.
+Level: `official_vendor`. Cookie sync on `sync.mathtag.com` is not contracted.
+Mobile `/event/mob` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `mt_id` | Required integer Pixel ID | `vendor.mediamath.param.mt_id.missing`, `.empty`, `.invalid` |
+| `mt_adid` | Required integer Advertiser ID | `vendor.mediamath.param.mt_adid.missing`, `.empty`, `.invalid` |
+| `mt_exem` | Optional SHA-256 hashed email | `vendor.mediamath.param.mt_exem.empty`, `.invalid` |
+| `mt_excl` | Optional SHA-256 hashed account ID | `vendor.mediamath.param.mt_excl.empty`, `.invalid` |
+| unhashed email | Forbidden | `vendor.mediamath.unhashed_email` |
+
+Source: [Mobile Pixel SDK](https://apidocs.mediamath.com/guides/mobile-pixel-sdk).
+
+## `vendor/oracle-bluekai`
+
+Oracle BlueKai site tags on `tags.bluekai.com/site/{siteId}` and
+`stags.bluekai.com/site/{siteId}`. Level: `official_vendor`. CoreTag on
+`tags.bkrtx.com` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `site_id` | Required integer site ID in the path | `vendor.oracle-bluekai.param.site_id.missing`, `.empty`, `.invalid` |
+| `e_id_s` | Optional SHA-256 email oHash | `vendor.oracle-bluekai.param.e_id_s.empty`, `.invalid` |
+| unhashed email | Forbidden | `vendor.oracle-bluekai.unhashed_email` |
+
+Source: [Sending oHashes to the Oracle Data Cloud Platform](https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html).
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a

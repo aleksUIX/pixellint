@@ -1,0 +1,32 @@
+{
+  "id": "vendor/ias",
+  "display_name": "Integral Ad Science display tag",
+  "vendor": "ias",
+  "description": "IAS Signal display tag on pixel.adsafeprotected.com/rjss/st/{advertiserId}/{publisherId}/skeleton.js. Both IDs ride in the path. Video tags on unified.adsafeprotected.com are vendor/ias-video. Other IAS paths are not contracted.",
+  "source_level": "ecosystem_reference",
+  "docs": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_connectingthirdparty",
+  "path_pattern": "/rjss/st/(?<advertiser_id>[^/]*)/(?<publisher_id>[^/]*)/skeleton\\.js",
+  "match": {
+    "hosts": ["pixel.adsafeprotected.com"],
+    "path_contains": ["/rjss/st/", "skeleton.js"]
+  },
+  "params": [
+    {
+      "name": "advertiser_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the IAS advertiser ID. Microsoft documents the IAS-generated display Tag URL as pixel.adsafeprotected.com/rjss/st/{advertiserId}/{publisherId}/skeleton.js.",
+      "fix_hint": "Copy the Tag URL from IAS Signal Tag Manager so the path is /rjss/st/{advertiserId}/{publisherId}/skeleton.js.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_connectingthirdparty"
+    },
+    {
+      "name": "publisher_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the IAS publisher ID. Microsoft documents it as the second path segment on the display Tag URL.",
+      "fix_hint": "Keep both path segments from the IAS Signal tag. The second is the publisher ID.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_connectingthirdparty"
+    }
+  ],
+  "rules": []
+}

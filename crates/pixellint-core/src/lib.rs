@@ -137,6 +137,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/criteo.json"),
     ),
     (
+        "vendor/didomi",
+        include_str!("../rulepacks/vendor/didomi.json"),
+    ),
+    (
         "vendor/drift",
         include_str!("../rulepacks/vendor/drift.json"),
     ),
@@ -201,6 +205,11 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/hubspot-pixel",
         include_str!("../rulepacks/vendor/hubspot-pixel.json"),
     ),
+    ("vendor/ias", include_str!("../rulepacks/vendor/ias.json")),
+    (
+        "vendor/ias-video",
+        include_str!("../rulepacks/vendor/ias-video.json"),
+    ),
     (
         "vendor/impact",
         include_str!("../rulepacks/vendor/impact.json"),
@@ -251,12 +260,20 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/liveramp-envelope-refresh.json"),
     ),
     (
+        "vendor/lotame",
+        include_str!("../rulepacks/vendor/lotame.json"),
+    ),
+    (
         "vendor/mailchimp",
         include_str!("../rulepacks/vendor/mailchimp.json"),
     ),
     (
         "vendor/matomo",
         include_str!("../rulepacks/vendor/matomo.json"),
+    ),
+    (
+        "vendor/mediamath",
+        include_str!("../rulepacks/vendor/mediamath.json"),
     ),
     ("vendor/meta", include_str!("../rulepacks/vendor/meta.json")),
     (
@@ -314,6 +331,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/openai-conversions-api",
         include_str!("../rulepacks/vendor/openai-conversions-api.json"),
+    ),
+    (
+        "vendor/oracle-bluekai",
+        include_str!("../rulepacks/vendor/oracle-bluekai.json"),
     ),
     (
         "vendor/outbrain",
