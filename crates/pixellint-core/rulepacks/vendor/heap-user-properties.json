@@ -1,0 +1,63 @@
+{
+  "id": "vendor/heap-user-properties",
+  "display_name": "Heap add user properties",
+  "vendor": "heap",
+  "description": "Server-side add_user_properties posted to heapanalytics.com/api/add_user_properties. Heap requires app_id and identity. properties is the object that actually writes traits. Bulk users[] is not contracted. Track stays vendor/heap-track. Identify is vendor/heap-identify.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.heap.io/reference/add-user-properties",
+  "match": {
+    "hosts": ["heapanalytics.com", "c.eu.heap-api.com"],
+    "path_prefixes": ["/api/add_user_properties"],
+    "json_paths": [
+      "app_id",
+      {
+        "path": "event",
+        "excludes": ".+"
+      },
+      {
+        "path": "user_id",
+        "excludes": ".+"
+      },
+      {
+        "path": "users",
+        "excludes": "^$"
+      },
+      {
+        "path": "distinct_id",
+        "excludes": ".+"
+      },
+      {
+        "path": "api_key",
+        "excludes": ".+"
+      }
+    ]
+  },
+  "body": {
+    "params": [
+      {
+        "name": "app_id",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the Heap environment ID. Heap documents it as required.",
+        "fix_hint": "Set app_id to the environment ID from Heap Projects.",
+        "doc": "https://developers.heap.io/reference/add-user-properties"
+      },
+      {
+        "name": "identity",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the known identity. Heap documents it as required. The server API cannot attach properties to an anonymous Heap user_id.",
+        "fix_hint": "Send the same identity you use in Heap Identify.",
+        "doc": "https://developers.heap.io/reference/add-user-properties"
+      },
+      {
+        "name": "properties",
+        "requirement": "recommended",
+        "description": "It is the trait object. Heap documents keys and values as strings or numbers, fewer than 1024 characters. The builtin Email property is the lowercase key email.",
+        "fix_hint": "Send a properties object. Use the key email, lowercase, for Heap's builtin Email property.",
+        "doc": "https://developers.heap.io/reference/add-user-properties"
+      }
+    ],
+    "rules": []
+  }
+}

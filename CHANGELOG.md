@@ -6,6 +6,40 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/adobe-ecid`, covering Adobe Visitor ID Service `dpm.demdex.net/id`:
+  required `d_ver=2`, and either `d_orgid` to mint an ECID or `d_mid` to reuse
+  one. Audience Manager `/event` stays directory-only.
+- `vendor/heap-identify`, covering `heapanalytics.com/api/v1/identify`:
+  required `app_id`, numeric SDK `user_id`, and `identity`. Track stays
+  `vendor/heap-track`.
+- `vendor/heap-user-properties`, covering
+  `heapanalytics.com/api/add_user_properties`: required `app_id` and
+  `identity`. `properties` is recommended. Bulk `users[]` is not contracted.
+- `vendor/cookiebot`, covering `consent.cookiebot.com/uc.js`: recommended
+  domain group `cbid` as a UUID. Cookiebot also accepts `data-cbid` on the
+  script tag.
+- `vendor/cookiebot-declaration`, covering `consent.cookiebot.com/{cbid}/cd.js`:
+  required UUID in the path. The banner stays `vendor/cookiebot`.
+- `vendor/onetrust`, covering
+  `cdn.cookielaw.org/consent/{id}/OtAutoBlock.js`: required domain script ID
+  in the path. `otSDKStub.js` with `data-domain-script` is not contracted.
+- `vendor/zendesk`, covering `static.zdassets.com/ekr/snippet.js`: required
+  widget `key`.
+- `vendor/drift`, covering `js.driftt.com/include/{cacheWindow}/{embedId}.js`:
+  required cache window and embed ID in the path.
+- `vendor/mailchimp`, covering
+  `chimpstatic.com/mcjs-connected/js/users/{user}/{site}.js`: required user
+  hash and connected-site hash in the path.
+- `vendor/pardot`, covering Account Engagement `pdt.js?aid=`: required
+  integer account ID. Legacy `pd.js` stays unpacked.
+- `vendor/nielsen`, covering DCR `secure-dcr.imrworldwide.com/cgi-bin/cfg`:
+  required `apid`. Recommended `apn` and `sfcode` of `dcr` or `dcr-cert`.
+- `vendor/ispot-conversion`, covering `pt.ispot.tv/v2/{TC-####-#}.gif`:
+  required Site ID in the path. Recommended `type` for the conversion event.
+  Impression GIFs stay `vendor/ispot`.
+
 ## 0.19.0 - 2026-09-11
 
 ### Added

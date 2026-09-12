@@ -63,7 +63,8 @@ VENDORS = {
     "salesforce": ("Salesforce", "identity", ["beacon.krxd.net", "cdn.krxd.net"], None),
     "neustar": ("TransUnion (Neustar)", "identity", ["aa.agkn.com"], None),
     "tapad": ("Tapad", "identity", ["pixel.tapad.com"], None),
-    "adobe_aam": ("Adobe Audience Manager", "identity", ["dpm.demdex.net", "cm.everesttech.net"], None),
+    "adobe_aam": ("Adobe Audience Manager", "identity", ["cm.everesttech.net"], None),
+    "adobe_ecid": ("Adobe Experience Cloud ID Service", "identity", ["dpm.demdex.net"], "vendor/adobe-ecid"),
 
     # Verification and measurement
     "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "rtb0.doubleverify.com"], None),

@@ -1,0 +1,32 @@
+{
+  "id": "vendor/drift",
+  "display_name": "Drift widget loader",
+  "vendor": "drift",
+  "description": "Drift widget loader on js.driftt.com/include/{cacheWindow}/{embedId}.js. The embed ID rides in the path after a five-minute cache window. event.api.drift.com collect is not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://devdocs.drift.com/docs/installation",
+  "path_pattern": "/include/(?<cache_bust>[0-9]+)/(?<embed_id>[^/]*)\\.js",
+  "match": {
+    "hosts": ["js.driftt.com"],
+    "path_contains": ["/include/"]
+  },
+  "params": [
+    {
+      "name": "embed_id",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Drift embed ID. Drift documents the loader as js.driftt.com/include/{timestamp}/{embedId}.js and drift.load('embedId').",
+      "fix_hint": "Copy the snippet from Drift Install so the path ends in /{embedId}.js.",
+      "doc": "https://devdocs.drift.com/docs/installation"
+    },
+    {
+      "name": "cache_bust",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the cache window Drift computes as Math.ceil(Date.now()/300000)*300000. The published snippet puts it in the path before the embed ID.",
+      "fix_hint": "Keep the timestamp segment the Drift snippet writes. It is not the embed ID.",
+      "doc": "https://devdocs.drift.com/docs/installation"
+    }
+  ],
+  "rules": []
+}

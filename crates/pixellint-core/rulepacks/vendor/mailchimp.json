@@ -1,0 +1,32 @@
+{
+  "id": "vendor/mailchimp",
+  "display_name": "Mailchimp connected site script",
+  "vendor": "mailchimp",
+  "description": "Mailchimp connected site script on chimpstatic.com/mcjs-connected/js/users/{user}/{site}.js. Mailchimp's Connected Sites API documents that URL. list-manage.com forms are not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://mailchimp.com/developer/marketing/api/connected-sites/add-connected-site/",
+  "path_pattern": "/mcjs-connected/js/users/(?<user_id>[^/]+)/(?<site_id>[^/]*)\\.js",
+  "match": {
+    "host_suffixes": ["chimpstatic.com"],
+    "path_contains": ["/mcjs-connected/js/users/"]
+  },
+  "params": [
+    {
+      "name": "user_id",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Mailchimp user hash in the connected-site script URL.",
+      "fix_hint": "Copy the connected-site snippet from Mailchimp Integrations so the path is /js/users/{user}/{site}.js.",
+      "doc": "https://mailchimp.com/developer/marketing/api/connected-sites/add-connected-site/"
+    },
+    {
+      "name": "site_id",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the connected-site hash. Mailchimp documents site_script.url as /js/users/{user-hash}/{site-hash}.js.",
+      "fix_hint": "Keep both path segments from the generated Mailchimp snippet.",
+      "doc": "https://mailchimp.com/developer/marketing/api/connected-sites/add-connected-site/"
+    }
+  ],
+  "rules": []
+}

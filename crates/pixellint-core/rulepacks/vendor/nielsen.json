@@ -1,0 +1,39 @@
+{
+  "id": "vendor/nielsen",
+  "display_name": "Nielsen DCR configuration ping",
+  "vendor": "nielsen",
+  "description": "Nielsen DCR SDK hello ping on secure-dcr.imrworldwide.com/cgi-bin/cfg. Nielsen documents apid as the assigned App ID, with apn and sfcode on the same initialize table. Measurement pings on /cgi-bin/gn and secure-gl.imrworldwide.com are not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(5.1.1)",
+  "match": {
+    "hosts": ["secure-dcr.imrworldwide.com"],
+    "path_prefixes": ["/cgi-bin/cfg"]
+  },
+  "params": [
+    {
+      "name": "apid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Nielsen-assigned App ID. Nielsen documents apid as required on SDK initialize, and the cfg hello ping carries it.",
+      "fix_hint": "Set apid to the App ID Nielsen assigned during onboarding.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(5.1.1)"
+    },
+    {
+      "name": "apn",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the client-defined player or site name. Nielsen documents apn as required on initialize.",
+      "fix_hint": "Send apn as a stable name for the player or site.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(5.1.1)"
+    },
+    {
+      "name": "sfcode",
+      "requirement": "recommended",
+      "format": { "kind": "enum", "values": ["dcr", "dcr-cert"] },
+      "description": "It selects the collection environment. Nielsen documents dcr for production and dcr-cert for testing.",
+      "fix_hint": "Send sfcode=dcr in production, or dcr-cert while Nielsen is certifying the integration.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(5.1.1)"
+    }
+  ],
+  "rules": []
+}

@@ -1,0 +1,26 @@
+{
+  "id": "vendor/cookiebot",
+  "display_name": "Cookiebot CMP banner",
+  "vendor": "cookiebot",
+  "description": "Cookiebot CMP banner on consent.cookiebot.com/uc.js. Cookiebot documents cbid on the query as uc.js?cbid=, or in data-cbid on the script tag. The Cookie Declaration loader is vendor/cookiebot-declaration.",
+  "source_level": "official_vendor",
+  "docs": "https://www.cookiebot.com/en/developer/",
+  "match": {
+    "hosts": ["consent.cookiebot.com"],
+    "path_contains": ["uc.js"]
+  },
+  "params": [
+    {
+      "name": "cbid",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+      },
+      "description": "It is the Cookiebot domain group ID. Cookiebot documents uc.js?cbid= as one install. The other install puts the same UUID in data-cbid, not the query.",
+      "fix_hint": "For a query install, put the domain group ID on the URL as cbid=. For a tag-attribute install, data-cbid carries it instead.",
+      "doc": "https://www.cookiebot.com/en/developer/"
+    }
+  ],
+  "rules": []
+}

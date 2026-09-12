@@ -1,0 +1,70 @@
+{
+  "id": "vendor/heap-identify",
+  "display_name": "Heap server-side identify",
+  "vendor": "heap",
+  "description": "Server-side identify posted to heapanalytics.com/api/v1/identify. Heap requires app_id, the SDK user_id, and identity. Track stays vendor/heap-track. Add user properties is vendor/heap-user-properties.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.heap.io/reference/identify-1",
+  "match": {
+    "hosts": ["heapanalytics.com", "c.eu.heap-api.com"],
+    "path_prefixes": ["/api/v1/identify"],
+    "json_paths": [
+      "app_id",
+      {
+        "path": "event",
+        "excludes": ".+"
+      },
+      {
+        "path": "properties",
+        "excludes": "^$"
+      },
+      {
+        "path": "distinct_id",
+        "excludes": ".+"
+      },
+      {
+        "path": "api_key",
+        "excludes": ".+"
+      }
+    ]
+  },
+  "body": {
+    "params": [
+      {
+        "name": "app_id",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the Heap environment ID. Heap documents it as required on identify.",
+        "fix_hint": "Set app_id to the environment ID from Heap Projects.",
+        "doc": "https://developers.heap.io/reference/identify-1"
+      },
+      {
+        "name": "user_id",
+        "requirement": "required",
+        "format": { "kind": "integer" },
+        "description": "It is the anonymous user_id from the Heap SDK. Heap documents a numeric string between 0 and 2^53-1.",
+        "fix_hint": "Send the Heap SDK user_id as digits, not the login email.",
+        "doc": "https://developers.heap.io/reference/identify-1"
+      },
+      {
+        "name": "identity",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the known identity, such as an email. Heap documents it as required and case-sensitive, limited to 255 characters.",
+        "fix_hint": "Send a unique identity. Heap drops a second identity on the same user_id.",
+        "doc": "https://developers.heap.io/reference/identify-1"
+      },
+      {
+        "name": "timestamp",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+        },
+        "description": "Heap documents timestamp as ISO 8601. When omitted, Heap stamps the arrival time.",
+        "fix_hint": "Send an ISO 8601 timestamp, such as 2017-03-10T22:21:56+00:00.",
+        "doc": "https://developers.heap.io/reference/identify-1"
+      }
+    ],
+    "rules": []
+  }
+}

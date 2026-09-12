@@ -1,0 +1,53 @@
+{
+  "id": "vendor/adobe-ecid",
+  "display_name": "Adobe Experience Cloud ID Service",
+  "vendor": "adobe_ecid",
+  "description": "Direct Visitor ID Service calls to dpm.demdex.net/id. Adobe documents d_ver=2 as required, and either d_orgid to mint an ECID or d_mid to reuse one. Audience Manager /event and cookie sync on cm.everesttech.net are not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration",
+  "match": {
+    "hosts": ["dpm.demdex.net"],
+    "paths": ["/id"]
+  },
+  "params": [
+    {
+      "name": "d_ver",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["2"] },
+      "description": "Adobe documents d_ver as required and tells you to leave it set as d_ver=2.",
+      "fix_hint": "Send d_ver=2 on every Visitor ID Service call.",
+      "doc": "https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration"
+    },
+    {
+      "name": "d_orgid",
+      "format": { "kind": "non_empty" },
+      "description": "It is the IMS org ID. Adobe's generate-a-MID call sends d_orgid with d_ver=2.",
+      "fix_hint": "Send d_orgid when you do not already have an ECID, or send d_mid when you do.",
+      "doc": "https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration-examples"
+    },
+    {
+      "name": "d_mid",
+      "format": { "kind": "non_empty" },
+      "description": "It is an existing ECID. Adobe's reuse call sends d_mid with d_ver=2.",
+      "fix_hint": "Send d_mid when you already have an Experience Cloud ID for the visitor.",
+      "doc": "https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration-examples"
+    },
+    {
+      "name": "d_cid",
+      "format": { "kind": "non_empty" },
+      "description": "Optional Data Provider ID, DPUUID, and authentication state, joined with %01.",
+      "doc": "https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.adobe-ecid.identifier_required",
+      "kind": "require_one_of",
+      "params": ["d_orgid", "d_mid"],
+      "severity": "error",
+      "message": "The Visitor ID Service call has neither d_orgid nor d_mid. Adobe documents d_orgid to mint an ECID and d_mid to reuse one.",
+      "fix_hint": "Send d_orgid to request a new ECID, or d_mid to reuse an existing one.",
+      "doc": "https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration-examples"
+    }
+  ]
+}

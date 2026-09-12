@@ -388,7 +388,22 @@ Sources: [query parameters](https://experienceleague.adobe.com/en/docs/analytics
 [identify your tracking server and report suites](https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites),
 [A4T reporting](https://experienceleague.adobe.com/en/docs/target-dev/developer/server-side/integration/a4t-reporting).
 
-Edge Network interact and collect are `vendor/adobe-web-sdk`.
+Edge Network interact and collect are `vendor/adobe-web-sdk`. Direct Visitor
+ID Service calls on `dpm.demdex.net/id` are `vendor/adobe-ecid`.
+
+## `vendor/adobe-ecid`
+
+Adobe Experience Cloud ID Service direct integration on `dpm.demdex.net/id`.
+Level: `official_vendor`. Audience Manager `/event` and cookie sync on
+`cm.everesttech.net` are not contracted.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `d_ver` | Required `2` | `vendor.adobe-ecid.param.d_ver.missing`, `.invalid` |
+| Identifier | One of `d_orgid` or `d_mid` | `vendor.adobe-ecid.identifier_required` |
+
+Sources: [direct integration](https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration),
+[direct integration use cases](https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration-examples).
 
 ## `vendor/adobe-web-sdk`
 
@@ -1545,14 +1560,26 @@ Source: [check that Crazy Egg is installed](https://support.crazyegg.com/knowled
 ## `vendor/ispot`
 
 iSpot Unified Measurement impression GIFs on `pi.ispot.tv/v2/{tracking_code}.gif`.
-Level: `official_vendor`. Conversion pixels on `pt.ispot.tv` stay directory-only.
-The published pixel spec does not give a citable conversion path table.
+Level: `official_vendor`. TV conversion pixels on `pt.ispot.tv` are
+`vendor/ispot-conversion`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `tracking_code` | Required in the path as `TC-{digits}-{digits}` | `vendor.ispot.param.tracking_code.missing`, `.empty`, `.invalid` |
 
 Source: [OTT Unified Measurement](https://developer.ispot.tv/documentation/unified-measurement) and the [pixel technical spec](https://developer.ispot.tv/sites/default/files/iSpot_Pixel_Technical_Documentation_1.pdf). Query extras such as `campaignid` are client-optional and not contracted.
+
+## `vendor/ispot-conversion`
+
+iSpot TV conversion GIFs on `pt.ispot.tv/v2/{tracking_code}.gif`. Level:
+`official_vendor`. Impression GIFs stay `vendor/ispot`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `tracking_code` | Required in the path as `TC-{digits}-{digits}` | `vendor.ispot-conversion.param.tracking_code.missing`, `.empty`, `.invalid` |
+| `type` | Recommended conversion event name | `vendor.ispot-conversion.param.type.missing`, `.empty` |
+
+Source: [conversion type](https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type) and the [pixel technical spec](https://developer.ispot.tv/sites/default/files/iSpot_Pixel_Technical_Documentation_1.pdf).
 
 ## `vendor/chartbeat`
 
@@ -1600,7 +1627,8 @@ Source: [install Heap.js](https://developers.heap.io/docs/install-heapjs).
 
 Server-side custom events posted to `heapanalytics.com/api/track`. Level:
 `official_vendor`. The Heap.js 5 config loader stays `vendor/heap`. Classic
-`heap-{id}.js` stays `vendor/heap-classic`.
+`heap-{id}.js` stays `vendor/heap-classic`. Identify is `vendor/heap-identify`.
+Add user properties is `vendor/heap-user-properties`.
 
 | Body field or rule | Enforced | Rule ids |
 | --- | --- | --- |
@@ -1611,6 +1639,35 @@ Server-side custom events posted to `heapanalytics.com/api/track`. Level:
 | `timestamp` | ISO 8601 when present | `vendor.heap-track.body.timestamp.invalid` |
 
 Source: [track](https://developers.heap.io/reference/track-1).
+
+## `vendor/heap-identify`
+
+Server-side identify posted to `heapanalytics.com/api/v1/identify`. Level:
+`official_vendor`. Track stays `vendor/heap-track`. Add user properties is
+`vendor/heap-user-properties`.
+
+| Body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `app_id` | Required environment ID | `vendor.heap-identify.body.app_id.missing`, `.empty` |
+| `user_id` | Required numeric SDK id | `vendor.heap-identify.body.user_id.missing`, `.invalid` |
+| `identity` | Required known identity | `vendor.heap-identify.body.identity.missing`, `.empty` |
+| `timestamp` | ISO 8601 when present | `vendor.heap-identify.body.timestamp.invalid` |
+
+Source: [identify](https://developers.heap.io/reference/identify-1).
+
+## `vendor/heap-user-properties`
+
+Server-side add user properties posted to
+`heapanalytics.com/api/add_user_properties`. Level: `official_vendor`. Bulk
+`users[]` is not contracted. Identify stays `vendor/heap-identify`.
+
+| Body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `app_id` | Required environment ID | `vendor.heap-user-properties.body.app_id.missing`, `.empty` |
+| `identity` | Required known identity | `vendor.heap-user-properties.body.identity.missing`, `.empty` |
+| `properties` | Recommended trait object | `vendor.heap-user-properties.body.properties.missing` |
+
+Source: [add user properties](https://developers.heap.io/reference/add-user-properties).
 
 ## `vendor/mouseflow`
 
@@ -1703,6 +1760,105 @@ envelope type, not an identifier type.
 
 Source: [Refresh Envelope API](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api).
 
+## `vendor/cookiebot`
+
+Cookiebot CMP banner on `consent.cookiebot.com/uc.js`. Level:
+`official_vendor`. Cookiebot documents `cbid` on the query, or in
+`data-cbid` on the script tag. The Cookie Declaration is
+`vendor/cookiebot-declaration`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `cbid` | Recommended UUID domain group ID | `vendor.cookiebot.param.cbid.missing`, `.empty`, `.invalid` |
+
+Source: [developer resources](https://www.cookiebot.com/en/developer/).
+
+## `vendor/cookiebot-declaration`
+
+Cookiebot Cookie Declaration on `consent.cookiebot.com/{cbid}/cd.js`.
+Level: `official_template`. The banner stays `vendor/cookiebot`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `cbid` | Required UUID in the path | `vendor.cookiebot-declaration.param.cbid.missing`, `.invalid` |
+
+Source: [manual implementation](https://support.cookiebot.com/hc/en-us/articles/10714664673564-Manually-implementing-Cookiebot-CMP-Cookiebot-Admin).
+
+## `vendor/onetrust`
+
+OneTrust Auto-Blocking on
+`cdn.cookielaw.org/consent/{domain-script-id}/OtAutoBlock.js`. Level:
+`official_vendor`. `otSDKStub.js` with `data-domain-script` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `domain_script_id` | Required in the path | `vendor.onetrust.param.domain_script_id.missing`, `.empty` |
+
+Source: [ecommerce AutoBlocking](https://developer.onetrust.com/onetrust/docs/ecommerce).
+
+## `vendor/zendesk`
+
+Zendesk Web Widget snippet on `static.zdassets.com/ekr/snippet.js`. Level:
+`official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `key` | Required widget key | `vendor.zendesk.param.key.missing`, `.empty` |
+
+Source: [Web Widget JavaScript APIs](https://developer.zendesk.com/documentation/classic-web-widget-sdks/web-widget/quickstart-tutorials/web-widget-javascript-apis/).
+
+## `vendor/drift`
+
+Drift widget loader on `js.driftt.com/include/{cacheWindow}/{embedId}.js`.
+Level: `official_vendor`. Collect on `event.api.drift.com` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `embed_id` | Required embed ID in the path | `vendor.drift.param.embed_id.missing`, `.empty` |
+| `cache_bust` | Required numeric cache window | `vendor.drift.param.cache_bust.missing`, `.invalid` |
+
+Source: [installation](https://devdocs.drift.com/docs/installation).
+
+## `vendor/mailchimp`
+
+Mailchimp connected site script on
+`chimpstatic.com/mcjs-connected/js/users/{user}/{site}.js`. Level:
+`official_vendor`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `user_id` | Required user hash in the path | `vendor.mailchimp.param.user_id.missing`, `.empty` |
+| `site_id` | Required connected-site hash | `vendor.mailchimp.param.site_id.missing`, `.empty` |
+
+Source: [add connected site](https://mailchimp.com/developer/marketing/api/connected-sites/add-connected-site/).
+
+## `vendor/pardot`
+
+Salesforce Account Engagement Tracking and Consent loader on
+`pi.pardot.com/pdt.js` and `pi.demand.salesforce.com/pdt.js`. Level:
+`official_vendor`. Legacy `pd.js` puts `piAId` in JavaScript and is not
+contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `aid` | Required integer account ID | `vendor.pardot.param.aid.missing`, `.empty`, `.invalid` |
+
+Source: [Tracking and Consent JavaScript API](https://developer.salesforce.com/blogs/2022/02/how-to-work-with-pardots-new-tracking-consent-javascript-api).
+
+## `vendor/nielsen`
+
+Nielsen DCR SDK hello ping on `secure-dcr.imrworldwide.com/cgi-bin/cfg`.
+Level: `official_vendor`. Measurement pings on `/cgi-bin/gn` are not
+contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `apid` | Required Nielsen App ID | `vendor.nielsen.param.apid.missing`, `.empty` |
+| `apn` | Recommended player or site name | `vendor.nielsen.param.apn.missing`, `.empty` |
+| `sfcode` | Recommended `dcr` or `dcr-cert` | `vendor.nielsen.param.sfcode.missing`, `.invalid` |
+
+Source: [DCR Static Browser SDK](https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(5.1.1)).
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a
@@ -1728,8 +1884,8 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 - Snap Pixel (`sc-static.net/scevent.min.js` and `tr.snapchat.com/p`). The
   loader has no pixel ID on the URL. Collection is a POST without a published
   query. Snap Conversions API is `vendor/snapchat`. Taboola unip events are
-  `vendor/taboola-unip`. S2S is `vendor/taboola-s2s`. iSpot conversion GIFs on
-  `pt.ispot.tv` stay directory-only. LiveRamp Envelope is
+  `vendor/taboola-unip`. S2S is `vendor/taboola-s2s`. iSpot conversion GIFs are
+  `vendor/ispot-conversion`. LiveRamp Envelope is
   `vendor/liveramp-envelope`. Refresh is `vendor/liveramp-envelope-refresh`.
   Cookie sync on `idsync.rlcdn.com` stays directory-only.
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling

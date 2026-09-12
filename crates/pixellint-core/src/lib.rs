@@ -39,6 +39,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/adobe-analytics.json"),
     ),
     (
+        "vendor/adobe-ecid",
+        include_str!("../rulepacks/vendor/adobe-ecid.json"),
+    ),
+    (
         "vendor/adobe-web-sdk",
         include_str!("../rulepacks/vendor/adobe-web-sdk.json"),
     ),
@@ -117,12 +121,24 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/comscore.json"),
     ),
     (
+        "vendor/cookiebot",
+        include_str!("../rulepacks/vendor/cookiebot.json"),
+    ),
+    (
+        "vendor/cookiebot-declaration",
+        include_str!("../rulepacks/vendor/cookiebot-declaration.json"),
+    ),
+    (
         "vendor/crazyegg",
         include_str!("../rulepacks/vendor/crazyegg.json"),
     ),
     (
         "vendor/criteo",
         include_str!("../rulepacks/vendor/criteo.json"),
+    ),
+    (
+        "vendor/drift",
+        include_str!("../rulepacks/vendor/drift.json"),
     ),
     (
         "vendor/floodlight",
@@ -162,8 +178,16 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/heap-classic.json"),
     ),
     (
+        "vendor/heap-identify",
+        include_str!("../rulepacks/vendor/heap-identify.json"),
+    ),
+    (
         "vendor/heap-track",
         include_str!("../rulepacks/vendor/heap-track.json"),
+    ),
+    (
+        "vendor/heap-user-properties",
+        include_str!("../rulepacks/vendor/heap-user-properties.json"),
     ),
     (
         "vendor/hotjar",
@@ -198,6 +222,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/ispot.json"),
     ),
     (
+        "vendor/ispot-conversion",
+        include_str!("../rulepacks/vendor/ispot-conversion.json"),
+    ),
+    (
         "vendor/klaviyo",
         include_str!("../rulepacks/vendor/klaviyo.json"),
     ),
@@ -221,6 +249,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/liveramp-envelope-refresh",
         include_str!("../rulepacks/vendor/liveramp-envelope-refresh.json"),
+    ),
+    (
+        "vendor/mailchimp",
+        include_str!("../rulepacks/vendor/mailchimp.json"),
     ),
     (
         "vendor/matomo",
@@ -268,6 +300,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/nextdoor-conversions-api.json"),
     ),
     (
+        "vendor/nielsen",
+        include_str!("../rulepacks/vendor/nielsen.json"),
+    ),
+    (
+        "vendor/onetrust",
+        include_str!("../rulepacks/vendor/onetrust.json"),
+    ),
+    (
         "vendor/openai",
         include_str!("../rulepacks/vendor/openai.json"),
     ),
@@ -278,6 +318,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/outbrain",
         include_str!("../rulepacks/vendor/outbrain.json"),
+    ),
+    (
+        "vendor/pardot",
+        include_str!("../rulepacks/vendor/pardot.json"),
     ),
     (
         "vendor/parsely",
@@ -387,6 +431,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/yandex-watch",
         include_str!("../rulepacks/vendor/yandex-watch.json"),
+    ),
+    (
+        "vendor/zendesk",
+        include_str!("../rulepacks/vendor/zendesk.json"),
     ),
 ];
 
