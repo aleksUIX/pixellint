@@ -1,0 +1,178 @@
+{
+  "id": "vendor/tiktok-events-2",
+  "display_name": "TikTok Events API 2.0",
+  "description": "Events API 2.0 track requests to business-api.tiktok.com /open_api/v1.3/event/track/. The Events 1.0 /pixel/track envelope is vendor/tiktok-events-api.",
+  "vendor": "tiktok",
+  "source_level": "official_vendor",
+  "docs": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3",
+  "match": {
+    "hosts": ["business-api.tiktok.com"],
+    "path_contains": ["/event/track"],
+    "json_paths": [
+      {
+        "any_of": ["event_source", "event_source_id"]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "event_source",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": ["web", "app", "offline", "crm"]
+          },
+          "description": "It names the channel. TikTok documents `web`, `app`, `offline`, and `crm`.",
+          "fix_hint": "Set `event_source` to `web` for Pixel-measured website events.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "event_source_id",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Pixel Code when `event_source` is `web`, or the matching event-set ID for app, offline, and CRM.",
+          "fix_hint": "Set `event_source_id` to the Pixel Code from Events Manager for web events.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "data",
+          "requirement": "required",
+          "description": "TikTok documents `data` as the array of events to report, at most 1,000.",
+          "fix_hint": "Send one event object, or a batch, under `data`.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "data[]",
+      "params": [
+        {
+          "name": "event",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the conversion event name. TikTok documents it as required on every Events 2.0 event.",
+          "fix_hint": "Set `event` to a documented standard name such as `Purchase` or `ViewContent`.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "event_time",
+          "requirement": "required",
+          "format": { "kind": "integer", "min_digits": 10, "max_digits": 10 },
+          "description": "TikTok documents `event_time` as Unix time in seconds, UTC. A 13-digit value is milliseconds.",
+          "fix_hint": "Send seconds since epoch, a 10-digit integer.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "event_id",
+          "requirement": "recommended",
+          "format": { "kind": "non_empty" },
+          "description": "TikTok documents `event_id` as required when the same conversion is also sent from the browser Pixel.",
+          "fix_hint": "Send the same `event_id` the Pixel fired.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "page.url",
+          "requirement": "recommended",
+          "format": { "kind": "url" },
+          "description": "TikTok documents `page.url` as required on web events.",
+          "fix_hint": "Send the absolute page URL in `page.url`.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "user.email",
+          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "description": "Email must be SHA-256 hashed after trim and lowercase.",
+          "fix_hint": "Trim, lowercase, SHA-256, send the hex digest.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "user.phone",
+          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "description": "Phone must be E.164 then SHA-256 hashed.",
+          "fix_hint": "Normalize to E.164, hash with SHA-256, send the hex digest.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "user.external_id",
+          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "description": "Advertiser-side identifiers must be SHA-256 hashed.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "user.ttclid",
+          "format": { "kind": "non_empty" },
+          "description": "It is the TikTok click id. TikTok documents it as a web match key.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "user.ip",
+          "format": { "kind": "non_empty" },
+          "description": "It is the visitor IP, sent unhashed.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "user.user_agent",
+          "format": { "kind": "non_empty" },
+          "description": "It is the visitor user agent, sent unhashed.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "properties.currency",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "description": "It is an ISO 4217 currency code. TikTok documents it as required for ROAS events.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "properties.value",
+          "description": "It is the total order value. TikTok documents it as required for ROAS events.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.tiktok-events-2.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. TikTok requires SHA-256 hashed email on Events API 2.0.",
+          "fix_hint": "Trim, lowercase, hash with SHA-256, and send the hex digest.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "code": "vendor.tiktok-events-2.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["user.ip", "user.user_agent"],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but TikTok documents `user.ip` and `user.user_agent` as unhashed.",
+          "fix_hint": "Send the raw IP address or user agent.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "code": "vendor.tiktok-events-2.body.user_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": ["user.email", "user.phone", "user.external_id", "user.ttclid", "user.ip"],
+          "severity": "warning",
+          "message": "The event has no match key. TikTok documents hashed email, phone, external_id, ttclid, or IP as the identifiers that attach the conversion to a person.",
+          "fix_hint": "Send hashed `user.email`, `phone`, or `external_id`, or `ttclid` or `user.ip`.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "code": "vendor.tiktok-events-2.body.purchase_requires_value_and_currency",
+          "kind": "required_when_value",
+          "when": "event",
+          "equals": ["Purchase", "CompletePayment", "PlaceAnOrder"],
+          "requires": ["properties.value", "properties.currency"],
+          "severity": "error",
+          "message": "A revenue event is missing `properties.value` or `properties.currency`. TikTok documents both for ROAS events.",
+          "fix_hint": "Set `properties.value` to the order total and `properties.currency` to a three-letter ISO 4217 code.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        }
+      ]
+    }
+  ]
+}

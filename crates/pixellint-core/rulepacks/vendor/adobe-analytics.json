@@ -1,10 +1,10 @@
 {
   "id": "vendor/adobe-analytics",
   "display_name": "Adobe Analytics",
-  "description": "Adobe Analytics data collection beacons, whose report suite IDs ride on the path after /b/ss/.",
+  "description": "Adobe Analytics data collection beacons, whose report suite IDs ride on the path after /b/ss/. Edge Network interact and collect are vendor/adobe-web-sdk.",
   "vendor": "adobe_analytics",
   "source_level": "official_vendor",
-  "docs": "https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites",
+  "docs": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters",
   "path_pattern": "/b/ss/(?<report_suite>[^/?]*)",
   "match": {
     "host_suffixes": ["omtrdc.net", "2o7.net"],
@@ -24,7 +24,72 @@
       "format": { "kind": "non_empty" },
       "description": "It is the Experience Cloud ID that ties the hit to a visitor.",
       "doc": "https://experienceleague.adobe.com/en/docs/target-dev/developer/server-side/integration/a4t-reporting"
+    },
+    {
+      "name": "g",
+      "format": { "kind": "url" },
+      "description": "It is the page URL, up to 255 bytes. Adobe documents it as the Page URL dimension.",
+      "fix_hint": "Send the absolute page URL in `g`. Longer URLs continue in `-g`.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+    },
+    {
+      "name": "pageName",
+      "aliases": ["gn"],
+      "format": { "kind": "non_empty" },
+      "description": "It is the page name. `gn` is the documented shorthand.",
+      "fix_hint": "Set `pageName` or `gn` to the page name you want in reports.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+    },
+    {
+      "name": "events",
+      "aliases": ["ev"],
+      "format": { "kind": "non_empty" },
+      "description": "It is the comma-separated list of events on the page. `ev` is the documented shorthand.",
+      "fix_hint": "Send `events` such as `purchase` or `prodView`.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+    },
+    {
+      "name": "products",
+      "aliases": ["pl"],
+      "format": { "kind": "non_empty" },
+      "description": "It is the products variable. `pl` is the documented shorthand.",
+      "fix_hint": "Send the products string Adobe documents for the Product dimension.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+    },
+    {
+      "name": "pe",
+      "format": {
+        "kind": "enum",
+        "values": ["lnk_o", "lnk_d", "lnk_e", "tnt"]
+      },
+      "description": "It is the hit type for link tracking. Adobe documents `lnk_o`, `lnk_d`, `lnk_e`, and `tnt`.",
+      "fix_hint": "Use `lnk_o` for a custom link, `lnk_d` for a download, `lnk_e` for an exit, or `tnt` for Analytics for Target.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+    },
+    {
+      "name": "AQB",
+      "format": { "kind": "non_empty" },
+      "description": "Adobe documents `AQB` as the start of an image request query string.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+    },
+    {
+      "name": "AQE",
+      "format": { "kind": "non_empty" },
+      "description": "Adobe documents `AQE` as the end of an image request, meaning the request was not truncated.",
+      "fix_hint": "If you send `AQB=1`, end the query with `AQE=1` so Adobe knows the hit was complete.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.adobe-analytics.truncated_request",
+      "kind": "required_with",
+      "when": "AQB",
+      "requires": ["AQE"],
+      "severity": "error",
+      "message": "The beacon starts with `AQB` but has no `AQE`. Adobe documents `AQE` as the end marker, so a missing `AQE` means the request was truncated.",
+      "fix_hint": "Append `AQE=1` to the query string.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+    }
+  ]
 }

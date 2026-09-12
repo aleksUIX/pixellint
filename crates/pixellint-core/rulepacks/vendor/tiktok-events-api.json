@@ -1,7 +1,7 @@
 {
   "id": "vendor/tiktok-events-api",
   "display_name": "TikTok Events API",
-  "description": "Server-to-server pixel track and batch requests to the TikTok Events API on business-api.tiktok.com.",
+  "description": "Server-to-server pixel track and batch requests to the TikTok Events API on business-api.tiktok.com. Events API 2.0 /event/track/ is vendor/tiktok-events-2.",
   "vendor": "tiktok",
   "source_level": "official_vendor",
   "docs": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
@@ -165,6 +165,31 @@
           "severity": "error",
           "message": "This field looks like a SHA-256 digest, but TikTok documents `context.ip` and `context.user_agent` as unhashed.",
           "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "code": "vendor.tiktok-events-api.body.user_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "context.user.email",
+            "context.user.phone_number",
+            "context.user.external_id",
+            "context.ip"
+          ],
+          "severity": "warning",
+          "message": "The event has no user identifier. TikTok documents hashed email, phone, external_id, or IP as the match keys that attach the conversion to a person.",
+          "fix_hint": "Send hashed `context.user.email`, `phone_number`, or `external_id`, or the visitor IP in `context.ip`.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "code": "vendor.tiktok-events-api.body.complete_payment_requires_value_and_currency",
+          "kind": "required_when_value",
+          "when": "event",
+          "equals": ["CompletePayment", "PlaceAnOrder"],
+          "requires": ["properties.value", "properties.currency"],
+          "severity": "error",
+          "message": "A `CompletePayment` or `PlaceAnOrder` event is missing `properties.value` or `properties.currency`. TikTok documents both on those revenue events.",
+          "fix_hint": "Set `properties.value` to the order total and `properties.currency` to a three-letter ISO 4217 code.",
           "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
         }
       ]

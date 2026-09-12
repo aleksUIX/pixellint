@@ -1,0 +1,127 @@
+{
+  "id": "vendor/taboola-s2s-bulk",
+  "display_name": "Taboola bulk S2S conversions",
+  "vendor": "taboola",
+  "description": "Taboola bulk server-to-server conversions posted to trc.taboola.com/{account-id}/log/3/bulk-s2s-action. Single postbacks are vendor/taboola-s2s. The base pixel loader is vendor/taboola.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions",
+  "path_pattern": "/(?<account_id>[^/]+)/log/3/bulk-s2s-action",
+  "match": {
+    "hosts": ["trc.taboola.com"],
+    "path_contains": ["/bulk-s2s-action"],
+    "json_paths": [
+      {
+        "any_of": [
+          "actions[].click-id",
+          "actions[].name",
+          "actions[].timestamp"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "account_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric Taboola Account ID in the path as `/{account-id}/log/3/bulk-s2s-action`.",
+      "fix_hint": "Put the Realize Account ID in the path, such as `/123456/log/3/bulk-s2s-action`.",
+      "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+    }
+  ],
+  "rules": [],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "actions",
+          "requirement": "required",
+          "description": "Bulk submit requires an `actions` array of conversions.",
+          "fix_hint": "Send an `actions` array. Taboola documents a limit of 1,000 conversions per request.",
+          "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "actions[]",
+      "params": [
+        {
+          "name": "click-id",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Taboola Click ID from the landing page. Taboola documents `click-id` as required on every bulk record.",
+          "fix_hint": "Send `click-id` with the Click ID Taboola appended to the landing page.",
+          "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+        },
+        {
+          "name": "timestamp",
+          "requirement": "required",
+          "format": { "kind": "integer" },
+          "description": "It is milliseconds since Unix epoch. Taboola documents `timestamp` as required on bulk records.",
+          "fix_hint": "Send milliseconds since epoch, such as `1620723457405`.",
+          "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+        },
+        {
+          "name": "name",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the event name as defined in Realize Conversion settings, not the Conversion Name.",
+          "fix_hint": "Set `name` to the Event Name from Realize, such as `LEAD`.",
+          "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+        },
+        {
+          "name": "revenue",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the conversion value. Taboola documents a float such as `10` or `9.99`.",
+          "fix_hint": "Send a number, such as `9.99`.",
+          "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+        },
+        {
+          "name": "currency",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "AUD",
+              "BRL",
+              "CAD",
+              "CNY",
+              "EUR",
+              "GBP",
+              "HKD",
+              "ILS",
+              "INR",
+              "JPY",
+              "KRW",
+              "MXN",
+              "NZD",
+              "RUB",
+              "SGD",
+              "THB",
+              "TRY",
+              "USD",
+              "ZAR"
+            ]
+          },
+          "description": "It is the revenue currency. Taboola documents a fixed list of three-letter codes, case-sensitive. Omit it to use the account default.",
+          "fix_hint": "Use a documented code such as `USD`.",
+          "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+        },
+        {
+          "name": "quantity",
+          "format": { "kind": "integer" },
+          "description": "It is the item quantity for the order. Taboola documents an integer.",
+          "fix_hint": "Send an integer quantity, such as `3`.",
+          "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+        },
+        {
+          "name": "orderid",
+          "format": { "kind": "non_empty" },
+          "description": "It is an order ID from the advertiser CRM. Taboola documents it as optional.",
+          "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}

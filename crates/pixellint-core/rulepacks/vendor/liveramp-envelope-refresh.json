@@ -1,0 +1,53 @@
+{
+  "id": "vendor/liveramp-envelope-refresh",
+  "display_name": "LiveRamp ATS envelope refresh",
+  "vendor": "liveramp",
+  "description": "LiveRamp ATS Envelope refresh on api.rlcdn.com/api/identity/v2/envelope/refresh. pid, envelope type it, and envelope value iv are required. Retrieve is vendor/liveramp-envelope. Cookie sync stays directory-only.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
+  "match": {
+    "hosts": ["api.rlcdn.com"],
+    "paths": ["/api/identity/v2/envelope/refresh"]
+  },
+  "params": [
+    {
+      "name": "pid",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the LiveRamp Placement ID.",
+      "fix_hint": "Send `pid` with the Placement ID LiveRamp issued for this property.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "name": "it",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["19", "24"] },
+      "description": "It is the envelope type. LiveRamp documents `19` ATS envelopes and `24` Meta-scoped envelopes. Retrieve uses identifier types 4, 11, and 15 instead.",
+      "fix_hint": "Send `it=19` for an ATS envelope, or `it=24` for a Meta-scoped envelope.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "name": "iv",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the stored envelope value, not the original hashed identifier.",
+      "fix_hint": "Send `iv` with the envelope string returned by the retrieve call.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "name": "ct",
+      "format": { "kind": "enum", "values": ["3", "4"] },
+      "description": "It is the consent type. LiveRamp documents `4` TCF v2 and `3` CCPA.",
+      "fix_hint": "Send `ct=4` with a TCF string in `cv`, or `ct=3` for CCPA.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "name": "atype",
+      "format": { "kind": "enum", "values": ["1", "2", "3", "4"] },
+      "description": "It is the implementation source. LiveRamp documents `1` ATS.js, `2` ATS API, `3` server-to-server, and `4` the mobile SDK.",
+      "fix_hint": "Send `atype=2` from an API call, or `atype=3` from a server.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    }
+  ],
+  "rules": []
+}

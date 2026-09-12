@@ -2,26 +2,15 @@
   "id": "vendor/mixpanel",
   "display_name": "Mixpanel track",
   "vendor": "mixpanel",
-  "description": "Event ingestion requests to the Mixpanel track endpoint, which posts a bare array of events.",
+  "description": "Event ingestion requests to the Mixpanel track endpoint, which posts a bare array of events. /import is vendor/mixpanel-import. /engage is vendor/mixpanel-engage. /groups is vendor/mixpanel-groups.",
   "source_level": "official_vendor",
   "docs": "https://docs.mixpanel.com/reference/track-event",
   "match": {
     "host_suffixes": [
       "mixpanel.com"
     ],
-    "path_contains": [
-      "/track",
-      "/import"
-    ],
-    "json_paths": [
-      {
-        "any_of": [
-          "[].properties.token",
-          "[].event",
-          "[].properties.distinct_id"
-        ]
-      }
-    ]
+    "path_contains": ["/track"],
+    "json_paths": ["[].properties.token"]
   },
   "body": [
     {
@@ -56,19 +45,30 @@
         },
         {
           "name": "properties.distinct_id",
+          "requirement": "recommended",
           "format": {
             "kind": "non_empty"
           },
-          "description": "It identifies the user who performed the event. Without it the event is not tied to a person.",
+          "description": "It identifies the user who performed the event. Mixpanel documents it as the unique user identifier; without it the event is not tied to a person.",
           "fix_hint": "Send the same `distinct_id` you use elsewhere for this user.",
           "doc": "https://docs.mixpanel.com/reference/track-event"
         },
         {
+          "name": "properties.time",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "Mixpanel documents `time` as a Unix timestamp in seconds or milliseconds. A non-numeric value is not that format.",
+          "fix_hint": "Send seconds or milliseconds since epoch, as an integer.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        },
+        {
           "name": "properties.$insert_id",
+          "requirement": "recommended",
           "format": {
             "kind": "non_empty"
           },
-          "description": "Mixpanel uses it to drop duplicates, so a retried request is not counted twice.",
+          "description": "Mixpanel uses it to drop duplicates, so a retried request is not counted twice. `/import` requires it in vendor/mixpanel-import.",
           "fix_hint": "Send a stable id per event.",
           "doc": "https://docs.mixpanel.com/reference/track-event"
         }

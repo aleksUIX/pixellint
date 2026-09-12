@@ -1,0 +1,124 @@
+{
+  "id": "vendor/mixpanel-engage",
+  "display_name": "Mixpanel engage",
+  "vendor": "mixpanel",
+  "description": "Mixpanel user profile updates posted to /engage. /track is vendor/mixpanel. /import is vendor/mixpanel-import. /groups is vendor/mixpanel-groups.",
+  "source_level": "official_vendor",
+  "docs": "https://docs.mixpanel.com/reference/profile-set",
+  "match": {
+    "host_suffixes": ["mixpanel.com"],
+    "path_contains": ["/engage"],
+    "json_paths": [
+      "[].$token",
+      "[].$distinct_id"
+    ]
+  },
+  "params": [
+    {
+      "name": "verbose",
+      "requirement": "recommended",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `verbose=1` so the 200 body says whether the update was accepted.",
+      "fix_hint": "Send `verbose=1` on `/engage` while you are implementing.",
+      "doc": "https://docs.mixpanel.com/reference/profile-set"
+    },
+    {
+      "name": "strict",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `strict=1` so failed records are named in the response.",
+      "fix_hint": "Send `strict=1` to see per-record validation errors.",
+      "doc": "https://docs.mixpanel.com/reference/profile-set"
+    },
+    {
+      "name": "ip",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `ip=0` on server-side calls so the profile is not geolocated to your server.",
+      "fix_hint": "Send `ip=0` from a server.",
+      "doc": "https://docs.mixpanel.com/reference/profile-set"
+    }
+  ],
+  "rules": [],
+  "body": [
+    {
+      "scope": "[]",
+      "params": [
+        {
+          "name": "$token",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel documents `$token` as required. It is the project token.",
+          "fix_hint": "Send the project token from Mixpanel project settings as `$token`.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set"
+        },
+        {
+          "name": "$distinct_id",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel documents `$distinct_id` as required. It must be the same id you send on events.",
+          "fix_hint": "Send the same `distinct_id` you use on `/track` for this user.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set"
+        },
+        {
+          "name": "$set",
+          "description": "Sets profile properties, creating the profile if needed. Mixpanel documents it as required for the profile-set call.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set"
+        },
+        {
+          "name": "$set_once",
+          "description": "Sets profile properties only when they are not already set.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set-property-once"
+        },
+        {
+          "name": "$add",
+          "description": "Increments numeric profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+        },
+        {
+          "name": "$union",
+          "description": "Unions list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+        },
+        {
+          "name": "$append",
+          "description": "Appends to list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+        },
+        {
+          "name": "$remove",
+          "description": "Removes values from list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+        },
+        {
+          "name": "$unset",
+          "description": "Unsets named profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+        },
+        {
+          "name": "$delete",
+          "description": "Deletes the profile.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.mixpanel-engage.body.operation_required",
+          "kind": "require_one_of",
+          "params": [
+            "$set",
+            "$set_once",
+            "$add",
+            "$union",
+            "$append",
+            "$remove",
+            "$unset",
+            "$delete"
+          ],
+          "severity": "error",
+          "message": "The profile update has no operation. Mixpanel documents `$set`, `$set_once`, `$add`, `$union`, `$append`, `$remove`, `$unset`, or `$delete`.",
+          "fix_hint": "Send `$set` with the properties to write, or another documented engage operator.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set"
+        }
+      ]
+    }
+  ]
+}

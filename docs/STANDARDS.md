@@ -103,6 +103,17 @@ Meta Pixel browser requests to `facebook.com/tr`. Level: `official_vendor`.
 | Limited Data Use | A country requires a state, otherwise Meta geolocates instead | `vendor.meta.ldu.country_without_state` |
 | Unhashed PII | No parameter carries a raw email address | `vendor.meta.pii.unhashed_email` |
 
+### Advanced Matching
+
+Meta requires customer information to be normalized and SHA-256 hashed. It
+documents the hashing, not the browser query names. `em`, `ph`, `fn`, `ln`,
+`external_id`, `fbc`, and `fbp` are ecosystem evidence for that reason.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `em`, `ph`, `fn`, `ln`, `external_id` | When present, SHA-256 hex | `vendor.meta.param.em.invalid`, `.ph.invalid`, `.fn.invalid`, `.ln.invalid`, `.external_id.invalid` |
+| `fbc`, `fbp` | When present, `fb.N.timestamp.value` | `vendor.meta.param.fbc.invalid`, `.fbp.invalid` |
+
 Sources: [pixel base code](https://developers.facebook.com/docs/meta-pixel/get-started),
 [standard events](https://developers.facebook.com/docs/meta-pixel/reference),
 [advanced matching](https://developers.facebook.com/docs/meta-pixel/advanced/advanced-matching),
@@ -170,7 +181,13 @@ on the path as semicolon-delimited pairs. Level: `official_vendor`.
 | `cat` | Required activity tag | `vendor.floodlight.param.cat.missing`, `.empty` |
 | `ord` | Required cache buster | `vendor.floodlight.param.ord.missing`, `.empty` |
 | `num` | When present, not empty | `vendor.floodlight.param.num.empty` |
+| `qty`, `cost` | When present, not empty | `vendor.floodlight.param.qty.empty`, `.cost.empty` |
+| `dc_lat` | When present, `0` or `1` | `vendor.floodlight.param.dc_lat.invalid` |
+| `u1`–`u20` | When present, not empty | `vendor.floodlight.param.u1.empty` through `.u20.empty` |
 | Unique counting | `num` is only meaningful alongside `ord` | `vendor.floodlight.counting.unique_requires_ord` |
+
+Campaign Manager documents custom variables through `u100`. This pack
+contracts `u1`–`u20`. `u21`–`u100` have the same shape and are not enumerated.
 
 Source: [Floodlight tag structure](https://support.google.com/campaignmanager/answer/2823425).
 
@@ -306,6 +323,51 @@ The payload is checked per conversion in `conversions`.
 Sources: [upload offline conversions](https://developers.google.com/google-ads/api/docs/conversions/upload-offline),
 [ClickConversion](https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion).
 
+Call conversions on `UploadCallConversions` are `vendor/google-ads-call-conversions`.
+Conversion adjustments on `UploadConversionAdjustments` are
+`vendor/google-ads-conversion-adjustments`.
+
+## `vendor/google-ads-call-conversions`
+
+Call conversions posted to `googleads.googleapis.com` `UploadCallConversions`.
+Level: `official_vendor`. Click uploads stay `vendor/google-ads-click-conversions`.
+The image pixel is a different pack.
+
+The payload is checked per conversion in `conversions`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `conversions` | Required | `vendor.google-ads-call-conversions.body.conversions.missing` |
+| `partialFailure` | Required `true` | `vendor.google-ads-call-conversions.body.partialFailure.missing`, `.invalid` |
+| `conversionAction` | Required resource name | `vendor.google-ads-call-conversions.body.conversionAction.missing`, `.empty` |
+| `callerId` | Required E.164 with a leading `+` | `vendor.google-ads-call-conversions.body.callerId.missing`, `.invalid` |
+| `callStartDateTime` | Required, `yyyy-mm-dd hh:mm:ss+|-hh:mm` | `vendor.google-ads-call-conversions.body.callStartDateTime.missing`, `.invalid` |
+| `conversionDateTime` | Required, same timestamp shape | `vendor.google-ads-call-conversions.body.conversionDateTime.missing`, `.invalid` |
+| `currencyCode` | ISO 4217 three-letter code when present | `vendor.google-ads-call-conversions.body.currencyCode.invalid` |
+
+Source: [upload call conversions](https://developers.google.com/google-ads/api/docs/conversions/upload-calls).
+
+## `vendor/google-ads-conversion-adjustments`
+
+Conversion adjustments posted to `googleads.googleapis.com`
+`UploadConversionAdjustments`. Level: `official_vendor`. Click uploads stay
+`vendor/google-ads-click-conversions`. Call conversions stay
+`vendor/google-ads-call-conversions`.
+
+The payload is checked per adjustment in `conversionAdjustments`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `conversionAdjustments` | Required | `vendor.google-ads-conversion-adjustments.body.conversionAdjustments.missing` |
+| `partialFailure` | Required `true` | `vendor.google-ads-conversion-adjustments.body.partialFailure.missing`, `.invalid` |
+| `conversionAction` | Required resource name | `vendor.google-ads-conversion-adjustments.body.conversionAction.missing`, `.empty` |
+| `adjustmentType` | Required `RETRACTION`, `RESTATEMENT`, or `ENHANCEMENT` | `vendor.google-ads-conversion-adjustments.body.adjustmentType.missing`, `.invalid` |
+| `adjustmentDateTime` | Required, `yyyy-mm-dd hh:mm:ss+|-hh:mm` | `vendor.google-ads-conversion-adjustments.body.adjustmentDateTime.missing`, `.invalid` |
+| Identity | One of `orderId` or `gclidDateTimePair.gclid` | `vendor.google-ads-conversion-adjustments.body.order_or_gclid_required` |
+| Restatement value | `RESTATEMENT` needs `restatementValue.adjustedValue` | `vendor.google-ads-conversion-adjustments.body.restatement_requires_value` |
+
+Source: [import conversion adjustments](https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments).
+
 ## `vendor/adobe-analytics`
 
 Adobe Analytics data collection beacons on `omtrdc.net` and `2o7.net`. The
@@ -315,9 +377,36 @@ report suite rides on the path after `/b/ss/`. Level: `official_vendor`.
 | --- | --- | --- |
 | `report_suite` | Required, read from the path | `vendor.adobe-analytics.param.report_suite.missing`, `.empty` |
 | `mid` | When present, not empty | `vendor.adobe-analytics.param.mid.empty` |
+| `g` | When present, an absolute URL | `vendor.adobe-analytics.param.g.invalid` |
+| `pageName` / `gn` | When present, not empty | `vendor.adobe-analytics.param.pageName.empty` |
+| `events` / `ev` | When present, not empty | `vendor.adobe-analytics.param.events.empty` |
+| `products` / `pl` | When present, not empty | `vendor.adobe-analytics.param.products.empty` |
+| `pe` | When present, `lnk_o`, `lnk_d`, `lnk_e`, or `tnt` | `vendor.adobe-analytics.param.pe.invalid` |
+| Truncated request | `AQB` requires `AQE` | `vendor.adobe-analytics.truncated_request` |
 
-Sources: [identify your tracking server and report suites](https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites),
+Sources: [query parameters](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters),
+[identify your tracking server and report suites](https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites),
 [A4T reporting](https://experienceleague.adobe.com/en/docs/target-dev/developer/server-side/integration/a4t-reporting).
+
+Edge Network interact and collect are `vendor/adobe-web-sdk`.
+
+## `vendor/adobe-web-sdk`
+
+Adobe Experience Platform Edge Network `interact` and `collect` on
+`edge.adobedc.net` and `server.adobedc.net`. Level: `official_vendor`.
+AppMeasurement `/b/ss/` stays `vendor/adobe-analytics`.
+
+`interact` posts a single `event`. `collect` posts `events[]`. Both carry the
+same XDM contract.
+
+| Parameter or body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `datastreamId` | Required. v1 alias `configId` | `vendor.adobe-web-sdk.param.datastreamId.missing`, `.empty` |
+| `xdm.timestamp` | Required ISO 8601 date-time | `vendor.adobe-web-sdk.body.xdm.timestamp.missing`, `.invalid` |
+| `xdm.eventType` | Recommended | `vendor.adobe-web-sdk.body.xdm.eventType.missing`, `.empty` |
+
+Sources: [interact](https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/),
+[collect](https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/).
 
 ## `vendor/pinterest`
 
@@ -465,6 +554,10 @@ a different shape and is not contracted here.
 | `event_at` | Required, exactly 13 digits, since v3 documents milliseconds | `vendor.reddit-conversions-api.body.event_at.missing`, `.invalid` |
 | `action_source` | Required, one of `WEBSITE`, `APP`, `PHYSICAL_STORE`, `OTHER` | `vendor.reddit-conversions-api.body.action_source.missing`, `.invalid` |
 | `type.tracking_type` | Required; unrecognized types warn rather than error | `vendor.reddit-conversions-api.body.type.tracking_type.missing`, `.invalid` |
+| Match key | At least one of `click_id`, `user.email`, `phone_number`, `uuid`, `external_id`, `ip_address`, `idfa`, `aaid` | `vendor.reddit-conversions-api.body.match_key_required` |
+| `event_source_url` | Recommended on `WEBSITE` | `vendor.reddit-conversions-api.body.website_requires_source_url` |
+| `type.custom_event_name` | Required when `tracking_type` is `CUSTOM` | `vendor.reddit-conversions-api.body.custom_requires_name` |
+| `metadata.value` | Recommended on `PURCHASE` | `vendor.reddit-conversions-api.body.purchase_requires_value` |
 | Over-hashing | `user.ip_address` and `user.user_agent` must not be digests | `vendor.reddit-conversions-api.body.hashed_plaintext_field` |
 
 Sources: [direct integration](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration),
@@ -508,13 +601,39 @@ event object under `batch`, with `pixel_code` on the envelope.
 | `context.ip`, `context.user_agent` | Sent unhashed | `vendor.tiktok-events-api.body.hashed_plaintext_field` |
 | Unhashed PII | No field carries a raw email address | `vendor.tiktok-events-api.body.unhashed_email` |
 | `properties.currency` | ISO 4217 three-letter code when present | `vendor.tiktok-events-api.body.properties.currency.invalid` |
+| Identifier | Hashed email, phone, `external_id`, or `context.ip` | `vendor.tiktok-events-api.body.user_needs_an_identifier` |
+| `CompletePayment`, `PlaceAnOrder` | Need `properties.value` and `properties.currency` | `vendor.tiktok-events-api.body.complete_payment_requires_value_and_currency` |
 
 Sources: [where to find pixel_code](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929),
 [event deduplication](https://ads.tiktok.com/marketing_api/docs?id=1739584864945154),
 [official Events API SDK models](https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelTrackBody.md).
 
-The `/open_api/v1.3/event/track/` Events 2.0 envelope is a different shape and
-is not contracted here.
+The `/open_api/v1.3/event/track/` Events 2.0 envelope is `vendor/tiktok-events-2`.
+
+## `vendor/tiktok-events-2`
+
+Events API 2.0 track requests to `business-api.tiktok.com`
+`/open_api/v1.3/event/track/`. Level: `official_vendor`. The Events 1.0
+`/pixel/track` envelope stays `vendor/tiktok-events-api`.
+
+The envelope is checked once. Each element of `data` is checked on its own.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `event_source` | Required `web`, `app`, `offline`, or `crm` | `vendor.tiktok-events-2.body.event_source.missing`, `.invalid` |
+| `event_source_id` | Required Pixel Code or event-set ID | `vendor.tiktok-events-2.body.event_source_id.missing`, `.empty` |
+| `data` | Required event array | `vendor.tiktok-events-2.body.data.missing` |
+| `event` | Required conversion name, per event | `vendor.tiktok-events-2.body.event.missing`, `.empty` |
+| `event_time` | Unix seconds, 10 digits | `vendor.tiktok-events-2.body.event_time.missing`, `.invalid` |
+| `event_id` | Recommended when the Pixel also fires | `vendor.tiktok-events-2.body.event_id.missing` |
+| `page.url` | Recommended absolute URL on web events | `vendor.tiktok-events-2.body.page.url.missing`, `.invalid` |
+| `user.email`, `phone`, `external_id` | SHA-256 hex digests | `vendor.tiktok-events-2.body.user.<field>.invalid` |
+| `user.ip`, `user.user_agent` | Sent unhashed | `vendor.tiktok-events-2.body.hashed_plaintext_field` |
+| Unhashed PII | No field carries a raw email address | `vendor.tiktok-events-2.body.unhashed_email` |
+| Identifier | Hashed email, phone, `external_id`, `ttclid`, or IP | `vendor.tiktok-events-2.body.user_needs_an_identifier` |
+| `Purchase`, `CompletePayment`, `PlaceAnOrder` | Need `properties.value` and `properties.currency` | `vendor.tiktok-events-2.body.purchase_requires_value_and_currency` |
+
+Source: [report app, web, offline, or CRM events](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3).
 
 ## `vendor/linkedin`
 
@@ -568,6 +687,34 @@ Event uploads to the Amplitude HTTP V2 API on `amplitude.com`. Level:
 
 Source: [HTTP V2 API](https://amplitude.com/docs/apis/analytics/http-v2).
 
+Identify is `vendor/amplitude-identify`. Group identify is
+`vendor/amplitude-group-identify`.
+
+## `vendor/amplitude-identify`
+
+Amplitude Identify API on `/identify`. Level: `official_vendor`. HTTP V2 stays
+`vendor/amplitude`. GET puts the fields on the query. POST uses the same names
+as form fields.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `api_key` | Required | `vendor.amplitude-identify.param.api_key.missing`, `.empty` |
+| `identification` | Required JSON object or array | `vendor.amplitude-identify.param.identification.missing`, `.empty` |
+
+Source: [Identify API](https://amplitude.com/docs/apis/analytics/identify).
+
+## `vendor/amplitude-group-identify`
+
+Amplitude Group Identify API on `/groupidentify`. Level: `official_vendor`.
+User identify stays `vendor/amplitude-identify`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `api_key` | Required | `vendor.amplitude-group-identify.param.api_key.missing`, `.empty` |
+| `identification` | Required JSON object or array | `vendor.amplitude-group-identify.param.identification.missing`, `.empty` |
+
+Source: [Group Identify API](https://amplitude.com/docs/apis/analytics/group-identify).
+
 ## `vendor/posthog`
 
 Capture requests to PostHog, single or batched under `batch`. Level:
@@ -582,6 +729,9 @@ Capture requests to PostHog, single or batched under `batch`. Level:
 
 Source: [capture API](https://posthog.com/docs/api/capture).
 
+Adobe Edge interact payloads carry `event.xdm`. This pack excludes that
+shape so they stay `vendor/adobe-web-sdk`.
+
 ## `vendor/mixpanel`
 
 Ingestion requests to the Mixpanel track endpoint, which posts a bare array of
@@ -591,11 +741,63 @@ events rather than an envelope. Level: `official_vendor`.
 | --- | --- | --- |
 | `event` | Required, per event | `vendor.mixpanel.body.event.missing`, `.empty` |
 | `properties` | Required, since the project token rides inside it | `vendor.mixpanel.body.properties.missing`, `.empty` |
-| `properties.token` | Required | `vendor.mixpanel.body.properties.token.missing` |
-| `properties.distinct_id` | Flagged when present and empty | `vendor.mixpanel.body.properties.distinct_id.empty` |
-| `properties.$insert_id` | Flagged when present and empty | `vendor.mixpanel.body.properties.$insert_id.empty` |
+| `properties.token` | Required | `vendor.mixpanel.body.properties.token.missing`, `.empty` |
+| `properties.distinct_id` | Recommended | `vendor.mixpanel.body.properties.distinct_id.missing`, `.empty` |
+| `properties.$insert_id` | Recommended | `vendor.mixpanel.body.properties.$insert_id.missing`, `.empty` |
+| `properties.time` | When present, an integer Unix timestamp | `vendor.mixpanel.body.properties.time.invalid` |
+
+`/import` is `vendor/mixpanel-import`. `/engage` is `vendor/mixpanel-engage`.
+This pack matches `/track` and a JSON array whose events carry `properties.token`.
 
 Source: [track event](https://docs.mixpanel.com/reference/track-event).
+
+## `vendor/mixpanel-import`
+
+Batch event imports posted to Mixpanel `/import`. Level: `official_vendor`.
+`/track` stays `vendor/mixpanel`. `/engage` stays `vendor/mixpanel-engage`.
+`/groups` is `vendor/mixpanel-groups`. Auth is a header or basic auth, not a
+JSON field.
+
+| Parameter or body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `strict` | Recommended `0` or `1` | `vendor.mixpanel-import.param.strict.missing`, `.invalid` |
+| `event` | Required, per event | `vendor.mixpanel-import.body.event.missing`, `.empty` |
+| `properties` | Required | `vendor.mixpanel-import.body.properties.missing` |
+| `properties.time` | Required integer Unix timestamp | `vendor.mixpanel-import.body.properties.time.missing`, `.invalid` |
+| `properties.distinct_id` | Required. Empty string is allowed | `vendor.mixpanel-import.body.properties.distinct_id.missing` |
+| `properties.$insert_id` | Required | `vendor.mixpanel-import.body.properties.$insert_id.missing`, `.empty` |
+
+Source: [import events](https://docs.mixpanel.com/reference/import-events).
+
+## `vendor/mixpanel-engage`
+
+Mixpanel user profile updates posted to `/engage`. Level: `official_vendor`.
+`/track` stays `vendor/mixpanel`. `/import` stays `vendor/mixpanel-import`.
+`/groups` is `vendor/mixpanel-groups`.
+
+| Parameter or body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `verbose` | Recommended `0` or `1` | `vendor.mixpanel-engage.param.verbose.missing`, `.invalid` |
+| `$token` | Required project token | `vendor.mixpanel-engage.body.$token.missing`, `.empty` |
+| `$distinct_id` | Required | `vendor.mixpanel-engage.body.$distinct_id.missing`, `.empty` |
+| Operation | One of `$set`, `$set_once`, `$add`, `$union`, `$append`, `$remove`, `$unset`, `$delete` | `vendor.mixpanel-engage.body.operation_required` |
+
+Source: [profile set](https://docs.mixpanel.com/reference/profile-set).
+
+## `vendor/mixpanel-groups`
+
+Mixpanel group profile updates posted to `/groups`. Level: `official_vendor`.
+`/track` stays `vendor/mixpanel`. `/engage` stays `vendor/mixpanel-engage`.
+
+| Parameter or body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `verbose` | Recommended `0` or `1` | `vendor.mixpanel-groups.param.verbose.missing`, `.invalid` |
+| `$token` | Required project token | `vendor.mixpanel-groups.body.$token.missing`, `.empty` |
+| `$group_key` | Required group type | `vendor.mixpanel-groups.body.$group_key.missing`, `.empty` |
+| `$group_id` | Required group instance | `vendor.mixpanel-groups.body.$group_id.missing`, `.empty` |
+| Operation | One of `$set`, `$set_once`, `$add`, `$union`, `$remove`, `$unset`, `$delete` | `vendor.mixpanel-groups.body.operation_required` |
+
+Source: [group set](https://docs.mixpanel.com/reference/group-set-property).
 
 ## `vendor/klaviyo`
 
@@ -763,7 +965,7 @@ Sources: [pixels](https://help.yahooinc.com/dsp-api/docs/pixels),
 ## `vendor/yandex-metrica`
 
 Measurement Protocol requests to `mc.yandex.ru/collect`. Level:
-`official_vendor`. The browser tag on `/watch` is not contracted.
+`official_vendor`. The browser tag on `/watch` is `vendor/yandex-watch`.
 
 | Parameter or rule | Enforced | Rule ids |
 | --- | --- | --- |
@@ -779,6 +981,18 @@ Source: [uploading data](https://yandex.com/dev/metrika/en/data-import/measureme
 The parameter table marks `ea` and `pa` as required on `event`, but the official
 goal examples omit `pa` and the ecommerce examples omit `ea`. Those fields are
 checked when present, not required on every event.
+
+## `vendor/yandex-watch`
+
+Yandex Metrica browser counter hits to `mc.yandex.ru/watch/{counter_id}`.
+Level: `official_vendor`. Measurement Protocol `/collect` stays
+`vendor/yandex-metrica`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `counter_id` | Required numeric tag ID in the path | `vendor.yandex-watch.param.counter_id.missing`, `.empty`, `.invalid` |
+
+Source: [installing a tag on a site with CSP](https://yandex.com/support/metrica/en/code/install-counter-csp).
 
 ## `vendor/openai`
 
@@ -913,13 +1127,61 @@ Source: [OneTag](https://developers.criteo.com/retailer-integration/docs/onetag)
 ## `vendor/taboola`
 
 Taboola base pixel loader on `cdn.taboola.com/libtrc/unip/{account_id}/tfa.js`.
-Level: `official_vendor`. Collection on `trc.taboola.com` stays directory-only.
+Level: `official_vendor`. Browser events are `vendor/taboola-unip`. S2S
+postbacks are `vendor/taboola-s2s`. Bulk submit is `vendor/taboola-s2s-bulk`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `account_id` | Required numeric Account ID in the path | `vendor.taboola.param.account_id.missing` |
 
 Source: [add the base pixel manually](https://developers.taboola.com/pixel/docs/add-the-base-pixel-manually).
+
+## `vendor/taboola-s2s`
+
+Taboola S2S conversion postbacks on
+`trc.taboola.com/actions-handler/log/3/s2s-action`. Level: `official_vendor`. The
+base pixel loader stays `vendor/taboola`. Bulk submit is `vendor/taboola-s2s-bulk`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `click-id` | Required Click ID | `vendor.taboola-s2s.param.click-id.missing`, `.empty` |
+| `name` | Required Realize Event Name | `vendor.taboola-s2s.param.name.missing`, `.empty` |
+| `revenue` | Integer or decimal when present | `vendor.taboola-s2s.param.revenue.invalid` |
+| `currency` | Documented three-letter code when present | `vendor.taboola-s2s.param.currency.invalid` |
+| `quantity` | Integer when present | `vendor.taboola-s2s.param.quantity.invalid` |
+| `orderid` | Non-empty when present | `vendor.taboola-s2s.param.orderid.empty` |
+
+Source: [the S2S postback URL](https://developers.taboola.com/pixel/docs/the-postback-url).
+
+## `vendor/taboola-s2s-bulk`
+
+Taboola bulk S2S conversions posted to
+`trc.taboola.com/{account-id}/log/3/bulk-s2s-action`. Level: `official_vendor`.
+Single postbacks stay `vendor/taboola-s2s`.
+
+| Parameter or body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `account_id` | Required numeric Account ID in the path | `vendor.taboola-s2s-bulk.param.account_id.missing`, `.invalid` |
+| `actions` | Required array | `vendor.taboola-s2s-bulk.body.actions.missing` |
+| `click-id` | Required on every record | `vendor.taboola-s2s-bulk.body.click-id.missing`, `.empty` |
+| `timestamp` | Required milliseconds since epoch | `vendor.taboola-s2s-bulk.body.timestamp.missing`, `.invalid` |
+| `name` | Required Realize Event Name | `vendor.taboola-s2s-bulk.body.name.missing`, `.empty` |
+| `revenue` | Number when present | `vendor.taboola-s2s-bulk.body.revenue.invalid` |
+| `currency` | Documented three-letter code when present | `vendor.taboola-s2s-bulk.body.currency.invalid` |
+| `quantity` | Integer when present | `vendor.taboola-s2s-bulk.body.quantity.invalid` |
+
+Source: [bulk submit S2S conversions](https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions).
+
+## `vendor/taboola-unip`
+
+Taboola browser event pixels on `/log/3/unip`. Level: `official_vendor`. The
+`tfa.js` loader stays `vendor/taboola`. S2S postbacks stay `vendor/taboola-s2s`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `en` | Required event name | `vendor.taboola-unip.param.en.missing`, `.empty` |
+
+Source: [Chrome DevTools verification](https://developers.taboola.com/pixel/docs/verification-network-traffic).
 
 ## `vendor/hotjar`
 
@@ -949,7 +1211,7 @@ Source: [tracking code API](https://developers.hubspot.com/docs/api-reference/la
 
 Awin fall-back conversion image on `www.awin1.com/sread.img` and S2S on
 `/sread.php`. Level: `official_vendor`. The MasterTag on `www.dwin1.com` is
-not contracted.
+`vendor/awin-mastertag`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -963,6 +1225,17 @@ not contracted.
 | `cr` | Recommended ISO 4217 currency | `vendor.awin.param.cr.missing`, `.invalid` |
 
 Source: [fall-back conversion pixel](https://help.awin.com/developers/docs/fall-back-conversion-pixel).
+
+## `vendor/awin-mastertag`
+
+Awin Advertiser MasterTag on `www.dwin1.com/{advertiserId}.js`. Level:
+`official_vendor`. Conversion pixels stay `vendor/awin`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `advertiser_id` | Required numeric advertiser ID in the path | `vendor.awin-mastertag.param.advertiser_id.missing`, `.empty`, `.invalid` |
+
+Source: [advertiser MasterTag](https://help.awin.com/developers/docs/advertiser-mastertag).
 
 ## `vendor/partnerize`
 
@@ -1094,6 +1367,30 @@ impact.com Universal Tracking Tag on `utt.impactcdn.com/{UUID}.js`. Level:
 
 Source: [UTT installation](https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/javascript-tag-utt/installation).
 
+Conversion POSTs to `api.impact.com` are `vendor/impact-conversions`.
+
+## `vendor/impact-conversions`
+
+Server-to-server conversion submissions to
+`api.impact.com/Advertisers/{AccountSID}/Conversions`. Level: `official_vendor`.
+The UTT loader stays `vendor/impact`.
+
+The official call is form-urlencoded POST. The pack contracts the path and the
+query names impact.com documents.
+
+| Parameter or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `account_sid` | Required Account SID in the path | `vendor.impact-conversions.param.account_sid.missing`, `.empty` |
+| `CampaignId` | Required numeric program id | `vendor.impact-conversions.param.CampaignId.missing`, `.invalid` |
+| Event type | One of `ActionTrackerId`, `EventTypeId`, or `EventTypeCode` | `vendor.impact-conversions.event_type_required` |
+| `EventDate` | Recommended ISO 8601 | `vendor.impact-conversions.param.EventDate.missing`, `.invalid` |
+| `OrderId` | Recommended order id | `vendor.impact-conversions.param.OrderId.missing` |
+| `ClickId` | Recommended `im_ref` click id | `vendor.impact-conversions.param.ClickId.missing` |
+| `CurrencyCode` | ISO 4217 three-letter code when present | `vendor.impact-conversions.param.CurrencyCode.invalid` |
+
+Sources: [API online sale](https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation),
+[conversion submission fields](https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references).
+
 ## `vendor/rakuten`
 
 Rakuten Advertising conversion image on `track.linksynergy.com/ep`. Level:
@@ -1172,6 +1469,22 @@ Plausible Events API JSON posted to `plausible.io/api/event`. Level:
 
 Source: [Events API](https://plausible.io/docs/events-api).
 
+## `vendor/cloudflare`
+
+Cloudflare Web Analytics beacon on `static.cloudflareinsights.com/beacon.min.js`.
+Level: `official_vendor`. POST `/cdn-cgi/rum` is not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `token` | Recommended site token on the query | `vendor.cloudflare.param.token.missing`, `.empty` |
+| `spa` | `true` or `false` when present | `vendor.cloudflare.param.spa.invalid` |
+
+Cloudflare documents the GTM install as `beacon.min.js?token=`. Automatic
+injection puts the token in `data-cf-beacon`, so a bare script URL is a
+warning, not an error.
+
+Source: [Web Analytics FAQ](https://developers.cloudflare.com/web-analytics/faq/).
+
 ## `vendor/matomo`
 
 Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
@@ -1181,19 +1494,39 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | --- | --- | --- |
 | `idsite` | Required numeric site ID | `vendor.matomo.param.idsite.missing`, `.empty`, `.invalid` |
 | `rec` | Required `1` | `vendor.matomo.param.rec.missing`, `.empty`, `.invalid` |
+| `action_name` | Recommended | `vendor.matomo.param.action_name.missing` |
+| `url` | Recommended, absolute URL | `vendor.matomo.param.url.missing`, `.invalid` |
+| `_id` | Recommended, 16 hex characters | `vendor.matomo.param._id.missing`, `.invalid` |
+| Event | `e_c` requires `e_a` | `vendor.matomo.event_requires_action` |
+| Order | `ec_id` requires `revenue` | `vendor.matomo.order_requires_revenue` |
 
 Source: [Tracking HTTP API](https://developer.matomo.org/api-reference/tracking-api).
 
 ## `vendor/parsely`
 
 Parse.ly tracker loader on `cdn.parsely.com/keys/{site_id}/p.js`. Level:
-`official_vendor`. Collect on `p1.parsely.com` stays directory-only.
+`official_vendor`. Collect on `p1.parsely.com` is `vendor/parsely-collect`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `site_id` | Required Site ID in the path | `vendor.parsely.param.site_id.missing` |
 
 Source: [tracking code setup](https://docs.parse.ly/installation-resources/parsely-integration/tracking-code-setup/).
+
+## `vendor/parsely-collect`
+
+Parse.ly collect beacons on `p1.parsely.com` and `p1-irl.parsely.com`. Level:
+`official_vendor`. The tracker loader stays `vendor/parsely`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `idsite` | Required Site ID | `vendor.parsely-collect.param.idsite.missing`, `.empty` |
+| `url` | Recommended absolute URL | `vendor.parsely-collect.param.url.missing`, `.invalid` |
+| `action` | Recommended | `vendor.parsely-collect.param.action.missing`, `.empty` |
+
+Sources: [tracker details](https://docs.parse.ly/tracker-details/),
+[test integration](https://docs.parse.ly/installation-resources/parsely-integration/test-integration/),
+[content security policy](https://docs.parse.ly/privacy/content-security-policy/).
 
 ## `vendor/crazyegg`
 
@@ -1212,8 +1545,8 @@ Source: [check that Crazy Egg is installed](https://support.crazyegg.com/knowled
 ## `vendor/ispot`
 
 iSpot Unified Measurement impression GIFs on `pi.ispot.tv/v2/{tracking_code}.gif`.
-Level: `official_vendor`. Conversion pixels on `pt.ispot.tv` stay directory-only
-until that path is contracted.
+Level: `official_vendor`. Conversion pixels on `pt.ispot.tv` stay directory-only.
+The published pixel spec does not give a citable conversion path table.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -1231,6 +1564,10 @@ not contracted.
 | --- | --- | --- |
 | `h` | Required site id (dashboard host) | `vendor.chartbeat.param.h.missing`, `.empty` |
 | `g` | Required numeric account UID | `vendor.chartbeat.param.g.missing`, `.empty`, `.invalid` |
+| `p`, `d`, `t`, `g0`, `g1`, `i` | When present, not empty | `vendor.chartbeat.param.p.empty` and the same shape for the rest |
+
+Those QA keys are format-when-present, not recommended, so a ping that only
+sends `h` and `g` stays warning-free.
 
 Source: [QA a web integration](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration).
 
@@ -1238,14 +1575,42 @@ Source: [QA a web integration](https://docs.chartbeat.com/cbp/tracking/standard-
 
 Heap.js 5 configuration loader on `cdn.us.heap-api.com` and
 `cdn.eu.heap-api.com`, path `/config/{envId}/heap_config.js`. Level:
-`official_vendor`. Classic `heap-{id}.js` on `cdn.heapanalytics.com` is not
-contracted.
+`official_vendor`. Classic `heap-{id}.js` on `cdn.heapanalytics.com` is
+`vendor/heap-classic`. Server-side `/api/track` is `vendor/heap-track`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `env_id` | Required numeric environment ID in the path | `vendor.heap.param.env_id.missing`, `.empty`, `.invalid` |
 
 Source: [web installation](https://developers.heap.io/docs/web).
+
+## `vendor/heap-classic`
+
+Heap Classic loader on `cdn.heapanalytics.com/js/heap-{appId}.js`. Level:
+`official_vendor`. Heap.js 5 stays `vendor/heap`. Server-side `/api/track` is
+`vendor/heap-track`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `app_id` | Required numeric environment ID in the path | `vendor.heap-classic.param.app_id.missing`, `.empty`, `.invalid` |
+
+Source: [install Heap.js](https://developers.heap.io/docs/install-heapjs).
+
+## `vendor/heap-track`
+
+Server-side custom events posted to `heapanalytics.com/api/track`. Level:
+`official_vendor`. The Heap.js 5 config loader stays `vendor/heap`. Classic
+`heap-{id}.js` stays `vendor/heap-classic`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `app_id` | Required environment ID | `vendor.heap-track.body.app_id.missing`, `.empty` |
+| `event` | Required event name | `vendor.heap-track.body.event.missing`, `.empty` |
+| Identity | One of `identity` or `user_id` | `vendor.heap-track.body.identity_or_user_required` |
+| Exclusive identity | Not both `identity` and `user_id` | `vendor.heap-track.body.identity_and_user_exclusive` |
+| `timestamp` | ISO 8601 when present | `vendor.heap-track.body.timestamp.invalid` |
+
+Source: [track](https://developers.heap.io/reference/track-1).
 
 ## `vendor/mouseflow`
 
@@ -1261,13 +1626,27 @@ Source: [custom variables](https://help.mouseflow.com/en/articles/4312070-custom
 ## `vendor/intercom`
 
 Intercom Messenger loader on `widget.intercom.io/widget/{app_id}`. Level:
-`official_vendor`. The IAM API host is not contracted.
+`official_vendor`. Data events on `api.intercom.io/events` are
+`vendor/intercom-events`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `app_id` | Required workspace ID in the path | `vendor.intercom.param.app_id.missing`, `.empty` |
 
 Source: [web installation](https://developers.intercom.com/installing-intercom/web/installation).
+
+## `vendor/intercom-events`
+
+Data events posted to `api.intercom.io/events`. Level: `official_vendor`. The
+Messenger loader stays `vendor/intercom`.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `event_name` | Required | `vendor.intercom-events.body.event_name.missing`, `.empty` |
+| `created_at` | Unix seconds, 10 digits | `vendor.intercom-events.body.created_at.missing`, `.invalid` |
+| Contact | One of `user_id`, `email`, `id`, or `intercom_user_id` | `vendor.intercom-events.body.contact_identifier_required` |
+
+Source: [create data event](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent).
 
 ## `vendor/nextdoor-conversions-api`
 
@@ -1291,6 +1670,38 @@ Server-side conversion events posted to
 
 Source: [conversions/track](https://developer.nextdoor.com/reference/conversions-track),
 [data types](https://developer.nextdoor.com/reference/conversion-data-types).
+
+## `vendor/liveramp-envelope`
+
+LiveRamp ATS Envelope API on `api.rlcdn.com`. Level: `official_vendor`.
+Cookie sync on `idsync.rlcdn.com` stays directory-only. Envelope refresh is
+`vendor/liveramp-envelope-refresh`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `pid` | Required integer Placement ID | `vendor.liveramp-envelope.param.pid.missing`, `.invalid` |
+| `it` | Required: `4` hashed email, `11` hashed phone, `15` custom ID | `vendor.liveramp-envelope.param.it.missing`, `.invalid` |
+| `iv` | Required hashed identifier | `vendor.liveramp-envelope.param.iv.missing`, `.empty` |
+| `ct` | `3` CCPA or `4` TCF v2 when present | `vendor.liveramp-envelope.param.ct.invalid` |
+| `atype` | `1`–`4` when present | `vendor.liveramp-envelope.param.atype.invalid` |
+
+Source: [ATS Envelope API](https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api).
+
+## `vendor/liveramp-envelope-refresh`
+
+LiveRamp ATS Envelope refresh on `api.rlcdn.com/api/identity/v2/envelope/refresh`.
+Level: `official_vendor`. Retrieve stays `vendor/liveramp-envelope`. `it` is an
+envelope type, not an identifier type.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `pid` | Required integer Placement ID | `vendor.liveramp-envelope-refresh.param.pid.missing`, `.invalid` |
+| `it` | Required: `19` ATS or `24` Meta-scoped | `vendor.liveramp-envelope-refresh.param.it.missing`, `.invalid` |
+| `iv` | Required envelope value | `vendor.liveramp-envelope-refresh.param.iv.missing`, `.empty` |
+| `ct` | `3` CCPA or `4` TCF v2 when present | `vendor.liveramp-envelope-refresh.param.ct.invalid` |
+| `atype` | `1`–`4` when present | `vendor.liveramp-envelope-refresh.param.atype.invalid` |
+
+Source: [Refresh Envelope API](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api).
 
 ## Vendor directory
 
@@ -1316,7 +1727,11 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 
 - Snap Pixel (`sc-static.net/scevent.min.js` and `tr.snapchat.com/p`). The
   loader has no pixel ID on the URL. Collection is a POST without a published
-  query. Snap Conversions API is `vendor/snapchat`
+  query. Snap Conversions API is `vendor/snapchat`. Taboola unip events are
+  `vendor/taboola-unip`. S2S is `vendor/taboola-s2s`. iSpot conversion GIFs on
+  `pt.ispot.tv` stay directory-only. LiveRamp Envelope is
+  `vendor/liveramp-envelope`. Refresh is `vendor/liveramp-envelope-refresh`.
+  Cookie sync on `idsync.rlcdn.com` stays directory-only.
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling
 - Duplicate or conflicting artifacts across a document
 - Document extraction: Pixellint validates artifacts a caller has already

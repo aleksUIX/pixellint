@@ -1,0 +1,132 @@
+{
+  "id": "vendor/google-ads-conversion-adjustments",
+  "display_name": "Google Ads conversion adjustment upload",
+  "vendor": "google",
+  "description": "Conversion adjustments posted to the Google Ads API UploadConversionAdjustments method. Click uploads stay vendor/google-ads-click-conversions. Call uploads stay vendor/google-ads-call-conversions.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+  "match": {
+    "hosts": ["googleads.googleapis.com"],
+    "path_contains": ["uploadConversionAdjustments"],
+    "json_paths": [
+      {
+        "any_of": [
+          "conversionAdjustments[].adjustmentType",
+          "conversionAdjustments[].adjustmentDateTime"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "conversionAdjustments",
+          "requirement": "required",
+          "description": "UploadConversionAdjustments requires a `conversionAdjustments` array.",
+          "fix_hint": "Send at least one ConversionAdjustment in `conversionAdjustments`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "name": "partialFailure",
+          "requirement": "required",
+          "format": { "kind": "enum", "values": ["true"] },
+          "description": "Google documents `partial_failure` as required, and the upload guides say to always send true.",
+          "fix_hint": "Set `partialFailure` to `true`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "conversionAdjustments[]",
+      "params": [
+        {
+          "name": "conversionAction",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the conversion action resource name, and every uploaded adjustment requires it.",
+          "fix_hint": "Set `conversionAction` to `customers/{id}/conversionActions/{id}`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ConversionAdjustment"
+        },
+        {
+          "name": "adjustmentType",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": ["RETRACTION", "RESTATEMENT", "ENHANCEMENT"]
+          },
+          "description": "Google documents `RETRACTION`, `RESTATEMENT`, and `ENHANCEMENT`.",
+          "fix_hint": "Set `adjustmentType` to `RETRACTION`, `RESTATEMENT`, or `ENHANCEMENT`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "name": "adjustmentDateTime",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"
+          },
+          "description": "Google documents the adjustment time with a timezone offset as `yyyy-mm-dd hh:mm:ss+|-hh:mm`.",
+          "fix_hint": "Send a timestamp such as `2026-08-21 12:00:00+00:00`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "name": "orderId",
+          "format": { "kind": "non_empty" },
+          "description": "It identifies the conversion to adjust. Google documents `orderId` as the recommended identifier.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "name": "gclidDateTimePair.gclid",
+          "format": { "kind": "non_empty" },
+          "description": "Google click ID plus conversion time, as an alternative to `orderId`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "name": "gclidDateTimePair.conversionDateTime",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"
+          },
+          "description": "The original conversion time when identifying via `gclidDateTimePair`. Same timestamp shape as `adjustmentDateTime`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "name": "restatementValue.adjustedValue",
+          "description": "The restated conversion value. Google documents it as required on `RESTATEMENT` and invalid on `RETRACTION`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "name": "restatementValue.currencyCode",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "description": "It is an ISO 4217 currency code for `adjustedValue`.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/RestatementValue"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.google-ads-conversion-adjustments.body.order_or_gclid_required",
+          "kind": "require_one_of",
+          "params": ["orderId", "gclidDateTimePair.gclid"],
+          "severity": "error",
+          "message": "The adjustment has neither `orderId` nor `gclidDateTimePair.gclid`. Google documents one of them as required so the conversion can be identified.",
+          "fix_hint": "Send `orderId`, or send `gclidDateTimePair` with `gclid` and `conversionDateTime`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "code": "vendor.google-ads-conversion-adjustments.body.restatement_requires_value",
+          "kind": "required_when_value",
+          "when": "adjustmentType",
+          "equals": ["RESTATEMENT"],
+          "requires": ["restatementValue.adjustedValue"],
+          "severity": "error",
+          "message": "A `RESTATEMENT` has no `restatementValue.adjustedValue`. Google documents the restated value as required.",
+          "fix_hint": "Set `restatementValue.adjustedValue` to the new conversion value.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        }
+      ]
+    }
+  ]
+}

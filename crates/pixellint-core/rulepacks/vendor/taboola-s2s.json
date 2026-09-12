@@ -1,0 +1,81 @@
+{
+  "id": "vendor/taboola-s2s",
+  "display_name": "Taboola S2S postback",
+  "vendor": "taboola",
+  "description": "Taboola server-to-server conversion postbacks on trc.taboola.com/actions-handler/log/3/s2s-action. The base pixel loader is vendor/taboola. Bulk submit is vendor/taboola-s2s-bulk. Browser collect on the same host is not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.taboola.com/pixel/docs/the-postback-url",
+  "match": {
+    "hosts": ["trc.taboola.com"],
+    "path_contains": ["/actions-handler/log/3/s2s-action"]
+  },
+  "params": [
+    {
+      "name": "click-id",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Taboola Click ID from the landing page. Taboola documents the query key as `click-id`, exactly, and says another spelling records no conversion.",
+      "fix_hint": "Send `click-id` with the Click ID Taboola appended to the landing page.",
+      "doc": "https://developers.taboola.com/pixel/docs/the-postback-url"
+    },
+    {
+      "name": "name",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the event name as defined in Realize Conversion settings, not the Conversion Name.",
+      "fix_hint": "Set `name` to the Event Name from Realize, such as `LEAD` or `PURCHASE`.",
+      "doc": "https://developers.taboola.com/pixel/docs/the-postback-url"
+    },
+    {
+      "name": "revenue",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the conversion value. Taboola documents an integer or decimal number, such as `10` or `9.99`.",
+      "fix_hint": "Send a number, such as `9.99`.",
+      "doc": "https://developers.taboola.com/pixel/docs/the-postback-url"
+    },
+    {
+      "name": "currency",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "AUD",
+          "BRL",
+          "CAD",
+          "CNY",
+          "EUR",
+          "GBP",
+          "HKD",
+          "ILS",
+          "INR",
+          "JPY",
+          "KRW",
+          "MXN",
+          "NZD",
+          "RUB",
+          "SGD",
+          "THB",
+          "TRY",
+          "USD",
+          "ZAR"
+        ]
+      },
+      "description": "It is the revenue currency. Taboola documents a fixed list of three-letter codes, case-sensitive. Omit it to use the account default.",
+      "fix_hint": "Use a documented code such as `USD`.",
+      "doc": "https://developers.taboola.com/pixel/docs/the-postback-url"
+    },
+    {
+      "name": "quantity",
+      "format": { "kind": "integer" },
+      "description": "It is the item quantity in the order. Taboola documents an integer.",
+      "fix_hint": "Send an integer quantity, such as `3`.",
+      "doc": "https://developers.taboola.com/pixel/docs/the-postback-url"
+    },
+    {
+      "name": "orderid",
+      "format": { "kind": "non_empty" },
+      "description": "It is an order ID from the advertiser CRM. Taboola documents it as optional.",
+      "doc": "https://developers.taboola.com/pixel/docs/the-postback-url"
+    }
+  ],
+  "rules": []
+}

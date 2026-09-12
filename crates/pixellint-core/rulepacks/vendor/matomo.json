@@ -25,7 +25,98 @@
       "description": "Matomo documents `rec=1` as required to record the request.",
       "fix_hint": "Set `rec` to `1`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "action_name",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "Matomo documents `action_name` as recommended. For page tracks it is the page title.",
+      "fix_hint": "Set `action_name` to the page title or action name.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "url",
+      "requirement": "recommended",
+      "format": { "kind": "url" },
+      "description": "Matomo documents `url` as recommended. It is the full URL of the current action.",
+      "fix_hint": "Send the absolute page URL in `url`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "_id",
+      "requirement": "recommended",
+      "format": { "kind": "regex", "pattern": "^[0-9A-Fa-f]{16}$" },
+      "description": "Matomo documents `_id` as recommended. It is a 16-character hexadecimal visitor ID.",
+      "fix_hint": "Send a stable 16-character hex visitor ID in `_id`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "rand",
+      "format": { "kind": "non_empty" },
+      "description": "Matomo documents `rand` as recommended so the request is not cached.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "apiv",
+      "format": { "kind": "enum", "values": ["1"] },
+      "description": "Matomo documents `apiv=1` as the Tracking API version.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "e_c",
+      "format": { "kind": "non_empty" },
+      "description": "It is the event category. Matomo documents it as required for event tracking and forbids an empty value.",
+      "fix_hint": "Set `e_c` to the event category, such as `Videos`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "e_a",
+      "format": { "kind": "non_empty" },
+      "description": "It is the event action. Matomo documents it as required for event tracking and forbids an empty value.",
+      "fix_hint": "Set `e_a` to the event action, such as `Play`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "idgoal",
+      "format": { "kind": "non_empty" },
+      "description": "It is the goal ID. Matomo documents `idgoal=0` as required for ecommerce cart and order hits.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ec_id",
+      "format": { "kind": "non_empty" },
+      "description": "It is the unique ecommerce order id. Matomo documents it as required when tracking an ecommerce order.",
+      "fix_hint": "Set `ec_id` to the order id when `idgoal=0` is an order, not a cart update.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "revenue",
+      "format": { "kind": "non_empty" },
+      "description": "It is the grand total. Matomo documents it as required when tracking an ecommerce order.",
+      "fix_hint": "Set `revenue` to the order grand total when sending `ec_id`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.matomo.event_requires_action",
+      "kind": "required_with",
+      "when": "e_c",
+      "requires": ["e_a"],
+      "severity": "error",
+      "message": "The hit sends an event category `e_c` without an event action `e_a`. Matomo documents both as required for event tracking.",
+      "fix_hint": "Set `e_a` to the event action, such as `Play`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "code": "vendor.matomo.order_requires_revenue",
+      "kind": "required_with",
+      "when": "ec_id",
+      "requires": ["revenue"],
+      "severity": "error",
+      "message": "The hit tracks an ecommerce order (`ec_id`) without `revenue`. Matomo documents the grand total as required on an order.",
+      "fix_hint": "Set `revenue` to the order grand total, and set `idgoal=0`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    }
+  ]
 }

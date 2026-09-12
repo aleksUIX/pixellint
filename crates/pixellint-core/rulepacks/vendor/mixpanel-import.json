@@ -1,0 +1,76 @@
+{
+  "id": "vendor/mixpanel-import",
+  "display_name": "Mixpanel import",
+  "vendor": "mixpanel",
+  "description": "Batch event imports posted to the Mixpanel /import endpoint. /track is vendor/mixpanel. /engage is vendor/mixpanel-engage. /groups is vendor/mixpanel-groups. Auth is a header or basic auth, not a JSON field.",
+  "source_level": "official_vendor",
+  "docs": "https://docs.mixpanel.com/reference/import-events",
+  "match": {
+    "host_suffixes": ["mixpanel.com"],
+    "path_contains": ["/import"],
+    "json_paths": [
+      "[].properties.$insert_id",
+      {
+        "path": "[].properties.token",
+        "excludes": ".*"
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "strict",
+      "requirement": "recommended",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `strict=1` so the batch is validated and failed events are named in the response.",
+      "fix_hint": "Send `strict=1` on `/import`.",
+      "doc": "https://docs.mixpanel.com/reference/import-events"
+    }
+  ],
+  "rules": [],
+  "body": [
+    {
+      "scope": "[]",
+      "params": [
+        {
+          "name": "event",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel documents the event name as required on every imported event.",
+          "fix_hint": "Name the event, such as `Signup`.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "name": "properties",
+          "requirement": "required",
+          "description": "Mixpanel documents the properties object as required. `time`, `distinct_id`, and `$insert_id` ride inside it.",
+          "fix_hint": "Add a `properties` object carrying `time`, `distinct_id`, and `$insert_id`.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "name": "properties.time",
+          "requirement": "required",
+          "format": { "kind": "integer" },
+          "description": "Mixpanel documents `time` as required Unix seconds or milliseconds since epoch.",
+          "fix_hint": "Send seconds or milliseconds since epoch, as an integer.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "name": "properties.distinct_id",
+          "requirement": "required",
+          "description": "Mixpanel documents `distinct_id` as required. An empty string is allowed for events that are not tied to a user.",
+          "fix_hint": "Send the same `distinct_id` you use elsewhere for this user, or an empty string when there is no user.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "name": "properties.$insert_id",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel documents `$insert_id` as required so `/import` can be retried without double-counting.",
+          "fix_hint": "Send a unique id per event, at most 36 alphanumeric or hyphen characters.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}

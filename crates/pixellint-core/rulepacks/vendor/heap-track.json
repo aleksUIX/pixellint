@@ -1,0 +1,92 @@
+{
+  "id": "vendor/heap-track",
+  "display_name": "Heap server-side track",
+  "description": "Server-side custom events posted to heapanalytics.com/api/track. The Heap.js 5 config loader is vendor/heap. Classic heap-{id}.js is vendor/heap-classic.",
+  "vendor": "heap",
+  "source_level": "official_vendor",
+  "docs": "https://developers.heap.io/reference/track-1",
+  "match": {
+    "hosts": ["heapanalytics.com", "c.eu.heap-api.com"],
+    "path_prefixes": ["/api/track"],
+    "json_paths": [
+      "app_id",
+      {
+        "path": "distinct_id",
+        "excludes": ".+"
+      },
+      {
+        "path": "api_key",
+        "excludes": ".+"
+      }
+    ]
+  },
+  "body": {
+    "params": [
+      {
+        "name": "app_id",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the Heap environment ID. Heap documents it as required on every track call.",
+        "fix_hint": "Set `app_id` to the environment ID from Heap Projects.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "name": "event",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the server-side event name. Heap documents it as required, limited to 1024 characters.",
+        "fix_hint": "Set `event` to the custom event name, such as `Purchase Completed`.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "name": "identity",
+        "format": { "kind": "non_empty" },
+        "description": "It identifies the user. Heap requires either `identity` or `user_id`, not both.",
+        "fix_hint": "Send the same identity you use in Heap Identify.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "name": "user_id",
+        "format": { "kind": "non_empty" },
+        "description": "It is Heap's anonymous user id. Heap requires either `identity` or `user_id`, not both.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "name": "timestamp",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+        },
+        "description": "Heap documents `timestamp` as an ISO 8601 datetime. When omitted, Heap stamps the arrival time.",
+        "fix_hint": "Send an ISO 8601 timestamp, such as `2026-07-26T06:00:00Z`.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "name": "idempotency_key",
+        "format": { "kind": "non_empty" },
+        "description": "Heap uses it to drop duplicate track calls.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.heap-track.body.identity_or_user_required",
+        "kind": "require_one_of",
+        "params": ["identity", "user_id"],
+        "severity": "error",
+        "message": "The track call has neither `identity` nor `user_id`. Heap documents one of them as required.",
+        "fix_hint": "Send `identity` for a known user, or `user_id` for an anonymous Heap id.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "code": "vendor.heap-track.body.identity_and_user_exclusive",
+        "kind": "mutually_exclusive",
+        "params": ["identity", "user_id"],
+        "severity": "error",
+        "message": "The track call sends both `identity` and `user_id`. Heap documents those as mutually exclusive.",
+        "fix_hint": "Send one identifier, not both.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      }
+    ]
+  }
+}

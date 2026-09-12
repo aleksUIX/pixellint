@@ -4,6 +4,105 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- `vendor/tiktok-events-2`, covering Events API 2.0 `/event/track/`: required
+  `event_source`, `event_source_id`, `data[].event`, and 10-digit
+  `event_time`. Hashed `user.email`/`phone`/`external_id`. Revenue events
+  need value and currency. Events 1.0 stays `vendor/tiktok-events-api`.
+- `vendor/heap-track`, covering `heapanalytics.com/api/track`: required
+  `app_id`, `event`, and exactly one of `identity` or `user_id`. The Heap.js 5
+  loader stays `vendor/heap`.
+- `vendor/intercom-events`, covering `api.intercom.io/events`: required
+  `event_name`, 10-digit `created_at`, and a contact identifier. The Messenger
+  loader stays `vendor/intercom`.
+- `vendor/google-ads-call-conversions`, covering `UploadCallConversions`:
+  required E.164 `callerId`, `callStartDateTime`, and `conversionDateTime`.
+  Click uploads stay `vendor/google-ads-click-conversions`.
+- `vendor/impact-conversions`, covering
+  `api.impact.com/Advertisers/{AccountSID}/Conversions`: required `CampaignId`
+  and one of `ActionTrackerId`/`EventTypeId`/`EventTypeCode`. The UTT loader
+  stays `vendor/impact`.
+- `vendor/yandex-watch`, covering `mc.yandex.ru/watch/{counter_id}`: required
+  numeric tag ID in the path. Measurement Protocol stays
+  `vendor/yandex-metrica`.
+- `vendor/mixpanel-import`, covering Mixpanel `/import`: required `event`,
+  `properties.time`, `properties.distinct_id`, and `$insert_id`. `/track`
+  stays `vendor/mixpanel`.
+- `vendor/adobe-web-sdk`, covering Edge Network `/interact` and `/collect`:
+  required `datastreamId` and ISO 8601 `xdm.timestamp`. AppMeasurement
+  `/b/ss/` stays `vendor/adobe-analytics`.
+- `vendor/parsely-collect`, covering `p1.parsely.com` collect: required
+  `idsite`, recommended `url` and `action`. The loader stays `vendor/parsely`.
+- `vendor/awin-mastertag`, covering `www.dwin1.com/{advertiserId}.js`:
+  required numeric advertiser ID in the path. Conversion pixels stay
+  `vendor/awin`.
+- `vendor/heap-classic`, covering `cdn.heapanalytics.com/js/heap-{appId}.js`:
+  required numeric environment ID. Heap.js 5 stays `vendor/heap`.
+- `vendor/google-ads-conversion-adjustments`, covering
+  `UploadConversionAdjustments`: required `adjustmentType`,
+  `adjustmentDateTime`, and `orderId` or `gclidDateTimePair.gclid`.
+  `RESTATEMENT` needs `restatementValue.adjustedValue`. Click uploads stay
+  `vendor/google-ads-click-conversions`.
+- `vendor/taboola-s2s`, covering `trc.taboola.com/actions-handler/log/3/s2s-action`:
+  required `click-id` and Realize `name`. `currency` is the documented
+  three-letter list when present. The loader stays `vendor/taboola`.
+- `vendor/taboola-s2s-bulk`, covering
+  `trc.taboola.com/{account-id}/log/3/bulk-s2s-action`: required numeric
+  account ID in the path, plus `actions[].click-id`, millisecond
+  `timestamp`, and `name`. Single postbacks stay `vendor/taboola-s2s`.
+- `vendor/cloudflare`, covering `static.cloudflareinsights.com/beacon.min.js`:
+  recommended site `token` on the query. Automatic injection puts the token
+  in `data-cf-beacon` instead.
+- `vendor/mixpanel-engage`, covering Mixpanel `/engage`: required `$token`,
+  `$distinct_id`, and one profile operation (`$set` and the rest). `/track`
+  stays `vendor/mixpanel`.
+- `vendor/mixpanel-groups`, covering Mixpanel `/groups`: required `$token`,
+  `$group_key`, `$group_id`, and one group operation (`$set` and the rest).
+  `/engage` stays `vendor/mixpanel-engage`.
+- `vendor/liveramp-envelope`, covering
+  `api.rlcdn.com/api/identity/v2/envelope`: required integer `pid`,
+  identifier type `it` (`4` hashed email, `11` hashed phone, `15` custom ID),
+  and nonempty `iv`. Cookie sync on `idsync.rlcdn.com` stays directory-only.
+- `vendor/liveramp-envelope-refresh`, covering
+  `api.rlcdn.com/api/identity/v2/envelope/refresh`: required integer `pid`,
+  envelope type `it` (`19` ATS, `24` Meta-scoped), and envelope value `iv`.
+  Retrieve stays `vendor/liveramp-envelope`.
+- `vendor/amplitude-identify`, covering Amplitude `/identify`: required
+  `api_key` and `identification`. HTTP V2 stays `vendor/amplitude`.
+- `vendor/amplitude-group-identify`, covering Amplitude `/groupidentify`:
+  required `api_key` and `identification`. User identify stays
+  `vendor/amplitude-identify`.
+- `vendor/taboola-unip`, covering Taboola `/log/3/unip` event pixels:
+  required `en`. The `tfa.js` loader stays `vendor/taboola`.
+
+### Changed
+
+- `vendor/adobe-analytics` contracts Adobe's query-parameter table: `g` as
+  a URL, nonempty `pageName`/`events`/`products`, `pe` as `lnk_o`/`lnk_d`/
+  `lnk_e`/`tnt`, and `AQB` requiring `AQE`.
+- `vendor/matomo` recommends `action_name`, `url`, and 16-hex `_id`. An event
+  category without an action, or an order without `revenue`, is an error.
+- `vendor/chartbeat` format-checks QA ping keys `p`, `d`, `t`, `g0`, `g1`,
+  and `i` when they are present.
+- `vendor/floodlight` format-checks `qty`, `cost`, `dc_lat`, and custom
+  variables `u1`–`u20` when they are present.
+- `vendor/meta` format-checks Advanced Matching `em`/`ph`/`fn`/`ln`/
+  `external_id` as SHA-256 hex and `fbc`/`fbp` as `fb.N.timestamp.value`.
+- `vendor/reddit-conversions-api` requires a match key, `custom_event_name`
+  on `CUSTOM`, `event_source_url` on `WEBSITE` (warning), and
+  `metadata.value` on `PURCHASE` (warning).
+- `vendor/tiktok-events-api` warns when an event has no hashed identifier or
+  IP, and errors when `CompletePayment` or `PlaceAnOrder` omits value and
+  currency.
+- `vendor/mixpanel` recommends `distinct_id` and `$insert_id`, and
+  format-checks `time` as an integer. `/import` is now
+  `vendor/mixpanel-import`.
+- `vendor/google-ads-click-conversions` excludes `conversionAdjustments` so
+  an adjustment payload is not also claimed as a click upload.
+
 ## 0.18.0 - 2026-09-11
 
 ### Added

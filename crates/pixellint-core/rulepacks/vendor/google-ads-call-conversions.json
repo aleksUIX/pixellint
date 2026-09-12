@@ -1,0 +1,93 @@
+{
+  "id": "vendor/google-ads-call-conversions",
+  "display_name": "Google Ads call conversion upload",
+  "description": "Call conversions posted to the Google Ads API UploadCallConversions method. UploadClickConversions stays vendor/google-ads-click-conversions. Conversion adjustments are vendor/google-ads-conversion-adjustments. The image pixel is a different pack.",
+  "vendor": "google",
+  "source_level": "official_vendor",
+  "docs": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+  "match": {
+    "hosts": ["googleads.googleapis.com"],
+    "path_contains": ["uploadCallConversions"],
+    "json_paths": [
+      {
+        "any_of": [
+          "conversions[].callerId",
+          "conversions[].callStartDateTime"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "conversions",
+          "requirement": "required",
+          "description": "UploadCallConversions requires a `conversions` array.",
+          "fix_hint": "Send at least one CallConversion in `conversions`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "name": "partialFailure",
+          "requirement": "required",
+          "format": { "kind": "enum", "values": ["true"] },
+          "description": "Google documents `partial_failure` as required, and the upload guides say to always send true.",
+          "fix_hint": "Set `partialFailure` to `true`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "conversions[]",
+      "params": [
+        {
+          "name": "conversionAction",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "It is the conversion action resource name, and every uploaded call conversion requires it.",
+          "fix_hint": "Set `conversionAction` to `customers/{id}/conversionActions/{id}`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "name": "callerId",
+          "requirement": "required",
+          "format": { "kind": "regex", "pattern": "^\\+[1-9][0-9]{6,14}$" },
+          "description": "It is the caller phone number. Google documents E.164 with a leading `+`.",
+          "fix_hint": "Send E.164, such as `+16502531234`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "name": "callStartDateTime",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"
+          },
+          "description": "Google documents the call start time as `yyyy-mm-dd hh:mm:ss+|-hh:mm`.",
+          "fix_hint": "Send a timestamp such as `2026-08-21 12:00:00+00:00`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "name": "conversionDateTime",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"
+          },
+          "description": "Google documents the conversion time with a timezone offset as `yyyy-mm-dd hh:mm:ss+|-hh:mm`. It must be after the call start.",
+          "fix_hint": "Send a timestamp such as `2026-08-21 12:05:00+00:00`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "name": "currencyCode",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "description": "It is an ISO 4217 currency code for `conversionValue`.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}

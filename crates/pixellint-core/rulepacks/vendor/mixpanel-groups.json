@@ -1,0 +1,127 @@
+{
+  "id": "vendor/mixpanel-groups",
+  "display_name": "Mixpanel groups",
+  "vendor": "mixpanel",
+  "description": "Mixpanel group profile updates posted to /groups. /track is vendor/mixpanel. /import is vendor/mixpanel-import. /engage is vendor/mixpanel-engage.",
+  "source_level": "official_vendor",
+  "docs": "https://docs.mixpanel.com/reference/group-set-property",
+  "match": {
+    "host_suffixes": ["mixpanel.com"],
+    "path_contains": ["/groups"],
+    "json_paths": [
+      "[].$token",
+      "[].$group_key",
+      "[].$group_id"
+    ]
+  },
+  "params": [
+    {
+      "name": "verbose",
+      "requirement": "recommended",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `verbose=1` so the 200 body says whether the update was accepted.",
+      "fix_hint": "Send `verbose=1` on `/groups` while you are implementing.",
+      "doc": "https://docs.mixpanel.com/reference/group-set-property"
+    },
+    {
+      "name": "strict",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `strict=1` so failed records are named in the response.",
+      "fix_hint": "Send `strict=1` to see per-record validation errors.",
+      "doc": "https://docs.mixpanel.com/reference/group-set-property"
+    },
+    {
+      "name": "ip",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `ip=0` on server-side calls so the group profile is not geolocated to your server.",
+      "fix_hint": "Send `ip=0` from a server.",
+      "doc": "https://docs.mixpanel.com/reference/group-set-property"
+    }
+  ],
+  "rules": [],
+  "body": [
+    {
+      "scope": "[]",
+      "params": [
+        {
+          "name": "$token",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel documents `$token` as required. It is the project token.",
+          "fix_hint": "Send the project token from Mixpanel project settings as `$token`.",
+          "doc": "https://docs.mixpanel.com/reference/group-set-property"
+        },
+        {
+          "name": "$group_key",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel documents `$group_key` as required. It is the group type, such as Company.",
+          "fix_hint": "Send the group key you configured in Mixpanel, such as `Company`.",
+          "doc": "https://docs.mixpanel.com/reference/group-set-property"
+        },
+        {
+          "name": "$group_id",
+          "requirement": "required",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel documents `$group_id` as required. It is the group instance, such as Acme.",
+          "fix_hint": "Send the id of this group, such as `acme`.",
+          "doc": "https://docs.mixpanel.com/reference/group-set-property"
+        },
+        {
+          "name": "$set",
+          "description": "Updates or adds group properties, creating the profile if needed.",
+          "doc": "https://docs.mixpanel.com/reference/group-set-property"
+        },
+        {
+          "name": "$set_once",
+          "description": "Sets group properties only when they are not already set.",
+          "doc": "https://docs.mixpanel.com/reference/group-set-property-once"
+        },
+        {
+          "name": "$add",
+          "description": "Increments numeric group properties.",
+          "doc": "https://docs.mixpanel.com/reference/group-batch-update"
+        },
+        {
+          "name": "$union",
+          "description": "Unions list group properties.",
+          "doc": "https://docs.mixpanel.com/reference/group-union"
+        },
+        {
+          "name": "$remove",
+          "description": "Removes values from list group properties.",
+          "doc": "https://docs.mixpanel.com/reference/group-batch-update"
+        },
+        {
+          "name": "$unset",
+          "description": "Unsets named group properties.",
+          "doc": "https://docs.mixpanel.com/reference/group-batch-update"
+        },
+        {
+          "name": "$delete",
+          "description": "Deletes the group profile.",
+          "doc": "https://docs.mixpanel.com/reference/group-batch-update"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.mixpanel-groups.body.operation_required",
+          "kind": "require_one_of",
+          "params": [
+            "$set",
+            "$set_once",
+            "$add",
+            "$union",
+            "$remove",
+            "$unset",
+            "$delete"
+          ],
+          "severity": "error",
+          "message": "The group update has no operation. Mixpanel documents `$set`, `$set_once`, `$add`, `$union`, `$remove`, `$unset`, or `$delete`.",
+          "fix_hint": "Send `$set` with the properties to write, or another documented groups operator.",
+          "doc": "https://docs.mixpanel.com/reference/group-set-property"
+        }
+      ]
+    }
+  ]
+}

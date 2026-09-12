@@ -90,6 +90,33 @@
         "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
       },
       {
+        "name": "click_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the Reddit click id. Reddit documents it as a match key and reads it from `event_source_url` when the field itself is omitted.",
+        "fix_hint": "Send the `rdt_cid` click id in `click_id`, or put it on `event_source_url`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "event_source_url",
+        "format": {
+          "kind": "url"
+        },
+        "description": "Reddit documents `event_source_url` as recommended on `WEBSITE` events so the domain can be extracted.",
+        "fix_hint": "Send the absolute page URL in `event_source_url`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "type.custom_event_name",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the custom event name. Reddit documents it as required when `tracking_type` is `CUSTOM`.",
+        "fix_hint": "Set `type.custom_event_name` to a name that is not a standard tracking type.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
         "name": "metadata.currency",
         "format": {
           "kind": "regex",
@@ -97,6 +124,73 @@
         },
         "description": "It is an ISO 4217 currency code.",
         "fix_hint": "Use the three-letter code, such as `USD`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.value",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the conversion value. Reddit documents `value` as strongly recommended on revenue events.",
+        "fix_hint": "Set `metadata.value` to the order total on `PURCHASE`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.conversion_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the id Reddit uses to deduplicate Pixel and CAPI events. Reddit strongly recommends it when both fire.",
+        "fix_hint": "Send the same `conversion_id` the Pixel sent.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.email",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the visitor email. Reddit accepts it unhashed or as SHA-256 hex.",
+        "fix_hint": "Send a canonical email, or the SHA-256 hex digest.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.phone_number",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the visitor phone number. Reddit accepts it unhashed or as SHA-256 hex.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.uuid",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the Reddit UUID match key. Reddit documents it for session-based deduplication against the Pixel.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.external_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is an advertiser-assigned identifier. Reddit documents it as a match key.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.idfa",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the iOS advertising id. Reddit documents it as a match key.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.aaid",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the Android advertising id. Reddit documents it as a match key.",
         "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
       },
       {
@@ -130,6 +224,57 @@
         "severity": "error",
         "message": "This field looks like a SHA-256 digest, but Reddit documents `user.ip_address` and `user.user_agent` as unhashed match keys.",
         "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "code": "vendor.reddit-conversions-api.body.match_key_required",
+        "kind": "require_one_of",
+        "params": [
+          "click_id",
+          "user.email",
+          "user.phone_number",
+          "user.uuid",
+          "user.external_id",
+          "user.ip_address",
+          "user.idfa",
+          "user.aaid"
+        ],
+        "severity": "error",
+        "message": "The event has no match key. Reddit documents match keys as required on each conversion so the event can be matched to a Reddit user.",
+        "fix_hint": "Send `click_id`, hashed or raw `user.email`, `user.phone_number`, `user.uuid`, `user.external_id`, `user.ip_address`, `user.idfa`, or `user.aaid`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "code": "vendor.reddit-conversions-api.body.website_requires_source_url",
+        "kind": "required_when_value",
+        "when": "action_source",
+        "equals": ["WEBSITE"],
+        "requires": ["event_source_url"],
+        "severity": "warning",
+        "message": "A `WEBSITE` event has no `event_source_url`. Reddit documents it as recommended so the domain can be extracted.",
+        "fix_hint": "Send the absolute page URL in `event_source_url`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "code": "vendor.reddit-conversions-api.body.custom_requires_name",
+        "kind": "required_when_value",
+        "when": "type.tracking_type",
+        "equals": ["CUSTOM"],
+        "requires": ["type.custom_event_name"],
+        "severity": "error",
+        "message": "A `CUSTOM` event has no `custom_event_name`. Reddit documents that field as the custom event's name.",
+        "fix_hint": "Set `type.custom_event_name` to a name that is not a standard tracking type.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "code": "vendor.reddit-conversions-api.body.purchase_requires_value",
+        "kind": "required_when_value",
+        "when": "type.tracking_type",
+        "equals": ["PURCHASE"],
+        "requires": ["metadata.value"],
+        "severity": "warning",
+        "message": "A `PURCHASE` event has no `metadata.value`. Reddit documents value as strongly recommended on revenue events.",
+        "fix_hint": "Set `metadata.value` to the order total.",
         "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
       }
     ]

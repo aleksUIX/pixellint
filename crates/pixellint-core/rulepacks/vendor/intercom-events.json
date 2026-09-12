@@ -1,0 +1,84 @@
+{
+  "id": "vendor/intercom-events",
+  "display_name": "Intercom Events API",
+  "description": "Data events posted to api.intercom.io/events. The Messenger loader is vendor/intercom.",
+  "vendor": "intercom",
+  "source_level": "official_vendor",
+  "docs": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+  "match": {
+    "hosts": ["api.intercom.io"],
+    "path_prefixes": ["/events"],
+    "json_paths": [
+      {
+        "any_of": ["event_name", "created_at"]
+      },
+      {
+        "path": "data_source_id",
+        "excludes": ".+"
+      },
+      {
+        "path": "event_time_epoch",
+        "excludes": ".+"
+      },
+      {
+        "path": "customer",
+        "excludes": ".+"
+      }
+    ]
+  },
+  "body": {
+    "params": [
+      {
+        "name": "event_name",
+        "requirement": "required",
+        "format": { "kind": "non_empty" },
+        "description": "It is the name of the event. Intercom documents it as required.",
+        "fix_hint": "Set `event_name` to a past-tense verb-noun, such as `placed-order`.",
+        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+      },
+      {
+        "name": "created_at",
+        "requirement": "required",
+        "format": { "kind": "integer", "min_digits": 10, "max_digits": 10 },
+        "description": "Intercom documents `created_at` as a UTC Unix timestamp in seconds. A 13-digit value is milliseconds.",
+        "fix_hint": "Send seconds since epoch, a 10-digit integer.",
+        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+      },
+      {
+        "name": "user_id",
+        "format": { "kind": "non_empty" },
+        "description": "It is your identifier for the user. Intercom requires `user_id`, `email`, or `id`.",
+        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+      },
+      {
+        "name": "email",
+        "format": { "kind": "non_empty" },
+        "description": "It is the user's email when email is how you identify contacts.",
+        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+      },
+      {
+        "name": "id",
+        "format": { "kind": "non_empty" },
+        "description": "It is Intercom's contact id. Required for leads when `user_id` and `email` are absent.",
+        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+      },
+      {
+        "name": "intercom_user_id",
+        "format": { "kind": "non_empty" },
+        "description": "It is Intercom's identifier for the user.",
+        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.intercom-events.body.contact_identifier_required",
+        "kind": "require_one_of",
+        "params": ["user_id", "email", "id", "intercom_user_id"],
+        "severity": "error",
+        "message": "The event has no contact identifier. Intercom documents `user_id`, `email`, or `id` as required.",
+        "fix_hint": "Send `user_id`, `email`, or Intercom's `id`.",
+        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+      }
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "vendor/cloudflare",
+  "display_name": "Cloudflare Web Analytics beacon",
+  "vendor": "cloudflare",
+  "description": "Cloudflare Web Analytics beacon on static.cloudflareinsights.com/beacon.min.js. GTM and query installs put the site token on the URL. Automatic injection puts it in data-cf-beacon instead. POST /cdn-cgi/rum is not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.cloudflare.com/web-analytics/faq/",
+  "match": {
+    "hosts": ["static.cloudflareinsights.com"],
+    "path_contains": ["beacon.min.js"]
+  },
+  "params": [
+    {
+      "name": "token",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Web Analytics site token. Cloudflare documents the GTM install as `beacon.min.js?token=`. Automatic injection sends the same token in `data-cf-beacon`, not the query.",
+      "fix_hint": "For a tag-manager install, put the site token on the query as `token=`.",
+      "doc": "https://developers.cloudflare.com/web-analytics/faq/"
+    },
+    {
+      "name": "spa",
+      "format": { "kind": "enum", "values": ["true", "false"] },
+      "description": "Cloudflare documents `spa` on the beacon query for single-page apps.",
+      "fix_hint": "Send `spa=false` or `spa=true` when you set it.",
+      "doc": "https://developers.cloudflare.com/web-analytics/faq/"
+    }
+  ],
+  "rules": []
+}

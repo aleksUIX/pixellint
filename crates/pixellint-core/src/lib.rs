@@ -39,6 +39,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/adobe-analytics.json"),
     ),
     (
+        "vendor/adobe-web-sdk",
+        include_str!("../rulepacks/vendor/adobe-web-sdk.json"),
+    ),
+    (
         "vendor/amazon-ads",
         include_str!("../rulepacks/vendor/amazon-ads.json"),
     ),
@@ -51,6 +55,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/amplitude.json"),
     ),
     (
+        "vendor/amplitude-group-identify",
+        include_str!("../rulepacks/vendor/amplitude-group-identify.json"),
+    ),
+    (
+        "vendor/amplitude-identify",
+        include_str!("../rulepacks/vendor/amplitude-identify.json"),
+    ),
+    (
         "vendor/appsflyer",
         include_str!("../rulepacks/vendor/appsflyer.json"),
     ),
@@ -59,6 +71,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/appsflyer-onelink-impression.json"),
     ),
     ("vendor/awin", include_str!("../rulepacks/vendor/awin.json")),
+    (
+        "vendor/awin-mastertag",
+        include_str!("../rulepacks/vendor/awin-mastertag.json"),
+    ),
     (
         "vendor/baidu",
         include_str!("../rulepacks/vendor/baidu.json"),
@@ -84,6 +100,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/chartbeat.json"),
     ),
     ("vendor/cj", include_str!("../rulepacks/vendor/cj.json")),
+    (
+        "vendor/cloudflare",
+        include_str!("../rulepacks/vendor/cloudflare.json"),
+    ),
     (
         "vendor/cm360-tracking-ad",
         include_str!("../rulepacks/vendor/cm360-tracking-ad.json"),
@@ -113,8 +133,16 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/google-ads-conversion.json"),
     ),
     (
+        "vendor/google-ads-call-conversions",
+        include_str!("../rulepacks/vendor/google-ads-call-conversions.json"),
+    ),
+    (
         "vendor/google-ads-click-conversions",
         include_str!("../rulepacks/vendor/google-ads-click-conversions.json"),
+    ),
+    (
+        "vendor/google-ads-conversion-adjustments",
+        include_str!("../rulepacks/vendor/google-ads-conversion-adjustments.json"),
     ),
     (
         "vendor/google-analytics",
@@ -129,6 +157,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/google-tag-manager.json"),
     ),
     ("vendor/heap", include_str!("../rulepacks/vendor/heap.json")),
+    (
+        "vendor/heap-classic",
+        include_str!("../rulepacks/vendor/heap-classic.json"),
+    ),
+    (
+        "vendor/heap-track",
+        include_str!("../rulepacks/vendor/heap-track.json"),
+    ),
     (
         "vendor/hotjar",
         include_str!("../rulepacks/vendor/hotjar.json"),
@@ -146,8 +182,16 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/impact.json"),
     ),
     (
+        "vendor/impact-conversions",
+        include_str!("../rulepacks/vendor/impact-conversions.json"),
+    ),
+    (
         "vendor/intercom",
         include_str!("../rulepacks/vendor/intercom.json"),
+    ),
+    (
+        "vendor/intercom-events",
+        include_str!("../rulepacks/vendor/intercom-events.json"),
     ),
     (
         "vendor/ispot",
@@ -169,6 +213,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/linkedin-conversions-api",
         include_str!("../rulepacks/vendor/linkedin-conversions-api.json"),
+    ),
+    (
+        "vendor/liveramp-envelope",
+        include_str!("../rulepacks/vendor/liveramp-envelope.json"),
+    ),
+    (
+        "vendor/liveramp-envelope-refresh",
+        include_str!("../rulepacks/vendor/liveramp-envelope-refresh.json"),
     ),
     (
         "vendor/matomo",
@@ -196,6 +248,18 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/mixpanel.json"),
     ),
     (
+        "vendor/mixpanel-import",
+        include_str!("../rulepacks/vendor/mixpanel-import.json"),
+    ),
+    (
+        "vendor/mixpanel-engage",
+        include_str!("../rulepacks/vendor/mixpanel-engage.json"),
+    ),
+    (
+        "vendor/mixpanel-groups",
+        include_str!("../rulepacks/vendor/mixpanel-groups.json"),
+    ),
+    (
         "vendor/mouseflow",
         include_str!("../rulepacks/vendor/mouseflow.json"),
     ),
@@ -218,6 +282,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/parsely",
         include_str!("../rulepacks/vendor/parsely.json"),
+    ),
+    (
+        "vendor/parsely-collect",
+        include_str!("../rulepacks/vendor/parsely-collect.json"),
     ),
     (
         "vendor/partnerize",
@@ -276,6 +344,18 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/taboola.json"),
     ),
     (
+        "vendor/taboola-s2s",
+        include_str!("../rulepacks/vendor/taboola-s2s.json"),
+    ),
+    (
+        "vendor/taboola-s2s-bulk",
+        include_str!("../rulepacks/vendor/taboola-s2s-bulk.json"),
+    ),
+    (
+        "vendor/taboola-unip",
+        include_str!("../rulepacks/vendor/taboola-unip.json"),
+    ),
+    (
         "vendor/the-trade-desk",
         include_str!("../rulepacks/vendor/the-trade-desk.json"),
     ),
@@ -286,6 +366,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/tiktok-events-api",
         include_str!("../rulepacks/vendor/tiktok-events-api.json"),
+    ),
+    (
+        "vendor/tiktok-events-2",
+        include_str!("../rulepacks/vendor/tiktok-events-2.json"),
     ),
     ("vendor/x", include_str!("../rulepacks/vendor/x.json")),
     (
@@ -299,6 +383,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/yandex-metrica",
         include_str!("../rulepacks/vendor/yandex-metrica.json"),
+    ),
+    (
+        "vendor/yandex-watch",
+        include_str!("../rulepacks/vendor/yandex-watch.json"),
     ),
 ];
 

@@ -1,0 +1,94 @@
+{
+  "id": "vendor/impact-conversions",
+  "display_name": "impact.com Conversions API",
+  "description": "Server-to-server conversion submissions to api.impact.com/Advertisers/{AccountSID}/Conversions. The UTT loader is vendor/impact.",
+  "vendor": "impact",
+  "source_level": "official_vendor",
+  "docs": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation",
+  "path_pattern": "/Advertisers/(?<account_sid>[^/]+)/Conversions",
+  "match": {
+    "hosts": ["api.impact.com"],
+    "path_contains": ["/Conversions"]
+  },
+  "params": [
+    {
+      "name": "account_sid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the impact.com Account SID in the path as `/Advertisers/{AccountSID}/Conversions`.",
+      "fix_hint": "Put the Account SID from impact.com in the path.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "CampaignId",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the program id. impact.com documents `CampaignId` as always required.",
+      "fix_hint": "Set `CampaignId` to the numeric program id.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "ActionTrackerId",
+      "format": { "kind": "integer" },
+      "description": "It is the event type id. impact.com documents it as required unless `EventTypeCode` or `EventTypeId` is sent.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "EventTypeId",
+      "format": { "kind": "integer" },
+      "description": "It is the event type id. An alternative to `ActionTrackerId`.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "EventTypeCode",
+      "format": { "kind": "non_empty" },
+      "description": "It is the event type code. An alternative to `ActionTrackerId`.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "EventDate",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+      },
+      "description": "impact.com documents `EventDate` as the conversion time in ISO 8601.",
+      "fix_hint": "Send ISO 8601, such as `2026-08-01T23:55:24-08:00`.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "OrderId",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the unique order id. impact.com uses it for deduplication.",
+      "fix_hint": "Set `OrderId` to the order reference.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "ClickId",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the impact.com click id from `im_ref`. Required unless another attribution parameter is sent.",
+      "fix_hint": "Replay the stored `im_ref` click id as `ClickId`.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CurrencyCode",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+      "description": "It is the ISO 4217 currency of the conversion.",
+      "fix_hint": "Use the three-letter code, such as `USD`.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.impact-conversions.event_type_required",
+      "kind": "require_one_of",
+      "params": ["ActionTrackerId", "EventTypeId", "EventTypeCode"],
+      "severity": "error",
+      "message": "The conversion has no event type. impact.com documents `ActionTrackerId`, `EventTypeId`, or `EventTypeCode` as required.",
+      "fix_hint": "Send `EventTypeId` or `ActionTrackerId` from Settings, Event Types.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    }
+  ]
+}
