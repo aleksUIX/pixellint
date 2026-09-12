@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.20.0 - 2026-09-11
+
 ### Added
 
 - `vendor/adobe-ecid`, covering Adobe Visitor ID Service `dpm.demdex.net/id`:
