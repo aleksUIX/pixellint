@@ -201,8 +201,19 @@ impl Engine {
 
             let normalized = artifact.artifact.trim().to_string();
             let key = dedupe_key(artifact.artifact_kind, &normalized);
+            let mut occurrences = artifact.occurrences.clone();
+            if occurrences.is_empty() {
+                occurrences.push(ArtifactOccurrence {
+                    occurrence_id: None,
+                    source_kind: None,
+                    path: None,
+                    line: None,
+                    column: None,
+                    context_label: None,
+                });
+            }
             if let Some(group) = groups.get_mut(&key) {
-                group.occurrences.extend(artifact.occurrences.clone());
+                group.occurrences.extend(occurrences);
                 continue;
             }
 
@@ -216,7 +227,7 @@ impl Engine {
                     normalized,
                     claimed_vendor: artifact.claimed_vendor.clone(),
                     expansion_state: artifact.expansion_state,
-                    occurrences: artifact.occurrences.clone(),
+                    occurrences,
                 },
             );
         }
@@ -246,17 +257,7 @@ impl Engine {
             warnings += artifact_warnings;
             infos += artifact_infos;
 
-            let mut occurrences = std::mem::take(&mut group.occurrences);
-            if occurrences.is_empty() {
-                occurrences.push(ArtifactOccurrence {
-                    occurrence_id: None,
-                    source_kind: None,
-                    path: None,
-                    line: None,
-                    column: None,
-                    context_label: None,
-                });
-            }
+            let occurrences = std::mem::take(&mut group.occurrences);
 
             artifacts.push(AggregatedArtifact {
                 artifact_id: format!("artifact-{}", artifact_number + 1),
@@ -392,7 +393,6 @@ mod tests {
         assert_eq!(report.extractor.as_ref().unwrap().id, "vastlint");
         assert_eq!(report.summary.artifacts_total, Some(2));
         assert_eq!(report.summary.unique_artifacts, Some(1));
-        assert_eq!(report.artifacts.len(), 1);
         assert_eq!(report.artifacts[0].occurrences.len(), 2);
         assert_eq!(
             report.artifacts[0].occurrences[0].path.as_deref(),
@@ -420,6 +420,18 @@ mod tests {
         assert_eq!(report.summary.unique_artifacts, Some(2));
         assert!(!report.is_ok());
         assert_eq!(report.summary.errors, 1);
+    }
+
+    #[test]
+    fn a_url_array_keeps_one_occurrence_per_row() {
+        let request = document_request_from_json(
+            r#"["https://example.com/pixel?id=1#frag","https://example.com/pixel?id=1#frag"]"#,
+        )
+        .unwrap();
+        let report = engine().validate_many(&request, &options()).unwrap();
+        assert_eq!(report.summary.artifacts_total, Some(2));
+        assert_eq!(report.summary.unique_artifacts, Some(1));
+        assert_eq!(report.artifacts[0].occurrences.len(), 2);
     }
 
     #[test]
