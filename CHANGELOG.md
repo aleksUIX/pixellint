@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.25.0 - 2026-09-11
+
 ### Added
 
 - `vendor/iqm`, covering IQM Pixel conversion scripts on
