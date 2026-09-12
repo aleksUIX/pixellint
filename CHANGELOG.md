@@ -6,6 +6,22 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/xandr`, covering Microsoft Monetize conversion pixels on
+  `ib.adnxs.com/px` and `secure.adnxs.com/px`: required integer `id`,
+  and `t` as `1` (JavaScript) or `2` (image). Numerical `value` when
+  present. Cookie sync and RTB on the same hosts are not contracted.
+- `vendor/xandr-sspx`, covering server-side conversion
+  `sspx-router.adnxs.com/sspx` and `secure.adnxs.com/sspx`: required
+  integer `id` and `sspdata`. Browser `/px` stays `vendor/xandr`.
+- `vendor/kevel`, covering Kevel `e-{networkId}.adzerk.net/i.gif` and
+  `/e.gif`: required shim `e` and signature `s`. Click redirects on
+  `/r` are not contracted.
+- `vendor/kantar`, covering Kantar
+  `secure.insightexpressai.com/adServer/adServerESI.aspx`: required
+  integer `bannerID`. ART19 documents the generated tag shape.
+
 ## 0.22.0 - 2026-09-11
 
 ### Added

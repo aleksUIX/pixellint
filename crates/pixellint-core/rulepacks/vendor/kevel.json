@@ -1,0 +1,31 @@
+{
+  "id": "vendor/kevel",
+  "display_name": "Kevel tracking pixel",
+  "vendor": "adzerk",
+  "description": "Kevel impression and custom-event pixels on e-{networkId}.adzerk.net/i.gif and /e.gif. Kevel documents e as the encoded shim and s as the signature. Click redirects on /r are not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server",
+  "match": {
+    "host_suffixes": ["adzerk.net"],
+    "paths": ["/i.gif", "/e.gif"]
+  },
+  "params": [
+    {
+      "name": "e",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the base64 encoded event shim. Kevel documents e as unique to the event.",
+      "fix_hint": "Send e from the Decision API impressionUrl or events[].url. Do not invent it.",
+      "doc": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server"
+    },
+    {
+      "name": "s",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the signature that verifies the shim. Kevel documents s on every tracking pixel.",
+      "fix_hint": "Send s from the same Decision API URL as e.",
+      "doc": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server"
+    }
+  ],
+  "rules": []
+}

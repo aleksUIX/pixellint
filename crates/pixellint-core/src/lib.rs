@@ -240,6 +240,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/ispot-conversion.json"),
     ),
     (
+        "vendor/kantar",
+        include_str!("../rulepacks/vendor/kantar.json"),
+    ),
+    (
+        "vendor/kevel",
+        include_str!("../rulepacks/vendor/kevel.json"),
+    ),
+    (
         "vendor/klaviyo",
         include_str!("../rulepacks/vendor/klaviyo.json"),
     ),
@@ -449,6 +457,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/x-conversions-api",
         include_str!("../rulepacks/vendor/x-conversions-api.json"),
+    ),
+    (
+        "vendor/xandr",
+        include_str!("../rulepacks/vendor/xandr.json"),
+    ),
+    (
+        "vendor/xandr-sspx",
+        include_str!("../rulepacks/vendor/xandr-sspx.json"),
     ),
     (
         "vendor/yahoo-conversions-api",

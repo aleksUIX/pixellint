@@ -2005,6 +2005,62 @@ Dot image pixels stay `vendor/yahoo-dot`. Product CAPI, which requires
 
 Source: [Standard Yahoo Conversion API](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api).
 
+## `vendor/xandr`
+
+Microsoft Monetize conversion pixels on `ib.adnxs.com/px` and
+`secure.adnxs.com/px`. Level: `official_vendor`. Server-side `/sspx` is
+`vendor/xandr-sspx`. Cookie sync and RTB on the same hosts are not
+contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `id` | Required integer conversion pixel ID | `vendor.xandr.param.id.missing`, `.empty`, `.invalid` |
+| `t` | Required `1` (JavaScript) or `2` (image) | `vendor.xandr.param.t.missing`, `.empty`, `.invalid` |
+| `value` | Optional numerical revenue, no currency symbol | `vendor.xandr.param.value.empty`, `.invalid` |
+| `consent` | Optional `0` or `1` when TCF is not used | `vendor.xandr.param.consent.empty`, `.invalid` |
+
+Sources: [Conversion Pixels Advanced](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced),
+[Test a Conversion Pixel](https://learn.microsoft.com/en-us/xandr/monetize/test-conversion-pixel-and-attribution).
+
+## `vendor/xandr-sspx`
+
+Microsoft Monetize server-side conversion pixels on
+`sspx-router.adnxs.com/sspx` and `secure.adnxs.com/sspx`. Level:
+`official_vendor`. Browser `/px` stays `vendor/xandr`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `id` | Required integer conversion pixel ID | `vendor.xandr-sspx.param.id.missing`, `.empty`, `.invalid` |
+| `sspdata` | Required SSP landing-page token | `vendor.xandr-sspx.param.sspdata.missing`, `.empty` |
+| `value` | Optional numerical revenue, no currency symbol | `vendor.xandr-sspx.param.value.empty`, `.invalid` |
+
+Source: [Server-Side Conversion Pixels](https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels).
+
+## `vendor/kevel`
+
+Kevel impression and custom-event pixels on
+`e-{networkId}.adzerk.net/i.gif` and `/e.gif`. Level: `official_vendor`.
+Click redirects on `/r` are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `e` | Required encoded event shim | `vendor.kevel.param.e.missing`, `.empty` |
+| `s` | Required signature | `vendor.kevel.param.s.missing`, `.empty` |
+
+Source: [Proxying events through your own server](https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server).
+
+## `vendor/kantar`
+
+Kantar InsightExpress measurement tags on
+`secure.insightexpressai.com/adServer/adServerESI.aspx`. Level:
+`ecosystem_reference`. Other Kantar paths are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `bannerID` | Required integer banner ID | `vendor.kantar.param.bannerID.missing`, `.empty`, `.invalid` |
+
+Source: [Setting Up 3rd Party Measurement - Kantar](https://art19.zendesk.com/hc/en-us/articles/360051178412-Setting-Up-3rd-Party-Measurement-Kantar).
+
 ## Vendor directory
 
 The directory attributes endpoints no rulepack claims. It asserts only that a

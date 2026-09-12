@@ -1,0 +1,45 @@
+{
+  "id": "vendor/xandr-sspx",
+  "display_name": "Xandr server-side conversion pixel",
+  "vendor": "xandr",
+  "description": "Microsoft Monetize server-side conversion pixels on sspx-router.adnxs.com/sspx and secure.adnxs.com/sspx. Microsoft documents id as the pixel ID and sspdata as the landing-page token. Browser /px stays vendor/xandr.",
+  "source_level": "official_vendor",
+  "docs": "https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels",
+  "match": {
+    "hosts": ["sspx-router.adnxs.com", "secure.adnxs.com"],
+    "paths": ["/sspx"]
+  },
+  "params": [
+    {
+      "name": "id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the Monetize conversion pixel ID. Microsoft documents id on every SSPX call.",
+      "fix_hint": "Set id to the conversion pixel ID from Monetize.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels"
+    },
+    {
+      "name": "sspdata",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the SSP token from the landing page. Microsoft documents sspdata as the populated ${SSP_DATA} value.",
+      "fix_hint": "Set sspdata to the token the landing page received after the click.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels"
+    },
+    {
+      "name": "order_id",
+      "format": { "kind": "non_empty" },
+      "description": "It is an order ID or SKU. Microsoft documents the same order_id field as on the browser pixel.",
+      "fix_hint": "Set order_id before sspdata when you pass an order or SKU.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels"
+    },
+    {
+      "name": "value",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "description": "It is the dynamic revenue. Microsoft documents a purely numerical value on conversion pixels.",
+      "fix_hint": "Set value to a number with no currency symbol, such as 10 or 10.50.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    }
+  ],
+  "rules": []
+}

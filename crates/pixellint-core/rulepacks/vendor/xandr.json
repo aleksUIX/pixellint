@@ -1,0 +1,52 @@
+{
+  "id": "vendor/xandr",
+  "display_name": "Xandr conversion pixel",
+  "vendor": "xandr",
+  "description": "Microsoft Monetize conversion pixels on ib.adnxs.com/px and secure.adnxs.com/px. Microsoft documents id as the pixel ID and t as 1 for JavaScript or 2 for image. Server-side /sspx is vendor/xandr-sspx. Cookie sync and RTB on the same hosts are not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced",
+  "match": {
+    "hosts": ["ib.adnxs.com", "secure.adnxs.com"],
+    "paths": ["/px"]
+  },
+  "params": [
+    {
+      "name": "id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the Monetize conversion pixel ID. Microsoft documents id on every exported conversion pixel.",
+      "fix_hint": "Set id to the conversion pixel ID from Monetize.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    },
+    {
+      "name": "t",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["1", "2"] },
+      "description": "It is the pixel type. Microsoft documents t=1 for JavaScript and t=2 for image.",
+      "fix_hint": "Set t=2 on an image pixel, or t=1 on a JavaScript pixel.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/test-conversion-pixel-and-attribution"
+    },
+    {
+      "name": "order_id",
+      "format": { "kind": "non_empty" },
+      "description": "It is an order ID or SKU. Microsoft documents a 36 character limit, with letters and numbers.",
+      "fix_hint": "Set order_id to the order or SKU, at most 36 characters.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    },
+    {
+      "name": "value",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "description": "It is the dynamic revenue. Microsoft documents a purely numerical value, so 10 is valid and $10 is not.",
+      "fix_hint": "Set value to a number with no currency symbol, such as 10 or 10.50.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    },
+    {
+      "name": "consent",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "It is binary consent when TCF signals are not available. Microsoft documents 1 for granted and 0 for denied.",
+      "fix_hint": "Send consent=1 when the user granted consent, or consent=0 when they denied it.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    }
+  ],
+  "rules": []
+}
