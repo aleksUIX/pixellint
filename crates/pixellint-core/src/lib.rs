@@ -145,6 +145,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/drift.json"),
     ),
     (
+        "vendor/flashtalking",
+        include_str!("../rulepacks/vendor/flashtalking.json"),
+    ),
+    (
         "vendor/floodlight",
         include_str!("../rulepacks/vendor/floodlight.json"),
     ),
@@ -215,6 +219,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/ias-video.json"),
     ),
     ("vendor/id5", include_str!("../rulepacks/vendor/id5.json")),
+    (
+        "vendor/id5-ctv",
+        include_str!("../rulepacks/vendor/id5-ctv.json"),
+    ),
     (
         "vendor/impact",
         include_str!("../rulepacks/vendor/impact.json"),
@@ -332,6 +340,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/nielsen",
         include_str!("../rulepacks/vendor/nielsen.json"),
+    ),
+    (
+        "vendor/nielsen-audit",
+        include_str!("../rulepacks/vendor/nielsen-audit.json"),
     ),
     (
         "vendor/onetrust",

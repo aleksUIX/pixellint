@@ -6,6 +6,21 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/id5-ctv`, covering ID5 CTV S2S `api.id5-sync.com/gc/v1`:
+  required `partner`, `ts`, `appid`, `ver`, `ip`, and `ua`. SHA-256
+  `hem` when present. Mobile in-app `/ga/v1` stays `vendor/id5`.
+  Cookie sync on `/i/` and `/s/` is not contracted.
+- `vendor/nielsen-audit`, covering Nielsen ads audit pings on
+  `audit.imrworldwide.com/cgi-bin/gn`: required `prd=audit`, `intid`,
+  `sessionid`, `product`, and Unix `createtm`. DCR cfg stays
+  `vendor/nielsen`. DCR measurement `/cgi-bin/gn` is not contracted.
+- `vendor/flashtalking`, covering Flashtalking OneTag containers on
+  `servedby.flashtalking.com/container/{advertiserId};{spotlightId};{spotlightGroupId};`:
+  required integer path IDs. Tealium documents that generated snippet
+  shape. Other Flashtalking hosts are not contracted.
+
 ## 0.23.0 - 2026-09-11
 
 ### Added

@@ -1,19 +1,19 @@
 {
-  "id": "vendor/id5",
-  "display_name": "ID5 mobile in-app S2S",
+  "id": "vendor/id5-ctv",
+  "display_name": "ID5 CTV S2S",
   "vendor": "id5",
-  "description": "ID5 mobile in-app server-to-server fetch on api.id5-sync.com/ga/v1. Cookie sync on /i/ and /s/ is not contracted. CTV /gc/v1 is vendor/id5-ctv.",
+  "description": "ID5 CTV server-to-server fetch on api.id5-sync.com/gc/v1. ID5 documents partner, ts, appid, ver, ip, and ua as required. Mobile in-app /ga/v1 is vendor/id5. Cookie sync on /i/ and /s/ is not contracted.",
   "source_level": "official_vendor",
-  "docs": "https://wiki.id5.io/docs/mobile-in-app-integration",
+  "docs": "https://wiki.id5.io/docs/ctv-integration",
   "match": {
     "hosts": ["api.id5-sync.com"],
-    "path_prefixes": ["/ga/v1"],
+    "path_prefixes": ["/gc/v1"],
     "json_paths": [
       {
-        "any_of": ["partner", "ts", "bundle", "hem", "ua"]
+        "any_of": ["appid", "partner", "ts"]
       },
       {
-        "path": "appid",
+        "path": "bundle",
         "excludes": ".+"
       }
     ]
@@ -24,9 +24,9 @@
         "name": "partner",
         "requirement": "required",
         "format": { "kind": "integer" },
-        "description": "It is the ID5 Partner Number. ID5 documents partner as required on /ga/v1.",
+        "description": "It is the ID5 Partner Number. ID5 documents partner as required on /gc/v1.",
         "fix_hint": "Set partner to the Partner Number ID5 issued. Use 173 only while testing.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       },
       {
         "name": "ts",
@@ -34,15 +34,15 @@
         "format": { "kind": "non_empty" },
         "description": "It is the request timestamp. ID5 documents ts as required, as an ISO-8601 string with a time zone offset.",
         "fix_hint": "Set ts to an ISO-8601 timestamp with offset, such as 2013-02-01T12:52:34+09:00.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       },
       {
-        "name": "bundle",
+        "name": "appid",
         "requirement": "required",
         "format": { "kind": "non_empty" },
-        "description": "It is the app identifier. ID5 documents bundle as required: package name on Android, numeric ID on iOS.",
-        "fix_hint": "Set bundle to the app package name or iOS numeric ID.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "description": "It is the store ID of the app. ID5 documents appid as required on /gc/v1.",
+        "fix_hint": "Set appid to the Apple App Store, Google Play, or equivalent store ID.",
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       },
       {
         "name": "ver",
@@ -50,7 +50,7 @@
         "format": { "kind": "non_empty" },
         "description": "It is the application version. ID5 documents ver as required.",
         "fix_hint": "Set ver to the app version string.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       },
       {
         "name": "ip",
@@ -58,7 +58,7 @@
         "format": { "kind": "non_empty" },
         "description": "It is the IPv4 address closest to the device. ID5 documents ip as required.",
         "fix_hint": "Send the device-facing IPv4 address, unhashed.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       },
       {
         "name": "ua",
@@ -66,32 +66,32 @@
         "format": { "kind": "non_empty" },
         "description": "It is the device default-browser user agent. ID5 documents ua as required.",
         "fix_hint": "Send the raw user agent string, unhashed.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       },
       {
         "name": "hem",
         "format": { "kind": "hex", "length": 64 },
         "description": "It is a SHA-256 hash of the cleansed email. ID5 documents hem as sha256 when present.",
         "fix_hint": "Cleanse the email, hash it with SHA-256, and send 64 lowercase hex characters.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       },
       {
         "name": "phone",
         "format": { "kind": "hex", "length": 64 },
         "description": "It is a SHA-256 hash of the cleansed phone number.",
         "fix_hint": "Cleanse the phone number, hash it with SHA-256, and send 64 lowercase hex characters.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       }
     ],
     "rules": [
       {
-        "code": "vendor.id5.body.unhashed_email",
+        "code": "vendor.id5-ctv.body.unhashed_email",
         "kind": "forbid_value_pattern",
         "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
         "severity": "error",
         "message": "A field carries what looks like a raw email address. ID5 documents hem as a SHA-256 digest of a cleansed email.",
         "fix_hint": "Cleanse the email, hash it with SHA-256, and send it as hem.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        "doc": "https://wiki.id5.io/docs/ctv-integration"
       }
     ]
   }

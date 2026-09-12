@@ -71,7 +71,7 @@ VENDORS = {
     "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "rtb0.doubleverify.com"], None),
     "ias": ("Integral Ad Science", "verification", ["pixel.adsafeprotected.com", "static.adsafeprotected.com", "dt.adsafeprotected.com"], "vendor/ias"),
     "moat": ("Oracle Moat", "verification", ["px.moatads.com", "z.moatads.com", "js.moatads.com"], None),
-    "nielsen": ("Nielsen", "measurement", ["secure-dcr.imrworldwide.com", "secure-gl.imrworldwide.com"], None),
+    "nielsen": ("Nielsen", "measurement", ["audit.imrworldwide.com", "secure-dcr.imrworldwide.com", "secure-gl.imrworldwide.com"], "vendor/nielsen"),
     "kantar": ("Kantar", "measurement", ["secure.insightexpressai.com"], "vendor/kantar"),
     "comscore": ("Comscore", "measurement", ["sb.scorecardresearch.com", "b.scorecardresearch.com"], None),
     "ispot": ("iSpot.tv", "measurement", ["pi.ispot.tv", "pt.ispot.tv"], "vendor/ispot"),

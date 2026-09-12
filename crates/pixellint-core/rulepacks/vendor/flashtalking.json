@@ -1,0 +1,40 @@
+{
+  "id": "vendor/flashtalking",
+  "display_name": "Flashtalking OneTag",
+  "vendor": "flashtalking",
+  "description": "Flashtalking OneTag Spotlight containers on servedby.flashtalking.com/container/{advertiserId};{spotlightId};{spotlightGroupId};. The three IDs ride in the path. Tealium documents that generated snippet shape. Other Flashtalking hosts are not contracted.",
+  "source_level": "ecosystem_reference",
+  "docs": "https://docs.tealium.com/client-side-tags/flashtalking-onetag-tag/",
+  "path_pattern": "/container/(?<advertiser_id>[^;]*);(?<spotlight_id>[^;]*);(?<spotlight_group_id>[^;]*);",
+  "match": {
+    "hosts": ["servedby.flashtalking.com"],
+    "path_contains": ["/container/"]
+  },
+  "params": [
+    {
+      "name": "advertiser_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the Flashtalking advertiser ID. Tealium documents it as the number just after /container/ in the generated snippet.",
+      "fix_hint": "Copy the OneTag from Flashtalking so the path is /container/{advertiserId};{spotlightId};{spotlightGroupId};.",
+      "doc": "https://docs.tealium.com/client-side-tags/flashtalking-onetag-tag/"
+    },
+    {
+      "name": "spotlight_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the Spotlight ID. Tealium documents it as the number just after the advertiser ID.",
+      "fix_hint": "Keep the second semicolon-delimited integer from the generated OneTag.",
+      "doc": "https://docs.tealium.com/client-side-tags/flashtalking-onetag-tag/"
+    },
+    {
+      "name": "spotlight_group_id",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the Spotlight Group ID. Tealium documents it as the number just after the Spotlight ID.",
+      "fix_hint": "Keep the third semicolon-delimited integer from the generated OneTag.",
+      "doc": "https://docs.tealium.com/client-side-tags/flashtalking-onetag-tag/"
+    }
+  ],
+  "rules": []
+}

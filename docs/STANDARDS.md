@@ -1848,8 +1848,8 @@ Source: [Tracking and Consent JavaScript API](https://developer.salesforce.com/b
 ## `vendor/nielsen`
 
 Nielsen DCR SDK hello ping on `secure-dcr.imrworldwide.com/cgi-bin/cfg`.
-Level: `official_vendor`. Measurement pings on `/cgi-bin/gn` are not
-contracted.
+Level: `official_vendor`. Ads audit pings are `vendor/nielsen-audit`. DCR
+measurement pings on `/cgi-bin/gn` are not contracted.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -1969,7 +1969,7 @@ Source: [Cookie Consent Manager Professional Implementation Guide](https://conse
 
 ID5 mobile in-app S2S on `api.id5-sync.com/ga/v1`. Level:
 `official_vendor`. Cookie sync on `/i/` and `/s/` is not contracted. CTV
-`/gc/v1` is not contracted.
+`/gc/v1` is `vendor/id5-ctv`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -2060,6 +2060,58 @@ Kantar InsightExpress measurement tags on
 | `bannerID` | Required integer banner ID | `vendor.kantar.param.bannerID.missing`, `.empty`, `.invalid` |
 
 Source: [Setting Up 3rd Party Measurement - Kantar](https://art19.zendesk.com/hc/en-us/articles/360051178412-Setting-Up-3rd-Party-Measurement-Kantar).
+
+## `vendor/id5-ctv`
+
+ID5 CTV S2S on `api.id5-sync.com/gc/v1`. Level: `official_vendor`. Mobile
+in-app `/ga/v1` stays `vendor/id5`. Cookie sync on `/i/` and `/s/` is not
+contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `partner` | Required integer Partner Number | `vendor.id5-ctv.body.partner.missing`, `.empty`, `.invalid` |
+| `ts` | Required timestamp | `vendor.id5-ctv.body.ts.missing`, `.empty` |
+| `appid` | Required store ID | `vendor.id5-ctv.body.appid.missing`, `.empty` |
+| `ver` | Required app version | `vendor.id5-ctv.body.ver.missing`, `.empty` |
+| `ip` | Required IPv4 closest to the device | `vendor.id5-ctv.body.ip.missing`, `.empty` |
+| `ua` | Required user agent | `vendor.id5-ctv.body.ua.missing`, `.empty` |
+| `hem` | Optional SHA-256 hashed email | `vendor.id5-ctv.body.hem.empty`, `.invalid` |
+| `phone` | Optional SHA-256 hashed phone | `vendor.id5-ctv.body.phone.empty`, `.invalid` |
+| unhashed email | Forbidden | `vendor.id5-ctv.body.unhashed_email` |
+
+Source: [CTV Integration](https://wiki.id5.io/docs/ctv-integration).
+
+## `vendor/nielsen-audit`
+
+Nielsen ads audit pings on `audit.imrworldwide.com/cgi-bin/gn`. Level:
+`official_vendor`. DCR cfg hello pings stay `vendor/nielsen`. DCR
+measurement `/cgi-bin/gn` on `secure-dcr` and `secure-gl` is not
+contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `prd` | Required `audit` | `vendor.nielsen-audit.param.prd.missing`, `.empty`, `.invalid` |
+| `intid` | Required integration ID | `vendor.nielsen-audit.param.intid.missing`, `.empty` |
+| `sessionid` | Required session ID | `vendor.nielsen-audit.param.sessionid.missing`, `.empty` |
+| `product` | Required product name | `vendor.nielsen-audit.param.product.missing`, `.empty` |
+| `createtm` | Required Unix timestamp | `vendor.nielsen-audit.param.createtm.missing`, `.empty`, `.invalid` |
+| `apid` | Recommended App ID, required only for content measurement | `vendor.nielsen-audit.param.apid.missing`, `.empty` |
+
+Source: [Digital Measurement Ads Audit Beacon](https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon).
+
+## `vendor/flashtalking`
+
+Flashtalking OneTag Spotlight containers on
+`servedby.flashtalking.com/container/{advertiserId};{spotlightId};{spotlightGroupId};`.
+Level: `ecosystem_reference`. Other Flashtalking hosts are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `advertiser_id` | Required integer advertiser ID in the path | `vendor.flashtalking.param.advertiser_id.missing`, `.empty`, `.invalid` |
+| `spotlight_id` | Required integer Spotlight ID in the path | `vendor.flashtalking.param.spotlight_id.missing`, `.empty`, `.invalid` |
+| `spotlight_group_id` | Required integer Spotlight Group ID in the path | `vendor.flashtalking.param.spotlight_group_id.missing`, `.empty`, `.invalid` |
+
+Source: [Flashtalking OneTag Tag Setup Guide](https://docs.tealium.com/client-side-tags/flashtalking-onetag-tag/).
 
 ## Vendor directory
 

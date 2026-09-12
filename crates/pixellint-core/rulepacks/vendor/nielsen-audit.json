@@ -1,0 +1,63 @@
+{
+  "id": "vendor/nielsen-audit",
+  "display_name": "Nielsen ads audit ping",
+  "vendor": "nielsen",
+  "description": "Nielsen Digital Measurement ads audit pings on audit.imrworldwide.com/cgi-bin/gn. Nielsen documents prd=audit, intid, sessionid, product, and createtm as mandatory. DCR cfg hello pings stay vendor/nielsen.",
+  "source_level": "official_vendor",
+  "docs": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
+  "match": {
+    "hosts": ["audit.imrworldwide.com"],
+    "path_prefixes": ["/cgi-bin/gn"]
+  },
+  "params": [
+    {
+      "name": "prd",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["audit"] },
+      "description": "It marks the request as an audit ping. Nielsen documents the ads audit URL as /cgi-bin/gn?prd=audit.",
+      "fix_hint": "Set prd=audit on every ads audit ping.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+    },
+    {
+      "name": "intid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the integration ID Nielsen assigns for all audit pings across platforms.",
+      "fix_hint": "Set intid to the integration ID Nielsen issued.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+    },
+    {
+      "name": "sessionid",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the session ID generated when the player is instantiated. Nielsen documents it as mandatory.",
+      "fix_hint": "Send a stable sessionid for the playback session, and fire again if it changes.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+    },
+    {
+      "name": "product",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It names the Nielsen product the ping corresponds to. Nielsen documents examples dar, dcr, and dtvr.",
+      "fix_hint": "Set product to the Nielsen product for this integration, such as dar, dcr, or dtvr.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+    },
+    {
+      "name": "createtm",
+      "requirement": "required",
+      "format": { "kind": "integer" },
+      "description": "It is the time the ping was fired. Nielsen documents createtm as Unix time.",
+      "fix_hint": "Set createtm to the Unix timestamp when the ping fired, such as 1643858542.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+    },
+    {
+      "name": "apid",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Nielsen Server App ID. Nielsen documents apid as required only for content measurement.",
+      "fix_hint": "Send apid when this audit ping is for content measurement.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+    }
+  ],
+  "rules": []
+}
