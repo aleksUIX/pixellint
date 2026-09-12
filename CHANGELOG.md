@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.19.0 - 2026-09-11
+
 ### Added
 
 - `vendor/tiktok-events-2`, covering Events API 2.0 `/event/track/`: required
