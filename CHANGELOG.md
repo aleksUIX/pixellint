@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.24.0 - 2026-09-11
+
 ### Added
 
 - `vendor/id5-ctv`, covering ID5 CTV S2S `api.id5-sync.com/gc/v1`:
