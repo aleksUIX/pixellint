@@ -3,6 +3,7 @@
 export const memory: WebAssembly.Memory;
 export const rulepacks: () => [number, number, number];
 export const validate: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => [number, number, number];
+export const validate_many: (a: number, b: number) => [number, number, number];
 export const validate_url: (a: number, b: number) => [number, number, number];
 export const vendor_for_host: (a: number, b: number) => [number, number, number];
 export const vendors: () => [number, number, number];

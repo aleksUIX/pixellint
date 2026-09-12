@@ -13,6 +13,12 @@ export function rulepacks(): any;
 export function validate(artifact_kind: string, artifact: string, expansion_state?: string | null, claimed_vendor?: string | null): any;
 
 /**
+ * Validates extracted artifacts as one document. The caller already pulled
+ * tracking URLs out. A JSON array of URL strings is a list of `url` artifacts.
+ */
+export function validate_many(document_json: string): any;
+
+/**
  * Validates a URL artifact with default options, the common case.
  */
 export function validate_url(artifact: string): any;

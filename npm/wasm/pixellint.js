@@ -40,6 +40,23 @@ function validate(artifact_kind, artifact, expansion_state, claimed_vendor) {
 exports.validate = validate;
 
 /**
+ * Validates extracted artifacts as one document. The caller already pulled
+ * tracking URLs out. A JSON array of URL strings is a list of `url` artifacts.
+ * @param {string} document_json
+ * @returns {any}
+ */
+function validate_many(document_json) {
+    const ptr0 = passStringToWasm0(document_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.validate_many(ptr0, len0);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return takeFromExternrefTable0(ret[0]);
+}
+exports.validate_many = validate_many;
+
+/**
  * Validates a URL artifact with default options, the common case.
  * @param {string} artifact
  * @returns {any}
