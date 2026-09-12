@@ -1,0 +1,55 @@
+{
+  "id": "vendor/freewheel",
+  "display_name": "FreeWheel ad request",
+  "vendor": "freewheel",
+  "description": "FreeWheel GET ad requests on *.v.fwmrm.net/ad/g/. FreeWheel documents nw as required from setNetwork, and setServer as /ad/g/1. Custom site section ids ride as csid; FreeWheel ids ride as ssid. Player profile is prof. Slot sections after a semicolon are not contracted. StickyAds cdn.stickyadstv.com, impression hops, and RTB are not this pack.",
+  "source_level": "official_vendor",
+  "docs": "https://vi.freewheel.tv/static/api_docs/html5/",
+  "match": {
+    "host_suffixes": ["v.fwmrm.net"],
+    "path_prefixes": ["/ad/g/"]
+  },
+  "params": [
+    {
+      "name": "nw",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the distributor network ID. FreeWheel documents setNetwork as required, and that call sets nw on the ad request.",
+      "fix_hint": "Set nw to the network ID from your FreeWheel sales engineer.",
+      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+    },
+    {
+      "name": "csid",
+      "format": { "kind": "non_empty" },
+      "description": "It is a custom site section ID. FreeWheel setSiteSection with a custom id sets csid. FreeWheel ids use ssid instead.",
+      "fix_hint": "Send csid for a custom site section, or ssid for a FreeWheel site section id.",
+      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+    },
+    {
+      "name": "ssid",
+      "format": { "kind": "non_empty" },
+      "description": "It is a FreeWheel site section ID. FreeWheel setSiteSection with a FreeWheel id sets ssid.",
+      "fix_hint": "Send ssid for a FreeWheel site section id, or csid for a custom one.",
+      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+    },
+    {
+      "name": "prof",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the player profile. FreeWheel setProfile sets prof on the ad request. Uplynk documents ad.prof as required on the constructed GET.",
+      "fix_hint": "Send prof as the player profile from FreeWheel, such as 14611:Vod.",
+      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.freewheel.site_section_required",
+      "kind": "require_one_of",
+      "params": ["csid", "ssid"],
+      "severity": "error",
+      "message": "The ad request has neither csid nor ssid. FreeWheel setSiteSection sets one of the two. Uplynk documents csid when locationDesc is undefined.",
+      "fix_hint": "Send csid for a custom site section, or ssid for a FreeWheel site section id.",
+      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+    }
+  ]
+}

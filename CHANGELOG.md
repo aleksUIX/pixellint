@@ -6,6 +6,17 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.28.0 - 2026-09-12
+
+### Added
+
+- `vendor/freewheel`, covering FreeWheel GET ad requests on
+  `*.v.fwmrm.net/ad/g/`: required `nw`, one of `csid` or `ssid`, and
+  recommended `prof`. FreeWheel documents `setNetwork` as required and
+  `setServer` as `/ad/g/1`. Uplynk documents the constructed GET table.
+  Slot sections after a semicolon, `/ad/p/`, StickyAds
+  `cdn.stickyadstv.com`, impression hops, and RTB are not contracted.
+
 ## 0.27.0 - 2026-09-12
 
 ### Added

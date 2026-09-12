@@ -1915,6 +1915,26 @@ this hop.
 
 Source: [Add macros to third-party display ad tags](https://support.google.com/displayvideo/answer/2591756).
 
+## `vendor/freewheel`
+
+FreeWheel GET ad requests on `*.v.fwmrm.net/ad/g/`. Level: `official_vendor`.
+FreeWheel documents `setNetwork` as required (`nw`) and `setServer` as
+`/ad/g/1`. `setSiteSection` sets `csid` or `ssid`. `setProfile` sets `prof`.
+Uplynk documents the constructed GET as
+`http://[customerId].v.fwmrm.net/ad/g/1?[globalParams];[keyValues];[slotParams]`,
+with `nw` required and `csid` required when `locationDesc` is undefined. Slot
+sections after a semicolon are not contracted. `/ad/p/`, StickyAds
+`cdn.stickyadstv.com`, impression hops, and RTB are not contracted.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `nw` | Required distributor network ID | `vendor.freewheel.param.nw.missing`, `.empty` |
+| Site section | One of `csid` or `ssid` | `vendor.freewheel.site_section_required` |
+| `prof` | Recommended player profile | `vendor.freewheel.param.prof.missing`, `.empty` |
+
+Sources: [FreeWheel HTML5 SDK](https://vi.freewheel.tv/static/api_docs/html5/),
+[Uplynk FreeWheel ad requests](https://docs.uplynk.com/docs/freewheel).
+
 ## `vendor/ias`
 
 IAS Signal display tag on
@@ -2222,6 +2242,9 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
   no published pixel query. InnovidXP impression pixels are
   `[collector].tvsquared.com/impression` (Innovid handbook), a different host
   family, not contracted.
+- StickyAds (`cdn.stickyadstv.com`). Spiked 2026-09-12. No published HTTP table
+  on that host. FreeWheel GET `/ad/g/` on `*.v.fwmrm.net` is
+  `vendor/freewheel`.
 - TikTok collect POST `analytics.tiktok.com/api/v2/pixel`. No published body.
   The loader is `vendor/tiktok`.
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling

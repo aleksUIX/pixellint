@@ -157,6 +157,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/floodlight.json"),
     ),
     (
+        "vendor/freewheel",
+        include_str!("../rulepacks/vendor/freewheel.json"),
+    ),
+    (
         "vendor/google-ad-manager",
         include_str!("../rulepacks/vendor/google-ad-manager.json"),
     ),

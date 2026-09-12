@@ -78,7 +78,7 @@ VENDORS = {
     "ispot": ("iSpot.tv", "measurement", ["pi.ispot.tv", "pt.ispot.tv"], "vendor/ispot"),
     "quantcast": ("Quantcast", "measurement", ["pixel.quantserve.com", "secure.quantserve.com"], None),
     "innovid": ("Innovid", "video", ["dts.innovid.com", "static.innovid.com"], None),
-    "freewheel": ("FreeWheel", "video", ["bea4.v.fwmrm.net", "cdn.stickyadstv.com"], None),
+    "freewheel": ("FreeWheel", "video", ["v.fwmrm.net", "cdn.stickyadstv.com"], "vendor/freewheel"),
 
     # Product and web analytics
     "adobe_analytics": ("Adobe Analytics", "analytics", ["sc.omtrdc.net", "smetrics.adobe.com", "assets.adobedtm.com", "edge.adobedc.net", "server.adobedc.net"], "vendor/adobe-analytics"),
