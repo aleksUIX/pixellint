@@ -69,6 +69,18 @@ pub fn validate(
     to_js(&summary)
 }
 
+/// Validates extracted artifacts as one document. The caller already pulled
+/// tracking URLs out. A JSON array of URL strings is a list of `url` artifacts.
+#[wasm_bindgen]
+pub fn validate_many(document_json: &str) -> Result<JsValue, JsValue> {
+    let request = pixellint_core::document_request_from_json(document_json)
+        .map_err(|error| JsValue::from_str(&error))?;
+    let report = Engine::default()
+        .validate_many(&request, &ValidationOptions::default())
+        .map_err(|error| JsValue::from_str(&error.to_string()))?;
+    to_js(&report)
+}
+
 /// Validates a URL artifact with default options, the common case.
 #[wasm_bindgen]
 pub fn validate_url(artifact: &str) -> Result<JsValue, JsValue> {

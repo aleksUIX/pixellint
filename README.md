@@ -84,6 +84,17 @@ pixellint validate postback @conversion-endpoint.txt --json
 curl -s "$TAG_URL" | pixellint validate vast -
 ```
 
+Callers that already extracted many URLs (Vastlint, an HTML adapter) pass them
+as a document. Identical values validate once:
+
+```bash
+pixellint validate-many @extracted.json --json
+```
+
+`extracted.json` is the wrapper in
+[docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), or a JSON array
+of URL strings. Pixellint does not parse VAST, HTML, or GTM.
+
 If the artifact is still a template with unexpanded macros, say so, and macro
 rules adjust:
 

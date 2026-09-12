@@ -10,7 +10,7 @@ npm install pixellint
 ```
 
 ```js
-import { validate, isOk } from "pixellint";
+import { validate, isOk, validateMany } from "pixellint";
 
 const pixel = validate("https://www.facebook.com/tr?ev=Purchase");
 isOk(pixel); // false: missing Pixel ID
@@ -22,6 +22,12 @@ const capi = validate(
   { kind: "json" },
 );
 isOk(capi); // false: event_time is milliseconds, Meta wants seconds
+
+const document = validateMany([
+  "https://example.com/pixel?id=1#frag",
+  "https://example.com/pixel?id=1#frag",
+]);
+document.summary.unique_artifacts; // 1
 ```
 
 Every finding carries a stable `code`, a `severity`, a `fix_hint`, the byte
@@ -50,6 +56,7 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 | Function | Returns |
 | --- | --- |
 | `validate(artifact, options?)` | The full validation summary |
+| `validateMany(document)` | Document report for extracted artifacts |
 | `isOk(summary)` | `false` when any error-severity finding is present |
 | `rulepacks()` | Every rulepack with its evidence level |
 | `vendors()` | The vendor endpoint directory |

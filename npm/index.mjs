@@ -22,6 +22,14 @@ export function validate(artifact, options = {}) {
   return wasm.validate(kind, artifact, state, vendor);
 }
 
+/**
+ * Validate extracted artifacts as one document.
+ * @param {object|Array} document - MULTI_ARTIFACT_SCHEMA object, or an array of URL strings.
+ */
+export function validateMany(document) {
+  return wasm.validate_many(JSON.stringify(document));
+}
+
 /** Rulepacks this build ships, with their evidence levels. */
 export function rulepacks() {
   return wasm.rulepacks();

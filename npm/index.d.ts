@@ -83,6 +83,45 @@ export interface ValidateOptions {
 /** Validate a measurement artifact against every applicable rulepack. */
 export function validate(artifact: string, options?: ValidateOptions): ValidationSummary;
 
+export interface FindingCounts {
+  artifacts_total?: number;
+  unique_artifacts?: number;
+  errors: number;
+  warnings: number;
+  infos: number;
+}
+
+export interface ArtifactOccurrence {
+  occurrence_id?: string | null;
+  source_kind?: string | null;
+  path?: string | null;
+  line?: number | null;
+  column?: number | null;
+  context_label?: string | null;
+}
+
+export interface AggregatedArtifact {
+  artifact_id: string;
+  dedupe_key: string;
+  artifact_kind: ArtifactKind;
+  raw_artifact: string;
+  normalized_artifact: string;
+  ok: boolean;
+  summary: FindingCounts;
+  reports: ValidationReport[];
+  occurrences: ArtifactOccurrence[];
+}
+
+export interface DocumentReport {
+  document_kind: string;
+  extractor?: { id: string; version?: string | null };
+  summary: FindingCounts;
+  artifacts: AggregatedArtifact[];
+}
+
+/** Validate extracted artifacts as one document. The caller already extracted URLs. */
+export function validateMany(document: object | string[]): DocumentReport;
+
 /** True when no error-severity finding is present. */
 export function isOk(summary: ValidationSummary): boolean;
 

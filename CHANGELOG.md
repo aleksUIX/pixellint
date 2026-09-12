@@ -6,6 +6,16 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.29.0 - 2026-09-12
+
+### Added
+
+- `Engine::validate_many` and `pixellint validate-many`, wrapping extracted
+  artifacts into the document result in `docs/MULTI_ARTIFACT_SCHEMA.md`.
+  Identical URLs validate once. Occurrences stay attached. Core still does not
+  parse VAST, HTML, or GTM. A JSON array of URL strings is a `list`. npm
+  `validateMany` wraps the same engine. MCP `validate_document` is still later.
+
 ## 0.28.0 - 2026-09-12
 
 ### Added

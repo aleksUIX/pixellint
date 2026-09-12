@@ -157,22 +157,20 @@ Examples:
 
 Pixellint itself should stay neutral about extraction in the core.
 
-## Recommended API Evolution
+## Implemented API
 
-1. Keep `validate(request)` unchanged.
-2. Add a future `validate_many(requests)` wrapper at the library or surface layer.
-3. Add a future `validate_document` MCP tool only after the extractor contract is stable.
+1. `validate(request)` is unchanged.
+2. `Engine::validate_many` plus `pixellint validate-many` wrap extracted artifacts.
+   npm `validateMany` is the same wrapper. A JSON array of URL strings is a
+   `list` of `url` artifacts.
+3. `validate_document` as an MCP tool stays later, until extractors settle.
 
-## Recommended MCP / CLI Behavior
-
-For document-level validation, future surfaces should return:
+The CLI and library return:
 
 - one document summary
 - one aggregated artifact result per unique artifact
 - one occurrence list per artifact
-- one per-finding target list when available
-
-That gives both machine-readable dedupe and human-readable debugging.
+- one per-finding target list when the single-artifact engine produced targets
 
 ## Minimal Example
 
@@ -232,6 +230,7 @@ That gives both machine-readable dedupe and human-readable debugging.
 
 ## Recommendation
 
-Adopt this schema design before building parameter-heavy vendor rulepacks.
+Callers that extract tracking URLs (Vastlint, an HTML adapter) should emit this
+wrapper and call `validate-many`. Pixellint does not parse the source document.
 
 Without per-artifact provenance and per-finding component targeting, future rules will be hard to debug and hard to trust in multi-pixel documents.

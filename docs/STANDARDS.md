@@ -2248,9 +2248,12 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
 - TikTok collect POST `analytics.tiktok.com/api/v2/pixel`. No published body.
   The loader is `vendor/tiktok`.
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling
-- Duplicate or conflicting artifacts across a document
+- Duplicate or conflicting artifacts across a document, beyond the
+  `validate-many` dedupe of identical extracted URLs
 - Document extraction: Pixellint validates artifacts a caller has already
   extracted. `html`, `js`, and `gtm` are not validation kinds.
+  `validate-many` wraps those extracted URLs. VAST XML parsing stays in
+  Vastlint.
 - VAST XML semantics beyond the tracking URLs a caller passes in
 
 Those belong in future vendor packs, in the document-level model described in

@@ -10,8 +10,8 @@ use std::io::{self, Read};
 use std::process::ExitCode;
 
 use pixellint_core::{
-    ArtifactKind, Engine, ExpansionState, RuleSourceLevel, Severity, ValidationOptions,
-    ValidationRequest, ValidationSummary,
+    ArtifactKind, DocumentReport, Engine, ExpansionState, RuleSourceLevel, Severity,
+    ValidationOptions, ValidationRequest, ValidationSummary, document_request_from_json,
 };
 
 const USAGE_EXIT: u8 = 2;
@@ -50,6 +50,7 @@ fn main() -> ExitCode {
         [command, rest @ ..] if command == "list-rulepacks" => run_list_rulepacks(rest),
         [command, rest @ ..] if command == "list-vendors" => run_list_vendors(rest),
         [command, rest @ ..] if command == "validate" => run_validate(rest),
+        [command, rest @ ..] if command == "validate-many" => run_validate_many(rest),
         [command, ..] => {
             eprintln!("unknown command: {command}");
             print_usage();
@@ -181,6 +182,48 @@ fn run_validate(args: &[String]) -> ExitCode {
                 ExitCode::FAILURE
             } else {
                 ExitCode::SUCCESS
+            }
+        }
+        Err(error) => usage_error(&error.to_string()),
+    }
+}
+
+fn run_validate_many(args: &[String]) -> ExitCode {
+    let [input, rest @ ..] = args else {
+        print_usage();
+        return ExitCode::from(USAGE_EXIT);
+    };
+
+    let raw = match read_artifact(input) {
+        Ok(raw) => raw,
+        Err(message) => return usage_error(&message),
+    };
+
+    let request = match document_request_from_json(&raw) {
+        Ok(request) => request,
+        Err(message) => return usage_error(&message),
+    };
+
+    let options = match parse_cli_options(rest) {
+        Ok(options) => options,
+        Err(message) => return usage_error(&message),
+    };
+
+    let engine = match build_engine(&options) {
+        Ok(engine) => engine,
+        Err(message) => return usage_error(&message),
+    };
+
+    match engine.validate_many(&request, &options.validation) {
+        Ok(report) => {
+            if let Err(error) = emit_document(&report, options.output_format) {
+                return usage_error(&error.to_string());
+            }
+
+            if report.is_ok() {
+                ExitCode::SUCCESS
+            } else {
+                ExitCode::FAILURE
             }
         }
         Err(error) => usage_error(&error.to_string()),
@@ -325,12 +368,29 @@ fn emit_summary(
     }
 }
 
-fn print_summary(summary: &ValidationSummary) {
+fn emit_document(
+    report: &DocumentReport,
+    output_format: OutputFormat,
+) -> Result<(), serde_json::Error> {
+    match output_format {
+        OutputFormat::Text => {
+            print_document(report);
+            Ok(())
+        }
+        OutputFormat::Json => {
+            let payload = serde_json::to_string_pretty(report)?;
+            println!("{payload}");
+            Ok(())
+        }
+    }
+}
+
+fn print_reports(reports: &[pixellint_core::ValidationReport]) -> (usize, usize, usize) {
     let mut errors = 0;
     let mut warnings = 0;
     let mut infos = 0;
 
-    for report in &summary.reports {
+    for report in reports {
         match &report.detected_vendor {
             Some(vendor) => println!("rulepack: {} (vendor: {vendor})", report.plugin_id),
             None => println!("rulepack: {}", report.plugin_id),
@@ -365,9 +425,48 @@ fn print_summary(summary: &ValidationSummary) {
         }
     }
 
+    (errors, warnings, infos)
+}
+
+fn print_summary(summary: &ValidationSummary) {
+    let (errors, warnings, infos) = print_reports(&summary.reports);
     println!(
         "\n{errors} error(s), {warnings} warning(s), {infos} info message(s) across {} rulepack(s).",
         summary.reports.len()
+    );
+}
+
+fn print_document(report: &DocumentReport) {
+    println!(
+        "document: {} ({} artifact(s), {} unique)",
+        report.document_kind,
+        report.summary.artifacts_total.unwrap_or(0),
+        report.summary.unique_artifacts.unwrap_or(0)
+    );
+    if let Some(extractor) = &report.extractor {
+        match &extractor.version {
+            Some(version) => println!("extractor: {} {version}", extractor.id),
+            None => println!("extractor: {}", extractor.id),
+        }
+    }
+
+    for artifact in &report.artifacts {
+        println!();
+        println!(
+            "{} ({} occurrence(s)) {}",
+            artifact.artifact_id,
+            artifact.occurrences.len(),
+            artifact.normalized_artifact
+        );
+        print_reports(&artifact.reports);
+    }
+
+    println!(
+        "\n{} error(s), {} warning(s), {} info message(s) across {} unique artifact(s).",
+        report.summary.errors,
+        report.summary.warnings,
+        report.summary.infos,
+        report.artifacts.len()
     );
 }
 
@@ -405,6 +504,7 @@ Spec-first validator for pixels, postbacks, and other measurement artifacts.
 
 USAGE
   pixellint validate <kind> <artifact> [options]
+  pixellint validate-many <document> [options]
   pixellint list-rulepacks [--json] [--rulepack-file <path>]...
   pixellint list-vendors [--json]
   pixellint help
@@ -415,6 +515,10 @@ KINDS
 
 ARTIFACT
   inline value, @path to read a file, or - to read stdin
+
+DOCUMENT
+  JSON object from MULTI_ARTIFACT_SCHEMA.md, or a JSON array of URL strings.
+  Extract tracking URLs first. Pixellint does not parse VAST, HTML, or GTM.
 
 OPTIONS
   --json                  Machine-readable output

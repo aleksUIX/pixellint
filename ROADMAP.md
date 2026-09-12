@@ -45,6 +45,9 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   [pixellint.org](https://pixellint.org)
 - GitHub Action in this repo (`uses: aleksUIX/pixellint@<tag>`). Prebuilt musl
   / macOS CLI tarballs on GitHub Releases
+- `Engine::validate_many` and `pixellint validate-many`: callers extract
+  artifacts, Pixellint returns one document report with unique artifacts and
+  occurrences. Schema: [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md)
 
 ## Next
 
@@ -59,9 +62,6 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   exists. Spiked 2026-09-12: none published. FreeWheel GET `/ad/g/` is
   `vendor/freewheel`.
 - Community-contributed directory entries and corrections
-- Document-level results: the wrapper described in
-  [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), so callers
-  that extract many artifacts get one coherent report
 - Deterministic autofix for the mechanical findings, behind an explicit flag
 - Duplicate and conflict detection across a set of artifacts
 

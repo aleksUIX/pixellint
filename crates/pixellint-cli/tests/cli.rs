@@ -71,6 +71,8 @@ fn usage_problems_exit_two() {
         vec!["validate", "url", "https://example.com/pixel", "--nope"],
         vec!["validate", "url", "https://example.com/pixel", "--state"],
         vec!["validate", "url", "@/definitely/missing/fixture.txt"],
+        vec!["validate-many"],
+        vec!["validate-many", "{nope"],
         vec!["frobnicate"],
         vec![],
     ] {
@@ -289,4 +291,38 @@ fn unknown_endpoints_are_attributed_to_their_vendor() {
         "directory",
     ]);
     assert!(!stdout.contains("directory"), "{stdout}");
+}
+
+#[test]
+fn validate_many_dedupes_and_exits_on_errors() {
+    let (code, stdout, _) = run(&[
+        "validate-many",
+        r#"{"document_kind":"vast","artifacts":[{"artifact":"https://example.com/pixel?id=1#frag","occurrences":[{"path":"/Impression[1]"}]},{"artifact":"https://example.com/pixel?id=1#frag","occurrences":[{"path":"/Tracking[3]"}]},{"artifact":"https://www.facebook.com/tr?ev=PageView"}]}"#,
+        "--json",
+    ]);
+
+    assert_eq!(code, 1, "{stdout}");
+    let report: serde_json::Value = serde_json::from_str(&stdout).expect("parse json");
+    assert_eq!(report["document_kind"], "vast");
+    assert_eq!(report["summary"]["artifacts_total"], 3);
+    assert_eq!(report["summary"]["unique_artifacts"], 2);
+    assert_eq!(
+        report["artifacts"][0]["occurrences"]
+            .as_array()
+            .unwrap()
+            .len(),
+        2
+    );
+    assert_eq!(report["artifacts"][0]["summary"]["warnings"], 1);
+    assert_eq!(report["summary"]["errors"], 1);
+}
+
+#[test]
+fn validate_many_rejects_html_items() {
+    let (code, _, stderr) = run(&[
+        "validate-many",
+        r#"[{"artifact_kind":"html","artifact":"<script src=https://example.com/px.js></script>"}]"#,
+    ]);
+    assert_eq!(code, 2, "{stderr}");
+    assert!(stderr.contains("html is not a validation kind"), "{stderr}");
 }

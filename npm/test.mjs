@@ -5,7 +5,7 @@
 
 import assert from "node:assert/strict";
 
-import { isOk, rulepacks, validate, vendorForHost, vendors, version } from "./index.mjs";
+import { isOk, rulepacks, validate, validateMany, vendorForHost, vendors, version } from "./index.mjs";
 
 const clean = validate("https://www.facebook.com/tr?id=1234567890123456&ev=PageView");
 assert.equal(isOk(clean), true, "a clean Meta pixel should pass");
@@ -74,5 +74,18 @@ assert.throws(
   () => validate("<script src=https://example.com/px.js></script>", { kind: "html" }),
   /not a validation kind/,
 );
+
+const many = validateMany({
+  document_kind: "vast",
+  artifacts: [
+    { artifact: "https://example.com/pixel?id=1#frag" },
+    { artifact: "https://example.com/pixel?id=1#frag" },
+    { artifact: "https://www.facebook.com/tr?ev=PageView" },
+  ],
+});
+assert.equal(many.summary.artifacts_total, 3);
+assert.equal(many.summary.unique_artifacts, 2);
+assert.equal(many.summary.errors, 1);
+assert.equal(many.artifacts[0].occurrences.length, 2);
 
 console.log(`pixellint ${version()}: npm smoke tests passed`);

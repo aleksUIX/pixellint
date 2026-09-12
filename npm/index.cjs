@@ -10,6 +10,10 @@ function validate(artifact, options = {}) {
   return wasm.validate(kind, artifact, state, vendor);
 }
 
+function validateMany(document) {
+  return wasm.validate_many(JSON.stringify(document));
+}
+
 function isOk(summary) {
   return summary.reports.every((report) =>
     report.violations.every((violation) => violation.severity !== "error"),
@@ -18,6 +22,7 @@ function isOk(summary) {
 
 module.exports = {
   validate,
+  validateMany,
   isOk,
   rulepacks: () => wasm.rulepacks(),
   vendors: () => wasm.vendors(),

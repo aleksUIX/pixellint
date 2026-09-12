@@ -8,11 +8,17 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 
 pub mod directory;
+pub mod document;
 mod json;
 pub mod manifest;
 mod privacy;
 
 pub use directory::{DIRECTORY_ID, DirectoryError, VendorDirectory, VendorEntry};
+pub use document::{
+    AggregatedArtifact, ArtifactOccurrence, DocumentArtifactInput, DocumentError,
+    DocumentExtractor, DocumentReport, DocumentRequest, FindingCounts, document_request_from_json,
+    document_request_from_value,
+};
 pub use manifest::{
     Assertion, ManifestError, ManifestRulePack, MatchSpec, PackRule, ParamContract, ParamStyle,
     Requirement, RulePackManifest, ValueFormat,
@@ -539,7 +545,7 @@ pub enum ArtifactKind {
     Unknown,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ExpansionState {
     #[default]
