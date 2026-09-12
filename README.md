@@ -206,6 +206,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/partnerize` | Partnerize conversion URL, campaign, clickref, and currency in the path | official vendor |
 | `vendor/amazon-ads` | Amazon Ad Tag conversion loader, Tag ID in the path | ecosystem reference |
 | `vendor/amazon-vfw` | Amazon DSP Firefly DV measurement, `vstevt` on `/dv/` | ecosystem reference |
+| `vendor/doubleverify` | DoubleVerify `visit.jpg` beacons, `ctx` `cmp` `plc` `sid` | ecosystem reference |
 | `vendor/outbrain` | Outbrain conversion pixel, ob_adv_id or ob_click_id | ecosystem reference |
 | `vendor/baidu` | Baidu Tongji collect `hm.gif?si=` | ecosystem reference |
 | `vendor/kwai` | Kwai Pixel loader, sdkid on s1.kwai.net | ecosystem reference |
@@ -247,7 +248,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover 127 endpoint families across 75 vendors. The vendor directory
+Rulepacks cover 128 endpoint families across 76 vendors. The vendor directory
 covers the rest by attribution: 119 vendor rows and 296 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 

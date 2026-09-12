@@ -6,6 +6,15 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/doubleverify`, covering DoubleVerify impression beacons on
+  `tps.doubleverify.com/visit.jpg` and `tpsc-video-*.doubleverify.com/visit.jpg`:
+  required `ctx`, `cmp`, `plc`, and `sid`. Google documents those names on the
+  generated wrapper as `dvparams`. OMID `dvtp_src.js`, RTB, VAST wrappers,
+  and `event.png` quartiles are not contracted. Amazon-hosted `/dv/` hops
+  stay `vendor/amazon-vfw`.
+
 ## 0.26.0 - 2026-09-12
 
 ### Changed

@@ -1895,6 +1895,26 @@ Lotame Lightning Tag on `tags.crwdcntrl.net/lt/c/{clientId}/lt.min.js`. Level:
 
 Source: [LT.js basic implementation](https://my.lotame.com/t/83hxvnt/lt-js-basic-implementation).
 
+## `vendor/doubleverify`
+
+DoubleVerify impression beacons on `tps.doubleverify.com/visit.jpg` and
+`tpsc-video-*.doubleverify.com/visit.jpg`. Level: `ecosystem_reference`.
+Google documents `ctx`, `cmp`, `plc`, and `sid` on the generated FlashTalking
+and DoubleVerify wrapper as `dvparams`. Those names ride on `visit.jpg`.
+OMID `cdn.doubleverify.com/dvtp_src.js`, RTB, VAST wrappers, and `event.png`
+quartiles are not contracted. Amazon-hosted `/dv/` hops are
+`vendor/amazon-vfw`. Microsoft Advertising DV is a Pinnacle link token, not
+this hop.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `ctx` | Required context or advertiser key | `vendor.doubleverify.param.ctx.missing`, `.empty` |
+| `cmp` | Required campaign key | `vendor.doubleverify.param.cmp.missing`, `.empty` |
+| `plc` | Required placement key | `vendor.doubleverify.param.plc.missing`, `.empty` |
+| `sid` | Required site or supply key. Names such as `turn` are legal | `vendor.doubleverify.param.sid.missing`, `.empty` |
+
+Source: [Add macros to third-party display ad tags](https://support.google.com/displayvideo/answer/2591756).
+
 ## `vendor/ias`
 
 IAS Signal display tag on
@@ -2194,6 +2214,14 @@ Full behavior: [VENDOR_DIRECTORY.md](VENDOR_DIRECTORY.md).
   2026-09-12. The loader has no pixel ID on the URL. Collection is a POST to
   `/p` without a published query or body. Snap Conversions API is
   `vendor/snapchat`.
+- Oracle Moat (`js.moatads.com`, `z.moatads.com/{name}/moatframe.js`,
+  `px.moatads.com`). Spiked 2026-09-12. Google Ad Manager OMID tells you to
+  obtain the script URL and VerificationParameters from Moat. No published
+  HTTP table. Path loaders stay attributed.
+- Innovid (`dts.innovid.com`, `s.innovid.com`). Spiked 2026-09-12. Ad serving,
+  no published pixel query. InnovidXP impression pixels are
+  `[collector].tvsquared.com/impression` (Innovid handbook), a different host
+  family, not contracted.
 - TikTok collect POST `analytics.tiktok.com/api/v2/pixel`. No published body.
   The loader is `vendor/tiktok`.
 - Macro vocabulary correctness per vendor, as opposed to generic macro handling

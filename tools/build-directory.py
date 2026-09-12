@@ -69,7 +69,7 @@ VENDORS = {
     "adobe_ecid": ("Adobe Experience Cloud ID Service", "identity", ["dpm.demdex.net"], "vendor/adobe-ecid"),
 
     # Verification and measurement
-    "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "rtb0.doubleverify.com"], None),
+    "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "rtb0.doubleverify.com"], "vendor/doubleverify"),
     "ias": ("Integral Ad Science", "verification", ["pixel.adsafeprotected.com", "static.adsafeprotected.com", "dt.adsafeprotected.com"], "vendor/ias"),
     "moat": ("Oracle Moat", "verification", ["px.moatads.com", "z.moatads.com", "js.moatads.com"], None),
     "nielsen": ("Nielsen", "measurement", ["audit.imrworldwide.com", "secure-dcr.imrworldwide.com", "secure-gl.imrworldwide.com"], "vendor/nielsen"),

@@ -12,7 +12,7 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - Declarative rulepack manifests: host and path matchers, parameter contracts,
   JSON body contracts, value formats, cross-parameter rules, and load-time
   validation including a citation requirement for vendor-documented rules
-- 127 first-party vendor packs: Meta Pixel and Conversions API, GA4
+- 128 first-party vendor packs: Meta Pixel and Conversions API, GA4
   Measurement Protocol and the browser `/g/collect` transport, Google Tag
   Manager and gtag.js, Google Ads conversion pixels and click conversion
   uploads, Campaign Manager Floodlight, Adobe Analytics, Pinterest Tag and
@@ -29,7 +29,8 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   CJ Affiliate conversion pixel, impact.com UTT, Rakuten Advertising conversion
   pixel, Partnerize conversion URLs, Microsoft Advertising Conversions API,
   Nextdoor Conversions API, Chartbeat pings, Heap configuration loaders,
-  Mouseflow project scripts, and Intercom Messenger loaders
+  Mouseflow project scripts, Intercom Messenger loaders, IAS Signal tags,
+  and DoubleVerify visit.jpg beacons
 - Vendor endpoint directory: hosts attributed by vendor, so endpoints without a
   matching pack still get identified, and vendors that do have a pack are
   marked as covered
@@ -51,8 +52,10 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   Cookie sync, RTB, and JS-only IDs stay attributed.
 - Snap Pixel stays attributed until a citable HTTP identifier exists on
   `scevent.min.js` or `tr.snapchat.com/p`. Spiked 2026-09-12: none published.
-- DoubleVerify, Moat, Innovid: pack only if a generated tag URL table exists
-  (same bar as IAS).
+- Moat and Innovid stay attributed until a citable HTTP table exists on the
+  directory hosts. Spiked 2026-09-12: none published. DoubleVerify visit.jpg
+  is `vendor/doubleverify`.
+- FreeWheel: pack only if a generated tag URL table exists.
 - Community-contributed directory entries and corrections
 - Document-level results: the wrapper described in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), so callers
