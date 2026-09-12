@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.27.0 - 2026-09-12
+
 ### Added
 
 - `vendor/doubleverify`, covering DoubleVerify impression beacons on
