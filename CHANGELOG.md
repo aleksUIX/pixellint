@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.21.0 - 2026-09-11
+
 ### Added
 
 - `vendor/didomi`, covering Didomi `sdk.privacy-center.org/{Public API Key}/loader.js`:
