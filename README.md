@@ -330,12 +330,24 @@ pixellint validate url 'https://px.acme.example/collect?ev=purchase' --rulepack-
 
 The format is documented in [docs/RULEPACK_SCHEMA.md](docs/RULEPACK_SCHEMA.md).
 
+Private pixels that only need a name, not a parameter contract, belong in a
+directory overlay:
+
+```bash
+pixellint validate url 'https://px.acme.example/collect' --directory-file extra.json
+```
+
+The overlay uses the same entry shape as the built-in directory. New hosts
+only; it cannot steal a first-party host. Contribute an upstream host through
+a PR: [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## What Pixellint does not do
 
 - It does not extract artifacts from documents. `html`, `js`, and `gtm` are
   not validation kinds; the CLI exits 2 if you pass them. Callers such as
   Vastlint parse VAST, HTML, or GTM containers and hand Pixellint the URLs they
-  found. The planned document-level result model is in
+  found. `pixellint validate-many` wraps those extracted URLs. The document
+  result model is in
   [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md).
 - It does not fire requests or check whether an endpoint responds.
 - It does not auto-fix. Findings carry fix hints; applying them is on you.

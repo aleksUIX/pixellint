@@ -27,6 +27,7 @@
 - Vendor packs are declarative manifests compiled into `pixellint-core` and interpreted by one `ManifestRulePack` plugin. 129 ship today, including conversion API JSON bodies where the vendor documents them.
 - A host directory attributes the long tail. It names the vendor and, when a first-party pack exists for that vendor, points at it. It never invents parameter rules.
 - User packs load from disk through `--rulepack-file` or `Engine::register_manifest_path`, using the same schema as the first-party packs.
+- Directory overlays load through `--directory-file` or `Engine::merge_directory`. New hosts only.
 - `pixellint` CLI exposes local QA and CI flows with JSON output and documented exit codes, including `validate-many` for extracted artifact lists.
 - `pixellint-mcp` exposes the same engine over newline-delimited JSON-RPC stdio (`validate_artifact`, `list_rulepacks`, `list_vendors`).
 - `pixellint-wasm` and the npm package wrap the same engine for Node and the browser playground (`validate`, `validateMany`).

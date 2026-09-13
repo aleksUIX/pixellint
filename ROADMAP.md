@@ -48,6 +48,9 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - `Engine::validate_many` and `pixellint validate-many`: callers extract
   artifacts, Pixellint returns one document report with unique artifacts and
   occurrences. Schema: [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md)
+- Directory overlays: `--directory-file` and `Engine::merge_directory` add
+  community or private hosts. They cannot steal a first-party host.
+  [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Next
 
@@ -61,7 +64,6 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - StickyAds (`cdn.stickyadstv.com`) stays attributed until a citable HTTP table
   exists. Spiked 2026-09-12: none published. FreeWheel GET `/ad/g/` is
   `vendor/freewheel`.
-- Community-contributed directory entries and corrections
 - Deterministic autofix for the mechanical findings, behind an explicit flag
 - Duplicate and conflict detection across a set of artifacts
 

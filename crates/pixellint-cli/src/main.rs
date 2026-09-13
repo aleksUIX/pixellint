@@ -11,7 +11,8 @@ use std::process::ExitCode;
 
 use pixellint_core::{
     ArtifactKind, DocumentReport, Engine, ExpansionState, RuleSourceLevel, Severity,
-    ValidationOptions, ValidationRequest, ValidationSummary, document_request_from_json,
+    ValidationOptions, ValidationRequest, ValidationSummary, VendorDirectory,
+    document_request_from_json,
 };
 
 const USAGE_EXIT: u8 = 2;
@@ -29,6 +30,7 @@ struct CliOptions {
     expansion_state: ExpansionState,
     claimed_vendor: Option<String>,
     rulepack_files: Vec<String>,
+    directory_files: Vec<String>,
 }
 
 fn main() -> ExitCode {
@@ -240,6 +242,13 @@ fn build_engine(options: &CliOptions) -> Result<Engine, String> {
             .map_err(|error| error.to_string())?;
     }
 
+    for path in &options.directory_files {
+        let extra = VendorDirectory::from_path(path).map_err(|error| error.to_string())?;
+        engine
+            .merge_directory(extra)
+            .map_err(|error| error.to_string())?;
+    }
+
     Ok(engine)
 }
 
@@ -300,6 +309,7 @@ fn parse_cli_options(args: &[String]) -> Result<CliOptions, String> {
     let mut expansion_state = ExpansionState::Unknown;
     let mut claimed_vendor = None;
     let mut rulepack_files = Vec::new();
+    let mut directory_files = Vec::new();
     let mut index = 0;
 
     while index < args.len() {
@@ -310,7 +320,8 @@ fn parse_cli_options(args: &[String]) -> Result<CliOptions, String> {
                 output_format = OutputFormat::Json;
                 index += 1;
             }
-            "--state" | "--rulepack" | "--except" | "--vendor" | "--rulepack-file" => {
+            "--state" | "--rulepack" | "--except" | "--vendor" | "--rulepack-file"
+            | "--directory-file" => {
                 let value = args
                     .get(index + 1)
                     .ok_or_else(|| format!("missing value for {argument}"))?;
@@ -320,7 +331,9 @@ fn parse_cli_options(args: &[String]) -> Result<CliOptions, String> {
                     "--rulepack" => validation.only_rulepacks.push(value.clone()),
                     "--except" => validation.except_rulepacks.push(value.clone()),
                     "--vendor" => claimed_vendor = Some(value.clone()),
-                    _ => rulepack_files.push(value.clone()),
+                    "--rulepack-file" => rulepack_files.push(value.clone()),
+                    "--directory-file" => directory_files.push(value.clone()),
+                    _ => unreachable!(),
                 }
 
                 index += 2;
@@ -337,6 +350,7 @@ fn parse_cli_options(args: &[String]) -> Result<CliOptions, String> {
         expansion_state,
         claimed_vendor,
         rulepack_files,
+        directory_files,
     })
 }
 
@@ -506,7 +520,7 @@ USAGE
   pixellint validate <kind> <artifact> [options]
   pixellint validate-many <document> [options]
   pixellint list-rulepacks [--json] [--rulepack-file <path>]...
-  pixellint list-vendors [--json]
+  pixellint list-vendors [--json] [--directory-file <path>]...
   pixellint help
   pixellint version
 
@@ -528,6 +542,7 @@ OPTIONS
                           selects endpoint attribution
   --except <id>           Skip these rulepacks (repeatable)
   --rulepack-file <path>  Load a custom rulepack manifest (repeatable)
+  --directory-file <path>  Merge extra vendor directory entries (repeatable)
 
 EXIT CODES
   0  clean, or warnings and info only

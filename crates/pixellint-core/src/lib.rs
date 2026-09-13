@@ -749,6 +749,12 @@ impl Engine {
         &self.directory
     }
 
+    /// Adds overlay entries to the current directory. Duplicate hosts fail
+    /// the merge, so a community file cannot steal a first-party attribution.
+    pub fn merge_directory(&mut self, extra: VendorDirectory) -> Result<(), crate::DirectoryError> {
+        self.directory.merge(extra)
+    }
+
     pub fn register<P>(&mut self, plugin: P)
     where
         P: ValidatorPlugin + 'static,
@@ -2233,6 +2239,37 @@ mod tests {
 
         assert_eq!(summary.reports.len(), 1);
         assert_eq!(summary.reports[0].plugin_id, "core");
+    }
+
+    #[test]
+    fn a_directory_overlay_attributes_new_hosts() {
+        let extra = VendorDirectory::from_json(
+            r#"{
+                "entries": [{
+                    "vendor": "acme",
+                    "display_name": "Acme",
+                    "category": "analytics",
+                    "hosts": ["px.acme.example"]
+                }]
+            }"#,
+        )
+        .expect("overlay");
+        let mut engine = Engine::default();
+        engine.merge_directory(extra).expect("merge");
+
+        let summary = engine
+            .validate(
+                &directory_request("https://px.acme.example/collect?id=1"),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+        let report = summary
+            .reports
+            .iter()
+            .find(|report| report.plugin_id == DIRECTORY_ID)
+            .expect("directory report");
+        assert_eq!(report.detected_vendor.as_deref(), Some("acme"));
+        assert!(report.is_ok());
     }
 
     #[test]

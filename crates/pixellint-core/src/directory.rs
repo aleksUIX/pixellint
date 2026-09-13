@@ -149,6 +149,14 @@ impl VendorDirectory {
         Ok(())
     }
 
+    /// Adds entries from another directory. A host already claimed by a
+    /// different vendor is rejected, so an overlay cannot steal attribution.
+    pub fn merge(&mut self, other: Self) -> Result<(), DirectoryError> {
+        self.entries.extend(other.entries);
+        self.validate()?;
+        Ok(())
+    }
+
     pub fn entries(&self) -> &[VendorEntry] {
         &self.entries
     }
@@ -228,6 +236,50 @@ mod tests {
     fn duplicate_hosts_are_rejected() {
         let json = TEST_DIRECTORY.replace(r#""globex.example""#, r#""px.acme.example""#);
         let error = VendorDirectory::from_json(&json).expect_err("duplicates are caught");
+        assert!(
+            matches!(error, DirectoryError::DuplicateHost { .. }),
+            "{error}"
+        );
+    }
+
+    #[test]
+    fn merge_adds_new_hosts_and_rejects_stolen_ones() {
+        let mut directory = VendorDirectory::from_json(TEST_DIRECTORY).expect("parse");
+        let extra = VendorDirectory::from_json(
+            r#"{
+                "entries": [
+                    {
+                        "vendor": "initech",
+                        "display_name": "Initech",
+                        "category": "analytics",
+                        "hosts": ["px.initech.example"]
+                    }
+                ]
+            }"#,
+        )
+        .expect("overlay");
+        directory.merge(extra).expect("new hosts merge");
+        assert_eq!(
+            directory
+                .lookup_host("px.initech.example")
+                .map(|entry| entry.vendor.as_str()),
+            Some("initech")
+        );
+
+        let stolen = VendorDirectory::from_json(
+            r#"{
+                "entries": [
+                    {
+                        "vendor": "initech",
+                        "display_name": "Initech",
+                        "category": "analytics",
+                        "hosts": ["px.acme.example"]
+                    }
+                ]
+            }"#,
+        )
+        .expect("stolen overlay");
+        let error = directory.merge(stolen).expect_err("cannot steal a host");
         assert!(
             matches!(error, DirectoryError::DuplicateHost { .. }),
             "{error}"

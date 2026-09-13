@@ -112,6 +112,30 @@ You do not have to upstream a pack to use one. Any manifest works with
 Rust. Pixellint aims to cover common endpoint families first-party and leave
 the long tail to custom packs.
 
+## Adding a directory host
+
+The directory attributes hosts. It does not invent parameter contracts. Two
+ways in:
+
+**Overlay at runtime.** Same JSON shape as the built-in file. Hosts must be
+new; an overlay cannot steal a first-party host.
+
+```bash
+pixellint validate url 'https://px.acme.example/collect' --directory-file extra.json
+pixellint list-vendors --directory-file extra.json
+```
+
+`Engine::merge_directory` does the same from Rust. Example:
+[fixtures/directory-overlay/acme.json](fixtures/directory-overlay/acme.json).
+
+**Upstream PR.** Edit `tools/build-directory.py` (vendor slug, display name,
+category, hosts, optional rulepack pointer) and
+`crates/pixellint-core/rulepacks/directory.json`. The host should resolve. Do
+not add a rulepack unless a published HTTP table exists. Cookie sync, RTB,
+and JS-only loaders stay attributed.
+
+See [docs/VENDOR_DIRECTORY.md](docs/VENDOR_DIRECTORY.md).
+
 ## Commit and PR style
 
 Small commits, present-tense subject lines, and a body that explains why.

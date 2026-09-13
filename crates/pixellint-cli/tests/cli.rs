@@ -73,6 +73,12 @@ fn usage_problems_exit_two() {
         vec!["validate", "url", "@/definitely/missing/fixture.txt"],
         vec!["validate-many"],
         vec!["validate-many", "{nope"],
+        vec![
+            "validate",
+            "url",
+            "https://example.com/pixel",
+            "--directory-file",
+        ],
         vec!["frobnicate"],
         vec![],
     ] {
@@ -325,4 +331,64 @@ fn validate_many_rejects_html_items() {
     ]);
     assert_eq!(code, 2, "{stderr}");
     assert!(stderr.contains("html is not a validation kind"), "{stderr}");
+}
+
+#[test]
+fn directory_overlays_attribute_new_hosts() {
+    let overlay = repo_root().join("fixtures/directory-overlay/acme.json");
+    let overlay = overlay.display().to_string();
+
+    let (code, stdout, _) = run(&[
+        "validate",
+        "url",
+        "https://px.acme.example/collect?id=1",
+        "--directory-file",
+        &overlay,
+    ]);
+    assert_eq!(code, 0, "{stdout}");
+    assert!(
+        stdout.contains("rulepack: directory (vendor: acme)"),
+        "{stdout}"
+    );
+
+    let (code, stdout, _) = run(&["list-vendors", "--json", "--directory-file", &overlay]);
+    assert_eq!(code, 0);
+    let vendors: serde_json::Value = serde_json::from_str(&stdout).expect("parse json");
+    assert!(
+        vendors
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|entry| entry["vendor"] == "acme" && entry["hosts"][0] == "px.acme.example"),
+        "{stdout}"
+    );
+}
+
+#[test]
+fn directory_overlays_cannot_steal_a_builtin_host() {
+    let overlay = repo_root().join("target/test-stolen-directory.json");
+    fs::write(
+        &overlay,
+        r#"{
+  "entries": [{
+    "vendor": "acme",
+    "display_name": "Acme",
+    "category": "analytics",
+    "hosts": ["www.facebook.com"]
+  }]
+}
+"#,
+    )
+    .expect("write overlay");
+
+    let (code, _, stderr) = run(&[
+        "validate",
+        "url",
+        "https://example.com/pixel",
+        "--directory-file",
+        &overlay.display().to_string(),
+    ]);
+    assert_eq!(code, 2, "{stderr}");
+    assert!(stderr.contains("www.facebook.com"), "{stderr}");
+    assert!(stderr.contains("claimed by both"), "{stderr}");
 }

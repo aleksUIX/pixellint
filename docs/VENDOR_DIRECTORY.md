@@ -77,6 +77,22 @@ engine.set_directory(pixellint_core::VendorDirectory::from_path("vendors.json")?
 
 Passing `VendorDirectory::default()` disables attribution entirely.
 
+## Overlay files
+
+`--directory-file` and `Engine::merge_directory` add entries to the built-in
+directory. The file uses the same `{ "entries": [...] }` shape. A host that
+the built-in directory already claims is rejected, so an overlay cannot steal
+attribution. New vendors and extra hosts on a new vendor slug are the point.
+
+```bash
+pixellint validate url 'https://px.acme.example/collect' --directory-file extra.json
+pixellint list-vendors --directory-file extra.json
+```
+
+Contribute first-party hosts through a PR to `tools/build-directory.py` and
+`directory.json`. Runtime overlays are for private pixels and local
+corrections. How to contribute: [CONTRIBUTING.md](../CONTRIBUTING.md).
+
 The loader rejects duplicate hosts across entries, empty fields, empty host
 lists, and unknown fields, so a directory that would silently misattribute
 traffic fails to load instead.

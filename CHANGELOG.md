@@ -6,6 +6,15 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.30.0 - 2026-09-12
+
+### Added
+
+- `--directory-file` and `Engine::merge_directory`, so a community or private
+  overlay can attribute extra hosts without replacing the built-in directory.
+  A host the built-in file already claims is rejected. CONTRIBUTING documents
+  runtime overlays and first-party PRs to `build-directory.py`.
+
 ## 0.29.0 - 2026-09-12
 
 ### Added
