@@ -113,6 +113,10 @@ Value checks are `.empty` when the value is blank and `.invalid` when it fails
 `severity` overrides the severity of every finding for that parameter.
 `format_severity` overrides only `.invalid`, which is how a parameter can be
 mandatory while unrecognized values stay a warning.
+`name_pattern` applies the same value checks to every present parameter whose
+name matches the regex. Findings use the matched name, so `u21=` reports
+`param.u21.empty` rather than a family label. It cannot be `required` or
+`recommended`, cannot declare aliases, and is URL-only.
 `allow_empty` skips the `.empty` finding, so a blank value is an unfilled
 template slot. Format checks still run when the value is populated.
 

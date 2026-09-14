@@ -6,6 +6,18 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.30.2 - 2026-09-13
+
+### Changed
+
+- Parameter contracts can set `name_pattern` so a family of present keys shares
+  one empty/format check. Floodlight covers `u1`–`u100`. Adobe Analytics covers
+  `c1`–`c75`, `v1`–`v250`, `l1`–`l3`, and `xact`. Matomo covers `dimension1`–
+  `dimension999`. Pinterest tag checkout and add-to-cart expect `ed[value]` and
+  `ed[currency]`. Kochava `action` is `event`. GA4 Measurement Protocol checks
+  `user_id` when present and requires ecommerce fields on `view_cart` and
+  `add_payment_info`.
+
 ## 0.30.1 - 2026-09-13
 
 ### Changed

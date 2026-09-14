@@ -154,6 +154,12 @@ impl ShapeMatch {
 #[serde(deny_unknown_fields)]
 pub struct ParamContract {
     pub name: String,
+    /// When set, this contract applies to every present parameter whose name
+    /// matches, instead of to `name` alone. Findings use the matched name.
+    /// Required and recommended are rejected at load: absence of a family is
+    /// not a missing parameter.
+    #[serde(default)]
+    pub name_pattern: Option<String>,
     /// Alternate spellings that satisfy the same contract.
     #[serde(default)]
     pub aliases: Vec<String>,
@@ -386,6 +392,18 @@ pub enum ManifestError {
         pack_id: String,
         path: String,
     },
+    NamePatternNotOptional {
+        pack_id: String,
+        name: String,
+    },
+    NamePatternWithAliases {
+        pack_id: String,
+        name: String,
+    },
+    NamePatternOnBody {
+        pack_id: String,
+        name: String,
+    },
 }
 
 impl fmt::Display for ManifestError {
@@ -456,6 +474,18 @@ impl fmt::Display for ManifestError {
                 f,
                 "rulepack `{pack_id}` has the malformed JSON path `{path}`: use dotted keys with `[]` for arrays, as in `data[].user_data.em[]`"
             ),
+            Self::NamePatternNotOptional { pack_id, name } => write!(
+                f,
+                "rulepack `{pack_id}` parameter `{name}` uses `name_pattern`, which can only check values that are already present, so it cannot be required or recommended"
+            ),
+            Self::NamePatternWithAliases { pack_id, name } => write!(
+                f,
+                "rulepack `{pack_id}` parameter `{name}` uses `name_pattern` and cannot also declare aliases"
+            ),
+            Self::NamePatternOnBody { pack_id, name } => write!(
+                f,
+                "rulepack `{pack_id}` parameter `{name}` uses `name_pattern` on a JSON body, which only matches exact field paths"
+            ),
         }
     }
 }
@@ -467,6 +497,7 @@ struct CompiledParam {
     contract: ParamContract,
     names: Vec<String>,
     regex: Option<Regex>,
+    name_regex: Option<Regex>,
     doc: Option<String>,
     source_level: RuleSourceLevel,
 }
@@ -614,6 +645,24 @@ fn compile_params(
     let mut params = Vec::with_capacity(contracts.len());
 
     for contract in contracts {
+        if contract.name_pattern.is_some() {
+            if !contract.aliases.is_empty() {
+                return Err(ManifestError::NamePatternWithAliases {
+                    pack_id: pack_id.to_string(),
+                    name: contract.name.clone(),
+                });
+            }
+            match contract.requirement {
+                Requirement::Required | Requirement::Recommended => {
+                    return Err(ManifestError::NamePatternNotOptional {
+                        pack_id: pack_id.to_string(),
+                        name: contract.name.clone(),
+                    });
+                }
+                Requirement::Optional | Requirement::Forbidden | Requirement::Deprecated => {}
+            }
+        }
+
         let mut names = vec![contract.name.clone()];
         names.extend(contract.aliases.iter().cloned());
 
@@ -641,10 +690,16 @@ fn compile_params(
             _ => None,
         };
 
+        let name_regex = match &contract.name_pattern {
+            Some(pattern) => Some(compile_regex(pack_id, pattern)?),
+            None => None,
+        };
+
         params.push(CompiledParam {
             contract: contract.clone(),
             names,
             regex,
+            name_regex,
             doc,
             source_level,
         });
@@ -764,6 +819,12 @@ impl ManifestRulePack {
 
                 for spec in specs.specs() {
                     let (params, names) = compile_params(&pack_id, &manifest, &spec.params)?;
+                    if let Some(compiled) = params.iter().find(|param| param.name_regex.is_some()) {
+                        return Err(ManifestError::NamePatternOnBody {
+                            pack_id,
+                            name: compiled.contract.name.clone(),
+                        });
+                    }
                     let rules =
                         compile_rules(&pack_id, &code_prefix, &manifest, &spec.rules, &names)?;
 
@@ -1005,8 +1066,9 @@ impl ValidatorPlugin for ManifestRulePack {
             body: None,
         };
 
+        let exact_names = exact_param_names(&self.params);
         for compiled in &self.params {
-            self.check_param(&scope, compiled, &params, &mut violations);
+            self.check_param(&scope, compiled, &params, &exact_names, &mut violations);
         }
 
         for compiled in &self.rules {
@@ -1109,8 +1171,9 @@ impl ManifestRulePack {
                     }),
                 };
 
+                let exact_names = exact_param_names(&body.params);
                 for compiled in &body.params {
-                    self.check_param(&scope, compiled, &params, &mut violations);
+                    self.check_param(&scope, compiled, &params, &exact_names, &mut violations);
                 }
 
                 for compiled in &body.rules {
@@ -1190,13 +1253,22 @@ impl ManifestRulePack {
         scope: &Scope,
         compiled: &CompiledParam,
         params: &[RawParam],
+        exact_names: &BTreeSet<String>,
         violations: &mut Vec<Violation>,
     ) {
         let contract = &compiled.contract;
-        let addressed: Vec<&RawParam> = params
-            .iter()
-            .filter(|param| compiled.names.iter().any(|name| name == &param.name))
-            .collect();
+        let addressed: Vec<&RawParam> = match &compiled.name_regex {
+            Some(name_regex) => params
+                .iter()
+                .filter(|param| {
+                    name_regex.is_match(&param.name) && !exact_names.contains(&param.name)
+                })
+                .collect(),
+            None => params
+                .iter()
+                .filter(|param| compiled.names.iter().any(|name| name == &param.name))
+                .collect(),
+        };
         let present: Vec<&RawParam> = addressed
             .iter()
             .copied()
@@ -1274,10 +1346,11 @@ impl ManifestRulePack {
             }
             Requirement::Forbidden => {
                 for param in &present {
+                    let code_name = finding_name(compiled, param);
                     violations.push(Violation {
                         code: format!(
                             "{}.{}.{}.forbidden",
-                            self.code_prefix, scope.code_segment, contract.name
+                            self.code_prefix, scope.code_segment, code_name
                         ),
                         message: describe(
                             format!(
@@ -1287,7 +1360,7 @@ impl ManifestRulePack {
                             contract.description.as_deref(),
                         ),
                         severity: contract.severity.unwrap_or(Severity::Error),
-                        field: Some(field.clone()),
+                        field: Some(format!("{}.{}", scope.field_prefix, code_name)),
                         fix_hint: contract
                             .fix_hint
                             .clone()
@@ -1300,10 +1373,11 @@ impl ManifestRulePack {
             }
             Requirement::Deprecated => {
                 for param in &present {
+                    let code_name = finding_name(compiled, param);
                     violations.push(Violation {
                         code: format!(
                             "{}.{}.{}.deprecated",
-                            self.code_prefix, scope.code_segment, contract.name
+                            self.code_prefix, scope.code_segment, code_name
                         ),
                         message: describe(
                             format!(
@@ -1313,7 +1387,7 @@ impl ManifestRulePack {
                             contract.description.as_deref(),
                         ),
                         severity: contract.severity.unwrap_or(Severity::Warning),
-                        field: Some(field.clone()),
+                        field: Some(format!("{}.{}", scope.field_prefix, code_name)),
                         fix_hint: contract.fix_hint.clone(),
                         source: source.clone(),
                         targets: vec![param.target()],
@@ -1324,6 +1398,8 @@ impl ManifestRulePack {
         }
 
         for param in present {
+            let code_name = finding_name(compiled, param);
+            let field = format!("{}.{}", scope.field_prefix, code_name);
             if param.value.is_empty() {
                 if contract.allow_empty {
                     continue;
@@ -1331,14 +1407,14 @@ impl ManifestRulePack {
                 violations.push(Violation {
                     code: format!(
                         "{}.{}.{}.empty",
-                        self.code_prefix, scope.code_segment, contract.name
+                        self.code_prefix, scope.code_segment, code_name
                     ),
                     message: format!("`{}` is present but has an empty value.", param.name),
                     severity: contract.severity.unwrap_or(match contract.requirement {
                         Requirement::Required => Severity::Error,
                         _ => Severity::Warning,
                     }),
-                    field: Some(field.clone()),
+                    field: Some(field),
                     fix_hint: contract
                         .fix_hint
                         .clone()
@@ -1371,7 +1447,7 @@ impl ManifestRulePack {
                 violations.push(Violation {
                     code: format!(
                         "{}.{}.{}.invalid",
-                        self.code_prefix, scope.code_segment, contract.name
+                        self.code_prefix, scope.code_segment, code_name
                     ),
                     message: describe(
                         format!("`{}` {reason}", param.name),
@@ -1547,6 +1623,22 @@ fn compile_regex(pack_id: &str, pattern: &str) -> Result<Regex, ManifestError> {
         pattern: pattern.to_string(),
         error: error.to_string(),
     })
+}
+
+fn exact_param_names(params: &[CompiledParam]) -> BTreeSet<String> {
+    params
+        .iter()
+        .filter(|compiled| compiled.name_regex.is_none())
+        .flat_map(|compiled| compiled.names.iter().cloned())
+        .collect()
+}
+
+fn finding_name<'a>(compiled: &'a CompiledParam, param: &'a RawParam) -> &'a str {
+    if compiled.name_regex.is_some() {
+        param.name.as_str()
+    } else {
+        compiled.contract.name.as_str()
+    }
 }
 
 fn validate_pack_id(id: &str) -> Result<(), ManifestError> {
@@ -2241,6 +2333,72 @@ mod tests {
             "https://px.example.com/collect?id=123&ev=PageView&url=not-a-url",
         ));
         assert_eq!(codes(&report), vec!["vendor.test.param.url.invalid"]);
+    }
+
+    #[test]
+    fn name_pattern_checks_present_keys_and_uses_the_matched_name() {
+        let manifest = TEST_MANIFEST.replace(
+            r#"{
+                "name": "url",
+                "format": { "kind": "url", "require_https": true }
+            }"#,
+            r#"{
+                "name": "u1",
+                "name_pattern": "^u([1-9]|[1-9][0-9]|100)$",
+                "format": { "kind": "non_empty" }
+            }"#,
+        );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile name_pattern");
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=PageView&u21=",
+        ));
+        assert_eq!(codes(&report), vec!["vendor.test.param.u21.empty"]);
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=PageView&u21=filled",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+    }
+
+    #[test]
+    fn name_pattern_cannot_be_required() {
+        let manifest = TEST_MANIFEST.replace(
+            r#"{
+                "name": "url",
+                "format": { "kind": "url", "require_https": true }
+            }"#,
+            r#"{
+                "name": "u1",
+                "name_pattern": "^u[0-9]+$",
+                "requirement": "required"
+            }"#,
+        );
+        let error = ManifestRulePack::from_json(&manifest).expect_err("required glob is rejected");
+        assert!(
+            matches!(error, ManifestError::NamePatternNotOptional { .. }),
+            "{error}"
+        );
+    }
+
+    #[test]
+    fn name_pattern_cannot_declare_aliases() {
+        let manifest = TEST_MANIFEST.replace(
+            r#"{
+                "name": "url",
+                "format": { "kind": "url", "require_https": true }
+            }"#,
+            r#"{
+                "name": "u1",
+                "name_pattern": "^u[0-9]+$",
+                "aliases": ["u"]
+            }"#,
+        );
+        let error = ManifestRulePack::from_json(&manifest).expect_err("aliases on a glob");
+        assert!(
+            matches!(error, ManifestError::NamePatternWithAliases { .. }),
+            "{error}"
+        );
     }
 
     #[test]

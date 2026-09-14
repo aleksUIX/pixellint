@@ -156,11 +156,12 @@ in `events` on its own.
 | `events` | Flagged when present and empty, which sends nothing | `vendor.google-analytics.body.events.empty` |
 | `timestamp_micros` | Exactly 16 digits, since Google documents microseconds and a 13-digit value is milliseconds | `vendor.google-analytics.body.timestamp_micros.invalid` |
 | `non_personalized_ads` | Deprecated in favor of the `consent` object | `vendor.google-analytics.body.non_personalized_ads.deprecated` |
+| `user_id` | When present, not empty | `vendor.google-analytics.body.user_id.empty` |
 | `events[].name` | Required; 40 characters or fewer warns when longer | `vendor.google-analytics.body.name.missing`, `.invalid` |
 | Value without currency | `currency` is required whenever `value` is set | `vendor.google-analytics.body.value_requires_currency` |
 | `purchase` | Needs `currency`, `value`, `transaction_id`, and `items` | `vendor.google-analytics.body.purchase_requires_ecommerce_fields` |
 | `refund` | Needs `currency`, `value`, and `transaction_id` | `vendor.google-analytics.body.refund_requires_ecommerce_fields` |
-| `add_to_cart`, `begin_checkout` | Need `currency`, `value`, and `items` | `vendor.google-analytics.body.cart_requires_ecommerce_fields` |
+| `add_to_cart`, `begin_checkout`, `view_cart`, `add_payment_info` | Need `currency`, `value`, and `items` | `vendor.google-analytics.body.cart_requires_ecommerce_fields` |
 | `view_item`, `add_to_wishlist` | Need `currency`, `value`, and `items` | `vendor.google-analytics.body.view_item_requires_ecommerce_fields` |
 
 Source: [Measurement Protocol reference](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference),
@@ -186,11 +187,11 @@ on the path as semicolon-delimited pairs. Level: `official_vendor`.
 | `dc_lat` | When present, `0` or `1` | `vendor.floodlight.param.dc_lat.invalid` |
 | `npa` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.npa.invalid` |
 | `tfua` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.tfua.invalid` |
-| `u1`–`u20` | When present, not empty | `vendor.floodlight.param.u1.empty` through `.u20.empty` |
+| `u1`–`u100` | When present, not empty | `vendor.floodlight.param.u1.empty` through `.u100.empty` |
 | Unique counting | `num` is only meaningful alongside `ord` | `vendor.floodlight.counting.unique_requires_ord` |
 
-Campaign Manager documents custom variables through `u100`. This pack
-contracts `u1`–`u20`. `u21`–`u100` have the same shape and are not enumerated.
+Campaign Manager documents custom variables through `u100`. Empty pairs on
+any of those keys warn.
 
 Source: [Floodlight tag structure](https://support.google.com/campaignmanager/answer/2823425),
 [iframe and image tags](https://support.google.com/campaignmanager/answer/2823450).
@@ -395,6 +396,10 @@ report suite rides on the path after `/b/ss/`. Level: `official_vendor`.
 | `v0` / `campaign` | When present, not empty | `vendor.adobe-analytics.param.v0.empty` |
 | `pageType` / `gt` | When present, not empty | `vendor.adobe-analytics.param.pageType.empty` |
 | `server` / `sv` | When present, not empty | `vendor.adobe-analytics.param.server.empty` |
+| `xact` | When present, not empty | `vendor.adobe-analytics.param.xact.empty` |
+| `c1`–`c75` | When present, not empty | `vendor.adobe-analytics.param.c1.empty` through `.c75.empty` |
+| `v1`–`v250` | When present, not empty | `vendor.adobe-analytics.param.v1.empty` through `.v250.empty` |
+| `l1`–`l3` | When present, not empty | `vendor.adobe-analytics.param.l1.empty` through `.l3.empty` |
 | Truncated request | `AQB` requires `AQE` | `vendor.adobe-analytics.truncated_request` |
 
 Sources: [query parameters](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters),
@@ -446,6 +451,10 @@ Level: `official_vendor`.
 | `tid` | Required tag ID | `vendor.pinterest.param.tid.missing`, `.empty` |
 | `event` | When present, one of the documented events. Custom names warn rather than error | `vendor.pinterest.param.event.invalid`, `.empty` |
 | `noscript` | When present, `0` or `1` | `vendor.pinterest.param.noscript.invalid` |
+| `ed[value]` | When present, a number | `vendor.pinterest.param.ed[value].invalid` |
+| `ed[currency]` | When present, ISO 4217 three-letter code | `vendor.pinterest.param.ed[currency].invalid` |
+| `ed[order_quantity]` | When present, an integer | `vendor.pinterest.param.ed[order_quantity].invalid` |
+| `checkout`, `addtocart` | Expected `ed[value]` and `ed[currency]` | `vendor.pinterest.checkout_requires_value_and_currency` |
 
 Source: [Pinterest tag](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/).
 
@@ -1075,7 +1084,7 @@ Post-install events posted as JSON to `control.kochava.com/track/json`. Level:
 | Body field | Enforced | Rule ids |
 | --- | --- | --- |
 | `kochava_app_id` | Required | `vendor.kochava.body.kochava_app_id.missing`, `.empty` |
-| `action` | Required | `vendor.kochava.body.action.missing`, `.empty` |
+| `action` | Required `event` | `vendor.kochava.body.action.missing`, `.empty`, `.invalid` |
 | `data` | Required | `vendor.kochava.body.data.missing` |
 | `data.event_name` | Required | `vendor.kochava.body.data.event_name.missing`, `.empty` |
 
@@ -1546,6 +1555,7 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | `apiv` | Recommended `1` | `vendor.matomo.param.apiv.missing`, `.invalid` |
 | `cid` | When present, 16 hex characters | `vendor.matomo.param.cid.invalid` |
 | `e_v` | When present, a number | `vendor.matomo.param.e_v.invalid` |
+| `dimension1`–`dimension999` | When present, not empty | `vendor.matomo.param.dimension1.empty` through `.dimension999.empty` |
 | Event | `e_c` requires `e_a` | `vendor.matomo.event_requires_action` |
 | Order | `ec_id` requires `revenue` | `vendor.matomo.order_requires_revenue` |
 
