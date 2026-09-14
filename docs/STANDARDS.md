@@ -157,6 +157,7 @@ in `events` on its own.
 | `timestamp_micros` | Exactly 16 digits, since Google documents microseconds and a 13-digit value is milliseconds | `vendor.google-analytics.body.timestamp_micros.invalid` |
 | `non_personalized_ads` | Deprecated in favor of the `consent` object | `vendor.google-analytics.body.non_personalized_ads.deprecated` |
 | `user_id` | When present, not empty | `vendor.google-analytics.body.user_id.empty` |
+| `consent.ad_user_data`, `consent.ad_personalization` | When present, `GRANTED` or `DENIED` | `vendor.google-analytics.body.consent.ad_user_data.invalid`, `.consent.ad_personalization.invalid` |
 | `events[].name` | Required; 40 characters or fewer warns when longer | `vendor.google-analytics.body.name.missing`, `.invalid` |
 | Value without currency | `currency` is required whenever `value` is set | `vendor.google-analytics.body.value_requires_currency` |
 | `purchase` | Needs `currency`, `value`, `transaction_id`, and `items` | `vendor.google-analytics.body.purchase_requires_ecommerce_fields` |
@@ -400,6 +401,9 @@ report suite rides on the path after `/b/ss/`. Level: `official_vendor`.
 | `c1`–`c75` | When present, not empty | `vendor.adobe-analytics.param.c1.empty` through `.c75.empty` |
 | `v1`–`v250` | When present, not empty | `vendor.adobe-analytics.param.v1.empty` through `.v250.empty` |
 | `l1`–`l3` | When present, not empty | `vendor.adobe-analytics.param.l1.empty` through `.l3.empty` |
+| `ch` | When present, not empty | `vendor.adobe-analytics.param.ch.empty` |
+| `pev1` | When present, an absolute URL | `vendor.adobe-analytics.param.pev1.invalid` |
+| `pev2` | When present, not empty | `vendor.adobe-analytics.param.pev2.empty` |
 | Truncated request | `AQB` requires `AQE` | `vendor.adobe-analytics.truncated_request` |
 
 Sources: [query parameters](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters),
@@ -430,16 +434,19 @@ Adobe Experience Platform Edge Network `interact` and `collect` on
 AppMeasurement `/b/ss/` stays `vendor/adobe-analytics`.
 
 `interact` posts a single `event`. `collect` posts `events[]`. Both carry the
-same XDM contract.
+same XDM contract. Alternative envelopes pick the first scope that is present,
+so a collect payload is not skipped because it has no `event` key.
 
 | Parameter or body field | Enforced | Rule ids |
 | --- | --- | --- |
 | `datastreamId` | Required. v1 alias `configId` | `vendor.adobe-web-sdk.param.datastreamId.missing`, `.empty` |
 | `xdm.timestamp` | Required ISO 8601 date-time | `vendor.adobe-web-sdk.body.xdm.timestamp.missing`, `.invalid` |
 | `xdm.eventType` | Recommended | `vendor.adobe-web-sdk.body.xdm.eventType.missing`, `.empty` |
+| `xdm.identityMap` | When present, not empty | `vendor.adobe-web-sdk.body.xdm.identityMap.empty` |
 
 Sources: [interact](https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/),
-[collect](https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/).
+[collect](https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/),
+[identityMap](https://experienceleague.adobe.com/en/docs/experience-platform/xdm/field-groups/profile/identitymap).
 
 ## `vendor/pinterest`
 
@@ -1054,9 +1061,18 @@ OpenAI Ads image tag requests to `bzr.openai.com/v1/sdk/events`. Level:
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `pid` | Required Pixel ID | `vendor.openai.param.pid.missing`, `.empty` |
-| `event` | Required documented event name | `vendor.openai.param.event.missing`, `.invalid` |
-| `data[type]` | Required data shape | `vendor.openai.param.data[type].missing`, `.empty` |
-| Custom name | `custom_event_name` when `event=custom` | `vendor.openai.custom_requires_name` |
+| `event` | Required documented event name. Image tag does not accept `app_installed` or `app_opened` | `vendor.openai.param.event.missing`, `.invalid` |
+| `data[type]` | Required `contents`, `customer_action`, `plan_enrollment`, or `custom`, matching the event | `vendor.openai.param.data[type].missing`, `.invalid`, `.contents_requires_contents_data`, `.customer_action_requires_customer_action_data`, `.plan_enrollment_requires_plan_enrollment_data`, `.custom_requires_custom_data` |
+| Custom name | `custom_event_name` when `event=custom`; 1-64 letters, digits, `_`, `-`; not a standard event name; omitted on standard events | `vendor.openai.custom_requires_name`, `.param.custom_event_name.invalid`, `.reserved_custom_event_name`, `.standard_forbids_custom_event_name` |
+| `event_id` | When present, not empty | `vendor.openai.param.event_id.empty` |
+| `oppref` | When present, not empty | `vendor.openai.param.oppref.empty` |
+| `data[amount]` | Integer minor units; `data[currency]` required with it | `vendor.openai.param.data[amount].invalid`, `.amount_requires_currency` |
+| `data[currency]` | When present, ISO 4217 three-letter code | `vendor.openai.param.data[currency].invalid` |
+| `data[plan_id]` | When present, not empty; only on `plan_enrollment` and `custom` | `vendor.openai.param.data[plan_id].empty`, `.contents_forbids_plan_id` |
+| `data[contents]` | When present, not empty; not on `customer_action` | `vendor.openai.param.data[contents].empty`, `.customer_action_forbids_contents` |
+| Unhashed PII | No query parameter carries a raw email address | `vendor.openai.pii.unhashed_email` |
+
+The JavaScript Pixel on `bzrcdn.openai.com/sdk/oaiq.min.js` is a loader. It stays directory-attributed. Image-tag GET `/v1/sdk/events` is the contracted hop.
 
 Sources: [image tag](https://developers.openai.com/ads/image-tag),
 [supported events](https://developers.openai.com/ads/supported-events).
@@ -1072,9 +1088,33 @@ Server-side events posted to `bzr.openai.com/v1/events`. Level:
 | `id` | Required event id | `vendor.openai-conversions-api.body.id.missing`, `.empty` |
 | `type` | Required documented event type | `vendor.openai-conversions-api.body.type.missing`, `.invalid` |
 | `timestamp_ms` | Required, exactly 13 digits | `vendor.openai-conversions-api.body.timestamp_ms.missing`, `.invalid` |
-| Web events | `source_url` when `action_source` is `web` | `vendor.openai-conversions-api.body.web_requires_source_url` |
+| `custom_event_name` | Required when `type` is `custom`; 1-64 letters, digits, `_`, `-`; not a standard event name; omitted on standard events | `vendor.openai-conversions-api.body.custom_requires_name`, `.body.custom_event_name.invalid`, `.body.reserved_custom_event_name`, `.body.standard_forbids_custom_event_name` |
+| `action_source` | When present, a documented source | `vendor.openai-conversions-api.body.action_source.invalid` |
+| Web events | `source_url` when `action_source` is `web` | `vendor.openai-conversions-api.body.web_requires_source_url`, `.body.source_url.invalid` |
+| App lifecycle | `action_source` present and `mobile_app` on `app_installed` and `app_opened` | `vendor.openai-conversions-api.body.app_requires_mobile_source`, `.body.app_source_must_be_mobile` |
+| `data` | Required | `vendor.openai-conversions-api.body.data.missing` |
+| `data.type` | Required, matching the event: `contents`, `customer_action`, `plan_enrollment`, or `custom` | `vendor.openai-conversions-api.body.data.type.missing`, `.invalid`, `.contents_requires_contents_data`, `.customer_action_requires_customer_action_data`, `.plan_enrollment_requires_plan_enrollment_data`, `.custom_requires_custom_data` |
+| `data.amount` | Integer minor units; `data.currency` required with it | `vendor.openai-conversions-api.body.data.amount.invalid`, `.body.amount_requires_currency` |
+| `data.plan_id` | When present, not empty; only on `plan_enrollment` and `custom` | `vendor.openai-conversions-api.body.data.plan_id.empty`, `.body.contents_forbids_plan_id` |
+| `data.contents` | Item list; not on `customer_action` | `vendor.openai-conversions-api.body.customer_action_forbids_contents` |
+| `data.contents[]` | Item `id`/`name`/`content_type`/`group_id` not empty; `quantity` and `amount` integers; item `currency` ISO 4217 | `vendor.openai-conversions-api.body.data.contents[].<field>.empty`, `.invalid` |
+| `opt_out` | When present, `true` or `false` | `vendor.openai-conversions-api.body.opt_out.invalid` |
+| `oppref` | When present, not empty | `vendor.openai-conversions-api.body.oppref.empty` |
+| `user` | When present, not an empty object | `vendor.openai-conversions-api.body.user.empty` |
+| Hashed identifiers | `emails_sha256`, `phone_numbers_sha256`, `external_ids_sha256`, `first_names_sha256`, `last_names_sha256` must be lowercase SHA-256 hex, scalar or list | `vendor.openai-conversions-api.body.user.<field>.invalid` |
+| `user.countries` | When present, ISO 3166-1 alpha-2 | `vendor.openai-conversions-api.body.user.countries.invalid` |
+| `user.cities` / `user.regions` | Raw strings, at most 128 characters | `vendor.openai-conversions-api.body.user.cities.invalid`, `.user.regions.invalid` |
+| `user.postal_codes[]` | Letters, numbers, spaces, or hyphens, up to 32 characters | `vendor.openai-conversions-api.body.user.postal_codes[].invalid` |
+| `user.android_advertising_id` | When present, UUID (GAID); all-zero UUID is ignored | `vendor.openai-conversions-api.body.user.android_advertising_id.invalid`, `.body.zero_advertising_id` |
+| `user.obref` | When present, not empty | `vendor.openai-conversions-api.body.user.obref.empty` |
+| `user.ip_address` | When present, IPv4 or IPv6 | `vendor.openai-conversions-api.body.user.ip_address.invalid` |
+| Unhashed PII | No field carries a raw email address | `vendor.openai-conversions-api.body.unhashed_email` |
+| Hashed plaintext | `ip_address`, `user_agent`, geo fields, and `obref` must not look like SHA-256 hex | `vendor.openai-conversions-api.body.hashed_plaintext_field` |
+| `integration_source` | When present, 1-64 ASCII starting with a letter or digit | `vendor.openai-conversions-api.body.integration_source.invalid` |
+| `validate_only` | When present, `true` or `false` | `vendor.openai-conversions-api.body.validate_only.invalid` |
 
-Source: [Conversions API](https://developers.openai.com/ads/conversions-api).
+Sources: [Conversions API](https://developers.openai.com/ads/conversions-api),
+[supported events](https://developers.openai.com/ads/supported-events).
 
 ## `vendor/kochava`
 
@@ -1555,6 +1595,7 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | `apiv` | Recommended `1` | `vendor.matomo.param.apiv.missing`, `.invalid` |
 | `cid` | When present, 16 hex characters | `vendor.matomo.param.cid.invalid` |
 | `e_v` | When present, a number | `vendor.matomo.param.e_v.invalid` |
+| `e_n` | When present, not empty | `vendor.matomo.param.e_n.empty` |
 | `dimension1`–`dimension999` | When present, not empty | `vendor.matomo.param.dimension1.empty` through `.dimension999.empty` |
 | Event | `e_c` requires `e_a` | `vendor.matomo.event_requires_action` |
 | Order | `ec_id` requires `revenue` | `vendor.matomo.order_requires_revenue` |

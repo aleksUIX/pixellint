@@ -220,6 +220,21 @@ pub enum Assertion {
         #[serde(default)]
         params: Vec<String>,
     },
+    /// When `when` carries one of `equals` and `param` is present, `param` must
+    /// equal `value`. Missing `param` is left to a presence contract. Macro
+    /// values never trigger it.
+    ValueWhen {
+        when: String,
+        equals: Vec<String>,
+        param: String,
+        value: String,
+    },
+    /// When `when` carries one of `equals`, none of `params` may be present.
+    ForbiddenWhenValue {
+        when: String,
+        equals: Vec<String>,
+        params: Vec<String>,
+    },
 }
 
 /// A pack-level rule that spans more than one parameter.
@@ -302,7 +317,7 @@ impl BodySpecs {
 pub enum ScopeSpec {
     /// One batch array, such as `data[]`.
     One(String),
-    /// Alternative envelopes, tried in order, first one that resolves wins. An
+    /// Alternative envelopes, tried in order, first one that is present wins. An
     /// empty string means the document itself. LinkedIn takes either a single
     /// event at the root or a batch under `elements`, so its pack declares
     /// `["elements[]", ""]`.
@@ -1559,6 +1574,54 @@ impl ManifestRulePack {
                     (true, hits.iter().map(|param| param.target()).collect())
                 }
             }
+            Assertion::ValueWhen {
+                when,
+                equals,
+                param,
+                value,
+            } => {
+                let triggered = params
+                    .iter()
+                    .filter(|candidate| &candidate.name == when)
+                    .filter(|candidate| !contains_macro(&candidate.value))
+                    .any(|candidate| equals.contains(&candidate.value));
+
+                if !triggered {
+                    (false, Vec::new())
+                } else {
+                    match params.iter().find(|candidate| &candidate.name == param) {
+                        Some(field) if !contains_macro(&field.value) && &field.value != value => {
+                            (true, vec![field.target()])
+                        }
+                        _ => (false, Vec::new()),
+                    }
+                }
+            }
+            Assertion::ForbiddenWhenValue {
+                when,
+                equals,
+                params: names,
+            } => {
+                let triggered = params
+                    .iter()
+                    .filter(|candidate| &candidate.name == when)
+                    .filter(|candidate| !contains_macro(&candidate.value))
+                    .any(|candidate| equals.contains(&candidate.value));
+
+                if !triggered {
+                    (false, Vec::new())
+                } else {
+                    let hits: Vec<&RawParam> = params
+                        .iter()
+                        .filter(|candidate| names.contains(&candidate.name))
+                        .collect();
+                    if hits.is_empty() {
+                        (false, Vec::new())
+                    } else {
+                        (true, hits.iter().map(|param| param.target()).collect())
+                    }
+                }
+            }
         };
 
         if triggered {
@@ -1596,6 +1659,12 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
             names
         }
         Assertion::ForbidValuePattern { params, .. } => params.iter().collect(),
+        Assertion::ValueWhen { when, param, .. } => vec![when, param],
+        Assertion::ForbiddenWhenValue { when, params, .. } => {
+            let mut names = vec![when];
+            names.extend(params.iter());
+            names
+        }
     }
 }
 
@@ -1813,9 +1882,15 @@ fn body_scopes(document: &JsonDocument, scope: Option<&ScopeSpec>) -> Vec<String
             return vec![String::new()];
         }
 
-        let scopes = document.expand(pattern);
-        if !scopes.is_empty() {
-            return scopes;
+        // `expand` keeps a missing final key so a presence contract can report
+        // it. Alternative envelopes must not treat that ghost path as a hit:
+        // Adobe collect posts `events[]`, and `event` is the interact envelope.
+        if document.matches_pattern(pattern) {
+            return document
+                .expand(pattern)
+                .into_iter()
+                .filter(|path| document.contains(path))
+                .collect();
         }
     }
 
@@ -2447,6 +2522,82 @@ mod tests {
     }
 
     #[test]
+    fn value_when_checks_a_present_field_against_the_required_value() {
+        let manifest = TEST_MANIFEST.replace(
+            r#"        "rules": ["#,
+            r#"        "rules": [
+            {
+                "code": "vendor.test.purchase_url_must_be_https_shop",
+                "kind": "value_when",
+                "when": "ev",
+                "equals": ["Purchase"],
+                "param": "url",
+                "value": "https://shop.example/thanks",
+                "severity": "error",
+                "message": "A purchase must send the documented shop URL."
+            },"#,
+        );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile manifest");
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=Purchase&url=https://other.example/",
+        ));
+        assert_eq!(
+            codes(&report),
+            vec!["vendor.test.purchase_url_must_be_https_shop"]
+        );
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=Purchase&url=https://shop.example/thanks",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        // Presence is a different contract. Missing `url` does not fire this.
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=Purchase",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=PageView&url=https://other.example/",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+    }
+
+    #[test]
+    fn forbidden_when_value_rejects_a_present_field() {
+        let manifest = TEST_MANIFEST.replace(
+            r#"        "rules": ["#,
+            r#"        "rules": [
+            {
+                "code": "vendor.test.purchase_forbids_url",
+                "kind": "forbidden_when_value",
+                "when": "ev",
+                "equals": ["Purchase"],
+                "params": ["url"],
+                "severity": "error",
+                "message": "A purchase must not send a landing URL."
+            },"#,
+        );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile manifest");
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=Purchase&url=https://shop.example/thanks",
+        ));
+        assert_eq!(codes(&report), vec!["vendor.test.purchase_forbids_url"]);
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=Purchase",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=PageView&url=https://shop.example/thanks",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+    }
+
+    #[test]
     fn path_captures_become_contracted_parameters() {
         let manifest = TEST_MANIFEST
             .replace(
@@ -2844,6 +2995,30 @@ mod body_tests {
             codes(&report),
             vec!["vendor.test-api.body.purchase_needs_value"]
         );
+    }
+
+    #[test]
+    fn alternative_scopes_skip_an_absent_first_envelope() {
+        let manifest = r#"{
+            "id": "vendor/alt",
+            "display_name": "Alt",
+            "description": "Tries interact then collect.",
+            "docs": "https://example.com/docs",
+            "match": {
+                "hosts": ["api.example.com"],
+                "json_paths": [{"any_of": ["event.x", "events[].x"]}]
+            },
+            "body": {
+                "scope": ["event", "events[]"],
+                "params": [
+                    { "name": "x", "requirement": "required", "format": { "kind": "non_empty" } }
+                ]
+            }
+        }"#;
+        let pack = ManifestRulePack::from_json(manifest).expect("compiles");
+        let report = pack.validate(&body_request(r#"{"events":[{"x":""}]}"#));
+
+        assert_eq!(codes(&report), vec!["vendor.alt.body.x.empty"]);
     }
 
     #[test]

@@ -158,6 +158,8 @@ rule names must also appear in `params`.
 | `mutually_exclusive` | `params` | more than one is present |
 | `required_with` | `when`, `requires` | `when` is present and something in `requires` is not |
 | `required_when_value` | `when`, `equals`, `requires` | `when` carries one of `equals` and something in `requires` is not present. Macro values never trigger it |
+| `value_when` | `when`, `equals`, `param`, `value` | `when` carries one of `equals` and `param` is present but is not `value`. Missing `param` is left to a presence contract. Macro values never trigger it |
+| `forbidden_when_value` | `when`, `equals`, `params` | `when` carries one of `equals` and something in `params` is present. Macro values never trigger it |
 | `forbid_value_pattern` | `pattern`, `params` | a value matches `pattern`. Empty `params` checks every parameter, macro values excluded |
 
 ## `body`
@@ -171,7 +173,7 @@ its own bytes.
 
 | Field | Required | Meaning |
 | --- | --- | --- |
-| `scope` | no | The batch array, such as `data[]`. A list means alternative envelopes, tried in order, first that resolves wins; `""` means the document itself. Omitting it evaluates the document once. |
+| `scope` | no | The batch array, such as `data[]`. A list means alternative envelopes, tried in order, first that is present wins; `""` means the document itself. Omitting it evaluates the document once. |
 | `params` | no | Parameter contracts, named by path relative to the scope. |
 | `rules` | no | Cross-field rules, using the same names. |
 

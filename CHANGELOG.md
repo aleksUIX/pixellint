@@ -6,6 +6,26 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.30.3 - 2026-09-13
+
+### Changed
+
+- Same-hop vendor packs now contract more of their published HTTP tables.
+  OpenAI image tag and Conversions API check event-to-data-shape pairing,
+  `contents`/`plan_id` availability per shape, `custom_event_name` omitted on
+  standard events, custom name charset, money fields, `oppref`, and unhashed
+  email on the image query. CAPI also checks `opt_out`, `validate_only`, item
+  `contents[]`, geographic match keys, empty `user`, GAID (including all-zero),
+  `obref`, IP, hashed plaintext on geo/`user_agent`, and lowercase SHA-256 hex.
+  `value_when` rules require a present field to carry a documented value.
+  `forbidden_when_value` rules reject a present field when another field carries
+  a documented value. Adobe Analytics checks `ch`, `pev1`, and `pev2` when
+  present. Adobe Web SDK flags an empty `xdm.identityMap`. Matomo flags an
+  empty `e_n`. GA4 Measurement Protocol checks `consent.ad_user_data` and
+  `consent.ad_personalization` as `GRANTED` or `DENIED`. Alternative JSON
+  envelopes pick the first scope that is present, so Adobe collect `events[]`
+  is contracted rather than skipped for a missing interact `event` key.
+
 ## 0.30.2 - 2026-09-13
 
 ### Changed
