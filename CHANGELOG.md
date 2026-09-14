@@ -6,6 +6,21 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.30.1 - 2026-09-13
+
+### Changed
+
+- Same-hop vendor packs now contract more of their published HTTP tables.
+  Adobe Analytics checks `cc`, `referrer`, `purchaseID`, `vid`, `v0`/`campaign`,
+  `pageType`/`gt`, and `server`/`sv` when present. Floodlight checks `npa` and
+  `tfua` as `0` or `1`. Google Ads conversion pixels check `currency_code` and
+  `ord`. Matomo recommends `rand` and `apiv=1`, and format-checks `e_v` and
+  `cid`. Snap CAPI requires value and currency on `PURCHASE`. Pinterest CAPI
+  warns when `checkout` omits value or currency. GA4 Measurement Protocol
+  requires ecommerce fields on `view_item` and `add_to_wishlist`. Parameter
+  contracts can set `allow_empty` so a blank Floodlight `npa`/`tfua` slot is
+  not reported.
+
 ## 0.30.0 - 2026-09-12
 
 ### Added

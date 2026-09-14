@@ -186,9 +186,43 @@
         "description": "It is an ISO 4217 currency code.",
         "fix_hint": "Use the three-letter code, such as `USD`.",
         "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.value",
+        "description": "It is the monetary value of the event. Pinterest documents it as recommended on checkout and related events, and requires currency whenever it is sent.",
+        "fix_hint": "Send the pre-tax, pre-shipping total in `custom_data.value`.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
       }
     ],
     "rules": [
+      {
+        "code": "vendor.pinterest-conversions-api.body.checkout_requires_value_and_currency",
+        "kind": "required_when_value",
+        "when": "event_name",
+        "equals": [
+          "checkout"
+        ],
+        "requires": [
+          "custom_data.value",
+          "custom_data.currency"
+        ],
+        "severity": "warning",
+        "message": "A `checkout` event is missing `custom_data.value` or `custom_data.currency`. Pinterest documents both as recommended for checkout.",
+        "fix_hint": "Send the checkout total and a three-letter currency code.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "code": "vendor.pinterest-conversions-api.body.value_requires_currency",
+        "kind": "required_with",
+        "when": "custom_data.value",
+        "requires": [
+          "custom_data.currency"
+        ],
+        "severity": "warning",
+        "message": "The event carries `custom_data.value` with no `custom_data.currency`. Pinterest documents currency as required whenever value is sent.",
+        "fix_hint": "Add `custom_data.currency` as a three-letter code alongside the value.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
       {
         "code": "vendor.pinterest-conversions-api.body.user_needs_an_identifier",
         "kind": "require_one_of",

@@ -52,14 +52,32 @@
     },
     {
       "name": "rand",
+      "requirement": "recommended",
       "format": { "kind": "non_empty" },
       "description": "Matomo documents `rand` as recommended so the request is not cached.",
+      "fix_hint": "Send a unique `rand` on every hit.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "apiv",
+      "requirement": "recommended",
       "format": { "kind": "enum", "values": ["1"] },
       "description": "Matomo documents `apiv=1` as the Tracking API version.",
+      "fix_hint": "Send `apiv=1`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "cid",
+      "format": { "kind": "regex", "pattern": "^[0-9A-Fa-f]{16}$" },
+      "description": "It forces the visitor ID. Matomo documents `cid` as a 16-character hexadecimal string.",
+      "fix_hint": "Send a 16-character hex visitor ID in `cid`, or use `_id` / `uid` instead.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "e_v",
+      "format": { "kind": "regex", "pattern": "^-?[0-9]+(\\.[0-9]+)?$" },
+      "description": "It is the event value. Matomo documents it as a float or integer, not a string label.",
+      "fix_hint": "Send a number in `e_v`, such as `9.99`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {

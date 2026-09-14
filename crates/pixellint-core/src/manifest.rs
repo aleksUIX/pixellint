@@ -182,6 +182,11 @@ pub struct ParamContract {
     /// Overrides the pack-level evidence level for this parameter.
     #[serde(default)]
     pub source_level: Option<RuleSourceLevel>,
+    /// When true, a blank value is treated as an unfilled template slot and is
+    /// not reported. Format checks still run on a populated value. Floodlight
+    /// `npa` and `tfua` ship this way on exported tags.
+    #[serde(default)]
+    pub allow_empty: bool,
 }
 
 /// The assertion a pack-level rule makes.
@@ -1320,6 +1325,9 @@ impl ManifestRulePack {
 
         for param in present {
             if param.value.is_empty() {
+                if contract.allow_empty {
+                    continue;
+                }
                 violations.push(Violation {
                     code: format!(
                         "{}.{}.{}.empty",
@@ -2211,6 +2219,28 @@ mod tests {
 
         let report = pack.validate(&request("https://px.example.com/collect?id=123"));
         assert_eq!(report.violations[0].severity, Severity::Error);
+    }
+
+    #[test]
+    fn allow_empty_skips_blank_template_slots() {
+        let manifest = TEST_MANIFEST.replace(
+            r#""name": "url",
+                "format": { "kind": "url", "require_https": true }"#,
+            r#""name": "url",
+                "format": { "kind": "url", "require_https": true },
+                "allow_empty": true"#,
+        );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile manifest");
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=PageView&url=",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=123&ev=PageView&url=not-a-url",
+        ));
+        assert_eq!(codes(&report), vec!["vendor.test.param.url.invalid"]);
     }
 
     #[test]

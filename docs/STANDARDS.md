@@ -161,6 +161,7 @@ in `events` on its own.
 | `purchase` | Needs `currency`, `value`, `transaction_id`, and `items` | `vendor.google-analytics.body.purchase_requires_ecommerce_fields` |
 | `refund` | Needs `currency`, `value`, and `transaction_id` | `vendor.google-analytics.body.refund_requires_ecommerce_fields` |
 | `add_to_cart`, `begin_checkout` | Need `currency`, `value`, and `items` | `vendor.google-analytics.body.cart_requires_ecommerce_fields` |
+| `view_item`, `add_to_wishlist` | Need `currency`, `value`, and `items` | `vendor.google-analytics.body.view_item_requires_ecommerce_fields` |
 
 Source: [Measurement Protocol reference](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference),
 [recommended events](https://developers.google.com/analytics/devguides/collection/ga4/reference/events).
@@ -183,13 +184,16 @@ on the path as semicolon-delimited pairs. Level: `official_vendor`.
 | `num` | When present, not empty | `vendor.floodlight.param.num.empty` |
 | `qty`, `cost` | When present, not empty | `vendor.floodlight.param.qty.empty`, `.cost.empty` |
 | `dc_lat` | When present, `0` or `1` | `vendor.floodlight.param.dc_lat.invalid` |
+| `npa` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.npa.invalid` |
+| `tfua` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.tfua.invalid` |
 | `u1`–`u20` | When present, not empty | `vendor.floodlight.param.u1.empty` through `.u20.empty` |
 | Unique counting | `num` is only meaningful alongside `ord` | `vendor.floodlight.counting.unique_requires_ord` |
 
 Campaign Manager documents custom variables through `u100`. This pack
 contracts `u1`–`u20`. `u21`–`u100` have the same shape and are not enumerated.
 
-Source: [Floodlight tag structure](https://support.google.com/campaignmanager/answer/2823425).
+Source: [Floodlight tag structure](https://support.google.com/campaignmanager/answer/2823425),
+[iframe and image tags](https://support.google.com/campaignmanager/answer/2823450).
 
 ## `vendor/cm360-tracking-ad`
 
@@ -298,6 +302,8 @@ ID travels in the path. Level: `official_vendor`.
 | --- | --- | --- |
 | `conversion_id` | Required numeric ID, read from the path | `vendor.google-ads-conversion.param.conversion_id.missing`, `.empty`, `.invalid` |
 | `label` | Expected. Without it the hit lands on the account rather than a conversion action | `vendor.google-ads-conversion.param.label.missing`, `.empty` |
+| `currency_code` | When present, ISO 4217 three-letter code | `vendor.google-ads-conversion.param.currency_code.invalid` |
+| `ord` | When present, not empty | `vendor.google-ads-conversion.param.ord.empty` |
 | `guid` | The generated tag sends `ON` | `vendor.google-ads-conversion.param.guid.invalid` |
 | `script` | The image fallback sends `0` | `vendor.google-ads-conversion.param.script.invalid` |
 
@@ -382,6 +388,13 @@ report suite rides on the path after `/b/ss/`. Level: `official_vendor`.
 | `events` / `ev` | When present, not empty | `vendor.adobe-analytics.param.events.empty` |
 | `products` / `pl` | When present, not empty | `vendor.adobe-analytics.param.products.empty` |
 | `pe` | When present, `lnk_o`, `lnk_d`, `lnk_e`, or `tnt` | `vendor.adobe-analytics.param.pe.invalid` |
+| `cc` | When present, ISO 4217 three-letter code | `vendor.adobe-analytics.param.cc.invalid` |
+| `referrer` | When present, an absolute URL | `vendor.adobe-analytics.param.referrer.invalid` |
+| `purchaseID` | When present, not empty | `vendor.adobe-analytics.param.purchaseID.empty` |
+| `vid` | When present, not empty | `vendor.adobe-analytics.param.vid.empty` |
+| `v0` / `campaign` | When present, not empty | `vendor.adobe-analytics.param.v0.empty` |
+| `pageType` / `gt` | When present, not empty | `vendor.adobe-analytics.param.pageType.empty` |
+| `server` / `sv` | When present, not empty | `vendor.adobe-analytics.param.server.empty` |
 | Truncated request | `AQB` requires `AQE` | `vendor.adobe-analytics.truncated_request` |
 
 Sources: [query parameters](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters),
@@ -454,6 +467,8 @@ The ad account ID rides on the path. The event payload is checked per event in
 | Hashed identifiers | `em`, `ph`, `external_id`, `hashed_maids` must be SHA-256 hex digests | `vendor.pinterest-conversions-api.body.user_data.<field>.invalid` |
 | Unhashed PII | No field carries a raw email address | `vendor.pinterest-conversions-api.body.unhashed_email` |
 | Over-hashing | `client_ip_address` and `client_user_agent` must not be digests | `vendor.pinterest-conversions-api.body.hashed_plaintext_field` |
+| `checkout` | Expected `custom_data.value` and `custom_data.currency` | `vendor.pinterest-conversions-api.body.checkout_requires_value_and_currency` |
+| Value without currency | `currency` is expected whenever `value` is set | `vendor.pinterest-conversions-api.body.value_requires_currency` |
 
 Source: [track conversion events in the API](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/).
 
@@ -480,6 +495,8 @@ The event payload is checked per event in `data`.
 | `user_data` | Required | `vendor.snapchat.body.user_data.missing`, `.empty` |
 | Hashed identifiers | `em`, `ph`, `fn`, `ln`, `ge`, `ct`, `st`, `zp`, `country` must be SHA-256 hex digests | `vendor.snapchat.body.user_data.<field>.invalid` |
 | Web events | `event_source_url` is required when `action_source` is `WEB` | `vendor.snapchat.body.web_requires_source_url` |
+| Purchase events | `custom_data.value` and `custom_data.currency` are required | `vendor.snapchat.body.purchase_requires_value_and_currency` |
+| Value without currency | `currency` is required whenever `value` is set | `vendor.snapchat.body.value_requires_currency` |
 | Unhashed PII | No field carries a raw email address | `vendor.snapchat.body.unhashed_email` |
 | Over-hashing | `client_ip_address` and `client_user_agent` must not be digests | `vendor.snapchat.body.hashed_plaintext_field` |
 
@@ -1525,6 +1542,10 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | `action_name` | Recommended | `vendor.matomo.param.action_name.missing` |
 | `url` | Recommended, absolute URL | `vendor.matomo.param.url.missing`, `.invalid` |
 | `_id` | Recommended, 16 hex characters | `vendor.matomo.param._id.missing`, `.invalid` |
+| `rand` | Recommended cache buster | `vendor.matomo.param.rand.missing`, `.empty` |
+| `apiv` | Recommended `1` | `vendor.matomo.param.apiv.missing`, `.invalid` |
+| `cid` | When present, 16 hex characters | `vendor.matomo.param.cid.invalid` |
+| `e_v` | When present, a number | `vendor.matomo.param.e_v.invalid` |
 | Event | `e_c` requires `e_a` | `vendor.matomo.event_requires_action` |
 | Order | `ec_id` requires `revenue` | `vendor.matomo.order_requires_revenue` |
 

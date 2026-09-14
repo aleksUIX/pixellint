@@ -235,6 +235,22 @@
         },
         "description": "It is sent unhashed, and it must be the browser's user agent rather than your HTTP client's.",
         "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.value",
+        "description": "It is the monetary value of the event. Snap documents it as required for PURCHASE.",
+        "fix_hint": "Send the purchase total in `custom_data.value`.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.currency",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Za-z]{3}$"
+        },
+        "description": "It is the ISO 4217 currency of `custom_data.value`.",
+        "fix_hint": "Send the three-letter code, such as `USD`.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
       }
     ],
     "rules": [
@@ -251,6 +267,34 @@
         "severity": "error",
         "message": "The event is marked `action_source: WEB` but carries no `event_source_url`, which Snap requires for website events.",
         "fix_hint": "Send the URL of the page the event took place on.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "code": "vendor.snapchat.body.purchase_requires_value_and_currency",
+        "kind": "required_when_value",
+        "when": "event_name",
+        "equals": [
+          "PURCHASE"
+        ],
+        "requires": [
+          "custom_data.value",
+          "custom_data.currency"
+        ],
+        "severity": "error",
+        "message": "A `PURCHASE` event is missing its value or currency. Snap documents `value` as required for PURCHASE, and currency rides with that value.",
+        "fix_hint": "Send `custom_data.value` and `custom_data.currency` on PURCHASE events.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "code": "vendor.snapchat.body.value_requires_currency",
+        "kind": "required_with",
+        "when": "custom_data.value",
+        "requires": [
+          "custom_data.currency"
+        ],
+        "severity": "error",
+        "message": "The event carries `custom_data.value` with no `custom_data.currency`. Snap documents currency as the ISO code that goes with the value.",
+        "fix_hint": "Add `custom_data.currency` as a three-letter code alongside the value.",
         "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
       },
       {

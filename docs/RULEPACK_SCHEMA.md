@@ -113,6 +113,8 @@ Value checks are `.empty` when the value is blank and `.invalid` when it fails
 `severity` overrides the severity of every finding for that parameter.
 `format_severity` overrides only `.invalid`, which is how a parameter can be
 mandatory while unrecognized values stay a warning.
+`allow_empty` skips the `.empty` finding, so a blank value is an unfilled
+template slot. Format checks still run when the value is populated.
 
 Values carrying an unexpanded macro skip format checks: unresolved macros are
 the `core` pack's finding to report, and reporting both would double-count one
