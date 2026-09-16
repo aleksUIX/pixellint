@@ -6,6 +6,19 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.1 - 2026-09-15
+
+### Changed
+
+- Same-hop vendor packs now contract more of their published HTTP tables.
+  Campaign Manager 360 tracking ads check `dc_lat`, `tfua`, and
+  `tag_for_child_directed_treatment` as `0` or `1`, and generated empty slots
+  stay quiet. Google Ads conversion pixels format-check `value` as a number
+  with no currency symbol or comma. Xandr conversion pixels check `order_id`
+  as letters and numbers up to 36 characters, `other` up to 20, and `redir`
+  as a URL. Quantcast Measure checks `labels`, `orderid`, `revenue`, and
+  `url` when present.
+
 ## 0.31.0 - 2026-09-15
 
 ### Added

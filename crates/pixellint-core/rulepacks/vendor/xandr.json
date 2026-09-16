@@ -28,9 +28,9 @@
     },
     {
       "name": "order_id",
-      "format": { "kind": "non_empty" },
-      "description": "It is an order ID or SKU. Microsoft documents a 36 character limit, with letters and numbers.",
-      "fix_hint": "Set order_id to the order or SKU, at most 36 characters.",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z0-9]{1,36}$" },
+      "description": "It is an order ID or SKU. Microsoft documents letters and numbers, with a 36 character limit.",
+      "fix_hint": "Set order_id to the order or SKU, letters and numbers only, at most 36 characters.",
       "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
     },
     {
@@ -45,6 +45,20 @@
       "format": { "kind": "enum", "values": ["0", "1"] },
       "description": "It is binary consent when TCF signals are not available. Microsoft documents 1 for granted and 0 for denied.",
       "fix_hint": "Send consent=1 when the user granted consent, or consent=0 when they denied it.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    },
+    {
+      "name": "other",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z0-9]{1,20}$" },
+      "description": "It is extra external data on the conversion. Microsoft documents letters and numbers, with a 20 character limit.",
+      "fix_hint": "Set other to letters and numbers only, at most 20 characters.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    },
+    {
+      "name": "redir",
+      "format": { "kind": "url" },
+      "description": "It is a piggyback pixel URL. Microsoft documents redir as the image or JavaScript pixel to notify after conversion.",
+      "fix_hint": "Set redir to an absolute image or JavaScript pixel URL, matching the host pixel type.",
       "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
     }
   ],

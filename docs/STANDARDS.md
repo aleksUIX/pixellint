@@ -209,6 +209,9 @@ activity tags (`src;type;cat;ord`) stay `vendor/floodlight`. GAM/CM360 VAST
 | --- | --- | --- |
 | `dc_trk_aid` | Required numeric tracking ad ID | `vendor.cm360-tracking-ad.param.dc_trk_aid.missing`, `.empty`, `.invalid` |
 | `dc_trk_cid` | Required numeric tracking creative ID | `vendor.cm360-tracking-ad.param.dc_trk_cid.missing`, `.empty`, `.invalid` |
+| `dc_lat` | When present, `0` or `1`. Generated empty slots are allowed | `vendor.cm360-tracking-ad.param.dc_lat.invalid` |
+| `tfua` | When present, `0` or `1`. Generated empty slots are allowed | `vendor.cm360-tracking-ad.param.tfua.invalid` |
+| `tag_for_child_directed_treatment` | When present, `0` or `1`. Generated empty slots are allowed | `vendor.cm360-tracking-ad.param.tag_for_child_directed_treatment.invalid` |
 
 Source: [Tagging issues in Campaign Manager 360](https://support.google.com/campaignmanager/answer/2829774). Placement-tag examples with `/trackimp` and `/trackclk` are in [placement tags](https://support.google.com/campaignmanager/answer/2826636).
 
@@ -304,6 +307,7 @@ ID travels in the path. Level: `official_vendor`.
 | --- | --- | --- |
 | `conversion_id` | Required numeric ID, read from the path | `vendor.google-ads-conversion.param.conversion_id.missing`, `.empty`, `.invalid` |
 | `label` | Expected. Without it the hit lands on the account rather than a conversion action | `vendor.google-ads-conversion.param.label.missing`, `.empty` |
+| `value` | When present, a number with no currency symbol or comma | `vendor.google-ads-conversion.param.value.empty`, `.invalid` |
 | `currency_code` | When present, ISO 4217 three-letter code | `vendor.google-ads-conversion.param.currency_code.invalid` |
 | `ord` | When present, not empty | `vendor.google-ads-conversion.param.ord.empty` |
 | `guid` | The generated tag sends `ON` | `vendor.google-ads-conversion.param.guid.invalid` |
@@ -1549,6 +1553,10 @@ the path as semicolon-delimited pairs. Level: `official_vendor`.
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `a` | Required p-code starting with `p-` | `vendor.quantcast.param.a.missing`, `.empty`, `.invalid` |
+| `labels` | When present, not empty | `vendor.quantcast.param.labels.empty` |
+| `orderid` | When present, not empty | `vendor.quantcast.param.orderid.empty` |
+| `revenue` | When present, a number with no currency symbol | `vendor.quantcast.param.revenue.empty`, `.invalid` |
+| `url` | When present, an absolute page URL | `vendor.quantcast.param.url.empty`, `.invalid` |
 
 Source: [inspect your tag](https://help.quantcast.com/docs/inspect-your-tag).
 
@@ -2177,8 +2185,11 @@ contracted.
 | --- | --- | --- |
 | `id` | Required integer conversion pixel ID | `vendor.xandr.param.id.missing`, `.empty`, `.invalid` |
 | `t` | Required `1` (JavaScript) or `2` (image) | `vendor.xandr.param.t.missing`, `.empty`, `.invalid` |
+| `order_id` | When present, letters and numbers, at most 36 characters | `vendor.xandr.param.order_id.empty`, `.invalid` |
 | `value` | Optional numerical revenue, no currency symbol | `vendor.xandr.param.value.empty`, `.invalid` |
 | `consent` | Optional `0` or `1` when TCF is not used | `vendor.xandr.param.consent.empty`, `.invalid` |
+| `other` | When present, letters and numbers, at most 20 characters | `vendor.xandr.param.other.empty`, `.invalid` |
+| `redir` | When present, an absolute piggyback pixel URL | `vendor.xandr.param.redir.empty`, `.invalid` |
 
 Sources: [Conversion Pixels Advanced](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced),
 [Test a Conversion Pixel](https://learn.microsoft.com/en-us/xandr/monetize/test-conversion-pixel-and-attribution).
