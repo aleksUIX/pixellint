@@ -1,0 +1,36 @@
+{
+  "id": "vendor/doubleverify-event",
+  "display_name": "DoubleVerify video event pixel",
+  "description": "DoubleVerify video quartile and player-event beacons on tpsc-video-*.doubleverify.com/event.png and tps.doubleverify.com/event.png. Generated wrappers always send vstevt. Impression visit.jpg hops stay vendor/doubleverify. Amazon-hosted /dv/ hops stay vendor/amazon-vfw.",
+  "vendor": "doubleverify",
+  "source_level": "ecosystem_reference",
+  "docs": "https://support.google.com/displayvideo/answer/2591756",
+  "match": {
+    "hosts": [
+      "tps.doubleverify.com",
+      "tpsc-video-as.doubleverify.com",
+      "tpsc-video-eu.doubleverify.com",
+      "tpsc-video-ue.doubleverify.com",
+      "tpsc-video-uw.doubleverify.com"
+    ],
+    "path_prefixes": ["/event.png"]
+  },
+  "params": [
+    {
+      "name": "vstevt",
+      "requirement": "required",
+      "format": { "kind": "non_empty" },
+      "description": "It is the viewability event code on generated DoubleVerify video event.png hops. Google documents ctx, cmp, plc, and sid as dvparams on the wrapper, not this query. Generated event.png tags always send vstevt, so an empty or missing value is a truncated quartile trail.",
+      "fix_hint": "Export the DoubleVerify video tag again so event.png carries vstevt.",
+      "doc": "https://support.google.com/displayvideo/answer/2591756"
+    },
+    {
+      "name": "dup",
+      "format": { "kind": "non_empty" },
+      "description": "It is the impression correlation id that ties an event.png hop to its visit.jpg. Generated video wrappers send it on both hops. An empty pair drops the quartile out of the impression.",
+      "fix_hint": "Keep dup from the generated visit.jpg tag on each event.png hop, or drop the empty pair.",
+      "doc": "https://support.google.com/displayvideo/answer/2591756"
+    }
+  ],
+  "rules": []
+}

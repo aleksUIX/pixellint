@@ -2,7 +2,7 @@
   "id": "vendor/google-ad-manager",
   "display_name": "Google Ad Manager ad request",
   "vendor": "google",
-  "description": "Google Ad Manager ad requests on pubads.g.doubleclick.net/gampad/ads and securepubads.g.doubleclick.net/gampad/ads. Google documents iu as the ad unit path. Floodlight activity tags stay vendor/floodlight. CM360 VAST events stay vendor/cm360-vast-event.",
+  "description": "Google Ad Manager ad requests on pubads.g.doubleclick.net/gampad/ads and securepubads.g.doubleclick.net/gampad/ads. Google documents iu, sz, output, env, gdfp_req, and correlator as required to implement ad serving. description_url is required for web and recommended for programmatic. pagead/interaction and pcs/view stay directory-only. Floodlight activity tags stay vendor/floodlight. CM360 VAST events stay vendor/cm360-vast-event.",
   "source_level": "official_vendor",
   "docs": "https://support.google.com/admanager/answer/10655276",
   "match": {
@@ -22,6 +22,168 @@
       },
       "description": "It is the ad unit path, including the network code, in the form /network_code/.../ad_unit. Google documents iu as required to implement ad serving.",
       "fix_hint": "Set iu to the Ad Manager ad unit path, such as /6062/videodemo.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "sz",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+x[0-9]+(\\|[0-9]+x[0-9]+)*$"
+      },
+      "description": "It is the size of the primary video ad slot. Google documents sz as required to implement ad serving, with multiple sizes separated by a pipe and no trailing v.",
+      "fix_hint": "Set sz to the player size, such as 640x480 or 300x250|400x300.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "output",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(vast|vmap|xml_vast[0-9]+|xml_vmap[0-9]+(?:_vast[0-9]+)?)$"
+      },
+      "description": "It is the ad response format. Google documents output as required, with vast, xml_vast4, vmap, xml_vmap1, and xml_vmap1_vast4 as the published values.",
+      "fix_hint": "Set output to vast, xml_vast4, vmap, or the VMAP/VAST combination your player expects.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "env",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": ["instream", "vp"]
+      },
+      "description": "It marks an in-stream or video-player request. Google documents env as required, with instream for video or audio and vp for video only.",
+      "fix_hint": "Set env=vp for video or env=instream when the request may return audio.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "gdfp_req",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": ["1"]
+      },
+      "description": "It is the Google Ad Manager schema indicator. Google documents gdfp_req=1 as required to implement ad serving.",
+      "fix_hint": "Set gdfp_req=1.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "correlator",
+      "requirement": "required",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "It is a random positive integer shared by requests from the same page view. Google documents correlator as required to implement ad serving, including competitive exclusions.",
+      "fix_hint": "Set correlator to a fresh random positive integer per page view, not reused across views.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "description_url",
+      "requirement": "recommended",
+      "format": {
+        "kind": "url"
+      },
+      "description": "It is a crawlable page that describes the video on this request, not the site home page. Google documents it as required for web and mobile app ad serving, and recommended for programmatic.",
+      "fix_hint": "Set description_url to the content page for this video, URL-encoded on web.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "unviewed_position_start",
+      "format": {
+        "kind": "enum",
+        "values": ["1"]
+      },
+      "description": "It marks delayed impressions for video. Google documents unviewed_position_start=1 as required for web and mobile apps when the impression is delayed.",
+      "fix_hint": "Set unviewed_position_start=1 on delayed-impression VAST tags.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "url",
+      "format": {
+        "kind": "url"
+      },
+      "description": "It is the page or inventory URL the request was sent from. Google documents url as required for programmatic monetization, distinct from description_url.",
+      "fix_hint": "Set url to the encoded page URL on web, or the closest inventory URL off-web.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "plcmt",
+      "format": {
+        "kind": "enum",
+        "values": ["1", "2"]
+      },
+      "description": "It is the IAB placement. Google documents plcmt as required for programmatic, with 1 for instream and 2 for accompanying content.",
+      "fix_hint": "Set plcmt=1 for instream or plcmt=2 for accompanying content.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "vpa",
+      "format": {
+        "kind": "enum",
+        "values": ["auto", "click"]
+      },
+      "description": "It says whether content starts on autoplay or click. Google documents vpa as required for programmatic. Leave it unset when unknown.",
+      "fix_hint": "Set vpa=auto or vpa=click, or omit it when playback start is unknown.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "vpmute",
+      "format": {
+        "kind": "enum",
+        "values": ["0", "1"]
+      },
+      "description": "It says whether ad playback starts muted. Google documents vpmute as required for programmatic, with 1 muted and 0 unmuted.",
+      "fix_hint": "Set vpmute=1 when playback starts muted, or vpmute=0 when it starts unmuted.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "ott_placement",
+      "format": {
+        "kind": "enum",
+        "values": ["1", "2", "3", "4", "5", "99"]
+      },
+      "description": "It names a non-standard OTT placement. Google documents ott_placement as required for programmatic pause, homescreen, PIP, L-banner, overlay, or custom CTV, and unnecessary for standard instream.",
+      "fix_hint": "Set ott_placement to 1 through 5 or 99 for those OTT formats. Omit it for standard instream.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "vpos",
+      "format": {
+        "kind": "enum",
+        "values": ["preroll", "midroll", "postroll"]
+      },
+      "description": "It is the pod position. Google documents vpos as recommended for programmatic. Ad rules set it automatically.",
+      "fix_hint": "Set vpos to preroll, midroll, or postroll when you are not using ad rules.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "vconp",
+      "format": {
+        "kind": "enum",
+        "values": ["1", "2"]
+      },
+      "description": "It says whether the player intends to play video continuously. Google documents vconp as recommended for programmatic, with 2 on and 1 off. Leave it unset when unknown.",
+      "fix_hint": "Set vconp=2 for continuous play, vconp=1 when it is off, or omit it when unknown.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "wta",
+      "format": {
+        "kind": "enum",
+        "values": ["0", "1"]
+      },
+      "description": "It says whether the player will render the AdChoices icon from VAST. Google documents wta as recommended for programmatic. Omit it or send 1 when the player renders the icon.",
+      "fix_hint": "Set wta=1 when the player renders AdChoices, or wta=0 only when it will not.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "vid_d",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "It is content duration in seconds. Google documents vid_d as recommended for programmatic mid-rolls without content ingestion.",
+      "fix_hint": "Set vid_d to the content duration in seconds when requesting mid-rolls.",
       "doc": "https://support.google.com/admanager/answer/10655276"
     }
   ],

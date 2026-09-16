@@ -6,6 +6,28 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.0 - 2026-09-15
+
+### Added
+
+- `vendor/doubleverify-event`, covering DoubleVerify video quartile and
+  player-event beacons on `tps.doubleverify.com/event.png` and
+  `tpsc-video-*.doubleverify.com/event.png`: required `vstevt`, and `dup`
+  when present. Impression `visit.jpg` hops stay `vendor/doubleverify`.
+  Amazon-hosted `/dv/` hops stay `vendor/amazon-vfw`.
+
+### Changed
+
+- `vendor/google-ad-manager` now contracts the rest of Google's published
+  VAST ad tag table on `/gampad/ads`: required `sz`, `output`, `env`,
+  `gdfp_req`, and `correlator`, recommended `description_url`, and the
+  documented programmatic and player fields when present. `pagead/` and
+  `pcs/view` stay directory-only.
+- `vendor/amazon-vfw` checks `ctx`, `cmp`, `plc`, and `sid` when present on
+  Firefly `/dv/` hops. Generated `/dv/proxy` tags send those names from the
+  same `dvparams` Google documents on DoubleVerify wrappers.
+- `vendor/doubleverify` checks `vstevt` when present on `visit.jpg`.
+
 ## 0.30.3 - 2026-09-13
 
 ### Changed

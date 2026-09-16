@@ -1,7 +1,7 @@
 {
   "id": "vendor/amazon-vfw",
   "display_name": "Amazon DSP Firefly DV measurement",
-  "description": "Amazon DSP Firefly viewability hops on vfw.amazon-adsystem.com /dv/, which wrap DoubleVerify measurement. IAS /ias/ hops on the same host are not contracted. The Ad Tag loader is vendor/amazon-ads.",
+  "description": "Amazon DSP Firefly viewability hops on vfw.amazon-adsystem.com /dv/, which wrap DoubleVerify measurement. Generated /dv/event.png and /dv/proxy tags always send vstevt. Generated /dv/proxy tags also send ctx, cmp, plc, and sid from the same dvparams Google documents on DoubleVerify wrappers. IAS /ias/ hops on the same host are not contracted. The Ad Tag loader is vendor/amazon-ads.",
   "vendor": "amazon",
   "source_level": "ecosystem_reference",
   "docs": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers",
@@ -17,6 +17,34 @@
       "description": "It is the Firefly viewability event code on Amazon-hosted DoubleVerify hops. Amazon documents DSP third-party verification with DoubleVerify, not this query; generated /dv/event.png and /dv/proxy tags always send vstevt, so an empty or missing value is a truncated wrapper.",
       "fix_hint": "Export the Firefly VAST again from Amazon DSP so vstevt is present on the /dv/ hop.",
       "doc": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers"
+    },
+    {
+      "name": "ctx",
+      "format": { "kind": "non_empty" },
+      "description": "It is the DoubleVerify context or advertiser key. Google documents it as ctx inside dvparams. Generated /dv/proxy tags carry the same name. Quartile /dv/event.png hops often omit it.",
+      "fix_hint": "Keep ctx from the generated Firefly /dv/proxy tag, or drop the empty pair.",
+      "doc": "https://support.google.com/displayvideo/answer/2591756"
+    },
+    {
+      "name": "cmp",
+      "format": { "kind": "non_empty" },
+      "description": "It is the DoubleVerify campaign key. Google documents it as cmp inside dvparams. Generated /dv/proxy tags carry the same name.",
+      "fix_hint": "Keep cmp from the generated Firefly /dv/proxy tag, or drop the empty pair.",
+      "doc": "https://support.google.com/displayvideo/answer/2591756"
+    },
+    {
+      "name": "plc",
+      "format": { "kind": "non_empty" },
+      "description": "It is the DoubleVerify placement key. Google documents it as plc inside dvparams. Generated /dv/proxy tags carry the same name.",
+      "fix_hint": "Keep plc from the generated Firefly /dv/proxy tag, or drop the empty pair.",
+      "doc": "https://support.google.com/displayvideo/answer/2591756"
+    },
+    {
+      "name": "sid",
+      "format": { "kind": "non_empty" },
+      "description": "It is the DoubleVerify site or supply key. Google documents it as sid inside dvparams. Generated /dv/proxy tags carry the same name. Values may be a name rather than digits.",
+      "fix_hint": "Keep sid from the generated Firefly /dv/proxy tag, or drop the empty pair.",
+      "doc": "https://support.google.com/displayvideo/answer/2591756"
     }
   ],
   "rules": []

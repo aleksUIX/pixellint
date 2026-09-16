@@ -1,7 +1,7 @@
 {
   "id": "vendor/doubleverify",
   "display_name": "DoubleVerify visit pixel",
-  "description": "DoubleVerify impression beacons on tps.doubleverify.com/visit.jpg and tpsc-video-*.doubleverify.com/visit.jpg. Google documents ctx, cmp, plc, and sid on the generated wrapper as dvparams. Those names ride on visit.jpg. OMID dvtp_src.js, RTB, VAST wrappers, and event.png quartiles are not contracted. Amazon-hosted /dv/ hops stay vendor/amazon-vfw.",
+  "description": "DoubleVerify impression beacons on tps.doubleverify.com/visit.jpg and tpsc-video-*.doubleverify.com/visit.jpg. Google documents ctx, cmp, plc, and sid on the generated FlashTalking and DoubleVerify wrapper as dvparams. Those names ride on visit.jpg. Generated video wrappers also send vstevt on visit.jpg. Quartile event.png hops are vendor/doubleverify-event. OMID dvtp_src.js, RTB, and VAST wrappers are not contracted. Amazon-hosted /dv/ hops stay vendor/amazon-vfw.",
   "vendor": "doubleverify",
   "source_level": "ecosystem_reference",
   "docs": "https://support.google.com/displayvideo/answer/2591756",
@@ -46,6 +46,13 @@
       "format": { "kind": "non_empty" },
       "description": "It is the DoubleVerify site or supply key. Google documents it as sid inside dvparams. Generated tags sometimes send a name rather than digits.",
       "fix_hint": "Keep sid from the generated DoubleVerify tag on the visit.jpg query.",
+      "doc": "https://support.google.com/displayvideo/answer/2591756"
+    },
+    {
+      "name": "vstevt",
+      "format": { "kind": "non_empty" },
+      "description": "It is the viewability event code on generated video visit.jpg tags. Google documents ctx, cmp, plc, and sid as dvparams, not this name. Generated tpsc-video visit.jpg hops send it, so an empty pair is a truncated wrapper. Quartile event.png hops are vendor/doubleverify-event.",
+      "fix_hint": "Keep vstevt from the generated video visit.jpg tag, or drop the empty pair.",
       "doc": "https://support.google.com/displayvideo/answer/2591756"
     }
   ],

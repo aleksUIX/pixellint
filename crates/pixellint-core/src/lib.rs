@@ -151,6 +151,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/doubleverify.json"),
     ),
     (
+        "vendor/doubleverify-event",
+        include_str!("../rulepacks/vendor/doubleverify-event.json"),
+    ),
+    (
         "vendor/drift",
         include_str!("../rulepacks/vendor/drift.json"),
     ),

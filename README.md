@@ -192,6 +192,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/floodlight` | Campaign Manager Floodlight activity tags | official vendor |
 | `vendor/cm360-tracking-ad` | CM360 tracking ads, `dc_trk_aid` and `dc_trk_cid` | official vendor |
 | `vendor/cm360-vast-event` | CM360 VAST event pixels, `dc_oe` on googlesyndication | ecosystem reference |
+| `vendor/google-ad-manager` | Ad Manager `/gampad/ads`, `iu` `sz` `output` `env` `gdfp_req` `correlator` | official vendor |
 | `vendor/adobe-analytics` | Adobe Analytics data collection beacons | official vendor |
 | `vendor/pinterest` | Pinterest tag requests and the noscript fallback | official vendor |
 | `vendor/pinterest-conversions-api` | Conversions API events, URL and JSON event payload | official vendor |
@@ -216,8 +217,9 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/awin` | Awin fall-back conversion pixel and S2S read | official vendor |
 | `vendor/partnerize` | Partnerize conversion URL, campaign, clickref, and currency in the path | official vendor |
 | `vendor/amazon-ads` | Amazon Ad Tag conversion loader, Tag ID in the path | ecosystem reference |
-| `vendor/amazon-vfw` | Amazon DSP Firefly DV measurement, `vstevt` on `/dv/` | ecosystem reference |
+| `vendor/amazon-vfw` | Amazon DSP Firefly DV measurement, `vstevt` and `dvparams` on `/dv/` | ecosystem reference |
 | `vendor/doubleverify` | DoubleVerify `visit.jpg` beacons, `ctx` `cmp` `plc` `sid` | ecosystem reference |
+| `vendor/doubleverify-event` | DoubleVerify `event.png` quartiles, `vstevt` | ecosystem reference |
 | `vendor/freewheel` | FreeWheel GET `/ad/g/` ad requests, `nw` and `csid` or `ssid` | official vendor |
 | `vendor/outbrain` | Outbrain conversion pixel, ob_adv_id or ob_click_id | ecosystem reference |
 | `vendor/baidu` | Baidu Tongji collect `hm.gif?si=` | ecosystem reference |
@@ -260,7 +262,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover 129 endpoint families across 77 vendors. The vendor directory
+Rulepacks cover 130 endpoint families across 77 vendors. The vendor directory
 covers the rest by attribution: 119 vendor rows and 296 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 

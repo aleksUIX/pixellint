@@ -1378,15 +1378,18 @@ Source: [Amazon Advertising Tag GTM template](https://github.com/amzn/ads-pao-am
 Amazon DSP Firefly viewability hops on `vfw.amazon-adsystem.com` `/dv/`, which
 wrap DoubleVerify measurement. Level: `ecosystem_reference`. Amazon documents
 DSP third-party verification with DoubleVerify and IAS, not this query.
-Generated `/dv/event.png` and `/dv/proxy` tags always send `vstevt`. IAS
-`/ias/` hops on the same host stay directory-only. The Ad Tag loader is
-`vendor/amazon-ads`.
+Generated `/dv/event.png` and `/dv/proxy` tags always send `vstevt`. Generated
+`/dv/proxy` tags also send `ctx`, `cmp`, `plc`, and `sid` from the same
+`dvparams` Google documents on DoubleVerify wrappers. Quartile `/dv/event.png`
+hops often omit those four. IAS `/ias/` hops on the same host stay
+directory-only. The Ad Tag loader is `vendor/amazon-ads`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `vstevt` | Required, non-empty Firefly event code | `vendor.amazon-vfw.param.vstevt.missing`, `.empty` |
+| `ctx`, `cmp`, `plc`, `sid` | When present, not empty | `vendor.amazon-vfw.param.ctx.empty`, `.cmp.empty`, `.plc.empty`, `.sid.empty` |
 
-Source: [approved third-party providers](https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers), observed Firefly VAST.
+Sources: [approved third-party providers](https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers), [Add macros to third-party display ad tags](https://support.google.com/displayvideo/answer/2591756), observed Firefly VAST.
 
 ## `vendor/outbrain`
 
@@ -1973,10 +1976,11 @@ DoubleVerify impression beacons on `tps.doubleverify.com/visit.jpg` and
 `tpsc-video-*.doubleverify.com/visit.jpg`. Level: `ecosystem_reference`.
 Google documents `ctx`, `cmp`, `plc`, and `sid` on the generated FlashTalking
 and DoubleVerify wrapper as `dvparams`. Those names ride on `visit.jpg`.
-OMID `cdn.doubleverify.com/dvtp_src.js`, RTB, VAST wrappers, and `event.png`
-quartiles are not contracted. Amazon-hosted `/dv/` hops are
-`vendor/amazon-vfw`. Microsoft Advertising DV is a Pinnacle link token, not
-this hop.
+Generated video wrappers also send `vstevt` on `visit.jpg`. Quartile
+`event.png` hops are `vendor/doubleverify-event`. OMID
+`cdn.doubleverify.com/dvtp_src.js`, RTB, and VAST wrappers are not contracted.
+Amazon-hosted `/dv/` hops are `vendor/amazon-vfw`. Microsoft Advertising DV is
+a Pinnacle link token, not this hop.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -1984,8 +1988,24 @@ this hop.
 | `cmp` | Required campaign key | `vendor.doubleverify.param.cmp.missing`, `.empty` |
 | `plc` | Required placement key | `vendor.doubleverify.param.plc.missing`, `.empty` |
 | `sid` | Required site or supply key. Names such as `turn` are legal | `vendor.doubleverify.param.sid.missing`, `.empty` |
+| `vstevt` | When present, not empty | `vendor.doubleverify.param.vstevt.empty` |
 
-Source: [Add macros to third-party display ad tags](https://support.google.com/displayvideo/answer/2591756).
+Source: [Add macros to third-party display ad tags](https://support.google.com/displayvideo/answer/2591756), observed `tpsc-video` VAST.
+
+## `vendor/doubleverify-event`
+
+DoubleVerify video quartile and player-event beacons on
+`tpsc-video-*.doubleverify.com/event.png` and `tps.doubleverify.com/event.png`.
+Level: `ecosystem_reference`. Generated wrappers always send `vstevt`.
+Impression `visit.jpg` hops stay `vendor/doubleverify`. Amazon-hosted `/dv/`
+hops stay `vendor/amazon-vfw`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `vstevt` | Required, non-empty viewability event code | `vendor.doubleverify-event.param.vstevt.missing`, `.empty` |
+| `dup` | When present, not empty. Ties the hop to its `visit.jpg` | `vendor.doubleverify-event.param.dup.empty` |
+
+Source: [Add macros to third-party display ad tags](https://support.google.com/displayvideo/answer/2591756), observed `tpsc-video` VAST.
 
 ## `vendor/freewheel`
 
@@ -2069,12 +2089,28 @@ Source: [Sending oHashes to the Oracle Data Cloud Platform](https://docs.oracle.
 Google Ad Manager ad requests on `pubads.g.doubleclick.net/gampad/ads`
 and `securepubads.g.doubleclick.net/gampad/ads`. Level: `official_vendor`.
 Floodlight activity tags stay `vendor/floodlight`. CM360 VAST events stay
-`vendor/cm360-vast-event`. Display GPT and VAST tags share this hop; only
-`iu` is contracted.
+`vendor/cm360-vast-event`. `pagead/interaction` and `pcs/view` stay
+directory-only. Display GPT and VAST tags share this hop.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `iu` | Required ad unit path `/network_code/.../ad_unit` | `vendor.google-ad-manager.param.iu.missing`, `.empty`, `.invalid` |
+| `sz` | Required player size, `640x480` or pipe-separated | `vendor.google-ad-manager.param.sz.missing`, `.empty`, `.invalid` |
+| `output` | Required VAST or VMAP format | `vendor.google-ad-manager.param.output.missing`, `.empty`, `.invalid` |
+| `env` | Required `instream` or `vp` | `vendor.google-ad-manager.param.env.missing`, `.empty`, `.invalid` |
+| `gdfp_req` | Required `1` | `vendor.google-ad-manager.param.gdfp_req.missing`, `.empty`, `.invalid` |
+| `correlator` | Required random positive integer per page view | `vendor.google-ad-manager.param.correlator.missing`, `.empty`, `.invalid` |
+| `description_url` | Recommended crawlable content page | `vendor.google-ad-manager.param.description_url.missing`, `.empty`, `.invalid` |
+| `unviewed_position_start` | When present, `1` | `vendor.google-ad-manager.param.unviewed_position_start.invalid` |
+| `url` | When present, an absolute URL | `vendor.google-ad-manager.param.url.empty`, `.invalid` |
+| `plcmt` | When present, `1` instream or `2` accompanying | `vendor.google-ad-manager.param.plcmt.invalid` |
+| `vpa` | When present, `auto` or `click` | `vendor.google-ad-manager.param.vpa.invalid` |
+| `vpmute` | When present, `0` or `1` | `vendor.google-ad-manager.param.vpmute.invalid` |
+| `ott_placement` | When present, `1`–`5` or `99` | `vendor.google-ad-manager.param.ott_placement.invalid` |
+| `vpos` | When present, `preroll`, `midroll`, or `postroll` | `vendor.google-ad-manager.param.vpos.invalid` |
+| `vconp` | When present, `1` or `2` | `vendor.google-ad-manager.param.vconp.invalid` |
+| `wta` | When present, `0` or `1` | `vendor.google-ad-manager.param.wta.invalid` |
+| `vid_d` | When present, content duration in seconds | `vendor.google-ad-manager.param.vid_d.empty`, `.invalid` |
 
 Source: [VAST ad tag parameters for web](https://support.google.com/admanager/answer/10655276).
 
