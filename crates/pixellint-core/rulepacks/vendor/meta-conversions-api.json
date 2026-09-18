@@ -13,9 +13,18 @@
       "/events"
     ],
     "json_paths": [
-      "data[].event_name",
+      {
+        "any_of": ["data[].event_name", "user_data"]
+      },
+      {
+        "any_of": ["data[].event_name", "event_name"]
+      },
       {
         "path": "data[].action_source",
+        "excludes": "^(WEB|OFFLINE|MOBILE_APP|web|app_android|app_ios|offline)$"
+      },
+      {
+        "path": "action_source",
         "excludes": "^(WEB|OFFLINE|MOBILE_APP|web|app_android|app_ios|offline)$"
       }
     ]
@@ -65,7 +74,7 @@
     }
   ],
   "body": {
-    "scope": "data[]",
+    "scope": ["data[]", ""],
     "params": [
       {
         "name": "event_name",

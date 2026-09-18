@@ -66,20 +66,22 @@
     {
       "name": "qty",
       "format": {
-        "kind": "non_empty"
+        "kind": "regex",
+        "pattern": "^[1-9][0-9]*$"
       },
-      "description": "It is the quantity of items on a sales tag. Campaign Manager documents it on transaction Floodlight tags.",
-      "fix_hint": "Set `qty` to the item count, or drop the empty pair.",
-      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+      "description": "It is the quantity of items on a sales tag. Campaign Manager documents qty as an integer greater than zero. Counter tags omit it.",
+      "fix_hint": "Set `qty` to the item count as a whole number of 1 or more, or drop the pair on a counter tag.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823450"
     },
     {
       "name": "cost",
       "format": {
-        "kind": "non_empty"
+        "kind": "regex",
+        "pattern": "^[0-9]+(\\.[0-9]+)?$"
       },
-      "description": "It is the revenue amount on a sales tag. Campaign Manager documents it on transaction Floodlight tags.",
-      "fix_hint": "Set `cost` to the order value, without a currency symbol.",
-      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+      "description": "It is the revenue amount on a sales tag. Campaign Manager documents cost as a number with no commas or currency symbols. Counter tags omit it.",
+      "fix_hint": "Set `cost` to the order value as a number, such as 19.99, or drop the pair on a counter tag.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823450"
     },
     {
       "name": "dc_lat",
@@ -145,6 +147,26 @@
       "message": "The tag counts unique users with `num` but omits `ord`. Unique counting sends `ord=1` together with a random `num`.",
       "fix_hint": "Add `ord=1` next to the random `num` value.",
       "doc": "https://support.google.com/campaignmanager/answer/2823425"
+    },
+    {
+      "code": "vendor.floodlight.sales.qty_requires_cost",
+      "kind": "required_with",
+      "when": "qty",
+      "requires": ["cost"],
+      "severity": "error",
+      "message": "The tag sends `qty` without `cost`. Campaign Manager documents both on sales conversion tags.",
+      "fix_hint": "Add `cost` as the revenue amount, with no currency symbol, or drop `qty` on a counter tag.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823450"
+    },
+    {
+      "code": "vendor.floodlight.sales.cost_requires_qty",
+      "kind": "required_with",
+      "when": "cost",
+      "requires": ["qty"],
+      "severity": "error",
+      "message": "The tag sends `cost` without `qty`. Campaign Manager documents both on sales conversion tags.",
+      "fix_hint": "Add `qty` as an integer of 1 or more, or drop `cost` on a counter tag.",
+      "doc": "https://support.google.com/campaignmanager/answer/2823450"
     }
   ]
 }

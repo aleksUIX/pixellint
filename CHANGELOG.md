@@ -6,6 +6,28 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.2 - 2026-09-17
+
+### Changed
+
+- Same-hop vendor packs now contract more of their published HTTP tables.
+  Floodlight sales tags type-check `qty` as an integer of 1 or more and `cost`
+  as a number, and require the pair together. Chartbeat recommends `p`, `d`,
+  and `t` from the QA ping key table. Parse.ly collect requires `url`. Nielsen
+  DCR cfg requires `apn` and `sfcode` from the initialize table. FreeWheel
+  checks `caid`, `asid`, and `flag` when present. Adobe Analytics warns when a
+  beacon has neither `pageName` nor `g`. Yahoo Dot accepts `projectId` as the
+  JavaScript twin of `a`.
+- `vendor/microsoft-uet` now follows Microsoft's published UET parameter table:
+  required `ti`, `ver`, `evt` (`pageLoad` or `custom`), `mid`, and 6-digit
+  `rn`; recommended `p` and `msclkid`; `ec`/`ea`/`el`/`ev` forbidden on
+  `pageLoad`. Evidence level is `official_vendor`.
+- Host-less JSON matching no longer claims SKAd-shaped `{ts, bundle, ver}` as
+  ID5, AppsFlyer `{app_id, eventName}` as Heap identify or user-properties, or
+  Meta `{event_name, user_data}` as Intercom. Meta CAPI also claims a flat
+  event object, not only `data[]`. Yahoo CAPI requires `userData` on the batch
+  array.
+
 ## 0.31.1 - 2026-09-15
 
 ### Changed

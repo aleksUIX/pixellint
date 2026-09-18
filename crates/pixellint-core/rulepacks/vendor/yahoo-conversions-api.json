@@ -10,13 +10,21 @@
     "hosts": ["batch.datax.yahoo.com"],
     "path_prefixes": ["/v1/events"],
     "json_paths": [
+      "[].userData",
       {
         "any_of": [
           "[].eventName",
           "[].eventTs",
-          "[].actionSource",
-          "[].userData"
+          "[].actionSource"
         ]
+      },
+      {
+        "path": "event_source",
+        "excludes": ".+"
+      },
+      {
+        "path": "data[].eventType",
+        "excludes": ".+"
       }
     ]
   },

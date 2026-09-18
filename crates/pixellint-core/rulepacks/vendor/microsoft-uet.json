@@ -3,8 +3,8 @@
   "display_name": "Microsoft Advertising UET",
   "description": "Universal Event Tracking requests to the Microsoft Advertising collection endpoint.",
   "vendor": "microsoft",
-  "source_level": "ecosystem_reference",
-  "docs": "https://learn.microsoft.com/en-us/advertising/guides/universal-event-tracking",
+  "source_level": "official_vendor",
+  "docs": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table",
   "match": {
     "hosts": ["bat.bing.com", "bat.bing.net"],
     "path_prefixes": ["/action", "/bat.js", "/p/action"]
@@ -14,22 +14,129 @@
       "name": "ti",
       "requirement": "required",
       "format": { "kind": "integer" },
-      "description": "It is the numeric UET tag ID. Microsoft documents how to create and install the tag but not the request format, so this rule is ecosystem evidence.",
+      "description": "It is the numeric UET tag ID. Microsoft documents ti as required on every event.",
       "fix_hint": "Copy the UET tag ID from Microsoft Advertising into the tag snippet.",
-      "doc": "https://learn.microsoft.com/en-us/advertising/guides/universal-event-tracking"
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
-      "name": "Ver",
-      "format": { "kind": "integer" },
-      "description": "It is the UET tag version the snippet reports.",
-      "doc": "https://learn.microsoft.com/en-us/advertising/guides/universal-event-tracking"
+      "name": "ver",
+      "aliases": ["Ver"],
+      "requirement": "required",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "description": "It is the UET tag version. Microsoft documents ver as required, and 2.3 for a custom implementation.",
+      "fix_hint": "Send ver as 2.3 on a custom implementation, or the version the generated snippet reports.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "evt",
+      "requirement": "required",
+      "format": { "kind": "enum", "values": ["pageLoad", "custom"] },
+      "description": "It names the event. Microsoft documents evt as required, and only pageLoad or custom.",
+      "fix_hint": "Send evt=pageLoad on a page view, or evt=custom on a custom event.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "mid",
+      "requirement": "required",
       "format": { "kind": "non_empty" },
-      "description": "It names the event, such as a page load or a custom event.",
-      "doc": "https://learn.microsoft.com/en-us/advertising/guides/universal-event-tracking"
+      "description": "It identifies events from a single page. Microsoft documents mid as a unique identifier that must change when the page changes.",
+      "fix_hint": "Send a fresh mid per page, such as a GUID.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "rn",
+      "requirement": "required",
+      "format": { "kind": "integer", "min_digits": 6, "max_digits": 6 },
+      "description": "It is a cache buster. Microsoft documents rn as a required random 6-digit number.",
+      "fix_hint": "Send a random 6-digit rn on every fire.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "p",
+      "requirement": "recommended",
+      "format": { "kind": "url" },
+      "description": "It is the page URL. Microsoft documents p on pageLoad events, and as mandatory when page URL remarketing lists are used.",
+      "fix_hint": "Send the absolute page URL in p.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "r",
+      "format": { "kind": "url" },
+      "description": "It is the referrer URL. Microsoft documents r on pageLoad events.",
+      "fix_hint": "Send the absolute referrer URL in r, or omit it.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "uid",
+      "format": { "kind": "non_empty" },
+      "description": "It is a customer-defined logged-in user ID that stays the same across browsers and devices.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "vid",
+      "format": { "kind": "non_empty" },
+      "description": "It is a customer-defined anonymous user ID.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "msclkid",
+      "requirement": "recommended",
+      "format": { "kind": "non_empty" },
+      "description": "It is the Microsoft Click ID. Microsoft documents it on every event. N is the documented value when cookies are blocked or no click exists.",
+      "fix_hint": "Forward the _uetmsclkid cookie, or send N when there is no click.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "ec",
+      "format": { "kind": "non_empty" },
+      "description": "It is the custom event category. Microsoft documents ec on custom events, and forbids it on pageLoad.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "ea",
+      "format": { "kind": "non_empty" },
+      "description": "It is the custom event action. Microsoft documents ea on custom events, and forbids it on pageLoad.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "el",
+      "format": { "kind": "non_empty" },
+      "description": "It is the custom event label. Microsoft documents el on custom events, and forbids it on pageLoad.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "ev",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "description": "It is the custom event value. Microsoft documents ev as numeric, on custom events only.",
+      "fix_hint": "Send a number such as 42, not a currency string.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "gv",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "description": "It is variable revenue for conversion tracking.",
+      "fix_hint": "Send a number such as 20.55, with no currency symbol.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "gc",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+      "description": "It is the ISO 4217 currency of gv.",
+      "fix_hint": "Send the three-letter code, such as USD.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.microsoft-uet.pageload_forbids_custom_event_fields",
+      "kind": "forbidden_when_value",
+      "when": "evt",
+      "equals": ["pageLoad"],
+      "params": ["ec", "ea", "el", "ev"],
+      "severity": "error",
+      "message": "A pageLoad event carries a custom-event field. Microsoft documents ec, ea, el, and ev as custom-event parameters that cannot be used with pageLoad.",
+      "fix_hint": "Drop ec, ea, el, and ev from pageLoad, or set evt=custom.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    }
+  ]
 }

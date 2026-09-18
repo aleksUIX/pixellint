@@ -184,7 +184,8 @@ on the path as semicolon-delimited pairs. Level: `official_vendor`.
 | `cat` | Required activity tag | `vendor.floodlight.param.cat.missing`, `.empty` |
 | `ord` | Required cache buster | `vendor.floodlight.param.ord.missing`, `.empty` |
 | `num` | When present, not empty | `vendor.floodlight.param.num.empty` |
-| `qty`, `cost` | When present, not empty | `vendor.floodlight.param.qty.empty`, `.cost.empty` |
+| `qty` | When present, an integer of 1 or more. Sales tags also need `cost` | `vendor.floodlight.param.qty.empty`, `.invalid`, `vendor.floodlight.sales.qty_requires_cost` |
+| `cost` | When present, a number with no currency symbol. Sales tags also need `qty` | `vendor.floodlight.param.cost.empty`, `.invalid`, `vendor.floodlight.sales.cost_requires_qty` |
 | `dc_lat` | When present, `0` or `1` | `vendor.floodlight.param.dc_lat.invalid` |
 | `npa` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.npa.invalid` |
 | `tfua` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.tfua.invalid` |
@@ -242,9 +243,10 @@ Server-side events posted to the Graph API events edge. Level:
 | `test_event_code` | Warns when present, since it diverts events to the test tool | `vendor.meta-conversions-api.testing.test_event_code_present` |
 | Unhashed PII | No query parameter carries a raw email address | `vendor.meta-conversions-api.pii.unhashed_email` |
 
-The event payload is checked per event in `data`. Codes carry `.body.` to keep
-them apart from the query parameters above, because the endpoint accepts some
-fields in either place.
+The event payload is checked per event in `data`, or on the document itself
+when the paste is a single event object with no `data` wrapper. Codes carry
+`.body.` to keep them apart from the query parameters above, because the
+endpoint accepts some fields in either place.
 
 | Body field or rule | Enforced | Rule ids |
 | --- | --- | --- |
@@ -409,6 +411,7 @@ report suite rides on the path after `/b/ss/`. Level: `official_vendor`.
 | `pev1` | When present, an absolute URL | `vendor.adobe-analytics.param.pev1.invalid` |
 | `pev2` | When present, not empty | `vendor.adobe-analytics.param.pev2.empty` |
 | Truncated request | `AQB` requires `AQE` | `vendor.adobe-analytics.truncated_request` |
+| Page identity | One of `pageName`/`gn` or `g` | `vendor.adobe-analytics.page_identity_required` |
 
 Sources: [query parameters](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters),
 [identify your tracking server and report suites](https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites),
@@ -532,18 +535,24 @@ each reports it.
 ## `vendor/microsoft-uet`
 
 Universal Event Tracking requests on `bat.bing.com` and `bat.bing.net`. Level:
-`ecosystem_reference`.
+`official_vendor`.
 
-| Parameter | Enforced | Rule ids |
+| Parameter or rule | Enforced | Rule ids |
 | --- | --- | --- |
 | `ti` | Required numeric tag ID | `vendor.microsoft-uet.param.ti.missing`, `.empty`, `.invalid` |
-| `Ver` | When present, numeric | `vendor.microsoft-uet.param.Ver.invalid`, `.empty` |
-| `evt` | When present, not empty | `vendor.microsoft-uet.param.evt.empty` |
+| `ver` / `Ver` | Required tag version | `vendor.microsoft-uet.param.ver.missing`, `.empty`, `.invalid` |
+| `evt` | Required `pageLoad` or `custom` | `vendor.microsoft-uet.param.evt.missing`, `.empty`, `.invalid` |
+| `mid` | Required per-page event id | `vendor.microsoft-uet.param.mid.missing`, `.empty` |
+| `rn` | Required 6-digit cache buster | `vendor.microsoft-uet.param.rn.missing`, `.empty`, `.invalid` |
+| `p` | Recommended page URL | `vendor.microsoft-uet.param.p.missing`, `.empty`, `.invalid` |
+| `r` | When present, an absolute URL | `vendor.microsoft-uet.param.r.empty`, `.invalid` |
+| `msclkid` | Recommended Microsoft Click ID | `vendor.microsoft-uet.param.msclkid.missing`, `.empty` |
+| `ec`, `ea`, `el` | When present, not empty | `vendor.microsoft-uet.param.ec.empty` and the same shape for `ea` and `el` |
+| `ev`, `gv` | When present, a number | `vendor.microsoft-uet.param.ev.invalid`, `.gv.invalid` |
+| `gc` | When present, ISO 4217 three-letter code | `vendor.microsoft-uet.param.gc.invalid` |
+| Custom fields on pageLoad | `ec`, `ea`, `el`, and `ev` are forbidden when `evt` is `pageLoad` | `vendor.microsoft-uet.pageload_forbids_custom_event_fields` |
 
-Source: [Universal Event Tracking](https://learn.microsoft.com/en-us/advertising/guides/universal-event-tracking).
-
-Microsoft documents how to create and install a UET tag, not the request
-format, which is why this pack is ecosystem evidence.
+Source: [UET parameters table](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table).
 
 ## `vendor/microsoft-conversions-api`
 
@@ -1017,7 +1026,7 @@ the pixels API.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
-| `a` | Required project ID | `vendor.yahoo-dot.param.a.missing`, `.empty` |
+| `a` / `projectId` | Required project ID | `vendor.yahoo-dot.param.a.missing`, `.empty` |
 | `.yp` | Required numeric pixel ID | `vendor.yahoo-dot.param..yp.missing`, `.empty`, `.invalid` |
 | `he` | SHA-256 hex digest when present | `vendor.yahoo-dot.param.he.invalid` |
 | Unhashed PII | No parameter carries a raw email address | `vendor.yahoo-dot.unhashed_email` |
@@ -1632,7 +1641,7 @@ Parse.ly collect beacons on `p1.parsely.com` and `p1-irl.parsely.com`. Level:
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `idsite` | Required Site ID | `vendor.parsely-collect.param.idsite.missing`, `.empty` |
-| `url` | Recommended absolute URL | `vendor.parsely-collect.param.url.missing`, `.invalid` |
+| `url` | Required absolute URL | `vendor.parsely-collect.param.url.missing`, `.invalid` |
 | `action` | Recommended | `vendor.parsely-collect.param.action.missing`, `.empty` |
 
 Sources: [tracker details](https://docs.parse.ly/tracker-details/),
@@ -1687,10 +1696,8 @@ not contracted.
 | --- | --- | --- |
 | `h` | Required site id (dashboard host) | `vendor.chartbeat.param.h.missing`, `.empty` |
 | `g` | Required numeric account UID | `vendor.chartbeat.param.g.missing`, `.empty`, `.invalid` |
-| `p`, `d`, `t`, `g0`, `g1`, `i` | When present, not empty | `vendor.chartbeat.param.p.empty` and the same shape for the rest |
-
-Those QA keys are format-when-present, not recommended, so a ping that only
-sends `h` and `g` stays warning-free.
+| `p`, `d`, `t` | Recommended path, domain, and page-session id | `vendor.chartbeat.param.p.missing`, `.empty` and the same shape for `d` and `t` |
+| `g0`, `g1`, `i` | When present, not empty | `vendor.chartbeat.param.g0.empty` and the same shape for the rest |
 
 Source: [QA a web integration](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration).
 
@@ -1950,8 +1957,8 @@ measurement pings on `/cgi-bin/gn` are not contracted.
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `apid` | Required Nielsen App ID | `vendor.nielsen.param.apid.missing`, `.empty` |
-| `apn` | Recommended player or site name | `vendor.nielsen.param.apn.missing`, `.empty` |
-| `sfcode` | Recommended `dcr` or `dcr-cert` | `vendor.nielsen.param.sfcode.missing`, `.invalid` |
+| `apn` | Required player or site name | `vendor.nielsen.param.apn.missing`, `.empty` |
+| `sfcode` | Required `dcr` or `dcr-cert` | `vendor.nielsen.param.sfcode.missing`, `.invalid` |
 
 Source: [DCR Static Browser SDK](https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(5.1.1)).
 
@@ -2031,6 +2038,8 @@ sections after a semicolon are not contracted. `/ad/p/`, StickyAds
 | `nw` | Required distributor network ID | `vendor.freewheel.param.nw.missing`, `.empty` |
 | Site section | One of `csid` or `ssid` | `vendor.freewheel.site_section_required` |
 | `prof` | Recommended player profile | `vendor.freewheel.param.prof.missing`, `.empty` |
+| `caid`, `asid` | When present, not empty. `setVideoAsset` writes `caid` or `asid` | `vendor.freewheel.param.caid.empty`, `.asid.empty` |
+| `flag` | When present, not empty. `setCapability` and autoPlayType write `flag` | `vendor.freewheel.param.flag.empty` |
 
 Sources: [FreeWheel HTML5 SDK](https://vi.freewheel.tv/static/api_docs/html5/),
 [Uplynk FreeWheel ad requests](https://docs.uplynk.com/docs/freewheel).
