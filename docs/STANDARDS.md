@@ -112,6 +112,7 @@ documents the hashing, not the browser query names. `em`, `ph`, `fn`, `ln`,
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `em`, `ph`, `fn`, `ln`, `external_id` | When present, SHA-256 hex | `vendor.meta.param.em.invalid`, `.ph.invalid`, `.fn.invalid`, `.ln.invalid`, `.external_id.invalid` |
+| `ge`, `db`, `ct`, `st`, `zp`, `country` | When present, SHA-256 hex | `vendor.meta.param.ge.invalid`, `.db.invalid`, `.ct.invalid`, `.st.invalid`, `.zp.invalid`, `.country.invalid` |
 | `fbc`, `fbp` | When present, `fb.N.timestamp.value` | `vendor.meta.param.fbc.invalid`, `.fbp.invalid` |
 
 Sources: [pixel base code](https://developers.facebook.com/docs/meta-pixel/get-started),
@@ -424,6 +425,7 @@ report suite rides on the path after `/b/ss/`. Level: `official_vendor`.
 | `pev2` | When present, not empty | `vendor.adobe-analytics.param.pev2.empty` |
 | Truncated request | `AQB` requires `AQE` | `vendor.adobe-analytics.truncated_request` |
 | Page identity | One of `pageName`/`gn` or `g` | `vendor.adobe-analytics.page_identity_required` |
+| Link hit | `pe` of `lnk_o`, `lnk_d`, or `lnk_e` requires `pev1` and `pev2` | `vendor.adobe-analytics.link_requires_url_and_name` |
 
 Sources: [query parameters](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters),
 [identify your tracking server and report suites](https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites),
@@ -480,6 +482,10 @@ Level: `official_vendor`.
 | `ed[value]` | When present, a number | `vendor.pinterest.param.ed[value].invalid` |
 | `ed[currency]` | When present, ISO 4217 three-letter code | `vendor.pinterest.param.ed[currency].invalid` |
 | `ed[order_quantity]` | When present, an integer | `vendor.pinterest.param.ed[order_quantity].invalid` |
+| `ed[event_id]` | When present, not empty | `vendor.pinterest.param.ed[event_id].empty` |
+| `pd[em]`, `pd[external_id]` | When present, SHA-256 hex. The img tag does not hash in the browser | `vendor.pinterest.param.pd[em].invalid`, `.pd[external_id].invalid` |
+| `ed[line_items][n][product_price]` | When present, a number | `vendor.pinterest.param.ed[line_items][0][product_price].invalid` |
+| `ed[line_items][n][product_quantity]` | When present, an integer | `vendor.pinterest.param.ed[line_items][0][product_quantity].invalid` |
 | `checkout`, `addtocart` | Expected `ed[value]` and `ed[currency]` | `vendor.pinterest.checkout_requires_value_and_currency` |
 
 Source: [Pinterest tag](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/).
@@ -1411,15 +1417,27 @@ Source: [advertiser MasterTag](https://help.awin.com/developers/docs/advertiser-
 ## `vendor/partnerize`
 
 Partnerize S2S and clickref conversion URLs on `prf.hn/conversion`. Level:
-`official_vendor`. Parameters ride as colon-delimited path segments. The
-loader on `cdn.performancehorizon.com` is not contracted. Basket item
-containers (`[category:.../sku:...]`) are not contracted.
+`official_vendor`. Parameters ride as colon-delimited path segments, including
+basket item containers (`[category:.../sku:...]`). The loader on
+`cdn.performancehorizon.com` is not contracted.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `campaign` | Required campaign id in the path | `vendor.partnerize.param.campaign.missing`, `.empty` |
 | `clickref` | Required click reference | `vendor.partnerize.param.clickref.missing`, `.empty` |
 | `currency` | Required ISO 4217 three-letter code | `vendor.partnerize.param.currency.missing`, `.invalid` |
+| `conversionref` | When present, not empty. Blank pairs are allowed | `vendor.partnerize.param.conversionref.empty` |
+| `tmethod`, `tplatform` | When present, integers. S2S samples send `2` | `vendor.partnerize.param.tmethod.invalid`, `.tplatform.invalid` |
+| `country` | When present, ISO 3166-1 alpha-2 | `vendor.partnerize.param.country.invalid` |
+| `customertype` | When present, `new` or `existing`. Blank pairs are allowed | `vendor.partnerize.param.customertype.invalid` |
+| `fulfilment_date`, `fulfilment_start_date` | When present, `YYYY-MM-DD` | `vendor.partnerize.param.fulfilment_date.invalid`, `.fulfilment_start_date.invalid` |
+| `conversion_time` | When present, `YYYY-MM-DD HH:MM:SS` | `vendor.partnerize.param.conversion_time.invalid` |
+| `device` | When present, `bot`, `desktop`, `mobile`, `tablet`, or `Other` | `vendor.partnerize.param.device.invalid` |
+| `context` | When present, `web`, `m_web`, `m_app`, `in_app`, `cd_d`, `cd_p`, `other`, or `offline` | `vendor.partnerize.param.context.invalid` |
+| `category`, `sku` | When present, not empty | `vendor.partnerize.param.category.empty`, `.sku.empty` |
+| `value` | When present, a number with no currency symbol | `vendor.partnerize.param.value.invalid` |
+| `quantity` | When present, a positive integer | `vendor.partnerize.param.quantity.invalid` |
+| Unhashed PII | No path segment carries a raw email address | `vendor.partnerize.pii.unhashed_email` |
 
 Source: [S2S integration](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration). Clickref pixel: [clickref pixel](https://help.phgsupport.com/hc/en-us/articles/4834811308957-Tracking-Partnerize-Clickref-Pixel-Integration).
 

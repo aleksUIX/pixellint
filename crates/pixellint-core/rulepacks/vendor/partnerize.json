@@ -1,11 +1,11 @@
 {
   "id": "vendor/partnerize",
   "display_name": "Partnerize conversion tracking",
-  "description": "Partnerize S2S and clickref conversion URLs on prf.hn/conversion, whose campaign, clickref, and currency ride as colon-delimited path segments. The loader on cdn.performancehorizon.com is not contracted.",
+  "description": "Partnerize S2S and clickref conversion URLs on prf.hn/conversion, whose campaign, clickref, currency, and basket keys ride as colon-delimited path segments. The loader on cdn.performancehorizon.com is not contracted.",
   "vendor": "partnerize",
   "source_level": "official_vendor",
   "docs": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration",
-  "path_pattern": "campaign:(?<campaign>[^/]*)(?:.*clickref:(?<clickref>[^/]*))?(?:.*currency:(?<currency>[^/]*))?",
+  "param_style": "colon_path",
   "match": {
     "hosts": ["prf.hn"],
     "path_prefixes": ["/conversion"]
@@ -33,7 +33,147 @@
       "description": "It is the ISO 4217 currency of the conversion. Partnerize documents it as required when the event has a monetary value.",
       "fix_hint": "Put a three-letter currency code in the path as currency:GBP.",
       "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "conversionref",
+      "allow_empty": true,
+      "format": { "kind": "non_empty" },
+      "description": "It is the brand's unique conversion reference. Partnerize documents it as required for validation, and says omit it when the brand cannot generate one.",
+      "fix_hint": "Put a stable order id in the path as conversionref:{id}, or omit the pair and let Partnerize mint one.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "tmethod",
+      "format": { "kind": "integer" },
+      "description": "It is the tracking method. Partnerize documents `tmethod:2` on S2S conversion URLs.",
+      "fix_hint": "Send `tmethod:2` on a server-to-server conversion.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "tplatform",
+      "format": { "kind": "integer" },
+      "description": "It is the tracking platform. Partnerize documents `tplatform:2` on S2S conversion URLs.",
+      "fix_hint": "Send `tplatform:2` on a server-to-server conversion.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "tracking_mode",
+      "format": { "kind": "non_empty" },
+      "description": "It is the tracking mode. Partnerize S2S samples send `tracking_mode:api`.",
+      "fix_hint": "Send `tracking_mode:api` on a server-to-server conversion.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "country",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z]{2}$" },
+      "description": "It is the site country of the purchase. Partnerize documents ISO 3166 letter country codes.",
+      "fix_hint": "Send a two-letter ISO 3166-1 code, such as `GB`.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "customertype",
+      "allow_empty": true,
+      "format": {
+        "kind": "enum",
+        "values": ["new", "existing"],
+        "case_insensitive": true
+      },
+      "description": "It is whether the buyer is a first-time or repeat customer. Partnerize documents `new` or `existing`, and says leave the pair blank when the value is unknown.",
+      "fix_hint": "Send `customertype:new` or `customertype:existing`, or leave the value blank.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "voucher",
+      "allow_empty": true,
+      "format": { "kind": "non_empty" },
+      "description": "It is the voucher used at purchase. Partnerize documents that the item `value` must already reflect the discount.",
+      "fix_hint": "Send the voucher code, or leave the pair blank.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "fulfilment_date",
+      "format": { "kind": "regex", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+      "description": "It is the service delivery date. Partnerize documents `YYYY-MM-DD`.",
+      "fix_hint": "Send `fulfilment_date` as `YYYY-MM-DD`, such as `2026-05-01`.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "fulfilment_start_date",
+      "format": { "kind": "regex", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+      "description": "It is the start of the fulfilment period. Partnerize documents `YYYY-MM-DD`.",
+      "fix_hint": "Send `fulfilment_start_date` as `YYYY-MM-DD`.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "conversion_time",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[ T][0-9]{2}:[0-9]{2}:[0-9]{2}"
+      },
+      "description": "It is the conversion timestamp. Partnerize samples use `YYYY-MM-DD+HH:MM:SS`.",
+      "fix_hint": "Send `conversion_time` as `2021-10-01+18:33:03`.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "device",
+      "format": {
+        "kind": "enum",
+        "values": ["bot", "desktop", "mobile", "tablet", "Other"],
+        "case_insensitive": true
+      },
+      "description": "It is the converting device. Partnerize documents `bot`, `desktop`, `mobile`, `tablet`, and `Other`.",
+      "fix_hint": "Send `device:mobile` or another documented device value.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "context",
+      "format": {
+        "kind": "enum",
+        "values": ["web", "m_web", "m_app", "in_app", "cd_d", "cd_p", "other", "offline"],
+        "case_insensitive": true
+      },
+      "description": "It is the converting context. Partnerize documents `web`, `m_web`, `m_app`, `in_app`, `cd_d`, `cd_p`, `other`, and `offline`.",
+      "fix_hint": "Send `context:m_web` or another documented context value.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "category",
+      "format": { "kind": "non_empty" },
+      "description": "It is the item category inside a basket container. Partnerize documents `category` as required on each `[...]` item.",
+      "fix_hint": "Put `category:{name}` inside each basket container.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "sku",
+      "format": { "kind": "non_empty" },
+      "description": "It is the item product code inside a basket container.",
+      "fix_hint": "Put `sku:{code}` inside the basket container, or drop the empty pair.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "value",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "description": "It is the individual item value, excluding tax, delivery, and currency symbols. Partnerize multiplies it by `quantity`.",
+      "fix_hint": "Send a number such as `19.99`, with no currency symbol or comma.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    },
+    {
+      "name": "quantity",
+      "format": { "kind": "regex", "pattern": "^[1-9][0-9]*$" },
+      "description": "It is the item quantity inside a basket container. Partnerize documents a positive number.",
+      "fix_hint": "Send a positive integer in `quantity`, such as `1`.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.partnerize.pii.unhashed_email",
+      "kind": "forbid_value_pattern",
+      "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+      "severity": "error",
+      "message": "A path segment carries what looks like a raw email address. Partnerize forbids personal data that could identify the end user in conversion parameters.",
+      "fix_hint": "Drop the email from the conversion path. Use `conversionref` for the order id.",
+      "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+    }
+  ]
 }

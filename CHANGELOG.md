@@ -6,6 +6,20 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Changed
+
+- Same-hop vendor packs now contract more of their published HTTP tables.
+  Partnerize conversion paths read colon-delimited path segments, including
+  basket `[category/sku/value/quantity]` containers, and type-check country,
+  customertype, fulfilment dates, device, context, and a raw email in any
+  segment. Pinterest image tags type-check hashed `pd[em]` and
+  `pd[external_id]`, `ed[event_id]`, and line-item price and quantity. Meta
+  Pixel Advanced Matching type-checks hashed `ge`, `db`, `ct`, `st`, `zp`,
+  and `country`. Adobe Analytics link hits (`pe=lnk_o`, `lnk_d`, or `lnk_e`)
+  require `pev1` and `pev2`.
+- `param_style: colon_path` reads `/key:value/` path segments, including
+  Partnerize basket containers wrapped in `[...]`.
+
 ## 0.31.3 - 2026-09-17
 
 ### Changed

@@ -32,6 +32,10 @@ pub enum ParamStyle {
     /// Semicolon-delimited `name=value` pairs inside the path, as used by
     /// Floodlight activity tags.
     Matrix,
+    /// Slash-delimited `key:value` path segments, as used by Partnerize
+    /// conversion URLs. Basket containers wrap a group in `[...]`; the
+    /// brackets are stripped so `category` and `quantity` still match.
+    ColonPath,
 }
 
 /// Whether a contracted parameter has to be present, must be absent, or is on
@@ -2028,8 +2032,13 @@ fn parse_artifact_url(artifact: &str) -> Option<ArtifactUrl> {
 
 /// Splits the raw artifact into parameters, keeping byte offsets into the
 /// original string. Query style reads `?a=1&b=2`; matrix style reads the
-/// semicolon-delimited pairs Floodlight puts in the path.
+/// semicolon-delimited pairs Floodlight puts in the path; colon-path style
+/// reads `/key:value/` segments, including Partnerize basket `[...]` groups.
 pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam> {
+    if style == ParamStyle::ColonPath {
+        return extract_colon_path_params(artifact);
+    }
+
     let length = artifact.len();
     let fragment_start = artifact.find('#').unwrap_or(length);
     let query_start = artifact[..fragment_start].find('?');
@@ -2040,6 +2049,7 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
             None => return Vec::new(),
         },
         ParamStyle::Matrix => path_span(artifact),
+        ParamStyle::ColonPath => unreachable!("colon_path returns above"),
     };
 
     if region_start >= region_end {
@@ -2049,6 +2059,7 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
     let separator = match style {
         ParamStyle::Query => '&',
         ParamStyle::Matrix => ';',
+        ParamStyle::ColonPath => unreachable!("colon_path returns above"),
     };
 
     let mut params = Vec::new();
@@ -2086,6 +2097,44 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
         }
 
         cursor = segment_end + 1;
+    }
+
+    params
+}
+
+/// Partnerize-style `/campaign:ID/clickref:ABC/[category:DVD/quantity:1]` paths.
+fn extract_colon_path_params(artifact: &str) -> Vec<RawParam> {
+    let (path_start, path_end) = path_span(artifact);
+    if path_start >= path_end {
+        return Vec::new();
+    }
+
+    let path = &artifact[path_start..path_end];
+    let mut params = Vec::new();
+    let mut rel = 0;
+
+    for segment in path.split('/') {
+        if !segment.is_empty() {
+            let bytes = segment.as_bytes();
+            let leading = usize::from(bytes.first() == Some(&b'['));
+            let trailing = usize::from(bytes.last() == Some(&b']') && segment.len() > leading);
+            let inner_end = segment.len() - trailing;
+            if leading < inner_end {
+                let inner = &segment[leading..inner_end];
+                if let Some((name, value)) = inner.split_once(':')
+                    && !name.is_empty()
+                {
+                    let abs = path_start + rel;
+                    params.push(RawParam::query(
+                        percent_decode(name),
+                        percent_decode(value),
+                        abs + leading,
+                        abs + inner_end,
+                    ));
+                }
+            }
+        }
+        rel += segment.len() + 1;
     }
 
     params
@@ -2373,6 +2422,51 @@ mod tests {
         assert_eq!(codes(&report), vec!["vendor.test.param.legacy.deprecated"]);
         let target = &report.violations[0].targets[0];
         assert_eq!(&artifact[target.start..target.end], "legacy=1");
+    }
+
+    #[test]
+    fn colon_path_params_are_read_from_the_path() {
+        let manifest = TEST_MANIFEST
+            .replace(
+                r#""match": {"#,
+                r#""param_style": "colon_path", "match": {"#,
+            )
+            .replace(
+                r#""path_prefixes": ["/collect"]"#,
+                r#""path_prefixes": ["/conversion"]"#,
+            );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile colon_path manifest");
+        let report = pack.validate(&request(
+            "https://px.example.com/conversion/id:12345/ev:PageView",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        let report = pack.validate(&request("https://px.example.com/conversion/id:12345"));
+        assert_eq!(codes(&report), vec!["vendor.test.param.ev.missing"]);
+    }
+
+    #[test]
+    fn colon_path_strips_basket_brackets() {
+        let manifest = TEST_MANIFEST
+            .replace(
+                r#""match": {"#,
+                r#""param_style": "colon_path", "match": {"#,
+            )
+            .replace(
+                r#""path_prefixes": ["/collect"]"#,
+                r#""path_prefixes": ["/conversion"]"#,
+            );
+        let pack = ManifestRulePack::from_json(&manifest).expect("compile colon_path manifest");
+        let artifact =
+            "https://px.example.com/conversion/[id:12345]/ev:Purchase/[category:SHOES/quantity:1]";
+        let report = pack.validate(&request(artifact));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        let artifact = "https://px.example.com/conversion/[id:ab]/ev:PageView";
+        let report = pack.validate(&request(artifact));
+        assert_eq!(codes(&report), vec!["vendor.test.param.id.invalid"]);
+        let target = &report.violations[0].targets[0];
+        assert_eq!(&artifact[target.start..target.end], "id:ab");
     }
 
     #[test]

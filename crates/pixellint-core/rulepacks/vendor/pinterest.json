@@ -96,6 +96,56 @@
       "description": "It is the order quantity on the noscript image. Pinterest documents `ed[order_quantity]` next to `ed[value]`.",
       "fix_hint": "Send an integer item count in `ed[order_quantity]`.",
       "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    },
+    {
+      "name": "ed[event_id]",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the event id on the noscript image. Pinterest documents `ed[event_id]` for deduplication against the JavaScript tag.",
+      "fix_hint": "Send the same event id the JavaScript tag fired, or drop the empty pair.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    },
+    {
+      "name": "pd[em]",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{64}$"
+      },
+      "description": "It is the hashed email for Enhanced Match on the image tag. Pinterest documents SHA-256 hex after lowercase and trim. The JavaScript tag hashes in the browser; the img tag does not.",
+      "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest in `pd[em]`.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    },
+    {
+      "name": "pd[external_id]",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{64}$"
+      },
+      "description": "It is the hashed advertiser-side user id for Enhanced Match on the image tag. Pinterest documents SHA-256 hex.",
+      "fix_hint": "Hash the identifier with SHA-256 and send the hex digest in `pd[external_id]`.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    },
+    {
+      "name": "ed[line_items][0][product_price]",
+      "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_price\\]$",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(\\.[0-9]+)?$"
+      },
+      "description": "It is a line-item price on the noscript image. Pinterest documents `ed[line_items][n][product_price]` as a number.",
+      "fix_hint": "Send a number in `ed[line_items][n][product_price]`, without a currency symbol.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    },
+    {
+      "name": "ed[line_items][0][product_quantity]",
+      "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_quantity\\]$",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "It is a line-item quantity on the noscript image. Pinterest documents `ed[line_items][n][product_quantity]` as an integer.",
+      "fix_hint": "Send an integer item count in `ed[line_items][n][product_quantity]`.",
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
     }
   ],
   "rules": [
