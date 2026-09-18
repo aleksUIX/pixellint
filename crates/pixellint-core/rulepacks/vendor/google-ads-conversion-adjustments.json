@@ -94,7 +94,9 @@
         },
         {
           "name": "restatementValue.adjustedValue",
+          "format": { "kind": "regex", "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$" },
           "description": "The restated conversion value. Google documents it as required on `RESTATEMENT` and invalid on `RETRACTION`.",
+          "fix_hint": "Set `restatementValue.adjustedValue` to the new conversion value.",
           "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
         },
         {
@@ -116,6 +118,16 @@
           "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
         },
         {
+          "code": "vendor.google-ads-conversion-adjustments.body.gclid_requires_conversion_time",
+          "kind": "required_with",
+          "when": "gclidDateTimePair.gclid",
+          "requires": ["gclidDateTimePair.conversionDateTime"],
+          "severity": "error",
+          "message": "The adjustment sends `gclidDateTimePair.gclid` without `conversionDateTime`. Google documents the pair together.",
+          "fix_hint": "Set `gclidDateTimePair.conversionDateTime` to the original conversion time.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
           "code": "vendor.google-ads-conversion-adjustments.body.restatement_requires_value",
           "kind": "required_when_value",
           "when": "adjustmentType",
@@ -124,6 +136,17 @@
           "severity": "error",
           "message": "A `RESTATEMENT` has no `restatementValue.adjustedValue`. Google documents the restated value as required.",
           "fix_hint": "Set `restatementValue.adjustedValue` to the new conversion value.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
+        },
+        {
+          "code": "vendor.google-ads-conversion-adjustments.body.retraction_forbids_value",
+          "kind": "forbidden_when_value",
+          "when": "adjustmentType",
+          "equals": ["RETRACTION"],
+          "params": ["restatementValue.adjustedValue"],
+          "severity": "error",
+          "message": "A `RETRACTION` carries `restatementValue.adjustedValue`. Google documents that field as required on `RESTATEMENT` and invalid on a retraction.",
+          "fix_hint": "Drop `restatementValue` from a retraction.",
           "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments"
         }
       ]

@@ -87,6 +87,23 @@
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         },
         {
+          "name": "pageLoadId",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "description": "It links custom events to a page load. Microsoft documents a v4 UUID.",
+          "fix_hint": "Send a UUID such as `bcf3000b-65fa-4cd2-808a-8a6cf2b1d0a5`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "adStorageConsent",
+          "format": { "kind": "enum", "values": ["G", "D"] },
+          "description": "It is the advertising-storage consent signal. Microsoft documents `G` for granted and `D` for denied.",
+          "fix_hint": "Set `adStorageConsent` to `G` or `D`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
           "name": "userData",
           "requirement": "required",
           "description": "Microsoft documents `userData` as required, with at least one supported identifier.",
@@ -144,10 +161,35 @@
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         },
         {
+          "name": "userData.clientIpAddress",
+          "format": { "kind": "non_empty" },
+          "description": "It is the visitor IP, IPv4 or IPv6, sent unhashed. Microsoft documents it as preferred.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "userData.clientUserAgent",
+          "format": { "kind": "non_empty" },
+          "description": "It is the visitor user agent, sent unhashed. Microsoft documents it as preferred.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
           "name": "customData.currency",
           "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
           "description": "It is the ISO 4217 currency of `customData.value`.",
           "fix_hint": "Use a three-letter code such as `USD`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.value",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the revenue value for variable-revenue goals. Microsoft documents a decimal number together with `currency`.",
+          "fix_hint": "Send a number such as `123.45`, with no currency symbol.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.eventValue",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the event value for custom conversion goals. Microsoft documents a float.",
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         }
       ],
@@ -181,6 +223,26 @@
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         },
         {
+          "code": "vendor.microsoft-conversions-api.body.value_requires_currency",
+          "kind": "required_with",
+          "when": "customData.value",
+          "requires": ["customData.currency"],
+          "severity": "error",
+          "message": "The event sends `customData.value` without `customData.currency`. Microsoft documents the ISO 4217 code together with the revenue value.",
+          "fix_hint": "Add `customData.currency`, such as `USD`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "code": "vendor.microsoft-conversions-api.body.currency_requires_value",
+          "kind": "required_with",
+          "when": "customData.currency",
+          "requires": ["customData.value"],
+          "severity": "error",
+          "message": "The event sends `customData.currency` without `customData.value`. Microsoft documents both together.",
+          "fix_hint": "Add `customData.value` as a number, with no currency symbol.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
           "code": "vendor.microsoft-conversions-api.body.unhashed_email",
           "kind": "forbid_value_pattern",
           "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
@@ -188,6 +250,16 @@
           "severity": "error",
           "message": "`userData.em` carries what looks like a raw email address. Microsoft documents SHA-256 lowercase hex.",
           "fix_hint": "Trim, lowercase, hash with SHA-256, and send the 64-character hex digest.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "code": "vendor.microsoft-conversions-api.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["userData.clientIpAddress", "userData.clientUserAgent"],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Microsoft documents `clientIpAddress` and `clientUserAgent` as unhashed.",
+          "fix_hint": "Send the raw IP address or user agent.",
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         }
       ]

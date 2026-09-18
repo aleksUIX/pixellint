@@ -37,9 +37,9 @@
     {
       "name": "amount",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
-      "description": "It is the sale subtotal after discounts, excluding tax and shipping. Awin documents it as a float with a dot decimal.",
-      "fix_hint": "Set `amount` to the order subtotal, with a dot decimal and no thousands separator.",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the sale subtotal after discounts, excluding tax and shipping. Awin documents a float with a dot decimal and no thousands separator.",
+      "fix_hint": "Set `amount` to the order subtotal, such as `1083.29`.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
     },
     {
@@ -53,8 +53,8 @@
     {
       "name": "parts",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
-      "description": "It is the commission group code plus amount, such as `DEFAULT:8.33`. Awin documents it as required.",
+      "format": { "kind": "regex", "pattern": "^.+:[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the commission group code plus amount, such as `DEFAULT:8.33`. Awin documents `{group}:{amount}` as required.",
       "fix_hint": "Set `parts` to `{group}:{amount}`, using `DEFAULT` when no group is configured.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
     },
@@ -91,9 +91,29 @@
     {
       "name": "cks",
       "format": { "kind": "non_empty" },
-      "description": "It is the Awin click identifier (`awc`) on server-to-server reads.",
+      "description": "It is the Awin click identifier (`awc`) on server-to-server reads. Awin documents it as required when `tt=ss`.",
+      "fix_hint": "Replay the stored `awc` value as `cks` on `/sread.php`.",
       "doc": "https://help.awin.com/developers/docs/direct-s2s"
+    },
+    {
+      "name": "customeracquisition",
+      "format": { "kind": "enum", "values": ["NEW", "RETURNING"] },
+      "description": "It names the customer type. Awin documents `NEW` or `RETURNING` on the fall-back pixel.",
+      "fix_hint": "Set `customeracquisition` to `NEW` or `RETURNING`.",
+      "doc": "https://help.awin.com/developers/docs/customer-acquisition"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.awin.s2s_requires_cks",
+      "kind": "required_when_value",
+      "when": "tt",
+      "equals": ["ss"],
+      "requires": ["cks"],
+      "severity": "error",
+      "message": "A server-to-server read has no `cks`. Awin documents the Awin click checksum as required when `tt=ss`.",
+      "fix_hint": "Replay the landing-page `awc` value as `cks`.",
+      "doc": "https://help.awin.com/developers/docs/direct-s2s"
+    }
+  ]
 }

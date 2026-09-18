@@ -110,6 +110,49 @@
           },
           "description": "Android advertising ID. Branch requires it together with `os=Android` when it is the identifier in use.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.user_agent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the user agent of the browser or app where the event occurred, sent unhashed.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.dma_eea",
+          "description": "Whether European regulations, including the DMA, apply to this user. Branch documents it as a boolean.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.dma_ad_personalization",
+          "description": "Whether the user granted ads personalization consent. Branch documents it as required when `dma_eea` is true.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.dma_ad_user_data",
+          "description": "Whether the user granted consent for third-party transmission of user-level ads data. Branch documents it as required when `dma_eea` is true.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "event_data.currency",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "description": "It is the ISO 4217 currency that revenue, price, shipping, and tax were reported in.",
+          "fix_hint": "Use a three-letter code such as `USD`.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "event_data.revenue",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the reported revenue for the event. Branch documents a number.",
+          "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
         }
       ],
       "rules": [
@@ -134,11 +177,26 @@
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
           "params": [
-            "user_data.ip"
+            "user_data.ip",
+            "user_data.user_agent"
           ],
           "severity": "error",
-          "message": "`user_data.ip` looks like a SHA-256 digest, but Branch documents it as the device IP address, unhashed.",
-          "fix_hint": "Send the raw IP address.",
+          "message": "This field looks like a SHA-256 digest, but Branch documents `user_data.ip` and `user_data.user_agent` as unhashed.",
+          "fix_hint": "Send the raw IP address or user agent.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "code": "vendor.branch.body.dma_consent_required",
+          "kind": "required_when_value",
+          "when": "user_data.dma_eea",
+          "equals": ["true"],
+          "requires": [
+            "user_data.dma_ad_personalization",
+            "user_data.dma_ad_user_data"
+          ],
+          "severity": "error",
+          "message": "`dma_eea` is true, but the event is missing `dma_ad_personalization` or `dma_ad_user_data`. Branch documents both consent signals when EU regulations apply.",
+          "fix_hint": "Send `user_data.dma_ad_personalization` and `user_data.dma_ad_user_data` as booleans.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api"
         }
       ]

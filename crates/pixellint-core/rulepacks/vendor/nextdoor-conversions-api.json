@@ -140,10 +140,25 @@
         "doc": "https://developer.nextdoor.com/reference/conversions-track"
       },
       {
-        "name": "custom.order_value",
+        "name": "customer.client_ip_address",
         "format": { "kind": "non_empty" },
+        "description": "It is the browser IP, IPv4 or IPv6, sent unhashed.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "custom.order_value",
+        "format": { "kind": "regex", "pattern": "^[A-Z]{3}[0-9]+(?:\\.[0-9]{1,2})?$" },
         "description": "It is ISO 4217 currency then the amount, such as `USD49.99`. Nextdoor documents it as required on purchase.",
         "fix_hint": "Set `custom.order_value` to a currency code followed by the amount, such as `USD49.99`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "custom.delivery_category",
+        "format": {
+          "kind": "enum",
+          "values": ["in_store", "curbside", "home_delivery"]
+        },
+        "description": "It names how the purchase was fulfilled. Nextdoor documents `in_store`, `curbside`, and `home_delivery`.",
         "doc": "https://developer.nextdoor.com/reference/conversions-track"
       }
     ],
@@ -173,6 +188,17 @@
         "doc": "https://developer.nextdoor.com/reference/conversions-track"
       },
       {
+        "code": "vendor.nextdoor-conversions-api.body.website_requires_user_agent",
+        "kind": "required_when_value",
+        "when": "action_source",
+        "equals": ["website"],
+        "requires": ["customer.client_user_agent"],
+        "severity": "error",
+        "message": "The event is `action_source: website` but carries no `customer.client_user_agent`. Nextdoor documents the user agent as required for website CAPI events.",
+        "fix_hint": "Send the raw browser user agent in `customer.client_user_agent`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
         "code": "vendor.nextdoor-conversions-api.body.purchase_requires_order_value",
         "kind": "required_when_value",
         "when": "event_name",
@@ -192,6 +218,16 @@
         "message": "`customer.email` carries what looks like a raw email address. Nextdoor documents SHA-256 after trim and lowercase.",
         "fix_hint": "Trim, lowercase, hash with SHA-256, and send the 64-character hex digest.",
         "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "code": "vendor.nextdoor-conversions-api.body.hashed_plaintext_field",
+        "kind": "forbid_value_pattern",
+        "pattern": "^[A-Fa-f0-9]{64}$",
+        "params": ["customer.client_ip_address", "customer.client_user_agent"],
+        "severity": "error",
+        "message": "This field looks like a SHA-256 digest, but Nextdoor documents `client_ip_address` and `client_user_agent` as unhashed.",
+        "fix_hint": "Send the raw IP address or user agent.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
       }
     ]
   }

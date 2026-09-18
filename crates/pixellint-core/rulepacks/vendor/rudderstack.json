@@ -86,6 +86,20 @@
           "description": "Name of the user action. Required on a track call.",
           "fix_hint": "Set `event` to the action name, such as `Product Purchased`.",
           "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "groupId",
+          "format": { "kind": "non_empty" },
+          "description": "Unique identifier of the group. RudderStack documents it as required on a group call.",
+          "fix_hint": "Set `groupId` to the group in your database.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "previousId",
+          "format": { "kind": "non_empty" },
+          "description": "The previous unique identifier of the user. RudderStack documents it on an alias call.",
+          "fix_hint": "Set `previousId` to the id being merged.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
         }
       ],
       "rules": [
@@ -98,6 +112,28 @@
           "severity": "error",
           "message": "A `track` call carries no `event`. RudderStack documents the event name as required.",
           "fix_hint": "Add the event name to the call.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "code": "vendor.rudderstack.body.group_requires_group_id",
+          "kind": "required_when_value",
+          "when": "type",
+          "equals": ["group"],
+          "requires": ["groupId"],
+          "severity": "error",
+          "message": "A `group` call carries no `groupId`. RudderStack documents the group id as required.",
+          "fix_hint": "Set `groupId` to the group in your database.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "code": "vendor.rudderstack.body.alias_requires_previous_id",
+          "kind": "required_when_value",
+          "when": "type",
+          "equals": ["alias"],
+          "requires": ["previousId"],
+          "severity": "error",
+          "message": "An `alias` call carries no `previousId`. RudderStack documents the previous unique identifier on alias.",
+          "fix_hint": "Set `previousId` to the id being merged.",
           "doc": "https://www.rudderstack.com/docs/api/http-api/"
         }
       ]
@@ -133,6 +169,22 @@
           "description": "RudderStack documents timestamp as ISO 8601 `yyyy-MM-ddTHH:mm:ss.SSSZ`.",
           "fix_hint": "Send an ISO 8601 timestamp such as `2022-02-01T19:14:18.381Z`.",
           "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "sentAt",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+          },
+          "description": "RudderStack documents `sentAt` as the client send time, used with `anonymousId` to keep event order.",
+          "fix_hint": "Send an ISO 8601 timestamp such as `2022-02-01T19:14:18.381Z`.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "context.ip",
+          "format": { "kind": "non_empty" },
+          "description": "It is the visitor IP, sent unhashed. RudderStack's HTTP samples send a raw address.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
         }
       ],
       "rules": [
@@ -143,6 +195,16 @@
           "severity": "error",
           "message": "The call carries neither `userId` nor `anonymousId`. RudderStack documents one of the two as required.",
           "fix_hint": "Send `userId` for a known user, or `anonymousId` for an unidentified one.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "code": "vendor.rudderstack.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["context.ip"],
+          "severity": "error",
+          "message": "`context.ip` looks like a SHA-256 digest, but RudderStack documents it as an IP address.",
+          "fix_hint": "Send the raw IP address.",
           "doc": "https://www.rudderstack.com/docs/api/http-api/"
         }
       ]

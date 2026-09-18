@@ -82,7 +82,7 @@
           },
           "description": "Braze documents the event name as required.",
           "fix_hint": "Name the custom event.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
         },
         {
           "name": "time",
@@ -93,10 +93,46 @@
           },
           "description": "Braze documents the event time as an ISO 8601 datetime, such as `2026-07-26T06:00:00+00:00`.",
           "fix_hint": "Send an ISO 8601 datetime rather than an epoch number.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+        },
+        {
+          "name": "_update_existing_only",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "Braze documents this as a boolean. When true, the call updates an existing profile and does not create one.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+        },
+        {
+          "name": "properties.time",
+          "requirement": "forbidden",
+          "description": "Braze reserves `time` as an event field, not as a custom property name.",
+          "fix_hint": "Rename the property. `time` is reserved.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+        },
+        {
+          "name": "properties.event_name",
+          "requirement": "forbidden",
+          "description": "Braze reserves `event_name` and cannot use it as a custom property.",
+          "fix_hint": "Rename the property. `event_name` is reserved.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
         }
       ],
       "rules": [
+        {
+          "code": "vendor.braze.body.event_one_primary_identifier",
+          "kind": "mutually_exclusive",
+          "params": [
+            "external_id",
+            "user_alias",
+            "braze_id"
+          ],
+          "severity": "error",
+          "message": "The event carries more than one primary identifier. Braze documents one of `external_id`, `user_alias`, or `braze_id` per object, and rejects the object when two are sent.",
+          "fix_hint": "Send one primary identifier. `email` and `phone` may ride alongside it as attributes.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
         {
           "code": "vendor.braze.body.event_needs_an_identifier",
           "kind": "require_one_of",
@@ -161,10 +197,12 @@
           "name": "product_id",
           "requirement": "required",
           "format": {
-            "kind": "non_empty"
+            "kind": "regex",
+            "pattern": "^.{1,255}$"
           },
-          "description": "Braze documents the product id as required on a purchase.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "description": "Braze documents the product id as required on a purchase, at most 255 characters.",
+          "fix_hint": "Send a product name or category of at most 255 characters.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
         },
         {
           "name": "currency",
@@ -175,13 +213,28 @@
           },
           "description": "Braze documents the currency as required on a purchase, as an ISO 4217 code.",
           "fix_hint": "Use the three-letter code, such as `USD`.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
         },
         {
           "name": "price",
           "requirement": "required",
-          "description": "Braze documents the price as required on a purchase.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "Braze documents the price as a float in the currency's base unit, such as dollars for USD.",
+          "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "quantity",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[1-9]|[1-9][0-9]|100)$"
+          },
+          "description": "Braze documents quantity as an integer from 1 through 100, defaulting to 1.",
+          "fix_hint": "Send an integer from 1 to 100.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
         },
         {
           "name": "time",
@@ -192,10 +245,74 @@
           },
           "description": "Braze documents the purchase time as an ISO 8601 datetime.",
           "fix_hint": "Send an ISO 8601 datetime rather than an epoch number.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "_update_existing_only",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "Braze documents this as a boolean. When true, the call updates an existing profile and does not create one.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "properties.time",
+          "requirement": "forbidden",
+          "description": "Braze reserves `time` and cannot use it as a purchase property name.",
+          "fix_hint": "Rename the property. `time` is reserved.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "properties.product_id",
+          "requirement": "forbidden",
+          "description": "Braze reserves `product_id` and cannot use it as a purchase property name.",
+          "fix_hint": "Rename the property. `product_id` is reserved.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "properties.quantity",
+          "requirement": "forbidden",
+          "description": "Braze reserves `quantity` and cannot use it as a purchase property name.",
+          "fix_hint": "Rename the property. `quantity` is reserved.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "properties.event_name",
+          "requirement": "forbidden",
+          "description": "Braze reserves `event_name` and cannot use it as a purchase property name.",
+          "fix_hint": "Rename the property. `event_name` is reserved.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "properties.price",
+          "requirement": "forbidden",
+          "description": "Braze reserves `price` and cannot use it as a purchase property name.",
+          "fix_hint": "Rename the property. `price` is reserved.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "properties.currency",
+          "requirement": "forbidden",
+          "description": "Braze reserves `currency` and cannot use it as a purchase property name.",
+          "fix_hint": "Rename the property. `currency` is reserved.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
         }
       ],
       "rules": [
+        {
+          "code": "vendor.braze.body.purchase_one_primary_identifier",
+          "kind": "mutually_exclusive",
+          "params": [
+            "external_id",
+            "user_alias",
+            "braze_id"
+          ],
+          "severity": "error",
+          "message": "The purchase carries more than one primary identifier. Braze documents one of `external_id`, `user_alias`, or `braze_id` per object, and rejects the object when two are sent.",
+          "fix_hint": "Send one primary identifier. `email` and `phone` may ride alongside it as attributes.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
         {
           "code": "vendor.braze.body.purchase_needs_an_identifier",
           "kind": "require_one_of",

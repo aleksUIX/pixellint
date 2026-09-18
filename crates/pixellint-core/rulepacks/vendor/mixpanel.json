@@ -12,6 +12,27 @@
     "path_contains": ["/track"],
     "json_paths": ["[].properties.token"]
   },
+  "params": [
+    {
+      "name": "ip",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `ip=1` so the request address is used to compute a `distinct_id` when none is sent.",
+      "doc": "https://docs.mixpanel.com/reference/track-event"
+    },
+    {
+      "name": "verbose",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `verbose=1` so the 200 body says whether the track call was accepted.",
+      "doc": "https://docs.mixpanel.com/reference/track-event"
+    },
+    {
+      "name": "img",
+      "format": { "kind": "enum", "values": ["0", "1"] },
+      "description": "Mixpanel documents `img=1` so the response is a 1x1 transparent pixel.",
+      "doc": "https://docs.mixpanel.com/reference/track-event"
+    }
+  ],
+  "rules": [],
   "body": [
     {
       "scope": "[]",
@@ -71,9 +92,28 @@
           "description": "Mixpanel uses it to drop duplicates, so a retried request is not counted twice. `/import` requires it in vendor/mixpanel-import.",
           "fix_hint": "Send a stable id per event.",
           "doc": "https://docs.mixpanel.com/reference/track-event"
+        },
+        {
+          "name": "properties.ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel uses `properties.ip` for GeoIP. This is different from the query `ip` flag. Send an address, not a digest.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.mixpanel.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["properties.ip"],
+          "severity": "error",
+          "message": "`properties.ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address.",
+          "fix_hint": "Send the raw IP address.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        }
+      ]
     }
   ]
 }

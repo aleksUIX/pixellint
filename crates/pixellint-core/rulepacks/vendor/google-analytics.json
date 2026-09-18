@@ -153,9 +153,56 @@
           "description": "It is consent for personalized advertising. Google documents `GRANTED` or `DENIED`.",
           "fix_hint": "Set `consent.ad_personalization` to `GRANTED` or `DENIED`.",
           "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "validation_behavior",
+          "format": {
+            "kind": "enum",
+            "values": ["RELAXED", "ENFORCE_RECOMMENDATIONS"]
+          },
+          "description": "It selects how strictly the Measurement Protocol validates the payload. Google documents `RELAXED` or `ENFORCE_RECOMMENDATIONS`.",
+          "fix_hint": "Send `RELAXED` or `ENFORCE_RECOMMENDATIONS`, or omit the field.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "ip_override",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the IP address Google Analytics uses to derive geography. Google documents it as an IP, not a digest.",
+          "fix_hint": "Send the visitor IP as `ip_override`, or send `user_location` instead.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "user_location.country_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}$"
+          },
+          "description": "It is the country in ISO 3166-1 alpha-2 form. Google documents `US` as the example.",
+          "fix_hint": "Send a two-letter country code such as `US`.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "user_properties.user_id",
+          "requirement": "forbidden",
+          "description": "Google reserves `user_id` as a user property name. Send `user_id` on the envelope instead.",
+          "fix_hint": "Move the identifier to the top-level `user_id` field.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.google-analytics.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["ip_override"],
+          "severity": "error",
+          "message": "`ip_override` looks like a SHA-256 digest, but Google documents it as an IP address.",
+          "fix_hint": "Send the raw IP address.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        }
+      ]
     },
     {
       "scope": "events[]",
@@ -197,6 +244,27 @@
           "name": "params.items",
           "description": "It lists the items the event covers.",
           "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+        },
+        {
+          "name": "params.session_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+$"
+          },
+          "description": "It identifies the user session. Google documents `session_id` as a positive number, and events without it do not contribute correctly to session reports.",
+          "fix_hint": "Send `session_id` as digits, matching the Analytics session for this user.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "params.engagement_time_msec",
+          "requirement": "recommended",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is engagement duration in milliseconds since the preceding event. Google documents it so Realtime and average engagement time stay accurate.",
+          "fix_hint": "Send `engagement_time_msec` as milliseconds of engagement since the last event.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
         }
       ],
       "rules": [

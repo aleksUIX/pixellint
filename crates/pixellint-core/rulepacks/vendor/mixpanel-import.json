@@ -57,20 +57,49 @@
         {
           "name": "properties.distinct_id",
           "requirement": "required",
-          "description": "Mixpanel documents `distinct_id` as required. An empty string is allowed for events that are not tied to a user.",
+          "allow_empty": true,
+          "description": "Mixpanel documents `distinct_id` as required. An empty string is allowed for events that are not tied to a user. Placeholder values such as `null` or `0` are rejected.",
           "fix_hint": "Send the same `distinct_id` you use elsewhere for this user, or an empty string when there is no user.",
           "doc": "https://docs.mixpanel.com/reference/import-events"
         },
         {
           "name": "properties.$insert_id",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
-          "description": "Mixpanel documents `$insert_id` as required so `/import` can be retried without double-counting.",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z0-9-]{1,36}$" },
+          "description": "Mixpanel documents `$insert_id` as required so `/import` can be retried without double-counting. It must be at most 36 alphanumeric or hyphen characters.",
           "fix_hint": "Send a unique id per event, at most 36 alphanumeric or hyphen characters.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "name": "properties.ip",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel uses `ip` for GeoIP. Send a client address, or `0` to skip lookup. Do not hash it.",
+          "fix_hint": "Send the visitor IP, or `0` from a server.",
           "doc": "https://docs.mixpanel.com/reference/import-events"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.mixpanel-import.body.placeholder_identifier",
+          "kind": "forbid_value_pattern",
+          "pattern": "^(?i)(00000000-0000-0000-0000-000000000000|anon|anonymous|nil|none|null|n/a|na|undefined|unknown|<nil>|0|-1|true|false|\\[\\]|\\{\\})$",
+          "params": ["properties.distinct_id", "properties.$insert_id"],
+          "severity": "error",
+          "message": "The identifier is a placeholder Mixpanel rejects. `/import` disallows values such as `null`, `0`, `anonymous`, and the all-zero UUID.",
+          "fix_hint": "Send a real `distinct_id` or `$insert_id`, or an empty `distinct_id` when there is no user.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "code": "vendor.mixpanel-import.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["properties.ip"],
+          "severity": "error",
+          "message": "`properties.ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address, or `0` to skip GeoIP.",
+          "fix_hint": "Send the raw IP address, or `0`.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        }
+      ]
     }
   ]
 }

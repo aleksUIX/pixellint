@@ -80,6 +80,70 @@
           "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
         },
         {
+          "name": "eventValue",
+          "requirement": "required",
+          "allow_empty": true,
+          "description": "AppsFlyer documents `eventValue` as required. Send an empty string when the event has no value.",
+          "fix_hint": "Send a JSON object string, or `\"\"` when there is no value.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "name": "att",
+          "format": {
+            "kind": "enum",
+            "values": ["0", "1", "2", "3"]
+          },
+          "description": "It is the iOS ATTrackingManager status. AppsFlyer documents 0 not determined, 1 restricted, 2 denied, 3 authorized.",
+          "fix_hint": "Send `0`, `1`, `2`, or `3`.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "name": "advertising_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "description": "It is the Android GAID. AppsFlyer documents a UUID.",
+          "fix_hint": "Send the GAID as a UUID.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "name": "idfa",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "description": "It is the iOS IDFA. AppsFlyer documents a UUID.",
+          "fix_hint": "Send the IDFA as a UUID.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "name": "aie",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "AppsFlyer documents `aie` as a boolean. `true` means the user agreed to share the advertiser ID.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "name": "app_type",
+          "format": {
+            "kind": "enum",
+            "values": ["app_clip"]
+          },
+          "description": "AppsFlyer documents `app_clip` when the event happened in an app clip. Omit the field otherwise.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "name": "os",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the device OS version. AppsFlyer documents it as required for correct processing, and assumes iOS 14.5 when it is omitted on iOS.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
           "name": "eventTime",
           "format": {
             "kind": "regex",

@@ -42,22 +42,23 @@
       {
         "name": "event",
         "requirement": "required",
-        "format": { "kind": "non_empty" },
+        "format": { "kind": "regex", "pattern": "^.{1,1024}$" },
         "description": "It is the server-side event name. Heap documents it as required, limited to 1024 characters.",
-        "fix_hint": "Set `event` to the custom event name, such as `Purchase Completed`.",
+        "fix_hint": "Set `event` to the custom event name, such as `Purchase Completed`, in at most 1024 characters.",
         "doc": "https://developers.heap.io/reference/track-1"
       },
       {
         "name": "identity",
-        "format": { "kind": "non_empty" },
-        "description": "It identifies the user. Heap requires either `identity` or `user_id`, not both.",
-        "fix_hint": "Send the same identity you use in Heap Identify.",
+        "format": { "kind": "regex", "pattern": "^.{1,255}$" },
+        "description": "It identifies the user. Heap documents a case-sensitive string of at most 255 characters, and requires either `identity` or `user_id`, not both.",
+        "fix_hint": "Send the same identity you use in Heap Identify, at most 255 characters.",
         "doc": "https://developers.heap.io/reference/track-1"
       },
       {
         "name": "user_id",
-        "format": { "kind": "non_empty" },
-        "description": "It is Heap's anonymous user id. Heap requires either `identity` or `user_id`, not both.",
+        "format": { "kind": "regex", "pattern": "^(?:0|[1-9][0-9]{0,15})$" },
+        "description": "It is Heap's anonymous user id. Heap documents the string form of a number from 0 through 2^53-1.",
+        "fix_hint": "Send the numeric `user_id` from the Heap SDK, digits only.",
         "doc": "https://developers.heap.io/reference/track-1"
       },
       {
@@ -74,6 +75,27 @@
         "name": "idempotency_key",
         "format": { "kind": "non_empty" },
         "description": "Heap uses it to drop duplicate track calls.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "name": "properties.user_id",
+        "requirement": "forbidden",
+        "description": "Heap reserves `user_id` as a top-level field. Reusing it inside `properties` produces unexpected behavior.",
+        "fix_hint": "Rename the property. Send `user_id` at the top level when you have the SDK id.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "name": "properties.session_id",
+        "requirement": "forbidden",
+        "description": "Heap reserves `session_id` as a top-level field. Reusing it inside `properties` produces unexpected behavior.",
+        "fix_hint": "Rename the property. Send `session_id` at the top level when you have a session id.",
+        "doc": "https://developers.heap.io/reference/track-1"
+      },
+      {
+        "name": "properties.screen_name",
+        "requirement": "forbidden",
+        "description": "Heap documents `screen_name` as reserved because it conflicts with autocaptured Screen Name on mobile.",
+        "fix_hint": "Rename the property.",
         "doc": "https://developers.heap.io/reference/track-1"
       }
     ],

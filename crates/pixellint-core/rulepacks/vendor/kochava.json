@@ -38,8 +38,10 @@
         },
         {
           "name": "kochava_device_id",
-          "format": { "kind": "non_empty" },
-          "description": "It is a Kochava device identifier. The article requires the key; the value may be empty when `device_ids` carries an ID instead.",
+          "requirement": "required",
+          "allow_empty": true,
+          "description": "The article requires the `kochava_device_id` key on every post-install payload. The value may be empty when `device_ids` carries an ID instead.",
+          "fix_hint": "Send `kochava_device_id` as a stable per-install string, or send it empty and put an ID in `device_ids`.",
           "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
         },
         {
@@ -56,9 +58,122 @@
           "description": "It is the event name. The article places `event_name` inside `data`.",
           "fix_hint": "Set `data.event_name` to the event the marketer expects.",
           "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "origination_ip",
+          "format": { "kind": "non_empty" },
+          "description": "It is the device IP. Kochava documents `origination_ip` as required; the field table puts it at the root and the samples put it inside `data`.",
+          "fix_hint": "Send the device IP as `origination_ip` or `data.origination_ip`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.origination_ip",
+          "format": { "kind": "non_empty" },
+          "description": "It is the device IP inside `data`, which is where Kochava's JSON samples put `origination_ip`.",
+          "fix_hint": "Send the device IP as `data.origination_ip` or `origination_ip`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "device_ua",
+          "format": { "kind": "non_empty" },
+          "description": "It is the device user agent. Kochava documents `device_ua` as required so it can parse the OS version.",
+          "fix_hint": "Send the client user agent as `device_ua` or `data.device_ua`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.device_ua",
+          "format": { "kind": "non_empty" },
+          "description": "It is the device user agent inside `data`, which is where Kochava's JSON samples put `device_ua`.",
+          "fix_hint": "Send the client user agent as `data.device_ua` or `device_ua`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "device_ver",
+          "allow_empty": true,
+          "description": "It is the device version string. Kochava documents the key as required and allows an empty value when `device_ua` is sent instead.",
+          "fix_hint": "Send `device_ver` or `data.device_ver`. An empty string is valid.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.device_ver",
+          "allow_empty": true,
+          "description": "It is the device version string inside `data`. Kochava's samples send `device_ver` as an empty string.",
+          "fix_hint": "Send `data.device_ver` or `device_ver`. An empty string is valid.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "currency",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "description": "It is an ISO 4217 currency code on revenue events. Kochava's samples send `USD`.",
+          "fix_hint": "Send a three-letter code such as `USD`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.currency",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "description": "It is an ISO 4217 currency code inside `data`. Kochava's samples send `USD`.",
+          "fix_hint": "Send a three-letter code such as `USD`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "usertime",
+          "format": { "kind": "integer" },
+          "description": "It is the time the user completed the event, as Unix seconds.",
+          "fix_hint": "Send `usertime` as seconds since epoch.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.usertime",
+          "format": { "kind": "integer" },
+          "description": "It is the time the user completed the event, as Unix seconds inside `data`.",
+          "fix_hint": "Send `data.usertime` as seconds since epoch.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.kochava.body.origination_ip_required",
+          "kind": "require_one_of",
+          "params": ["origination_ip", "data.origination_ip"],
+          "severity": "error",
+          "message": "The payload has no device IP. Kochava documents `origination_ip` as required on every post-install event.",
+          "fix_hint": "Send `origination_ip` at the root or inside `data`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "code": "vendor.kochava.body.device_ua_required",
+          "kind": "require_one_of",
+          "params": ["device_ua", "data.device_ua"],
+          "severity": "error",
+          "message": "The payload has no device user agent. Kochava documents `device_ua` as required so it can parse the OS version.",
+          "fix_hint": "Send `device_ua` at the root or inside `data`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "code": "vendor.kochava.body.device_ver_required",
+          "kind": "require_one_of",
+          "params": ["device_ver", "data.device_ver"],
+          "severity": "error",
+          "message": "The payload has no `device_ver` key. Kochava documents the key as required and allows an empty value.",
+          "fix_hint": "Send `device_ver` at the root or inside `data`. An empty string is valid.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "code": "vendor.kochava.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "origination_ip",
+            "data.origination_ip",
+            "device_ua",
+            "data.device_ua"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Kochava documents `origination_ip` and `device_ua` as unhashed device values.",
+          "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        }
+      ]
     }
   ]
 }

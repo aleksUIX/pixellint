@@ -158,7 +158,13 @@ in `events` on its own.
 | `non_personalized_ads` | Deprecated in favor of the `consent` object | `vendor.google-analytics.body.non_personalized_ads.deprecated` |
 | `user_id` | When present, not empty | `vendor.google-analytics.body.user_id.empty` |
 | `consent.ad_user_data`, `consent.ad_personalization` | When present, `GRANTED` or `DENIED` | `vendor.google-analytics.body.consent.ad_user_data.invalid`, `.consent.ad_personalization.invalid` |
+| `validation_behavior` | When present, `RELAXED` or `ENFORCE_RECOMMENDATIONS` | `vendor.google-analytics.body.validation_behavior.invalid` |
+| `ip_override` | When present, not a digest | `vendor.google-analytics.body.ip_override.empty`, `.hashed_plaintext_field` |
+| `user_location.country_id` | When present, ISO 3166-1 alpha-2 | `vendor.google-analytics.body.user_location.country_id.invalid` |
+| Reserved user property | `user_properties.user_id` is forbidden | `vendor.google-analytics.body.user_properties.user_id.forbidden` |
 | `events[].name` | Required; 40 characters or fewer warns when longer | `vendor.google-analytics.body.name.missing`, `.invalid` |
+| `events[].params.session_id` | Recommended digits | `vendor.google-analytics.body.params.session_id.missing`, `.invalid` |
+| `events[].params.engagement_time_msec` | Recommended milliseconds | `vendor.google-analytics.body.params.engagement_time_msec.missing`, `.invalid` |
 | Value without currency | `currency` is required whenever `value` is set | `vendor.google-analytics.body.value_requires_currency` |
 | `purchase` | Needs `currency`, `value`, `transaction_id`, and `items` | `vendor.google-analytics.body.purchase_requires_ecommerce_fields` |
 | `refund` | Needs `currency`, `value`, and `transaction_id` | `vendor.google-analytics.body.refund_requires_ecommerce_fields` |
@@ -331,8 +337,10 @@ The payload is checked per conversion in `conversions`.
 | `conversionAction` | Required resource name | `vendor.google-ads-click-conversions.body.conversionAction.missing`, `.empty` |
 | `conversionDateTime` | Required, `yyyy-mm-dd hh:mm:ss+|-hh:mm` | `vendor.google-ads-click-conversions.body.conversionDateTime.missing`, `.invalid` |
 | Click ID or user | One of `gclid`, `gbraid`, `wbraid`, or `userIdentifiers` | `vendor.google-ads-click-conversions.body.click_id_or_user_required` |
+| `conversionValue` / `currencyCode` | Together when either is sent; ISO 4217 for the code | `vendor.google-ads-click-conversions.body.value_requires_currency`, `.currency_requires_value`, `.currencyCode.invalid` |
 | Hashed PII | `hashedEmail` and `hashedPhoneNumber` must be SHA-256 | `vendor.google-ads-click-conversions.body.userIdentifiers[].<field>.invalid` |
 | Unhashed PII | No field carries a raw email address | `vendor.google-ads-click-conversions.body.unhashed_email` |
+| Over-hashing | `userIpAddress` must not be a digest | `vendor.google-ads-click-conversions.body.hashed_plaintext_field` |
 
 Sources: [upload offline conversions](https://developers.google.com/google-ads/api/docs/conversions/upload-offline),
 [ClickConversion](https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion).
@@ -357,7 +365,9 @@ The payload is checked per conversion in `conversions`.
 | `callerId` | Required E.164 with a leading `+` | `vendor.google-ads-call-conversions.body.callerId.missing`, `.invalid` |
 | `callStartDateTime` | Required, `yyyy-mm-dd hh:mm:ss+|-hh:mm` | `vendor.google-ads-call-conversions.body.callStartDateTime.missing`, `.invalid` |
 | `conversionDateTime` | Required, same timestamp shape | `vendor.google-ads-call-conversions.body.conversionDateTime.missing`, `.invalid` |
+| `conversionValue` | Non-negative number when present, together with `currencyCode` | `vendor.google-ads-call-conversions.body.conversionValue.invalid`, `.value_requires_currency`, `.currency_requires_value` |
 | `currencyCode` | ISO 4217 three-letter code when present | `vendor.google-ads-call-conversions.body.currencyCode.invalid` |
+| `consent.adUserData` | When present, `UNSPECIFIED`, `UNKNOWN`, `GRANTED`, or `DENIED` | `vendor.google-ads-call-conversions.body.consent.adUserData.invalid` |
 
 Source: [upload call conversions](https://developers.google.com/google-ads/api/docs/conversions/upload-calls).
 
@@ -378,7 +388,9 @@ The payload is checked per adjustment in `conversionAdjustments`.
 | `adjustmentType` | Required `RETRACTION`, `RESTATEMENT`, or `ENHANCEMENT` | `vendor.google-ads-conversion-adjustments.body.adjustmentType.missing`, `.invalid` |
 | `adjustmentDateTime` | Required, `yyyy-mm-dd hh:mm:ss+|-hh:mm` | `vendor.google-ads-conversion-adjustments.body.adjustmentDateTime.missing`, `.invalid` |
 | Identity | One of `orderId` or `gclidDateTimePair.gclid` | `vendor.google-ads-conversion-adjustments.body.order_or_gclid_required` |
-| Restatement value | `RESTATEMENT` needs `restatementValue.adjustedValue` | `vendor.google-ads-conversion-adjustments.body.restatement_requires_value` |
+| `gclidDateTimePair` | `gclid` needs `conversionDateTime` | `vendor.google-ads-conversion-adjustments.body.gclid_requires_conversion_time` |
+| Restatement value | `RESTATEMENT` needs numeric `restatementValue.adjustedValue` | `vendor.google-ads-conversion-adjustments.body.restatement_requires_value`, `.restatementValue.adjustedValue.invalid` |
+| Retraction value | `RETRACTION` must not send `restatementValue.adjustedValue` | `vendor.google-ads-conversion-adjustments.body.retraction_forbids_value` |
 
 Source: [import conversion adjustments](https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments).
 
@@ -573,7 +585,11 @@ is milliseconds.
 | `userData` | Required | `vendor.microsoft-conversions-api.body.userData.missing` |
 | User identifiers | At least one of `anonymousId`, `externalId`, `em`, `ph`, `msclkid`, `idfa`, `gaid` | `vendor.microsoft-conversions-api.body.user_needs_an_identifier` |
 | `eventSourceUrl` | Required on `pageLoad` | `vendor.microsoft-conversions-api.body.page_load_requires_url` |
+| `pageLoadId` | UUID when present | `vendor.microsoft-conversions-api.body.pageLoadId.invalid` |
+| `adStorageConsent` | `G` or `D` when present | `vendor.microsoft-conversions-api.body.adStorageConsent.invalid` |
 | `userData.em` | SHA-256 hex when present; raw email is an error | `vendor.microsoft-conversions-api.body.userData.em.invalid`, `.unhashed_email` |
+| `customData.value` / `customData.currency` | Together when either is sent; ISO 4217 for the code | `vendor.microsoft-conversions-api.body.value_requires_currency`, `.currency_requires_value`, `.customData.currency.invalid` |
+| Over-hashing | `clientIpAddress` and `clientUserAgent` must not be a digest | `vendor.microsoft-conversions-api.body.hashed_plaintext_field` |
 
 Source: [Conversions API](https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration).
 
@@ -756,6 +772,11 @@ Event uploads to the Amplitude HTTP V2 API on `amplitude.com`. Level:
 | `user_id`, `device_id` | 5 characters or more, which Amplitude documents as the minimum it accepts | `vendor.amplitude.body.user_id.invalid`, `.device_id.invalid` |
 | `time` | 13 digits, since Amplitude documents milliseconds | `vendor.amplitude.body.time.invalid` |
 | Identity | One of `user_id` or `device_id` is required | `vendor.amplitude.body.event_needs_an_identifier` |
+| Reserved `event_type` | Names that start with `[Amplitude]` are rejected. `$identify` is allowed | `vendor.amplitude.body.reserved_event_type` |
+| Over-hashing | `ip` and `user_agent` must not be a digest. `$remote` is allowed for IP | `vendor.amplitude.body.hashed_plaintext_field` |
+| `revenue` | When present, a signed float | `vendor.amplitude.body.revenue.invalid` |
+| `currency` | When present, uppercase ISO 4217 | `vendor.amplitude.body.currency.invalid` |
+| `session_id` | When present, an integer. `-1` is allowed | `vendor.amplitude.body.session_id.invalid` |
 
 Source: [HTTP V2 API](https://amplitude.com/docs/apis/analytics/http-v2).
 
@@ -796,8 +817,12 @@ Capture requests to PostHog, single or batched under `batch`. Level:
 | --- | --- | --- |
 | `api_key` | Required | `vendor.posthog.body.api_key.missing`, `.empty` |
 | `event` | Required, per event | `vendor.posthog.body.event.missing`, `.empty` |
-| `distinct_id` | Required, per event | `vendor.posthog.body.distinct_id.missing`, `.empty` |
+| `distinct_id` | Required per event, at most 200 characters. Also accepted at `properties.distinct_id` | `vendor.posthog.body.event_needs_an_identifier`, `.distinct_id.invalid`, `.properties.distinct_id.invalid` |
 | `timestamp` | ISO 8601, since an epoch number is read as the ingestion time instead | `vendor.posthog.body.timestamp.invalid` |
+| `historical_migration` | When present, `true` or `false` | `vendor.posthog.body.historical_migration.invalid` |
+| Over-hashing | `properties.$ip` must not be a digest | `vendor.posthog.body.hashed_plaintext_field` |
+| `$create_alias` | Requires `properties.alias` | `vendor.posthog.body.alias_requires_alias` |
+| `$groupidentify` | Requires `$group_type` and `$group_key`, each at most 400 characters | `vendor.posthog.body.groupidentify_requires_type_and_key` |
 
 Source: [capture API](https://posthog.com/docs/api/capture).
 
@@ -817,6 +842,8 @@ events rather than an envelope. Level: `official_vendor`.
 | `properties.distinct_id` | Recommended | `vendor.mixpanel.body.properties.distinct_id.missing`, `.empty` |
 | `properties.$insert_id` | Recommended | `vendor.mixpanel.body.properties.$insert_id.missing`, `.empty` |
 | `properties.time` | When present, an integer Unix timestamp | `vendor.mixpanel.body.properties.time.invalid` |
+| `ip`, `verbose`, `img` | When present on the query, `0` or `1` | `vendor.mixpanel.param.ip.invalid`, `.verbose.invalid`, `.img.invalid` |
+| Over-hashing | `properties.ip` must not be a digest | `vendor.mixpanel.body.hashed_plaintext_field` |
 
 `/import` is `vendor/mixpanel-import`. `/engage` is `vendor/mixpanel-engage`.
 This pack matches `/track` and a JSON array whose events carry `properties.token`.
@@ -836,8 +863,9 @@ JSON field.
 | `event` | Required, per event | `vendor.mixpanel-import.body.event.missing`, `.empty` |
 | `properties` | Required | `vendor.mixpanel-import.body.properties.missing` |
 | `properties.time` | Required integer Unix timestamp | `vendor.mixpanel-import.body.properties.time.missing`, `.invalid` |
-| `properties.distinct_id` | Required. Empty string is allowed | `vendor.mixpanel-import.body.properties.distinct_id.missing` |
-| `properties.$insert_id` | Required | `vendor.mixpanel-import.body.properties.$insert_id.missing`, `.empty` |
+| `properties.distinct_id` | Required. Empty string is allowed. Placeholder ids are rejected | `vendor.mixpanel-import.body.properties.distinct_id.missing`, `vendor.mixpanel-import.body.placeholder_identifier` |
+| `properties.$insert_id` | Required, at most 36 alphanumeric or hyphen characters | `vendor.mixpanel-import.body.properties.$insert_id.missing`, `.empty`, `.invalid`, `vendor.mixpanel-import.body.placeholder_identifier` |
+| Over-hashing | `properties.ip` must not be a digest | `vendor.mixpanel-import.body.hashed_plaintext_field` |
 
 Source: [import events](https://docs.mixpanel.com/reference/import-events).
 
@@ -853,6 +881,9 @@ Mixpanel user profile updates posted to `/engage`. Level: `official_vendor`.
 | `$token` | Required project token | `vendor.mixpanel-engage.body.$token.missing`, `.empty` |
 | `$distinct_id` | Required | `vendor.mixpanel-engage.body.$distinct_id.missing`, `.empty` |
 | Operation | One of `$set`, `$set_once`, `$add`, `$union`, `$append`, `$remove`, `$unset`, `$delete` | `vendor.mixpanel-engage.body.operation_required` |
+| `$ip` | Unhashed when present | `vendor.mixpanel-engage.body.hashed_plaintext_field` |
+| `$time` | Integer seconds since epoch when present | `vendor.mixpanel-engage.body.$time.invalid` |
+| `$ignore_time` | `true` or `false` when present | `vendor.mixpanel-engage.body.$ignore_time.invalid` |
 
 Source: [profile set](https://docs.mixpanel.com/reference/profile-set).
 
@@ -879,7 +910,12 @@ Event creation on the Klaviyo events API, in JSON:API shape. Level:
 | Body field or rule | Enforced | Rule ids |
 | --- | --- | --- |
 | `data.type` | Required, and must be `event` | `vendor.klaviyo.body.data.type.missing`, `.invalid` |
-| Metric name | Required at `data.attributes.metric.data.attributes.name` | `vendor.klaviyo.body.data.attributes.metric.data.attributes.name.missing`, `.empty` |
+| Metric name | Required at `data.attributes.metric.data.attributes.name`, fewer than 128 characters | `vendor.klaviyo.body.data.attributes.metric.data.attributes.name.missing`, `.empty`, `.invalid` |
+| `properties` | Required. An empty object is allowed | `vendor.klaviyo.body.data.attributes.properties.missing` |
+| `time` | When present, ISO 8601 | `vendor.klaviyo.body.data.attributes.time.invalid` |
+| `value` | When present, a number | `vendor.klaviyo.body.data.attributes.value.invalid` |
+| `value` and `value_currency` | Required together. Currency is ISO 4217 | `vendor.klaviyo.body.value_requires_currency`, `.currency_requires_value`, `.value_currency.invalid` |
+| `phone_number` | When present, E.164 | `vendor.klaviyo.body.data.attributes.profile.data.attributes.phone_number.invalid` |
 | Profile identity | One of id, email, phone number, or external id is required | `vendor.klaviyo.body.profile_needs_an_identifier` |
 
 Source: [create event](https://developers.klaviyo.com/en/reference/create_event).
@@ -893,10 +929,13 @@ Level: `official_vendor`.
 | --- | --- | --- |
 | `events[].name` | Required | `vendor.braze.body.name.missing`, `.empty` |
 | `events[].time`, `purchases[].time` | Required, ISO 8601 datetime | `vendor.braze.body.time.missing`, `.invalid` |
-| `purchases[].product_id` | Required | `vendor.braze.body.product_id.missing` |
+| `purchases[].product_id` | Required, at most 255 characters | `vendor.braze.body.product_id.missing`, `.invalid` |
 | `purchases[].currency` | Required, ISO 4217 three-letter code | `vendor.braze.body.currency.missing`, `.invalid` |
-| `purchases[].price` | Required | `vendor.braze.body.price.missing` |
+| `purchases[].price` | Required float | `vendor.braze.body.price.missing`, `.invalid` |
+| `purchases[].quantity` | When present, an integer from 1 through 100 | `vendor.braze.body.quantity.invalid` |
 | Identity | Every event and purchase needs one of `external_id`, `user_alias`, `braze_id`, `email`, or `phone` | `vendor.braze.body.event_needs_an_identifier`, `.purchase_needs_an_identifier` |
+| One primary | At most one of `external_id`, `user_alias`, or `braze_id` | `vendor.braze.body.event_one_primary_identifier`, `.purchase_one_primary_identifier` |
+| Reserved properties | Event properties must not use `time` or `event_name`. Purchase properties must not use `time`, `product_id`, `quantity`, `event_name`, `price`, or `currency` | `vendor.braze.body.properties.time.forbidden`, `.properties.event_name.forbidden` |
 
 Source: [POST /users/track](https://www.braze.com/docs/api/endpoints/user_data/post_user_track/).
 
@@ -915,8 +954,13 @@ Calls to the Segment HTTP Tracking API on `api.segment.io` and the regional
 | `writeKey` | Flagged when present and empty. Segment also accepts it as basic auth, so it is not required in the body | `vendor.segment.body.writeKey.empty` |
 | `batch[].type` | Required, and one of identify, track, page, screen, group, alias | `vendor.segment.body.type.missing`, `.invalid` |
 | Track calls | A `track` in a batch needs an `event` | `vendor.segment.body.track_requires_an_event_name` |
+| Group calls | A `group` in a batch needs `groupId` | `vendor.segment.body.group_requires_group_id` |
+| Alias calls | An `alias` in a batch needs `previousId` | `vendor.segment.body.alias_requires_previous_id` |
 | Identity | Every call needs `userId` or `anonymousId` | `vendor.segment.body.call_needs_an_identifier` |
 | `timestamp` | ISO 8601 date string | `vendor.segment.body.timestamp.invalid` |
+| `sentAt` | ISO 8601 date string when present | `vendor.segment.body.sentAt.invalid` |
+| `messageId` | Fewer than 100 characters when present | `vendor.segment.body.messageId.invalid` |
+| `context.ip` | Unhashed | `vendor.segment.body.hashed_plaintext_field` |
 
 Source: [HTTP API source](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/),
 [track spec](https://segment.com/docs/connections/spec/track/).
@@ -945,7 +989,9 @@ Level: `official_vendor`.
 | `s2s` | Required, and must be `1` | `vendor.adjust.param.s2s.missing`, `.invalid` |
 | Device ID | One of `idfa`, `gps_adid`, or the other documented device IDs | `vendor.adjust.device_id_required` |
 | `created_at` | ISO 8601 when present | `vendor.adjust.param.created_at.invalid` |
-| Over-hashing | `ip_address` must not be a digest | `vendor.adjust.hashed_plaintext_field` |
+| `ip_address` | IPv4 when present | `vendor.adjust.param.ip_address.invalid` |
+| Revenue | `revenue` and `currency` together | `vendor.adjust.revenue_requires_currency`, `.currency_requires_revenue` |
+| Over-hashing | `ip_address` and `user_agent` must not be a digest | `vendor.adjust.hashed_plaintext_field` |
 
 Source: [S2S events](https://dev.adjust.com/en/api/s2s-api/events/).
 
@@ -962,15 +1008,17 @@ the call still returns 200 and the event is not recorded.
 | `app_id` | Required, from the path. Digits-only IDs warn that the iOS prefix is missing | `vendor.appsflyer.param.app_id.missing`, `.empty`, `.ios_app_id_unprefixed` |
 | `appsflyer_id` | Required | `vendor.appsflyer.body.appsflyer_id.missing`, `.empty` |
 | `eventName` | Required | `vendor.appsflyer.body.eventName.missing`, `.empty` |
+| `eventValue` | Required. Empty string is allowed | `vendor.appsflyer.body.eventValue.missing` |
+| `att` | `0`, `1`, `2`, or `3` when present | `vendor.appsflyer.body.att.invalid` |
+| `advertising_id` / `idfa` | UUID when present | `vendor.appsflyer.body.advertising_id.invalid`, `.idfa.invalid` |
+| `aie` | `true` or `false` when present | `vendor.appsflyer.body.aie.invalid` |
+| `app_type` | `app_clip` when present | `vendor.appsflyer.body.app_type.invalid` |
 | `eventTime` | UTC as `yyyy-mm-dd hh:mm:ss.sss` when present | `vendor.appsflyer.body.eventTime.invalid` |
 | Hashed PII | `email_hashed`, `phone_number_hashed`, and name fields must be SHA-256 | `vendor.appsflyer.body.<field>.invalid` |
 | Unhashed PII | No field carries a raw email address | `vendor.appsflyer.body.unhashed_email` |
 | Over-hashing | `ip` must not be a digest | `vendor.appsflyer.body.hashed_plaintext_field` |
 
 Source: [S2S events API 3](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview).
-
-`eventValue` is documented as required, including as an empty string when there
-is no value. Empty is a legal payload, so the pack does not contract it.
 
 ## `vendor/appsflyer-onelink-impression`
 
@@ -995,7 +1043,10 @@ Standard and custom events posted to `api2.branch.io/v2/event/standard` and
 | `name` | Required | `vendor.branch.body.name.missing`, `.empty` |
 | `user_data` | Required | `vendor.branch.body.user_data.missing` |
 | Identity | At least one of `developer_identity`, `browser_fingerprint_id`, `idfa`, `idfv`, `android_id`, or `aaid` | `vendor.branch.body.user_needs_an_identifier` |
-| Over-hashing | `user_data.ip` must not be a digest | `vendor.branch.body.hashed_plaintext_field` |
+| Over-hashing | `user_data.ip` and `user_data.user_agent` must not be a digest | `vendor.branch.body.hashed_plaintext_field` |
+| `event_data.currency` | ISO 4217 three-letter code when present | `vendor.branch.body.event_data.currency.invalid` |
+| `event_data.revenue` | Number when present, no currency symbol | `vendor.branch.body.event_data.revenue.invalid` |
+| DMA consent | `dma_ad_personalization` and `dma_ad_user_data` when `dma_eea` is true | `vendor.branch.body.dma_consent_required` |
 
 Source: [Events API](https://help.branch.io/developers-hub/reference/events-api).
 
@@ -1138,14 +1189,21 @@ Post-install events posted as JSON to `control.kochava.com/track/json`. Level:
 | --- | --- | --- |
 | `kochava_app_id` | Required | `vendor.kochava.body.kochava_app_id.missing`, `.empty` |
 | `action` | Required `event` | `vendor.kochava.body.action.missing`, `.empty`, `.invalid` |
+| `kochava_device_id` | Required key; empty is allowed | `vendor.kochava.body.kochava_device_id.missing` |
 | `data` | Required | `vendor.kochava.body.data.missing` |
 | `data.event_name` | Required | `vendor.kochava.body.data.event_name.missing`, `.empty` |
+| Device IP | One of `origination_ip` or `data.origination_ip` | `vendor.kochava.body.origination_ip_required` |
+| Device UA | One of `device_ua` or `data.device_ua` | `vendor.kochava.body.device_ua_required` |
+| Device version | One of `device_ver` or `data.device_ver`; empty is allowed | `vendor.kochava.body.device_ver_required` |
+| Over-hashing | `origination_ip` and `device_ua` must not be a digest | `vendor.kochava.body.hashed_plaintext_field` |
+| `currency` | ISO 4217 three-letter code when present | `vendor.kochava.body.currency.invalid`, `.data.currency.invalid` |
+| `usertime` | Unix seconds when present | `vendor.kochava.body.usertime.invalid`, `.data.usertime.invalid` |
 
 Source: [post-install event setup](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/).
 
-The article's field table and JSON sample disagree on whether `device_ids` and
-`origination_ip` sit at the root or inside `data`. Those fields are not
-required here.
+The article's field table puts `origination_ip`, `device_ua`, and `device_ver` at
+the root. The JSON samples put them inside `data`. Either location satisfies
+the contract.
 
 ## `vendor/singular`
 
@@ -1197,8 +1255,11 @@ query or in basic auth).
 | Pixel identity | `userId` or `anonymousId` | `vendor.rudderstack.identifier_required` |
 | Batch `type` | Required documented method | `vendor.rudderstack.body.type.missing`, `.invalid` |
 | Track `event` | Required when `type` is `track` | `vendor.rudderstack.body.track_requires_an_event_name` |
+| Group `groupId` | Required when `type` is `group` | `vendor.rudderstack.body.group_requires_group_id` |
+| Alias `previousId` | Required when `type` is `alias` | `vendor.rudderstack.body.alias_requires_previous_id` |
 | Call identity | `userId` or `anonymousId` | `vendor.rudderstack.body.call_needs_an_identifier` |
-| `timestamp` | ISO 8601 when present | `vendor.rudderstack.body.timestamp.invalid` |
+| `timestamp` / `sentAt` | ISO 8601 when present | `vendor.rudderstack.body.timestamp.invalid`, `.sentAt.invalid` |
+| `context.ip` | Unhashed | `vendor.rudderstack.body.hashed_plaintext_field` |
 
 Sources: [HTTP API](https://www.rudderstack.com/docs/api/http-api/),
 [Pixel API](https://www.rudderstack.com/docs/api/pixel-api/).
@@ -1323,13 +1384,18 @@ Awin fall-back conversion image on `www.awin1.com/sread.img` and S2S on
 | `merchant` | Required numeric advertiser ID | `vendor.awin.param.merchant.missing`, `.empty`, `.invalid` |
 | `tt` | Required `ns` or `ss` | `vendor.awin.param.tt.missing`, `.invalid` |
 | `tv` | Required `2` | `vendor.awin.param.tv.missing`, `.invalid` |
-| `amount` | Required sale subtotal | `vendor.awin.param.amount.missing`, `.empty` |
+| `amount` | Required float with a dot decimal, no thousands separator | `vendor.awin.param.amount.missing`, `.invalid` |
 | `ch` | Required last-click channel | `vendor.awin.param.ch.missing`, `.empty` |
-| `parts` | Required commission group plus amount | `vendor.awin.param.parts.missing`, `.empty` |
+| `parts` | Required `{group}:{amount}` | `vendor.awin.param.parts.missing`, `.invalid` |
 | `ref` | Required unique order reference | `vendor.awin.param.ref.missing`, `.empty` |
 | `cr` | Recommended ISO 4217 currency | `vendor.awin.param.cr.missing`, `.invalid` |
+| `cks` | Required when `tt=ss` | `vendor.awin.s2s_requires_cks` |
+| `customeracquisition` | `NEW` or `RETURNING` when present | `vendor.awin.param.customeracquisition.invalid` |
 
-Source: [fall-back conversion pixel](https://help.awin.com/developers/docs/fall-back-conversion-pixel).
+Source: [fall-back conversion pixel](https://help.awin.com/developers/docs/fall-back-conversion-pixel),
+[parameter guidance](https://help.awin.com/developers/docs/parameter-guidance),
+[direct S2S](https://help.awin.com/developers/docs/direct-s2s),
+[customer acquisition](https://help.awin.com/developers/docs/customer-acquisition).
 
 ## `vendor/awin-mastertag`
 
@@ -1493,10 +1559,12 @@ query names impact.com documents.
 | `account_sid` | Required Account SID in the path | `vendor.impact-conversions.param.account_sid.missing`, `.empty` |
 | `CampaignId` | Required numeric program id | `vendor.impact-conversions.param.CampaignId.missing`, `.invalid` |
 | Event type | One of `ActionTrackerId`, `EventTypeId`, or `EventTypeCode` | `vendor.impact-conversions.event_type_required` |
-| `EventDate` | Recommended ISO 8601 | `vendor.impact-conversions.param.EventDate.missing`, `.invalid` |
+| `EventDate` | Required ISO 8601, or `NOW` | `vendor.impact-conversions.param.EventDate.missing`, `.invalid` |
 | `OrderId` | Recommended order id | `vendor.impact-conversions.param.OrderId.missing` |
-| `ClickId` | Recommended `im_ref` click id | `vendor.impact-conversions.param.ClickId.missing` |
+| Attribution | One of `ClickId`, `CustomerId`, `CustomProfileId`, a promo code, `UniqueUrl`, `GoogAId`, `AppleIfa`, or `AppleIfv` | `vendor.impact-conversions.attribution_required` |
 | `CurrencyCode` | ISO 4217 three-letter code when present | `vendor.impact-conversions.param.CurrencyCode.invalid` |
+| Unhashed PII | `CustomerId` must not be a raw email | `vendor.impact-conversions.unhashed_email` |
+| Over-hashing | `IpAddress` must not be a digest | `vendor.impact-conversions.hashed_plaintext_field` |
 
 Sources: [API online sale](https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation),
 [conversion submission fields](https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references).
@@ -1736,9 +1804,10 @@ Add user properties is `vendor/heap-user-properties`.
 | Body field or rule | Enforced | Rule ids |
 | --- | --- | --- |
 | `app_id` | Required environment ID | `vendor.heap-track.body.app_id.missing`, `.empty` |
-| `event` | Required event name | `vendor.heap-track.body.event.missing`, `.empty` |
-| Identity | One of `identity` or `user_id` | `vendor.heap-track.body.identity_or_user_required` |
+| `event` | Required event name, at most 1024 characters | `vendor.heap-track.body.event.missing`, `.empty`, `.invalid` |
+| Identity | One of `identity` (at most 255 characters) or numeric `user_id` | `vendor.heap-track.body.identity_or_user_required`, `.identity.invalid`, `.user_id.invalid` |
 | Exclusive identity | Not both `identity` and `user_id` | `vendor.heap-track.body.identity_and_user_exclusive` |
+| Reserved properties | `properties` must not reuse `user_id`, `session_id`, or `screen_name` | `vendor.heap-track.body.properties.user_id.forbidden`, `.properties.session_id.forbidden`, `.properties.screen_name.forbidden` |
 | `timestamp` | ISO 8601 when present | `vendor.heap-track.body.timestamp.invalid` |
 
 Source: [track](https://developers.heap.io/reference/track-1).
@@ -1825,7 +1894,10 @@ Server-side conversion events posted to
 | `customer` | Required | `vendor.nextdoor-conversions-api.body.customer.missing` |
 | User identifiers | At least one of hashed `email`, hashed `phone_number`, or `click_id` | `vendor.nextdoor-conversions-api.body.user_needs_an_identifier` |
 | `action_source_url` | Required on `website` | `vendor.nextdoor-conversions-api.body.website_requires_url` |
-| `custom.order_value` | Required on `purchase` | `vendor.nextdoor-conversions-api.body.purchase_requires_order_value` |
+| `customer.client_user_agent` | Required on `website`, unhashed | `vendor.nextdoor-conversions-api.body.website_requires_user_agent` |
+| `custom.order_value` | Required on `purchase`. ISO 4217 then amount, such as `USD49.99` | `vendor.nextdoor-conversions-api.body.purchase_requires_order_value`, `.custom.order_value.invalid` |
+| `custom.delivery_category` | When present, `in_store`, `curbside`, or `home_delivery` | `vendor.nextdoor-conversions-api.body.custom.delivery_category.invalid` |
+| Over-hashing | `client_ip_address` and `client_user_agent` must not be a digest | `vendor.nextdoor-conversions-api.body.hashed_plaintext_field` |
 | `customer.email` | SHA-256 hex when present; raw email is an error | `vendor.nextdoor-conversions-api.body.customer.email.invalid`, `.unhashed_email` |
 
 Source: [conversions/track](https://developer.nextdoor.com/reference/conversions-track),

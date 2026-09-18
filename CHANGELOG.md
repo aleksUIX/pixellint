@@ -6,6 +6,64 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.3 - 2026-09-17
+
+### Changed
+
+- Same-hop vendor packs now contract more of their published HTTP tables.
+  Kochava post-install events require `kochava_device_id`, a device IP, a
+  device user agent, and a `device_ver` key (empty is allowed), accepting those
+  device fields at the root or inside `data`. Currency is ISO 4217 when
+  present, and a hashed IP or user agent is an error. GA4 Measurement Protocol
+  events recommend `session_id` and `engagement_time_msec`, type-check
+  `validation_behavior` and `user_location.country_id`, reject a hashed
+  `ip_override`, and forbid the reserved `user_properties.user_id` name.
+  Awin conversion pixels type-check `amount` as a dot-decimal float and
+  `parts` as `{group}:{amount}`, require `cks` when `tt=ss`, and accept
+  `customeracquisition` only as `NEW` or `RETURNING`. Mixpanel `/import`
+  type-checks `$insert_id` as at most 36 alphanumeric or hyphen characters,
+  rejects Mixpanel's published placeholder identifiers, allows an empty
+  `distinct_id`, and rejects a hashed `ip`. Branch Events API type-checks
+  `event_data.currency` and `event_data.revenue` when present, rejects a
+  hashed user agent, and requires DMA consent fields when `dma_eea` is true.
+  Adjust S2S events type-check `ip_address` as IPv4, require `revenue` with
+  `currency`, and reject a hashed user agent. impact.com conversions require
+  `EventDate` (ISO 8601 or `NOW`) and at least one attribution key, reject a
+  plaintext email as `CustomerId`, and reject a hashed `IpAddress`. Google Ads
+  click uploads require `conversionValue` with `currencyCode` and reject a
+  hashed `userIpAddress`. Microsoft Advertising CAPI type-checks `pageLoadId`
+  as a UUID and `adStorageConsent` as `G` or `D`, requires `customData.value`
+  with `currency`, and rejects a hashed IP or user agent. Amplitude HTTP V2
+  rejects reserved `[Amplitude]` event names (`$identify` is allowed),
+  type-checks `revenue`, uppercase ISO 4217 `currency`, and `session_id`
+  (including `-1`), and rejects a hashed `ip` or `user_agent` (`$remote` is
+  allowed). Mixpanel `/track` type-checks query `ip`, `verbose`, and `img` as
+  `0` or `1`, and rejects a hashed `properties.ip`. Nextdoor CAPI type-checks
+  `custom.order_value` as ISO 4217 then amount, requires a user agent on
+  website events, type-checks `delivery_category`, and rejects a hashed IP or
+  user agent. Klaviyo Create Event requires `properties`, type-checks metric
+  names under 128 characters, ISO 8601 `time`, E.164 phone, and `value` with
+  `value_currency`. Braze `/users/track` accepts only one primary identifier
+  per object, type-checks purchase `price` and `quantity` (1 through 100), and
+  forbids reserved property names such as `time`. PostHog capture accepts
+  `distinct_id` at the top level or in `properties`, caps it at 200 characters,
+  type-checks `historical_migration`, requires `alias` on `$create_alias` and
+  group fields on `$groupidentify`, and rejects a hashed `$ip`. Google Ads
+  call uploads require `conversionValue` with `currencyCode` and type-check
+  `consent.adUserData`. Heap server-side track caps `event` at 1024 characters
+  and `identity` at 255, type-checks numeric `user_id`, and forbids reserved
+  keys inside `properties`. AppsFlyer S2S requires `eventValue` (empty is
+  allowed), type-checks `att` as 0 through 3, UUID `advertising_id` and `idfa`,
+  boolean `aie`, and `app_type` as `app_clip`. Google Ads conversion
+  adjustments require `conversionDateTime` with `gclid`, type-check numeric
+  `adjustedValue`, and forbid that value on `RETRACTION`. Segment and
+  RudderStack batch `group` needs `groupId`, `alias` needs `previousId`, and a
+  hashed `context.ip` is an error. Segment also caps `messageId` under 100
+  characters. Mixpanel `/engage` type-checks `$time` as seconds since epoch and
+  rejects a hashed `$ip`.
+- `forbid_value_pattern` now inspects values that look like `[macros]`, so
+  reserved Amplitude event names are not skipped.
+
 ## 0.31.2 - 2026-09-17
 
 ### Changed

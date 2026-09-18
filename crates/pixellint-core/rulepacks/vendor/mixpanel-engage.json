@@ -97,9 +97,38 @@
           "name": "$delete",
           "description": "Deletes the profile.",
           "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+        },
+        {
+          "name": "$ip",
+          "format": { "kind": "non_empty" },
+          "description": "Mixpanel uses `$ip` to geolocate the profile. Send a raw address, not a digest.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
+        },
+        {
+          "name": "$time",
+          "format": { "kind": "integer" },
+          "description": "Mixpanel documents `$time` as seconds since epoch for the profile update.",
+          "fix_hint": "Send a Unix timestamp in seconds, not milliseconds and not an ISO string.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
+        },
+        {
+          "name": "$ignore_time",
+          "format": { "kind": "enum", "values": ["true", "false"] },
+          "description": "Mixpanel documents `$ignore_time` as a boolean. `true` leaves Last Seen unchanged.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
         }
       ],
       "rules": [
+        {
+          "code": "vendor.mixpanel-engage.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["$ip"],
+          "severity": "error",
+          "message": "`$ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address used for geolocation.",
+          "fix_hint": "Send the raw IP address, or omit `$ip`.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
+        },
         {
           "code": "vendor.mixpanel-engage.body.operation_required",
           "kind": "require_one_of",

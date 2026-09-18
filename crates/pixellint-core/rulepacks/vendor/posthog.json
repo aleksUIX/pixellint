@@ -87,6 +87,15 @@
           "description": "It is the project API key, and PostHog rejects the request without it.",
           "fix_hint": "Send the project API key from your PostHog project settings.",
           "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "historical_migration",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "PostHog documents `historical_migration` as a boolean on `/batch`. Set it to `true` when backfilling so events are processed in order.",
+          "doc": "https://posthog.com/docs/api/capture"
         }
       ],
       "rules": []
@@ -109,12 +118,24 @@
         },
         {
           "name": "distinct_id",
-          "requirement": "required",
+          "severity": "error",
           "format": {
-            "kind": "non_empty"
+            "kind": "regex",
+            "pattern": "^.{1,200}$"
           },
-          "description": "It identifies the person the event belongs to.",
-          "fix_hint": "Send the same `distinct_id` you use elsewhere for this person.",
+          "description": "It identifies the person the event belongs to. PostHog documents at most 200 characters, and also reads `properties.distinct_id` when the top-level field is absent.",
+          "fix_hint": "Send `distinct_id` at the top level, at most 200 characters.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.distinct_id",
+          "severity": "error",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,200}$"
+          },
+          "description": "PostHog reads `properties.distinct_id` when the top-level `distinct_id` is absent. Prefer the top-level field.",
+          "fix_hint": "Send `distinct_id` at the top level, or inside `properties` when the client cannot.",
           "doc": "https://posthog.com/docs/api/capture"
         },
         {
@@ -126,9 +147,95 @@
           "description": "PostHog documents the timestamp as ISO 8601. An epoch number is read as the ingestion time instead.",
           "fix_hint": "Send an ISO 8601 timestamp, such as `2026-07-26T06:00:00Z`.",
           "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.$ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the visitor IP, sent unhashed.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.$process_person_profile",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "PostHog documents this as a boolean. Set it to `false` to capture an anonymous event.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.alias",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the distinct id being merged. PostHog documents it as required on `$create_alias`.",
+          "fix_hint": "Set `properties.alias` to the distinct id this person should merge into.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.$group_type",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,400}$"
+          },
+          "description": "It is the group type on `$groupidentify`. PostHog documents at most 400 characters.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.$group_key",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,400}$"
+          },
+          "description": "It is the group key on `$groupidentify`. PostHog documents at most 400 characters.",
+          "doc": "https://posthog.com/docs/api/capture"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.posthog.body.event_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": ["distinct_id", "properties.distinct_id"],
+          "severity": "error",
+          "message": "The event carries no `distinct_id`. PostHog documents it as required at the top level, and also reads `properties.distinct_id` when the top-level field is absent. A missing or empty id is not ingested, and the endpoint still returns 200.",
+          "fix_hint": "Send `distinct_id` at the top level.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "code": "vendor.posthog.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["properties.$ip"],
+          "severity": "error",
+          "message": "`properties.$ip` looks like a SHA-256 digest, but PostHog documents it as an IP address.",
+          "fix_hint": "Send the raw IP address.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "code": "vendor.posthog.body.alias_requires_alias",
+          "kind": "required_when_value",
+          "when": "event",
+          "equals": ["$create_alias"],
+          "requires": ["properties.alias"],
+          "severity": "error",
+          "message": "A `$create_alias` event carries no `properties.alias`. PostHog documents that field as the distinct id being merged.",
+          "fix_hint": "Set `properties.alias` to the distinct id this person should merge into.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "code": "vendor.posthog.body.groupidentify_requires_type_and_key",
+          "kind": "required_when_value",
+          "when": "event",
+          "equals": ["$groupidentify"],
+          "requires": ["properties.$group_type", "properties.$group_key"],
+          "severity": "error",
+          "message": "A `$groupidentify` event is missing `$group_type` or `$group_key`. PostHog documents both, each at most 400 characters.",
+          "fix_hint": "Set `properties.$group_type` and `properties.$group_key`.",
+          "doc": "https://posthog.com/docs/api/capture"
+        }
+      ]
     }
   ]
 }

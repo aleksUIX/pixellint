@@ -80,14 +80,52 @@
           "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
         },
         {
+          "name": "conversionValue",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the conversion value for the advertiser. Google documents a non-negative number together with `currencyCode`.",
+          "fix_hint": "Send a number such as `1.0`, with no currency symbol, together with `currencyCode`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
           "name": "currencyCode",
           "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
           "description": "It is an ISO 4217 currency code for `conversionValue`.",
           "fix_hint": "Use the three-letter code, such as `USD`.",
           "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "name": "consent.adUserData",
+          "format": {
+            "kind": "enum",
+            "values": ["UNSPECIFIED", "UNKNOWN", "GRANTED", "DENIED"]
+          },
+          "description": "Google documents `consent.ad_user_data` on the CallConversion object.",
+          "fix_hint": "Send `GRANTED` or `DENIED`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.google-ads-call-conversions.body.value_requires_currency",
+          "kind": "required_with",
+          "when": "conversionValue",
+          "requires": ["currencyCode"],
+          "severity": "error",
+          "message": "The conversion sends `conversionValue` without `currencyCode`. Google documents the ISO 4217 code together with the value.",
+          "fix_hint": "Add `currencyCode`, such as `USD`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "code": "vendor.google-ads-call-conversions.body.currency_requires_value",
+          "kind": "required_with",
+          "when": "currencyCode",
+          "requires": ["conversionValue"],
+          "severity": "error",
+          "message": "The conversion sends `currencyCode` without `conversionValue`. Google documents both together.",
+          "fix_hint": "Add `conversionValue` as a non-negative number.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        }
+      ]
     }
   ]
 }

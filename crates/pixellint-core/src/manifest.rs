@@ -1561,10 +1561,13 @@ impl ManifestRulePack {
                     return;
                 };
 
+                // Bracketed reserved names such as Amplitude's `[Amplitude]
+                // Start Session` look like ad-tech macros. The forbid still
+                // has to read the literal; a format check can wait for the
+                // template to expand, this rule cannot.
                 let hits: Vec<&RawParam> = params
                     .iter()
                     .filter(|param| names.is_empty() || names.contains(&param.name))
-                    .filter(|param| !contains_macro(&param.value))
                     .filter(|param| regex.is_match(&param.value))
                     .collect();
 

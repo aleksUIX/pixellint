@@ -69,13 +69,23 @@
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
+      "name": "revenue",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "It is the revenue in full currency units, such as `149.99` for $149.99. Adjust documents a minimum of 0.001 and requires `currency` with it.",
+      "fix_hint": "Send `revenue` as a number with no currency symbol, together with `currency`.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
       "name": "currency",
       "format": {
         "kind": "regex",
         "pattern": "^[A-Za-z]{3}$"
       },
-      "description": "It is the ISO 4217 currency code for a revenue event.",
-      "fix_hint": "Use the three-letter code, such as `EUR`.",
+      "description": "It is the ISO 4217 currency code for a revenue event. Adjust documents it together with `revenue`.",
+      "fix_hint": "Use the three-letter code, such as `EUR`, together with `revenue`.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
@@ -95,10 +105,20 @@
     {
       "name": "ip_address",
       "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]{1,3}(?:\\.[0-9]{1,3}){3}$"
+      },
+      "description": "It is the device IP address, sent unhashed. Adjust documents IPv4 only; IPv6 is not supported.",
+      "fix_hint": "Send the device IPv4 address, not a digest and not an IPv6 address.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "user_agent",
+      "format": {
         "kind": "non_empty"
       },
-      "description": "It is the device IP address, sent unhashed. Adjust documents IPv4 only.",
-      "fix_hint": "Send the device IPv4 address, not a digest and not an IPv6 address.",
+      "description": "It is the device user agent, URL-encoded, sent unhashed.",
+      "fix_hint": "Send the raw user agent string, URL-encoded.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
@@ -217,11 +237,32 @@
       "kind": "forbid_value_pattern",
       "pattern": "^[A-Fa-f0-9]{64}$",
       "params": [
-        "ip_address"
+        "ip_address",
+        "user_agent"
       ],
       "severity": "error",
-      "message": "`ip_address` looks like a SHA-256 digest, but Adjust documents it as the device IPv4 address, unhashed.",
-      "fix_hint": "Send the raw IPv4 address. Hashing it makes the event unmatchable.",
+      "message": "This field looks like a SHA-256 digest, but Adjust documents `ip_address` and `user_agent` as unhashed.",
+      "fix_hint": "Send the raw IPv4 address or user agent.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "code": "vendor.adjust.revenue_requires_currency",
+      "kind": "required_with",
+      "when": "revenue",
+      "requires": ["currency"],
+      "severity": "error",
+      "message": "The event sends `revenue` without `currency`. Adjust documents both on revenue events.",
+      "fix_hint": "Add `currency` as a three-letter ISO 4217 code.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "code": "vendor.adjust.currency_requires_revenue",
+      "kind": "required_with",
+      "when": "currency",
+      "requires": ["revenue"],
+      "severity": "error",
+      "message": "The event sends `currency` without `revenue`. Adjust documents both on revenue events.",
+      "fix_hint": "Add `revenue` as a number in full currency units, such as `123.4`.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     }
   ]

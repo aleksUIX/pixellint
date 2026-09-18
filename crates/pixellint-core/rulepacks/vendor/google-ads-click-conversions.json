@@ -112,8 +112,21 @@
         {
           "name": "currencyCode",
           "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
-          "description": "It is an ISO 4217 currency code for `conversionValue`.",
-          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "description": "It is an ISO 4217 currency code for `conversionValue`. Google documents both together.",
+          "fix_hint": "Use the three-letter code, such as `USD`, together with `conversionValue`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "name": "conversionValue",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the conversion value for the advertiser. Google documents it together with `currencyCode`.",
+          "fix_hint": "Send a number such as `1.0`, with no currency symbol, together with `currencyCode`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "name": "userIpAddress",
+          "format": { "kind": "non_empty" },
+          "description": "It is the customer IP on the landing page after the click, sent unhashed. Google documents the device address, not the advertiser server.",
           "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
         }
       ],
@@ -128,6 +141,26 @@
           "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
         },
         {
+          "code": "vendor.google-ads-click-conversions.body.value_requires_currency",
+          "kind": "required_with",
+          "when": "conversionValue",
+          "requires": ["currencyCode"],
+          "severity": "error",
+          "message": "The conversion sends `conversionValue` without `currencyCode`. Google documents the ISO 4217 code together with the value.",
+          "fix_hint": "Add `currencyCode`, such as `USD`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.currency_requires_value",
+          "kind": "required_with",
+          "when": "currencyCode",
+          "requires": ["conversionValue"],
+          "severity": "error",
+          "message": "The conversion sends `currencyCode` without `conversionValue`. Google documents both together.",
+          "fix_hint": "Add `conversionValue` as a number, with no currency symbol.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
           "code": "vendor.google-ads-click-conversions.body.unhashed_email",
           "kind": "forbid_value_pattern",
           "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
@@ -135,6 +168,16 @@
           "message": "A field carries what looks like a raw email address. Google requires email as `hashedEmail`, SHA-256 hashed after normalization.",
           "fix_hint": "Normalize the address, hash it with SHA-256, and send `userIdentifiers[].hashedEmail`.",
           "doc": "https://developers.google.com/google-ads/api/docs/conversions/enhanced-conversions/web"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": ["userIpAddress"],
+          "severity": "error",
+          "message": "`userIpAddress` looks like a SHA-256 digest, but Google documents it as the customer IP, unhashed.",
+          "fix_hint": "Send the raw IP address of the customer's device.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
         }
       ]
     }
