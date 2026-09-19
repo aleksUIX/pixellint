@@ -572,6 +572,8 @@ Universal Event Tracking requests on `bat.bing.com` and `bat.bing.net`. Level:
 | `search_term` | When present, the search query | `vendor.microsoft-uet.param.search_term.empty` |
 | `ecomm_category` | When present, the category browse ID | `vendor.microsoft-uet.param.ecomm_category.empty` |
 | `transaction_id` | When present, a unique transaction ID | `vendor.microsoft-uet.param.transaction_id.empty` |
+| `flight_destid`, `flight_originid`, `flight_pagetype`, `flight_startdate`, `flight_enddate` | When present, not empty | `vendor.microsoft-uet.param.flight_destid.empty` and the same shape for the other flight IDs and dates |
+| `flight_totalvalue` | When present, a number | `vendor.microsoft-uet.param.flight_totalvalue.empty`, `.invalid` |
 | `ec`, `ea`, `el` | When present, not empty | `vendor.microsoft-uet.param.ec.empty` and the same shape for `ea` and `el` |
 | `ev`, `gv` | When present, a number | `vendor.microsoft-uet.param.ev.invalid`, `.gv.invalid` |
 | `gc` | When present, ISO 4217 three-letter code | `vendor.microsoft-uet.param.gc.invalid` |
@@ -2245,7 +2247,13 @@ directory-only. Display GPT and VAST tags share this hop.
 | `ott_placement` | When present, `1`–`5` or `99` | `vendor.google-ad-manager.param.ott_placement.invalid` |
 | `vpos` | When present, `preroll`, `midroll`, or `postroll` | `vendor.google-ad-manager.param.vpos.invalid` |
 | `vconp` | When present, `1` or `2` | `vendor.google-ad-manager.param.vconp.invalid` |
-| `wta` | When present, `0` or `1` | `vendor.google-ad-manager.param.wta.invalid` |
+| `wta` | When present, `0` or `1`, or an empty pair | `vendor.google-ad-manager.param.wta.invalid` |
+| `aconp` | When present, `0`, `1`, or `2` | `vendor.google-ad-manager.param.aconp.empty`, `.invalid` |
+| `dth` | When present, `1`–`7` | `vendor.google-ad-manager.param.dth.empty`, `.invalid` |
+| `hl` | When present, ISO 639-1 or 639-2 language code | `vendor.google-ad-manager.param.hl.empty`, `.invalid` |
+| `givn` | When present, the PAL video nonce | `vendor.google-ad-manager.param.givn.empty` |
+| `omid_p` | When present, OMID partner name and version | `vendor.google-ad-manager.param.omid_p.empty` |
+| `sdk_apis` | When present, one or more integer API frameworks, comma-separated | `vendor.google-ad-manager.param.sdk_apis.empty`, `.invalid` |
 | `vid_d` | When present, content duration in seconds | `vendor.google-ad-manager.param.vid_d.empty`, `.invalid` |
 
 Source: [VAST ad tag parameters for web](https://support.google.com/admanager/answer/10655276).

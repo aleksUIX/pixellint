@@ -6,6 +6,15 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Changed
+
+- Same-hop vendor packs now contract more of their published HTTP tables.
+  Microsoft UET type-checks travel `flight_destid`, `flight_originid`,
+  `flight_pagetype`, `flight_startdate`, `flight_enddate`, and numeric
+  `flight_totalvalue`. Google Ad Manager type-checks `aconp`, `dth`, `hl`,
+  `givn`, `omid_p`, and `sdk_apis`. The `items` array stays out until Microsoft
+  documents an HTTP encoding.
+
 ## 0.31.6 - 2026-09-18
 
 ### Changed

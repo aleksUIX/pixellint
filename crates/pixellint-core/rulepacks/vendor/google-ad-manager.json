@@ -169,12 +169,67 @@
     },
     {
       "name": "wta",
+      "allow_empty": true,
       "format": {
         "kind": "enum",
         "values": ["0", "1"]
       },
-      "description": "It says whether the player will render the AdChoices icon from VAST. Google documents wta as recommended for programmatic. Omit it or send 1 when the player renders the icon.",
+      "description": "It says whether the player will render the AdChoices icon from VAST. Google documents wta as recommended for programmatic. Omit it, send 1, or send an empty pair when the player renders the icon.",
       "fix_hint": "Set wta=1 when the player renders AdChoices, or wta=0 only when it will not.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "aconp",
+      "format": {
+        "kind": "enum",
+        "values": ["0", "1", "2"]
+      },
+      "description": "It says whether the player intends to play audio continuously. Google documents aconp=2 on, aconp=1 off, and aconp=0 when unknown.",
+      "fix_hint": "Set aconp=2 for continuous audio, aconp=1 when it is off, or aconp=0 when unknown.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "dth",
+      "format": {
+        "kind": "enum",
+        "values": ["1", "2", "3", "4", "5", "6", "7"]
+      },
+      "description": "It is a device type hint. Google documents 1 feature phone, 2 smart phone, 3 desktop, 4 tablet, 5 connected TV, 6 game console, and 7 set top box.",
+      "fix_hint": "Set dth to 1 through 7 for the device class of this request.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "hl",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{2,3}$"
+      },
+      "description": "It is the request language. Google documents an ISO 639-1 two-letter or ISO 639-2 three-letter code.",
+      "fix_hint": "Set hl to a two- or three-letter language code, such as it or eng.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "givn",
+      "format": { "kind": "non_empty" },
+      "description": "It is the PAL video nonce. Google documents givn as the replacement for paln, and says not to send both.",
+      "fix_hint": "Send the PAL nonce in givn, or drop the empty pair. Do not also send paln.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "omid_p",
+      "format": { "kind": "non_empty" },
+      "description": "It is the OMID partner name and version when PAL is not used. Google documents a value such as examplepartnername/1.0.0.0.",
+      "fix_hint": "Send omid_p as partner/version when you are not using PAL or the IMA SDK.",
+      "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "sdk_apis",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:,[0-9]+)*$"
+      },
+      "description": "It is the supported SDK API frameworks. Google documents a single integer or a comma-separated list, such as 7 for OMID.",
+      "fix_hint": "Send sdk_apis as one or more integer API framework values, comma-separated.",
       "doc": "https://support.google.com/admanager/answer/10655276"
     },
     {
