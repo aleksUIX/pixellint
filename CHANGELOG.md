@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.5 - 2026-09-18
+
 ### Added
 
 - `vendor/awin-basket`, covering `www.awin1.com/basket.php` and
