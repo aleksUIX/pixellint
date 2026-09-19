@@ -82,6 +82,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     ),
     ("vendor/awin", include_str!("../rulepacks/vendor/awin.json")),
     (
+        "vendor/awin-basket",
+        include_str!("../rulepacks/vendor/awin-basket.json"),
+    ),
+    (
         "vendor/awin-mastertag",
         include_str!("../rulepacks/vendor/awin-mastertag.json"),
     ),

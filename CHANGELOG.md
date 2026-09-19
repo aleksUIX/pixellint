@@ -6,6 +6,21 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/awin-basket`, covering `www.awin1.com/basket.php` and
+  `zenaps.com/basket.php`: required `product_line` in the published `AW:P|...`
+  product-row shape.
+
+### Changed
+
+- Same-hop vendor packs now contract more of their published HTTP tables.
+  Awin fall-back pixels type-check product-level `bd[n]` rows and custom `pN`
+  keys, and accept pipe-delimited commission `parts`. impact.com conversions
+  type-check `OrderDiscount` and `ItemSkuN` / `ItemNameN` / `ItemCategoryN` /
+  `ItemQuantityN` / `ItemSubTotalN`, and require `EventCode` when `AppPackage`
+  is present.
+
 ## 0.31.4 - 2026-09-18
 
 ### Changed

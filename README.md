@@ -214,7 +214,8 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/taboola` | Taboola Pixel loader, account ID in the path | official vendor |
 | `vendor/hotjar` | Hotjar tracking code, site ID in the path | official template |
 | `vendor/hubspot` | HubSpot tracking code, Hub ID in the path | official template |
-| `vendor/awin` | Awin fall-back conversion pixel and S2S read | official vendor |
+| `vendor/awin` | Awin fall-back conversion pixel and S2S read, including product-level `bd[n]` | official vendor |
+| `vendor/awin-basket` | Awin product-level `basket.php` `product_line` rows | official vendor |
 | `vendor/partnerize` | Partnerize conversion URL, campaign, clickref, and currency in the path | official vendor |
 | `vendor/amazon-ads` | Amazon Ad Tag conversion loader, Tag ID in the path | ecosystem reference |
 | `vendor/amazon-vfw` | Amazon DSP Firefly DV measurement, `vstevt` and `dvparams` on `/dv/` | ecosystem reference |
@@ -262,7 +263,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover 130 endpoint families across 77 vendors. The vendor directory
+Rulepacks cover 131 endpoint families across 77 vendors. The vendor directory
 covers the rest by attribution: 119 vendor rows and 296 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 
@@ -363,6 +364,18 @@ tests that drive the real CLI binary and the real MCP stdio transport.
 ```bash
 cargo test --workspace
 ```
+
+## Benchmark
+
+In-process engine speed over the golden corpus, D1-shaped synthetic pixels, and large `validate-many` batches:
+
+```bash
+cargo run -p pixellint-bench --release -- --quick
+cargo run -p pixellint-bench --release
+cargo run -p pixellint-bench --release -- --mode load --heavy
+```
+
+See [bench/README.md](bench/README.md).
 
 ## Docs
 

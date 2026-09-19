@@ -1,0 +1,27 @@
+{
+  "id": "vendor/awin-basket",
+  "display_name": "Awin product-level basket",
+  "description": "Awin product-level tracking requests on www.awin1.com/basket.php and zenaps.com/basket.php. Each product_line is one AW:P row. Conversion pixels stay vendor/awin. The MasterTag stays vendor/awin-mastertag.",
+  "vendor": "awin",
+  "source_level": "official_vendor",
+  "docs": "https://help.awin.com/developers/docs/product-level-tracking-2",
+  "match": {
+    "hosts": ["www.awin1.com"],
+    "host_suffixes": ["zenaps.com"],
+    "path_prefixes": ["/basket.php"]
+  },
+  "params": [
+    {
+      "name": "product_line",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^AW:P\\|[0-9]+\\|[^|]+\\|[^|]+\\|[^|]+\\|[0-9]+(?:\\.[0-9]+)?\\|[1-9][0-9]*\\|[^|]*\\|[^|]+\\|[^|]*$"
+      },
+      "description": "It is one product-level tracking row. Awin documents `product_line` as `AW:P|{advertiserId}|{orderReference}|{productId}|{productName}|{productItemPrice}|{productQuantity}|{productSku}|{commissionGroupCode}|{productCategory}`. Price is a float with a dot decimal. Quantity is a positive integer. SKU and category may be blank.",
+      "fix_hint": "Send `product_line=AW:P|{advertiserId}|{orderReference}|{productId}|{productName}|{price}|{quantity}|{sku}|{group}|{category}`.",
+      "doc": "https://help.awin.com/developers/docs/product-level-tracking-2"
+    }
+  ],
+  "rules": []
+}

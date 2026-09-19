@@ -115,7 +115,7 @@ VENDORS = {
     "impact": ("impact.com", "affiliate", ["utt.impactcdn.com", "app.impact.com"], "vendor/impact"),
     "cj": ("CJ Affiliate", "affiliate", ["www.emjcd.com", "www.mczbf.com"], "vendor/cj"),
     "rakuten": ("Rakuten Advertising", "affiliate", ["track.linksynergy.com", "click.linksynergy.com"], "vendor/rakuten"),
-    "awin": ("Awin", "affiliate", ["www.awin1.com", "www.dwin1.com"], "vendor/awin"),
+    "awin": ("Awin", "affiliate", ["www.awin1.com", "www.dwin1.com", "zenaps.com"], "vendor/awin"),
     "shareasale": ("ShareASale", "affiliate", ["www.shareasale.com", "shareasale.com"], None),
     "partnerize": ("Partnerize", "affiliate", ["prf.hn", "cdn.performancehorizon.com"], None),
     "appsflyer": ("AppsFlyer", "mobile", ["impression.appsflyer.com", "launches.appsflyer.com", "onelink.me", "api3.appsflyer.com"], "vendor/appsflyer"),

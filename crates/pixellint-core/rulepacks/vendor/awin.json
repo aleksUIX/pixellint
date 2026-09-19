@@ -1,7 +1,7 @@
 {
   "id": "vendor/awin",
   "display_name": "Awin conversion pixel",
-  "description": "Awin fall-back conversion image and S2S reads on www.awin1.com/sread.img and /sread.php. The MasterTag on www.dwin1.com is vendor/awin-mastertag.",
+  "description": "Awin fall-back conversion image and S2S reads on www.awin1.com/sread.img and /sread.php, including product-level bd[n] rows and custom pN keys. Product-level basket.php requests are vendor/awin-basket. The MasterTag on www.dwin1.com is vendor/awin-mastertag.",
   "vendor": "awin",
   "source_level": "official_vendor",
   "docs": "https://help.awin.com/developers/docs/fall-back-conversion-pixel",
@@ -53,8 +53,8 @@
     {
       "name": "parts",
       "requirement": "required",
-      "format": { "kind": "regex", "pattern": "^.+:[0-9]+(?:\\.[0-9]+)?$" },
-      "description": "It is the commission group code plus amount, such as `DEFAULT:8.33`. Awin documents `{group}:{amount}` as required.",
+      "format": { "kind": "regex", "pattern": "^(?:[^:]+:[0-9]+(?:\\.[0-9]+)?)(?:\\|[^:]+:[0-9]+(?:\\.[0-9]+)?)*$" },
+      "description": "It is the commission group code plus amount, such as `DEFAULT:8.33`. Multiple groups are pipe-delimited, such as `CD:11.10|DVD:14.99`. Awin documents `{group}:{amount}` as required.",
       "fix_hint": "Set `parts` to `{group}:{amount}`, using `DEFAULT` when no group is configured.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
     },
@@ -84,8 +84,9 @@
     },
     {
       "name": "vc",
+      "allow_empty": true,
       "format": { "kind": "non_empty" },
-      "description": "It is the voucher code when a discount was used.",
+      "description": "It is the voucher code when a discount was used. Awin documents returning the pair even when the value is empty.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
     },
     {
@@ -101,6 +102,26 @@
       "description": "It names the customer type. Awin documents `NEW` or `RETURNING` on the fall-back pixel.",
       "fix_hint": "Set `customeracquisition` to `NEW` or `RETURNING`.",
       "doc": "https://help.awin.com/developers/docs/customer-acquisition"
+    },
+    {
+      "name": "bd[0]",
+      "name_pattern": "^bd\\[[0-9]+\\]$",
+      "format": {
+        "kind": "regex",
+        "pattern": "^AW:P\\|[0-9]+\\|[^|]+\\|[^|]+\\|[^|]+\\|[0-9]+(?:\\.[0-9]+)?\\|[1-9][0-9]*\\|[^|]*\\|[^|]+\\|[^|]*$"
+      },
+      "description": "It is one product-level tracking row on the fall-back pixel or S2S read. Awin documents `bd[n]` as `AW:P|{advertiserId}|{orderReference}|{productId}|{productName}|{productItemPrice}|{productQuantity}|{productSku}|{commissionGroupCode}|{productCategory}`. Price is a float with a dot decimal. Quantity is a positive integer. SKU and category may be blank.",
+      "fix_hint": "Send `bd[n]=AW:P|{advertiserId}|{orderReference}|{productId}|{productName}|{price}|{quantity}|{sku}|{group}|{category}`.",
+      "doc": "https://help.awin.com/developers/docs/product-level-tracking-2"
+    },
+    {
+      "name": "p1",
+      "name_pattern": "^p[1-9][0-9]*$",
+      "allow_empty": true,
+      "format": { "kind": "non_empty" },
+      "description": "It is a custom parameter on the fall-back pixel. Awin documents `p1` through `pN` as URL-encoded GET keys.",
+      "fix_hint": "URL-encode the custom value, or drop the empty pair.",
+      "doc": "https://help.awin.com/developers/docs/custom-parameters"
     }
   ],
   "rules": [

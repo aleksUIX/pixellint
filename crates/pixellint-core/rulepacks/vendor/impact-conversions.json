@@ -126,6 +126,70 @@
       "description": "It is the ISO 4217 currency of the conversion.",
       "fix_hint": "Use the three-letter code, such as `USD`.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "OrderDiscount",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the order-level discount. impact.com documents a decimal amount that is applied proportionately across item subtotals.",
+      "fix_hint": "Send `OrderDiscount` as a number such as `15.00`, without a currency symbol.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "EventCode",
+      "format": { "kind": "non_empty" },
+      "description": "It names the mobile event, such as INSTALL, SIGN-UP, or SALE. impact.com documents it as required when submitting mobile conversions.",
+      "fix_hint": "Send `EventCode` when the conversion is a mobile event.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "AppPackage",
+      "format": { "kind": "non_empty" },
+      "description": "It is the app package name on a mobile conversion.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "IrAppId",
+      "format": { "kind": "non_empty" },
+      "description": "It is the IR App ID on a mobile conversion.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "ItemSku1",
+      "name_pattern": "^ItemSku[1-9][0-9]*$",
+      "format": { "kind": "non_empty" },
+      "description": "It is a line-item SKU. impact.com documents `ItemSkuN` on the online-sale conversion POST.",
+      "fix_hint": "Send `ItemSku1`, `ItemSku2`, and so on for each SKU set.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "ItemName1",
+      "name_pattern": "^ItemName[1-9][0-9]*$",
+      "format": { "kind": "non_empty" },
+      "description": "It is a line-item name. impact.com documents `ItemNameN` on the online-sale conversion POST.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "ItemCategory1",
+      "name_pattern": "^ItemCategory[1-9][0-9]*$",
+      "format": { "kind": "non_empty" },
+      "description": "It is a line-item category. impact.com documents `ItemCategoryN` on the online-sale conversion POST.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "ItemQuantity1",
+      "name_pattern": "^ItemQuantity[1-9][0-9]*$",
+      "format": { "kind": "regex", "pattern": "^[1-9][0-9]*$" },
+      "description": "It is a line-item quantity. impact.com documents `ItemQuantityN` as a positive integer.",
+      "fix_hint": "Send `ItemQuantityN` as a positive integer, such as `2`.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+    },
+    {
+      "name": "ItemSubTotal1",
+      "name_pattern": "^ItemSubTotal[1-9][0-9]*$",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is a line-item subtotal. impact.com documents `ItemSubTotalN` as the SKU-set total after unit price times quantity.",
+      "fix_hint": "Send `ItemSubTotalN` as a number such as `28.00`, without a currency symbol.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
     }
   ],
   "rules": [
@@ -175,6 +239,16 @@
       "severity": "error",
       "message": "`IpAddress` looks like a SHA-256 digest, but impact.com documents it as the customer's public IP, unhashed.",
       "fix_hint": "Send the raw IP address.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "code": "vendor.impact-conversions.mobile_requires_event_code",
+      "kind": "required_with",
+      "when": "AppPackage",
+      "requires": ["EventCode"],
+      "severity": "error",
+      "message": "A mobile conversion has `AppPackage` and no `EventCode`. impact.com documents `EventCode` as required when submitting mobile conversions.",
+      "fix_hint": "Send `EventCode` such as `SALE`, `INSTALL`, or `SIGN-UP`.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
     }
   ]

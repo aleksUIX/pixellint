@@ -12,7 +12,7 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 - Declarative rulepack manifests: host and path matchers, parameter contracts,
   JSON body contracts, value formats, cross-parameter rules, and load-time
   validation including a citation requirement for vendor-documented rules
-- 130 first-party vendor packs: Meta Pixel and Conversions API, GA4
+- 131 first-party vendor packs: Meta Pixel and Conversions API, GA4
   Measurement Protocol and the browser `/g/collect` transport, Google Tag
   Manager and gtag.js, Google Ads conversion pixels and click conversion
   uploads, Campaign Manager Floodlight, Adobe Analytics, Pinterest Tag and
@@ -25,8 +25,9 @@ What Pixellint does today and where it is heading. Not a promise of dates.
   Adjust S2S, Branch Events API, Kochava S2S, Singular S2S EVENT, The Trade
   Desk universal pixel, Criteo OneTag loader, Amazon Ad Tag loader, Taboola
   Pixel loader, Outbrain pixel, Baidu Tongji collect, Kwai Pixel loader, Hotjar
-  tracking code, HubSpot tracking code and collect pixel, Awin conversion pixel,
-  CJ Affiliate conversion pixel, impact.com UTT, Rakuten Advertising conversion
+  tracking code, HubSpot tracking code and collect pixel, Awin conversion pixel
+  and product-level basket hop, CJ Affiliate conversion pixel, impact.com UTT,
+  Rakuten Advertising conversion
   pixel, Partnerize conversion URLs, Microsoft Advertising Conversions API,
   Nextdoor Conversions API, Chartbeat pings, Heap configuration loaders,
   Mouseflow project scripts, Intercom Messenger loaders, IAS Signal tags,

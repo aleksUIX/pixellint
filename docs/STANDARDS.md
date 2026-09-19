@@ -1382,7 +1382,8 @@ Source: [tracking code API](https://developers.hubspot.com/docs/api-reference/la
 ## `vendor/awin`
 
 Awin fall-back conversion image on `www.awin1.com/sread.img` and S2S on
-`/sread.php`. Level: `official_vendor`. The MasterTag on `www.dwin1.com` is
+`/sread.php`. Level: `official_vendor`. Product-level `basket.php` requests are
+`vendor/awin-basket`. The MasterTag on `www.dwin1.com` is
 `vendor/awin-mastertag`.
 
 | Parameter | Enforced | Rule ids |
@@ -1392,21 +1393,37 @@ Awin fall-back conversion image on `www.awin1.com/sread.img` and S2S on
 | `tv` | Required `2` | `vendor.awin.param.tv.missing`, `.invalid` |
 | `amount` | Required float with a dot decimal, no thousands separator | `vendor.awin.param.amount.missing`, `.invalid` |
 | `ch` | Required last-click channel | `vendor.awin.param.ch.missing`, `.empty` |
-| `parts` | Required `{group}:{amount}` | `vendor.awin.param.parts.missing`, `.invalid` |
+| `parts` | Required `{group}:{amount}`, pipe-delimited when there is more than one group | `vendor.awin.param.parts.missing`, `.invalid` |
 | `ref` | Required unique order reference | `vendor.awin.param.ref.missing`, `.empty` |
 | `cr` | Recommended ISO 4217 currency | `vendor.awin.param.cr.missing`, `.invalid` |
 | `cks` | Required when `tt=ss` | `vendor.awin.s2s_requires_cks` |
 | `customeracquisition` | `NEW` or `RETURNING` when present | `vendor.awin.param.customeracquisition.invalid` |
+| `bd[n]` | When present, `AW:P|{advertiserId}|{orderReference}|{productId}|{productName}|{price}|{quantity}|{sku}|{group}|{category}` | `vendor.awin.param.bd[n].invalid` |
+| `pN` | When present, a custom parameter. Blank pairs are allowed | `vendor.awin.param.pN.empty` |
 
 Source: [fall-back conversion pixel](https://help.awin.com/developers/docs/fall-back-conversion-pixel),
 [parameter guidance](https://help.awin.com/developers/docs/parameter-guidance),
+[product-level tracking](https://help.awin.com/developers/docs/product-level-tracking-2),
 [direct S2S](https://help.awin.com/developers/docs/direct-s2s),
 [customer acquisition](https://help.awin.com/developers/docs/customer-acquisition).
+
+## `vendor/awin-basket`
+
+Awin product-level tracking on `www.awin1.com/basket.php` and `zenaps.com/basket.php`.
+Level: `official_vendor`. Conversion pixels stay `vendor/awin`. The MasterTag
+stays `vendor/awin-mastertag`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `product_line` | Required `AW:P|{advertiserId}|{orderReference}|{productId}|{productName}|{price}|{quantity}|{sku}|{group}|{category}` | `vendor.awin-basket.param.product_line.missing`, `.empty`, `.invalid` |
+
+Source: [product-level tracking](https://help.awin.com/developers/docs/product-level-tracking-2).
 
 ## `vendor/awin-mastertag`
 
 Awin Advertiser MasterTag on `www.dwin1.com/{advertiserId}.js`. Level:
-`official_vendor`. Conversion pixels stay `vendor/awin`.
+`official_vendor`. Conversion pixels stay `vendor/awin`. Product-level
+`basket.php` requests stay `vendor/awin-basket`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -1581,6 +1598,11 @@ query names impact.com documents.
 | `OrderId` | Recommended order id | `vendor.impact-conversions.param.OrderId.missing` |
 | Attribution | One of `ClickId`, `CustomerId`, `CustomProfileId`, a promo code, `UniqueUrl`, `GoogAId`, `AppleIfa`, or `AppleIfv` | `vendor.impact-conversions.attribution_required` |
 | `CurrencyCode` | ISO 4217 three-letter code when present | `vendor.impact-conversions.param.CurrencyCode.invalid` |
+| `OrderDiscount` | When present, a number with no currency symbol | `vendor.impact-conversions.param.OrderDiscount.invalid` |
+| `ItemSkuN`, `ItemNameN`, `ItemCategoryN` | When present, not empty | `vendor.impact-conversions.param.ItemSkuN.empty`, `.ItemNameN.empty`, `.ItemCategoryN.empty` |
+| `ItemQuantityN` | When present, a positive integer | `vendor.impact-conversions.param.ItemQuantityN.invalid` |
+| `ItemSubTotalN` | When present, a number with no currency symbol | `vendor.impact-conversions.param.ItemSubTotalN.invalid` |
+| `EventCode` | Required when `AppPackage` is present | `vendor.impact-conversions.mobile_requires_event_code` |
 | Unhashed PII | `CustomerId` must not be a raw email | `vendor.impact-conversions.unhashed_email` |
 | Over-hashing | `IpAddress` must not be a digest | `vendor.impact-conversions.hashed_plaintext_field` |
 
