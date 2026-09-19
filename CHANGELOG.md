@@ -6,6 +6,11 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Changed
+
+- Xandr conversion pixels type-check `seg` and `remove` as comma-separated
+  integer segment IDs on the same `/px` hop.
+
 ## 0.31.5 - 2026-09-18
 
 ### Added

@@ -2311,6 +2311,8 @@ contracted.
 | `consent` | Optional `0` or `1` when TCF is not used | `vendor.xandr.param.consent.empty`, `.invalid` |
 | `other` | When present, letters and numbers, at most 20 characters | `vendor.xandr.param.other.empty`, `.invalid` |
 | `redir` | When present, an absolute piggyback pixel URL | `vendor.xandr.param.redir.empty`, `.invalid` |
+| `seg` | When present, one or more integer segment IDs, comma-separated | `vendor.xandr.param.seg.empty`, `.invalid` |
+| `remove` | When present, one or more integer segment IDs, comma-separated | `vendor.xandr.param.remove.empty`, `.invalid` |
 
 Sources: [Conversion Pixels Advanced](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced),
 [Test a Conversion Pixel](https://learn.microsoft.com/en-us/xandr/monetize/test-conversion-pixel-and-attribution).

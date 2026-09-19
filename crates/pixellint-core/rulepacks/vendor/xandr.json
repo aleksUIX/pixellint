@@ -2,7 +2,7 @@
   "id": "vendor/xandr",
   "display_name": "Xandr conversion pixel",
   "vendor": "xandr",
-  "description": "Microsoft Monetize conversion pixels on ib.adnxs.com/px and secure.adnxs.com/px. Microsoft documents id as the pixel ID and t as 1 for JavaScript or 2 for image. Server-side /sspx is vendor/xandr-sspx. Cookie sync and RTB on the same hosts are not contracted.",
+  "description": "Microsoft Monetize conversion pixels on ib.adnxs.com/px and secure.adnxs.com/px. Microsoft documents id as the pixel ID and t as 1 for JavaScript or 2 for image. seg and remove add or drop integer segment IDs on the same hop. Server-side /sspx is vendor/xandr-sspx. Cookie sync and RTB on the same hosts are not contracted.",
   "source_level": "official_vendor",
   "docs": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced",
   "match": {
@@ -59,6 +59,20 @@
       "format": { "kind": "url" },
       "description": "It is a piggyback pixel URL. Microsoft documents redir as the image or JavaScript pixel to notify after conversion.",
       "fix_hint": "Set redir to an absolute image or JavaScript pixel URL, matching the host pixel type.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    },
+    {
+      "name": "seg",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:,[0-9]+)*$" },
+      "description": "It adds the user to one or more segments when the conversion fires. Microsoft documents comma-separated segment IDs on the same conversion pixel.",
+      "fix_hint": "Set `seg` to one or more integer segment IDs, comma-separated, such as `12192,12304`.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    },
+    {
+      "name": "remove",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:,[0-9]+)*$" },
+      "description": "It removes the user from one or more segments when the conversion fires. Microsoft documents comma-separated segment IDs on the same conversion pixel.",
+      "fix_hint": "Set `remove` to one or more integer segment IDs, comma-separated, such as `23145`.",
       "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
     }
   ],
