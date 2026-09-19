@@ -564,7 +564,14 @@ Universal Event Tracking requests on `bat.bing.com` and `bat.bing.net`. Level:
 | `rn` | Required 6-digit cache buster | `vendor.microsoft-uet.param.rn.missing`, `.empty`, `.invalid` |
 | `p` | Recommended page URL | `vendor.microsoft-uet.param.p.missing`, `.empty`, `.invalid` |
 | `r` | When present, an absolute URL | `vendor.microsoft-uet.param.r.empty`, `.invalid` |
-| `msclkid` | Recommended Microsoft Click ID | `vendor.microsoft-uet.param.msclkid.missing`, `.empty` |
+| `msclkid` | Recommended Microsoft Click ID: `N`, or a 32-hex GUID plus `-0` / `-1` and an optional `N` | `vendor.microsoft-uet.param.msclkid.missing`, `.empty`, `.invalid` |
+| `kl` | When present, the page title | `vendor.microsoft-uet.param.kl.empty` |
+| `tw` | When present, page SEO keywords | `vendor.microsoft-uet.param.tw.empty` |
+| `pagetype` | When present, a documented page type such as `Purchase` | `vendor.microsoft-uet.param.pagetype.empty`, `.invalid` |
+| `prodid` | When present, one or more product IDs, comma-separated | `vendor.microsoft-uet.param.prodid.empty`, `.invalid` |
+| `search_term` | When present, the search query | `vendor.microsoft-uet.param.search_term.empty` |
+| `ecomm_category` | When present, the category browse ID | `vendor.microsoft-uet.param.ecomm_category.empty` |
+| `transaction_id` | When present, a unique transaction ID | `vendor.microsoft-uet.param.transaction_id.empty` |
 | `ec`, `ea`, `el` | When present, not empty | `vendor.microsoft-uet.param.ec.empty` and the same shape for `ea` and `el` |
 | `ev`, `gv` | When present, a number | `vendor.microsoft-uet.param.ev.invalid`, `.gv.invalid` |
 | `gc` | When present, ISO 4217 three-letter code | `vendor.microsoft-uet.param.gc.invalid` |
@@ -2327,7 +2334,9 @@ Microsoft Monetize server-side conversion pixels on
 | --- | --- | --- |
 | `id` | Required integer conversion pixel ID | `vendor.xandr-sspx.param.id.missing`, `.empty`, `.invalid` |
 | `sspdata` | Required SSP landing-page token | `vendor.xandr-sspx.param.sspdata.missing`, `.empty` |
+| `order_id` | When present, letters and numbers, at most 36 characters | `vendor.xandr-sspx.param.order_id.empty`, `.invalid` |
 | `value` | Optional numerical revenue, no currency symbol | `vendor.xandr-sspx.param.value.empty`, `.invalid` |
+| `other` | When present, letters and numbers, at most 20 characters | `vendor.xandr-sspx.param.other.empty`, `.invalid` |
 
 Source: [Server-Side Conversion Pixels](https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels).
 

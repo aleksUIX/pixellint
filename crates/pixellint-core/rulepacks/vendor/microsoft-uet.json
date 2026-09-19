@@ -1,7 +1,7 @@
 {
   "id": "vendor/microsoft-uet",
   "display_name": "Microsoft Advertising UET",
-  "description": "Universal Event Tracking requests to the Microsoft Advertising collection endpoint.",
+  "description": "Universal Event Tracking requests to the Microsoft Advertising collection endpoint. Microsoft documents ti, ver, evt, mid, and rn on every event, plus pageLoad kl and tw and custom-event pagetype, prodid, search_term, ecomm_category, and transaction_id.",
   "vendor": "microsoft",
   "source_level": "official_vendor",
   "docs": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table",
@@ -81,9 +81,70 @@
     {
       "name": "msclkid",
       "requirement": "recommended",
+      "format": { "kind": "regex", "pattern": "^(N|[A-Fa-f0-9]{32}-[01]N?)$" },
+      "description": "It is the Microsoft Click ID. Microsoft documents a 32-hex GUID plus -0 or -1, an optional N when cookies are blocked, or N alone when no click exists.",
+      "fix_hint": "Forward the _uetmsclkid cookie as {guid}-0 or {guid}-1, or send N when there is no click.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "kl",
       "format": { "kind": "non_empty" },
-      "description": "It is the Microsoft Click ID. Microsoft documents it on every event. N is the documented value when cookies are blocked or no click exists.",
-      "fix_hint": "Forward the _uetmsclkid cookie, or send N when there is no click.",
+      "description": "It is the page title. Microsoft documents kl on pageLoad events.",
+      "fix_hint": "Send the page title in kl, or drop the empty pair.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "tw",
+      "format": { "kind": "non_empty" },
+      "description": "It is the SEO meta keywords for the current page. Microsoft documents tw on pageLoad events.",
+      "fix_hint": "Send the page keywords in tw, or drop the empty pair.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "pagetype",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "Cart",
+          "Category",
+          "Home",
+          "Other",
+          "Product",
+          "Purchase",
+          "Search results"
+        ],
+        "case_insensitive": true
+      },
+      "description": "It is the page type on a custom event. Microsoft documents Cart, Category, Home, Other, Product, Purchase, and Search results.",
+      "fix_hint": "Send a documented pagetype such as Purchase or Product.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "prodid",
+      "format": { "kind": "regex", "pattern": "^[^,]+(?:,[^,]+)*$" },
+      "description": "It is a comma-separated list of product IDs. Microsoft documents prodid as matching the ID or item_group_id in the MMC product feed.",
+      "fix_hint": "Send one or more product IDs, comma-separated, such as Prod123456.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "search_term",
+      "format": { "kind": "non_empty" },
+      "description": "It is the search query that led to the search results page. Microsoft documents search_term on custom events.",
+      "fix_hint": "Send the search query in search_term, or drop the empty pair.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "ecomm_category",
+      "format": { "kind": "non_empty" },
+      "description": "It is the category ID on a category browse page. Microsoft documents ecomm_category on custom events.",
+      "fix_hint": "Send the category ID in ecomm_category, or drop the empty pair.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "transaction_id",
+      "format": { "kind": "non_empty" },
+      "description": "It is a unique transaction ID. Microsoft documents transaction_id on custom events.",
+      "fix_hint": "Send a unique transaction ID, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {

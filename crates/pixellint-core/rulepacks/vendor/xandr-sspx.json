@@ -2,7 +2,7 @@
   "id": "vendor/xandr-sspx",
   "display_name": "Xandr server-side conversion pixel",
   "vendor": "xandr",
-  "description": "Microsoft Monetize server-side conversion pixels on sspx-router.adnxs.com/sspx and secure.adnxs.com/sspx. Microsoft documents id as the pixel ID and sspdata as the landing-page token. Browser /px stays vendor/xandr.",
+  "description": "Microsoft Monetize server-side conversion pixels on sspx-router.adnxs.com/sspx and secure.adnxs.com/sspx. Microsoft documents id as the pixel ID and sspdata as the landing-page token. order_id, value, and other ride before sspdata. Browser /px stays vendor/xandr. Segment add and remove are not available on SSPX.",
   "source_level": "official_vendor",
   "docs": "https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels",
   "match": {
@@ -28,9 +28,9 @@
     },
     {
       "name": "order_id",
-      "format": { "kind": "non_empty" },
-      "description": "It is an order ID or SKU. Microsoft documents the same order_id field as on the browser pixel.",
-      "fix_hint": "Set order_id before sspdata when you pass an order or SKU.",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z0-9]{1,36}$" },
+      "description": "It is an order ID or SKU. Microsoft documents the same order_id field as on the browser pixel: letters and numbers, with a 36 character limit.",
+      "fix_hint": "Set order_id before sspdata to the order or SKU, letters and numbers only, at most 36 characters.",
       "doc": "https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels"
     },
     {
@@ -39,6 +39,13 @@
       "description": "It is the dynamic revenue. Microsoft documents a purely numerical value on conversion pixels.",
       "fix_hint": "Set value to a number with no currency symbol, such as 10 or 10.50.",
       "doc": "https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced"
+    },
+    {
+      "name": "other",
+      "format": { "kind": "regex", "pattern": "^[A-Za-z0-9]{1,20}$" },
+      "description": "It is extra external data on the conversion. Microsoft documents other on SSPX, with the same letters-and-numbers limit as the browser pixel.",
+      "fix_hint": "Set other before sspdata to letters and numbers only, at most 20 characters.",
+      "doc": "https://learn.microsoft.com/en-us/xandr/monetize/server-side-conversion-pixels"
     }
   ],
   "rules": []
