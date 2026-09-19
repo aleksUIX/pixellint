@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.7 - 2026-09-19
+
 ### Changed
 
 - Same-hop vendor packs now contract more of their published HTTP tables.
