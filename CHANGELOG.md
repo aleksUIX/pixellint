@@ -130,6 +130,11 @@ All notable changes to Pixellint are documented here. The format follows
   `ll_CC` locale, ATT status 0 to 3, and a country code when `use_ip=true`.
 - Cheap-scan borrows scheme, host, and path from the artifact when they are
   already ASCII lowercase, instead of copying them on every typical pixel.
+- Pinterest Conversions API type-checks product `custom_data`: `content_ids`,
+  `content_name`, `content_category`, `content_brand`, integer `num_items`,
+  `order_id`, `search_string`, `opt_out_type` (`ldp`), numeric `value`, and
+  contents `id`, `item_name`, `item_category`, `item_brand`, unit `item_price`,
+  and integer `quantity`.
 
 ## 0.31.8 - 2026-09-19
 

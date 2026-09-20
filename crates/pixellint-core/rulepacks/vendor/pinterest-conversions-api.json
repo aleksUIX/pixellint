@@ -189,8 +189,150 @@
       },
       {
         "name": "custom_data.value",
-        "description": "It is the monetary value of the event. Pinterest documents it as recommended on checkout and related events, and requires currency whenever it is sent.",
-        "fix_hint": "Send the pre-tax, pre-shipping total in `custom_data.value`.",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
+        "description": "It is the total monetary value of purchased items. Pinterest documents a string parsed as a double, with no negatives, and currency whenever it is sent.",
+        "fix_hint": "Send the pre-tax, pre-shipping total in `custom_data.value` as a number, such as `66.95`.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.content_ids",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is a product ID related to the event. Pinterest documents an array of IDs that also appear on `custom_data.contents`.",
+        "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.content_ids[]",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "Every listed ID is a product ID related to the event.",
+        "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop empty entries.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.content_name",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the name of the page or product associated with the event.",
+        "fix_hint": "Send the page or product name in `custom_data.content_name`, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.content_category",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the type of merchandise. Pinterest documents `content_category` on the product event table.",
+        "fix_hint": "Send the merchandise type in `custom_data.content_category`, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.content_brand",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the brand of merchandise. Pinterest documents `content_brand` on the product event table.",
+        "fix_hint": "Send the brand in `custom_data.content_brand`, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.num_items",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is the total number of products involved, for example items purchased in a checkout.",
+        "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.order_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It identifies the order in a purchase-related event.",
+        "fix_hint": "Send the order id in `custom_data.order_id`, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.search_string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the string entered in a search event.",
+        "fix_hint": "Send the query in `custom_data.search_string`, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.opt_out_type",
+        "format": {
+          "kind": "enum",
+          "case_insensitive": true,
+          "values": ["ldp"]
+        },
+        "description": "It is the privacy opt-out type. Pinterest documents `ldp` as the only accepted value for limited data processing.",
+        "fix_hint": "Set `custom_data.opt_out_type` to `ldp`, or drop the pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.contents[].id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the product ID of an individual merchandise item.",
+        "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.contents[].item_name",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the product name of an individual merchandise item.",
+        "fix_hint": "Set `custom_data.contents[].item_name` to the product name, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.contents[].item_category",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the product category of an individual merchandise item.",
+        "fix_hint": "Set `custom_data.contents[].item_category` to the category, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.contents[].item_brand",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the brand of an individual merchandise item.",
+        "fix_hint": "Set `custom_data.contents[].item_brand` to the brand, or drop the empty pair.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.contents[].item_price",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
+        "description": "It is the price of one merchandise item (single quantity). Pinterest documents it as a string parsed as a number.",
+        "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `19.99`. Put the order total in `custom_data.value`.",
+        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      },
+      {
+        "name": "custom_data.contents[].quantity",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is the quantity of that merchandise item selected by the user.",
+        "fix_hint": "Send a whole number in `custom_data.contents[].quantity`, such as `2`.",
         "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
       }
     ],

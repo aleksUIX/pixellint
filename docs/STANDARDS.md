@@ -523,6 +523,13 @@ The ad account ID rides on the path. The event payload is checked per event in
 | Over-hashing | `client_ip_address` and `client_user_agent` must not be digests | `vendor.pinterest-conversions-api.body.hashed_plaintext_field` |
 | `checkout` | Expected `custom_data.value` and `custom_data.currency` | `vendor.pinterest-conversions-api.body.checkout_requires_value_and_currency` |
 | Value without currency | `currency` is expected whenever `value` is set | `vendor.pinterest-conversions-api.body.value_requires_currency` |
+| `custom_data.value` | Non-negative decimal number when present | `vendor.pinterest-conversions-api.body.custom_data.value.invalid` |
+| `custom_data.content_ids`, `content_name`, `content_category`, `content_brand`, `order_id`, `search_string` | When present, not empty | `vendor.pinterest-conversions-api.body.custom_data.content_ids.empty`, `.content_name.empty`, `.content_category.empty`, `.content_brand.empty`, `.order_id.empty`, `.search_string.empty` |
+| `custom_data.num_items` | Whole number when present | `vendor.pinterest-conversions-api.body.custom_data.num_items.invalid` |
+| `custom_data.opt_out_type` | When present, `ldp` | `vendor.pinterest-conversions-api.body.custom_data.opt_out_type.invalid` |
+| `custom_data.contents[].id`, `item_name`, `item_category`, `item_brand` | When present, not empty | `vendor.pinterest-conversions-api.body.custom_data.contents[].id.empty`, `.item_name.empty`, `.item_category.empty`, `.item_brand.empty` |
+| `custom_data.contents[].item_price` | Number when present. Unit price of one item | `vendor.pinterest-conversions-api.body.custom_data.contents[].item_price.invalid` |
+| `custom_data.contents[].quantity` | Whole number when present | `vendor.pinterest-conversions-api.body.custom_data.contents[].quantity.invalid` |
 
 Source: [track conversion events in the API](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/).
 
