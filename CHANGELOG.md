@@ -50,6 +50,11 @@ All notable changes to Pixellint are documented here. The format follows
 - impact.com Conversions API type-checks item extras `ItemText1`–`ItemText10`,
   `ItemNumeric1`–`ItemNumeric10`, `ItemDate1`–`ItemDate10`, and
   `ItemMoney1`–`ItemMoney3` from the published conversion item table.
+- Meta Conversions API type-checks `custom_data` product fields (`content_ids`,
+  `content_type`, contents `id` / `quantity` / `item_price` /
+  `delivery_category`, order-level `delivery_category`, `num_items`,
+  `order_id`, `search_string`, `predicted_ltv`, numeric `value`) and
+  `referrer_url` from the published Graph events tables.
 
 ## 0.31.9 - 2026-09-20
 

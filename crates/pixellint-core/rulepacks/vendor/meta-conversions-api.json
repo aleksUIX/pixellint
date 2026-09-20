@@ -188,6 +188,10 @@
       },
       {
         "name": "custom_data.value",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
         "description": "Meta requires it for purchase events and for any event that uses value optimization.",
         "fix_hint": "Send the monetary value as a number, without a currency symbol.",
         "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
@@ -201,6 +205,119 @@
         "description": "Meta requires a valid ISO 4217 three-digit currency code.",
         "fix_hint": "Use the three-letter code, such as `USD`.",
         "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.content_ids[]",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is a product ID associated with the event, such as a SKU on AddToCart.",
+        "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop empty entries.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.content_type",
+        "format": {
+          "kind": "enum",
+          "values": ["product", "product_group"]
+        },
+        "description": "It says whether `content_ids` and `contents` are products or product groups. Meta documents `product` or `product_group`.",
+        "fix_hint": "Set `custom_data.content_type` to `product` or `product_group`.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.contents[].id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the product ID on a contents row. Meta documents `id`, `quantity`, `item_price`, and `delivery_category` on that object.",
+        "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.contents[].quantity",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is how many of that product the event covers.",
+        "fix_hint": "Send a whole number in `custom_data.contents[].quantity`, such as `1`.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.contents[].item_price",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
+        "description": "It is the price of that product. Put the order total in `custom_data.value`.",
+        "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `129.99`, without a currency symbol.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.contents[].delivery_category",
+        "format": {
+          "kind": "enum",
+          "values": ["in_store", "curbside", "home_delivery"]
+        },
+        "description": "It is the delivery type on a contents row. Meta documents `in_store`, `curbside`, and `home_delivery`.",
+        "fix_hint": "Set the contents `delivery_category` to `in_store`, `curbside`, or `home_delivery`.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.delivery_category",
+        "format": {
+          "kind": "enum",
+          "values": ["in_store", "curbside", "home_delivery"]
+        },
+        "description": "It is the delivery type for a purchase event. Meta documents `in_store`, `curbside`, and `home_delivery`.",
+        "fix_hint": "Set `custom_data.delivery_category` to `in_store`, `curbside`, or `home_delivery`.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.num_items",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is the number of items in checkout. Meta documents it for InitiateCheckout events.",
+        "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.order_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the order ID for this transaction, as a string.",
+        "fix_hint": "Send `custom_data.order_id`, or drop the empty pair.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.search_string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the query the user searched for. Meta documents it for Search events.",
+        "fix_hint": "Send the query in `custom_data.search_string`, or drop the empty pair.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "custom_data.predicted_ltv",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
+        "description": "It is the predicted lifetime value of a conversion event.",
+        "fix_hint": "Send `custom_data.predicted_ltv` as a number, such as `250.00`.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+      },
+      {
+        "name": "referrer_url",
+        "format": {
+          "kind": "url"
+        },
+        "description": "It is the referrer URL for the event.",
+        "fix_hint": "Send an absolute URL in `referrer_url`, including the scheme.",
+        "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event"
       },
       {
         "name": "user_data.em",

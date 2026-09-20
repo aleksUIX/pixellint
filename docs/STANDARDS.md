@@ -268,6 +268,16 @@ endpoint accepts some fields in either place.
 | Hashed identifiers | `em`, `ph`, `fn`, `ln`, `ge`, `db`, `ct`, `st`, `zp`, `country`, `external_id` must be SHA-256 hex digests, in either the scalar or the list form | `vendor.meta-conversions-api.body.user_data.<field>.invalid` |
 | `fbc`, `fbp` | Must match the documented `fb.N.timestamp.value` shape | `vendor.meta-conversions-api.body.user_data.fbc.invalid`, `.fbp.invalid` |
 | Purchase events | `custom_data.value` and `custom_data.currency` are required | `vendor.meta-conversions-api.body.purchase_requires_value_and_currency` |
+| `custom_data.value` | When present, a number with no currency symbol | `vendor.meta-conversions-api.body.custom_data.value.invalid` |
+| `custom_data.content_ids[]` | When present, not empty | `vendor.meta-conversions-api.body.custom_data.content_ids[].empty` |
+| `custom_data.content_type` | When present, `product` or `product_group` | `vendor.meta-conversions-api.body.custom_data.content_type.invalid` |
+| `custom_data.contents[]` | When present, non-empty `id`, integer `quantity`, numeric `item_price`, and `delivery_category` of `in_store` / `curbside` / `home_delivery` | `vendor.meta-conversions-api.body.custom_data.contents[].id.empty`, `.quantity.invalid`, `.item_price.invalid`, `.delivery_category.invalid` |
+| `custom_data.delivery_category` | When present, `in_store`, `curbside`, or `home_delivery` | `vendor.meta-conversions-api.body.custom_data.delivery_category.invalid` |
+| `custom_data.num_items` | When present, a whole number | `vendor.meta-conversions-api.body.custom_data.num_items.invalid` |
+| `custom_data.order_id` | When present, not empty | `vendor.meta-conversions-api.body.custom_data.order_id.empty` |
+| `custom_data.search_string` | When present, not empty | `vendor.meta-conversions-api.body.custom_data.search_string.empty` |
+| `custom_data.predicted_ltv` | When present, a number | `vendor.meta-conversions-api.body.custom_data.predicted_ltv.invalid` |
+| `referrer_url` | When present, an absolute URL | `vendor.meta-conversions-api.body.referrer_url.invalid` |
 | Website events | `event_source_url` is required when `action_source` is `website` | `vendor.meta-conversions-api.body.website_requires_source_url` |
 | Limited Data Use | `data_processing_options_country` is required when `LDU` is sent | `vendor.meta-conversions-api.body.ldu_requires_country` |
 | Unhashed PII | No field carries a raw email address | `vendor.meta-conversions-api.body.unhashed_email` |
