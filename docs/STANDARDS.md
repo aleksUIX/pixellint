@@ -1369,8 +1369,13 @@ Taboola browser event pixels on `/log/3/unip`. Level: `official_vendor`. The
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `en` | Required event name | `vendor.taboola-unip.param.en.missing`, `.empty` |
+| `revenue` | Integer or decimal when present, no commas | `vendor.taboola-unip.param.revenue.invalid` |
+| `currency` | Documented three-letter code when present | `vendor.taboola-unip.param.currency.invalid` |
+| `quantity` | Integer when present | `vendor.taboola-unip.param.quantity.invalid` |
+| `orderid` | Non-empty when present | `vendor.taboola-unip.param.orderid.empty` |
 
-Source: [Chrome DevTools verification](https://developers.taboola.com/pixel/docs/verification-network-traffic).
+Sources: [Chrome DevTools verification](https://developers.taboola.com/pixel/docs/verification-network-traffic),
+[track dynamic conversion values](https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values).
 
 ## `vendor/hotjar`
 

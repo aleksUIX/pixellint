@@ -26,6 +26,9 @@ All notable changes to Pixellint are documented here. The format follows
 - X website tag pixels match `analytics.x.com` and `t.co/i/adsct` as well as
   `analytics.twitter.com`, and type-check click ID `twclid` from the published
   conversion matching table.
+- Taboola unip event pixels type-check dynamic `revenue`, `currency`,
+  `quantity`, and `orderid` from the published conversion-value table. The
+  `tfa.js` loader stays account ID only.
 
 ## 0.31.8 - 2026-09-19
 

@@ -2,7 +2,7 @@
   "id": "vendor/taboola-unip",
   "display_name": "Taboola unip event pixel",
   "vendor": "taboola",
-  "description": "Taboola browser event pixels on /log/3/unip. Taboola documents the en event name on the query. The tfa.js loader is vendor/taboola. S2S postbacks are vendor/taboola-s2s.",
+  "description": "Taboola browser event pixels on /log/3/unip. Taboola documents the en event name on the query. Generated pixels send revenue, currency, quantity, and orderid under those same names. The tfa.js loader is vendor/taboola. S2S postbacks are vendor/taboola-s2s.",
   "source_level": "official_vendor",
   "docs": "https://developers.taboola.com/pixel/docs/verification-network-traffic",
   "match": {
@@ -17,6 +17,57 @@
       "description": "It is the event name. Taboola documents verifying event pixels by a unip request that carries `en`.",
       "fix_hint": "Send `en` with the Realize event name, such as `page_view` or `purchase`.",
       "doc": "https://developers.taboola.com/pixel/docs/verification-network-traffic"
+    },
+    {
+      "name": "revenue",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the conversion value. Taboola documents an integer or decimal number, with no commas. Page views omit it.",
+      "fix_hint": "Send a number, such as `9.99`, or drop the pair on a page view.",
+      "doc": "https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values"
+    },
+    {
+      "name": "currency",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "AUD",
+          "BRL",
+          "CAD",
+          "CNY",
+          "EUR",
+          "GBP",
+          "HKD",
+          "ILS",
+          "INR",
+          "JPY",
+          "KRW",
+          "MXN",
+          "NZD",
+          "RUB",
+          "SGD",
+          "THB",
+          "TRY",
+          "USD",
+          "ZAR"
+        ]
+      },
+      "description": "It is the revenue currency. Taboola documents a fixed list of three-letter codes, case-sensitive. Omit it to use the account default.",
+      "fix_hint": "Use a documented code such as `USD`.",
+      "doc": "https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values"
+    },
+    {
+      "name": "quantity",
+      "format": { "kind": "integer" },
+      "description": "It is the item quantity in the order. Taboola documents an integer.",
+      "fix_hint": "Send an integer quantity, such as `3`.",
+      "doc": "https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values"
+    },
+    {
+      "name": "orderid",
+      "format": { "kind": "non_empty" },
+      "description": "It is an order ID from the advertiser CRM. Taboola documents it as optional. Purchase fires often send it.",
+      "fix_hint": "Set orderid to the CRM order ID, or drop the pair.",
+      "doc": "https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values"
     }
   ],
   "rules": []
