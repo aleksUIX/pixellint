@@ -55,6 +55,11 @@ All notable changes to Pixellint are documented here. The format follows
   `delivery_category`, order-level `delivery_category`, `num_items`,
   `order_id`, `search_string`, `predicted_ltv`, numeric `value`) and
   `referrer_url` from the published Graph events tables.
+- Google Ads click conversion uploads type-check `orderId`,
+  `conversionEnvironment`, `customerType`, `consent.adUserData`, cart
+  `merchantId` / feed codes / item `productId` / `quantity` / `unitPrice`,
+  custom variables, and external attribution credit from the published
+  ClickConversion table.
 
 ## 0.31.9 - 2026-09-20
 

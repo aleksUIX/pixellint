@@ -355,6 +355,13 @@ The payload is checked per conversion in `conversions`.
 | Hashed PII | `hashedEmail` and `hashedPhoneNumber` must be SHA-256 | `vendor.google-ads-click-conversions.body.userIdentifiers[].<field>.invalid` |
 | Unhashed PII | No field carries a raw email address | `vendor.google-ads-click-conversions.body.unhashed_email` |
 | Over-hashing | `userIpAddress` must not be a digest | `vendor.google-ads-click-conversions.body.hashed_plaintext_field` |
+| `orderId` | When present, not empty | `vendor.google-ads-click-conversions.body.orderId.empty` |
+| `conversionEnvironment` | When present, `APP` or `WEB` | `vendor.google-ads-click-conversions.body.conversionEnvironment.invalid` |
+| `customerType` | When present, `NEW` or `RETURNING` | `vendor.google-ads-click-conversions.body.customerType.invalid` |
+| `consent.adUserData` | When present, `GRANTED` or `DENIED` | `vendor.google-ads-click-conversions.body.consent.adUserData.invalid` |
+| `cartData` | When present, integer `merchantId`, non-empty feed country/language, numeric `localTransactionCost`, item `productId` / integer `quantity` / numeric `unitPrice` | `vendor.google-ads-click-conversions.body.cartData.merchantId.invalid`, `.items[].quantity.invalid`, `.items[].unitPrice.invalid` |
+| `customVariables[]` | When present, non-empty resource name and value | `vendor.google-ads-click-conversions.body.customVariables[].conversionCustomVariable.empty`, `.value.empty` |
+| `externalAttributionData` | When present, numeric credit and non-empty model name | `vendor.google-ads-click-conversions.body.externalAttributionData.externalAttributionCredit.invalid` |
 
 Sources: [upload offline conversions](https://developers.google.com/google-ads/api/docs/conversions/upload-offline),
 [ClickConversion](https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion).

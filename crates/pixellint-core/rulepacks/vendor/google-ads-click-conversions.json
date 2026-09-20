@@ -128,6 +128,120 @@
           "format": { "kind": "non_empty" },
           "description": "It is the customer IP on the landing page after the click, sent unhashed. Google documents the device address, not the advertiser server.",
           "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "name": "orderId",
+          "format": { "kind": "non_empty" },
+          "description": "It is the order ID for the conversion. Google documents one order id per conversion action, and recommends it for later adjustments.",
+          "fix_hint": "Send `orderId` as a string, or drop the empty pair.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "name": "conversionEnvironment",
+          "format": {
+            "kind": "enum",
+            "values": ["UNSPECIFIED", "UNKNOWN", "APP", "WEB"]
+          },
+          "description": "It is where the conversion was recorded. Google documents `APP` or `WEB`.",
+          "fix_hint": "Set `conversionEnvironment` to `APP` or `WEB`.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "name": "customerType",
+          "format": {
+            "kind": "enum",
+            "values": ["UNSPECIFIED", "UNKNOWN", "NEW", "RETURNING"]
+          },
+          "description": "It is whether the converting user is new or returning. Google documents `NEW` or `RETURNING`.",
+          "fix_hint": "Set `customerType` to `NEW` or `RETURNING`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "name": "consent.adUserData",
+          "format": {
+            "kind": "enum",
+            "values": ["UNSPECIFIED", "UNKNOWN", "GRANTED", "DENIED"]
+          },
+          "description": "It is consent for ad user data on the click conversion. Google documents `GRANTED` or `DENIED`.",
+          "fix_hint": "Send `consent.adUserData` as `GRANTED` or `DENIED`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/Consent"
+        },
+        {
+          "name": "cartData.merchantId",
+          "format": { "kind": "integer" },
+          "description": "It is the Merchant Center ID where the cart items are uploaded.",
+          "fix_hint": "Send `cartData.merchantId` as a whole number.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData"
+        },
+        {
+          "name": "cartData.feedCountryCode",
+          "format": { "kind": "non_empty" },
+          "description": "It is the country code of the Merchant Center feed the items come from.",
+          "fix_hint": "Send `cartData.feedCountryCode`, or drop the empty pair.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData"
+        },
+        {
+          "name": "cartData.feedLanguageCode",
+          "format": { "kind": "non_empty" },
+          "description": "It is the language code of the Merchant Center feed the items come from.",
+          "fix_hint": "Send `cartData.feedLanguageCode`, or drop the empty pair.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData"
+        },
+        {
+          "name": "cartData.localTransactionCost",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is cart-level discounts such as free shipping or coupons. The currency is the same as `currencyCode`.",
+          "fix_hint": "Send `cartData.localTransactionCost` as a number, such as `2.50`, without a currency symbol.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData"
+        },
+        {
+          "name": "cartData.items[].productId",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Merchant Center product identifier for a purchased item.",
+          "fix_hint": "Set `cartData.items[].productId` to the Merchant Center id, or drop the empty pair.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData.Item"
+        },
+        {
+          "name": "cartData.items[].quantity",
+          "format": { "kind": "integer" },
+          "description": "It is how many of that item were sold.",
+          "fix_hint": "Send a whole number in `cartData.items[].quantity`, such as `1`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData.Item"
+        },
+        {
+          "name": "cartData.items[].unitPrice",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the unit price excluding tax, shipping, and cart-level discounts.",
+          "fix_hint": "Send `cartData.items[].unitPrice` as a number, such as `19.99`, without a currency symbol.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData.Item"
+        },
+        {
+          "name": "customVariables[].conversionCustomVariable",
+          "format": { "kind": "non_empty" },
+          "description": "It is the custom conversion variable resource name.",
+          "fix_hint": "Set `conversionCustomVariable` to `customers/{id}/conversionCustomVariables/{id}`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CustomVariable"
+        },
+        {
+          "name": "customVariables[].value",
+          "format": { "kind": "non_empty" },
+          "description": "It is the custom variable value. Google documents that it must not carry private customer data such as email or phone.",
+          "fix_hint": "Send a non-empty custom variable value with no email or phone.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CustomVariable"
+        },
+        {
+          "name": "externalAttributionData.externalAttributionCredit",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the fraction of the conversion attributed to the Google Ads click.",
+          "fix_hint": "Send `externalAttributionCredit` as a number, such as `0.3`.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ExternalAttributionData"
+        },
+        {
+          "name": "externalAttributionData.externalAttributionModel",
+          "format": { "kind": "non_empty" },
+          "description": "It is the name of the external attribution model.",
+          "fix_hint": "Send `externalAttributionModel`, or drop the empty pair.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ExternalAttributionData"
         }
       ],
       "rules": [
