@@ -2103,6 +2103,8 @@ Add user properties is `vendor/heap-user-properties`.
 | Exclusive identity | Not both `identity` and `user_id` | `vendor.heap-track.body.identity_and_user_exclusive` |
 | Reserved properties | `properties` must not reuse `user_id`, `session_id`, or `screen_name` | `vendor.heap-track.body.properties.user_id.forbidden`, `.properties.session_id.forbidden`, `.properties.screen_name.forbidden` |
 | `timestamp` | ISO 8601 when present | `vendor.heap-track.body.timestamp.invalid` |
+| `session_id` | When present, not empty | `vendor.heap-track.body.session_id.empty` |
+| `idempotency_key` | When present, not empty | `vendor.heap-track.body.idempotency_key.empty` |
 
 Source: [track](https://developers.heap.io/reference/track-1).
 

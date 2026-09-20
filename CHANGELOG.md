@@ -67,6 +67,7 @@ All notable changes to Pixellint are documented here. The format follows
   `$current_url` and `$referrer`, non-empty `mp_lib`, `$lib_version`,
   `$device_id`, and `$user_id`, integer `$screen_height` / `$screen_width`,
   GeoIP `$city` / `$region`, and 2-letter `mp_country_code`.
+- Heap `/api/track` type-checks top-level `session_id` when present.
 
 ## 0.31.9 - 2026-09-20
 
