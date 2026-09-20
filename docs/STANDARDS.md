@@ -507,15 +507,16 @@ Level: `official_vendor`.
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
 | `tid` | Required tag ID | `vendor.pinterest.param.tid.missing`, `.empty` |
-| `event` | When present, one of the documented events. Custom names warn rather than error | `vendor.pinterest.param.event.invalid`, `.empty` |
+| `event` | When present, one of the documented events, including `viewcontent`. Custom names warn rather than error | `vendor.pinterest.param.event.invalid`, `.empty` |
 | `noscript` | When present, `0` or `1` | `vendor.pinterest.param.noscript.invalid` |
 | `ed[value]` | When present, a number | `vendor.pinterest.param.ed[value].invalid` |
 | `ed[currency]` | When present, ISO 4217 three-letter code | `vendor.pinterest.param.ed[currency].invalid` |
 | `ed[order_quantity]` | When present, an integer | `vendor.pinterest.param.ed[order_quantity].invalid` |
-| `ed[event_id]` | When present, not empty | `vendor.pinterest.param.ed[event_id].empty` |
+| `ed[event_id]`, `ed[order_id]`, `ed[promo_code]`, `ed[property]`, `ed[search_query]`, `ed[video_title]`, `ed[lead_type]` | When present, not empty | `vendor.pinterest.param.ed[event_id].empty`, `.ed[order_id].empty`, `.ed[promo_code].empty`, `.ed[property].empty`, `.ed[search_query].empty`, `.ed[video_title].empty`, `.ed[lead_type].empty` |
 | `pd[em]`, `pd[external_id]` | When present, SHA-256 hex. The img tag does not hash in the browser | `vendor.pinterest.param.pd[em].invalid`, `.pd[external_id].invalid` |
 | `ed[line_items][n][product_price]` | When present, a number | `vendor.pinterest.param.ed[line_items][0][product_price].invalid` |
 | `ed[line_items][n][product_quantity]` | When present, an integer | `vendor.pinterest.param.ed[line_items][0][product_quantity].invalid` |
+| `ed[line_items][n]` name, id, category, variant, brand | When present, not empty | `vendor.pinterest.param.ed[line_items][0][product_name].empty`, `.product_id.empty`, `.product_category.empty`, `.product_variant_id.empty`, `.product_variant.empty`, `.product_brand.empty` |
 | `checkout`, `addtocart` | Expected `ed[value]` and `ed[currency]` | `vendor.pinterest.checkout_requires_value_and_currency` |
 
 Source: [Pinterest tag](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/).

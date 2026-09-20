@@ -17,6 +17,12 @@ All notable changes to Pixellint are documented here. The format follows
 
 ### Changed
 
+- Pinterest tag type-checks `viewcontent` plus leftover event-data query keys
+  from the published table: `ed[order_id]`, `ed[promo_code]`, `ed[property]`,
+  `ed[search_query]`, `ed[video_title]`, `ed[lead_type]`, and line-item
+  `product_name` / `product_id` / `product_category` / `product_variant_id` /
+  `product_variant` / `product_brand`.
+
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.
 
