@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::error::Error;
 use std::fmt;
 use std::path::Path;
@@ -909,8 +909,9 @@ impl Engine {
         self.index = index;
     }
 
-    fn candidate_ids<'a>(&'a self, prepared: &PreparedArtifact<'_>) -> HashSet<&'a str> {
-        let mut ids: HashSet<&str> = self.index.always_ids.iter().map(String::as_str).collect();
+    fn candidate_ids<'a>(&'a self, prepared: &PreparedArtifact<'_>) -> Vec<&'a str> {
+        let mut ids: Vec<&str> = Vec::new();
+        ids.extend(self.index.always_ids.iter().map(String::as_str));
         if prepared.wants_json() {
             ids.extend(self.index.json_ids.iter().map(String::as_str));
         }
@@ -931,6 +932,8 @@ impl Engine {
                 }
             }
         }
+        ids.sort_unstable();
+        ids.dedup();
         ids
     }
 
@@ -978,14 +981,16 @@ impl Engine {
             return Ok(selected);
         }
 
-        let candidates = self.candidate_ids(prepared);
         let selected = self
-            .plugins
-            .values()
-            .filter(|entry| candidates.contains(entry.plugin.metadata().id.as_str()))
-            .filter(|entry| !excluded.contains(entry.plugin.metadata().id.as_str()))
-            .filter(|entry| entry.plugin.supports_prepared(prepared))
-            .map(|entry| Arc::clone(&entry.plugin))
+            .candidate_ids(prepared)
+            .into_iter()
+            .filter(|rulepack_id| !excluded.contains(rulepack_id))
+            .filter_map(|rulepack_id| {
+                self.plugins
+                    .get(rulepack_id)
+                    .filter(|entry| entry.plugin.supports_prepared(prepared))
+                    .map(|entry| Arc::clone(&entry.plugin))
+            })
             .collect::<Vec<_>>();
 
         if selected.is_empty() {

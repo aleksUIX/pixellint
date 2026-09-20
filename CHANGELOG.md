@@ -70,6 +70,8 @@ All notable changes to Pixellint are documented here. The format follows
 - Yahoo Conversion API events type-check optional `eventId`, `actionSourceUrl`,
   two-letter `country`, partner `pxid` as `sourceId:value`, unhashed
   `userData.ip_address` and `userAgent`, and numeric `eventData.price`.
+- Auto-mode plugin selection looks up the host-index shortlist instead of
+  walking every registered pack and hashing candidate ids.
 
 ## 0.31.8 - 2026-09-19
 
