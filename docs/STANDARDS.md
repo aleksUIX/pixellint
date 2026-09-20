@@ -702,8 +702,14 @@ a different shape and is not contracted here.
 | `type.tracking_type` | Required; unrecognized types warn rather than error | `vendor.reddit-conversions-api.body.type.tracking_type.missing`, `.invalid` |
 | Match key | At least one of `click_id`, `user.email`, `phone_number`, `uuid`, `external_id`, `ip_address`, `idfa`, `aaid` | `vendor.reddit-conversions-api.body.match_key_required` |
 | `event_source_url` | Recommended on `WEBSITE` | `vendor.reddit-conversions-api.body.website_requires_source_url` |
-| `type.custom_event_name` | Required when `tracking_type` is `CUSTOM` | `vendor.reddit-conversions-api.body.custom_requires_name` |
+| `type.custom_event_name` | Required when `tracking_type` is `CUSTOM`. At most 64 UTF-8 characters | `vendor.reddit-conversions-api.body.custom_requires_name`, `.type.custom_event_name.invalid` |
 | `metadata.value` | Recommended on `PURCHASE` | `vendor.reddit-conversions-api.body.purchase_requires_value` |
+| `metadata.item_count` | When present, an integer | `vendor.reddit-conversions-api.body.metadata.item_count.invalid` |
+| `metadata.products[].id`, `name`, `category` | When present, not empty | `vendor.reddit-conversions-api.body.metadata.products[].id.empty` |
+| `metadata.products[].quantity` | When present, an integer | `vendor.reddit-conversions-api.body.metadata.products[].quantity.invalid` |
+| `metadata.products[].item_price` | When present, a number | `vendor.reddit-conversions-api.body.metadata.products[].item_price.invalid` |
+| `user.screen_dimensions.width`, `height` | When present, an integer | `vendor.reddit-conversions-api.body.user.screen_dimensions.width.invalid` |
+| Limited Data Use | `modes` is `LDU`. Country is required when LDU is set. Region is optional | `vendor.reddit-conversions-api.body.user.data_processing_options.modes[].invalid`, `.ldu_requires_country` |
 | Over-hashing | `user.ip_address` and `user.user_agent` must not be digests | `vendor.reddit-conversions-api.body.hashed_plaintext_field` |
 
 Sources: [direct integration](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration),

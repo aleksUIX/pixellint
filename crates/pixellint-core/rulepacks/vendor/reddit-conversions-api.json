@@ -110,10 +110,11 @@
       {
         "name": "type.custom_event_name",
         "format": {
-          "kind": "non_empty"
+          "kind": "regex",
+          "pattern": "^.{1,64}$"
         },
-        "description": "It is the custom event name. Reddit documents it as required when `tracking_type` is `CUSTOM`.",
-        "fix_hint": "Set `type.custom_event_name` to a name that is not a standard tracking type.",
+        "description": "It is the custom event name. Reddit documents it as required when `tracking_type` is `CUSTOM`, any UTF-8 character up to 64 characters including spaces.",
+        "fix_hint": "Set `type.custom_event_name` to a name that is not a standard tracking type, at most 64 characters.",
         "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
       },
       {
@@ -142,6 +143,61 @@
         },
         "description": "It is the id Reddit uses to deduplicate Pixel and CAPI events. Reddit strongly recommends it when both fire.",
         "fix_hint": "Send the same `conversion_id` the Pixel sent.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.item_count",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is the number of items in the conversion. Reddit documents `item_count` as strongly recommended on revenue events, and says product `quantity` is not a replacement.",
+        "fix_hint": "Set `metadata.item_count` to the order item count, such as `2`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.products[].id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the product id on a metadata products row. Reddit documents `id` on each product object.",
+        "fix_hint": "Set `metadata.products[].id` to the SKU or catalog id, or drop the empty pair.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.products[].name",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the product name on a metadata products row. Reddit documents `name` on each product object.",
+        "fix_hint": "Set `metadata.products[].name` to the product name, or drop the empty pair.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.products[].category",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the product category on a metadata products row. Reddit documents `category` on each product object.",
+        "fix_hint": "Set `metadata.products[].category` to the category, or drop the empty pair.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.products[].quantity",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is the quantity of that product. Reddit documents `quantity` on each product object. It is not a replacement for `metadata.item_count`.",
+        "fix_hint": "Send `metadata.products[].quantity` as a whole number, such as `2`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "metadata.products[].item_price",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
+        "description": "It is the unit price of that product. Reddit documents `item_price` on each product object. It is not a replacement for `metadata.value`.",
+        "fix_hint": "Send `metadata.products[].item_price` as a number, such as `9.99`. Put the order total in `metadata.value`.",
         "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
       },
       {
@@ -210,6 +266,54 @@
         "description": "It is the visitor user agent. Reddit accepts it unhashed.",
         "fix_hint": "Send the browser's user agent string, not a digest.",
         "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.screen_dimensions.width",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is the display width. Reddit documents `user.screen_dimensions.width` as a match-key field.",
+        "fix_hint": "Send `user.screen_dimensions.width` as an integer pixel count.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.screen_dimensions.height",
+        "format": {
+          "kind": "integer"
+        },
+        "description": "It is the display height. Reddit documents `user.screen_dimensions.height` as a match-key field.",
+        "fix_hint": "Send `user.screen_dimensions.height` as an integer pixel count.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.data_processing_options.modes[]",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "LDU"
+          ]
+        },
+        "description": "It is the Limited Data Use mode. Reddit documents `modes` as the fixed value `LDU`.",
+        "fix_hint": "Send `user.data_processing_options.modes` as `[\"LDU\"]`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.data_processing_options.country",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the country for Limited Data Use. Reddit documents country as required when LDU is set.",
+        "fix_hint": "Send `user.data_processing_options.country` when `modes` includes `LDU`.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "name": "user.data_processing_options.region",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the region for Limited Data Use. Reddit documents region as optional when LDU is set.",
+        "fix_hint": "Send `user.data_processing_options.region`, or omit it.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
       }
     ],
     "rules": [
@@ -275,6 +379,17 @@
         "severity": "warning",
         "message": "A `PURCHASE` event has no `metadata.value`. Reddit documents value as strongly recommended on revenue events.",
         "fix_hint": "Set `metadata.value` to the order total.",
+        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+      },
+      {
+        "code": "vendor.reddit-conversions-api.body.ldu_requires_country",
+        "kind": "required_when_value",
+        "when": "user.data_processing_options.modes[]",
+        "equals": ["LDU"],
+        "requires": ["user.data_processing_options.country"],
+        "severity": "error",
+        "message": "Limited Data Use is enabled but `user.data_processing_options.country` is missing. Reddit documents country as required when `modes` is `LDU`.",
+        "fix_hint": "Send `user.data_processing_options.country` with `modes: [\"LDU\"]`.",
         "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
       }
     ]

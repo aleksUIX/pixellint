@@ -12,6 +12,9 @@ All notable changes to Pixellint are documented here. The format follows
   `$current_url` and `$referrer`, non-empty `mp_lib`, `$lib_version`,
   `$device_id`, and `$user_id`, and integer `$screen_height` / `$screen_width`
   from the published default-property table.
+- Reddit CAPI v3 type-checks `metadata.item_count`, product `id` / `name` /
+  `category` / `quantity` / `item_price`, screen dimensions, Limited Data Use
+  `modes` plus required country, and custom event names at most 64 characters.
 
 ## 0.31.9 - 2026-09-20
 
