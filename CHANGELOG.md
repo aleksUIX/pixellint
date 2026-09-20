@@ -88,6 +88,8 @@ All notable changes to Pixellint are documented here. The format follows
   `continueOnValidationError`.
 - Auto-mode plugin selection looks up the host-index shortlist instead of
   walking every registered pack and hashing candidate ids.
+- Core URL checks reuse the prepared macro scan and inspect the http(s)
+  scheme prefix instead of lowercasing the whole artifact.
 
 ## 0.31.8 - 2026-09-19
 

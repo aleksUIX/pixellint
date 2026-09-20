@@ -1243,9 +1243,9 @@ fn validate_url_like_artifact(
     prepared: &PreparedArtifact<'_>,
     violations: &mut Vec<Violation>,
 ) {
-    let macro_spans = detect_macro_spans(artifact);
+    let macro_spans = prepared.macro_spans();
     let has_unsafe_macro_positions =
-        apply_macro_rules(artifact, expansion_state, &macro_spans, violations);
+        apply_macro_rules(artifact, expansion_state, macro_spans, violations);
 
     if has_unsafe_macro_positions {
         return;
@@ -1255,7 +1255,7 @@ fn validate_url_like_artifact(
     let parse_artifact = if macro_spans.is_empty() {
         artifact
     } else {
-        sanitized = sanitize_macro_spans(artifact, &macro_spans);
+        sanitized = sanitize_macro_spans(artifact, macro_spans);
         sanitized.as_str()
     };
 
@@ -1862,18 +1862,25 @@ fn overlaps(span: &MacroSpan, start: usize, end: usize) -> bool {
     start < end && span.start < end && span.end > start
 }
 
+fn http_url_remainder(artifact: &str) -> Option<&str> {
+    let bytes = artifact.as_bytes();
+    if bytes.len() >= 8 && bytes[..8].eq_ignore_ascii_case(b"https://") {
+        Some(&artifact[8..])
+    } else if bytes.len() >= 7 && bytes[..7].eq_ignore_ascii_case(b"http://") {
+        Some(&artifact[7..])
+    } else {
+        None
+    }
+}
+
 fn has_missing_network_host(artifact: &str) -> bool {
-    let lowered = artifact.to_ascii_lowercase();
-    let Some(remainder) = lowered
-        .strip_prefix("http://")
-        .or_else(|| lowered.strip_prefix("https://"))
-    else {
+    let Some(remainder) = http_url_remainder(artifact) else {
         return false;
     };
 
     matches!(
-        remainder.chars().next(),
-        None | Some('/') | Some('?') | Some('#') | Some(':') | Some('@')
+        remainder.as_bytes().first().copied(),
+        None | Some(b'/') | Some(b'?') | Some(b'#') | Some(b':') | Some(b'@')
     )
 }
 
@@ -2093,6 +2100,19 @@ mod tests {
             .unwrap();
 
         assert_eq!(violation_codes(&summary), vec!["core.url.host_missing"]);
+    }
+
+    #[test]
+    fn missing_network_host_reads_the_scheme_prefix_without_copying_the_url() {
+        assert!(has_missing_network_host("https:///pixel?id=1"));
+        assert!(has_missing_network_host("HTTPS://"));
+        assert!(has_missing_network_host("http://?q=1"));
+        assert!(has_missing_network_host("HTTP://#frag"));
+        assert!(has_missing_network_host("https://:8443/pixel"));
+        assert!(!has_missing_network_host("https://example.com/pixel"));
+        assert!(!has_missing_network_host("HTTPS://example.com/pixel"));
+        assert!(!has_missing_network_host("HTTP://example.com/pixel"));
+        assert!(!has_missing_network_host("ftp://example.com/pixel"));
     }
 
     #[test]

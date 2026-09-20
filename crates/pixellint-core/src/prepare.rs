@@ -6,7 +6,7 @@
 use std::cell::OnceCell;
 
 use crate::json::{JsonDocument, JsonError};
-use crate::{ArtifactKind, ValidationRequest, detect_macro_spans, sanitize_macro_spans};
+use crate::{ArtifactKind, MacroSpan, ValidationRequest, detect_macro_spans, sanitize_macro_spans};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct ArtifactUrl {
@@ -25,6 +25,7 @@ pub struct PreparedArtifact<'a> {
     trimmed: &'a str,
     url: OnceCell<Option<ArtifactUrl>>,
     json: OnceCell<Result<JsonDocument, JsonError>>,
+    macros: OnceCell<Vec<MacroSpan>>,
 }
 
 impl<'a> PreparedArtifact<'a> {
@@ -34,6 +35,7 @@ impl<'a> PreparedArtifact<'a> {
             trimmed: request.artifact.trim(),
             url: OnceCell::new(),
             json: OnceCell::new(),
+            macros: OnceCell::new(),
         }
     }
 
@@ -51,10 +53,19 @@ impl<'a> PreparedArtifact<'a> {
                 && JsonDocument::looks_like_json(self.trimmed))
     }
 
+    pub(crate) fn macro_spans(&self) -> &[MacroSpan] {
+        self.macros.get_or_init(|| detect_macro_spans(self.trimmed))
+    }
+
     pub(crate) fn url(&self) -> Option<&ArtifactUrl> {
-        self.url
-            .get_or_init(|| parse_artifact_url(self.trimmed))
-            .as_ref()
+        if self.url.get().is_none() {
+            let parsed = {
+                let spans = self.macro_spans();
+                parse_artifact_url_with_spans(self.trimmed, spans)
+            };
+            let _ = self.url.set(parsed);
+        }
+        self.url.get().and_then(Option::as_ref)
     }
 
     pub(crate) fn json(&self) -> Option<&Result<JsonDocument, JsonError>> {
@@ -81,12 +92,16 @@ pub(crate) fn host_matches_suffix(host: &str, suffix: &str) -> bool {
 
 /// Parses an artifact URL with macros neutralized, so a templated URL still
 /// resolves to a host and path.
+#[cfg(test)]
 pub(crate) fn parse_artifact_url(artifact: &str) -> Option<ArtifactUrl> {
-    let spans = detect_macro_spans(artifact);
+    parse_artifact_url_with_spans(artifact, &detect_macro_spans(artifact))
+}
+
+fn parse_artifact_url_with_spans(artifact: &str, spans: &[MacroSpan]) -> Option<ArtifactUrl> {
     if spans.is_empty() {
         scan_url(artifact)
     } else {
-        scan_url(&sanitize_macro_spans(artifact, &spans))
+        scan_url(&sanitize_macro_spans(artifact, spans))
     }
 }
 
@@ -368,6 +383,22 @@ mod tests {
         let first = prepared.json().expect("json");
         let second = prepared.json().expect("json");
         assert!(first.is_ok());
+        assert!(std::ptr::eq(first, second));
+    }
+
+    #[test]
+    fn prepared_macro_spans_are_reused_for_url_parse() {
+        let request = ValidationRequest {
+            artifact_kind: ArtifactKind::Url,
+            artifact: "https://example.com/pixel?id=[PIXEL_ID]".to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Unknown,
+        };
+        let prepared = PreparedArtifact::from_request(&request);
+        let first = prepared.macro_spans();
+        let _ = prepared.url();
+        let second = prepared.macro_spans();
+        assert_eq!(first.len(), 1);
         assert!(std::ptr::eq(first, second));
     }
 }
