@@ -36,7 +36,7 @@ pub(crate) fn apply_privacy_rules(artifact: &str, violations: &mut Vec<Violation
     check_gpp(artifact, &params, violations);
 }
 
-fn find<'a>(params: &'a [RawParam], name: &str) -> Option<&'a RawParam> {
+fn find<'a, 'p>(params: &'a [RawParam<'p>], name: &str) -> Option<&'a RawParam<'p>> {
     params.iter().find(|param| param.name == name)
 }
 
@@ -79,7 +79,7 @@ fn violation(
 
 /// Both the TCF and GPP specs tell URL creators to add each signal exactly once.
 /// A repeated signal leaves the callee choosing which copy to believe.
-fn check_duplicates(params: &[RawParam], violations: &mut Vec<Violation>) {
+fn check_duplicates(params: &[RawParam<'_>], violations: &mut Vec<Violation>) {
     for name in SIGNAL_PARAMS {
         let matches: Vec<&RawParam> = params.iter().filter(|param| param.name == name).collect();
 
@@ -100,7 +100,7 @@ fn check_duplicates(params: &[RawParam], violations: &mut Vec<Violation>) {
     }
 }
 
-fn check_tcf(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation>) {
+fn check_tcf(artifact: &str, params: &[RawParam<'_>], violations: &mut Vec<Violation>) {
     let gdpr = find(params, "gdpr");
     let consent = find(params, "gdpr_consent");
 
@@ -108,7 +108,7 @@ fn check_tcf(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
     // is how Floodlight and VAST tags ship. Only a populated value is a claim.
     let applies = match gdpr {
         Some(param) if !skip_signal_value(&param.value) && !param.value.is_empty() => {
-            match param.value.as_str() {
+            match param.value.as_ref() {
                 "0" => Some(false),
                 "1" => Some(true),
                 other => {
@@ -212,7 +212,7 @@ fn check_tcf(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
 /// decodes to nothing resembling consent. What separates a TC String from a
 /// string is the Version field the spec pins to 2, and enough length to hold the
 /// fields it lists as mandatory.
-fn check_tc_string_contents(param: &RawParam, violations: &mut Vec<Violation>) {
+fn check_tc_string_contents(param: &RawParam<'_>, violations: &mut Vec<Violation>) {
     // Only the core segment is fixed. Optional segments follow a dot and carry
     // their own layout.
     let core = param.value.split('.').next().unwrap_or_default();
@@ -266,7 +266,7 @@ fn check_tc_string_contents(param: &RawParam, violations: &mut Vec<Violation>) {
     }
 }
 
-fn check_us_privacy(params: &[RawParam], violations: &mut Vec<Violation>) {
+fn check_us_privacy(params: &[RawParam<'_>], violations: &mut Vec<Violation>) {
     let Some(param) = find(params, "us_privacy") else {
         return;
     };
@@ -322,7 +322,7 @@ fn check_us_privacy(params: &[RawParam], violations: &mut Vec<Violation>) {
     }
 }
 
-fn check_gpp(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation>) {
+fn check_gpp(artifact: &str, params: &[RawParam<'_>], violations: &mut Vec<Violation>) {
     let gpp = find(params, "gpp");
     let sid = find(params, "gpp_sid");
 
@@ -386,7 +386,7 @@ fn check_gpp(artifact: &str, params: &[RawParam], violations: &mut Vec<Violation
 /// GPP Header field". That makes a value in `gpp` that is not a GPP string
 /// cheap to spot: a TC String pasted into the wrong parameter decodes to type 2
 /// and stops here.
-fn check_gpp_header(param: &RawParam, violations: &mut Vec<Violation>) {
+fn check_gpp_header(param: &RawParam<'_>, violations: &mut Vec<Violation>) {
     let header = param.value.split('~').next().unwrap_or_default();
 
     match read_bits(header, 0, 6) {

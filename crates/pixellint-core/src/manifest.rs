@@ -1284,7 +1284,7 @@ impl ManifestRulePack {
 
     /// Pulls named captures out of the path so an identifier carried there can
     /// be contracted like any query parameter.
-    fn extract_path_params(&self, artifact: &str) -> Vec<RawParam> {
+    fn extract_path_params<'a>(&self, artifact: &'a str) -> Vec<RawParam<'a>> {
         let Some(pattern) = &self.path_pattern else {
             return Vec::new();
         };
@@ -1302,8 +1302,8 @@ impl ManifestRulePack {
                 let capture = captures.name(name)?;
 
                 Some(RawParam::query(
-                    name.to_string(),
-                    percent_decode(capture.as_str()).into_owned(),
+                    Cow::Owned(name.to_string()),
+                    percent_decode(capture.as_str()),
                     path_start + capture.start(),
                     path_start + capture.end(),
                 ))
@@ -1323,7 +1323,7 @@ impl ManifestRulePack {
         &self,
         scope: &Scope,
         compiled: &CompiledParam,
-        params: &[RawParam],
+        params: &[RawParam<'_>],
         exact_names: &BTreeSet<String>,
         violations: &mut Vec<Violation>,
     ) {
@@ -1332,12 +1332,18 @@ impl ManifestRulePack {
             Some(name_regex) => params
                 .iter()
                 .filter(|param| {
-                    name_regex.is_match(&param.name) && !exact_names.contains(&param.name)
+                    name_regex.is_match(param.name.as_ref())
+                        && !exact_names.contains(param.name.as_ref())
                 })
                 .collect(),
             None => params
                 .iter()
-                .filter(|param| compiled.names.iter().any(|name| name == &param.name))
+                .filter(|param| {
+                    compiled
+                        .names
+                        .iter()
+                        .any(|name| name.as_str() == param.name.as_ref())
+                })
                 .collect(),
         };
         let present: Vec<&RawParam> = addressed
@@ -1499,7 +1505,7 @@ impl ManifestRulePack {
             // Unexpanded macros are the core pack's business. Checking the
             // literal macro text against a value format would double-report the
             // same defect with a worse message.
-            if contains_macro(&param.value) {
+            if contains_macro(param.value.as_ref()) {
                 continue;
             }
 
@@ -1514,7 +1520,9 @@ impl ManifestRulePack {
                 continue;
             };
 
-            if let Some(reason) = format_violation(format, compiled.regex.as_ref(), &param.value) {
+            if let Some(reason) =
+                format_violation(format, compiled.regex.as_ref(), param.value.as_ref())
+            {
                 violations.push(Violation {
                     code: format!(
                         "{}.{}.{}.invalid",
@@ -1541,19 +1549,37 @@ impl ManifestRulePack {
         &self,
         scope: &Scope,
         compiled: &CompiledRule,
-        params: &[RawParam],
+        params: &[RawParam<'_>],
         violations: &mut Vec<Violation>,
     ) {
         let rule = &compiled.rule;
         let source = self.source_for(compiled.source_level, compiled.doc.as_deref());
         // An empty slot is not a value, so a rule must not read it as one.
-        let live: Vec<RawParam> = params
-            .iter()
-            .filter(|param| !param.missing)
-            .cloned()
-            .collect();
-        let params: &[RawParam] = &live;
-        let present = |name: &str| params.iter().any(|param| param.name == name);
+        let live: Vec<&RawParam> = params.iter().filter(|param| !param.missing).collect();
+        let params = live.as_slice();
+        let present = |name: &str| params.iter().any(|param| param.name.as_ref() == name);
+        let named = |name: &str| {
+            params
+                .iter()
+                .copied()
+                .find(|param| param.name.as_ref() == name)
+        };
+        let hits_named = |names: &[String]| {
+            params
+                .iter()
+                .copied()
+                .filter(|param| {
+                    names
+                        .iter()
+                        .any(|name| name.as_str() == param.name.as_ref())
+                })
+                .collect::<Vec<_>>()
+        };
+        let value_in = |values: &[String], param: &RawParam| {
+            values
+                .iter()
+                .any(|value| value.as_str() == param.value.as_ref())
+        };
 
         let (triggered, targets) = match &rule.assertion {
             Assertion::RequireOneOf { params: names } => {
@@ -1564,11 +1590,7 @@ impl ManifestRulePack {
                 }
             }
             Assertion::MutuallyExclusive { params: names } => {
-                let hits: Vec<&RawParam> = params
-                    .iter()
-                    .filter(|param| names.contains(&param.name))
-                    .collect();
-
+                let hits = hits_named(names);
                 if hits.len() > 1 {
                     (true, hits.iter().map(|param| param.target()).collect())
                 } else {
@@ -1577,9 +1599,7 @@ impl ManifestRulePack {
             }
             Assertion::RequiredWith { when, requires } => {
                 if present(when) && !requires.iter().all(|name| present(name)) {
-                    let target = params
-                        .iter()
-                        .find(|param| &param.name == when)
+                    let target = named(when)
                         .map(RawParam::target)
                         .unwrap_or_else(|| scope.fallback_for(when));
                     (true, vec![target])
@@ -1594,14 +1614,13 @@ impl ManifestRulePack {
             } => {
                 let triggered = params
                     .iter()
-                    .filter(|param| &param.name == when)
-                    .filter(|param| !contains_macro(&param.value))
-                    .any(|param| equals.contains(&param.value));
+                    .copied()
+                    .filter(|param| param.name.as_ref() == when)
+                    .filter(|param| !contains_macro(param.value.as_ref()))
+                    .any(|param| value_in(equals, param));
 
                 if triggered && !requires.iter().all(|name| present(name)) {
-                    let target = params
-                        .iter()
-                        .find(|param| &param.name == when)
+                    let target = named(when)
                         .map(RawParam::target)
                         .unwrap_or_else(|| scope.fallback_for(when));
                     (true, vec![target])
@@ -1623,8 +1642,14 @@ impl ManifestRulePack {
                 // template to expand, this rule cannot.
                 let hits: Vec<&RawParam> = params
                     .iter()
-                    .filter(|param| names.is_empty() || names.contains(&param.name))
-                    .filter(|param| regex.is_match(&param.value))
+                    .copied()
+                    .filter(|param| {
+                        names.is_empty()
+                            || names
+                                .iter()
+                                .any(|name| name.as_str() == param.name.as_ref())
+                    })
+                    .filter(|param| regex.is_match(param.value.as_ref()))
                     .collect();
 
                 if hits.is_empty() {
@@ -1641,15 +1666,19 @@ impl ManifestRulePack {
             } => {
                 let triggered = params
                     .iter()
-                    .filter(|candidate| &candidate.name == when)
-                    .filter(|candidate| !contains_macro(&candidate.value))
-                    .any(|candidate| equals.contains(&candidate.value));
+                    .copied()
+                    .filter(|candidate| candidate.name.as_ref() == when)
+                    .filter(|candidate| !contains_macro(candidate.value.as_ref()))
+                    .any(|candidate| value_in(equals, candidate));
 
                 if !triggered {
                     (false, Vec::new())
                 } else {
-                    match params.iter().find(|candidate| &candidate.name == param) {
-                        Some(field) if !contains_macro(&field.value) && &field.value != value => {
+                    match named(param) {
+                        Some(field)
+                            if !contains_macro(field.value.as_ref())
+                                && field.value.as_ref() != value =>
+                        {
                             (true, vec![field.target()])
                         }
                         _ => (false, Vec::new()),
@@ -1663,17 +1692,15 @@ impl ManifestRulePack {
             } => {
                 let triggered = params
                     .iter()
-                    .filter(|candidate| &candidate.name == when)
-                    .filter(|candidate| !contains_macro(&candidate.value))
-                    .any(|candidate| equals.contains(&candidate.value));
+                    .copied()
+                    .filter(|candidate| candidate.name.as_ref() == when)
+                    .filter(|candidate| !contains_macro(candidate.value.as_ref()))
+                    .any(|candidate| value_in(equals, candidate));
 
                 if !triggered {
                     (false, Vec::new())
                 } else {
-                    let hits: Vec<&RawParam> = params
-                        .iter()
-                        .filter(|candidate| names.contains(&candidate.name))
-                        .collect();
+                    let hits = hits_named(names);
                     if hits.is_empty() {
                         (false, Vec::new())
                     } else {
@@ -1761,9 +1788,9 @@ fn exact_param_names(params: &[CompiledParam]) -> BTreeSet<String> {
         .collect()
 }
 
-fn finding_name<'a>(compiled: &'a CompiledParam, param: &'a RawParam) -> &'a str {
+fn finding_name<'a>(compiled: &'a CompiledParam, param: &'a RawParam<'_>) -> &'a str {
     if compiled.name_regex.is_some() {
-        param.name.as_str()
+        param.name.as_ref()
     } else {
         compiled.contract.name.as_str()
     }
@@ -1878,9 +1905,9 @@ pub(crate) fn contains_macro(value: &str) -> bool {
 /// A parameter as it appears in the raw artifact, with byte offsets preserved so
 /// findings can point at the exact span.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct RawParam {
-    pub(crate) name: String,
-    pub(crate) value: String,
+pub(crate) struct RawParam<'a> {
+    pub(crate) name: Cow<'a, str>,
+    pub(crate) value: Cow<'a, str>,
     pub(crate) start: usize,
     pub(crate) end: usize,
     /// Where the value was carried, so a finding about a body field is not
@@ -1902,12 +1929,17 @@ pub(crate) struct RawParam {
     pub(crate) missing: bool,
 }
 
-impl RawParam {
+impl<'a> RawParam<'a> {
     /// A query parameter, the common case.
-    pub(crate) fn query(name: String, value: String, start: usize, end: usize) -> Self {
+    pub(crate) fn query(
+        name: impl Into<Cow<'a, str>>,
+        value: impl Into<Cow<'a, str>>,
+        start: usize,
+        end: usize,
+    ) -> Self {
         Self {
-            name,
-            value,
+            name: name.into(),
+            value: value.into(),
             start,
             end,
             component: ViolationTargetComponent::QueryParam,
@@ -1920,8 +1952,12 @@ impl RawParam {
     pub(crate) fn target(&self) -> ViolationTarget {
         ViolationTarget {
             component: self.component,
-            name: Some(self.location.clone().unwrap_or_else(|| self.name.clone())),
-            value: Some(self.value.clone()),
+            name: Some(
+                self.location
+                    .clone()
+                    .unwrap_or_else(|| self.name.clone().into_owned()),
+            ),
+            value: Some(self.value.clone().into_owned()),
             start: self.start,
             end: self.end,
         }
@@ -1962,11 +1998,11 @@ fn body_scopes(document: &JsonDocument, scope: Option<&ScopeSpec>) -> Vec<String
 /// under `data[1]` reads `data[1].user_data.em[0]` and up. Every hit keeps the
 /// contract's own name so the existing checkers match it, and carries its
 /// concrete path along for the finding.
-fn collect_body_params(
-    document: &JsonDocument,
+fn collect_body_params<'a>(
+    document: &'a JsonDocument,
     scope: &str,
-    contracts: &[CompiledParam],
-) -> Vec<RawParam> {
+    contracts: &'a [CompiledParam],
+) -> Vec<RawParam<'a>> {
     let mut params = Vec::new();
 
     for compiled in contracts {
@@ -1983,8 +2019,8 @@ fn collect_body_params(
                     let anchor = document.nearest_present_ancestor(&path);
 
                     params.push(RawParam {
-                        name: name.clone(),
-                        value: String::new(),
+                        name: Cow::Borrowed(name.as_str()),
+                        value: Cow::Borrowed(""),
                         start: anchor.map(|field| field.start).unwrap_or(0),
                         end: anchor.map(|field| field.end).unwrap_or(0),
                         component: ViolationTargetComponent::BodyField,
@@ -1999,15 +2035,15 @@ fn collect_body_params(
                 // keeps a populated object from being reported as empty, while
                 // an empty one still is.
                 let value = match (field.kind, field.is_blank()) {
-                    (_, true) => String::new(),
+                    (_, true) => Cow::Borrowed(""),
                     (JsonValueKind::Object | JsonValueKind::Array, false) => {
-                        field.kind.label().to_string()
+                        Cow::Borrowed(field.kind.label())
                     }
-                    _ => field.text.clone(),
+                    _ => Cow::Borrowed(field.text.as_str()),
                 };
 
                 params.push(RawParam {
-                    name: name.clone(),
+                    name: Cow::Borrowed(name.as_str()),
                     value,
                     start: field.start,
                     end: field.end,
@@ -2059,7 +2095,7 @@ fn whole_url_target(artifact: &str) -> ViolationTarget {
 /// on `;`, the shape Adform uses; matrix style reads the semicolon-delimited
 /// pairs Floodlight puts in the path; colon-path style reads `/key:value/`
 /// segments, including Partnerize basket `[...]` groups.
-pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam> {
+pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam<'_>> {
     if style == ParamStyle::ColonPath {
         return extract_colon_path_params(artifact);
     }
@@ -2103,8 +2139,8 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
             };
 
             params.push(RawParam::query(
-                percent_decode(name).into_owned(),
-                percent_decode(value).into_owned(),
+                percent_decode(name),
+                percent_decode(value),
                 cursor + name_offset,
                 segment_end,
             ));
@@ -2135,7 +2171,7 @@ fn next_pair_break(haystack: &str, style: ParamStyle) -> Option<usize> {
 }
 
 /// Partnerize-style `/campaign:ID/clickref:ABC/[category:DVD/quantity:1]` paths.
-fn extract_colon_path_params(artifact: &str) -> Vec<RawParam> {
+fn extract_colon_path_params(artifact: &str) -> Vec<RawParam<'_>> {
     let (path_start, path_end) = path_span(artifact);
     if path_start >= path_end {
         return Vec::new();
@@ -2158,8 +2194,8 @@ fn extract_colon_path_params(artifact: &str) -> Vec<RawParam> {
                 {
                     let abs = path_start + rel;
                     params.push(RawParam::query(
-                        percent_decode(name).into_owned(),
-                        percent_decode(value).into_owned(),
+                        percent_decode(name),
+                        percent_decode(value),
                         abs + leading,
                         abs + inner_end,
                     ));
@@ -2935,6 +2971,23 @@ mod tests {
         assert_eq!(percent_decode("caf%C3%A9"), "café");
         assert!(matches!(percent_decode("plain"), Cow::Borrowed("plain")));
         assert!(matches!(percent_decode(""), Cow::Borrowed("")));
+    }
+
+    #[test]
+    fn typical_query_params_borrow_the_artifact() {
+        let params = extract_params(
+            "https://example.com/pixel?id=12345&ev=PageView",
+            ParamStyle::Query,
+        );
+        assert_eq!(params.len(), 2);
+        assert!(matches!(params[0].name, Cow::Borrowed("id")));
+        assert!(matches!(params[0].value, Cow::Borrowed("12345")));
+        assert!(matches!(params[1].name, Cow::Borrowed("ev")));
+        assert!(matches!(params[1].value, Cow::Borrowed("PageView")));
+
+        let decoded = extract_params("https://example.com/pixel?em=a%40b.com", ParamStyle::Query);
+        assert!(matches!(decoded[0].value, Cow::Owned(_)));
+        assert_eq!(decoded[0].value.as_ref(), "a@b.com");
     }
 }
 

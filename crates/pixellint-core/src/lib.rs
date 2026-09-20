@@ -1023,8 +1023,8 @@ impl Engine {
         }
 
         let artifact = prepared.trimmed();
-        let host = prepared.url().and_then(|url| url.host.clone())?;
-        let entry = self.directory.lookup_host(&host)?;
+        let host = prepared.url().and_then(|url| url.host.as_deref())?;
+        let entry = self.directory.lookup_host(host)?;
 
         let mut message = format!(
             "This endpoint belongs to {} ({}). No Pixellint rulepack covers it, so only the core checks ran.",
@@ -1039,11 +1039,11 @@ impl Engine {
         }
 
         let target = artifact
-            .find(&host)
+            .find(host)
             .map(|start| ViolationTarget {
                 component: ViolationTargetComponent::Host,
                 name: None,
-                value: Some(host.clone()),
+                value: Some(host.to_string()),
                 start,
                 end: start + host.len(),
             })

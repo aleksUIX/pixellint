@@ -122,7 +122,7 @@ impl VendorDirectory {
     }
 
     fn validate(&self) -> Result<(), DirectoryError> {
-        let mut claimed: Vec<(String, &str)> = Vec::new();
+        let mut claimed: Vec<(Cow<'_, str>, &str)> = Vec::new();
 
         for entry in &self.entries {
             for (field, value) in [
@@ -146,11 +146,14 @@ impl VendorDirectory {
             }
 
             for host in &entry.hosts {
-                let host = host.to_ascii_lowercase();
+                let host = ascii_lower(host);
 
-                if let Some((_, owner)) = claimed.iter().find(|(claimed, _)| claimed == &host) {
+                if let Some((_, owner)) = claimed
+                    .iter()
+                    .find(|(claimed, _)| claimed.as_ref() == host.as_ref())
+                {
                     return Err(DirectoryError::DuplicateHost {
-                        host,
+                        host: host.into_owned(),
                         vendors: ((*owner).to_string(), entry.vendor.clone()),
                     });
                 }
@@ -213,7 +216,9 @@ impl VendorDirectory {
         let mut by_host = HashMap::with_capacity(self.host_count());
         for (index, entry) in self.entries.iter().enumerate() {
             for host in &entry.hosts {
-                by_host.entry(host.to_ascii_lowercase()).or_insert(index);
+                by_host
+                    .entry(ascii_lower(host).into_owned())
+                    .or_insert(index);
             }
         }
         self.by_host = by_host;

@@ -47,6 +47,9 @@ All notable changes to Pixellint are documented here. The format follows
 - PostHog capture requires `properties.$survey_id` on `survey sent`,
   `survey shown`, and `survey dismissed`, and type-checks `$current_url`,
   `$session_id`, and `$screen_name` when present. `$current_url` may be a path.
+- Query and body parameter checks borrow names and values from the artifact
+  instead of copying them, and rule checks no longer clone the live param list.
+  Directory attribution borrows the prepared host instead of cloning it first.
 
 ## 0.31.8 - 2026-09-19
 
