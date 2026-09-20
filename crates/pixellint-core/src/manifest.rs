@@ -1019,7 +1019,7 @@ impl ManifestRulePack {
             return false;
         }
 
-        let path = parsed.path.as_str();
+        let path = parsed.path.as_ref();
         let path_constrained = !self.matcher.paths.is_empty()
             || !self.matcher.path_prefixes.is_empty()
             || !self.matcher.path_contains.is_empty();

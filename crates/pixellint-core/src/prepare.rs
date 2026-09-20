@@ -3,6 +3,7 @@
 //! Plugin selection and the packs that run used to re-parse the same URL or
 //! JSON body. This type holds those parses so the hot path can reuse them.
 
+use std::borrow::Cow;
 use std::cell::OnceCell;
 
 use crate::json::{JsonDocument, JsonError};
@@ -10,21 +11,34 @@ use crate::manifest::{ParamStyle, RawParam, extract_params};
 use crate::{ArtifactKind, MacroSpan, ValidationRequest, detect_macro_spans, sanitize_macro_spans};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct ArtifactUrl {
-    pub(crate) host: Option<String>,
-    pub(crate) path: String,
-    pub(crate) scheme: String,
+pub(crate) struct ArtifactUrl<'a> {
+    pub(crate) host: Option<Cow<'a, str>>,
+    pub(crate) path: Cow<'a, str>,
+    pub(crate) scheme: Cow<'a, str>,
     pub(crate) has_userinfo: bool,
     pub(crate) has_fragment: bool,
     /// True when scheme, host presence, userinfo, and fragment match `Url::parse`.
     pub(crate) core_ready: bool,
 }
 
+impl ArtifactUrl<'_> {
+    fn into_owned(self) -> ArtifactUrl<'static> {
+        ArtifactUrl {
+            host: self.host.map(|host| Cow::Owned(host.into_owned())),
+            path: Cow::Owned(self.path.into_owned()),
+            scheme: Cow::Owned(self.scheme.into_owned()),
+            has_userinfo: self.has_userinfo,
+            has_fragment: self.has_fragment,
+            core_ready: self.core_ready,
+        }
+    }
+}
+
 /// Parsed view of one artifact, shared across plugin selection and validation.
 pub struct PreparedArtifact<'a> {
     request: &'a ValidationRequest,
     trimmed: &'a str,
-    url: OnceCell<Option<ArtifactUrl>>,
+    url: OnceCell<Option<ArtifactUrl<'a>>>,
     json: OnceCell<Result<JsonDocument, JsonError>>,
     macros: OnceCell<Vec<MacroSpan>>,
     params: [OnceCell<Vec<RawParam<'a>>>; 4],
@@ -60,7 +74,7 @@ impl<'a> PreparedArtifact<'a> {
         self.macros.get_or_init(|| detect_macro_spans(self.trimmed))
     }
 
-    pub(crate) fn url(&self) -> Option<&ArtifactUrl> {
+    pub(crate) fn url(&self) -> Option<&ArtifactUrl<'_>> {
         if self.url.get().is_none() {
             let parsed = {
                 let spans = self.macro_spans();
@@ -102,19 +116,22 @@ pub(crate) fn host_matches_suffix(host: &str, suffix: &str) -> bool {
 /// Parses an artifact URL with macros neutralized, so a templated URL still
 /// resolves to a host and path.
 #[cfg(test)]
-pub(crate) fn parse_artifact_url(artifact: &str) -> Option<ArtifactUrl> {
+pub(crate) fn parse_artifact_url(artifact: &str) -> Option<ArtifactUrl<'_>> {
     parse_artifact_url_with_spans(artifact, &detect_macro_spans(artifact))
 }
 
-fn parse_artifact_url_with_spans(artifact: &str, spans: &[MacroSpan]) -> Option<ArtifactUrl> {
+fn parse_artifact_url_with_spans<'a>(
+    artifact: &'a str,
+    spans: &[MacroSpan],
+) -> Option<ArtifactUrl<'a>> {
     if spans.is_empty() {
         scan_url(artifact)
     } else {
-        scan_url(&sanitize_macro_spans(artifact, spans))
+        scan_url(&sanitize_macro_spans(artifact, spans)).map(ArtifactUrl::into_owned)
     }
 }
 
-fn scan_url(artifact: &str) -> Option<ArtifactUrl> {
+fn scan_url(artifact: &str) -> Option<ArtifactUrl<'_>> {
     let scheme_end = artifact.find("://")?;
     if scheme_end == 0 {
         return None;
@@ -126,14 +143,14 @@ fn scan_url(artifact: &str) -> Option<ArtifactUrl> {
         return None;
     }
 
-    let scheme = artifact[..scheme_end].to_ascii_lowercase();
+    let scheme = ascii_lower_cow(&artifact[..scheme_end]);
     let bytes = artifact.as_bytes();
     let mut index = scheme_end + 3;
     if index > artifact.len() {
         return None;
     }
 
-    if is_special_scheme(&scheme) {
+    if is_special_scheme(scheme.as_ref()) {
         let mut skipped = index;
         while skipped < artifact.len() && bytes[skipped] == b'/' {
             skipped += 1;
@@ -147,7 +164,7 @@ fn scan_url(artifact: &str) -> Option<ArtifactUrl> {
     }
 
     if index == artifact.len() {
-        return Some(unready_url(scheme, None, "/".to_string(), false, false));
+        return Some(unready_url(scheme, None, Cow::Borrowed("/"), false, false));
     }
 
     if bytes[index] == b'[' {
@@ -156,7 +173,7 @@ fn scan_url(artifact: &str) -> Option<ArtifactUrl> {
         if !host_raw.is_ascii() {
             return parse_with_url_crate(artifact);
         }
-        let host = host_raw.to_ascii_lowercase();
+        let host = ascii_lower_cow(host_raw);
         index += close + 1;
         if index < artifact.len() && bytes[index] == b':' {
             index += 1;
@@ -212,7 +229,7 @@ fn scan_url(artifact: &str) -> Option<ArtifactUrl> {
     }
 
     Some(ArtifactUrl {
-        host: Some(host.to_ascii_lowercase()),
+        host: Some(ascii_lower_cow(host)),
         path: path_from(artifact, auth_end),
         scheme,
         has_userinfo,
@@ -240,13 +257,21 @@ fn port_is_core_ready(port: Option<&str>) -> bool {
     }
 }
 
-fn unready_url(
-    scheme: String,
-    host: Option<String>,
-    path: String,
+fn ascii_lower_cow(value: &str) -> Cow<'_, str> {
+    if value.bytes().any(|byte| byte.is_ascii_uppercase()) {
+        Cow::Owned(value.to_ascii_lowercase())
+    } else {
+        Cow::Borrowed(value)
+    }
+}
+
+fn unready_url<'a>(
+    scheme: Cow<'a, str>,
+    host: Option<Cow<'a, str>>,
+    path: Cow<'a, str>,
     has_userinfo: bool,
     has_fragment: bool,
-) -> ArtifactUrl {
+) -> ArtifactUrl<'a> {
     ArtifactUrl {
         host,
         path,
@@ -257,30 +282,30 @@ fn unready_url(
     }
 }
 
-fn nonempty_host(host: String) -> Option<String> {
+fn nonempty_host<'a>(host: Cow<'a, str>) -> Option<Cow<'a, str>> {
     if host.is_empty() { None } else { Some(host) }
 }
 
-fn path_from(artifact: &str, auth_end: usize) -> String {
+fn path_from(artifact: &str, auth_end: usize) -> Cow<'_, str> {
     if auth_end >= artifact.len() {
-        return "/".to_string();
+        return Cow::Borrowed("/");
     }
     match artifact.as_bytes()[auth_end] {
         b'/' => {
             let rest = &artifact[auth_end..];
             let end = rest.find(['?', '#']).unwrap_or(rest.len());
-            rest[..end].to_string()
+            Cow::Borrowed(&rest[..end])
         }
-        _ => "/".to_string(),
+        _ => Cow::Borrowed("/"),
     }
 }
 
-fn parse_with_url_crate(artifact: &str) -> Option<ArtifactUrl> {
+fn parse_with_url_crate(artifact: &str) -> Option<ArtifactUrl<'static>> {
     let parsed = url::Url::parse(artifact).ok()?;
     Some(ArtifactUrl {
-        host: parsed.host_str().map(str::to_string),
-        path: parsed.path().to_string(),
-        scheme: parsed.scheme().to_string(),
+        host: parsed.host_str().map(|host| Cow::Owned(host.to_string())),
+        path: Cow::Owned(parsed.path().to_string()),
+        scheme: Cow::Owned(parsed.scheme().to_string()),
         has_userinfo: !parsed.username().is_empty() || parsed.password().is_some(),
         has_fragment: parsed.fragment().is_some(),
         core_ready: true,
@@ -337,7 +362,12 @@ mod tests {
         ];
 
         for artifact in cases {
-            let cheap = parse_artifact_url(artifact).map(|parsed| (parsed.host, parsed.path));
+            let cheap = parse_artifact_url(artifact).map(|parsed| {
+                (
+                    parsed.host.map(|host| host.into_owned()),
+                    parsed.path.into_owned(),
+                )
+            });
             assert_eq!(cheap, crate_url(artifact), "{artifact}");
         }
     }
@@ -369,6 +399,26 @@ mod tests {
         let ipv6 = parse_artifact_url("https://[2001:db8::1]/pixel?id=1").unwrap();
         assert!(!ipv6.core_ready);
         assert_eq!(ipv6.host.as_deref(), Some("[2001:db8::1]"));
+    }
+
+    #[test]
+    fn typical_https_host_path_and_scheme_borrow_the_artifact() {
+        let artifact = "https://www.facebook.com/tr?id=1";
+        let parsed = parse_artifact_url(artifact).unwrap();
+        assert!(matches!(parsed.scheme, Cow::Borrowed("https")));
+        assert!(matches!(
+            parsed.host.as_ref(),
+            Some(Cow::Borrowed("www.facebook.com"))
+        ));
+        assert!(matches!(parsed.path, Cow::Borrowed("/tr")));
+    }
+
+    #[test]
+    fn uppercase_host_and_scheme_are_copied() {
+        let parsed = parse_artifact_url("HTTPS://WWW.FACEBOOK.COM/tr").unwrap();
+        assert!(matches!(parsed.scheme, Cow::Owned(_)));
+        assert!(matches!(parsed.host, Some(Cow::Owned(_))));
+        assert!(matches!(parsed.path, Cow::Borrowed("/tr")));
     }
 
     #[test]
