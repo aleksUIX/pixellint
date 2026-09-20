@@ -63,6 +63,10 @@ All notable changes to Pixellint are documented here. The format follows
 - Host-index lookup stores plugin slots instead of cloning rulepack ids per
   host, and directory lookup skips a second lowercase copy when the prepared
   host is already ASCII lowercase.
+- Mixpanel `/import` type-checks SDK default properties when present: absolute
+  `$current_url` and `$referrer`, non-empty `mp_lib`, `$lib_version`,
+  `$device_id`, and `$user_id`, integer `$screen_height` / `$screen_width`,
+  GeoIP `$city` / `$region`, and 2-letter `mp_country_code`.
 
 ## 0.31.9 - 2026-09-20
 

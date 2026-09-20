@@ -1013,8 +1013,15 @@ JSON field.
 | `properties.distinct_id` | Required. Empty string is allowed. Placeholder ids are rejected | `vendor.mixpanel-import.body.properties.distinct_id.missing`, `vendor.mixpanel-import.body.placeholder_identifier` |
 | `properties.$insert_id` | Required, at most 36 alphanumeric or hyphen characters | `vendor.mixpanel-import.body.properties.$insert_id.missing`, `.empty`, `.invalid`, `vendor.mixpanel-import.body.placeholder_identifier` |
 | Over-hashing | `properties.ip` must not be a digest | `vendor.mixpanel-import.body.hashed_plaintext_field` |
+| `properties.$current_url`, `$referrer` | When present, an absolute URL | `vendor.mixpanel-import.body.properties.$current_url.invalid`, `.$referrer.invalid` |
+| `properties.mp_lib`, `$lib_version`, `$device_id`, `$user_id` | When present, not empty | `vendor.mixpanel-import.body.properties.mp_lib.empty`, `.$lib_version.empty`, `.$device_id.empty`, `.$user_id.empty` |
+| `properties.$screen_height`, `$screen_width` | When present, an integer | `vendor.mixpanel-import.body.properties.$screen_height.invalid`, `.$screen_width.invalid` |
+| `properties.$city`, `$region` | When present, not empty | `vendor.mixpanel-import.body.properties.$city.empty`, `.$region.empty` |
+| `properties.mp_country_code` | When present, a 2-letter country code | `vendor.mixpanel-import.body.properties.mp_country_code.invalid` |
+| `project_id` | When present on the query, not empty | `vendor.mixpanel-import.param.project_id.empty` |
 
-Source: [import events](https://docs.mixpanel.com/reference/import-events).
+Source: [import events](https://docs.mixpanel.com/reference/import-events),
+[default properties](https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties).
 
 ## `vendor/mixpanel-engage`
 
