@@ -21,6 +21,10 @@ All notable changes to Pixellint are documented here. The format follows
 - X conversion API type-checks `value`, `number_items`, `description`, and
   contents `content_id`, `content_name`, `content_type`, `content_price`,
   `num_items`, and `content_group_id` from the published conversion object.
+- Validate builds finding strings only when a contract fires, sizes the
+  parameter vec from the separator count, skips matrix extraction on paths
+  with no `=`, and percent-decodes into the existing buffer when the bytes
+  are already UTF-8.
 
 ## 0.31.9 - 2026-09-20
 

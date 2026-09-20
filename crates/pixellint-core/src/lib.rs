@@ -949,6 +949,25 @@ impl Engine {
         self.ensure_known_rulepacks(&options.only_rulepacks)?;
         self.ensure_known_rulepacks(&options.except_rulepacks)?;
 
+        if options.only_rulepacks.is_empty() && options.except_rulepacks.is_empty() {
+            let selected = self
+                .candidate_ids(prepared)
+                .into_iter()
+                .filter_map(|rulepack_id| {
+                    self.plugins
+                        .get(rulepack_id)
+                        .filter(|entry| entry.plugin.supports_prepared(prepared))
+                        .map(|entry| Arc::clone(&entry.plugin))
+                })
+                .collect::<Vec<_>>();
+
+            return if selected.is_empty() {
+                Err(EngineError::NoMatchingPlugin)
+            } else {
+                Ok(selected)
+            };
+        }
+
         let excluded: BTreeSet<&str> = options
             .except_rulepacks
             .iter()

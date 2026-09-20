@@ -554,7 +554,7 @@ struct Scope<'a> {
     /// same field in both places under different rules.
     code_segment: &'static str,
     /// Prefix for the reported `field`, such as `param` or `body.data[1]`.
-    field_prefix: String,
+    field_prefix: &'a str,
     /// Where to point when there is nothing more specific to point at, such as
     /// a field that is missing entirely.
     fallback: ViolationTarget,
@@ -1132,7 +1132,7 @@ impl ValidatorPlugin for ManifestRulePack {
 
         let scope = Scope {
             code_segment: "param",
-            field_prefix: "param".to_string(),
+            field_prefix: "param",
             fallback: whole_url_target(artifact),
             body: None,
         };
@@ -1251,12 +1251,13 @@ impl ManifestRulePack {
         for body in &self.bodies {
             for scope_path in body_scopes(document, body.scope.as_ref()) {
                 let params = collect_body_params(document, &scope_path, &body.params);
+                let field_prefix = match scope_path.is_empty() {
+                    true => "body".to_string(),
+                    false => format!("body.{scope_path}"),
+                };
                 let scope = Scope {
                     code_segment: "body",
-                    field_prefix: match scope_path.is_empty() {
-                        true => "body".to_string(),
-                        false => format!("body.{scope_path}"),
-                    },
+                    field_prefix: &field_prefix,
                     fallback: body_target(document, &scope_path, artifact),
                     body: Some(BodyScope {
                         document,
@@ -1368,19 +1369,6 @@ impl ManifestRulePack {
                 })
                 .collect(),
         };
-        let present: Vec<&RawParam> = addressed
-            .iter()
-            .copied()
-            .filter(|param| !param.missing)
-            .collect();
-        let empty_slots: Vec<&RawParam> = addressed
-            .iter()
-            .copied()
-            .filter(|param| param.missing)
-            .collect();
-        let field = format!("{}.{}", scope.field_prefix, contract.name);
-        let source = self.source_for(compiled.source_level, compiled.doc.as_deref());
-
         match contract.requirement {
             Requirement::Required | Requirement::Recommended => {
                 let severity =
@@ -1394,6 +1382,12 @@ impl ManifestRulePack {
 
                 let report_missing =
                     |targets: Vec<ViolationTarget>, violations: &mut Vec<Violation>| {
+                        if targets.is_empty() {
+                            return;
+                        }
+                        let field = format!("{}.{}", scope.field_prefix, contract.name);
+                        let source =
+                            self.source_for(compiled.source_level, compiled.doc.as_deref());
                         for target in targets {
                             violations.push(Violation {
                                 code: format!(
@@ -1435,16 +1429,20 @@ impl ManifestRulePack {
                     // identifier carrying `idType` does not excuse the next one
                     // for leaving it out.
                     report_missing(
-                        empty_slots.iter().map(|slot| slot.target()).collect(),
+                        addressed
+                            .iter()
+                            .filter(|slot| slot.missing)
+                            .map(|slot| slot.target())
+                            .collect(),
                         violations,
                     );
-                } else if present.is_empty() {
+                } else if addressed.iter().all(|param| param.missing) {
                     report_missing(vec![scope.fallback_for(&contract.name)], violations);
                     return;
                 }
             }
             Requirement::Forbidden => {
-                for param in &present {
+                for param in addressed.iter().filter(|param| !param.missing) {
                     let code_name = finding_name(compiled, param);
                     violations.push(Violation {
                         code: format!(
@@ -1464,14 +1462,14 @@ impl ManifestRulePack {
                             .fix_hint
                             .clone()
                             .or_else(|| Some(format!("Remove the `{}` parameter.", param.name))),
-                        source: source.clone(),
+                        source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
                         targets: vec![param.target()],
                     });
                 }
                 return;
             }
             Requirement::Deprecated => {
-                for param in &present {
+                for param in addressed.iter().filter(|param| !param.missing) {
                     let code_name = finding_name(compiled, param);
                     violations.push(Violation {
                         code: format!(
@@ -1488,7 +1486,7 @@ impl ManifestRulePack {
                         severity: contract.severity.unwrap_or(Severity::Warning),
                         field: Some(format!("{}.{}", scope.field_prefix, code_name)),
                         fix_hint: contract.fix_hint.clone(),
-                        source: source.clone(),
+                        source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
                         targets: vec![param.target()],
                     });
                 }
@@ -1496,9 +1494,8 @@ impl ManifestRulePack {
             Requirement::Optional => {}
         }
 
-        for param in present {
+        for param in addressed.iter().filter(|param| !param.missing) {
             let code_name = finding_name(compiled, param);
-            let field = format!("{}.{}", scope.field_prefix, code_name);
             if param.value.is_empty() {
                 if contract.allow_empty {
                     continue;
@@ -1513,12 +1510,12 @@ impl ManifestRulePack {
                         Requirement::Required => Severity::Error,
                         _ => Severity::Warning,
                     }),
-                    field: Some(field),
+                    field: Some(format!("{}.{}", scope.field_prefix, code_name)),
                     fix_hint: contract
                         .fix_hint
                         .clone()
                         .or_else(|| Some(format!("Populate `{}` before firing.", param.name))),
-                    source: source.clone(),
+                    source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
                     targets: vec![param.target()],
                 });
                 continue;
@@ -1558,9 +1555,9 @@ impl ManifestRulePack {
                         .format_severity
                         .or(contract.severity)
                         .unwrap_or(Severity::Error),
-                    field: Some(field.clone()),
+                    field: Some(format!("{}.{}", scope.field_prefix, code_name)),
                     fix_hint: contract.fix_hint.clone(),
-                    source: source.clone(),
+                    source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
                     targets: vec![param.target()],
                 });
             }
@@ -1575,25 +1572,26 @@ impl ManifestRulePack {
         violations: &mut Vec<Violation>,
     ) {
         let rule = &compiled.rule;
-        let source = self.source_for(compiled.source_level, compiled.doc.as_deref());
         // An empty slot is not a value, so a rule must not read it as one.
-        let live: Vec<&RawParam> = params.iter().filter(|param| !param.missing).collect();
-        let params = live.as_slice();
-        let present = |name: &str| params.iter().any(|param| param.name.as_ref() == name);
+        let live = |param: &RawParam| !param.missing;
+        let present = |name: &str| {
+            params
+                .iter()
+                .any(|param| live(param) && param.name.as_ref() == name)
+        };
         let named = |name: &str| {
             params
                 .iter()
-                .copied()
-                .find(|param| param.name.as_ref() == name)
+                .find(|param| live(param) && param.name.as_ref() == name)
         };
         let hits_named = |names: &[String]| {
             params
                 .iter()
-                .copied()
                 .filter(|param| {
-                    names
-                        .iter()
-                        .any(|name| name.as_str() == param.name.as_ref())
+                    live(param)
+                        && names
+                            .iter()
+                            .any(|name| name.as_str() == param.name.as_ref())
                 })
                 .collect::<Vec<_>>()
         };
@@ -1636,8 +1634,7 @@ impl ManifestRulePack {
             } => {
                 let triggered = params
                     .iter()
-                    .copied()
-                    .filter(|param| param.name.as_ref() == when)
+                    .filter(|param| live(param) && param.name.as_ref() == when)
                     .filter(|param| !contains_macro(param.value.as_ref()))
                     .any(|param| value_in(equals, param));
 
@@ -1664,12 +1661,12 @@ impl ManifestRulePack {
                 // template to expand, this rule cannot.
                 let hits: Vec<&RawParam> = params
                     .iter()
-                    .copied()
                     .filter(|param| {
-                        names.is_empty()
-                            || names
-                                .iter()
-                                .any(|name| name.as_str() == param.name.as_ref())
+                        live(param)
+                            && (names.is_empty()
+                                || names
+                                    .iter()
+                                    .any(|name| name.as_str() == param.name.as_ref()))
                     })
                     .filter(|param| regex.is_match(param.value.as_ref()))
                     .collect();
@@ -1688,8 +1685,7 @@ impl ManifestRulePack {
             } => {
                 let triggered = params
                     .iter()
-                    .copied()
-                    .filter(|candidate| candidate.name.as_ref() == when)
+                    .filter(|candidate| live(candidate) && candidate.name.as_ref() == when)
                     .filter(|candidate| !contains_macro(candidate.value.as_ref()))
                     .any(|candidate| value_in(equals, candidate));
 
@@ -1714,8 +1710,7 @@ impl ManifestRulePack {
             } => {
                 let triggered = params
                     .iter()
-                    .copied()
-                    .filter(|candidate| candidate.name.as_ref() == when)
+                    .filter(|candidate| live(candidate) && candidate.name.as_ref() == when)
                     .filter(|candidate| !contains_macro(candidate.value.as_ref()))
                     .any(|candidate| value_in(equals, candidate));
 
@@ -1739,7 +1734,7 @@ impl ManifestRulePack {
                 severity: rule.severity,
                 field: None,
                 fix_hint: rule.fix_hint.clone(),
-                source,
+                source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
                 targets,
             });
         }
@@ -1921,6 +1916,13 @@ fn format_violation(format: &ValueFormat, regex: Option<&Regex>, value: &str) ->
 }
 
 pub(crate) fn contains_macro(value: &str) -> bool {
+    if !value
+        .as_bytes()
+        .iter()
+        .any(|&byte| matches!(byte, b'$' | b'[' | b'{'))
+    {
+        return false;
+    }
     !detect_macro_spans(value).is_empty()
 }
 
@@ -2131,7 +2133,15 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam<
             Some(start) => (start + 1, fragment_start),
             None => return Vec::new(),
         },
-        ParamStyle::Matrix => path_span(artifact),
+        ParamStyle::Matrix => {
+            let (start, end) = path_span(artifact);
+            // Matrix pairs are `name=value`. A query pixel's path has no `=`,
+            // so skip walking it on every validate.
+            if start >= end || !artifact.as_bytes()[start..end].contains(&b'=') {
+                return Vec::new();
+            }
+            (start, end)
+        }
         ParamStyle::ColonPath => unreachable!("colon_path returns above"),
     };
 
@@ -2139,7 +2149,8 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam<
         return Vec::new();
     }
 
-    let mut params = Vec::new();
+    let region = &artifact[region_start..region_end];
+    let mut params = Vec::with_capacity(param_pair_capacity(region, style));
     let mut cursor = region_start;
 
     while cursor <= region_end {
@@ -2178,6 +2189,20 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam<
     params
 }
 
+fn param_pair_capacity(region: &str, style: ParamStyle) -> usize {
+    let bytes = region.as_bytes();
+    let separators = match style {
+        ParamStyle::Query => bytes.iter().filter(|&&byte| byte == b'&').count(),
+        ParamStyle::Matrix => bytes.iter().filter(|&&byte| byte == b';').count(),
+        ParamStyle::QuerySemicolon => bytes
+            .iter()
+            .filter(|&&byte| byte == b'&' || byte == b';')
+            .count(),
+        ParamStyle::ColonPath => 0,
+    };
+    separators + 1
+}
+
 fn next_pair_break(haystack: &str, style: ParamStyle) -> Option<usize> {
     match style {
         ParamStyle::Query => haystack.find('&'),
@@ -2200,7 +2225,7 @@ fn extract_colon_path_params(artifact: &str) -> Vec<RawParam<'_>> {
     }
 
     let path = &artifact[path_start..path_end];
-    let mut params = Vec::new();
+    let mut params = Vec::with_capacity(path.bytes().filter(|&byte| byte == b'/').count());
     let mut rel = 0;
 
     for segment in path.split('/') {
@@ -2289,7 +2314,10 @@ fn percent_decode(value: &str) -> Cow<'_, str> {
         }
     }
 
-    Cow::Owned(String::from_utf8_lossy(&decoded).into_owned())
+    match String::from_utf8(decoded) {
+        Ok(text) => Cow::Owned(text),
+        Err(error) => Cow::Owned(String::from_utf8_lossy(&error.into_bytes()).into_owned()),
+    }
 }
 
 #[cfg(test)]
@@ -2991,6 +3019,7 @@ mod tests {
         assert_eq!(percent_decode("100% done"), "100% done");
         assert_eq!(percent_decode("a%"), "a%");
         assert_eq!(percent_decode("caf%C3%A9"), "café");
+        assert_eq!(percent_decode("%FF"), "\u{FFFD}");
         assert!(matches!(percent_decode("plain"), Cow::Borrowed("plain")));
         assert!(matches!(percent_decode(""), Cow::Borrowed("")));
     }
@@ -3010,6 +3039,12 @@ mod tests {
         let decoded = extract_params("https://example.com/pixel?em=a%40b.com", ParamStyle::Query);
         assert!(matches!(decoded[0].value, Cow::Owned(_)));
         assert_eq!(decoded[0].value.as_ref(), "a@b.com");
+
+        let matrix = extract_params(
+            "https://www.facebook.com/tr?id=1&ev=PageView",
+            ParamStyle::Matrix,
+        );
+        assert!(matrix.is_empty());
     }
 }
 
