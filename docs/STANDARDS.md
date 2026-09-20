@@ -1438,6 +1438,11 @@ query or in basic auth).
 | Call identity | `userId` or `anonymousId` | `vendor.rudderstack.body.call_needs_an_identifier` |
 | `timestamp` / `sentAt` | ISO 8601 when present | `vendor.rudderstack.body.timestamp.invalid`, `.sentAt.invalid` |
 | `context.ip` | Unhashed | `vendor.rudderstack.body.hashed_plaintext_field` |
+| Pixel `name`, library, locale, userAgent, platform | Non-empty when present | `vendor.rudderstack.param.name.empty`, `.context.library.name.empty` |
+| Pixel `context.screen.width` / `height` | Integer when present | `vendor.rudderstack.param.context.screen.width.invalid` |
+| Pixel `context.page.url` / `referrer` | Absolute URL when present | `vendor.rudderstack.param.context.page.url.invalid` |
+| HTTP `name` / `context.library.name` | Non-empty when present | `vendor.rudderstack.body.name.empty`, `.context.library.name.empty` |
+| HTTP `properties.revenue` | Decimal number when present | `vendor.rudderstack.body.properties.revenue.invalid` |
 
 Sources: [HTTP API](https://www.rudderstack.com/docs/api/http-api/),
 [Pixel API](https://www.rudderstack.com/docs/api/pixel-api/).

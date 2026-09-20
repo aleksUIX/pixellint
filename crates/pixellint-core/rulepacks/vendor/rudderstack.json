@@ -52,6 +52,82 @@
       "format": { "kind": "non_empty" },
       "description": "Known-user identifier. Alternative to `anonymousId`.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "name",
+      "format": { "kind": "non_empty" },
+      "description": "Page or screen name sent for context on a pixel track.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.library.name",
+      "format": { "kind": "non_empty" },
+      "description": "Name of the library or SDK, such as `Rudderstack AMP SDK`.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.library.version",
+      "format": { "kind": "non_empty" },
+      "description": "Version of the library or SDK.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.platform",
+      "format": { "kind": "non_empty" },
+      "description": "Platform context, such as `AMP`.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.locale",
+      "format": { "kind": "non_empty" },
+      "description": "User locale, such as the browser language.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.userAgent",
+      "format": { "kind": "non_empty" },
+      "description": "User agent string of the client that fired the pixel.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.screen.width",
+      "format": { "kind": "integer" },
+      "description": "Screen width in pixels. RudderStack's Pixel API sample sends an integer.",
+      "fix_hint": "Send the width in pixels, such as `1920`.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.screen.height",
+      "format": { "kind": "integer" },
+      "description": "Screen height in pixels. RudderStack's Pixel API sample sends an integer.",
+      "fix_hint": "Send the height in pixels, such as `1080`.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.page.path",
+      "format": { "kind": "non_empty" },
+      "description": "Path of the page being viewed.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.page.url",
+      "format": { "kind": "url" },
+      "description": "Full page URL. RudderStack documents `path`, `url`, `referrer`, and `title` on `context.page`.",
+      "fix_hint": "Send an absolute URL in `context.page.url`, including the scheme.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.page.referrer",
+      "format": { "kind": "url" },
+      "description": "Referrer URL of the page being viewed.",
+      "fix_hint": "Send an absolute referrer URL, or drop the empty pair.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
+    },
+    {
+      "name": "context.page.title",
+      "format": { "kind": "non_empty" },
+      "description": "Title of the page being viewed.",
+      "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     }
   ],
   "rules": [
@@ -184,6 +260,40 @@
           "name": "context.ip",
           "format": { "kind": "non_empty" },
           "description": "It is the visitor IP, sent unhashed. RudderStack's HTTP samples send a raw address.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "name",
+          "format": { "kind": "non_empty" },
+          "description": "Name of the page or screen. RudderStack's HTTP page and screen samples send it.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "context.library.name",
+          "format": { "kind": "non_empty" },
+          "description": "Name of the library that produced the call. RudderStack's HTTP samples send `http`.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "properties.revenue",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "Amount associated with the event. RudderStack's HTTP track sample sends a decimal number such as `4.99`.",
+          "fix_hint": "Send a number such as `4.99`, with no currency symbol.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "properties.path",
+          "format": { "kind": "non_empty" },
+          "description": "Path of the page being viewed. RudderStack's HTTP page sample sends it on `properties`.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "properties.title",
+          "format": { "kind": "non_empty" },
+          "description": "Title of the page being viewed. RudderStack's HTTP page sample sends it on `properties`.",
           "doc": "https://www.rudderstack.com/docs/api/http-api/"
         }
       ],

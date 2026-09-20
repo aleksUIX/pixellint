@@ -25,6 +25,11 @@ All notable changes to Pixellint are documented here. The format follows
   parameter vec from the separator count, skips matrix extraction on paths
   with no `=`, and percent-decodes into the existing buffer when the bytes
   are already UTF-8.
+- RudderStack Pixel API type-checks page `name`, library name and version,
+  platform, locale, user agent, integer screen size, and `context.page` path,
+  title, URL, and referrer. HTTP track payloads type-check `name`,
+  `context.library.name`, numeric `properties.revenue`, and page
+  `properties.path` / `properties.title` from the published samples.
 
 ## 0.31.9 - 2026-09-20
 
