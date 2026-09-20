@@ -109,8 +109,11 @@ All notable changes to Pixellint are documented here. The format follows
 - Snap Conversions API Dynamic Ads type-check numeric `custom_data.value`,
   Snap's documented currency subset, `content_type` (`product` or
   `product_group`), `content_ids`, `num_items`, and contents `id`,
-  `quantity`, and unit `item_price`. Travel ads and `extinfo` stay
-  unexpanded.
+  `quantity`, and unit `item_price`. Travel ads type-check `checkin_date`,
+  IATA origin and destination airports, and integer `num_adults`,
+  `num_children`, and `num_infants`. Dynamic Ads also type-check
+  `content_name`, `content_category`, `search_string`, and `predicted_ltv`.
+  `extinfo` stays unexpanded.
 - Query and matrix parameters are split once per `validate` and reused by
   core privacy checks and the matching vendor pack.
 - Adjust S2S events type-check `idfv` as an uppercase UUID, `android_id`

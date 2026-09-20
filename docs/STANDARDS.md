@@ -560,6 +560,11 @@ The event payload is checked per event in `data`.
 | `custom_data.num_items` | Whole number when present | `vendor.snapchat.body.custom_data.num_items.invalid` |
 | `custom_data.contents[].id` | When present, not empty | `vendor.snapchat.body.custom_data.contents[].id.empty` |
 | `custom_data.contents[].quantity`, `item_price` | When present, a number. `item_price` is the unit price | `vendor.snapchat.body.custom_data.contents[].quantity.invalid`, `.item_price.invalid` |
+| `custom_data.content_name`, `content_category`, `search_string` | When present, not empty | `vendor.snapchat.body.custom_data.content_name.empty`, `.content_category.empty`, `.search_string.empty` |
+| `custom_data.predicted_ltv` | Non-negative decimal number when present | `vendor.snapchat.body.custom_data.predicted_ltv.invalid` |
+| `custom_data.checkin_date` | YYYYMMDD, YYYY-MM-DD, or ISO datetime with timezone when present | `vendor.snapchat.body.custom_data.checkin_date.invalid` |
+| `custom_data.origin_airport`, `destination_airport` | Three-letter IATA code when present | `vendor.snapchat.body.custom_data.origin_airport.invalid`, `.destination_airport.invalid` |
+| `custom_data.num_adults`, `num_children`, `num_infants` | Whole number when present | `vendor.snapchat.body.custom_data.num_adults.invalid`, `.num_children.invalid`, `.num_infants.invalid` |
 | Web events | `event_source_url` is required when `action_source` is `WEB` | `vendor.snapchat.body.web_requires_source_url` |
 | Purchase events | `custom_data.value` and `custom_data.currency` are required | `vendor.snapchat.body.purchase_requires_value_and_currency` |
 | Value without currency | `currency` is required whenever `value` is set | `vendor.snapchat.body.value_requires_currency` |
