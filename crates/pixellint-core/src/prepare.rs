@@ -6,6 +6,7 @@
 use std::cell::OnceCell;
 
 use crate::json::{JsonDocument, JsonError};
+use crate::manifest::{ParamStyle, RawParam, extract_params};
 use crate::{ArtifactKind, MacroSpan, ValidationRequest, detect_macro_spans, sanitize_macro_spans};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -26,6 +27,7 @@ pub struct PreparedArtifact<'a> {
     url: OnceCell<Option<ArtifactUrl>>,
     json: OnceCell<Result<JsonDocument, JsonError>>,
     macros: OnceCell<Vec<MacroSpan>>,
+    params: [OnceCell<Vec<RawParam<'a>>>; 4],
 }
 
 impl<'a> PreparedArtifact<'a> {
@@ -36,6 +38,7 @@ impl<'a> PreparedArtifact<'a> {
             url: OnceCell::new(),
             json: OnceCell::new(),
             macros: OnceCell::new(),
+            params: Default::default(),
         }
     }
 
@@ -73,6 +76,12 @@ impl<'a> PreparedArtifact<'a> {
             return None;
         }
         Some(self.json.get_or_init(|| JsonDocument::parse(self.trimmed)))
+    }
+
+    pub(crate) fn params(&self, style: ParamStyle) -> &[RawParam<'_>] {
+        self.params[style.cache_index()]
+            .get_or_init(|| extract_params(self.trimmed, style))
+            .as_slice()
     }
 }
 
@@ -399,6 +408,21 @@ mod tests {
         let _ = prepared.url();
         let second = prepared.macro_spans();
         assert_eq!(first.len(), 1);
+        assert!(std::ptr::eq(first, second));
+    }
+
+    #[test]
+    fn prepared_query_params_are_reused() {
+        let request = ValidationRequest {
+            artifact_kind: ArtifactKind::Url,
+            artifact: "https://example.com/pixel?id=1&ev=Purchase".to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Unknown,
+        };
+        let prepared = PreparedArtifact::from_request(&request);
+        let first = prepared.params(ParamStyle::Query);
+        let second = prepared.params(ParamStyle::Query);
+        assert_eq!(first.len(), 2);
         assert!(std::ptr::eq(first, second));
     }
 }

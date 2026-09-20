@@ -106,6 +106,8 @@ All notable changes to Pixellint are documented here. The format follows
   `product_group`), `content_ids`, `num_items`, and contents `id`,
   `quantity`, and unit `item_price`. Travel ads and `extinfo` stay
   unexpanded.
+- Query and matrix parameters are split once per `validate` and reused by
+  core privacy checks and the matching vendor pack.
 
 ## 0.31.8 - 2026-09-19
 

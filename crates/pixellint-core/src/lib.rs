@@ -1167,7 +1167,7 @@ impl ValidatorPlugin for CoreRulePack {
                         prepared,
                         &mut violations,
                     );
-                    privacy::apply_privacy_rules(artifact, &mut violations);
+                    privacy::apply_privacy_rules(prepared, &mut violations);
                 }
                 ArtifactKind::JsonPayload => {
                     validate_json_artifact(artifact, prepared.json(), &mut violations)

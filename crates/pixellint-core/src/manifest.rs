@@ -43,6 +43,17 @@ pub enum ParamStyle {
     ColonPath,
 }
 
+impl ParamStyle {
+    pub(crate) fn cache_index(self) -> usize {
+        match self {
+            Self::Query => 0,
+            Self::QuerySemicolon => 1,
+            Self::Matrix => 2,
+            Self::ColonPath => 3,
+        }
+    }
+}
+
 /// Whether a contracted parameter has to be present, must be absent, or is on
 /// its way out.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
@@ -1105,8 +1116,19 @@ impl ValidatorPlugin for ManifestRulePack {
             };
         }
 
-        let mut params = extract_params(artifact, self.param_style);
-        params.extend(self.extract_path_params(artifact));
+        let extracted = prepared.params(self.param_style);
+        let path_params = self.extract_path_params(artifact);
+        let owned;
+        let params: &[RawParam] = if path_params.is_empty() {
+            extracted
+        } else {
+            owned = {
+                let mut merged = extracted.to_vec();
+                merged.extend(path_params);
+                merged
+            };
+            &owned
+        };
 
         let scope = Scope {
             code_segment: "param",
@@ -1117,11 +1139,11 @@ impl ValidatorPlugin for ManifestRulePack {
 
         let exact_names = &self.exact_param_names;
         for compiled in &self.params {
-            self.check_param(&scope, compiled, &params, exact_names, &mut violations);
+            self.check_param(&scope, compiled, params, exact_names, &mut violations);
         }
 
         for compiled in &self.rules {
-            self.check_rule(&scope, compiled, &params, &mut violations);
+            self.check_rule(&scope, compiled, params, &mut violations);
         }
 
         if let (Some(claimed), Some(vendor)) = (request.claimed_vendor.as_deref(), self.vendor())

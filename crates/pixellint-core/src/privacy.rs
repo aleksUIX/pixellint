@@ -10,7 +10,8 @@
 //! `REDACTED` is skipped the same way: it is a scrubbed copy, not a consent
 //! string, and must not be decoded as TCF, USP, or GPP.
 
-use crate::manifest::{ParamStyle, RawParam, contains_macro, extract_params};
+use crate::manifest::{ParamStyle, RawParam, contains_macro};
+use crate::prepare::PreparedArtifact;
 use crate::{RuleSource, RuleSourceLevel, Severity, Violation, ViolationTarget};
 
 const TCF_SPEC: &str = "https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework/blob/master/TCFv2/IAB%20Tech%20Lab%20-%20Consent%20string%20and%20vendor%20list%20formats%20v2.md";
@@ -20,20 +21,38 @@ const GPP_SPEC: &str = "https://github.com/InteractiveAdvertisingBureau/Global-P
 /// Parameters the specs say must appear at most once in a URL.
 const SIGNAL_PARAMS: [&str; 5] = ["gdpr", "gdpr_consent", "us_privacy", "gpp", "gpp_sid"];
 
-pub(crate) fn apply_privacy_rules(artifact: &str, violations: &mut Vec<Violation>) {
+pub(crate) fn apply_privacy_rules(
+    prepared: &PreparedArtifact<'_>,
+    violations: &mut Vec<Violation>,
+) {
     // Consent signals ride in the query on most pixels and in the path on
     // Floodlight-style tags, so both styles have to be read.
-    let mut params = extract_params(artifact, ParamStyle::Query);
-    params.extend(extract_params(artifact, ParamStyle::Matrix));
+    let artifact = prepared.trimmed();
+    let query = prepared.params(ParamStyle::Query);
+    let matrix = prepared.params(ParamStyle::Matrix);
+    let owned;
+    let params: &[RawParam] = if matrix.is_empty() {
+        query
+    } else if query.is_empty() {
+        matrix
+    } else {
+        owned = {
+            let mut merged = Vec::with_capacity(query.len() + matrix.len());
+            merged.extend_from_slice(query);
+            merged.extend_from_slice(matrix);
+            merged
+        };
+        &owned
+    };
 
     if params.is_empty() {
         return;
     }
 
-    check_duplicates(&params, violations);
-    check_tcf(artifact, &params, violations);
-    check_us_privacy(&params, violations);
-    check_gpp(artifact, &params, violations);
+    check_duplicates(params, violations);
+    check_tcf(artifact, params, violations);
+    check_us_privacy(params, violations);
+    check_gpp(artifact, params, violations);
 }
 
 fn find<'a, 'p>(params: &'a [RawParam<'p>], name: &str) -> Option<&'a RawParam<'p>> {
