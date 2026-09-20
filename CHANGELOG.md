@@ -73,6 +73,10 @@ All notable changes to Pixellint are documented here. The format follows
 - Klaviyo Create Event requires nested `metric` and `profile` resource types,
   type-checks `locale`, `image`, `anonymous_id`, and `_kx`, and rejects hashed
   email and `location.ip`.
+- AppsFlyer S2S in-app events type-check `idfv` and `oaid` as UUIDs,
+  `fb_login_id` as digits, `customer_user_id`, `bundleIdentifier`, and
+  `app_version_name` when present, and boolean flags on
+  `consent_data.manual`.
 - Auto-mode plugin selection looks up the host-index shortlist instead of
   walking every registered pack and hashing candidate ids.
 

@@ -1090,6 +1090,11 @@ the call still returns 200 and the event is not recorded.
 | `eventValue` | Required. Empty string is allowed | `vendor.appsflyer.body.eventValue.missing` |
 | `att` | `0`, `1`, `2`, or `3` when present | `vendor.appsflyer.body.att.invalid` |
 | `advertising_id` / `idfa` | UUID when present | `vendor.appsflyer.body.advertising_id.invalid`, `.idfa.invalid` |
+| `idfv` / `oaid` | UUID when present | `vendor.appsflyer.body.idfv.invalid`, `.oaid.invalid` |
+| `customer_user_id` | When present, not empty | `vendor.appsflyer.body.customer_user_id.empty` |
+| `fb_login_id` | When present, digits only | `vendor.appsflyer.body.fb_login_id.invalid` |
+| `bundleIdentifier`, `app_version_name` | When present, not empty | `vendor.appsflyer.body.bundleIdentifier.empty`, `.app_version_name.empty` |
+| Manual consent | `gdpr_applies`, `ad_user_data_enabled`, `ad_personalization_enabled` are booleans when present | `vendor.appsflyer.body.consent_data.manual.gdpr_applies.invalid` |
 | `aie` | `true` or `false` when present | `vendor.appsflyer.body.aie.invalid` |
 | `app_type` | `app_clip` when present | `vendor.appsflyer.body.app_type.invalid` |
 | `eventTime` | UTC as `yyyy-mm-dd hh:mm:ss.sss` when present | `vendor.appsflyer.body.eventTime.invalid` |
