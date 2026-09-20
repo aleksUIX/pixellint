@@ -208,7 +208,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/reddit-conversions-api` | Conversions API v3 events, URL and JSON event payload | official vendor |
 | `vendor/nextdoor-conversions-api` | Nextdoor Conversions API JSON on /v2/api/conversions/track | official vendor |
 | `vendor/x-conversions-api` | X conversion API measurement events, URL and JSON payload | official vendor |
-| `vendor/x` | X website tag image pixels on analytics.twitter.com/i/adsct | ecosystem reference |
+| `vendor/x` | X website tag image pixels on analytics.twitter.com, analytics.x.com, and t.co /adsct | ecosystem reference |
 | `vendor/the-trade-desk` | The Trade Desk universal pixel iframe on insight.adsrvr.org/track/up | official vendor |
 | `vendor/criteo` | Criteo OneTag loader `ld.js?a=` | official vendor |
 | `vendor/taboola` | Taboola Pixel loader, account ID in the path | official vendor |

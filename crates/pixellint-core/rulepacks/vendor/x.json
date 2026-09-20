@@ -1,12 +1,16 @@
 {
   "id": "vendor/x",
   "display_name": "X website tag",
-  "description": "X conversion image pixels on analytics.twitter.com/i/adsct. txn_id is the conversion ID. Generated pixels send p_id=Twitter. tw_sale_amount and tw_order_quantity ride on purchase fires. X documents twq, not this query. The conversion API stays vendor/x-conversions-api.",
+  "description": "X conversion image pixels on analytics.twitter.com/i/adsct, analytics.x.com, and t.co. txn_id is the conversion ID. Generated pixels send p_id=Twitter. tw_sale_amount and tw_order_quantity ride on purchase fires. twclid is the click ID X documents for matching. X documents twq, not this query. The conversion API stays vendor/x-conversions-api.",
   "vendor": "x",
   "source_level": "ecosystem_reference",
   "docs": "https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html",
   "match": {
-    "hosts": ["analytics.twitter.com"],
+    "hosts": [
+      "analytics.twitter.com",
+      "analytics.x.com",
+      "t.co"
+    ],
     "path_contains": ["/adsct"]
   },
   "params": [
@@ -42,6 +46,14 @@
       "description": "Purchase fires send the item count as an integer.",
       "fix_hint": "Set tw_order_quantity to the item count, digits only.",
       "doc": "https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html"
+    },
+    {
+      "name": "twclid",
+      "format": { "kind": "non_empty" },
+      "description": "It is the X click identifier from the landing URL. X documents twclid as a matching identifier on the pixel and the conversion API. Page fires without an ad click omit it.",
+      "fix_hint": "Set twclid to the click ID from the landing URL query, or drop the pair when there was no click.",
+      "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions",
+      "source_level": "official_vendor"
     }
   ],
   "rules": []

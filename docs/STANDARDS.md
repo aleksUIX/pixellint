@@ -1477,9 +1477,10 @@ Source: [S2S integration](https://help.phgsupport.com/hc/en-us/articles/36002039
 
 ## `vendor/x`
 
-X website tag image pixels on `analytics.twitter.com/i/adsct`. Level:
-`ecosystem_reference`. X documents `twq` and `uwt.js`, not this query. The
-conversion API is `vendor/x-conversions-api`.
+X website tag image pixels on `analytics.twitter.com/i/adsct`,
+`analytics.x.com`, and `t.co`. Level: `ecosystem_reference`. Generated pixels
+also fire those hosts. X documents `twq` and `uwt.js`, not this query, except
+`twclid`. The conversion API is `vendor/x-conversions-api`.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
@@ -1487,8 +1488,10 @@ conversion API is `vendor/x-conversions-api`.
 | `p_id` | Recommended `Twitter` | `vendor.x.param.p_id.missing`, `.invalid` |
 | `tw_sale_amount` | When present, a number with no currency symbol | `vendor.x.param.tw_sale_amount.invalid` |
 | `tw_order_quantity` | When present, integer item count | `vendor.x.param.tw_order_quantity.invalid` |
+| `twclid` | When present, not empty. X documents it as the click ID used to match the pixel and the conversion API | `vendor.x.param.twclid.empty` |
 
-Source: [conversion tracking for websites](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html).
+Sources: [conversion tracking for websites](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html),
+[conversion API](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions).
 
 ## `vendor/amazon-ads`
 

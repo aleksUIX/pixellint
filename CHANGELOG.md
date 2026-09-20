@@ -23,6 +23,9 @@ All notable changes to Pixellint are documented here. The format follows
   standard events stay allowed. `m.value` stays unpublished.
 - `validate_many` keeps one copy of an already-trimmed URL in the dedupe group
   and moves strings into the result instead of cloning them again at emit.
+- X website tag pixels match `analytics.x.com` and `t.co/i/adsct` as well as
+  `analytics.twitter.com`, and type-check click ID `twclid` from the published
+  conversion matching table.
 
 ## 0.31.8 - 2026-09-19
 
