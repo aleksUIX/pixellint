@@ -1055,11 +1055,16 @@ Calls to the Segment HTTP Tracking API on `api.segment.io` and the regional
 | `context.ip` | Unhashed | `vendor.segment.body.hashed_plaintext_field` |
 | `context.userAgent` | When present, not empty. Sent unhashed | `vendor.segment.body.context.userAgent.empty`, `.hashed_plaintext_field` |
 | `context.page.url` | Absolute URL when present | `vendor.segment.body.context.page.url.invalid` |
+| `context.locale` | Language or language-region tag such as `en-US` when present | `vendor.segment.body.context.locale.invalid` |
 | `properties.currency` | ISO 4217 three-letter code when present. Omitted currency is assumed USD | `vendor.segment.body.properties.currency.invalid` |
+| `properties.revenue` | Non-negative decimal number when present | `vendor.segment.body.properties.revenue.invalid` |
+| `properties.value` | Non-negative decimal number when present | `vendor.segment.body.properties.value.invalid` |
+| `properties.url` | Absolute URL when present, including `http` | `vendor.segment.body.properties.url.invalid` |
 
 Source: [HTTP API source](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/),
 [common fields](https://segment.com/docs/connections/spec/common/),
-[track spec](https://segment.com/docs/connections/spec/track/).
+[track spec](https://segment.com/docs/connections/spec/track/),
+[page spec](https://segment.com/docs/connections/spec/page/).
 
 The rendered documentation returns 403 to automated fetches, so the contract was
 read from the source the site is built from, Segment's own published docs

@@ -93,6 +93,10 @@ All notable changes to Pixellint are documented here. The format follows
 - Adobe Edge Network type-checks `web.webPageDetails` URL, name, site
   section, and home/error flags, `web.webInteraction` type, URL, and
   link-click value, plus query `requestId` and boolean `silent`.
+- Segment HTTP Tracking API calls type-check `context.locale`, reserved
+  numeric `properties.revenue` and `properties.value`, and page
+  `properties.url` as an absolute URL. Currency stays optional; page `name`
+  stays unrequired.
 
 ## 0.31.8 - 2026-09-19
 
