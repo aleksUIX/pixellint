@@ -41,6 +41,9 @@ All notable changes to Pixellint are documented here. The format follows
   `qt`, `realp`, `pdf`, `wma`, `gears`, `ag` as `1`), content `c_n` / `c_p` /
   `c_t` / `c_i` (an interaction needs a name), JSON `ec_items`, and numeric
   `ec_st` / `ec_tx` / `ec_sh` / `ec_dt`.
+- Matomo Tracking API type-checks product-view `_pkc` / `_pks` / `_pkn` /
+  numeric `_pkp`, page-performance `pf_*` timings in milliseconds, and
+  absolute `link` / `download` URLs.
 
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.

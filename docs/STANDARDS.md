@@ -2006,6 +2006,10 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | Content interaction | `c_i` requires `c_n` | `vendor.matomo.content_interaction_requires_name` |
 | `ec_items` | When present, a JSON array | `vendor.matomo.param.ec_items.invalid` |
 | `ec_st`, `ec_tx`, `ec_sh`, `ec_dt` | When present, a number | `vendor.matomo.param.ec_st.invalid`, `.ec_tx.invalid`, `.ec_sh.invalid`, `.ec_dt.invalid` |
+| `_pkc`, `_pks`, `_pkn` | When present, not empty | `vendor.matomo.param._pkc.empty`, `._pks.empty`, `._pkn.empty` |
+| `_pkp` | When present, a number | `vendor.matomo.param._pkp.invalid` |
+| `pf_net`, `pf_srv`, `pf_tfr`, `pf_dm1`, `pf_dm2`, `pf_onl` | When present, milliseconds as an integer | `vendor.matomo.param.pf_net.invalid` and the other `pf_*` keys |
+| `link`, `download` | When present, an absolute URL | `vendor.matomo.param.link.invalid`, `.download.invalid` |
 | `e_v` | When present, a number | `vendor.matomo.param.e_v.invalid` |
 | `e_n` | When present, not empty | `vendor.matomo.param.e_n.empty` |
 | `revenue` | When present, a number. Required with `ec_id` | `vendor.matomo.param.revenue.invalid`, `vendor.matomo.order_requires_revenue` |
