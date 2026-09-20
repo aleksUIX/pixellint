@@ -1329,9 +1329,12 @@ Post-install events posted as JSON to `control.kochava.com/track/json`. Level:
 | Device IP | One of `origination_ip` or `data.origination_ip` | `vendor.kochava.body.origination_ip_required` |
 | Device UA | One of `device_ua` or `data.device_ua` | `vendor.kochava.body.device_ua_required` |
 | Device version | One of `device_ver` or `data.device_ver`; empty is allowed | `vendor.kochava.body.device_ver_required` |
+| Device IDs | At least one of `idfa`, `idfv`, `adid`, or `android_id` in `device_ids` | `vendor.kochava.body.device_ids_required` |
 | Over-hashing | `origination_ip` and `device_ua` must not be a digest | `vendor.kochava.body.hashed_plaintext_field` |
 | `currency` | ISO 4217 three-letter code when present | `vendor.kochava.body.currency.invalid`, `.data.currency.invalid` |
 | `usertime` | Unix seconds when present | `vendor.kochava.body.usertime.invalid`, `.data.usertime.invalid` |
+| `event_data.sum` | Number when present | `vendor.kochava.body.data.event_data.sum.invalid` |
+| ATT detail | `authorized`, `denied`, `notDetermined`, or `restricted` when present | `vendor.kochava.body.data.att_detail.invalid` |
 
 Source: [post-install event setup](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/).
 

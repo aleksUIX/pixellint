@@ -116,6 +116,10 @@ All notable changes to Pixellint are documented here. The format follows
 - Adjust S2S events type-check `idfv` as an uppercase UUID, `android_id`
   lowercase without hyphens, MD5/SHA1 Android ID and IMEI hashes, `meid`
   uppercase, and URL-encoded JSON `callback_params` / `partner_params`.
+- Kochava post-install events require at least one identifier in
+  `device_ids` (`idfa`, `idfv`, `adid`, or `android_id`), type-check
+  `event_data.sum` as a number, and check ATT `att_detail` against
+  `authorized`, `denied`, `notDetermined`, and `restricted`.
 
 ## 0.31.8 - 2026-09-19
 

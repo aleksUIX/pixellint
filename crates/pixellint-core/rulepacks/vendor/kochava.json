@@ -128,6 +128,147 @@
           "description": "It is the time the user completed the event, as Unix seconds inside `data`.",
           "fix_hint": "Send `data.usertime` as seconds since epoch.",
           "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.app_version",
+          "format": { "kind": "non_empty" },
+          "description": "It is the app version string. Kochava documents `app_version` as optional.",
+          "fix_hint": "Send `data.app_version` as a version string such as `1.0.0`, or drop the pair.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.device_ids.idfa",
+          "format": { "kind": "non_empty" },
+          "description": "It is the iOS advertising ID inside `device_ids`. Kochava requires at least one identifier in that object.",
+          "fix_hint": "Send `data.device_ids.idfa`, or another documented identifier such as `adid` or `android_id`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.device_ids.idfv",
+          "format": { "kind": "non_empty" },
+          "description": "It is the iOS vendor ID inside `device_ids`. Kochava allows more than one identifier.",
+          "fix_hint": "Send `data.device_ids.idfv` when it is available.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.device_ids.adid",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Android advertising ID inside `device_ids`. Kochava requires at least one identifier in that object.",
+          "fix_hint": "Send `data.device_ids.adid`, or another documented identifier such as `idfa` or `android_id`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.device_ids.android_id",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Android ID inside `device_ids`. Kochava requires at least one identifier in that object.",
+          "fix_hint": "Send `data.device_ids.android_id`, or another documented identifier such as `idfa` or `adid`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "device_ids.idfa",
+          "format": { "kind": "non_empty" },
+          "description": "It is the iOS advertising ID when `device_ids` sits at the root. Kochava's table lists the object alongside other required keys.",
+          "fix_hint": "Send `device_ids.idfa`, or put the object inside `data`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "device_ids.idfv",
+          "format": { "kind": "non_empty" },
+          "description": "It is the iOS vendor ID when `device_ids` sits at the root.",
+          "fix_hint": "Send `device_ids.idfv` when it is available.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "device_ids.adid",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Android advertising ID when `device_ids` sits at the root.",
+          "fix_hint": "Send `device_ids.adid`, or put the object inside `data`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "device_ids.android_id",
+          "format": { "kind": "non_empty" },
+          "description": "It is the Android ID when `device_ids` sits at the root.",
+          "fix_hint": "Send `device_ids.android_id`, or put the object inside `data`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.event_data.id",
+          "format": { "kind": "non_empty" },
+          "description": "It is the item id inside `event_data`. Kochava's post-install sample sends it.",
+          "fix_hint": "Send `data.event_data.id`, or drop the empty pair.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.event_data.name",
+          "format": { "kind": "non_empty" },
+          "description": "It is the item name inside `event_data`. Kochava's post-install sample sends it.",
+          "fix_hint": "Send `data.event_data.name`, or drop the empty pair.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.event_data.sum",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the monetary value inside `event_data`. Kochava's post-install sample sends a number such as `150`.",
+          "fix_hint": "Send `data.event_data.sum` as a number, with no currency symbol.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.att",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "It is the iOS App Tracking Transparency result. Kochava documents `true` when tracking is authorized and `false` when it is not, on iOS 14+ events.",
+          "fix_hint": "Send `data.att` as `true` or `false`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.att_detail",
+          "format": {
+            "kind": "enum",
+            "values": ["authorized", "denied", "notDetermined", "restricted"]
+          },
+          "description": "It is the ATTrackingManager.AuthorizationStatus. Kochava documents `authorized`, `denied`, `notDetermined`, and `restricted`.",
+          "fix_hint": "Send `authorized`, `denied`, `notDetermined`, or `restricted`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.app_tracking_transparency.att",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "It is the ATT result inside Kochava's iOS 14+ `app_tracking_transparency` object.",
+          "fix_hint": "Send `data.app_tracking_transparency.att` as `true` or `false`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.app_tracking_transparency.att_detail",
+          "format": {
+            "kind": "enum",
+            "values": ["authorized", "denied", "notDetermined", "restricted"]
+          },
+          "description": "It is the ATTrackingManager.AuthorizationStatus inside `app_tracking_transparency`.",
+          "fix_hint": "Send `authorized`, `denied`, `notDetermined`, or `restricted`.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.app_tracking_transparency.att_time",
+          "format": { "kind": "integer" },
+          "description": "It is the ATT authorization time. Kochava documents `att_time` as optional on iOS 14+ events.",
+          "fix_hint": "Send `att_time` as Unix seconds.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "name": "data.app_tracking_transparency.att_duration",
+          "format": { "kind": "integer" },
+          "description": "It is how long the user took to answer the ATT prompt, in seconds.",
+          "fix_hint": "Send `att_duration` as an integer number of seconds.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
         }
       ],
       "rules": [
@@ -156,6 +297,24 @@
           "severity": "error",
           "message": "The payload has no `device_ver` key. Kochava documents the key as required and allows an empty value.",
           "fix_hint": "Send `device_ver` at the root or inside `data`. An empty string is valid.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "code": "vendor.kochava.body.device_ids_required",
+          "kind": "require_one_of",
+          "params": [
+            "data.device_ids.idfa",
+            "data.device_ids.idfv",
+            "data.device_ids.adid",
+            "data.device_ids.android_id",
+            "device_ids.idfa",
+            "device_ids.idfv",
+            "device_ids.adid",
+            "device_ids.android_id"
+          ],
+          "severity": "error",
+          "message": "The payload has no identifier in `device_ids`. Kochava requires at least one of IDFA, IDFV, ADID, or Android ID.",
+          "fix_hint": "Send `data.device_ids` with `idfa`, `idfv`, `adid`, or `android_id`.",
           "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
         },
         {
