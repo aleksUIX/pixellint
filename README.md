@@ -212,6 +212,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/x` | X website tag image pixels on analytics.twitter.com, analytics.x.com, and t.co /adsct | ecosystem reference |
 | `vendor/the-trade-desk` | The Trade Desk universal pixel iframe on insight.adsrvr.org/track/up | official vendor |
 | `vendor/criteo` | Criteo OneTag loader `ld.js?a=` | official vendor |
+| `vendor/criteo-retail-media` | Criteo Retail Media Delivery API on /delivery/retailmedia | official vendor |
 | `vendor/taboola` | Taboola Pixel loader, account ID in the path | official vendor |
 | `vendor/hotjar` | Hotjar tracking code, site ID in the path | official template |
 | `vendor/hubspot` | HubSpot tracking code, Hub ID in the path | official template |
@@ -264,8 +265,8 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover 132 endpoint families across 77 vendors. The vendor directory
-covers the rest by attribution: 119 vendor rows and 297 hosts, so an unrecognized
+Rulepacks cover 133 endpoint families across 77 vendors. The vendor directory
+covers the rest by attribution: 120 vendor rows and 299 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 
 ```bash

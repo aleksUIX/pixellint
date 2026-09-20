@@ -1424,6 +1424,30 @@ not contracted.
 
 Source: [OneTag](https://developers.criteo.com/retailer-integration/docs/onetag).
 
+## `vendor/criteo-retail-media`
+
+Criteo Retail Media Delivery API GET requests on `d.us.criteo.com` and
+`d.eu.criteo.com` `/delivery/retailmedia`. Level: `official_vendor`. The OneTag
+loader is `vendor/criteo`.
+
+| Parameter | Enforced | Rule ids |
+| --- | --- | --- |
+| `criteo-partner-id` | Required integer | `vendor.criteo-retail-media.param.criteo-partner-id.missing`, `.empty`, `.invalid` |
+| `retailer-visitor-id` | Required, unhashed | `vendor.criteo-retail-media.param.retailer-visitor-id.missing`, `.empty`, `.hashed_plaintext_field` |
+| `page-id` | Required | `vendor.criteo-retail-media.param.page-id.missing`, `.empty` |
+| `event-type` | Required | `vendor.criteo-retail-media.param.event-type.missing`, `.empty` |
+| `email` | SHA-256 hex when present | `vendor.criteo-retail-media.param.email.invalid` |
+| `addToCart` | Requires `page-uid`, `item`, `price`, `quantity` | `vendor.criteo-retail-media.add_to_cart_requires_item` |
+| `trackTransaction` | Requires `item`, `price`, `quantity`, `transaction-id` | `vendor.criteo-retail-media.transaction_requires_order` |
+| `currency` | Three-letter ISO 4217 when present | `vendor.criteo-retail-media.param.currency.invalid` |
+| `nocall` | `oa`, `pd`, or `both` when present | `vendor.criteo-retail-media.param.nocall.invalid` |
+| `verbosity` | `min` or `full` when present | `vendor.criteo-retail-media.param.verbosity.invalid` |
+| `device-id-type` | `gaid` or `idfa` when present | `vendor.criteo-retail-media.param.device-id-type.invalid` |
+
+Source: [API Parameters](https://developers.criteo.com/retailer-integration/docs/api-parameters-1),
+[organic add-to-cart](https://developers.criteo.com/retailer-integration/docs/organic-add-to-cart-events),
+[order confirmation](https://developers.criteo.com/retailer-integration/docs/order-confirmation-page).
+
 ## `vendor/taboola`
 
 Taboola base pixel loader on `cdn.taboola.com/libtrc/unip/{account_id}/tfa.js`.

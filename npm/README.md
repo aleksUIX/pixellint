@@ -47,9 +47,9 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 - URL conformance, transport, credentials, fragments, and ad-tech macro handling
 - IAB consent signals: TCF `gdpr` and `gdpr_consent`, the deprecated US Privacy
   string, and GPP `gpp` and `gpp_sid`
-- Vendor parameter contracts for 132 endpoint families, including Meta
+- Vendor parameter contracts for 133 endpoint families, including Meta
   Conversions API, TikTok Events API, Reddit CAPI, and the browser pixels
-- Endpoint attribution for 119 vendor rows, so an unrecognized pixel still gets a name.
+- Endpoint attribution for 120 vendor rows, so an unrecognized pixel still gets a name.
 
 ## API
 

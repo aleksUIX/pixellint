@@ -149,6 +149,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/criteo.json"),
     ),
     (
+        "vendor/criteo-retail-media",
+        include_str!("../rulepacks/vendor/criteo-retail-media.json"),
+    ),
+    (
         "vendor/didomi",
         include_str!("../rulepacks/vendor/didomi.json"),
     ),

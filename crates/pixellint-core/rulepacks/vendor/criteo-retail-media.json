@@ -1,0 +1,223 @@
+{
+  "id": "vendor/criteo-retail-media",
+  "display_name": "Criteo Retail Media Delivery API",
+  "vendor": "criteo",
+  "description": "Retail Media Delivery API GET requests on d.us.criteo.com and d.eu.criteo.com /delivery/retailmedia. The OneTag loader on dynamic.criteo.com stays vendor/criteo.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+  "match": {
+    "hosts": [
+      "d.us.criteo.com",
+      "d.eu.criteo.com"
+    ],
+    "path_contains": [
+      "/delivery/retailmedia"
+    ]
+  },
+  "params": [
+    {
+      "name": "criteo-partner-id",
+      "requirement": "required",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "It is the Criteo partner ID. Criteo documents it as required on every Delivery API request.",
+      "fix_hint": "Set `criteo-partner-id` to the numeric partner ID from your Criteo technical account manager.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "retailer-visitor-id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is a persistent unauthenticated user ID on the same device. Criteo documents it as required on every Delivery API request.",
+      "fix_hint": "Set `retailer-visitor-id` to a first-party ID that lasts at least 30 days.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "page-id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the page ID Criteo issued for the placement. Criteo documents it as required on every Delivery API request.",
+      "fix_hint": "Set `page-id` to the value from your Criteo team, such as `viewHome_API_desktop`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "event-type",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the page or organic event type. Criteo documents it as required on each page-type request, such as `viewHome`, `addToCart`, or `trackTransaction`.",
+      "fix_hint": "Set `event-type` to the documented value for the page, such as `viewHome`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "customer-id",
+      "allow_empty": true,
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the authenticated user ID. Criteo documents it as required when the user is logged in, and empty when they are not.",
+      "fix_hint": "Set `customer-id` to the logged-in CRM id, or leave it empty for a guest.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "email",
+      "format": {
+        "kind": "hex",
+        "length": 64
+      },
+      "description": "It is the user's email as a SHA-256 hex digest. Criteo documents trimming, cleaning, and lowercasing before hashing.",
+      "fix_hint": "Send a 64-character lowercase SHA-256 hex digest of the cleaned email.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "page-uid",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It links an organic add-to-cart to the page-load ad request. Criteo documents it as required on `addToCart`.",
+      "fix_hint": "Set `page-uid` to the value returned on the initial Delivery API call for that page.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/organic-add-to-cart-events"
+    },
+    {
+      "name": "item",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the SKU, or a pipe-separated SKU list. Criteo documents it as required on `addToCart` and `trackTransaction`.",
+      "fix_hint": "Set `item` to the SKU, or to pipe-separated SKUs such as `123|456|789`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/order-confirmation-page"
+    },
+    {
+      "name": "price",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?(?:\\|[0-9]+(?:\\.[0-9]+)?)*$"
+      },
+      "description": "It is the unit price, or a pipe-separated list aligned with `item`. Criteo documents it as required on `addToCart` and `trackTransaction`.",
+      "fix_hint": "Send unit prices as numbers, pipe-separated when there is more than one SKU, such as `29.99|15.49`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/order-confirmation-page"
+    },
+    {
+      "name": "quantity",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\|[0-9]+)*$"
+      },
+      "description": "It is the quantity, or a pipe-separated list aligned with `item`. Criteo documents it as required on `addToCart` and `trackTransaction`. Cancellations use `0`.",
+      "fix_hint": "Send integer quantities, pipe-separated when there is more than one SKU.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/order-confirmation-page"
+    },
+    {
+      "name": "transaction-id",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the unique order ID. Criteo documents it as required on `trackTransaction`.",
+      "fix_hint": "Set `transaction-id` to the order ID, and reuse it for cancellations and modifications.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/order-confirmation-page"
+    },
+    {
+      "name": "currency",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{3}$"
+      },
+      "description": "It is the ISO 4217 currency of the order. Criteo documents it as required only when the retailer sells in more than one currency.",
+      "fix_hint": "Send a three-letter code such as `USD` or `EUR`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/order-confirmation-page"
+    },
+    {
+      "name": "nocall",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "oa",
+          "pd",
+          "both"
+        ]
+      },
+      "description": "It filters sponsored products, commerce display, or both from the Delivery API response.",
+      "fix_hint": "Use `oa`, `pd`, or `both`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "verbosity",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "min",
+          "full"
+        ]
+      },
+      "description": "It is the product-object verbosity in the Delivery API response. Criteo documents `min` and `full`.",
+      "fix_hint": "Use `min` or `full`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "device-id",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the GAID or IDFA for in-app traffic. Criteo documents it when Offsite is activated.",
+      "fix_hint": "Send the advertising ID for the device.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "device-id-type",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "gaid",
+          "idfa"
+        ]
+      },
+      "description": "It names the identifier in `device-id`. Criteo documents `gaid` or `idfa`.",
+      "fix_hint": "Set `device-id-type` to `gaid` or `idfa`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.criteo-retail-media.add_to_cart_requires_item",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": ["addToCart"],
+      "requires": ["page-uid", "item", "price", "quantity"],
+      "severity": "error",
+      "message": "An `addToCart` event is missing `page-uid`, `item`, `price`, or `quantity`. Criteo documents all four on organic add-to-cart.",
+      "fix_hint": "Send `page-uid` from the page-load response plus `item`, unit `price`, and `quantity`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/organic-add-to-cart-events"
+    },
+    {
+      "code": "vendor.criteo-retail-media.transaction_requires_order",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": ["trackTransaction"],
+      "requires": ["item", "price", "quantity", "transaction-id"],
+      "severity": "error",
+      "message": "A `trackTransaction` event is missing `item`, `price`, `quantity`, or `transaction-id`. Criteo documents all four on order confirmation.",
+      "fix_hint": "Send pipe-separated `item`, unit `price`, and `quantity` lists plus `transaction-id`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/order-confirmation-page"
+    },
+    {
+      "code": "vendor.criteo-retail-media.hashed_plaintext_field",
+      "kind": "forbid_value_pattern",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "params": [
+        "retailer-visitor-id",
+        "customer-id",
+        "device-id"
+      ],
+      "severity": "error",
+      "message": "This field looks like a SHA-256 digest, but Criteo documents `retailer-visitor-id`, `customer-id`, and `device-id` as unhashed. Hash email instead.",
+      "fix_hint": "Send the raw visitor, customer, or device ID. Hash only `email`.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    }
+  ]
+}

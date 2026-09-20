@@ -15,6 +15,11 @@ All notable changes to Pixellint are documented here. The format follows
   pixels on `q.quora.com` stay directory-only. LinkedIn CAPI now matches on
   `conversionHappenedAt` rather than a nested `conversion` object, so the two
   packs do not claim each other's payloads.
+- `vendor/criteo-retail-media`, covering GET `/delivery/retailmedia` on
+  `d.us.criteo.com` and `d.eu.criteo.com`: required `criteo-partner-id`,
+  `retailer-visitor-id`, `page-id`, and `event-type` from the published
+  Delivery API table, SHA-256 `email`, organic `addToCart` fields, and
+  `trackTransaction` order fields. The OneTag loader stays `vendor/criteo`.
 
 ### Changed
 

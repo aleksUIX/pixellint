@@ -42,7 +42,7 @@ VENDORS = {
     # Demand and supply side platforms
     "thetradedesk": ("The Trade Desk", "programmatic", ["insight.adsrvr.org", "js.adsrvr.org", "match.adsrvr.org"], "vendor/the-trade-desk"),
     "amazon": ("Amazon Ads", "programmatic", ["s.amazon-adsystem.com", "aax.amazon-adsystem.com", "c.amazon-adsystem.com", "fls-na.amazon-adsystem.com"], "vendor/amazon-ads"),
-    "criteo": ("Criteo", "programmatic", ["sslwidget.criteo.com", "static.criteo.net", "gum.criteo.com", "dis.criteo.com", "widget.criteo.com", "dynamic.criteo.com"], "vendor/criteo"),
+    "criteo": ("Criteo", "programmatic", ["sslwidget.criteo.com", "static.criteo.net", "gum.criteo.com", "dis.criteo.com", "widget.criteo.com", "dynamic.criteo.com", "d.us.criteo.com", "d.eu.criteo.com"], "vendor/criteo"),
     "adform": ("Adform", "programmatic", ["a1.adform.net", "a2.adform.net", "asia.adform.net", "track.adform.net", "s1.adform.net", "s2.adform.net", "server.adform.net"], "vendor/adform"),
     "xandr": ("Xandr", "programmatic", ["ib.adnxs.com", "secure.adnxs.com", "acdn.adnxs.com", "sspx-router.adnxs.com"], "vendor/xandr"),
     "pubmatic": ("PubMatic", "programmatic", ["ads.pubmatic.com", "image6.pubmatic.com", "simage2.pubmatic.com"], None),
