@@ -180,6 +180,81 @@ fn counts_from(summary: &ValidationSummary) -> (usize, usize, usize) {
     (errors, warnings, infos)
 }
 
+const EMPTY_OCCURRENCE: ArtifactOccurrence = ArtifactOccurrence {
+    occurrence_id: None,
+    source_kind: None,
+    path: None,
+    line: None,
+    column: None,
+    context_label: None,
+};
+
+#[derive(Clone, Copy)]
+enum OccurrencePart<'a> {
+    Empty,
+    Listed(&'a [ArtifactOccurrence]),
+}
+
+/// Input rows for one unique artifact, before dummy occurrences are built.
+enum Occurrences<'a> {
+    /// Every row had an empty `occurrences` list. One dummy per row at emit.
+    Generated(usize),
+    /// At least one row listed occurrences. Keep document order.
+    Parts(Vec<OccurrencePart<'a>>),
+}
+
+impl<'a> Occurrences<'a> {
+    fn from_row(listed: &'a [ArtifactOccurrence]) -> Self {
+        if listed.is_empty() {
+            Self::Generated(1)
+        } else {
+            Self::Parts(vec![OccurrencePart::Listed(listed)])
+        }
+    }
+
+    fn push_row(&mut self, listed: &'a [ArtifactOccurrence]) {
+        if listed.is_empty() {
+            match self {
+                Self::Generated(n) => *n += 1,
+                Self::Parts(parts) => parts.push(OccurrencePart::Empty),
+            }
+            return;
+        }
+        match self {
+            Self::Generated(n) => {
+                let mut parts = Vec::with_capacity(*n + 1);
+                parts.extend(std::iter::repeat_n(OccurrencePart::Empty, *n));
+                parts.push(OccurrencePart::Listed(listed));
+                *self = Self::Parts(parts);
+            }
+            Self::Parts(parts) => parts.push(OccurrencePart::Listed(listed)),
+        }
+    }
+
+    fn into_vec(self) -> Vec<ArtifactOccurrence> {
+        match self {
+            Self::Generated(n) => vec![EMPTY_OCCURRENCE; n],
+            Self::Parts(parts) => {
+                let cap: usize = parts
+                    .iter()
+                    .map(|part| match part {
+                        OccurrencePart::Empty => 1,
+                        OccurrencePart::Listed(listed) => listed.len(),
+                    })
+                    .sum();
+                let mut out = Vec::with_capacity(cap);
+                for part in parts {
+                    match part {
+                        OccurrencePart::Empty => out.push(EMPTY_OCCURRENCE),
+                        OccurrencePart::Listed(listed) => out.extend(listed.iter().cloned()),
+                    }
+                }
+                out
+            }
+        }
+    }
+}
+
 impl Engine {
     /// Validates every extracted artifact. Identical values (same kind and
     /// trimmed text) run once. Occurrences stay on the unique result.
@@ -200,20 +275,8 @@ impl Engine {
             }
 
             let trimmed = artifact.artifact.trim();
-            let occurrences = if artifact.occurrences.is_empty() {
-                vec![ArtifactOccurrence {
-                    occurrence_id: None,
-                    source_kind: None,
-                    path: None,
-                    line: None,
-                    column: None,
-                    context_label: None,
-                }]
-            } else {
-                artifact.occurrences.clone()
-            };
             if let Some(&slot) = index.get(&(kind_label(artifact.artifact_kind), trimmed)) {
-                groups[slot].occurrences.extend(occurrences);
+                groups[slot].occurrences.push_row(&artifact.occurrences);
                 continue;
             }
 
@@ -231,7 +294,7 @@ impl Engine {
                 normalized,
                 claimed_vendor: artifact.claimed_vendor.clone(),
                 expansion_state: artifact.expansion_state,
-                occurrences,
+                occurrences: Occurrences::from_row(&artifact.occurrences),
             });
         }
 
@@ -279,7 +342,7 @@ impl Engine {
                     infos: artifact_infos,
                 },
                 reports: summary.reports,
-                occurrences: group.occurrences,
+                occurrences: group.occurrences.into_vec(),
             });
         }
 
@@ -311,7 +374,7 @@ impl Engine {
     }
 }
 
-struct Group {
+struct Group<'a> {
     first_index: usize,
     artifact_kind: ArtifactKind,
     /// Original text when it differs from `normalized`. `None` means the
@@ -320,7 +383,7 @@ struct Group {
     normalized: String,
     claimed_vendor: Option<String>,
     expansion_state: ExpansionState,
-    occurrences: Vec<ArtifactOccurrence>,
+    occurrences: Occurrences<'a>,
 }
 
 /// Parses a document request from JSON. A JSON array of URL strings is a
@@ -483,6 +546,63 @@ mod tests {
             "https://example.com/pixel?id=1"
         );
         assert_eq!(report.artifacts[0].occurrences.len(), 2);
+    }
+
+    #[test]
+    fn mixed_empty_and_listed_occurrences_keep_document_order() {
+        let request = DocumentRequest {
+            document_kind: "list".to_string(),
+            extractor: None,
+            artifacts: vec![
+                DocumentArtifactInput {
+                    artifact_kind: ArtifactKind::Url,
+                    artifact: "https://example.com/pixel?id=1".to_string(),
+                    claimed_vendor: None,
+                    expansion_state: ExpansionState::Unknown,
+                    occurrences: Vec::new(),
+                },
+                DocumentArtifactInput {
+                    artifact_kind: ArtifactKind::Url,
+                    artifact: "https://example.com/pixel?id=1".to_string(),
+                    claimed_vendor: None,
+                    expansion_state: ExpansionState::Unknown,
+                    occurrences: vec![ArtifactOccurrence {
+                        occurrence_id: None,
+                        source_kind: Some("xpath".to_string()),
+                        path: Some("/VAST/Ad[1]/InLine/Impression[1]".to_string()),
+                        line: None,
+                        column: None,
+                        context_label: None,
+                    }],
+                },
+                DocumentArtifactInput {
+                    artifact_kind: ArtifactKind::Url,
+                    artifact: "https://example.com/pixel?id=1".to_string(),
+                    claimed_vendor: None,
+                    expansion_state: ExpansionState::Unknown,
+                    occurrences: Vec::new(),
+                },
+            ],
+        };
+        let report = engine().validate_many(&request, &options()).unwrap();
+        assert_eq!(report.artifacts[0].occurrences.len(), 3);
+        assert_eq!(
+            report.artifacts[0].occurrences[0].occurrence_id.as_deref(),
+            Some("occ-1")
+        );
+        assert_eq!(
+            report.artifacts[0].occurrences[1].path.as_deref(),
+            Some("/VAST/Ad[1]/InLine/Impression[1]")
+        );
+        assert_eq!(
+            report.artifacts[0].occurrences[1].occurrence_id.as_deref(),
+            Some("occ-2")
+        );
+        assert_eq!(
+            report.artifacts[0].occurrences[2].occurrence_id.as_deref(),
+            Some("occ-3")
+        );
+        assert!(report.artifacts[0].occurrences[2].path.is_none());
     }
 
     #[test]

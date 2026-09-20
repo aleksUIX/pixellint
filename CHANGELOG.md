@@ -37,6 +37,8 @@ All notable changes to Pixellint are documented here. The format follows
 - `validate_many` groups by borrowed kind and trimmed text, so duplicate rows
   do not allocate a dedupe-key string, and the unique URL moves into
   `validate` instead of cloning first.
+- `validate_many` defers dummy occurrences until emit, so a duplicate-heavy
+  URL list does not allocate an `ArtifactOccurrence` per row during grouping.
 - Matomo Tracking API type-checks leftover plugin flags (`fla`, `java`, `dir`,
   `qt`, `realp`, `pdf`, `wma`, `gears`, `ag` as `1`), content `c_n` / `c_p` /
   `c_t` / `c_i` (an interaction needs a name), JSON `ec_items`, and numeric
