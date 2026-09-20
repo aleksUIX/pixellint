@@ -128,8 +128,13 @@ names are ecosystem evidence even though the requirement is Meta's own.
 
 | Parameter or rule | Enforced | Rule ids |
 | --- | --- | --- |
-| `cd[value]` | Required on `Purchase` | `vendor.meta.purchase_requires_value_and_currency` |
+| `cd[value]` | Required on `Purchase`, a number | `vendor.meta.purchase_requires_value_and_currency`, `vendor.meta.param.cd[value].invalid` |
 | `cd[currency]` | Required on `Purchase`, ISO 4217 three-letter code | `vendor.meta.purchase_requires_value_and_currency`, `vendor.meta.param.cd[currency].invalid` |
+| `cd[content_name]`, `cd[content_category]`, `cd[content_ids]`, `cd[search_string]` | When present, not empty | `vendor.meta.param.cd[content_name].empty`, `.cd[content_category].empty`, `.cd[content_ids].empty`, `.cd[search_string].empty` |
+| `cd[content_type]` | When present, `product` or `product_group` | `vendor.meta.param.cd[content_type].invalid` |
+| `cd[num_items]` | When present, an integer | `vendor.meta.param.cd[num_items].invalid` |
+| `cd[predicted_ltv]` | When present, a number | `vendor.meta.param.cd[predicted_ltv].invalid` |
+| `eid` | When present, not empty. Image-tag spelling of Pixel `eventID` | `vendor.meta.param.eid.empty` |
 
 Source: [standard events reference](https://developers.facebook.com/docs/meta-pixel/reference).
 

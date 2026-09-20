@@ -22,6 +22,11 @@ All notable changes to Pixellint are documented here. The format follows
   `ed[search_query]`, `ed[video_title]`, `ed[lead_type]`, and line-item
   `product_name` / `product_id` / `product_category` / `product_variant_id` /
   `product_variant` / `product_brand`.
+- Meta Pixel type-checks leftover object-property query keys from the
+  published pixel table: numeric `cd[value]`, `cd[content_name]`,
+  `cd[content_category]`, `cd[content_ids]`, `cd[content_type]`
+  (`product` / `product_group`), integer `cd[num_items]`,
+  `cd[search_string]`, numeric `cd[predicted_ltv]`, and image-tag `eid`.
 
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.

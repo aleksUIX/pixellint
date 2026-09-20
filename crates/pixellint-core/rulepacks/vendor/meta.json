@@ -102,6 +102,10 @@
     },
     {
       "name": "cd[value]",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the monetary value of the conversion. Meta documents `value` as required for Purchase events.",
       "fix_hint": "Send the value as a number, without a currency symbol.",
       "source_level": "ecosystem_reference",
@@ -117,6 +121,87 @@
       "fix_hint": "Send the three-letter code, such as `USD`.",
       "source_level": "ecosystem_reference",
       "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "cd[content_name]",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the page or product name on the image pixel. Meta documents `content_name` as a string.",
+      "fix_hint": "Send the name in `cd[content_name]`, or drop the empty pair.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "cd[content_category]",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the page or product category on the image pixel. Meta documents `content_category` as a string.",
+      "fix_hint": "Send the category in `cd[content_category]`, or drop the empty pair.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "cd[content_ids]",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is a product id on the image pixel. Meta documents `content_ids` and shows `cd[content_ids]` on the img tag.",
+      "fix_hint": "Send catalog IDs in `cd[content_ids]`, or drop the empty pair.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/advanced/"
+    },
+    {
+      "name": "cd[content_type]",
+      "format": {
+        "kind": "enum",
+        "values": ["product", "product_group"]
+      },
+      "description": "It says whether `content_ids` are products or product groups. Meta documents `product` or `product_group`.",
+      "fix_hint": "Set `cd[content_type]` to `product` or `product_group`.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "cd[num_items]",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "It is the item count on the image pixel. Meta documents `num_items` as an integer for InitiateCheckout.",
+      "fix_hint": "Send a whole number in `cd[num_items]`, such as `2`.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "cd[search_string]",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the search query on the image pixel. Meta documents `search_string` for Search events.",
+      "fix_hint": "Send the query in `cd[search_string]`, or drop the empty pair.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "cd[predicted_ltv]",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "It is predicted lifetime value on the image pixel. Meta documents `predicted_ltv` as a number.",
+      "fix_hint": "Send `cd[predicted_ltv]` as a number, such as `250.00`.",
+      "source_level": "ecosystem_reference",
+      "doc": "https://developers.facebook.com/docs/meta-pixel/reference"
+    },
+    {
+      "name": "eid",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is the event id on the image pixel. Meta documents `eid` for deduplication against Conversions API `event_id`.",
+      "fix_hint": "Send the same id the Conversions API fired in `eid`, or drop the empty pair.",
+      "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events"
     },
     {
       "name": "em",
