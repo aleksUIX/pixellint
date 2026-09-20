@@ -6,6 +6,11 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Changed
+
+- `Engine::default` builds the host index once after every builtin pack is
+  registered, instead of rebuilding it on each insert.
+
 ## 0.31.8 - 2026-09-19
 
 ### Added

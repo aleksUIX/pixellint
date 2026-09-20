@@ -772,14 +772,16 @@ impl Default for Engine {
     fn default() -> Self {
         let mut engine = Self::new();
         engine.set_directory(VendorDirectory::builtin());
-        engine.register(CoreRulePack::default());
+        engine.insert_plugin(CoreRulePack::default());
 
         for (id, json) in BUILTIN_VENDOR_MANIFESTS {
-            engine.register_manifest_json(json).unwrap_or_else(|error| {
+            let pack = ManifestRulePack::from_json(json).unwrap_or_else(|error| {
                 panic!("built-in rulepack `{id}` failed to compile: {error}")
             });
+            engine.insert_plugin(pack);
         }
 
+        engine.rebuild_index();
         engine
     }
 }
@@ -814,6 +816,14 @@ impl Engine {
     where
         P: ValidatorPlugin + 'static,
     {
+        self.insert_plugin(plugin);
+        self.rebuild_index();
+    }
+
+    fn insert_plugin<P>(&mut self, plugin: P)
+    where
+        P: ValidatorPlugin + 'static,
+    {
         let routing = plugin.routing();
         self.plugins.insert(
             plugin.metadata().id.clone(),
@@ -822,7 +832,6 @@ impl Engine {
                 routing,
             },
         );
-        self.rebuild_index();
     }
 
     /// Compiles a declarative rulepack manifest and registers it.
