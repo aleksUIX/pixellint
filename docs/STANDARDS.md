@@ -1354,7 +1354,13 @@ EVENT requests to `s2s.singular.net/api/v1/evt` and `/api/v2/evt`. Level:
 | `i` | Required app identifier | `vendor.singular.param.i.missing`, `.empty` |
 | `n` | Required, 1 to 32 ASCII characters | `vendor.singular.param.n.missing`, `.invalid` |
 | IP | Exactly one of `ip` or `use_ip` | `vendor.singular.ip_required`, `.ip_ambiguous` |
-| Over-hashing | `ip` must not be a digest | `vendor.singular.hashed_plaintext_field` |
+| Device ID | One of `sdid` (V2) or a V1 advertising ID | `vendor.singular.device_id_required` |
+| `idfa`, `idfv`, `aifa`, `asid`, `amid` | UUID when present | `vendor.singular.param.idfa.invalid` |
+| Over-hashing | `ip` and `ua` must not be a digest | `vendor.singular.hashed_plaintext_field` |
+| `amt` | Number, requires `cur` | `vendor.singular.param.amt.invalid`, `.amt_requires_currency` |
+| `lc` | `ll_CC` locale when present | `vendor.singular.param.lc.invalid` |
+| `att_authorization_status` | `0` to `3` when present | `vendor.singular.param.att_authorization_status.invalid` |
+| `use_ip=true` | Requires `country` | `vendor.singular.use_ip_requires_country` |
 
 Source: [S2S EVENT endpoint](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference).
 

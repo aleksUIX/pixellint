@@ -120,6 +120,9 @@ All notable changes to Pixellint are documented here. The format follows
   `device_ids` (`idfa`, `idfv`, `adid`, or `android_id`), type-check
   `event_data.sum` as a number, and check ATT `att_detail` against
   `authorized`, `denied`, `notDetermined`, and `restricted`.
+- Singular S2S EVENT type-checks V1 advertising IDs as UUIDs, requires a
+  device identifier (`sdid` or a V1 ID), numeric `amt` with `cur`,
+  `ll_CC` locale, ATT status 0 to 3, and a country code when `use_ip=true`.
 
 ## 0.31.8 - 2026-09-19
 
