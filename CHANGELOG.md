@@ -34,6 +34,9 @@ All notable changes to Pixellint are documented here. The format follows
   table: absolute `urlref`, non-empty `uid`, `res` as `WIDTHxHEIGHT`, integer
   local time `h` / `m` / `s`, `cookie` / `new_visit` / `ping` as `1`, six-character
   `pv_id`, site-search `search` / `search_count`, and numeric `revenue`.
+- `validate_many` groups by borrowed kind and trimmed text, so duplicate rows
+  do not allocate a dedupe-key string, and the unique URL moves into
+  `validate` instead of cloning first.
 
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.

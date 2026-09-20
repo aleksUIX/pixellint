@@ -188,19 +188,18 @@ impl Engine {
         request: &DocumentRequest,
         options: &ValidationOptions,
     ) -> Result<DocumentReport, DocumentError> {
-        let mut order: Vec<String> = Vec::new();
-        let mut groups: HashMap<String, Group> = HashMap::new();
+        let mut groups: Vec<Group> = Vec::new();
+        let mut index: HashMap<(&str, &str), usize> = HashMap::new();
 
-        for (index, artifact) in request.artifacts.iter().enumerate() {
+        for (item_index, artifact) in request.artifacts.iter().enumerate() {
             if kind_rejected(artifact.artifact_kind) {
                 return Err(DocumentError::UnsupportedKind {
-                    index,
+                    index: item_index,
                     kind: artifact.artifact_kind,
                 });
             }
 
             let trimmed = artifact.artifact.trim();
-            let key = dedupe_key(artifact.artifact_kind, trimmed);
             let occurrences = if artifact.occurrences.is_empty() {
                 vec![ArtifactOccurrence {
                     occurrence_id: None,
@@ -213,8 +212,8 @@ impl Engine {
             } else {
                 artifact.occurrences.clone()
             };
-            if let Some(group) = groups.get_mut(&key) {
-                group.occurrences.extend(occurrences);
+            if let Some(&slot) = index.get(&(kind_label(artifact.artifact_kind), trimmed)) {
+                groups[slot].occurrences.extend(occurrences);
                 continue;
             }
 
@@ -224,31 +223,27 @@ impl Engine {
                 (Some(artifact.artifact.clone()), trimmed.to_string())
             };
 
-            order.push(key.clone());
-            groups.insert(
-                key,
-                Group {
-                    first_index: index,
-                    artifact_kind: artifact.artifact_kind,
-                    raw_artifact,
-                    normalized,
-                    claimed_vendor: artifact.claimed_vendor.clone(),
-                    expansion_state: artifact.expansion_state,
-                    occurrences,
-                },
-            );
+            index.insert((kind_label(artifact.artifact_kind), trimmed), groups.len());
+            groups.push(Group {
+                first_index: item_index,
+                artifact_kind: artifact.artifact_kind,
+                raw_artifact,
+                normalized,
+                claimed_vendor: artifact.claimed_vendor.clone(),
+                expansion_state: artifact.expansion_state,
+                occurrences,
+            });
         }
 
-        let mut artifacts = Vec::with_capacity(order.len());
+        let mut artifacts = Vec::with_capacity(groups.len());
         let mut errors = 0;
         let mut warnings = 0;
         let mut infos = 0;
 
-        for (artifact_number, key) in order.into_iter().enumerate() {
-            let group = groups.remove(&key).expect("group exists for ordered key");
+        for (artifact_number, group) in groups.into_iter().enumerate() {
             let validation = ValidationRequest {
                 artifact_kind: group.artifact_kind,
-                artifact: group.normalized.clone(),
+                artifact: group.normalized,
                 claimed_vendor: group.claimed_vendor,
                 expansion_state: group.expansion_state,
             };
@@ -264,12 +259,14 @@ impl Engine {
             warnings += artifact_warnings;
             infos += artifact_infos;
 
-            let normalized_artifact = group.normalized;
-            let raw_artifact = group.raw_artifact.unwrap_or(validation.artifact);
+            let normalized_artifact = validation.artifact;
+            let raw_artifact = group
+                .raw_artifact
+                .unwrap_or_else(|| normalized_artifact.clone());
 
             artifacts.push(AggregatedArtifact {
                 artifact_id: format!("artifact-{}", artifact_number + 1),
-                dedupe_key: key,
+                dedupe_key: dedupe_key(group.artifact_kind, &normalized_artifact),
                 artifact_kind: group.artifact_kind,
                 raw_artifact,
                 normalized_artifact,
