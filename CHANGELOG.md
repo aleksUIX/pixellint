@@ -17,6 +17,9 @@ All notable changes to Pixellint are documented here. The format follows
 
 ### Changed
 
+- Body finding field paths and fallback targets are built only when a contract
+  fires, so a clean CAPI batch does not allocate one finding string per event.
+
 - Mixpanel `/track` type-checks SDK default properties when present: absolute
   `$current_url` and `$referrer`, non-empty `mp_lib`, `$lib_version`,
   `$device_id`, and `$user_id`, and integer `$screen_height` / `$screen_width`

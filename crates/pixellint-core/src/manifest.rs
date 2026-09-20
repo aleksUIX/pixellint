@@ -553,11 +553,9 @@ struct Scope<'a> {
     /// payload. Keeping them apart matters because an endpoint may accept the
     /// same field in both places under different rules.
     code_segment: &'static str,
-    /// Prefix for the reported `field`, such as `param` or `body.data[1]`.
-    field_prefix: &'a str,
-    /// Where to point when there is nothing more specific to point at, such as
-    /// a field that is missing entirely.
-    fallback: ViolationTarget,
+    /// The artifact being checked. Fallback targets borrow spans from it and
+    /// are built only when a contract fires.
+    artifact: &'a str,
     /// The payload being read, when this scope is a body rather than a URL.
     body: Option<BodyScope<'a>>,
 }
@@ -569,12 +567,27 @@ struct BodyScope<'a> {
 }
 
 impl Scope<'_> {
+    fn field(&self, name: &str) -> String {
+        match &self.body {
+            None => format!("param.{name}"),
+            Some(body) if body.path.is_empty() => format!("body.{name}"),
+            Some(body) => format!("body.{}.{name}", body.path),
+        }
+    }
+
+    fn fallback(&self) -> ViolationTarget {
+        match &self.body {
+            Some(body) => body_target(body.document, body.path, self.artifact),
+            None => whole_url_target(self.artifact),
+        }
+    }
+
     /// Where to point for a finding about a field that carries no value of its
     /// own. A missing `user_data.em` is most useful pointed at the `user_data`
     /// that does exist, rather than at the whole event.
     fn fallback_for(&self, name: &str) -> ViolationTarget {
         let Some(body) = &self.body else {
-            return self.fallback.clone();
+            return self.fallback();
         };
 
         let path = match body.path.is_empty() {
@@ -590,7 +603,7 @@ impl Scope<'_> {
                 start: field.start,
                 end: field.end,
             },
-            None => self.fallback.clone(),
+            None => self.fallback(),
         }
     }
 }
@@ -1132,8 +1145,7 @@ impl ValidatorPlugin for ManifestRulePack {
 
         let scope = Scope {
             code_segment: "param",
-            field_prefix: "param",
-            fallback: whole_url_target(artifact),
+            artifact,
             body: None,
         };
 
@@ -1251,14 +1263,9 @@ impl ManifestRulePack {
         for body in &self.bodies {
             for scope_path in body_scopes(document, body.scope.as_ref()) {
                 let params = collect_body_params(document, &scope_path, &body.params);
-                let field_prefix = match scope_path.is_empty() {
-                    true => "body".to_string(),
-                    false => format!("body.{scope_path}"),
-                };
                 let scope = Scope {
                     code_segment: "body",
-                    field_prefix: &field_prefix,
-                    fallback: body_target(document, &scope_path, artifact),
+                    artifact,
                     body: Some(BodyScope {
                         document,
                         path: &scope_path,
@@ -1385,7 +1392,7 @@ impl ManifestRulePack {
                         if targets.is_empty() {
                             return;
                         }
-                        let field = format!("{}.{}", scope.field_prefix, contract.name);
+                        let field = scope.field(&contract.name);
                         let source =
                             self.source_for(compiled.source_level, compiled.doc.as_deref());
                         for target in targets {
@@ -1457,7 +1464,7 @@ impl ManifestRulePack {
                             contract.description.as_deref(),
                         ),
                         severity: contract.severity.unwrap_or(Severity::Error),
-                        field: Some(format!("{}.{}", scope.field_prefix, code_name)),
+                        field: Some(scope.field(code_name)),
                         fix_hint: contract
                             .fix_hint
                             .clone()
@@ -1484,7 +1491,7 @@ impl ManifestRulePack {
                             contract.description.as_deref(),
                         ),
                         severity: contract.severity.unwrap_or(Severity::Warning),
-                        field: Some(format!("{}.{}", scope.field_prefix, code_name)),
+                        field: Some(scope.field(code_name)),
                         fix_hint: contract.fix_hint.clone(),
                         source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
                         targets: vec![param.target()],
@@ -1510,7 +1517,7 @@ impl ManifestRulePack {
                         Requirement::Required => Severity::Error,
                         _ => Severity::Warning,
                     }),
-                    field: Some(format!("{}.{}", scope.field_prefix, code_name)),
+                    field: Some(scope.field(code_name)),
                     fix_hint: contract
                         .fix_hint
                         .clone()
@@ -1555,7 +1562,7 @@ impl ManifestRulePack {
                         .format_severity
                         .or(contract.severity)
                         .unwrap_or(Severity::Error),
-                    field: Some(format!("{}.{}", scope.field_prefix, code_name)),
+                    field: Some(scope.field(code_name)),
                     fix_hint: contract.fix_hint.clone(),
                     source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
                     targets: vec![param.target()],
@@ -1606,7 +1613,7 @@ impl ManifestRulePack {
                 if names.iter().any(|name| present(name)) {
                     (false, Vec::new())
                 } else {
-                    (true, vec![scope.fallback.clone()])
+                    (true, vec![scope.fallback()])
                 }
             }
             Assertion::MutuallyExclusive { params: names } => {
@@ -1978,10 +1985,11 @@ impl<'a> RawParam<'a> {
             component: self.component,
             name: Some(
                 self.location
-                    .clone()
-                    .unwrap_or_else(|| self.name.clone().into_owned()),
+                    .as_deref()
+                    .unwrap_or(self.name.as_ref())
+                    .to_string(),
             ),
-            value: Some(self.value.clone().into_owned()),
+            value: Some(self.value.as_ref().to_string()),
             start: self.start,
             end: self.end,
         }
