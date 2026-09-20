@@ -1650,13 +1650,15 @@ Adform video, impression, and click tags on `*.adform.net` paths `/videoad`,
 `/C/`, and `/adfserve`. Level: `official_vendor`. That includes the regional
 tracking domains (`a2` Americas, `track` EMEA, `a1` global, `asia` APAC).
 Verification scripts on `s2.adform.net` stay directory-only; they do not use
-those paths.
+those paths. Query pairs split on both `&` and `;`, so `bn` is the banner ID
+even when consent or click pairs follow it.
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
-| `bn` | Required banner ID, leading digits | `vendor.adform.param.bn.missing`, `.empty`, `.invalid` |
+| `bn` | Required numeric banner ID | `vendor.adform.param.bn.missing`, `.empty`, `.invalid` |
+| `C` | Numeric click index when present. Multi-click tags send `C=1`, `C=2` | `vendor.adform.param.C.empty`, `.invalid` |
 
-Source: [serve third-party banners](https://www.adformhelp.com/hc/en-us/articles/9738565242385-Serve-Third-Party-Banners-with-Adform-Ad-Server). Regional hosts: [site-tracking privacy information](https://www.adformhelp.com/hc/en-us/articles/9740578281873-Learn-About-Site-Tracking-Privacy-Information).
+Source: [serve third-party banners](https://www.adformhelp.com/hc/en-us/articles/9738565242385-Serve-Third-Party-Banners-with-Adform-Ad-Server), [code HTML5 banners](https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners). Regional hosts: [site-tracking privacy information](https://www.adformhelp.com/hc/en-us/articles/9740578281873-Learn-About-Site-Tracking-Privacy-Information).
 
 ## `vendor/comscore`
 

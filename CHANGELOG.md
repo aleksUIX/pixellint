@@ -10,6 +10,9 @@ All notable changes to Pixellint are documented here. The format follows
 
 - `Engine::default` builds the host index once after every builtin pack is
   registered, instead of rebuilding it on each insert.
+- Adform tracking tags type-check click index `C`. Query strings that mix `&`
+  and `;` are readable via `param_style: query_semicolon`, so `bn` is the
+  banner ID instead of the whole semicolon tail.
 
 ## 0.31.8 - 2026-09-19
 

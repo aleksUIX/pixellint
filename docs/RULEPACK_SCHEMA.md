@@ -28,7 +28,7 @@ engine.register_manifest_path("acme.json")?;
 | `vendor` | no | Vendor slug reported as `detected_vendor` when the pack matches. |
 | `source_level` | no | Evidence level for every rule in the pack. Defaults to `official_vendor`. |
 | `docs` | no | Pack-wide documentation URL. Rules inherit it when they omit their own. |
-| `param_style` | no | `query` (default), `matrix`, or `colon_path`. |
+| `param_style` | no | `query` (default), `query_semicolon`, `matrix`, or `colon_path`. |
 | `path_pattern` | no | Regular expression with named captures, run against the path. Each named group becomes a parameter. |
 | `match` | yes | Which artifacts the pack claims. |
 | `params` | no | Parameter contracts. |
@@ -43,6 +43,8 @@ is rejected at load time.
 ### `param_style`
 
 - `query` reads `?a=1&b=2`.
+- `query_semicolon` reads the query string and splits on both `&` and `;`,
+  the shape Adform uses: `?bn=123;C=1` next to `?bn=123&v=3`.
 - `matrix` reads semicolon-delimited pairs carried on the path, the shape
   Floodlight uses: `/ddm/activity/src=123;type=abc;cat=xyz;ord=1?`.
 - `colon_path` reads slash-delimited `key:value` path segments, the shape

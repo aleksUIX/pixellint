@@ -31,6 +31,9 @@ pub enum ParamStyle {
     /// Standard `?name=value&name=value` query parameters.
     #[default]
     Query,
+    /// Query parameters that split on both `&` and `;`, the shape Adform
+    /// impression and click tags use: `?bn=123;C=1` next to `?bn=123&v=3`.
+    QuerySemicolon,
     /// Semicolon-delimited `name=value` pairs inside the path, as used by
     /// Floodlight activity tags.
     Matrix,
@@ -2052,9 +2055,10 @@ fn whole_url_target(artifact: &str) -> ViolationTarget {
 }
 
 /// Splits the raw artifact into parameters, keeping byte offsets into the
-/// original string. Query style reads `?a=1&b=2`; matrix style reads the
-/// semicolon-delimited pairs Floodlight puts in the path; colon-path style
-/// reads `/key:value/` segments, including Partnerize basket `[...]` groups.
+/// original string. Query style reads `?a=1&b=2`; query-semicolon also splits
+/// on `;`, the shape Adform uses; matrix style reads the semicolon-delimited
+/// pairs Floodlight puts in the path; colon-path style reads `/key:value/`
+/// segments, including Partnerize basket `[...]` groups.
 pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam> {
     if style == ParamStyle::ColonPath {
         return extract_colon_path_params(artifact);
@@ -2065,7 +2069,7 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
     let query_start = artifact[..fragment_start].find('?');
 
     let (region_start, region_end) = match style {
-        ParamStyle::Query => match query_start {
+        ParamStyle::Query | ParamStyle::QuerySemicolon => match query_start {
             Some(start) => (start + 1, fragment_start),
             None => return Vec::new(),
         },
@@ -2077,18 +2081,11 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
         return Vec::new();
     }
 
-    let separator = match style {
-        ParamStyle::Query => '&',
-        ParamStyle::Matrix => ';',
-        ParamStyle::ColonPath => unreachable!("colon_path returns above"),
-    };
-
     let mut params = Vec::new();
     let mut cursor = region_start;
 
     while cursor <= region_end {
-        let segment_end = artifact[cursor..region_end]
-            .find(separator)
+        let segment_end = next_pair_break(&artifact[cursor..region_end], style)
             .map(|offset| cursor + offset)
             .unwrap_or(region_end);
         let segment = &artifact[cursor..segment_end];
@@ -2121,6 +2118,20 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
     }
 
     params
+}
+
+fn next_pair_break(haystack: &str, style: ParamStyle) -> Option<usize> {
+    match style {
+        ParamStyle::Query => haystack.find('&'),
+        ParamStyle::Matrix => haystack.find(';'),
+        ParamStyle::QuerySemicolon => match (haystack.find('&'), haystack.find(';')) {
+            (Some(ampersand), Some(semicolon)) => Some(ampersand.min(semicolon)),
+            (Some(ampersand), None) => Some(ampersand),
+            (None, Some(semicolon)) => Some(semicolon),
+            (None, None) => None,
+        },
+        ParamStyle::ColonPath => None,
+    }
 }
 
 /// Partnerize-style `/campaign:ID/clickref:ABC/[category:DVD/quantity:1]` paths.
@@ -2449,6 +2460,32 @@ mod tests {
         let artifact = "https://px.example.com/ddm/activity/id=12345;ev=Purchase;legacy=1?";
         let report = pack.validate(&request(artifact));
 
+        assert_eq!(codes(&report), vec!["vendor.test.param.legacy.deprecated"]);
+        let target = &report.violations[0].targets[0];
+        assert_eq!(&artifact[target.start..target.end], "legacy=1");
+    }
+
+    #[test]
+    fn query_semicolon_params_split_on_ampersand_and_semicolon() {
+        let manifest = TEST_MANIFEST.replace(
+            r#""match": {"#,
+            r#""param_style": "query_semicolon", "match": {"#,
+        );
+        let pack =
+            ManifestRulePack::from_json(&manifest).expect("compile query_semicolon manifest");
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=12345;ev=PageView",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        let report = pack.validate(&request(
+            "https://px.example.com/collect?id=12345&ev=PageView",
+        ));
+        assert!(codes(&report).is_empty(), "{:?}", codes(&report));
+
+        let artifact = "https://px.example.com/collect?id=12345;ev=Purchase;legacy=1";
+        let report = pack.validate(&request(artifact));
         assert_eq!(codes(&report), vec!["vendor.test.param.legacy.deprecated"]);
         let target = &report.violations[0].targets[0];
         assert_eq!(&artifact[target.start..target.end], "legacy=1");

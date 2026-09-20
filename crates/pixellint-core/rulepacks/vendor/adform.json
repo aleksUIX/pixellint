@@ -1,10 +1,11 @@
 {
   "id": "vendor/adform",
   "display_name": "Adform tracking tags",
-  "description": "Adform video, impression, and click tags on regional tracking domains, whose banner number rides as bn.",
+  "description": "Adform video, impression, and click tags on regional tracking domains, whose banner number rides as bn and whose click index rides as C.",
   "vendor": "adform",
   "source_level": "official_vendor",
   "docs": "https://www.adformhelp.com/hc/en-us/articles/9738565242385-Serve-Third-Party-Banners-with-Adform-Ad-Server",
+  "param_style": "query_semicolon",
   "match": {
     "host_suffixes": ["adform.net"],
     "path_prefixes": ["/videoad", "/C/", "/adfserve"]
@@ -13,10 +14,17 @@
     {
       "name": "bn",
       "requirement": "required",
-      "format": { "kind": "regex", "pattern": "^[0-9]+" },
-      "description": "It is the numeric Adform banner ID. Adform documents video tags as `{region}.adform.net/videoad/?bn=` plus that ID. Semicolon-delimited consent pairs may follow the number on click and impression tags. a2 is the Americas tracking domain, track is EMEA, a1 is global, asia is APAC.",
+      "format": { "kind": "integer" },
+      "description": "It is the numeric Adform banner ID. Adform documents video tags as `{region}.adform.net/videoad/?bn=` plus that ID. a2 is the Americas tracking domain, track is EMEA, a1 is global, asia is APAC.",
       "fix_hint": "Set `bn` to the banner ID from the Adform tag.",
       "doc": "https://www.adformhelp.com/hc/en-us/articles/9738565242385-Serve-Third-Party-Banners-with-Adform-Ad-Server"
+    },
+    {
+      "name": "C",
+      "format": { "kind": "integer" },
+      "description": "It is the click index Adform writes on multi-click banners. Adform documents clicktrackers as `C=1`, `C=2`, and so on. Single-click tags omit it.",
+      "fix_hint": "Set `C` to the click index from the Adform tag, or drop the pair on a single-click tag.",
+      "doc": "https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners"
     }
   ],
   "rules": []
