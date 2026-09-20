@@ -2051,7 +2051,14 @@ Parse.ly collect beacons on `p1.parsely.com` and `p1-irl.parsely.com`. Level:
 | --- | --- | --- |
 | `idsite` | Required Site ID | `vendor.parsely-collect.param.idsite.missing`, `.empty` |
 | `url` | Required absolute URL | `vendor.parsely-collect.param.url.missing`, `.invalid` |
-| `action` | Recommended | `vendor.parsely-collect.param.action.missing`, `.empty` |
+| `action` | Recommended: `pageview`, `heartbeat`, `videostart`, `vheartbeat`, `conversion`, or `custom` | `vendor.parsely-collect.param.action.missing`, `.invalid` |
+| `rand`, `plid`, `sid`, `sts`, `slts`, `pvid`, `inc` | When present, an integer | `vendor.parsely-collect.param.rand.invalid` and the other integer keys |
+| `urlref`, `sref` | When present, an absolute URL or blank | `vendor.parsely-collect.param.urlref.invalid`, `.sref.invalid` |
+| `surl` | When present, an absolute URL | `vendor.parsely-collect.param.surl.invalid` |
+| `screen` | When present, `WxH|availWxavailH|depth` | `vendor.parsely-collect.param.screen.invalid` |
+| `data` | When present, a JSON object or blank | `vendor.parsely-collect.param.data.invalid` |
+| `title`, `u` | When present, not empty | `vendor.parsely-collect.param.title.empty`, `.u.empty` |
+| `date` | When present, an ISO 8601 datetime | `vendor.parsely-collect.param.date.invalid` |
 
 Sources: [tracker details](https://docs.parse.ly/tracker-details/),
 [test integration](https://docs.parse.ly/installation-resources/parsely-integration/test-integration/),

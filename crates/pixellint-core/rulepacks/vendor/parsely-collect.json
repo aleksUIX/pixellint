@@ -28,9 +28,86 @@
     {
       "name": "action",
       "requirement": "recommended",
-      "format": { "kind": "non_empty" },
-      "description": "It names the event. Parse.ly documents pageview, heartbeat, videostart, video heartbeat, conversion, and custom events.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "pageview",
+          "heartbeat",
+          "videostart",
+          "vheartbeat",
+          "conversion",
+          "custom"
+        ]
+      },
+      "description": "It names the event. Parse.ly documents `pageview`, `heartbeat`, `videostart`, `vheartbeat`, `conversion`, and `custom`.",
       "fix_hint": "Send `action=pageview` for a page view.",
+      "doc": "https://docs.parse.ly/tracker-details/"
+    },
+    {
+      "name": "rand",
+      "name_pattern": "^(rand|plid|sid|sts|slts|pvid|inc)$",
+      "format": { "kind": "integer" },
+      "description": "It is an integer tracker field. Parse.ly documents `rand` / `sts` / `slts` as millisecond timestamps, `plid` / `pvid` / `sid` as ids, and `inc` as heartbeat seconds. `slts` is `0` on a first session.",
+      "fix_hint": "Send an integer, such as `0` or a millisecond timestamp.",
+      "doc": "https://docs.parse.ly/tracker-details/"
+    },
+    {
+      "name": "urlref",
+      "allow_empty": true,
+      "format": { "kind": "url" },
+      "description": "It is the HTTP referrer. Parse.ly documents a full URL, or blank when the reader typed the address.",
+      "fix_hint": "Send an absolute referrer URL in `urlref`, or leave it blank.",
+      "doc": "https://docs.parse.ly/installation-resources/parsely-integration/test-integration/"
+    },
+    {
+      "name": "sref",
+      "allow_empty": true,
+      "format": { "kind": "url" },
+      "description": "It is the session's first referrer. Parse.ly documents that it can be blank.",
+      "fix_hint": "Send an absolute URL in `sref`, or leave it blank.",
+      "doc": "https://docs.parse.ly/tracker-details/"
+    },
+    {
+      "name": "surl",
+      "format": { "kind": "url" },
+      "description": "It is the session's first pageview URL.",
+      "fix_hint": "Send the absolute first-page URL in `surl`.",
+      "doc": "https://docs.parse.ly/tracker-details/"
+    },
+    {
+      "name": "screen",
+      "format": { "kind": "regex", "pattern": "^[0-9]+x[0-9]+\\|[0-9]+x[0-9]+\\|[0-9]+$" },
+      "description": "It is the client resolution. Parse.ly documents `WIDTHxHEIGHT|availableWIDTHxavailableHEIGHT|pixelDepth`.",
+      "fix_hint": "Send `screen` as `1920x1080|1920x1040|24`.",
+      "doc": "https://docs.parse.ly/tracker-details/"
+    },
+    {
+      "name": "data",
+      "allow_empty": true,
+      "format": { "kind": "regex", "pattern": "^\\{.*\\}$" },
+      "description": "It is optional JSON. Parse.ly documents conversions, audience segments, and custom data here, and allows a blank value.",
+      "fix_hint": "Send a JSON object in `data`, or leave it blank.",
+      "doc": "https://docs.parse.ly/tracker-details/"
+    },
+    {
+      "name": "title",
+      "format": { "kind": "non_empty" },
+      "description": "It is the content title shown in the Parse.ly dashboard.",
+      "fix_hint": "Send the headline in `title`, or drop the empty pair.",
+      "doc": "https://docs.parse.ly/tracker-details/"
+    },
+    {
+      "name": "date",
+      "format": { "kind": "regex", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}" },
+      "description": "It is the client-side event time. Parse.ly documents an ISO 8601 datetime string.",
+      "fix_hint": "Send `date` as ISO 8601, such as `2026-09-20T15:41:53.000Z`.",
+      "doc": "https://docs.parse.ly/tracker-details/"
+    },
+    {
+      "name": "u",
+      "format": { "kind": "non_empty" },
+      "description": "It is the pseudonymous device UUID.",
+      "fix_hint": "Send the device UUID in `u`, or drop the empty pair.",
       "doc": "https://docs.parse.ly/tracker-details/"
     }
   ]

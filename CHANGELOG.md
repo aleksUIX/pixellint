@@ -55,6 +55,12 @@ All notable changes to Pixellint are documented here. The format follows
 - Matomo Tracking API type-checks leftover Crash Analytics query keys from
   the published table: non-empty `cra` (requires `ca=1`), `cra_st` /
   `cra_ct` / `cra_tp` / `cra_ru`, and integer `cra_rl` / `cra_rc`.
+- Parse.ly collect type-checks leftover default beacon keys from the
+  published tracker table: integer `rand` / `plid` / `sid` / `sts` /
+  `slts` / `pvid` / `inc`, absolute or blank `urlref` / `sref`, absolute
+  `surl`, `screen` as `WxH|availWxavailH|depth`, JSON `data`, ISO 8601
+  `date`, and `action` as `pageview` / `heartbeat` / `videostart` /
+  `vheartbeat` / `conversion` / `custom`.
 
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.
