@@ -553,6 +553,13 @@ The event payload is checked per event in `data`.
 | `user_data.sc_cookie1` | When present, not empty. First-party `_scid`, unhashed | `vendor.snapchat.body.user_data.sc_cookie1.empty` |
 | `user_data.madid`, `idfv` | When present, not empty. Sent unhashed | `vendor.snapchat.body.user_data.madid.empty`, `.idfv.empty` |
 | `custom_data.order_id` | When present, not empty | `vendor.snapchat.body.custom_data.order_id.empty` |
+| `custom_data.value` | Non-negative decimal number when present | `vendor.snapchat.body.custom_data.value.invalid` |
+| `custom_data.currency` | Documented ISO 4217 subset when present | `vendor.snapchat.body.custom_data.currency.invalid` |
+| `custom_data.content_type` | When present, `product` or `product_group` | `vendor.snapchat.body.custom_data.content_type.invalid` |
+| `custom_data.content_ids` | When present, not empty. Scalar or list | `vendor.snapchat.body.custom_data.content_ids.empty` |
+| `custom_data.num_items` | Whole number when present | `vendor.snapchat.body.custom_data.num_items.invalid` |
+| `custom_data.contents[].id` | When present, not empty | `vendor.snapchat.body.custom_data.contents[].id.empty` |
+| `custom_data.contents[].quantity`, `item_price` | When present, a number. `item_price` is the unit price | `vendor.snapchat.body.custom_data.contents[].quantity.invalid`, `.item_price.invalid` |
 | Web events | `event_source_url` is required when `action_source` is `WEB` | `vendor.snapchat.body.web_requires_source_url` |
 | Purchase events | `custom_data.value` and `custom_data.currency` are required | `vendor.snapchat.body.purchase_requires_value_and_currency` |
 | Value without currency | `currency` is required whenever `value` is set | `vendor.snapchat.body.value_requires_currency` |

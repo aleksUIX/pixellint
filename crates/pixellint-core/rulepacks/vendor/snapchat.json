@@ -283,18 +283,84 @@
       },
       {
         "name": "custom_data.value",
-        "description": "It is the monetary value of the event. Snap documents it as required for PURCHASE.",
-        "fix_hint": "Send the purchase total in `custom_data.value`.",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
+        "description": "It is the monetary value of the event. Snap documents a float, required for PURCHASE, with no currency symbol.",
+        "fix_hint": "Send the purchase total in `custom_data.value` as a number, such as `10`.",
         "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
       },
       {
         "name": "custom_data.currency",
         "format": {
-          "kind": "regex",
-          "pattern": "^[A-Za-z]{3}$"
+          "kind": "enum",
+          "case_insensitive": true,
+          "values": [
+            "USD",
+            "AED",
+            "AUD",
+            "BGN",
+            "BRL",
+            "CAD",
+            "CHF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CZK",
+            "DKK",
+            "EGP",
+            "EUR",
+            "GBP",
+            "GIP",
+            "HKD",
+            "HRK",
+            "HUF",
+            "IDR",
+            "ILS",
+            "INR",
+            "JPY",
+            "KRW",
+            "KWD",
+            "KZT",
+            "LBP",
+            "MXN",
+            "MYR",
+            "NGN",
+            "NOK",
+            "NZD",
+            "PEN",
+            "PHP",
+            "PKR",
+            "PLN",
+            "QAR",
+            "RON",
+            "RUB",
+            "SAR",
+            "SEK",
+            "SGD",
+            "THB",
+            "TRY",
+            "TWD",
+            "TZS",
+            "UAH",
+            "VND",
+            "ZAR",
+            "ALL",
+            "BHD",
+            "DZD",
+            "GHS",
+            "IQD",
+            "ISK",
+            "JOD",
+            "KES",
+            "MAD",
+            "OMR",
+            "XOF"
+          ]
         },
-        "description": "It is the ISO 4217 currency of `custom_data.value`.",
-        "fix_hint": "Send the three-letter code, such as `USD`.",
+        "description": "It is the currency of `custom_data.value`. Snap documents a subset of ISO 4217, not every three-letter code.",
+        "fix_hint": "Send a documented code such as `USD`.",
         "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
       },
       {
@@ -305,6 +371,73 @@
         "description": "It is the order identifier. Snap documents it on the Dynamic Ads custom_data table.",
         "fix_hint": "Send the order id in `custom_data.order_id`, or drop the empty pair.",
         "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.content_type",
+        "format": {
+          "kind": "enum",
+          "values": ["product", "product_group"]
+        },
+        "description": "It says what `content_ids` or `contents` represent. Snap documents `product` for a single item or `product_group` for a variant group.",
+        "fix_hint": "Set `custom_data.content_type` to `product` or `product_group`.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.content_ids",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is a product or category identifier. Snap documents a single id, an array, or a comma-separated list.",
+        "fix_hint": "Send a catalog id in `custom_data.content_ids`, or drop the empty pair.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.content_ids[]",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "Every id in the list is a product or category identifier.",
+        "fix_hint": "Send catalog ids in `custom_data.content_ids`, or drop empty entries.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.num_items",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+$"
+        },
+        "description": "It is the total number of items. Snap documents it as a string.",
+        "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.contents[].id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the item id on a contents row. Snap documents `id` on each contents object.",
+        "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.contents[].quantity",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
+        "description": "It is the item count on a contents row. Snap's published example sends it as a number string.",
+        "fix_hint": "Send `custom_data.contents[].quantity` as a number, such as `1`.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI"
+      },
+      {
+        "name": "custom_data.contents[].item_price",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        },
+        "description": "It is the unit price of one item. Snap's published example sends `item_price` as a number string.",
+        "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `5`. Put the order total in `custom_data.value`.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI"
       }
     ],
     "rules": [

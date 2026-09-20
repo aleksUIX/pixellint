@@ -101,6 +101,11 @@ All notable changes to Pixellint are documented here. The format follows
   an absolute URL, numeric `properties.value`, `properties.content_type`
   (`product` or `product_group`), contents `content_id` and unit `price`,
   and `user.locale`. Contents `quantity` stays off the published table.
+- Snap Conversions API Dynamic Ads type-check numeric `custom_data.value`,
+  Snap's documented currency subset, `content_type` (`product` or
+  `product_group`), `content_ids`, `num_items`, and contents `id`,
+  `quantity`, and unit `item_price`. Travel ads and `extinfo` stay
+  unexpanded.
 
 ## 0.31.8 - 2026-09-19
 
