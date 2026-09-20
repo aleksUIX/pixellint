@@ -376,6 +376,43 @@
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
+      "name": "_cvar",
+      "name_pattern": "^(_cvar|cvar|uadata)$",
+      "format": { "kind": "regex", "pattern": "^\\{.*\\}$" },
+      "description": "It is a JSON object. Matomo documents `_cvar` as visit-scope custom variables, `cvar` as page-scope custom variables, and `uadata` as Client Hints.",
+      "fix_hint": "Send a JSON object, such as `{\"1\":[\"OS\",\"iphone 5.0\"]}`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "recMode",
+      "format": { "kind": "enum", "values": ["1", "2"] },
+      "description": "It selects visit vs bot tracking. Matomo documents `1` as bot only and `2` as auto. Omit it for visit-only tracking.",
+      "fix_hint": "Send `recMode=1` or `recMode=2`, or omit the pair for visit-only tracking.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "bots",
+      "format": { "kind": "enum", "values": ["1"] },
+      "description": "If set to `1`, Matomo tracks a detected bot as a normal visit. Matomo documents `bots=1` only when `recMode` is omitted.",
+      "fix_hint": "Send `bots=1` without `recMode`, or omit the pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "http_status",
+      "name_pattern": "^(http_status|bw_bytes)$",
+      "format": { "kind": "integer" },
+      "description": "It is bot-tracking telemetry. Matomo documents `http_status` as the HTTP status code and `bw_bytes` as bytes transferred.",
+      "fix_hint": "Send `http_status` or `bw_bytes` as an integer.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "source",
+      "format": { "kind": "non_empty" },
+      "description": "It is a source label for a bot request, such as `Cloudflare`.",
+      "fix_hint": "Send a source label in `source`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
       "name": "dimension1",
       "name_pattern": "^dimension([1-9]|[1-9][0-9]{1,2})$",
       "format": { "kind": "non_empty" },
@@ -424,6 +461,28 @@
       "severity": "error",
       "message": "The hit sends `ca` with `ping=1`. Matomo documents custom action as incompatible with a heartbeat.",
       "fix_hint": "Drop `ca` from a heartbeat, or drop `ping=1` from a custom action.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "code": "vendor.matomo.bot_requires_ua",
+      "kind": "required_when_value",
+      "when": "recMode",
+      "equals": ["1"],
+      "requires": ["ua"],
+      "severity": "error",
+      "message": "The hit sets `recMode=1` without `ua`. Matomo documents the user-agent as required for bot-only tracking.",
+      "fix_hint": "Send the full user-agent string in `ua`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "code": "vendor.matomo.bots_forbids_recMode",
+      "kind": "forbidden_when_value",
+      "when": "recMode",
+      "equals": ["1", "2"],
+      "params": ["bots"],
+      "severity": "error",
+      "message": "The hit sends `bots=1` with `recMode`. Matomo documents `bots=1` only in visit-only mode, when `recMode` is omitted.",
+      "fix_hint": "Drop `bots`, or drop `recMode`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     }
   ]

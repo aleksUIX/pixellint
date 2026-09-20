@@ -2004,6 +2004,11 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | `ua`, `lang`, `cs` | When present, not empty | `vendor.matomo.param.ua.empty`, `.lang.empty`, `.cs.empty` |
 | `ca` | When present, `1`. Forbidden with `ping=1` | `vendor.matomo.param.ca.invalid`, `vendor.matomo.ca_forbids_ping` |
 | `_rcn`, `_rck` | When present, not empty | `vendor.matomo.param._rcn.empty`, `._rck.empty` |
+| `_cvar`, `cvar`, `uadata` | When present, a JSON object | `vendor.matomo.param._cvar.invalid`, `.cvar.invalid`, `.uadata.invalid` |
+| `recMode` | When present, `1` (bot only) or `2` (auto). `1` requires `ua` | `vendor.matomo.param.recMode.invalid`, `vendor.matomo.bot_requires_ua` |
+| `bots` | When present, `1`. Forbidden with `recMode` | `vendor.matomo.param.bots.invalid`, `vendor.matomo.bots_forbids_recMode` |
+| `http_status`, `bw_bytes` | When present, an integer | `vendor.matomo.param.http_status.invalid`, `.bw_bytes.invalid` |
+| `source` | When present, not empty | `vendor.matomo.param.source.empty` |
 | Plugin flags | When present, `1` (`fla`, `java`, `dir`, `qt`, `realp`, `pdf`, `wma`, `gears`, `ag`) | `vendor.matomo.param.pdf.invalid` and the other plugin keys |
 | `c_n`, `c_p`, `c_i` | When present, not empty | `vendor.matomo.param.c_n.empty`, `.c_p.empty`, `.c_i.empty` |
 | `c_t` | When present, an absolute URL | `vendor.matomo.param.c_t.invalid` |

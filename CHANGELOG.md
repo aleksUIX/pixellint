@@ -47,6 +47,9 @@ All notable changes to Pixellint are documented here. The format follows
 - Matomo Tracking API type-checks leftover site-search `search_cat`,
   user-agent `ua`, Accept-Language `lang`, charset `cs`, campaign
   `_rcn` / `_rck`, and `ca=1` (forbidden with `ping=1`).
+- Matomo Tracking API type-checks leftover JSON `_cvar` / `cvar` /
+  `uadata`, `recMode` `1`/`2` (bot-only requires `ua`), `bots=1`
+  (forbidden with `recMode`), and integer `http_status` / `bw_bytes`.
 
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.
