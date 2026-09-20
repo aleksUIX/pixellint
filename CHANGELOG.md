@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.8 - 2026-09-19
+
 ### Added
 
 - In-process load benchmark (`pixellint-bench`) over the golden corpus,
