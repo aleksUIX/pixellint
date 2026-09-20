@@ -1999,7 +1999,11 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | `cookie`, `new_visit`, `ping` | When present, `1` | `vendor.matomo.param.cookie.invalid`, `.new_visit.invalid`, `.ping.invalid` |
 | `pv_id` | When present, six alphanumeric characters | `vendor.matomo.param.pv_id.invalid` |
 | `search` | When present, not empty | `vendor.matomo.param.search.empty` |
+| `search_cat` | When present, not empty | `vendor.matomo.param.search_cat.empty` |
 | `search_count` | When present, an integer | `vendor.matomo.param.search_count.invalid` |
+| `ua`, `lang`, `cs` | When present, not empty | `vendor.matomo.param.ua.empty`, `.lang.empty`, `.cs.empty` |
+| `ca` | When present, `1`. Forbidden with `ping=1` | `vendor.matomo.param.ca.invalid`, `vendor.matomo.ca_forbids_ping` |
+| `_rcn`, `_rck` | When present, not empty | `vendor.matomo.param._rcn.empty`, `._rck.empty` |
 | Plugin flags | When present, `1` (`fla`, `java`, `dir`, `qt`, `realp`, `pdf`, `wma`, `gears`, `ag`) | `vendor.matomo.param.pdf.invalid` and the other plugin keys |
 | `c_n`, `c_p`, `c_i` | When present, not empty | `vendor.matomo.param.c_n.empty`, `.c_p.empty`, `.c_i.empty` |
 | `c_t` | When present, an absolute URL | `vendor.matomo.param.c_t.invalid` |

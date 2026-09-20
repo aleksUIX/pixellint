@@ -327,6 +327,55 @@
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
+      "name": "search_cat",
+      "format": { "kind": "non_empty" },
+      "description": "It is the site-search category. Matomo documents `search_cat` as optional when `search` is specified.",
+      "fix_hint": "Send the search category in `search_cat`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ua",
+      "format": { "kind": "non_empty" },
+      "description": "It is an override for the User-Agent HTTP header. Matomo uses it to detect the operating system and browser.",
+      "fix_hint": "Send the full user-agent string in `ua`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "lang",
+      "format": { "kind": "non_empty" },
+      "description": "It is an override for the Accept-Language HTTP header. Matomo uses it to detect country when GeoIP is not enabled.",
+      "fix_hint": "Send the Accept-Language value in `lang`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "cs",
+      "format": { "kind": "non_empty" },
+      "description": "It is the charset of the page being tracked. Matomo defaults to `utf-8`.",
+      "fix_hint": "Send the page charset in `cs` when it is not `utf-8`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ca",
+      "format": { "kind": "enum", "values": ["1"] },
+      "description": "It marks a custom action that is not a page view. Matomo documents `ca=1` on events and other non-pageview hits.",
+      "fix_hint": "Send `ca=1` on a non-pageview hit, or omit the pair. Do not send it with `ping=1`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "_rcn",
+      "format": { "kind": "non_empty" },
+      "description": "It is the campaign name used to attribute goal conversions, not visits.",
+      "fix_hint": "Send the campaign name in `_rcn`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "_rck",
+      "format": { "kind": "non_empty" },
+      "description": "It is the campaign keyword used to attribute goal conversions, not visits.",
+      "fix_hint": "Send the campaign keyword in `_rck`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
       "name": "dimension1",
       "name_pattern": "^dimension([1-9]|[1-9][0-9]{1,2})$",
       "format": { "kind": "non_empty" },
@@ -364,6 +413,17 @@
       "severity": "error",
       "message": "The hit sends a content interaction `c_i` without a content name `c_n`. Matomo documents both on a content interaction.",
       "fix_hint": "Set `c_n` to the same content name as the impression, such as `Ad Foo Bar`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "code": "vendor.matomo.ca_forbids_ping",
+      "kind": "forbidden_when_value",
+      "when": "ping",
+      "equals": ["1"],
+      "params": ["ca"],
+      "severity": "error",
+      "message": "The hit sends `ca` with `ping=1`. Matomo documents custom action as incompatible with a heartbeat.",
+      "fix_hint": "Drop `ca` from a heartbeat, or drop `ping=1` from a custom action.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     }
   ]
