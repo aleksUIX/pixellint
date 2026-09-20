@@ -44,6 +44,9 @@ All notable changes to Pixellint are documented here. The format follows
 - Segment HTTP Tracking API calls type-check unhashed `context.userAgent`,
   require `context.page.url` to be an absolute URL when present, and check
   reserved `properties.currency` as a three-letter ISO 4217 code.
+- PostHog capture requires `properties.$survey_id` on `survey sent`,
+  `survey shown`, and `survey dismissed`, and type-checks `$current_url`,
+  `$session_id`, and `$screen_name` when present. `$current_url` may be a path.
 
 ## 0.31.8 - 2026-09-19
 

@@ -855,6 +855,8 @@ Capture requests to PostHog, single or batched under `batch`. Level:
 | Over-hashing | `properties.$ip` must not be a digest | `vendor.posthog.body.hashed_plaintext_field` |
 | `$create_alias` | Requires `properties.alias` | `vendor.posthog.body.alias_requires_alias` |
 | `$groupidentify` | Requires `$group_type` and `$group_key`, each at most 400 characters | `vendor.posthog.body.groupidentify_requires_type_and_key` |
+| `$current_url`, `$session_id`, `$screen_name` | When present, not empty. `$current_url` may be a path | `vendor.posthog.body.properties.$current_url.empty`, `.$session_id.empty`, `.$screen_name.empty` |
+| `survey sent`, `survey shown`, `survey dismissed` | Require `properties.$survey_id` | `vendor.posthog.body.survey_requires_survey_id` |
 
 Source: [capture API](https://posthog.com/docs/api/capture).
 

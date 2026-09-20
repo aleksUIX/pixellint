@@ -191,6 +191,42 @@
           },
           "description": "It is the group key on `$groupidentify`. PostHog documents at most 400 characters.",
           "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.$current_url",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the page URL or path on `$pageview`. PostHog documents it on the capture pageview example, including a path-only value.",
+          "fix_hint": "Send `properties.$current_url` as the page path or full URL, or drop the empty pair.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.$session_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the session id. PostHog documents it on the `$pageview` capture example.",
+          "fix_hint": "Send `properties.$session_id`, or drop the empty pair.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.$screen_name",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the screen name on `$screen`. PostHog documents it on the capture screen-view example.",
+          "fix_hint": "Send `properties.$screen_name`, or drop the empty pair.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "name": "properties.$survey_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the survey. PostHog documents it as required on `survey sent`, `survey shown`, and `survey dismissed`.",
+          "fix_hint": "Set `properties.$survey_id` to the survey id from PostHog.",
+          "doc": "https://posthog.com/docs/api/capture"
         }
       ],
       "rules": [
@@ -233,6 +269,17 @@
           "severity": "error",
           "message": "A `$groupidentify` event is missing `$group_type` or `$group_key`. PostHog documents both, each at most 400 characters.",
           "fix_hint": "Set `properties.$group_type` and `properties.$group_key`.",
+          "doc": "https://posthog.com/docs/api/capture"
+        },
+        {
+          "code": "vendor.posthog.body.survey_requires_survey_id",
+          "kind": "required_when_value",
+          "when": "event",
+          "equals": ["survey sent", "survey shown", "survey dismissed"],
+          "requires": ["properties.$survey_id"],
+          "severity": "error",
+          "message": "A survey event carries no `properties.$survey_id`. PostHog documents that field as required on `survey sent`, `survey shown`, and `survey dismissed`.",
+          "fix_hint": "Set `properties.$survey_id` to the survey id from PostHog.",
           "doc": "https://posthog.com/docs/api/capture"
         }
       ]
