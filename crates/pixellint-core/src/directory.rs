@@ -10,6 +10,8 @@
 //! never publish one. Attribution is a weaker claim that can be made honestly
 //! for the long tail.
 
+use std::borrow::Cow;
+use std::collections::HashMap;
 use std::error::Error;
 use std::fmt;
 use std::fs;
@@ -39,11 +41,21 @@ pub struct VendorEntry {
 }
 
 /// A set of vendor entries.
-#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct VendorDirectory {
     entries: Vec<VendorEntry>,
+    #[serde(skip)]
+    by_host: HashMap<String, usize>,
 }
+
+impl PartialEq for VendorDirectory {
+    fn eq(&self, other: &Self) -> bool {
+        self.entries == other.entries
+    }
+}
+
+impl Eq for VendorDirectory {}
 
 /// Why a directory could not be loaded.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -95,9 +107,10 @@ impl VendorDirectory {
     }
 
     pub fn from_json(json: &str) -> Result<Self, DirectoryError> {
-        let directory: Self =
+        let mut directory: Self =
             serde_json::from_str(json).map_err(|error| DirectoryError::Parse(error.to_string()))?;
         directory.validate()?;
+        directory.rebuild_host_index();
         Ok(directory)
     }
 
@@ -154,6 +167,7 @@ impl VendorDirectory {
     pub fn merge(&mut self, other: Self) -> Result<(), DirectoryError> {
         self.entries.extend(other.entries);
         self.validate()?;
+        self.rebuild_host_index();
         Ok(())
     }
 
@@ -176,15 +190,41 @@ impl VendorDirectory {
 
     /// Finds the vendor that serves a host. A directory host also matches its
     /// subdomains, so `sc-static.net` covers `cdn.sc-static.net`.
+    ///
+    /// When more than one listed host matches, the earlier directory entry
+    /// wins, matching the previous linear scan.
     pub fn lookup_host(&self, host: &str) -> Option<&VendorEntry> {
-        let host = host.to_ascii_lowercase();
+        let host = ascii_lower(host);
+        let mut best: Option<usize> = None;
+        let mut label = host.as_ref();
+        loop {
+            if let Some(&index) = self.by_host.get(label) {
+                best = Some(best.map_or(index, |current| current.min(index)));
+            }
+            match label.find('.') {
+                Some(dot) => label = &label[dot + 1..],
+                None => break,
+            }
+        }
+        best.map(|index| &self.entries[index])
+    }
 
-        self.entries.iter().find(|entry| {
-            entry.hosts.iter().any(|candidate| {
-                let candidate = candidate.to_ascii_lowercase();
-                host == candidate || host.ends_with(&format!(".{candidate}"))
-            })
-        })
+    fn rebuild_host_index(&mut self) {
+        let mut by_host = HashMap::with_capacity(self.host_count());
+        for (index, entry) in self.entries.iter().enumerate() {
+            for host in &entry.hosts {
+                by_host.entry(host.to_ascii_lowercase()).or_insert(index);
+            }
+        }
+        self.by_host = by_host;
+    }
+}
+
+fn ascii_lower(value: &str) -> Cow<'_, str> {
+    if value.bytes().any(|byte| byte.is_ascii_uppercase()) {
+        Cow::Owned(value.to_ascii_lowercase())
+    } else {
+        Cow::Borrowed(value)
     }
 }
 
@@ -230,6 +270,44 @@ mod tests {
         );
         assert_eq!(directory.lookup_host("notglobex.example"), None);
         assert_eq!(directory.lookup_host("example.com"), None);
+    }
+
+    #[test]
+    fn overlapping_suffixes_keep_the_first_directory_entry() {
+        let directory = VendorDirectory::from_json(
+            r#"{
+                "entries": [
+                    {
+                        "vendor": "parent",
+                        "display_name": "Parent",
+                        "category": "analytics",
+                        "hosts": ["example.test"]
+                    },
+                    {
+                        "vendor": "child",
+                        "display_name": "Child",
+                        "category": "analytics",
+                        "hosts": ["px.example.test"]
+                    }
+                ]
+            }"#,
+        )
+        .expect("parse");
+
+        assert_eq!(
+            directory.lookup_host("px.example.test").map(|e| &e.vendor),
+            Some(&"parent".to_string())
+        );
+        assert_eq!(
+            directory
+                .lookup_host("cdn.px.example.test")
+                .map(|e| &e.vendor),
+            Some(&"parent".to_string())
+        );
+        assert_eq!(
+            directory.lookup_host("example.test").map(|e| &e.vendor),
+            Some(&"parent".to_string())
+        );
     }
 
     #[test]

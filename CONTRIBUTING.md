@@ -23,8 +23,10 @@ All three must pass; CI enforces them.
 - `crates/pixellint-cli`: the `pixellint` binary
 - `crates/pixellint-mcp`: MCP server over stdio
 - `crates/pixellint-wasm`: wasm-bindgen bindings
+- `crates/pixellint-bench`: unpublished in-process load benchmark
 - `npm/`: the Node package, wrapping a committed WASM build in `npm/wasm/`
 - `fixtures/`: golden corpus, one directory per rulepack
+- `bench/`: how to run the load benchmark (`bench/README.md`)
 
 ## The committed WASM build
 

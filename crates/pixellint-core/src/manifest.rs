@@ -6,6 +6,7 @@
 //! [`ValidatorPlugin`] trait as the hand-written `core` pack, so first-party
 //! vendor packs and user-supplied packs run through one code path.
 
+use std::borrow::Cow;
 use std::collections::BTreeSet;
 use std::error::Error;
 use std::fmt;
@@ -16,10 +17,11 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 
 use crate::json::{self, JsonDocument, JsonValueKind};
+use crate::prepare::{self, ArtifactUrl, PreparedArtifact};
 use crate::{
-    ArtifactKind, RulePackMetadata, RuleSource, RuleSourceLevel, Severity, ValidationReport,
-    ValidationRequest, ValidatorPlugin, Violation, ViolationTarget, ViolationTargetComponent,
-    detect_macro_spans, sanitize_macro_spans,
+    ArtifactKind, PluginRouting, RulePackMetadata, RuleSource, RuleSourceLevel, Severity,
+    ValidationReport, ValidationRequest, ValidatorPlugin, Violation, ViolationTarget,
+    ViolationTargetComponent, detect_macro_spans,
 };
 
 /// How a pack's parameters are carried on the wire.
@@ -606,6 +608,7 @@ struct CompiledBody {
     scope: Option<ScopeSpec>,
     params: Vec<CompiledParam>,
     rules: Vec<CompiledRule>,
+    exact_names: BTreeSet<String>,
 }
 
 /// A rulepack compiled from a [`RulePackManifest`].
@@ -619,6 +622,7 @@ pub struct ManifestRulePack {
     path_pattern: Option<Regex>,
     matcher: MatchSpec,
     params: Vec<CompiledParam>,
+    exact_param_names: BTreeSet<String>,
     rules: Vec<CompiledRule>,
     bodies: Vec<CompiledBody>,
     shapes: Vec<CompiledShape>,
@@ -873,10 +877,12 @@ impl ManifestRulePack {
                         }
                     }
 
+                    let exact_names = exact_param_names(&params);
                     bodies.push(CompiledBody {
                         scope: spec.scope.clone(),
                         params,
                         rules,
+                        exact_names,
                     });
                 }
 
@@ -888,6 +894,15 @@ impl ManifestRulePack {
                 }
             }
         }
+
+        let mut matcher = manifest.matcher;
+        for host in &mut matcher.hosts {
+            host.make_ascii_lowercase();
+        }
+        for suffix in &mut matcher.host_suffixes {
+            suffix.make_ascii_lowercase();
+        }
+        let exact_param_names = exact_param_names(&params);
 
         Ok(Self {
             metadata: RulePackMetadata {
@@ -906,8 +921,9 @@ impl ManifestRulePack {
             docs: manifest.docs.clone(),
             param_style: manifest.param_style,
             path_pattern,
-            matcher: manifest.matcher.clone(),
+            matcher,
             params,
+            exact_param_names,
             rules,
             bodies,
             shapes,
@@ -970,30 +986,26 @@ impl ManifestRulePack {
         !self.shapes.is_empty() && self.shapes.iter().all(|shape| shape.holds(document))
     }
 
-    fn matches_endpoint(&self, artifact: &str) -> bool {
-        let Some(parsed) = parse_artifact_url(artifact) else {
+    fn matches_parsed_url(&self, parsed: Option<&ArtifactUrl>) -> bool {
+        let Some(parsed) = parsed else {
             return false;
         };
-        let Some(host) = parsed.host else {
+        let Some(host) = parsed.host.as_deref() else {
             return false;
         };
-        let host = host.to_ascii_lowercase();
 
-        let host_matches = self
-            .matcher
-            .hosts
-            .iter()
-            .any(|candidate| candidate.eq_ignore_ascii_case(&host))
-            || self.matcher.host_suffixes.iter().any(|suffix| {
-                let suffix = suffix.to_ascii_lowercase();
-                host == suffix || host.ends_with(&format!(".{suffix}"))
-            });
+        let host_matches = self.matcher.hosts.iter().any(|candidate| candidate == host)
+            || self
+                .matcher
+                .host_suffixes
+                .iter()
+                .any(|suffix| prepare::host_matches_suffix(host, suffix));
 
         if !host_matches {
             return false;
         }
 
-        let path = parsed.path;
+        let path = parsed.path.as_str();
         let path_constrained = !self.matcher.paths.is_empty()
             || !self.matcher.path_prefixes.is_empty()
             || !self.matcher.path_contains.is_empty();
@@ -1002,10 +1014,7 @@ impl ManifestRulePack {
             return true;
         }
 
-        self.matcher
-            .paths
-            .iter()
-            .any(|candidate| candidate == &path)
+        self.matcher.paths.iter().any(|candidate| candidate == path)
             || self
                 .matcher
                 .path_prefixes
@@ -1024,31 +1033,49 @@ impl ValidatorPlugin for ManifestRulePack {
         &self.metadata
     }
 
-    fn supports(&self, request: &ValidationRequest) -> bool {
-        let artifact = request.artifact.trim();
+    fn routing(&self) -> PluginRouting {
+        PluginRouting::Indexed {
+            hosts: self.matcher.hosts.clone(),
+            suffixes: self.matcher.host_suffixes.clone(),
+            json: !self.bodies.is_empty(),
+        }
+    }
 
-        if !self.matches_artifact_kind(request.artifact_kind) {
+    fn supports(&self, request: &ValidationRequest) -> bool {
+        self.supports_prepared(&PreparedArtifact::from_request(request))
+    }
+
+    fn supports_prepared(&self, prepared: &PreparedArtifact<'_>) -> bool {
+        let artifact = prepared.trimmed();
+
+        if !self.matches_artifact_kind(prepared.request().artifact_kind) {
             return false;
         }
 
-        if self.reads_as_body(request.artifact_kind, artifact) {
-            return JsonDocument::parse(artifact)
-                .map(|document| self.matches_shape(&document))
-                .unwrap_or(false);
+        if self.reads_as_body(prepared.request().artifact_kind, artifact) {
+            return match prepared.json() {
+                Some(Ok(document)) => self.matches_shape(document),
+                _ => false,
+            };
         }
 
-        self.matches_endpoint(artifact)
+        self.matches_parsed_url(prepared.url())
     }
 
     fn validate(&self, request: &ValidationRequest) -> ValidationReport {
-        let artifact = request.artifact.trim();
+        self.validate_prepared(&PreparedArtifact::from_request(request))
+    }
+
+    fn validate_prepared(&self, prepared: &PreparedArtifact<'_>) -> ValidationReport {
+        let request = prepared.request();
+        let artifact = prepared.trimmed();
         let mut violations = Vec::new();
 
         if self.reads_as_body(request.artifact_kind, artifact) {
-            return self.validate_body(request, artifact);
+            return self.validate_body(request, artifact, prepared.json());
         }
 
-        if !self.matches_endpoint(artifact) {
+        if !self.matches_parsed_url(prepared.url()) {
             violations.push(Violation {
                 code: format!("{}.endpoint_mismatch", self.code_prefix),
                 message: format!(
@@ -1085,9 +1112,9 @@ impl ValidatorPlugin for ManifestRulePack {
             body: None,
         };
 
-        let exact_names = exact_param_names(&self.params);
+        let exact_names = &self.exact_param_names;
         for compiled in &self.params {
-            self.check_param(&scope, compiled, &params, &exact_names, &mut violations);
+            self.check_param(&scope, compiled, &params, exact_names, &mut violations);
         }
 
         for compiled in &self.rules {
@@ -1133,20 +1160,42 @@ impl ManifestRulePack {
     /// payload the pack does not recognize is reported the same way a URL that
     /// misses the endpoint is, since both mean the caller aimed the pack at the
     /// wrong artifact.
-    fn validate_body(&self, request: &ValidationRequest, artifact: &str) -> ValidationReport {
+    fn validate_body(
+        &self,
+        request: &ValidationRequest,
+        artifact: &str,
+        parsed: Option<&Result<JsonDocument, json::JsonError>>,
+    ) -> ValidationReport {
         // A body that does not parse is the core pack's finding to report, and
         // it has nothing this pack can contract.
-        let Ok(document) = JsonDocument::parse(artifact) else {
-            return ValidationReport {
-                plugin_id: self.metadata.id.clone(),
-                detected_vendor: None,
-                violations: Vec::new(),
-            };
+        let owned;
+        let document = match parsed {
+            Some(Ok(document)) => document,
+            Some(Err(_)) => {
+                return ValidationReport {
+                    plugin_id: self.metadata.id.clone(),
+                    detected_vendor: None,
+                    violations: Vec::new(),
+                };
+            }
+            None => match JsonDocument::parse(artifact) {
+                Ok(document) => {
+                    owned = document;
+                    &owned
+                }
+                Err(_) => {
+                    return ValidationReport {
+                        plugin_id: self.metadata.id.clone(),
+                        detected_vendor: None,
+                        violations: Vec::new(),
+                    };
+                }
+            },
         };
 
         let mut violations = Vec::new();
 
-        if !self.matches_shape(&document) {
+        if !self.matches_shape(document) {
             violations.push(Violation {
                 code: format!("{}.payload_mismatch", self.code_prefix),
                 message: format!(
@@ -1175,24 +1224,24 @@ impl ManifestRulePack {
         }
 
         for body in &self.bodies {
-            for scope_path in body_scopes(&document, body.scope.as_ref()) {
-                let params = collect_body_params(&document, &scope_path, &body.params);
+            for scope_path in body_scopes(document, body.scope.as_ref()) {
+                let params = collect_body_params(document, &scope_path, &body.params);
                 let scope = Scope {
                     code_segment: "body",
                     field_prefix: match scope_path.is_empty() {
                         true => "body".to_string(),
                         false => format!("body.{scope_path}"),
                     },
-                    fallback: body_target(&document, &scope_path, artifact),
+                    fallback: body_target(document, &scope_path, artifact),
                     body: Some(BodyScope {
-                        document: &document,
+                        document,
                         path: &scope_path,
                     }),
                 };
 
-                let exact_names = exact_param_names(&body.params);
+                let exact_names = &body.exact_names;
                 for compiled in &body.params {
-                    self.check_param(&scope, compiled, &params, &exact_names, &mut violations);
+                    self.check_param(&scope, compiled, &params, exact_names, &mut violations);
                 }
 
                 for compiled in &body.rules {
@@ -1251,7 +1300,7 @@ impl ManifestRulePack {
 
                 Some(RawParam::query(
                     name.to_string(),
-                    percent_decode(capture.as_str()),
+                    percent_decode(capture.as_str()).into_owned(),
                     path_start + capture.start(),
                     path_start + capture.end(),
                 ))
@@ -1791,7 +1840,7 @@ fn format_violation(format: &ValueFormat, regex: Option<&Regex>, value: &str) ->
         },
         ValueFormat::Url { require_https } => {
             let decoded = percent_decode(value);
-            match url::Url::parse(&decoded) {
+            match url::Url::parse(decoded.as_ref()) {
                 Ok(parsed) => {
                     if *require_https && parsed.scheme() != "https" {
                         Some(format!("must be an https URL, but is `{decoded}`."))
@@ -2002,34 +2051,6 @@ fn whole_url_target(artifact: &str) -> ViolationTarget {
     }
 }
 
-struct ArtifactUrl {
-    host: Option<String>,
-    path: String,
-}
-
-/// The host of an artifact, with macros neutralized first.
-pub(crate) fn artifact_host(artifact: &str) -> Option<String> {
-    parse_artifact_url(artifact)?.host
-}
-
-/// Parses an artifact URL with macros neutralized, so a templated URL still
-/// resolves to a host and path.
-fn parse_artifact_url(artifact: &str) -> Option<ArtifactUrl> {
-    let spans = detect_macro_spans(artifact);
-    let sanitized = if spans.is_empty() {
-        artifact.to_string()
-    } else {
-        sanitize_macro_spans(artifact, &spans)
-    };
-
-    let parsed = url::Url::parse(&sanitized).ok()?;
-
-    Some(ArtifactUrl {
-        host: parsed.host_str().map(str::to_string),
-        path: parsed.path().to_string(),
-    })
-}
-
 /// Splits the raw artifact into parameters, keeping byte offsets into the
 /// original string. Query style reads `?a=1&b=2`; matrix style reads the
 /// semicolon-delimited pairs Floodlight puts in the path; colon-path style
@@ -2085,8 +2106,8 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam>
             };
 
             params.push(RawParam::query(
-                percent_decode(name),
-                percent_decode(value),
+                percent_decode(name).into_owned(),
+                percent_decode(value).into_owned(),
                 cursor + name_offset,
                 segment_end,
             ));
@@ -2126,8 +2147,8 @@ fn extract_colon_path_params(artifact: &str) -> Vec<RawParam> {
                 {
                     let abs = path_start + rel;
                     params.push(RawParam::query(
-                        percent_decode(name),
-                        percent_decode(value),
+                        percent_decode(name).into_owned(),
+                        percent_decode(value).into_owned(),
                         abs + leading,
                         abs + inner_end,
                     ));
@@ -2158,7 +2179,15 @@ pub(crate) fn path_span(artifact: &str) -> (usize, usize) {
 
 /// Minimal percent-decoding for parameter names and values. `+` is decoded as a
 /// space because form-encoded pixel payloads are common.
-fn percent_decode(value: &str) -> String {
+fn percent_decode(value: &str) -> Cow<'_, str> {
+    if !value
+        .as_bytes()
+        .iter()
+        .any(|&byte| byte == b'%' || byte == b'+')
+    {
+        return Cow::Borrowed(value);
+    }
+
     let bytes = value.as_bytes();
     let mut decoded = Vec::with_capacity(bytes.len());
     let mut index = 0;
@@ -2191,13 +2220,14 @@ fn percent_decode(value: &str) -> String {
         }
     }
 
-    String::from_utf8_lossy(&decoded).into_owned()
+    Cow::Owned(String::from_utf8_lossy(&decoded).into_owned())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::{Engine, ExpansionState, ValidationOptions};
+    use std::borrow::Cow;
 
     const TEST_MANIFEST: &str = r#"{
         "id": "vendor/test",
@@ -2857,6 +2887,17 @@ mod tests {
         assert_eq!(percent_decode("buyer%40example.com"), "buyer@example.com");
         assert_eq!(percent_decode("a+b"), "a b");
         assert_eq!(percent_decode("100%"), "100%");
+        assert_eq!(percent_decode("plain"), "plain");
+        assert_eq!(percent_decode(""), "");
+        assert_eq!(percent_decode("%2Fpath%2F"), "/path/");
+        assert_eq!(percent_decode("%2f"), "/");
+        assert_eq!(percent_decode("%GG"), "%GG");
+        assert_eq!(percent_decode("%2"), "%2");
+        assert_eq!(percent_decode("100% done"), "100% done");
+        assert_eq!(percent_decode("a%"), "a%");
+        assert_eq!(percent_decode("caf%C3%A9"), "café");
+        assert!(matches!(percent_decode("plain"), Cow::Borrowed("plain")));
+        assert!(matches!(percent_decode(""), Cow::Borrowed("")));
     }
 }
 

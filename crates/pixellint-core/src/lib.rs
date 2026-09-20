@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::error::Error;
 use std::fmt;
 use std::path::Path;
@@ -11,6 +11,7 @@ pub mod directory;
 pub mod document;
 mod json;
 pub mod manifest;
+mod prepare;
 mod privacy;
 
 pub use directory::{DIRECTORY_ID, DirectoryError, VendorDirectory, VendorEntry};
@@ -23,6 +24,7 @@ pub use manifest::{
     Assertion, ManifestError, ManifestRulePack, MatchSpec, PackRule, ParamContract, ParamStyle,
     Requirement, RulePackManifest, ValueFormat,
 };
+pub use prepare::PreparedArtifact;
 
 /// The vendor endpoint directory compiled into the crate.
 pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.json");
@@ -687,10 +689,40 @@ impl ValidationSummary {
     }
 }
 
+/// How the engine can shortlist this pack before calling [`ValidatorPlugin::supports`].
+#[derive(Debug, Clone)]
+#[doc(hidden)]
+pub enum PluginRouting {
+    /// Always a candidate. Used by `core` and custom plugins that do not
+    /// advertise hosts.
+    Always,
+    /// Candidate when the artifact host or JSON shape can match this pack.
+    Indexed {
+        hosts: Vec<String>,
+        suffixes: Vec<String>,
+        json: bool,
+    },
+}
+
 pub trait ValidatorPlugin: Send + Sync {
     fn metadata(&self) -> &RulePackMetadata;
     fn supports(&self, request: &ValidationRequest) -> bool;
     fn validate(&self, request: &ValidationRequest) -> ValidationReport;
+
+    #[doc(hidden)]
+    fn routing(&self) -> PluginRouting {
+        PluginRouting::Always
+    }
+
+    #[doc(hidden)]
+    fn supports_prepared(&self, prepared: &PreparedArtifact<'_>) -> bool {
+        self.supports(prepared.request())
+    }
+
+    #[doc(hidden)]
+    fn validate_prepared(&self, prepared: &PreparedArtifact<'_>) -> ValidationReport {
+        self.validate(prepared.request())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -714,9 +746,23 @@ impl fmt::Display for EngineError {
 
 impl Error for EngineError {}
 
+struct PluginEntry {
+    plugin: Arc<dyn ValidatorPlugin>,
+    routing: PluginRouting,
+}
+
+#[derive(Default)]
+struct HostIndex {
+    exact: HashMap<String, Vec<String>>,
+    suffixes: HashMap<String, Vec<String>>,
+    json_ids: Vec<String>,
+    always_ids: Vec<String>,
+}
+
 pub struct Engine {
-    plugins: BTreeMap<String, Arc<dyn ValidatorPlugin>>,
+    plugins: BTreeMap<String, PluginEntry>,
     directory: VendorDirectory,
+    index: HostIndex,
 }
 
 impl Default for Engine {
@@ -743,6 +789,7 @@ impl Engine {
         Self {
             plugins: BTreeMap::new(),
             directory: VendorDirectory::default(),
+            index: HostIndex::default(),
         }
     }
 
@@ -767,8 +814,15 @@ impl Engine {
     where
         P: ValidatorPlugin + 'static,
     {
-        self.plugins
-            .insert(plugin.metadata().id.clone(), Arc::new(plugin));
+        let routing = plugin.routing();
+        self.plugins.insert(
+            plugin.metadata().id.clone(),
+            PluginEntry {
+                plugin: Arc::new(plugin),
+                routing,
+            },
+        );
+        self.rebuild_index();
     }
 
     /// Compiles a declarative rulepack manifest and registers it.
@@ -786,7 +840,7 @@ impl Engine {
     pub fn list_rulepacks(&self) -> Vec<RulePackMetadata> {
         self.plugins
             .values()
-            .map(|plugin| plugin.metadata().clone())
+            .map(|entry| entry.plugin.metadata().clone())
             .collect()
     }
 
@@ -795,22 +849,81 @@ impl Engine {
         request: &ValidationRequest,
         options: &ValidationOptions,
     ) -> Result<ValidationSummary, EngineError> {
-        let plugins = self.select_plugins(request, options)?;
+        let prepared = PreparedArtifact::from_request(request);
+        let plugins = self.select_plugins(&prepared, options)?;
         let mut reports: Vec<ValidationReport> = plugins
             .into_iter()
-            .map(|plugin| plugin.validate(request))
+            .map(|plugin| plugin.validate_prepared(&prepared))
             .collect();
 
-        if let Some(report) = self.directory_report(request, options, &reports) {
+        if let Some(report) = self.directory_report(&prepared, options, &reports) {
             reports.push(report);
         }
 
         Ok(ValidationSummary { reports })
     }
 
+    fn rebuild_index(&mut self) {
+        let mut index = HostIndex::default();
+        for (id, entry) in &self.plugins {
+            match &entry.routing {
+                PluginRouting::Always => index.always_ids.push(id.clone()),
+                PluginRouting::Indexed {
+                    hosts,
+                    suffixes,
+                    json,
+                } => {
+                    for host in hosts {
+                        index
+                            .exact
+                            .entry(host.clone())
+                            .or_default()
+                            .push(id.clone());
+                    }
+                    for suffix in suffixes {
+                        index
+                            .suffixes
+                            .entry(suffix.clone())
+                            .or_default()
+                            .push(id.clone());
+                    }
+                    if *json {
+                        index.json_ids.push(id.clone());
+                    }
+                }
+            }
+        }
+        self.index = index;
+    }
+
+    fn candidate_ids<'a>(&'a self, prepared: &PreparedArtifact<'_>) -> HashSet<&'a str> {
+        let mut ids: HashSet<&str> = self.index.always_ids.iter().map(String::as_str).collect();
+        if prepared.wants_json() {
+            ids.extend(self.index.json_ids.iter().map(String::as_str));
+        }
+        if let Some(url) = prepared.url()
+            && let Some(host) = url.host.as_deref()
+        {
+            if let Some(list) = self.index.exact.get(host) {
+                ids.extend(list.iter().map(String::as_str));
+            }
+            let mut label = host;
+            loop {
+                if let Some(list) = self.index.suffixes.get(label) {
+                    ids.extend(list.iter().map(String::as_str));
+                }
+                match label.find('.') {
+                    Some(index) => label = &label[index + 1..],
+                    None => break,
+                }
+            }
+        }
+        ids
+    }
+
     fn select_plugins(
         &self,
-        request: &ValidationRequest,
+        prepared: &PreparedArtifact<'_>,
         options: &ValidationOptions,
     ) -> Result<Vec<Arc<dyn ValidatorPlugin>>, EngineError> {
         self.ensure_known_rulepacks(&options.only_rulepacks)?;
@@ -838,7 +951,11 @@ impl Engine {
             let selected = only_packs
                 .into_iter()
                 .filter(|rulepack_id| !excluded.contains(rulepack_id.as_str()))
-                .filter_map(|rulepack_id| self.plugins.get(rulepack_id).map(Arc::clone))
+                .filter_map(|rulepack_id| {
+                    self.plugins
+                        .get(rulepack_id)
+                        .map(|entry| Arc::clone(&entry.plugin))
+                })
                 .collect::<Vec<_>>();
 
             if selected.is_empty() {
@@ -848,12 +965,14 @@ impl Engine {
             return Ok(selected);
         }
 
+        let candidates = self.candidate_ids(prepared);
         let selected = self
             .plugins
             .values()
-            .filter(|plugin| !excluded.contains(plugin.metadata().id.as_str()))
-            .filter(|plugin| plugin.supports(request))
-            .map(Arc::clone)
+            .filter(|entry| candidates.contains(entry.plugin.metadata().id.as_str()))
+            .filter(|entry| !excluded.contains(entry.plugin.metadata().id.as_str()))
+            .filter(|entry| entry.plugin.supports_prepared(prepared))
+            .map(|entry| Arc::clone(&entry.plugin))
             .collect::<Vec<_>>();
 
         if selected.is_empty() {
@@ -873,7 +992,7 @@ impl Engine {
     /// pack is strictly better information than a directory hit.
     fn directory_report(
         &self,
-        request: &ValidationRequest,
+        prepared: &PreparedArtifact<'_>,
         options: &ValidationOptions,
         reports: &[ValidationReport],
     ) -> Option<ValidationReport> {
@@ -894,8 +1013,8 @@ impl Engine {
             return None;
         }
 
-        let artifact = request.artifact.trim();
-        let host = manifest::artifact_host(artifact)?;
+        let artifact = prepared.trimmed();
+        let host = prepared.url().and_then(|url| url.host.clone())?;
         let entry = self.directory.lookup_host(&host)?;
 
         let mut message = format!(
@@ -995,8 +1114,13 @@ impl ValidatorPlugin for CoreRulePack {
     }
 
     fn validate(&self, request: &ValidationRequest) -> ValidationReport {
+        self.validate_prepared(&PreparedArtifact::from_request(request))
+    }
+
+    fn validate_prepared(&self, prepared: &PreparedArtifact<'_>) -> ValidationReport {
         let mut violations = Vec::new();
-        let artifact = request.artifact.trim();
+        let artifact = prepared.trimmed();
+        let request = prepared.request();
 
         if artifact.is_empty() {
             violations.push(Violation {
@@ -1022,11 +1146,13 @@ impl ValidatorPlugin for CoreRulePack {
                     validate_url_like_artifact(artifact, request.expansion_state, &mut violations);
                     privacy::apply_privacy_rules(artifact, &mut violations);
                 }
-                ArtifactKind::JsonPayload => validate_json_artifact(artifact, &mut violations),
+                ArtifactKind::JsonPayload => {
+                    validate_json_artifact(artifact, prepared.json(), &mut violations)
+                }
                 // An unstated kind that opens like a document is read as one, so
                 // a pasted payload still gets its syntax checked.
                 ArtifactKind::Unknown if json::JsonDocument::looks_like_json(artifact) => {
-                    validate_json_artifact(artifact, &mut violations);
+                    validate_json_artifact(artifact, prepared.json(), &mut violations)
                 }
                 _ => {}
             }
@@ -1044,12 +1170,28 @@ impl ValidatorPlugin for CoreRulePack {
 
 /// A body that does not parse cannot be contracted by any vendor pack, so the
 /// syntax error is the whole finding and it is worth saying precisely.
-fn validate_json_artifact(artifact: &str, violations: &mut Vec<Violation>) {
-    let Err(error) = json::JsonDocument::parse(artifact) else {
-        return;
+fn validate_json_artifact(
+    artifact: &str,
+    parsed: Option<&Result<json::JsonDocument, json::JsonError>>,
+    violations: &mut Vec<Violation>,
+) {
+    let error = match parsed {
+        Some(Ok(_)) => return,
+        Some(Err(error)) => error,
+        None => match json::JsonDocument::parse(artifact) {
+            Ok(_) => return,
+            Err(error) => {
+                violations.push(json_parse_violation(artifact, &error));
+                return;
+            }
+        },
     };
 
-    violations.push(Violation {
+    violations.push(json_parse_violation(artifact, error));
+}
+
+fn json_parse_violation(artifact: &str, error: &json::JsonError) -> Violation {
+    Violation {
         code: "core.json.parse_error".to_string(),
         message: format!("Request body is not valid JSON: {error}."),
         severity: Severity::Error,
@@ -1069,7 +1211,7 @@ fn validate_json_artifact(artifact: &str, violations: &mut Vec<Violation>) {
             start: error.offset.min(artifact.len()),
             end: artifact.len(),
         }],
-    });
+    }
 }
 
 fn validate_url_like_artifact(
@@ -1428,6 +1570,11 @@ pub(crate) fn detect_macro_spans(artifact: &str) -> Vec<MacroSpan> {
     let mut index = 0;
 
     while index < artifact.len() {
+        let remainder = &artifact[index..];
+        let Some(relative) = remainder.find(['$', '[', '{']) else {
+            break;
+        };
+        index += relative;
         let remainder = &artifact[index..];
 
         if let Some(span) = match_macro_span(artifact, index, remainder) {

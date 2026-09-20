@@ -11,8 +11,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use pixellint_core::{
-    ArtifactKind, BUILTIN_VENDOR_MANIFESTS, Engine, ExpansionState, ManifestRulePack, Severity,
-    ValidationOptions, ValidationRequest, ValidationSummary, ValidatorPlugin,
+    ArtifactKind, BUILTIN_VENDOR_MANIFESTS, CoreRulePack, Engine, ExpansionState, ManifestRulePack,
+    Severity, ValidationOptions, ValidationReport, ValidationRequest, ValidationSummary,
+    ValidatorPlugin,
 };
 use serde::Deserialize;
 
@@ -122,6 +123,110 @@ fn golden_corpus_matches_expected_findings() {
     }
 
     assert!(checked > 0, "no fixtures were checked");
+}
+
+#[test]
+fn auto_mode_matches_independent_plugin_supports_and_reports() {
+    let engine = Engine::default();
+    let core = CoreRulePack::default();
+    let mut packs: Vec<(&str, ManifestRulePack)> = BUILTIN_VENDOR_MANIFESTS
+        .iter()
+        .map(|(id, json)| {
+            (
+                *id,
+                ManifestRulePack::from_json(json)
+                    .unwrap_or_else(|error| panic!("compile `{id}` for selection lock: {error}")),
+            )
+        })
+        .collect();
+    packs.sort_by_key(|(id, _)| *id);
+
+    let mut checked = 0;
+
+    for directory in fixture_directories() {
+        let manifest_path = directory.join("manifest.json");
+        let manifest = fs::read_to_string(&manifest_path)
+            .unwrap_or_else(|error| panic!("read {}: {error}", manifest_path.display()));
+        let cases: Vec<FixtureCase> = serde_json::from_str(&manifest)
+            .unwrap_or_else(|error| panic!("parse {}: {error}", manifest_path.display()));
+
+        for case in cases {
+            if !case.rulepacks.is_empty() {
+                continue;
+            }
+
+            let label = format!("{}/{}", directory_name(&directory), case.id);
+            let artifact_path = directory.join(&case.fixture);
+            let artifact = fs::read_to_string(&artifact_path).unwrap_or_else(|error| {
+                panic!("read fixture {}: {error}", artifact_path.display())
+            });
+
+            let request = ValidationRequest {
+                artifact_kind: parse_artifact_kind(&case.kind),
+                artifact,
+                claimed_vendor: case.claimed_vendor.clone(),
+                expansion_state: parse_expansion_state(case.expansion_state.as_deref()),
+            };
+
+            let excluded: BTreeSet<&str> =
+                case.except_rulepacks.iter().map(String::as_str).collect();
+
+            let mut expected = Vec::new();
+            if !excluded.contains("core") && core.supports(&request) {
+                expected.push(core.validate(&request));
+            }
+            for (id, pack) in &packs {
+                if excluded.contains(id) {
+                    continue;
+                }
+                if pack.supports(&request) {
+                    expected.push(pack.validate(&request));
+                }
+            }
+
+            let options = ValidationOptions {
+                only_rulepacks: Vec::new(),
+                except_rulepacks: case.except_rulepacks.clone(),
+            };
+            let summary = engine
+                .validate(&request, &options)
+                .unwrap_or_else(|error| panic!("validate fixture {label}: {error}"));
+
+            let actual: Vec<&ValidationReport> = summary
+                .reports
+                .iter()
+                .filter(|report| report.plugin_id != pixellint_core::DIRECTORY_ID)
+                .collect();
+
+            let actual_ids: Vec<&str> = actual
+                .iter()
+                .map(|report| report.plugin_id.as_str())
+                .collect();
+            let expected_ids: Vec<&str> = expected
+                .iter()
+                .map(|report| report.plugin_id.as_str())
+                .collect();
+            assert_eq!(
+                actual_ids, expected_ids,
+                "fixture {label} auto-selected rulepacks"
+            );
+
+            for (actual_report, expected_report) in actual.iter().zip(expected.iter()) {
+                assert_eq!(
+                    *actual_report, expected_report,
+                    "fixture {label} report `{}`",
+                    expected_report.plugin_id
+                );
+            }
+
+            checked += 1;
+        }
+    }
+
+    assert!(
+        checked > 100,
+        "selection lock walked too few auto-mode fixtures: {checked}"
+    );
 }
 
 #[test]

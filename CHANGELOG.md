@@ -6,6 +6,23 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- In-process load benchmark (`pixellint-bench`) over the golden corpus,
+  D1-shaped synthetic pixels, and huge `validate-many` batches. See
+  [bench/README.md](bench/README.md).
+- Engine coverage tests that lock plugin selection, host and JSON matching,
+  `validate_many` equivalence, and error paths against an independent
+  `supports()` scan of every golden fixture.
+
+### Changed
+
+- `Engine::validate` shortlists vendor packs by host (and JSON shape), parses
+  the artifact URL or JSON body once, and reuses that work in `supports` and
+  `validate`. Matcher hosts are lowercased at compile time. Directory lookup
+  uses a host map. Parameter percent-decoding skips allocation when there is
+  nothing to decode.
+
 ## 0.31.7 - 2026-09-19
 
 ### Changed
