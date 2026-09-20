@@ -146,6 +146,85 @@
         "doc": "https://developer.nextdoor.com/reference/conversions-track"
       },
       {
+        "name": "customer.first_name",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the first name after lowercase.",
+        "fix_hint": "Lowercase, SHA-256, and send 64 lowercase hex characters.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "name": "customer.last_name",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the last name after lowercase.",
+        "fix_hint": "Lowercase, SHA-256, and send 64 lowercase hex characters.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "name": "customer.date_of_birth",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the date of birth. Nextdoor documents YYYYMMDD before hashing.",
+        "fix_hint": "Format as YYYYMMDD, SHA-256, and send 64 lowercase hex characters.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "customer.street_address",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the street address.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "name": "customer.city",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the city after lowercase with no spaces.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "name": "customer.state",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the two-letter ANSI state code after lowercase.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "customer.zip_code",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the ZIP code. Nextdoor documents the first 5 digits for US codes before hashing.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "customer.country",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of the ISO 3166-1 alpha-2 country code after lowercase.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "customer.gender",
+        "format": { "kind": "hex", "length": 64 },
+        "format_severity": "warning",
+        "description": "It is the SHA-256 digest of `f`, `m`, or `n`. Nextdoor documents the initial as hashed.",
+        "fix_hint": "Hash `f`, `m`, or `n` with SHA-256 and send 64 lowercase hex characters.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "customer.external_id",
+        "format": { "kind": "non_empty" },
+        "description": "It is the advertiser's own user id, such as a loyalty id.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "custom.order_id",
+        "format": { "kind": "non_empty" },
+        "description": "It is the order ID for the transaction. Nextdoor documents it as required for offline events.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
         "name": "custom.order_value",
         "format": { "kind": "regex", "pattern": "^[A-Z]{3}[0-9]+(?:\\.[0-9]{1,2})?$" },
         "description": "It is ISO 4217 currency then the amount, such as `USD49.99`. Nextdoor documents it as required on purchase.",
@@ -159,6 +238,142 @@
           "values": ["in_store", "curbside", "home_delivery"]
         },
         "description": "It names how the purchase was fulfilled. Nextdoor documents `in_store`, `curbside`, and `home_delivery`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "custom.product_context[].id",
+        "format": { "kind": "non_empty" },
+        "description": "It is the product id on a `product_context` row. Nextdoor documents `id` on each product object.",
+        "fix_hint": "Set `custom.product_context[].id` to the SKU or catalog id, or drop the empty pair.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "custom.product_context[].content_name",
+        "format": { "kind": "non_empty" },
+        "description": "It is the product name on a `product_context` row. Nextdoor lists `content_name` with `id`, `quantity`, and `item_price`.",
+        "fix_hint": "Set `custom.product_context[].content_name` to the product name, or drop the empty pair.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "custom.product_context[].quantity",
+        "format": { "kind": "integer" },
+        "description": "It is the quantity of that product. Nextdoor documents `quantity` as an integer on each product object.",
+        "fix_hint": "Send `custom.product_context[].quantity` as a whole number, such as `2`.",
+        "doc": "https://developer.nextdoor.com/reference/conversion-data-types"
+      },
+      {
+        "name": "custom.product_context[].item_price",
+        "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+        "description": "It is the unit price of that product. The conversions/track example uses a decimal such as `5.99`. It is not a replacement for `custom.order_value`.",
+        "fix_hint": "Send `custom.product_context[].item_price` as a number, such as `5.99`. Put the order total in `custom.order_value`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "app.app_id",
+        "format": { "kind": "non_empty" },
+        "description": "It is the App Store or Google Play app id. Nextdoor documents the `app` object as required for app events.",
+        "fix_hint": "Set `app.app_id` to the store app id.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "app.platform",
+        "format": {
+          "kind": "enum",
+          "values": ["iOS", "Android"]
+        },
+        "description": "It is the mobile platform. Nextdoor documents `iOS` and `Android`.",
+        "fix_hint": "Set `app.platform` to `iOS` or `Android`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "app.app_version",
+        "format": { "kind": "non_empty" },
+        "description": "It is the mobile app version string.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "app.app_tracking_enabled",
+        "format": {
+          "kind": "enum",
+          "values": ["true", "false"]
+        },
+        "description": "It is the ATT opt-in flag. Nextdoor documents a boolean.",
+        "fix_hint": "Send `app.app_tracking_enabled` as `true` or `false`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "restricted_data_usage",
+        "format": { "kind": "integer" },
+        "description": "When set, Nextdoor documents `1` (or `true`) to keep the event for reporting only.",
+        "fix_hint": "Send `restricted_data_usage` as an integer, such as `1`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "restricted_data_usage_country",
+        "format": {
+          "kind": "enum",
+          "values": ["1"]
+        },
+        "description": "It associates a country with Limited Data Use. Nextdoor documents `1` for the United States.",
+        "fix_hint": "Set `restricted_data_usage_country` to `1`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "restricted_data_usage_state",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "1000",
+            "1001",
+            "1002",
+            "1003",
+            "1004",
+            "1005",
+            "1006",
+            "1007",
+            "1008",
+            "1009",
+            "1010",
+            "1011",
+            "1012",
+            "1013",
+            "1014",
+            "1015",
+            "1016",
+            "1017",
+            "1018"
+          ]
+        },
+        "description": "It associates a US state with Limited Data Use. Nextdoor documents codes `1000` (California) through `1018` (Rhode Island).",
+        "fix_hint": "Set `restricted_data_usage_state` to a documented code such as `1000` for California.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "delivery_optimization",
+        "format": {
+          "kind": "enum",
+          "values": ["true", "false"]
+        },
+        "description": "True means the event may be used for optimization. False means attribution only.",
+        "fix_hint": "Send `delivery_optimization` as `true` or `false`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "event_timezone",
+        "format": { "kind": "non_empty" },
+        "description": "It is an optional timezone for where the conversion took place.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "partner_id",
+        "format": { "kind": "non_empty" },
+        "description": "It names the integration vendor or agency partner. Nextdoor documents it as reference, not attribution.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "name": "test_event",
+        "format": { "kind": "non_empty" },
+        "description": "It flags a test conversion. Nextdoor documents a string such as `TEST1234`.",
         "doc": "https://developer.nextdoor.com/reference/conversions-track"
       }
     ],
@@ -207,6 +422,17 @@
         "severity": "error",
         "message": "The event is `purchase` but carries no `custom.order_value`. Nextdoor documents order value as required on purchase.",
         "fix_hint": "Set `custom.order_value` to a currency code followed by the amount, such as `USD49.99`.",
+        "doc": "https://developer.nextdoor.com/reference/conversions-track"
+      },
+      {
+        "code": "vendor.nextdoor-conversions-api.body.app_requires_app_id",
+        "kind": "required_when_value",
+        "when": "action_source",
+        "equals": ["app"],
+        "requires": ["app.app_id"],
+        "severity": "error",
+        "message": "The event is `action_source: app` but carries no `app.app_id`. Nextdoor documents the `app` object as required for app events.",
+        "fix_hint": "Set `app.app_id` to the App Store or Google Play app id.",
         "doc": "https://developer.nextdoor.com/reference/conversions-track"
       },
       {

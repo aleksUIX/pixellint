@@ -2163,6 +2163,15 @@ Server-side conversion events posted to
 | `customer.client_user_agent` | Required on `website`, unhashed | `vendor.nextdoor-conversions-api.body.website_requires_user_agent` |
 | `custom.order_value` | Required on `purchase`. ISO 4217 then amount, such as `USD49.99` | `vendor.nextdoor-conversions-api.body.purchase_requires_order_value`, `.custom.order_value.invalid` |
 | `custom.delivery_category` | When present, `in_store`, `curbside`, or `home_delivery` | `vendor.nextdoor-conversions-api.body.custom.delivery_category.invalid` |
+| Hashed customer PII | SHA-256 hex when present: `first_name`, `last_name`, `date_of_birth`, `street_address`, `city`, `state`, `zip_code`, `country`, `gender` | `vendor.nextdoor-conversions-api.body.customer.first_name.invalid` and the same `.invalid` suffix on the other hashed fields |
+| `customer.external_id` | Non-empty when present | `vendor.nextdoor-conversions-api.body.customer.external_id.empty` |
+| `custom.order_id` | Non-empty when present | `vendor.nextdoor-conversions-api.body.custom.order_id.empty` |
+| `custom.product_context[]` | Product `id` / `content_name` non-empty, integer `quantity`, numeric `item_price` | `vendor.nextdoor-conversions-api.body.custom.product_context[].id.empty`, `.quantity.invalid`, `.item_price.invalid` |
+| `app.app_id` | Required on `action_source: app` | `vendor.nextdoor-conversions-api.body.app_requires_app_id` |
+| `app.platform` | When present, `iOS` or `Android` | `vendor.nextdoor-conversions-api.body.app.platform.invalid` |
+| `restricted_data_usage_state` | When present, documented codes `1000` through `1018` | `vendor.nextdoor-conversions-api.body.restricted_data_usage_state.invalid` |
+| `restricted_data_usage_country` | When present, `1` (United States) | `vendor.nextdoor-conversions-api.body.restricted_data_usage_country.invalid` |
+| `delivery_optimization` | When present, boolean | `vendor.nextdoor-conversions-api.body.delivery_optimization.invalid` |
 | Over-hashing | `client_ip_address` and `client_user_agent` must not be a digest | `vendor.nextdoor-conversions-api.body.hashed_plaintext_field` |
 | `customer.email` | SHA-256 hex when present; raw email is an error | `vendor.nextdoor-conversions-api.body.customer.email.invalid`, `.unhashed_email` |
 

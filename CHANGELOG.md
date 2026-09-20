@@ -35,6 +35,11 @@ All notable changes to Pixellint are documented here. The format follows
   country, language, and UUID `idfa` / `idfv` / `adid`. Placeholder
   identifiers Amplitude documents as 400 (`anonymous`, `undefined`,
   `unknown`, `lmy47d`, all-zero UUID) are rejected.
+- Nextdoor CAPI type-checks hashed customer PII (`first_name`, `last_name`,
+  date of birth, address, `gender`), `external_id`, `custom.order_id`,
+  `product_context` id / name / quantity / item_price, app `app_id` /
+  `platform` / version / ATT, Limited Data Use country and state codes,
+  and `delivery_optimization`. App events require `app.app_id`.
 
 ## 0.31.9 - 2026-09-20
 
