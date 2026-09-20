@@ -39,6 +39,16 @@
           "description": "Microsoft documents `data` as the list of events. An empty list sends nothing.",
           "fix_hint": "Send at least one event in `data`.",
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "continueOnValidationError",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "It is whether a batch should skip invalid events. Microsoft documents `true` to skip them and `false` (the default) to reject the whole request.",
+          "fix_hint": "Send `true` or `false` in `continueOnValidationError`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         }
       ],
       "rules": []
@@ -84,6 +94,13 @@
           "format": { "kind": "url" },
           "description": "It is the page URL. Microsoft documents it as required on `pageLoad` events.",
           "fix_hint": "Set `eventSourceUrl` to the absolute page URL.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "referrerUrl",
+          "format": { "kind": "url" },
+          "description": "It is the page referrer, used for referral remarketing lists. Microsoft documents a URL.",
+          "fix_hint": "Send an absolute URL in `referrerUrl`, or omit the field.",
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         },
         {
@@ -190,6 +207,100 @@
           "name": "customData.eventValue",
           "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
           "description": "It is the event value for custom conversion goals. Microsoft documents a float.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.transactionId",
+          "format": { "kind": "non_empty" },
+          "description": "It is a unique id for singular events such as a purchase. Microsoft documents it as optional but recommended.",
+          "fix_hint": "Send `customData.transactionId`, or drop the empty pair.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.pageType",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "cart",
+              "category",
+              "home",
+              "other",
+              "product",
+              "purchase",
+              "searchresults"
+            ]
+          },
+          "description": "It is the ecommerce page type for dynamic remarketing. Microsoft documents a closed set.",
+          "fix_hint": "Set `customData.pageType` to `cart`, `category`, `home`, `other`, `product`, `purchase`, or `searchresults`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.ecommTotalValue",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the total value of the cart or purchase. Microsoft documents a decimal.",
+          "fix_hint": "Send a number such as `123.45`, with no currency symbol.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.items[].id",
+          "format": { "kind": "non_empty" },
+          "description": "It is the item id on an `items` row. Microsoft documents `id` as preferred on each product object.",
+          "fix_hint": "Set `customData.items[].id` to the catalog item ID, or drop the empty pair.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.items[].quantity",
+          "format": { "kind": "integer" },
+          "description": "It is the item quantity on an `items` row. Microsoft documents an integer.",
+          "fix_hint": "Send `customData.items[].quantity` as an integer, such as `2`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.items[].price",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the item price after discounts. Microsoft documents a decimal.",
+          "fix_hint": "Send `customData.items[].price` as a number, such as `25.1`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.hotelData.checkinDate",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "description": "It is the hotel check-in date. Microsoft documents `YYYY-MM-DD`.",
+          "fix_hint": "Send `customData.hotelData.checkinDate` as `YYYY-MM-DD`, such as `2018-10-27`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.hotelData.checkoutDate",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "description": "It is the hotel check-out date. Microsoft documents `YYYY-MM-DD`.",
+          "fix_hint": "Send `customData.hotelData.checkoutDate` as `YYYY-MM-DD`, such as `2018-10-31`.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.hotelData.totalPrice",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the total booking price including taxes and fees. Microsoft documents a decimal.",
+          "fix_hint": "Send a number such as `188.23`, with no currency symbol.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.hotelData.basePrice",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the booking price excluding taxes and fees. Microsoft documents a decimal.",
+          "fix_hint": "Send a number such as `165.76`, with no currency symbol.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "name": "customData.hotelData.lengthOfStay",
+          "format": { "kind": "integer" },
+          "description": "It is the number of nights. Microsoft documents an integer, and it is not required when `checkoutDate` is sent.",
+          "fix_hint": "Send `customData.hotelData.lengthOfStay` as an integer, such as `4`.",
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         }
       ],

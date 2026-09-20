@@ -608,10 +608,17 @@ is milliseconds.
 | `userData` | Required | `vendor.microsoft-conversions-api.body.userData.missing` |
 | User identifiers | At least one of `anonymousId`, `externalId`, `em`, `ph`, `msclkid`, `idfa`, `gaid` | `vendor.microsoft-conversions-api.body.user_needs_an_identifier` |
 | `eventSourceUrl` | Required on `pageLoad` | `vendor.microsoft-conversions-api.body.page_load_requires_url` |
+| `referrerUrl` | Absolute URL when present | `vendor.microsoft-conversions-api.body.referrerUrl.invalid` |
 | `pageLoadId` | UUID when present | `vendor.microsoft-conversions-api.body.pageLoadId.invalid` |
 | `adStorageConsent` | `G` or `D` when present | `vendor.microsoft-conversions-api.body.adStorageConsent.invalid` |
 | `userData.em` | SHA-256 hex when present; raw email is an error | `vendor.microsoft-conversions-api.body.userData.em.invalid`, `.unhashed_email` |
 | `customData.value` / `customData.currency` | Together when either is sent; ISO 4217 for the code | `vendor.microsoft-conversions-api.body.value_requires_currency`, `.currency_requires_value`, `.customData.currency.invalid` |
+| `customData.pageType` | Documented ecommerce page type when present | `vendor.microsoft-conversions-api.body.customData.pageType.invalid` |
+| `customData.ecommTotalValue` | Number when present | `vendor.microsoft-conversions-api.body.customData.ecommTotalValue.invalid` |
+| `customData.transactionId` | Non-empty when present | `vendor.microsoft-conversions-api.body.customData.transactionId.empty` |
+| `customData.items[]` | Item `id` when present; integer `quantity`; decimal `price` | `vendor.microsoft-conversions-api.body.customData.items[].id.empty`, `.quantity.invalid`, `.price.invalid` |
+| `customData.hotelData` | `YYYY-MM-DD` check-in and check-out; decimal prices; integer nights | `vendor.microsoft-conversions-api.body.customData.hotelData.checkinDate.invalid`, `.checkoutDate.invalid`, `.totalPrice.invalid`, `.basePrice.invalid`, `.lengthOfStay.invalid` |
+| `continueOnValidationError` | Boolean when present | `vendor.microsoft-conversions-api.body.continueOnValidationError.invalid` |
 | Over-hashing | `clientIpAddress` and `clientUserAgent` must not be a digest | `vendor.microsoft-conversions-api.body.hashed_plaintext_field` |
 
 Source: [Conversions API](https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration).

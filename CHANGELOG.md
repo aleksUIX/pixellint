@@ -82,6 +82,10 @@ All notable changes to Pixellint are documented here. The format follows
   two-letter `user_data.country`, `advertising_ids.oaid` as a UUID, and
   boolean DMA and limit-ad-tracking flags. `$product_category` stays
   unformatted because Branch's table and sample payloads disagree.
+- Microsoft Advertising CAPI type-checks `referrerUrl`, ecommerce
+  `pageType`, `items[]` id/quantity/price, `ecommTotalValue`,
+  `transactionId`, hotel check-in dates and prices, and boolean
+  `continueOnValidationError`.
 - Auto-mode plugin selection looks up the host-index shortlist instead of
   walking every registered pack and hashing candidate ids.
 
