@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.9 - 2026-09-20
+
 ### Added
 
 - `vendor/quora-conversions-api`, covering POST `/ads/v0/conversion`: required
