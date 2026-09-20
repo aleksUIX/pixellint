@@ -1103,10 +1103,15 @@ Level: `official_vendor`.
 | `event_token` | Required | `vendor.adjust.param.event_token.missing`, `.empty` |
 | `s2s` | Required, and must be `1` | `vendor.adjust.param.s2s.missing`, `.invalid` |
 | Device ID | One of `idfa`, `gps_adid`, or the other documented device IDs | `vendor.adjust.device_id_required` |
+| `idfv` | Uppercase UUID with hyphens when present | `vendor.adjust.param.idfv.invalid` |
+| `android_id` | Lowercase, no hyphens when present | `vendor.adjust.param.android_id.invalid` |
+| Hashed Android ID / IMEI | Lowercase MD5 (32 hex) or SHA1 (40 hex); uppercase MD5/SHA1 variants | `vendor.adjust.param.android_id_lower_md5.invalid`, `.android_id_lower_sha1.invalid`, `.android_id_upper_md5.invalid`, `.android_id_upper_sha1.invalid`, `.imei_lower_md5.invalid` |
+| `meid` | Uppercase, no hyphens when present | `vendor.adjust.param.meid.invalid` |
+| `callback_params`, `partner_params` | JSON object when present | `vendor.adjust.param.callback_params.invalid`, `.partner_params.invalid` |
 | `created_at` | ISO 8601 when present | `vendor.adjust.param.created_at.invalid` |
 | `ip_address` | IPv4 when present | `vendor.adjust.param.ip_address.invalid` |
 | Revenue | `revenue` and `currency` together | `vendor.adjust.revenue_requires_currency`, `.currency_requires_revenue` |
-| Over-hashing | `ip_address` and `user_agent` must not be a digest | `vendor.adjust.hashed_plaintext_field` |
+| Over-hashing | `ip_address`, `user_agent`, `idfa`, `gps_adid`, `idfv`, and `android_id` must not be a digest | `vendor.adjust.hashed_plaintext_field` |
 
 Source: [S2S events](https://dev.adjust.com/en/api/s2s-api/events/).
 

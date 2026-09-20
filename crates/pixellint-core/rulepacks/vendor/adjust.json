@@ -140,37 +140,61 @@
     {
       "name": "idfv",
       "format": {
-        "kind": "non_empty"
+        "kind": "regex",
+        "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
       },
-      "description": "iOS Identifier for Vendor.",
+      "description": "iOS Identifier for Vendor. Adjust documents uppercase with hyphens.",
+      "fix_hint": "Send the IDFV in uppercase with hyphens, such as `D2CADB5F-410F-4963-AC0C-2A78534BDF1E`.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
       "name": "android_id",
       "format": {
-        "kind": "non_empty"
+        "kind": "regex",
+        "pattern": "^[a-z0-9]+$"
       },
-      "description": "Raw Android ID, lowercase, without hyphens.",
+      "description": "Raw Android ID. Adjust documents lowercase, without hyphens.",
+      "fix_hint": "Send the Android ID in lowercase with no hyphens.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
       "name": "android_id_lower_md5",
-      "description": "Hashed Android ID, lowercase MD5.",
+      "format": {
+        "kind": "hex",
+        "length": 32
+      },
+      "description": "Hashed Android ID. Adjust documents lowercase MD5.",
+      "fix_hint": "Send a 32-character lowercase MD5 hex digest.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
       "name": "android_id_lower_sha1",
-      "description": "Hashed Android ID, lowercase SHA1.",
+      "format": {
+        "kind": "hex",
+        "length": 40
+      },
+      "description": "Hashed Android ID. Adjust documents lowercase SHA1.",
+      "fix_hint": "Send a 40-character lowercase SHA1 hex digest.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
       "name": "android_id_upper_md5",
-      "description": "Hashed Android ID, uppercase MD5.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-F0-9]{32}$"
+      },
+      "description": "Hashed Android ID. Adjust documents uppercase MD5.",
+      "fix_hint": "Send a 32-character uppercase MD5 hex digest.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
       "name": "android_id_upper_sha1",
-      "description": "Hashed Android ID, uppercase SHA1.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-F0-9]{40}$"
+      },
+      "description": "Hashed Android ID. Adjust documents uppercase SHA1.",
+      "fix_hint": "Send a 40-character uppercase SHA1 hex digest.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
@@ -180,12 +204,22 @@
     },
     {
       "name": "imei_lower_md5",
-      "description": "Hashed IMEI, lowercase MD5.",
+      "format": {
+        "kind": "hex",
+        "length": 32
+      },
+      "description": "Hashed IMEI. Adjust documents lowercase MD5, without hyphens.",
+      "fix_hint": "Send a 32-character lowercase MD5 hex digest.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
       "name": "meid",
-      "description": "Raw MEID, uppercase, without hyphens.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Z0-9]+$"
+      },
+      "description": "Raw MEID. Adjust documents uppercase, without hyphens.",
+      "fix_hint": "Send the MEID in uppercase with no hyphens.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {
@@ -204,6 +238,26 @@
         "kind": "non_empty"
       },
       "description": "The Adjust identifier associated with the device. Useful for identifying LAT users on iOS without IDFA.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "callback_params",
+      "format": {
+        "kind": "regex",
+        "pattern": "^\\{.*\\}$"
+      },
+      "description": "It is a JSON object of string callback key-value pairs. Adjust documents it URL-encoded, with no nested objects.",
+      "fix_hint": "Send a JSON object such as `{\"f0o\":\"bar\"}`, URL-encoded. Do not nest objects.",
+      "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+    },
+    {
+      "name": "partner_params",
+      "format": {
+        "kind": "regex",
+        "pattern": "^\\{.*\\}$"
+      },
+      "description": "It is a JSON object of string partner key-value pairs. Adjust documents it URL-encoded, with no nested objects.",
+      "fix_hint": "Send a JSON object such as `{\"f0o\":\"bar\"}`, URL-encoded. Do not nest objects.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     }
   ],
@@ -238,11 +292,15 @@
       "pattern": "^[A-Fa-f0-9]{64}$",
       "params": [
         "ip_address",
-        "user_agent"
+        "user_agent",
+        "idfa",
+        "gps_adid",
+        "idfv",
+        "android_id"
       ],
       "severity": "error",
-      "message": "This field looks like a SHA-256 digest, but Adjust documents `ip_address` and `user_agent` as unhashed.",
-      "fix_hint": "Send the raw IPv4 address or user agent.",
+      "message": "This field looks like a SHA-256 digest, but Adjust documents the device IP, user agent, and advertising IDs as unhashed.",
+      "fix_hint": "Send the raw IPv4 address, user agent, or advertising ID.",
       "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
     },
     {

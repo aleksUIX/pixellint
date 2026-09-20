@@ -108,6 +108,9 @@ All notable changes to Pixellint are documented here. The format follows
   unexpanded.
 - Query and matrix parameters are split once per `validate` and reused by
   core privacy checks and the matching vendor pack.
+- Adjust S2S events type-check `idfv` as an uppercase UUID, `android_id`
+  lowercase without hyphens, MD5/SHA1 Android ID and IMEI hashes, `meid`
+  uppercase, and URL-encoded JSON `callback_params` / `partner_params`.
 
 ## 0.31.8 - 2026-09-19
 
