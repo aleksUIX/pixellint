@@ -464,13 +464,23 @@ so a collect payload is not skipped because it has no `event` key.
 | Parameter or body field | Enforced | Rule ids |
 | --- | --- | --- |
 | `datastreamId` | Required. v1 alias `configId` | `vendor.adobe-web-sdk.param.datastreamId.missing`, `.empty` |
+| `requestId` | Non-empty when present | `vendor.adobe-web-sdk.param.requestId.empty` |
+| `silent` | Boolean when present on collect | `vendor.adobe-web-sdk.param.silent.invalid` |
 | `xdm.timestamp` | Required ISO 8601 date-time | `vendor.adobe-web-sdk.body.xdm.timestamp.missing`, `.invalid` |
 | `xdm.eventType` | Recommended | `vendor.adobe-web-sdk.body.xdm.eventType.missing`, `.empty` |
 | `xdm.identityMap` | When present, not empty | `vendor.adobe-web-sdk.body.xdm.identityMap.empty` |
+| `xdm.web.webPageDetails.URL` | Absolute URL when present | `vendor.adobe-web-sdk.body.xdm.web.webPageDetails.URL.invalid` |
+| `xdm.web.webPageDetails.name` / `siteSection` | Non-empty when present | `vendor.adobe-web-sdk.body.xdm.web.webPageDetails.name.empty`, `.siteSection.empty` |
+| `xdm.web.webPageDetails.isErrorPage` / `isHomePage` | Boolean when present | `vendor.adobe-web-sdk.body.xdm.web.webPageDetails.isErrorPage.invalid`, `.isHomePage.invalid` |
+| `xdm.web.webInteraction.type` | `download`, `exit`, or `other` when present | `vendor.adobe-web-sdk.body.xdm.web.webInteraction.type.invalid` |
+| `xdm.web.webInteraction.URL` | Absolute URL when present | `vendor.adobe-web-sdk.body.xdm.web.webInteraction.URL.invalid` |
+| `xdm.web.webInteraction.linkClicks.value` | Number when present | `vendor.adobe-web-sdk.body.xdm.web.webInteraction.linkClicks.value.invalid` |
 
 Sources: [interact](https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/),
 [collect](https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/),
-[identityMap](https://experienceleague.adobe.com/en/docs/experience-platform/xdm/field-groups/profile/identitymap).
+[identityMap](https://experienceleague.adobe.com/en/docs/experience-platform/xdm/field-groups/profile/identitymap),
+[web page details](https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/webpage-details),
+[web interaction](https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/web-interaction).
 
 ## `vendor/pinterest`
 

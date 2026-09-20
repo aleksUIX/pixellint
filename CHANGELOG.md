@@ -90,6 +90,9 @@ All notable changes to Pixellint are documented here. The format follows
   walking every registered pack and hashing candidate ids.
 - Core URL checks reuse the prepared macro scan and inspect the http(s)
   scheme prefix instead of lowercasing the whole artifact.
+- Adobe Edge Network type-checks `web.webPageDetails` URL, name, site
+  section, and home/error flags, `web.webInteraction` type, URL, and
+  link-click value, plus query `requestId` and boolean `silent`.
 
 ## 0.31.8 - 2026-09-19
 

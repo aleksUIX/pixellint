@@ -23,6 +23,23 @@
       "description": "It is the datastream ID. Adobe documents `datastreamId` on v2. v1 uses `configId`.",
       "fix_hint": "Set `datastreamId` to the Datastream ID from the Adobe Experience Platform UI.",
       "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/"
+    },
+    {
+      "name": "requestId",
+      "format": { "kind": "non_empty" },
+      "description": "It is an external request tracing ID. Adobe documents `requestId` on interact and collect.",
+      "fix_hint": "Send `requestId`, or drop the empty pair and let Edge generate one.",
+      "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/"
+    },
+    {
+      "name": "silent",
+      "format": {
+        "kind": "enum",
+        "values": ["true", "false"]
+      },
+      "description": "It asks collect to return 204 with an empty body. Adobe documents a boolean query parameter.",
+      "fix_hint": "Send `silent=true` or `silent=false`.",
+      "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/"
     }
   ],
   "rules": [],
@@ -55,6 +72,81 @@
           "description": "It holds namespaces and identity values. Adobe documents `identityMap` on the XDM ExperienceEvent. An empty object matches nobody.",
           "fix_hint": "Send at least one namespace in `xdm.identityMap`, or omit the field.",
           "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/field-groups/profile/identitymap"
+        },
+        {
+          "name": "xdm.web.webPageDetails.URL",
+          "format": { "kind": "url" },
+          "description": "It is the normative page URL. Adobe documents `web.webPageDetails.URL` as an RFC 3986 URI.",
+          "fix_hint": "Send an absolute URL in `xdm.web.webPageDetails.URL`, or omit the field.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/webpage-details"
+        },
+        {
+          "name": "xdm.web.webPageDetails.name",
+          "format": { "kind": "non_empty" },
+          "description": "It is the normative page name. Adobe documents `web.webPageDetails.name` for classification.",
+          "fix_hint": "Send `xdm.web.webPageDetails.name`, or drop the empty pair.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/webpage-details"
+        },
+        {
+          "name": "xdm.web.webPageDetails.siteSection",
+          "format": { "kind": "non_empty" },
+          "description": "It is the site section for the page. Adobe documents `web.webPageDetails.siteSection`.",
+          "fix_hint": "Send `xdm.web.webPageDetails.siteSection`, or drop the empty pair.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/webpage-details"
+        },
+        {
+          "name": "xdm.web.webPageDetails.isErrorPage",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "It flags an error page. Adobe documents `web.webPageDetails.isErrorPage` as a boolean.",
+          "fix_hint": "Send `true` or `false` in `xdm.web.webPageDetails.isErrorPage`.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/webpage-details"
+        },
+        {
+          "name": "xdm.web.webPageDetails.isHomePage",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "It flags a home page. Adobe documents `web.webPageDetails.isHomePage` as a boolean.",
+          "fix_hint": "Send `true` or `false` in `xdm.web.webPageDetails.isHomePage`.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/webpage-details"
+        },
+        {
+          "name": "xdm.web.webInteraction.URL",
+          "format": { "kind": "url" },
+          "description": "It is the link URL for an in-page interaction. Adobe documents `web.webInteraction.URL`.",
+          "fix_hint": "Send an absolute URL in `xdm.web.webInteraction.URL`, or omit the field.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/web-interaction"
+        },
+        {
+          "name": "xdm.web.webInteraction.name",
+          "format": { "kind": "non_empty" },
+          "description": "It is the normative name of the web link. Adobe documents `web.webInteraction.name`.",
+          "fix_hint": "Send `xdm.web.webInteraction.name`, or drop the empty pair.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/web-interaction"
+        },
+        {
+          "name": "xdm.web.webInteraction.type",
+          "format": {
+            "kind": "enum",
+            "values": ["download", "exit", "other"]
+          },
+          "description": "It is the link type. Adobe documents `download`, `exit`, or `other`.",
+          "fix_hint": "Set `xdm.web.webInteraction.type` to `download`, `exit`, or `other`.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/web-interaction"
+        },
+        {
+          "name": "xdm.web.webInteraction.linkClicks.value",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the link-click measure. Adobe documents `linkClicks` as a measure with a numeric value.",
+          "fix_hint": "Send `xdm.web.webInteraction.linkClicks.value` as a number, such as `1`.",
+          "doc": "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/web-interaction"
         }
       ],
       "rules": []
