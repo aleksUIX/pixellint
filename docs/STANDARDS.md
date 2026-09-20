@@ -1826,6 +1826,10 @@ query names impact.com documents.
 | `ItemSkuN`, `ItemNameN`, `ItemCategoryN` | When present, not empty | `vendor.impact-conversions.param.ItemSkuN.empty`, `.ItemNameN.empty`, `.ItemCategoryN.empty` |
 | `ItemQuantityN` | When present, a positive integer | `vendor.impact-conversions.param.ItemQuantityN.invalid` |
 | `ItemSubTotalN` | When present, a number with no currency symbol | `vendor.impact-conversions.param.ItemSubTotalN.invalid` |
+| `ItemTextN` | When present, 1-64 characters (`ItemText1` through `ItemText10`) | `vendor.impact-conversions.param.ItemTextN.empty`, `.invalid` |
+| `ItemNumericN` | When present, a number (`ItemNumeric1` through `ItemNumeric10`) | `vendor.impact-conversions.param.ItemNumericN.invalid` |
+| `ItemDateN` | When present, a documented ISO-like date (`ItemDate1` through `ItemDate10`) | `vendor.impact-conversions.param.ItemDateN.invalid` |
+| `ItemMoneyN` | When present, a number (`ItemMoney1` through `ItemMoney3`) | `vendor.impact-conversions.param.ItemMoneyN.invalid` |
 | `EventCode` | Required when `AppPackage` is present | `vendor.impact-conversions.mobile_requires_event_code` |
 | Unhashed PII | `CustomerId` must not be a raw email | `vendor.impact-conversions.unhashed_email` |
 | Over-hashing | `IpAddress` must not be a digest | `vendor.impact-conversions.hashed_plaintext_field` |

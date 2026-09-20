@@ -47,6 +47,9 @@ All notable changes to Pixellint are documented here. The format follows
   p50 27.2ms to 26.3ms (n=5 protocol).
 - Taboola S2S postbacks reject `click_id`. Taboola documents the query key as
   `click-id`, exactly, and says another spelling records no conversion.
+- impact.com Conversions API type-checks item extras `ItemText1`–`ItemText10`,
+  `ItemNumeric1`–`ItemNumeric10`, `ItemDate1`–`ItemDate10`, and
+  `ItemMoney1`–`ItemMoney3` from the published conversion item table.
 
 ## 0.31.9 - 2026-09-20
 
