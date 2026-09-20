@@ -1152,7 +1152,12 @@ impl ValidatorPlugin for CoreRulePack {
         if !artifact.is_empty() {
             match request.artifact_kind {
                 ArtifactKind::Url | ArtifactKind::VastTracker | ArtifactKind::ServerPostback => {
-                    validate_url_like_artifact(artifact, request.expansion_state, &mut violations);
+                    validate_url_like_artifact(
+                        artifact,
+                        request.expansion_state,
+                        prepared,
+                        &mut violations,
+                    );
                     privacy::apply_privacy_rules(artifact, &mut violations);
                 }
                 ArtifactKind::JsonPayload => {
@@ -1226,6 +1231,7 @@ fn json_parse_violation(artifact: &str, error: &json::JsonError) -> Violation {
 fn validate_url_like_artifact(
     artifact: &str,
     expansion_state: ExpansionState,
+    prepared: &PreparedArtifact<'_>,
     violations: &mut Vec<Violation>,
 ) {
     let macro_spans = detect_macro_spans(artifact);
@@ -1236,13 +1242,15 @@ fn validate_url_like_artifact(
         return;
     }
 
+    let sanitized;
     let parse_artifact = if macro_spans.is_empty() {
-        artifact.to_string()
+        artifact
     } else {
-        sanitize_macro_spans(artifact, &macro_spans)
+        sanitized = sanitize_macro_spans(artifact, &macro_spans);
+        sanitized.as_str()
     };
 
-    if has_missing_network_host(&parse_artifact) {
+    if has_missing_network_host(parse_artifact) {
         violations.push(Violation {
             code: "core.url.host_missing".to_string(),
             message: "Network-delivered tracking URLs must include a host component.".to_string(),
@@ -1257,105 +1265,25 @@ fn validate_url_like_artifact(
         return;
     }
 
-    match Url::parse(&parse_artifact) {
-        Ok(url) => {
-            if url.scheme() == "http" {
-                violations.push(Violation {
-                    code: "core.url.insecure_transport".to_string(),
-                    message:
-                        "Plain http tracking endpoints are discouraged; use https for measurement artifacts."
-                            .to_string(),
-                    severity: Severity::Warning,
-                    field: Some("url".to_string()),
-                    fix_hint: Some(
-                        "Upgrade the endpoint to https so trackers remain compatible with secure playback and delivery environments."
-                            .to_string(),
-                    ),
-                    source: RuleSource {
-                        level: RuleSourceLevel::EcosystemReference,
-                        name: "Secure tracking transport baseline".to_string(),
-                        reference: None,
-                    },
-                    targets: Vec::new(),
-                });
-            }
+    if let Some(parsed) = prepared.url().filter(|parsed| parsed.core_ready) {
+        emit_parsed_url_findings(
+            &parsed.scheme,
+            parsed.host.is_none(),
+            parsed.has_userinfo,
+            parsed.has_fragment,
+            violations,
+        );
+        return;
+    }
 
-            if !matches!(url.scheme(), "http" | "https") {
-                violations.push(Violation {
-                    code: "core.url.unsupported_scheme".to_string(),
-                    message:
-                        "Only http and https URL artifacts are supported by the core rulepack."
-                            .to_string(),
-                    severity: Severity::Error,
-                    field: Some("url".to_string()),
-                    fix_hint: Some(
-                        "Use an http or https endpoint for network-delivered tracking artifacts."
-                            .to_string(),
-                    ),
-                    source: RuleSource::normative(
-                        "W3C Beacon / URL transport baseline",
-                        "https://www.w3.org/TR/beacon/",
-                    ),
-                    targets: Vec::new(),
-                });
-            }
-
-            if url.host_str().is_none() {
-                violations.push(Violation {
-                    code: "core.url.host_missing".to_string(),
-                    message: "Network-delivered tracking URLs must include a host component."
-                        .to_string(),
-                    severity: Severity::Error,
-                    field: Some("url".to_string()),
-                    fix_hint: Some(
-                        "Provide a fully qualified endpoint such as https://example.com/pixel."
-                            .to_string(),
-                    ),
-                    source: RuleSource::normative("URL Standard", "https://url.spec.whatwg.org/"),
-                    targets: Vec::new(),
-                });
-            }
-
-            if !url.username().is_empty() || url.password().is_some() {
-                violations.push(Violation {
-                    code: "core.url.userinfo_deprecated".to_string(),
-                    message:
-                        "Credentials embedded in tracking URLs are deprecated and should not be used."
-                            .to_string(),
-                    severity: Severity::Warning,
-                    field: Some("url".to_string()),
-                    fix_hint: Some(
-                        "Move credentials to a safer transport or server-side configuration."
-                            .to_string(),
-                    ),
-                    source: RuleSource::normative(
-                        "RFC 3986 URI generic syntax",
-                        "https://www.rfc-editor.org/rfc/rfc3986",
-                    ),
-                    targets: Vec::new(),
-                });
-            }
-
-            if url.fragment().is_some() {
-                violations.push(Violation {
-                    code: "core.url.fragment_ignored".to_string(),
-                    message:
-                        "URL fragments are not transmitted to the server and cannot carry measurement parameters."
-                            .to_string(),
-                    severity: Severity::Warning,
-                    field: Some("url".to_string()),
-                    fix_hint: Some(
-                        "Move tracking data into the query string or request body."
-                            .to_string(),
-                    ),
-                    source: RuleSource::normative(
-                        "RFC 3986 URI generic syntax",
-                        "https://www.rfc-editor.org/rfc/rfc3986",
-                    ),
-                    targets: Vec::new(),
-                });
-            }
-        }
+    match Url::parse(parse_artifact) {
+        Ok(url) => emit_parsed_url_findings(
+            url.scheme(),
+            url.host_str().is_none(),
+            !url.username().is_empty() || url.password().is_some(),
+            url.fragment().is_some(),
+            violations,
+        ),
         Err(_) => violations.push(Violation {
             code: "core.url.invalid".to_string(),
             message: "Artifact is not a valid URL.".to_string(),
@@ -1367,6 +1295,105 @@ fn validate_url_like_artifact(
             source: RuleSource::normative("URL Standard", "https://url.spec.whatwg.org/"),
             targets: Vec::new(),
         }),
+    }
+}
+
+fn emit_parsed_url_findings(
+    scheme: &str,
+    host_missing: bool,
+    has_userinfo: bool,
+    has_fragment: bool,
+    violations: &mut Vec<Violation>,
+) {
+    if scheme == "http" {
+        violations.push(Violation {
+            code: "core.url.insecure_transport".to_string(),
+            message:
+                "Plain http tracking endpoints are discouraged; use https for measurement artifacts."
+                    .to_string(),
+            severity: Severity::Warning,
+            field: Some("url".to_string()),
+            fix_hint: Some(
+                "Upgrade the endpoint to https so trackers remain compatible with secure playback and delivery environments."
+                    .to_string(),
+            ),
+            source: RuleSource {
+                level: RuleSourceLevel::EcosystemReference,
+                name: "Secure tracking transport baseline".to_string(),
+                reference: None,
+            },
+            targets: Vec::new(),
+        });
+    }
+
+    if !matches!(scheme, "http" | "https") {
+        violations.push(Violation {
+            code: "core.url.unsupported_scheme".to_string(),
+            message: "Only http and https URL artifacts are supported by the core rulepack."
+                .to_string(),
+            severity: Severity::Error,
+            field: Some("url".to_string()),
+            fix_hint: Some(
+                "Use an http or https endpoint for network-delivered tracking artifacts."
+                    .to_string(),
+            ),
+            source: RuleSource::normative(
+                "W3C Beacon / URL transport baseline",
+                "https://www.w3.org/TR/beacon/",
+            ),
+            targets: Vec::new(),
+        });
+    }
+
+    if host_missing {
+        violations.push(Violation {
+            code: "core.url.host_missing".to_string(),
+            message: "Network-delivered tracking URLs must include a host component.".to_string(),
+            severity: Severity::Error,
+            field: Some("url".to_string()),
+            fix_hint: Some(
+                "Provide a fully qualified endpoint such as https://example.com/pixel.".to_string(),
+            ),
+            source: RuleSource::normative("URL Standard", "https://url.spec.whatwg.org/"),
+            targets: Vec::new(),
+        });
+    }
+
+    if has_userinfo {
+        violations.push(Violation {
+            code: "core.url.userinfo_deprecated".to_string(),
+            message: "Credentials embedded in tracking URLs are deprecated and should not be used."
+                .to_string(),
+            severity: Severity::Warning,
+            field: Some("url".to_string()),
+            fix_hint: Some(
+                "Move credentials to a safer transport or server-side configuration.".to_string(),
+            ),
+            source: RuleSource::normative(
+                "RFC 3986 URI generic syntax",
+                "https://www.rfc-editor.org/rfc/rfc3986",
+            ),
+            targets: Vec::new(),
+        });
+    }
+
+    if has_fragment {
+        violations.push(Violation {
+            code: "core.url.fragment_ignored".to_string(),
+            message:
+                "URL fragments are not transmitted to the server and cannot carry measurement parameters."
+                    .to_string(),
+            severity: Severity::Warning,
+            field: Some("url".to_string()),
+            fix_hint: Some(
+                "Move tracking data into the query string or request body.".to_string(),
+            ),
+            source: RuleSource::normative(
+                "RFC 3986 URI generic syntax",
+                "https://www.rfc-editor.org/rfc/rfc3986",
+            ),
+            targets: Vec::new(),
+        });
     }
 }
 
