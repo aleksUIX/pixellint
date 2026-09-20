@@ -21,6 +21,8 @@ All notable changes to Pixellint are documented here. The format follows
 - Reddit Pixel Custom events require `m.customEventName` (the generated query
   spelling of `customEventName`), at most 64 characters. Empty slots on
   standard events stay allowed. `m.value` stays unpublished.
+- `validate_many` keeps one copy of an already-trimmed URL in the dedupe group
+  and moves strings into the result instead of cloning them again at emit.
 
 ## 0.31.8 - 2026-09-19
 

@@ -199,23 +199,30 @@ impl Engine {
                 });
             }
 
-            let normalized = artifact.artifact.trim().to_string();
-            let key = dedupe_key(artifact.artifact_kind, &normalized);
-            let mut occurrences = artifact.occurrences.clone();
-            if occurrences.is_empty() {
-                occurrences.push(ArtifactOccurrence {
+            let trimmed = artifact.artifact.trim();
+            let key = dedupe_key(artifact.artifact_kind, trimmed);
+            let occurrences = if artifact.occurrences.is_empty() {
+                vec![ArtifactOccurrence {
                     occurrence_id: None,
                     source_kind: None,
                     path: None,
                     line: None,
                     column: None,
                     context_label: None,
-                });
-            }
+                }]
+            } else {
+                artifact.occurrences.clone()
+            };
             if let Some(group) = groups.get_mut(&key) {
                 group.occurrences.extend(occurrences);
                 continue;
             }
+
+            let (raw_artifact, normalized) = if trimmed.len() == artifact.artifact.len() {
+                (None, artifact.artifact.clone())
+            } else {
+                (Some(artifact.artifact.clone()), trimmed.to_string())
+            };
 
             order.push(key.clone());
             groups.insert(
@@ -223,7 +230,7 @@ impl Engine {
                 Group {
                     first_index: index,
                     artifact_kind: artifact.artifact_kind,
-                    raw_artifact: artifact.artifact.clone(),
+                    raw_artifact,
                     normalized,
                     claimed_vendor: artifact.claimed_vendor.clone(),
                     expansion_state: artifact.expansion_state,
@@ -237,12 +244,12 @@ impl Engine {
         let mut warnings = 0;
         let mut infos = 0;
 
-        for (artifact_number, key) in order.iter().enumerate() {
-            let group = groups.get_mut(key).expect("group exists for ordered key");
+        for (artifact_number, key) in order.into_iter().enumerate() {
+            let group = groups.remove(&key).expect("group exists for ordered key");
             let validation = ValidationRequest {
                 artifact_kind: group.artifact_kind,
                 artifact: group.normalized.clone(),
-                claimed_vendor: group.claimed_vendor.clone(),
+                claimed_vendor: group.claimed_vendor,
                 expansion_state: group.expansion_state,
             };
             let summary =
@@ -257,14 +264,15 @@ impl Engine {
             warnings += artifact_warnings;
             infos += artifact_infos;
 
-            let occurrences = std::mem::take(&mut group.occurrences);
+            let normalized_artifact = group.normalized;
+            let raw_artifact = group.raw_artifact.unwrap_or(validation.artifact);
 
             artifacts.push(AggregatedArtifact {
                 artifact_id: format!("artifact-{}", artifact_number + 1),
-                dedupe_key: key.clone(),
+                dedupe_key: key,
                 artifact_kind: group.artifact_kind,
-                raw_artifact: group.raw_artifact.clone(),
-                normalized_artifact: group.normalized.clone(),
+                raw_artifact,
+                normalized_artifact,
                 ok: summary.is_ok(),
                 summary: FindingCounts {
                     artifacts_total: None,
@@ -274,7 +282,7 @@ impl Engine {
                     infos: artifact_infos,
                 },
                 reports: summary.reports,
-                occurrences,
+                occurrences: group.occurrences,
             });
         }
 
@@ -309,7 +317,9 @@ impl Engine {
 struct Group {
     first_index: usize,
     artifact_kind: ArtifactKind,
-    raw_artifact: String,
+    /// Original text when it differs from `normalized`. `None` means the
+    /// first-seen artifact was already trimmed, so one copy is enough.
+    raw_artifact: Option<String>,
     normalized: String,
     claimed_vendor: Option<String>,
     expansion_state: ExpansionState,
@@ -395,6 +405,14 @@ mod tests {
         assert_eq!(report.summary.unique_artifacts, Some(1));
         assert_eq!(report.artifacts[0].occurrences.len(), 2);
         assert_eq!(
+            report.artifacts[0].raw_artifact,
+            "https://example.com/pixel?id=1#frag"
+        );
+        assert_eq!(
+            report.artifacts[0].normalized_artifact,
+            "https://example.com/pixel?id=1#frag"
+        );
+        assert_eq!(
             report.artifacts[0].occurrences[0].path.as_deref(),
             Some("/VAST/Ad[1]/InLine/Impression[1]")
         );
@@ -431,6 +449,42 @@ mod tests {
         let report = engine().validate_many(&request, &options()).unwrap();
         assert_eq!(report.summary.artifacts_total, Some(2));
         assert_eq!(report.summary.unique_artifacts, Some(1));
+        assert_eq!(report.artifacts[0].occurrences.len(), 2);
+    }
+
+    #[test]
+    fn whitespace_duplicates_keep_the_first_raw_and_trimmed_normalized() {
+        let request = DocumentRequest {
+            document_kind: "list".to_string(),
+            extractor: None,
+            artifacts: vec![
+                DocumentArtifactInput {
+                    artifact_kind: ArtifactKind::Url,
+                    artifact: "  https://example.com/pixel?id=1  ".to_string(),
+                    claimed_vendor: None,
+                    expansion_state: ExpansionState::Unknown,
+                    occurrences: Vec::new(),
+                },
+                DocumentArtifactInput {
+                    artifact_kind: ArtifactKind::Url,
+                    artifact: "https://example.com/pixel?id=1".to_string(),
+                    claimed_vendor: None,
+                    expansion_state: ExpansionState::Unknown,
+                    occurrences: Vec::new(),
+                },
+            ],
+        };
+        let report = engine().validate_many(&request, &options()).unwrap();
+        assert_eq!(report.summary.artifacts_total, Some(2));
+        assert_eq!(report.summary.unique_artifacts, Some(1));
+        assert_eq!(
+            report.artifacts[0].raw_artifact,
+            "  https://example.com/pixel?id=1  "
+        );
+        assert_eq!(
+            report.artifacts[0].normalized_artifact,
+            "https://example.com/pixel?id=1"
+        );
         assert_eq!(report.artifacts[0].occurrences.len(), 2);
     }
 
