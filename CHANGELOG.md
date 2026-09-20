@@ -40,6 +40,8 @@ All notable changes to Pixellint are documented here. The format follows
   `product_context` id / name / quantity / item_price, app `app_id` /
   `platform` / version / ATT, Limited Data Use country and state codes,
   and `delivery_optimization`. App events require `app.app_id`.
+- OpenAI CAPI type-checks `contents[].variant_dict` as a non-empty object of
+  string pairs from the published Content table.
 
 ## 0.31.9 - 2026-09-20
 

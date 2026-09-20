@@ -1338,7 +1338,7 @@ Server-side events posted to `bzr.openai.com/v1/events`. Level:
 | `data.amount` | Integer minor units; `data.currency` required with it | `vendor.openai-conversions-api.body.data.amount.invalid`, `.body.amount_requires_currency` |
 | `data.plan_id` | When present, not empty; only on `plan_enrollment` and `custom` | `vendor.openai-conversions-api.body.data.plan_id.empty`, `.body.contents_forbids_plan_id` |
 | `data.contents` | Item list; not on `customer_action` | `vendor.openai-conversions-api.body.customer_action_forbids_contents` |
-| `data.contents[]` | Item `id`/`name`/`content_type`/`group_id` not empty; `quantity` and `amount` integers; item `currency` ISO 4217 | `vendor.openai-conversions-api.body.data.contents[].<field>.empty`, `.invalid` |
+| `data.contents[]` | Item `id`/`name`/`content_type`/`group_id` not empty; `quantity` and `amount` integers; item `currency` ISO 4217; `variant_dict` a non-empty object | `vendor.openai-conversions-api.body.data.contents[].<field>.empty`, `.invalid` |
 | `opt_out` | When present, `true` or `false` | `vendor.openai-conversions-api.body.opt_out.invalid` |
 | `oppref` | When present, not empty | `vendor.openai-conversions-api.body.oppref.empty` |
 | `user` | When present, not an empty object | `vendor.openai-conversions-api.body.user.empty` |
