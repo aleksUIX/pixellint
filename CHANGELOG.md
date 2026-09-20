@@ -30,6 +30,11 @@ All notable changes to Pixellint are documented here. The format follows
   title, URL, and referrer. HTTP track payloads type-check `name`,
   `context.library.name`, numeric `properties.revenue`, and page
   `properties.path` / `properties.title` from the published samples.
+- Amplitude HTTP V2 type-checks purchase `price`, integer `quantity`,
+  `productId`, `revenueType`, location, `event_id`, app version, platform,
+  country, language, and UUID `idfa` / `idfv` / `adid`. Placeholder
+  identifiers Amplitude documents as 400 (`anonymous`, `undefined`,
+  `unknown`, `lmy47d`, all-zero UUID) are rejected.
 
 ## 0.31.9 - 2026-09-20
 

@@ -145,6 +145,132 @@
           },
           "description": "It is the session start time in milliseconds since epoch. Amplitude documents `-1` as the same as omitting it.",
           "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "price",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the price of the item purchased. Amplitude documents a float and accepts negatives for refunds.",
+          "fix_hint": "Send a number such as `4.99`, with no currency symbol.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "quantity",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the quantity of the item purchased. Amplitude documents an integer and defaults to 1 when omitted.",
+          "fix_hint": "Send a whole number such as `3`.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "productId",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the item purchased. Amplitude documents sending price and quantity, or revenue, with this field.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "revenueType",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the type of revenue for the item purchased, such as `Refund`.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "location_lat",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the current latitude of the user. Amplitude documents a float.",
+          "fix_hint": "Send a number such as `37.77`.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "location_lng",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the current longitude of the user. Amplitude documents a float.",
+          "fix_hint": "Send a number such as `-122.39`.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "event_id",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is an incrementing counter Amplitude documents to distinguish events that share a `user_id` and timestamp.",
+          "fix_hint": "Send a whole number such as `23`.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "app_version",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the current version of the application.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "platform",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the platform of the device, such as `iOS`.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "country",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the current country of the user.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "language",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the language set by the user. Amplitude stores a language name; a tag such as `en-US` is accepted and rewritten.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "idfa",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "description": "It is the iOS Identifier for Advertiser. Amplitude's HTTP V2 samples send a UUID, and all-zero IDFAs are dropped.",
+          "fix_hint": "Send `idfa` as a UUID, or omit the field.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "idfv",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "description": "It is the iOS Identifier for Vendor. Amplitude's HTTP V2 samples send a UUID.",
+          "fix_hint": "Send `idfv` as a UUID, or omit the field.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "name": "adid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "description": "It is the Google Play Services advertising ID. Amplitude's HTTP V2 samples send a UUID.",
+          "fix_hint": "Send `adid` as a UUID, or omit the field.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
         }
       ],
       "rules": [
@@ -178,6 +304,16 @@
           "severity": "error",
           "message": "This field looks like a SHA-256 digest, but Amplitude documents `ip` and `user_agent` as unhashed. Use `$remote` when the IP should come from the request.",
           "fix_hint": "Send the raw IP or user agent, or `$remote` for IP.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "code": "vendor.amplitude.body.placeholder_identifier",
+          "kind": "forbid_value_pattern",
+          "pattern": "^(?:(?i:anonymous|undefined|unknown|lmy47d)|00000000-0000-0000-0000-000000000000)$",
+          "params": ["user_id", "device_id"],
+          "severity": "error",
+          "message": "This identifier is on Amplitude's list of values that return 400, such as `anonymous` or an all-zero UUID.",
+          "fix_hint": "Send a real `user_id` or `device_id` of at least 5 characters.",
           "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
         }
       ]

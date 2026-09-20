@@ -893,6 +893,14 @@ Event uploads to the Amplitude HTTP V2 API on `amplitude.com`. Level:
 | `revenue` | When present, a signed float | `vendor.amplitude.body.revenue.invalid` |
 | `currency` | When present, uppercase ISO 4217 | `vendor.amplitude.body.currency.invalid` |
 | `session_id` | When present, an integer. `-1` is allowed | `vendor.amplitude.body.session_id.invalid` |
+| `price` | When present, a signed float | `vendor.amplitude.body.price.invalid` |
+| `quantity` | When present, an integer | `vendor.amplitude.body.quantity.invalid` |
+| `productId` / `revenueType` | Non-empty when present | `vendor.amplitude.body.productId.empty`, `.revenueType.empty` |
+| `location_lat` / `location_lng` | When present, a signed float | `vendor.amplitude.body.location_lat.invalid` |
+| `event_id` | When present, an integer | `vendor.amplitude.body.event_id.invalid` |
+| `app_version` / `platform` / `country` / `language` | Non-empty when present | `vendor.amplitude.body.platform.empty` |
+| `idfa` / `idfv` / `adid` | UUID when present | `vendor.amplitude.body.idfa.invalid` |
+| Placeholder identity | `anonymous`, `undefined`, `unknown`, `lmy47d`, and the all-zero UUID return 400 | `vendor.amplitude.body.placeholder_identifier` |
 
 Source: [HTTP V2 API](https://amplitude.com/docs/apis/analytics/http-v2).
 
