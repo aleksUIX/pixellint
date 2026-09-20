@@ -39,7 +39,7 @@ pub struct PreparedArtifact<'a> {
     request: &'a ValidationRequest,
     trimmed: &'a str,
     url: OnceCell<Option<ArtifactUrl<'a>>>,
-    json: OnceCell<Result<JsonDocument, JsonError>>,
+    json: OnceCell<Result<JsonDocument<'a>, JsonError>>,
     macros: OnceCell<Vec<MacroSpan>>,
     params: [OnceCell<Vec<RawParam<'a>>>; 4],
 }
@@ -85,7 +85,7 @@ impl<'a> PreparedArtifact<'a> {
         self.url.get().and_then(Option::as_ref)
     }
 
-    pub(crate) fn json(&self) -> Option<&Result<JsonDocument, JsonError>> {
+    pub(crate) fn json(&self) -> Option<&Result<JsonDocument<'a>, JsonError>> {
         if !self.wants_json() {
             return None;
         }

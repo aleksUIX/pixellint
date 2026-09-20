@@ -564,7 +564,7 @@ struct Scope<'a> {
 
 /// The document and the element a body scope is evaluating.
 struct BodyScope<'a> {
-    document: &'a JsonDocument,
+    document: &'a JsonDocument<'a>,
     path: &'a str,
 }
 
@@ -583,9 +583,9 @@ impl Scope<'_> {
         };
 
         match body.document.nearest_present_ancestor(&path) {
-            Some(field) => ViolationTarget {
+            Some((ancestor, field)) => ViolationTarget {
                 component: ViolationTargetComponent::BodyField,
-                name: Some(field.path.clone()),
+                name: Some(ancestor.to_string()),
                 value: None,
                 start: field.start,
                 end: field.end,
@@ -604,7 +604,7 @@ enum CompiledShape {
 }
 
 impl CompiledShape {
-    fn holds(&self, document: &JsonDocument) -> bool {
+    fn holds(&self, document: &JsonDocument<'_>) -> bool {
         match self {
             Self::Present(path) => document.matches_pattern(path),
             Self::Excludes { path, regex } => !document
@@ -996,7 +996,7 @@ impl ManifestRulePack {
 
     /// Whether the payload has the shape this pack claims. A bare body carries
     /// no host, so its shape is the only thing that can identify it.
-    fn matches_shape(&self, document: &JsonDocument) -> bool {
+    fn matches_shape(&self, document: &JsonDocument<'_>) -> bool {
         !self.shapes.is_empty() && self.shapes.iter().all(|shape| shape.holds(document))
     }
 
@@ -1189,7 +1189,7 @@ impl ManifestRulePack {
         &self,
         request: &ValidationRequest,
         artifact: &str,
-        parsed: Option<&Result<JsonDocument, json::JsonError>>,
+        parsed: Option<&Result<JsonDocument<'_>, json::JsonError>>,
     ) -> ValidationReport {
         // A body that does not parse is the core pack's finding to report, and
         // it has nothing this pack can contract.
@@ -1991,7 +1991,7 @@ impl<'a> RawParam<'a> {
 /// The concrete scopes a body spec evaluates over: one per element of the batch
 /// array, or a single empty scope covering the whole document when the endpoint
 /// takes one event per request.
-fn body_scopes(document: &JsonDocument, scope: Option<&ScopeSpec>) -> Vec<String> {
+fn body_scopes(document: &JsonDocument<'_>, scope: Option<&ScopeSpec>) -> Vec<String> {
     let Some(scope) = scope else {
         return vec![String::new()];
     };
@@ -2023,7 +2023,7 @@ fn body_scopes(document: &JsonDocument, scope: Option<&ScopeSpec>) -> Vec<String
 /// contract's own name so the existing checkers match it, and carries its
 /// concrete path along for the finding.
 fn collect_body_params<'a>(
-    document: &'a JsonDocument,
+    document: &'a JsonDocument<'_>,
     scope: &str,
     contracts: &'a [CompiledParam],
 ) -> Vec<RawParam<'a>> {
@@ -2040,13 +2040,16 @@ fn collect_body_params<'a>(
                 let Some(field) = document.get(&path) else {
                     // The slot is addressable but empty. Recording it lets the
                     // contract report once per place the value belongs.
-                    let anchor = document.nearest_present_ancestor(&path);
+                    let (start, end) = match document.nearest_present_ancestor(&path) {
+                        Some((_, field)) => (field.start, field.end),
+                        None => (0, 0),
+                    };
 
                     params.push(RawParam {
                         name: Cow::Borrowed(name.as_str()),
                         value: Cow::Borrowed(""),
-                        start: anchor.map(|field| field.start).unwrap_or(0),
-                        end: anchor.map(|field| field.end).unwrap_or(0),
+                        start,
+                        end,
                         component: ViolationTargetComponent::BodyField,
                         location: Some(path),
                         container: false,
@@ -2063,7 +2066,7 @@ fn collect_body_params<'a>(
                     (JsonValueKind::Object | JsonValueKind::Array, false) => {
                         Cow::Borrowed(field.kind.label())
                     }
-                    _ => Cow::Borrowed(field.text.as_str()),
+                    _ => Cow::Borrowed(field.text.as_ref()),
                 };
 
                 params.push(RawParam {
@@ -2085,7 +2088,7 @@ fn collect_body_params<'a>(
 
 /// Where to point when a body finding has no field of its own to blame: the
 /// enclosing event if there is one, otherwise the whole payload.
-fn body_target(document: &JsonDocument, scope: &str, artifact: &str) -> ViolationTarget {
+fn body_target(document: &JsonDocument<'_>, scope: &str, artifact: &str) -> ViolationTarget {
     match document.get(scope) {
         Some(field) => ViolationTarget {
             component: ViolationTargetComponent::BodyField,

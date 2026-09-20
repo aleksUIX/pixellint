@@ -10,6 +10,7 @@
 //! empty subscript to mean "every element", so `data[].event_name` expands to
 //! one concrete path per event in the payload.
 
+use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::fmt;
 
@@ -45,19 +46,19 @@ impl JsonValueKind {
 
 /// One value in the document, with the byte span it occupies in the source.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct JsonField {
-    pub(crate) path: String,
+pub(crate) struct JsonField<'a> {
     pub(crate) kind: JsonValueKind,
     /// Scalar values as text: strings unescaped, numbers and literals verbatim.
-    /// Containers carry an empty string.
-    pub(crate) text: String,
+    /// Containers carry an empty string. Unescaped strings, numbers, and
+    /// `true` / `false` / `null` borrow the artifact bytes.
+    pub(crate) text: Cow<'a, str>,
     pub(crate) start: usize,
     pub(crate) end: usize,
     /// Element count for arrays, member count for objects.
     pub(crate) len: Option<usize>,
 }
 
-impl JsonField {
+impl JsonField<'_> {
     /// Whether the value counts as empty for a presence check. A container with
     /// no members is as absent as a blank string, and a JSON `null` is the way
     /// most senders spell "I had nothing to put here".
@@ -83,13 +84,13 @@ impl fmt::Display for JsonError {
 }
 
 /// A parsed document, flattened to path to value.
-#[derive(Debug, Clone, Default)]
-pub(crate) struct JsonDocument {
-    fields: BTreeMap<String, JsonField>,
+#[derive(Debug, Clone)]
+pub(crate) struct JsonDocument<'a> {
+    fields: BTreeMap<String, JsonField<'a>>,
 }
 
-impl JsonDocument {
-    pub(crate) fn parse(input: &str) -> Result<Self, JsonError> {
+impl<'a> JsonDocument<'a> {
+    pub(crate) fn parse(input: &'a str) -> Result<Self, JsonError> {
         let mut reader = Reader {
             bytes: input.as_bytes(),
             input,
@@ -117,7 +118,7 @@ impl JsonDocument {
         trimmed.starts_with('{') || trimmed.starts_with('[')
     }
 
-    pub(crate) fn get(&self, path: &str) -> Option<&JsonField> {
+    pub(crate) fn get(&self, path: &str) -> Option<&JsonField<'a>> {
         self.fields.get(path)
     }
 
@@ -127,17 +128,20 @@ impl JsonDocument {
 
     /// The span of the nearest ancestor that is present, so a violation about a
     /// missing field can still point somewhere useful.
-    pub(crate) fn nearest_present_ancestor(&self, path: &str) -> Option<&JsonField> {
+    pub(crate) fn nearest_present_ancestor<'p>(
+        &self,
+        path: &'p str,
+    ) -> Option<(&'p str, &JsonField<'a>)> {
         let mut candidate = path;
 
         while let Some(parent) = parent_path(candidate) {
             if let Some(field) = self.fields.get(parent) {
-                return Some(field);
+                return Some((parent, field));
             }
             candidate = parent;
         }
 
-        self.fields.get("")
+        self.fields.get("").map(|field| ("", field))
     }
 
     fn array_len(&self, path: &str) -> Option<usize> {
@@ -287,7 +291,7 @@ struct Reader<'a> {
     bytes: &'a [u8],
     input: &'a str,
     pos: usize,
-    fields: BTreeMap<String, JsonField>,
+    fields: BTreeMap<String, JsonField<'a>>,
 }
 
 impl<'a> Reader<'a> {
@@ -325,15 +329,14 @@ impl<'a> Reader<'a> {
         &mut self,
         path: String,
         kind: JsonValueKind,
-        text: String,
+        text: Cow<'a, str>,
         start: usize,
         end: usize,
         len: Option<usize>,
     ) {
         self.fields.insert(
-            path.clone(),
+            path,
             JsonField {
-                path,
                 kind,
                 text,
                 start,
@@ -386,7 +389,7 @@ impl<'a> Reader<'a> {
             self.record(
                 path,
                 JsonValueKind::Object,
-                String::new(),
+                Cow::Borrowed(""),
                 start,
                 self.pos,
                 Some(0),
@@ -400,7 +403,7 @@ impl<'a> Reader<'a> {
             self.skip_whitespace();
             self.expect(b':')?;
             self.skip_whitespace();
-            self.read_value(join_key(&path, &key), depth + 1)?;
+            self.read_value(join_key(&path, key.as_ref()), depth + 1)?;
             members += 1;
             self.skip_whitespace();
 
@@ -417,7 +420,7 @@ impl<'a> Reader<'a> {
         self.record(
             path,
             JsonValueKind::Object,
-            String::new(),
+            Cow::Borrowed(""),
             start,
             self.pos,
             Some(members),
@@ -437,7 +440,7 @@ impl<'a> Reader<'a> {
             self.record(
                 path,
                 JsonValueKind::Array,
-                String::new(),
+                Cow::Borrowed(""),
                 start,
                 self.pos,
                 Some(0),
@@ -464,7 +467,7 @@ impl<'a> Reader<'a> {
         self.record(
             path,
             JsonValueKind::Array,
-            String::new(),
+            Cow::Borrowed(""),
             start,
             self.pos,
             Some(elements),
@@ -472,10 +475,31 @@ impl<'a> Reader<'a> {
         Ok(())
     }
 
-    /// Reads a string and returns its unescaped content.
-    fn read_string(&mut self) -> Result<String, JsonError> {
+    /// Reads a string. Unescaped content borrows the artifact; escapes copy.
+    fn read_string(&mut self) -> Result<Cow<'a, str>, JsonError> {
         self.expect(b'"')?;
-        let mut out = String::new();
+        let content_start = self.pos;
+
+        loop {
+            let Some(byte) = self.peek() else {
+                return Err(self.error("unterminated string"));
+            };
+
+            match byte {
+                b'"' => {
+                    let borrowed = &self.input[content_start..self.pos];
+                    self.pos += 1;
+                    return Ok(Cow::Borrowed(borrowed));
+                }
+                b'\\' => return self.read_string_escaped(content_start),
+                0x00..=0x1f => return Err(self.error("control character in string")),
+                _ => self.pos += 1,
+            }
+        }
+    }
+
+    fn read_string_escaped(&mut self, content_start: usize) -> Result<Cow<'a, str>, JsonError> {
+        let mut out = String::from(&self.input[content_start..self.pos]);
         let mut literal_start = self.pos;
 
         loop {
@@ -487,7 +511,7 @@ impl<'a> Reader<'a> {
                 b'"' => {
                     out.push_str(&self.input[literal_start..self.pos]);
                     self.pos += 1;
-                    return Ok(out);
+                    return Ok(Cow::Owned(out));
                 }
                 b'\\' => {
                     out.push_str(&self.input[literal_start..self.pos]);
@@ -566,7 +590,7 @@ impl<'a> Reader<'a> {
         Ok(value)
     }
 
-    fn read_literal(&mut self) -> Result<(String, JsonValueKind), JsonError> {
+    fn read_literal(&mut self) -> Result<(Cow<'a, str>, JsonValueKind), JsonError> {
         for (literal, kind) in [
             ("true", JsonValueKind::Bool),
             ("false", JsonValueKind::Bool),
@@ -574,14 +598,14 @@ impl<'a> Reader<'a> {
         ] {
             if self.input[self.pos..].starts_with(literal) {
                 self.pos += literal.len();
-                return Ok((literal.to_string(), kind));
+                return Ok((Cow::Borrowed(literal), kind));
             }
         }
 
         Err(self.error("expected `true`, `false`, or `null`"))
     }
 
-    fn read_number(&mut self) -> Result<String, JsonError> {
+    fn read_number(&mut self) -> Result<Cow<'a, str>, JsonError> {
         let start = self.pos;
 
         if self.peek() == Some(b'-') {
@@ -616,7 +640,7 @@ impl<'a> Reader<'a> {
             }
         }
 
-        Ok(self.input[start..self.pos].to_string())
+        Ok(Cow::Borrowed(&self.input[start..self.pos]))
     }
 
     fn skip_digits(&mut self) -> usize {
@@ -710,6 +734,29 @@ mod tests {
         let document = JsonDocument::parse(r#"{"a":"line\nbreak A 😀"}"#).expect("parses");
 
         assert_eq!(document.get("a").expect("field").text, "line\nbreak A 😀");
+        assert!(matches!(
+            document.get("a").expect("field").text,
+            Cow::Owned(_)
+        ));
+    }
+
+    #[test]
+    fn unescaped_scalars_borrow_the_artifact() {
+        let input = r#"{"a":"Purchase","b":4200,"c":true}"#;
+        let document = JsonDocument::parse(input).expect("parses");
+
+        assert!(matches!(
+            document.get("a").expect("string").text,
+            Cow::Borrowed("Purchase")
+        ));
+        assert!(matches!(
+            document.get("b").expect("number").text,
+            Cow::Borrowed("4200")
+        ));
+        assert!(matches!(
+            document.get("c").expect("bool").text,
+            Cow::Borrowed("true")
+        ));
     }
 
     #[test]
@@ -786,7 +833,7 @@ mod tests {
         let ancestor = document
             .nearest_present_ancestor("data[0].user_data.em")
             .expect("ancestor");
-        assert_eq!(ancestor.path, "data[0]");
+        assert_eq!(ancestor.0, "data[0]");
     }
 
     #[test]

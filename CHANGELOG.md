@@ -42,6 +42,9 @@ All notable changes to Pixellint are documented here. The format follows
   and `delivery_optimization`. App events require `app.app_id`.
 - OpenAI CAPI type-checks `contents[].variant_dict` as a non-empty object of
   string pairs from the published Content table.
+- JSON parse borrows unescaped strings, numbers, and literals from the
+  artifact, and stores each field path once. Synth CAPI 1000-event batch
+  p50 27.2ms to 26.3ms (n=5 protocol).
 
 ## 0.31.9 - 2026-09-20
 

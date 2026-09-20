@@ -1218,7 +1218,7 @@ impl ValidatorPlugin for CoreRulePack {
 /// syntax error is the whole finding and it is worth saying precisely.
 fn validate_json_artifact(
     artifact: &str,
-    parsed: Option<&Result<json::JsonDocument, json::JsonError>>,
+    parsed: Option<&Result<json::JsonDocument<'_>, json::JsonError>>,
     violations: &mut Vec<Violation>,
 ) {
     let error = match parsed {
