@@ -99,6 +99,33 @@
           "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
         },
         {
+          "name": "context.ad.callback",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the TikTok Click ID (`ttclid`) from the landing URL. TikTok documents it as unhashed on `context.ad.callback`.",
+          "fix_hint": "Copy `ttclid` from the landing URL into `context.ad.callback`, or drop the empty pair.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584860883969"
+        },
+        {
+          "name": "context.page.url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the page URL when the event happened. TikTok documents it on `context.page`.",
+          "fix_hint": "Send an absolute URL in `context.page.url`, including the scheme.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "context.page.referrer",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the page referrer. TikTok documents it on `context.page`.",
+          "fix_hint": "Send an absolute referrer URL, or drop the empty pair.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
           "name": "context.user.email",
           "format": {
             "kind": "regex",
@@ -127,6 +154,15 @@
           "description": "Advertiser-side identifiers must be SHA-256 hashed on the client side.",
           "fix_hint": "Hash the identifier with SHA-256 and send the hex digest.",
           "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "context.user.ttp",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the first-party `_ttp` cookie. TikTok documents it as unhashed on `context.user.ttp`.",
+          "fix_hint": "Read `_ttp` under your domain into `context.user.ttp`, or drop the empty pair.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584860883969"
         },
         {
           "name": "properties.currency",
@@ -160,11 +196,13 @@
           "pattern": "^[A-Fa-f0-9]{64}$",
           "params": [
             "context.ip",
-            "context.user_agent"
+            "context.user_agent",
+            "context.ad.callback",
+            "context.user.ttp"
           ],
           "severity": "error",
-          "message": "This field looks like a SHA-256 digest, but TikTok documents `context.ip` and `context.user_agent` as unhashed.",
-          "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+          "message": "This field looks like a SHA-256 digest, but TikTok documents `context.ip`, `context.user_agent`, `context.ad.callback`, and `context.user.ttp` as unhashed.",
+          "fix_hint": "Send the raw IP address, user agent, click ID, or `_ttp` cookie. Hashing it makes the event unmatchable.",
           "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
         },
         {
@@ -174,11 +212,13 @@
             "context.user.email",
             "context.user.phone_number",
             "context.user.external_id",
+            "context.user.ttp",
+            "context.ad.callback",
             "context.ip"
           ],
           "severity": "warning",
-          "message": "The event has no user identifier. TikTok documents hashed email, phone, external_id, or IP as the match keys that attach the conversion to a person.",
-          "fix_hint": "Send hashed `context.user.email`, `phone_number`, or `external_id`, or the visitor IP in `context.ip`.",
+          "message": "The event has no user identifier. TikTok documents hashed email, phone, external_id, the `_ttp` cookie, click ID, or IP as the match keys that attach the conversion to a person.",
+          "fix_hint": "Send hashed `context.user.email`, `phone_number`, or `external_id`, or unhashed `context.user.ttp`, `context.ad.callback`, or `context.ip`.",
           "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
         },
         {

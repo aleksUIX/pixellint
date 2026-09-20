@@ -38,6 +38,9 @@ All notable changes to Pixellint are documented here. The format follows
 - Snap Conversions API events type-check unhashed `sc_click_id`, `sc_cookie1`,
   `madid`, and `idfv`, plus optional `event_id` and `custom_data.order_id` from
   the published parameter table.
+- TikTok Events API 1.0 track payloads type-check unhashed click ID
+  `context.ad.callback` and `_ttp` cookie `context.user.ttp`, and require
+  `context.page.url` and `referrer` to be absolute URLs when present.
 
 ## 0.31.8 - 2026-09-19
 
