@@ -993,8 +993,12 @@ Calls to the Segment HTTP Tracking API on `api.segment.io` and the regional
 | `sentAt` | ISO 8601 date string when present | `vendor.segment.body.sentAt.invalid` |
 | `messageId` | Fewer than 100 characters when present | `vendor.segment.body.messageId.invalid` |
 | `context.ip` | Unhashed | `vendor.segment.body.hashed_plaintext_field` |
+| `context.userAgent` | When present, not empty. Sent unhashed | `vendor.segment.body.context.userAgent.empty`, `.hashed_plaintext_field` |
+| `context.page.url` | Absolute URL when present | `vendor.segment.body.context.page.url.invalid` |
+| `properties.currency` | ISO 4217 three-letter code when present. Omitted currency is assumed USD | `vendor.segment.body.properties.currency.invalid` |
 
 Source: [HTTP API source](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/),
+[common fields](https://segment.com/docs/connections/spec/common/),
 [track spec](https://segment.com/docs/connections/spec/track/).
 
 The rendered documentation returns 403 to automated fetches, so the contract was

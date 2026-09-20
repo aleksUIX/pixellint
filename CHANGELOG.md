@@ -41,6 +41,9 @@ All notable changes to Pixellint are documented here. The format follows
 - TikTok Events API 1.0 track payloads type-check unhashed click ID
   `context.ad.callback` and `_ttp` cookie `context.user.ttp`, and require
   `context.page.url` and `referrer` to be absolute URLs when present.
+- Segment HTTP Tracking API calls type-check unhashed `context.userAgent`,
+  require `context.page.url` to be an absolute URL when present, and check
+  reserved `properties.currency` as a three-letter ISO 4217 code.
 
 ## 0.31.8 - 2026-09-19
 
