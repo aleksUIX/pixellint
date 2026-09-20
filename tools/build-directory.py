@@ -20,7 +20,7 @@ VENDORS = {
     "linkedin": ("LinkedIn", "social", ["px.ads.linkedin.com", "snap.licdn.com"], "vendor/linkedin"),
     "reddit": ("Reddit", "social", ["alb.reddit.com", "www.redditstatic.com", "pixel-config.reddit.com", "conversions-api.reddit.com", "ads-api.reddit.com"], "vendor/reddit"),
     "x": ("X (Twitter)", "social", ["analytics.twitter.com", "static.ads-twitter.com", "ads-api.twitter.com", "ads-api.x.com", "t.co"], "vendor/x-conversions-api"),
-    "quora": ("Quora", "social", ["a.quora.com", "q.quora.com"], None),
+    "quora": ("Quora", "social", ["a.quora.com", "q.quora.com", "api.quora.com"], "vendor/quora-conversions-api"),
     "nextdoor": ("Nextdoor", "social", ["ads.nextdoor.com"], None),
     "kwai": ("Kwai", "social", ["s1.kwai.net"], "vendor/kwai"),
 

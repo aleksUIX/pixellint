@@ -677,6 +677,27 @@ Sources: [direct integration](https://ads-api-reddit.netlify.app/docs/v3/guides/
 Reddit accepts email and phone unhashed or SHA-256 hashed, so this pack does
 not require a digest on those fields.
 
+## `vendor/quora-conversions-api`
+
+Server-side conversion events posted to `api.quora.com/ads/v0/conversion`.
+Level: `official_vendor`. Browser pixels on `q.quora.com` stay directory-only.
+
+| Body field or rule | Enforced | Rule ids |
+| --- | --- | --- |
+| `account_id` | Required | `vendor.quora-conversions-api.body.account_id.missing`, `.empty` |
+| `conversion.event_name` | Required, one of the documented PixelCategory names | `vendor.quora-conversions-api.body.conversion.event_name.missing`, `.invalid` |
+| `conversion.click_id` | Recommended. Quora documents `qclid` as the attribution match key. Events without it are accepted | `vendor.quora-conversions-api.body.conversion.click_id.missing`, `.empty` |
+| `conversion.event_id` | When present, not empty | `vendor.quora-conversions-api.body.conversion.event_id.empty` |
+| `conversion.value` | When present, a signed float | `vendor.quora-conversions-api.body.conversion.value.invalid` |
+| `conversion.timestamp` | When present, an integer. The official tag uses microseconds | `vendor.quora-conversions-api.body.conversion.timestamp.invalid` |
+| `device.user_agent`, `referer`, `language`, `mobile_device_id` | When present, not empty. `referer` is the spelling Quora sends | `vendor.quora-conversions-api.body.device.user_agent.empty` |
+
+Sources: [Conversion API Overview](https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview),
+[How Quora counts conversions](https://quoraadsupport.zendesk.com/hc/en-us/articles/46220613643789-How-Quora-counts-conversions),
+[official Conversion API tag](https://github.com/quora/quora-capi-tag).
+
+Hashed email and phone stay unpublished on this endpoint.
+
 ## `vendor/tiktok`
 
 TikTok Pixel loader on `analytics.tiktok.com/i18n/pixel/events.js` and
@@ -775,6 +796,8 @@ only, so `conversionId` stays recommended.
 
 Conversion events streamed to `api.linkedin.com/rest/conversionEvents`, either
 as a single event or as a batch under `elements`. Level: `official_vendor`.
+The pack matches on `conversionHappenedAt`, not a `conversion` object, so other
+CAPI payloads that nest conversion fields are not claimed.
 
 | Body field or rule | Enforced | Rule ids |
 | --- | --- | --- |

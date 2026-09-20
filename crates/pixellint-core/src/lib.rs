@@ -431,6 +431,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/quantcast.json"),
     ),
     (
+        "vendor/quora-conversions-api",
+        include_str!("../rulepacks/vendor/quora-conversions-api.json"),
+    ),
+    (
         "vendor/rakuten",
         include_str!("../rulepacks/vendor/rakuten.json"),
     ),

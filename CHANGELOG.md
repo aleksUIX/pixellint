@@ -6,6 +6,16 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/quora-conversions-api`, covering POST `/ads/v0/conversion`: required
+  `account_id` and `conversion.event_name` from the documented PixelCategory
+  set, recommended `click_id` (`qclid`), and optional `event_id`, `value`,
+  `timestamp`, and device fields from Quora's Conversion API tag. Browser
+  pixels on `q.quora.com` stay directory-only. LinkedIn CAPI now matches on
+  `conversionHappenedAt` rather than a nested `conversion` object, so the two
+  packs do not claim each other's payloads.
+
 ### Changed
 
 - `Engine::default` builds the host index once after every builtin pack is

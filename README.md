@@ -206,6 +206,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/microsoft-clarity` | Microsoft Clarity tag loader, project ID in the path | official template |
 | `vendor/reddit` | Reddit Pixel conversion requests | ecosystem reference |
 | `vendor/reddit-conversions-api` | Conversions API v3 events, URL and JSON event payload | official vendor |
+| `vendor/quora-conversions-api` | Quora Conversion API JSON on /ads/v0/conversion | official vendor |
 | `vendor/nextdoor-conversions-api` | Nextdoor Conversions API JSON on /v2/api/conversions/track | official vendor |
 | `vendor/x-conversions-api` | X conversion API measurement events, URL and JSON payload | official vendor |
 | `vendor/x` | X website tag image pixels on analytics.twitter.com, analytics.x.com, and t.co /adsct | ecosystem reference |
@@ -263,8 +264,8 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 
 ### Vendor directory
 
-Rulepacks cover 131 endpoint families across 77 vendors. The vendor directory
-covers the rest by attribution: 119 vendor rows and 296 hosts, so an unrecognized
+Rulepacks cover 132 endpoint families across 77 vendors. The vendor directory
+covers the rest by attribution: 119 vendor rows and 297 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 
 ```bash

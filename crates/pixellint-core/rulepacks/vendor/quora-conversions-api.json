@@ -1,0 +1,139 @@
+{
+  "id": "vendor/quora-conversions-api",
+  "display_name": "Quora Conversions API",
+  "vendor": "quora",
+  "description": "Server-side conversion events posted to api.quora.com/ads/v0/conversion. Browser pixels on q.quora.com stay directory-only.",
+  "source_level": "official_vendor",
+  "docs": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview",
+  "match": {
+    "hosts": [
+      "api.quora.com"
+    ],
+    "path_contains": [
+      "/ads/v0/conversion"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "account_id",
+          "conversion.event_name",
+          "conversion.click_id"
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "account_id",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Quora Ads account id. Quora documents it as required on the Conversion API request.",
+          "fix_hint": "Set `account_id` to the Ads account id from Quora Ads Manager.",
+          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview"
+        },
+        {
+          "name": "conversion.event_name",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "Generic",
+              "ViewContent",
+              "Search",
+              "AddToCart",
+              "AddToWishlist",
+              "InitiateCheckout",
+              "AddPaymentInfo",
+              "Purchase",
+              "GenerateLead",
+              "CompleteRegistration",
+              "AppInstall"
+            ]
+          },
+          "description": "It is the conversion event name. Quora documents a fixed PixelCategory set on the Conversion API.",
+          "fix_hint": "Use a documented name such as `Purchase` or `Generic`.",
+          "doc": "https://github.com/quora/quora-capi-tag"
+        },
+        {
+          "name": "conversion.click_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Quora click id (`qclid`). Quora documents it as the match key for ad attribution. Events without it are accepted but cannot be attributed to a click.",
+          "fix_hint": "Send `conversion.click_id` as the `qclid` from the landing-page URL or `quora_qclid` cookie.",
+          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview"
+        },
+        {
+          "name": "conversion.event_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the event so Pixel and CAPI can deduplicate. Quora documents sharing the same `event_id` across both.",
+          "fix_hint": "Send a stable `conversion.event_id` on both the pixel and the Conversion API call.",
+          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/46220613643789-How-Quora-counts-conversions"
+        },
+        {
+          "name": "conversion.value",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the conversion value. Quora's Conversion API tag sends it as a number.",
+          "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
+          "doc": "https://github.com/quora/quora-capi-tag"
+        },
+        {
+          "name": "conversion.timestamp",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the event time. Quora's Conversion API tag sends microseconds since epoch.",
+          "fix_hint": "Send an integer timestamp. The official tag uses microseconds.",
+          "doc": "https://github.com/quora/quora-capi-tag"
+        },
+        {
+          "name": "device.user_agent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the device user agent. Quora's Conversion API tag sends it unhashed when the client provides it.",
+          "fix_hint": "Send `device.user_agent`, or drop the empty pair.",
+          "doc": "https://github.com/quora/quora-capi-tag"
+        },
+        {
+          "name": "device.referer",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the page referrer. Quora's Conversion API tag uses the `referer` spelling.",
+          "fix_hint": "Send `device.referer`, or drop the empty pair.",
+          "doc": "https://github.com/quora/quora-capi-tag"
+        },
+        {
+          "name": "device.language",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the device language. Quora's Conversion API tag sends it when the client provides it.",
+          "fix_hint": "Send `device.language`, or drop the empty pair.",
+          "doc": "https://github.com/quora/quora-capi-tag"
+        },
+        {
+          "name": "device.mobile_device_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the mobile advertising id. Quora's Conversion API tag sends it when the client provides it.",
+          "fix_hint": "Send `device.mobile_device_id`, or drop the empty pair.",
+          "doc": "https://github.com/quora/quora-capi-tag"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}
