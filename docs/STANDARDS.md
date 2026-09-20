@@ -1130,7 +1130,16 @@ Standard and custom events posted to `api2.branch.io/v2/event/standard` and
 | Over-hashing | `user_data.ip` and `user_data.user_agent` must not be a digest | `vendor.branch.body.hashed_plaintext_field` |
 | `event_data.currency` | ISO 4217 three-letter code when present | `vendor.branch.body.event_data.currency.invalid` |
 | `event_data.revenue` | Number when present, no currency symbol | `vendor.branch.body.event_data.revenue.invalid` |
+| `event_data.shipping` | Number when present, no currency symbol | `vendor.branch.body.event_data.shipping.invalid` |
+| `event_data.tax` | Number when present, no currency symbol | `vendor.branch.body.event_data.tax.invalid` |
+| `user_data.country` | Two-letter country code when present | `vendor.branch.body.user_data.country.invalid` |
+| `user_data.limit_ad_tracking` | Boolean when present | `vendor.branch.body.user_data.limit_ad_tracking.invalid` |
+| `user_data.advertising_ids.oaid` | UUID when present | `vendor.branch.body.user_data.advertising_ids.oaid.invalid` |
+| DMA flags | Boolean when present | `vendor.branch.body.user_data.dma_eea.invalid`, `.dma_ad_personalization.invalid`, `.dma_ad_user_data.invalid` |
 | DMA consent | `dma_ad_personalization` and `dma_ad_user_data` when `dma_eea` is true | `vendor.branch.body.dma_consent_required` |
+| `content_items[].$content_schema` | Documented schema enum when present | `vendor.branch.body.content_items[].$content_schema.invalid` |
+| `content_items[].$og_image_url` | Absolute URL when present | `vendor.branch.body.content_items[].$og_image_url.invalid` |
+| `content_items[].$condition` | Documented condition enum when present | `vendor.branch.body.content_items[].$condition.invalid` |
 
 Source: [Events API](https://help.branch.io/developers-hub/reference/events-api).
 

@@ -120,18 +120,63 @@
           "doc": "https://help.branch.io/developers-hub/reference/events-api"
         },
         {
+          "name": "user_data.country",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}$"
+          },
+          "description": "It is the user's country code, usually from device settings. Branch's Events API sample is a two-letter code such as `US`.",
+          "fix_hint": "Send a two-letter country code such as `US`.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.limit_ad_tracking",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "It is whether the partner opted out of advertiser tracking. Branch documents a boolean.",
+          "fix_hint": "Send `true` or `false` in `user_data.limit_ad_tracking`.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "user_data.advertising_ids.oaid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "description": "It is the OAID inside `advertising_ids`. Branch documents a UUID for non-standard IDs such as Huawei OAID.",
+          "fix_hint": "Send `user_data.advertising_ids.oaid` as a UUID.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
           "name": "user_data.dma_eea",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
           "description": "Whether European regulations, including the DMA, apply to this user. Branch documents it as a boolean.",
+          "fix_hint": "Send `true` or `false` in `user_data.dma_eea`.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api"
         },
         {
           "name": "user_data.dma_ad_personalization",
-          "description": "Whether the user granted ads personalization consent. Branch documents it as required when `dma_eea` is true.",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "Whether the user granted ads personalization consent. Branch documents it as a boolean, required when `dma_eea` is true.",
+          "fix_hint": "Send `true` or `false` in `user_data.dma_ad_personalization`.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api"
         },
         {
           "name": "user_data.dma_ad_user_data",
-          "description": "Whether the user granted consent for third-party transmission of user-level ads data. Branch documents it as required when `dma_eea` is true.",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "Whether the user granted consent for third-party transmission of user-level ads data. Branch documents it as a boolean, required when `dma_eea` is true.",
+          "fix_hint": "Send `true` or `false` in `user_data.dma_ad_user_data`.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api"
         },
         {
@@ -152,6 +197,89 @@
           },
           "description": "It is the reported revenue for the event. Branch documents a number.",
           "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "event_data.shipping",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the shipping cost for the transaction. Branch documents a number.",
+          "fix_hint": "Send a number such as `10.5`, with no currency symbol.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "event_data.tax",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the total tax for the transaction. Branch documents a number.",
+          "fix_hint": "Send a number such as `13.5`, with no currency symbol.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "content_items[].$content_schema",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "COMMERCE_AUCTION",
+              "COMMERCE_BUSINESS",
+              "COMMERCE_OTHER",
+              "COMMERCE_PRODUCT",
+              "COMMERCE_RESTAURANT",
+              "COMMERCE_SERVICE",
+              "COMMERCE_TRAVEL_FLIGHT",
+              "COMMERCE_TRAVEL_HOTEL",
+              "COMMERCE_TRAVEL_OTHER",
+              "GAME_STATE",
+              "MEDIA_IMAGE",
+              "MEDIA_MIXED",
+              "MEDIA_MUSIC",
+              "MEDIA_OTHER",
+              "MEDIA_VIDEO",
+              "OTHER",
+              "TEXT_ARTICLE",
+              "TEXT_BLOG",
+              "TEXT_OTHER",
+              "TEXT_RECIPE",
+              "TEXT_REVIEW",
+              "TEXT_SEARCH_RESULTS",
+              "TEXT_STORY",
+              "TEXT_TECHNICAL_DOC"
+            ]
+          },
+          "description": "It is the content schema on a `content_items` row. Branch documents a closed set of COMMERCE, GAME, MEDIA, TEXT, and OTHER values.",
+          "fix_hint": "Set `content_items[].$content_schema` to a documented value such as `COMMERCE_PRODUCT`.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "content_items[].$og_image_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the image URL for the content item. Branch documents `$og_image_url` as a URL.",
+          "fix_hint": "Send an absolute image URL in `content_items[].$og_image_url`, or omit the field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "name": "content_items[].$condition",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "OTHER",
+              "NEW",
+              "EXCELLENT",
+              "GOOD",
+              "FAIR",
+              "POOR",
+              "USED",
+              "REFURBISHED"
+            ]
+          },
+          "description": "It is the product condition on a `content_items` row, used for auctions. Branch documents a closed set.",
+          "fix_hint": "Set `content_items[].$condition` to `NEW`, `USED`, `REFURBISHED`, or another documented value.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api"
         }
       ],

@@ -77,6 +77,11 @@ All notable changes to Pixellint are documented here. The format follows
   `fb_login_id` as digits, `customer_user_id`, `bundleIdentifier`, and
   `app_version_name` when present, and boolean flags on
   `consent_data.manual`.
+- Branch Events API type-checks `content_items` `$content_schema` and
+  `$condition` enums, `$og_image_url`, numeric `shipping` and `tax`,
+  two-letter `user_data.country`, `advertising_ids.oaid` as a UUID, and
+  boolean DMA and limit-ad-tracking flags. `$product_category` stays
+  unformatted because Branch's table and sample payloads disagree.
 - Auto-mode plugin selection looks up the host-index shortlist instead of
   walking every registered pack and hashing candidate ids.
 
