@@ -860,15 +860,20 @@ CAPI payloads that nest conversion fields are not claimed.
 | `conversion` | Required, in the form `urn:lla:llaPartnerConversion:ID` | `vendor.linkedin-conversions-api.body.conversion.missing`, `.invalid` |
 | `conversionHappenedAt` | Required, exactly 13 digits, since LinkedIn documents milliseconds and a 10-digit value is seconds | `vendor.linkedin-conversions-api.body.conversionHappenedAt.missing`, `.invalid` |
 | `user.userIds` | Required, even when matching on `lead`, `externalIds`, or `userInfo`, where it is sent as an empty list | `vendor.linkedin-conversions-api.body.user.userIds.missing` |
-| `user.userIds[].idType` | Required; unrecognized types warn rather than error | `vendor.linkedin-conversions-api.body.user.userIds[].idType.missing`, `.invalid` |
+| `user.userIds[].idType` | Required; unrecognized types warn rather than error. Documented types include `SHA256_IP_ADDRESS` | `vendor.linkedin-conversions-api.body.user.userIds[].idType.missing`, `.invalid` |
 | `user.userIds[].idValue` | Required and non-empty | `vendor.linkedin-conversions-api.body.user.userIds[].idValue.missing`, `.empty` |
+| `user.userInfo.firstName`, `lastName` | When present, not empty. A first name needs a last name, and the reverse | `vendor.linkedin-conversions-api.body.user.userInfo.firstName.empty`, `.userinfo_first_needs_last`, `.userinfo_last_needs_first` |
+| `user.userInfo.hashedFirstName`, `hashedLastName` | When present, 64 lowercase hex. The hashed names are sent together | `vendor.linkedin-conversions-api.body.user.userInfo.hashedFirstName.invalid`, `.hashed_first_needs_last` |
+| `user.userInfo.companyName`, `title` | When present, not empty | `vendor.linkedin-conversions-api.body.user.userInfo.companyName.empty`, `.title.empty` |
+| `user.userInfo.countryCode` | When present, an ISO two-letter code | `vendor.linkedin-conversions-api.body.user.userInfo.countryCode.invalid` |
+| `user.externalIds[]` | When present, not empty | `vendor.linkedin-conversions-api.body.user.externalIds[].empty` |
 | `conversionValue` | An amount needs a `currencyCode` | `vendor.linkedin-conversions-api.body.value_needs_both_fields` |
 | Unhashed PII | No identifier carries a raw email address | `vendor.linkedin-conversions-api.body.unhashed_email` |
 
 Source: [Conversions API](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api).
 
-The `idType` list is taken from LinkedIn's own validation error, which may not
-be exhaustive, so an unfamiliar value is a warning rather than an error.
+The `idType` list is taken from LinkedIn's streaming schema, including
+`SHA256_IP_ADDRESS`. An unfamiliar value is a warning rather than an error.
 
 ## `vendor/amplitude`
 

@@ -68,11 +68,12 @@
             "LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID",
             "ACXIOM_ID",
             "PLAINTEXT_IP_ADDRESS",
+            "SHA256_IP_ADDRESS",
             "GOOGLE_AID"
           ]
         },
         "format_severity": "warning",
-        "description": "It names the kind of identifier carried in `idValue`.",
+        "description": "It names the kind of identifier carried in `idValue`. LinkedIn documents `SHA256_EMAIL`, `LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID`, `ACXIOM_ID`, `PLAINTEXT_IP_ADDRESS`, `SHA256_IP_ADDRESS`, and `GOOGLE_AID`.",
         "fix_hint": "Use one of the documented identifier types.",
         "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
       },
@@ -95,6 +96,81 @@
         "description": "LinkedIn rejects a `lead` that is not a valid URN.",
         "fix_hint": "Send it as `urn:li:leadGenFormResponse:ID`.",
         "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "name": "user.externalIds[]",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is an advertiser-provided identifier for the converting user. LinkedIn documents at most one value in the list, and requires a standard identifier alongside the first send.",
+        "fix_hint": "Send `user.externalIds` as a one-item list, together with `userIds` or `userInfo` on the first match.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "name": "user.userInfo.firstName",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the contact first name in plain text. LinkedIn documents it with `lastName` for probabilistic matching.",
+        "fix_hint": "Send `user.userInfo.firstName` with `lastName`, or send the hashed pair instead.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "name": "user.userInfo.lastName",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the contact last name in plain text. LinkedIn documents it with `firstName` for probabilistic matching.",
+        "fix_hint": "Send `user.userInfo.lastName` with `firstName`, or send the hashed pair instead.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "name": "user.userInfo.hashedFirstName",
+        "format": {
+          "kind": "hex",
+          "length": 64
+        },
+        "description": "It is the SHA-256 hex digest of the first name. LinkedIn documents lowercase, no spaces or punctuation, UTF-8, then SHA-256.",
+        "fix_hint": "Send a 64-character lowercase hex digest in `user.userInfo.hashedFirstName` with `hashedLastName`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "name": "user.userInfo.hashedLastName",
+        "format": {
+          "kind": "hex",
+          "length": 64
+        },
+        "description": "It is the SHA-256 hex digest of the last name. LinkedIn documents lowercase, no spaces or punctuation, UTF-8, then SHA-256.",
+        "fix_hint": "Send a 64-character lowercase hex digest in `user.userInfo.hashedLastName` with `hashedFirstName`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "name": "user.userInfo.companyName",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the company name in plain text. LinkedIn documents it as an optional userInfo match field.",
+        "fix_hint": "Send `user.userInfo.companyName`, or drop the empty pair.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "name": "user.userInfo.title",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the job title in plain text. LinkedIn documents it as an optional userInfo match field.",
+        "fix_hint": "Send `user.userInfo.title`, or drop the empty pair.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "name": "user.userInfo.countryCode",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[A-Za-z]{2}$"
+        },
+        "description": "It is an ISO two-letter country or region code. LinkedIn documents `US` as the example.",
+        "fix_hint": "Send a two-letter code such as `US`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
       },
       {
         "name": "conversionValue.currencyCode",
@@ -137,6 +213,54 @@
         "message": "`conversionValue` carries an amount with no `currencyCode`. LinkedIn documents both fields together.",
         "fix_hint": "Add `conversionValue.currencyCode` alongside the amount.",
         "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+      },
+      {
+        "code": "vendor.linkedin-conversions-api.body.userinfo_first_needs_last",
+        "kind": "required_with",
+        "when": "user.userInfo.firstName",
+        "requires": [
+          "user.userInfo.lastName"
+        ],
+        "severity": "error",
+        "message": "`userInfo` has `firstName` without `lastName`. LinkedIn documents both names together for matching.",
+        "fix_hint": "Send `user.userInfo.lastName` with `firstName`, or send `hashedFirstName` and `hashedLastName` instead.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "code": "vendor.linkedin-conversions-api.body.userinfo_last_needs_first",
+        "kind": "required_with",
+        "when": "user.userInfo.lastName",
+        "requires": [
+          "user.userInfo.firstName"
+        ],
+        "severity": "error",
+        "message": "`userInfo` has `lastName` without `firstName`. LinkedIn documents both names together for matching.",
+        "fix_hint": "Send `user.userInfo.firstName` with `lastName`, or send `hashedFirstName` and `hashedLastName` instead.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "code": "vendor.linkedin-conversions-api.body.hashed_first_needs_last",
+        "kind": "required_with",
+        "when": "user.userInfo.hashedFirstName",
+        "requires": [
+          "user.userInfo.hashedLastName"
+        ],
+        "severity": "error",
+        "message": "`userInfo` has `hashedFirstName` without `hashedLastName`. LinkedIn documents both hashed names together.",
+        "fix_hint": "Send `user.userInfo.hashedLastName` with `hashedFirstName`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+      },
+      {
+        "code": "vendor.linkedin-conversions-api.body.hashed_last_needs_first",
+        "kind": "required_with",
+        "when": "user.userInfo.hashedLastName",
+        "requires": [
+          "user.userInfo.hashedFirstName"
+        ],
+        "severity": "error",
+        "message": "`userInfo` has `hashedLastName` without `hashedFirstName`. LinkedIn documents both hashed names together.",
+        "fix_hint": "Send `user.userInfo.hashedFirstName` with `hashedLastName`.",
+        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
       },
       {
         "code": "vendor.linkedin-conversions-api.body.unhashed_email",

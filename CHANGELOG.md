@@ -15,6 +15,9 @@ All notable changes to Pixellint are documented here. The format follows
 - Reddit CAPI v3 type-checks `metadata.item_count`, product `id` / `name` /
   `category` / `quantity` / `item_price`, screen dimensions, Limited Data Use
   `modes` plus required country, and custom event names at most 64 characters.
+- LinkedIn CAPI type-checks `userInfo` first and last names (plain or SHA-256
+  hex), `companyName`, `title`, two-letter `countryCode`, `externalIds`, and
+  `SHA256_IP_ADDRESS` as an `idType`.
 
 ## 0.31.9 - 2026-09-20
 
