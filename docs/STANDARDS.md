@@ -785,10 +785,17 @@ The envelope is checked once. Each element of `data` is checked on its own.
 | `event_time` | Unix seconds, 10 digits | `vendor.tiktok-events-2.body.event_time.missing`, `.invalid` |
 | `event_id` | Recommended when the Pixel also fires | `vendor.tiktok-events-2.body.event_id.missing` |
 | `page.url` | Recommended absolute URL on web events | `vendor.tiktok-events-2.body.page.url.missing`, `.invalid` |
+| `page.referrer` | Absolute URL when present | `vendor.tiktok-events-2.body.page.referrer.invalid` |
 | `user.email`, `phone`, `external_id` | SHA-256 hex digests | `vendor.tiktok-events-2.body.user.<field>.invalid` |
+| `user.ttp` | When present, not empty. Sent unhashed | `vendor.tiktok-events-2.body.user.ttp.empty`, `.hashed_plaintext_field` |
+| `user.locale` | Language or language-region tag such as `en-US` or `en_US` when present | `vendor.tiktok-events-2.body.user.locale.invalid` |
 | `user.ip`, `user.user_agent` | Sent unhashed | `vendor.tiktok-events-2.body.hashed_plaintext_field` |
 | Unhashed PII | No field carries a raw email address | `vendor.tiktok-events-2.body.unhashed_email` |
-| Identifier | Hashed email, phone, `external_id`, `ttclid`, or IP | `vendor.tiktok-events-2.body.user_needs_an_identifier` |
+| Identifier | Hashed email, phone, `external_id`, `ttclid`, `ttp`, or IP | `vendor.tiktok-events-2.body.user_needs_an_identifier` |
+| `properties.value` | Non-negative decimal number when present | `vendor.tiktok-events-2.body.properties.value.invalid` |
+| `properties.content_type` | When present, `product` or `product_group` | `vendor.tiktok-events-2.body.properties.content_type.invalid` |
+| `properties.contents[].content_id` | When present, not empty | `vendor.tiktok-events-2.body.properties.contents[].content_id.empty` |
+| `properties.contents[].price` | When present, a number. Unit price, not the order total | `vendor.tiktok-events-2.body.properties.contents[].price.invalid` |
 | `Purchase`, `CompletePayment`, `PlaceAnOrder` | Need `properties.value` and `properties.currency` | `vendor.tiktok-events-2.body.purchase_requires_value_and_currency` |
 
 Source: [report app, web, offline, or CRM events](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3).

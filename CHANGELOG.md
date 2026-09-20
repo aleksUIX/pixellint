@@ -97,6 +97,10 @@ All notable changes to Pixellint are documented here. The format follows
   numeric `properties.revenue` and `properties.value`, and page
   `properties.url` as an absolute URL. Currency stays optional; page `name`
   stays unrequired.
+- TikTok Events API 2.0 type-checks unhashed `user.ttp`, `page.referrer` as
+  an absolute URL, numeric `properties.value`, `properties.content_type`
+  (`product` or `product_group`), contents `content_id` and unit `price`,
+  and `user.locale`. Contents `quantity` stays off the published table.
 
 ## 0.31.8 - 2026-09-19
 

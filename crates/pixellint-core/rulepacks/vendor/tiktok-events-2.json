@@ -82,6 +82,13 @@
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
+          "name": "page.referrer",
+          "format": { "kind": "url" },
+          "description": "It is the referrer URL. TikTok documents the full URL, including query, as `document.referrer` or the Referer header.",
+          "fix_hint": "Send an absolute URL in `page.referrer`, including the scheme.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
           "name": "user.email",
           "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
           "description": "Email must be SHA-256 hashed after trim and lowercase.",
@@ -108,6 +115,13 @@
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
+          "name": "user.ttp",
+          "format": { "kind": "non_empty" },
+          "description": "It is the `_ttp` cookie Pixel SDK writes. TikTok documents it as an unhashed web match key.",
+          "fix_hint": "Read `_ttp` under your domain into `user.ttp`, or drop the empty pair.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
           "name": "user.ip",
           "format": { "kind": "non_empty" },
           "description": "It is the visitor IP, sent unhashed.",
@@ -120,6 +134,16 @@
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
+          "name": "user.locale",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2,3}(?:[-_][A-Za-z]{2})?$"
+          },
+          "description": "It is the BCP 47 language identifier. TikTok documents tags such as `en-US` and `zh-CN`, and samples also use `en_US`.",
+          "fix_hint": "Send a tag such as `en-US` or `en_US`.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
           "name": "properties.currency",
           "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
           "description": "It is an ISO 4217 currency code. TikTok documents it as required for ROAS events.",
@@ -128,7 +152,33 @@
         },
         {
           "name": "properties.value",
-          "description": "It is the total order value. TikTok documents it as required for ROAS events.",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the total order value. TikTok documents a float with no currency symbol, such as `10.00`.",
+          "fix_hint": "Send a number such as `20`, with no currency symbol.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "properties.content_type",
+          "format": {
+            "kind": "enum",
+            "values": ["product", "product_group"]
+          },
+          "description": "It is how catalog ids map. TikTok documents `product` when `content_id` is a sku, or `product_group` when it is an item group.",
+          "fix_hint": "Set `properties.content_type` to `product` or `product_group`.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "properties.contents[].content_id",
+          "format": { "kind": "non_empty" },
+          "description": "It is the product or content id on a contents row. TikTok documents matching catalog `sku_id` or `item_group_id`.",
+          "fix_hint": "Set `properties.contents[].content_id` to the catalog item ID, or drop the empty pair.",
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "properties.contents[].price",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "description": "It is the unit price of one item. TikTok documents `price` as the single-item price, not the order total.",
+          "fix_hint": "Send `properties.contents[].price` as a number, such as `10`. Put the order total in `properties.value`.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         }
       ],
@@ -146,19 +196,19 @@
           "code": "vendor.tiktok-events-2.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["user.ip", "user.user_agent"],
+          "params": ["user.ip", "user.user_agent", "user.ttp"],
           "severity": "error",
-          "message": "This field looks like a SHA-256 digest, but TikTok documents `user.ip` and `user.user_agent` as unhashed.",
-          "fix_hint": "Send the raw IP address or user agent.",
+          "message": "This field looks like a SHA-256 digest, but TikTok documents `user.ip`, `user.user_agent`, and `user.ttp` as unhashed.",
+          "fix_hint": "Send the raw IP address, user agent, or `_ttp` cookie.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "code": "vendor.tiktok-events-2.body.user_needs_an_identifier",
           "kind": "require_one_of",
-          "params": ["user.email", "user.phone", "user.external_id", "user.ttclid", "user.ip"],
+          "params": ["user.email", "user.phone", "user.external_id", "user.ttclid", "user.ttp", "user.ip"],
           "severity": "warning",
-          "message": "The event has no match key. TikTok documents hashed email, phone, external_id, ttclid, or IP as the identifiers that attach the conversion to a person.",
-          "fix_hint": "Send hashed `user.email`, `phone`, or `external_id`, or `ttclid` or `user.ip`.",
+          "message": "The event has no match key. TikTok documents hashed email, phone, external_id, ttclid, ttp, or IP as the identifiers that attach the conversion to a person.",
+          "fix_hint": "Send hashed `user.email`, `phone`, or `external_id`, or `ttclid`, `ttp`, or `user.ip`.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
