@@ -1228,6 +1228,13 @@ The Pixel ID rides on the path. The event payload is checked per event in
 | Hashed PII | `hashed_email` and `hashed_phone_number` must be SHA-256 hex digests | `vendor.x-conversions-api.body.identifiers[].<field>.invalid` |
 | Unhashed PII | No field carries a raw email address | `vendor.x-conversions-api.body.unhashed_email` |
 | Over-hashing | `ip_address` and `user_agent` must not be digests | `vendor.x-conversions-api.body.hashed_plaintext_field` |
+| `value` | When present, a decimal number | `vendor.x-conversions-api.body.value.invalid` |
+| `number_items` | When present, an integer | `vendor.x-conversions-api.body.number_items.invalid` |
+| `price_currency` | When present, an ISO 4217 code | `vendor.x-conversions-api.body.price_currency.invalid` |
+| `description` | When present, not empty | `vendor.x-conversions-api.body.description.empty` |
+| `contents[].content_id`, `content_name`, `content_type`, `content_group_id` | When present, not empty | `vendor.x-conversions-api.body.contents[].content_id.empty` |
+| `contents[].content_price` | When present, a number | `vendor.x-conversions-api.body.contents[].content_price.invalid` |
+| `contents[].num_items` | When present, an integer | `vendor.x-conversions-api.body.contents[].num_items.invalid` |
 
 Source: [conversion API](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions).
 

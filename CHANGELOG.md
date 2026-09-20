@@ -18,6 +18,9 @@ All notable changes to Pixellint are documented here. The format follows
 - LinkedIn CAPI type-checks `userInfo` first and last names (plain or SHA-256
   hex), `companyName`, `title`, two-letter `countryCode`, `externalIds`, and
   `SHA256_IP_ADDRESS` as an `idType`.
+- X conversion API type-checks `value`, `number_items`, `description`, and
+  contents `content_id`, `content_name`, `content_type`, `content_price`,
+  `num_items`, and `content_group_id` from the published conversion object.
 
 ## 0.31.9 - 2026-09-20
 
