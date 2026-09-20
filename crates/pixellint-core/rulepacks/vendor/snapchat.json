@@ -114,6 +114,15 @@
         "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
       },
       {
+        "name": "event_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is an advertiser-chosen identifier for deduplication against the Pixel. Snap documents it as recommended for unique events. An empty pair cannot collapse a web and CAPI pair.",
+        "fix_hint": "Send the same `event_id` the Pixel used as `client_dedup_id`, or drop the empty pair.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
         "name": "user_data",
         "requirement": "required",
         "description": "Snap matches the conversion on customer information, and the event needs at least one identifier.",
@@ -237,6 +246,42 @@
         "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
       },
       {
+        "name": "user_data.sc_click_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the Snap click ID from the landing-page `ScCid` query. Snap documents it as unhashed.",
+        "fix_hint": "Copy `ScCid` from the landing URL into `user_data.sc_click_id`, or drop the empty pair.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.sc_cookie1",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the first-party `_scid` cookie. Snap documents it as unhashed and recommended for match rate.",
+        "fix_hint": "Read `_scid` under your domain into `user_data.sc_cookie1`, or drop the empty pair.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.madid",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the mobile advertiser ID. Snap documents it as lowercase and unhashed.",
+        "fix_hint": "Send the IDFA or GAID in lowercase, unhashed, or drop the empty pair.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "user_data.idfv",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the plain-text IDFV. Snap documents it as unhashed and recommended for app events.",
+        "fix_hint": "Send the IDFV unhashed, or drop the empty pair.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
         "name": "custom_data.value",
         "description": "It is the monetary value of the event. Snap documents it as required for PURCHASE.",
         "fix_hint": "Send the purchase total in `custom_data.value`.",
@@ -250,6 +295,15 @@
         },
         "description": "It is the ISO 4217 currency of `custom_data.value`.",
         "fix_hint": "Send the three-letter code, such as `USD`.",
+        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+      },
+      {
+        "name": "custom_data.order_id",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "It is the order identifier. Snap documents it on the Dynamic Ads custom_data table.",
+        "fix_hint": "Send the order id in `custom_data.order_id`, or drop the empty pair.",
         "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
       }
     ],
@@ -312,7 +366,11 @@
         "pattern": "^[A-Fa-f0-9]{64}$",
         "params": [
           "user_data.client_ip_address",
-          "user_data.client_user_agent"
+          "user_data.client_user_agent",
+          "user_data.sc_click_id",
+          "user_data.sc_cookie1",
+          "user_data.madid",
+          "user_data.idfv"
         ],
         "severity": "error",
         "message": "This field looks like a SHA-256 digest, but Snap documents it as one of the parameters that is sent unhashed.",

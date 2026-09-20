@@ -538,11 +538,16 @@ The event payload is checked per event in `data`.
 | `action_source` | Required, one of `WEB`, `OFFLINE`, `MOBILE_APP` | `vendor.snapchat.body.action_source.missing`, `.invalid` |
 | `user_data` | Required | `vendor.snapchat.body.user_data.missing`, `.empty` |
 | Hashed identifiers | `em`, `ph`, `fn`, `ln`, `ge`, `ct`, `st`, `zp`, `country` must be SHA-256 hex digests | `vendor.snapchat.body.user_data.<field>.invalid` |
+| `event_id` | When present, not empty. Dedup against the Pixel | `vendor.snapchat.body.event_id.empty` |
+| `user_data.sc_click_id` | When present, not empty. From landing-page `ScCid`, unhashed | `vendor.snapchat.body.user_data.sc_click_id.empty` |
+| `user_data.sc_cookie1` | When present, not empty. First-party `_scid`, unhashed | `vendor.snapchat.body.user_data.sc_cookie1.empty` |
+| `user_data.madid`, `idfv` | When present, not empty. Sent unhashed | `vendor.snapchat.body.user_data.madid.empty`, `.idfv.empty` |
+| `custom_data.order_id` | When present, not empty | `vendor.snapchat.body.custom_data.order_id.empty` |
 | Web events | `event_source_url` is required when `action_source` is `WEB` | `vendor.snapchat.body.web_requires_source_url` |
 | Purchase events | `custom_data.value` and `custom_data.currency` are required | `vendor.snapchat.body.purchase_requires_value_and_currency` |
 | Value without currency | `currency` is required whenever `value` is set | `vendor.snapchat.body.value_requires_currency` |
 | Unhashed PII | No field carries a raw email address | `vendor.snapchat.body.unhashed_email` |
-| Over-hashing | `client_ip_address` and `client_user_agent` must not be digests | `vendor.snapchat.body.hashed_plaintext_field` |
+| Over-hashing | `client_ip_address`, `client_user_agent`, `sc_click_id`, `sc_cookie1`, `madid`, and `idfv` must not be digests | `vendor.snapchat.body.hashed_plaintext_field` |
 
 Source: [using the API](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI),
 [parameters](https://developers.snap.com/api/marketing-api/Conversions-API/Parameters).

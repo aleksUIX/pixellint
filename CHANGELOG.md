@@ -35,6 +35,9 @@ All notable changes to Pixellint are documented here. The format follows
 - Cheap URL scan covers extra slashes on http(s) pixels (`https:///host/path`)
   and empty ports (`https://host:/path`) without `Url::parse`. Core reuses that
   parse on typical pixels instead of parsing the same URL again.
+- Snap Conversions API events type-check unhashed `sc_click_id`, `sc_cookie1`,
+  `madid`, and `idfv`, plus optional `event_id` and `custom_data.order_id` from
+  the published parameter table.
 
 ## 0.31.8 - 2026-09-19
 
