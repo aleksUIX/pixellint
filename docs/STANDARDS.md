@@ -769,6 +769,7 @@ event object under `batch`, with `pixel_code` on the envelope.
 | `properties.contents[].content_id` | When present, not empty | `vendor.tiktok-events-api.body.properties.contents[].content_id.empty` |
 | `properties.contents[].content_type` | When present, `product` or `product_group` | `vendor.tiktok-events-api.body.properties.contents[].content_type.invalid` |
 | `properties.contents[].quantity`, `price` | When present, a number. `price` is the unit price | `vendor.tiktok-events-api.body.properties.contents[].quantity.invalid`, `.price.invalid` |
+| `properties.contents[].content_name`, `content_category`, `status` | When present, not empty. `status` has no enumerated values | `vendor.tiktok-events-api.body.properties.contents[].content_name.empty`, `.content_category.empty`, `.status.empty` |
 
 Sources: [where to find pixel_code](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929),
 [event deduplication](https://ads.tiktok.com/marketing_api/docs?id=1739584864945154),
