@@ -39,7 +39,27 @@
       "description": "Reddit documents these standard names on rdt('track'). Custom events use Custom. Unrecognized values warn because a misspelling (Purchse) otherwise ships as a new event.",
       "fix_hint": "Use a standard event name, or Custom with customEventName in the pixel call.",
       "doc": "https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel"
+    },
+    {
+      "name": "m.customEventName",
+      "format": { "kind": "regex", "pattern": "^.{1,64}$" },
+      "allow_empty": true,
+      "description": "It is the custom event name Reddit documents on rdt('track', 'Custom', { customEventName }). Generated pixels send it as m.customEventName. Reddit allows any UTF-8 character up to 64 characters including spaces. Empty slots on standard events are unfilled GTM template fields.",
+      "fix_hint": "Set m.customEventName to the custom event name, at most 64 characters, or drop the pair on a standard event.",
+      "doc": "https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.reddit.custom.requires_name",
+      "kind": "required_when_value",
+      "when": "event",
+      "equals": ["Custom"],
+      "requires": ["m.customEventName"],
+      "severity": "error",
+      "message": "A Custom event is missing m.customEventName. Reddit documents rdt('track', 'Custom', { customEventName }) and treats that name as a distinct conversion.",
+      "fix_hint": "Add m.customEventName with the custom event name, at most 64 characters.",
+      "doc": "https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel"
+    }
+  ]
 }

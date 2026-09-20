@@ -633,12 +633,14 @@ CAPI v3 is `vendor/reddit-conversions-api`.
 | --- | --- | --- |
 | `id` | Required advertiser ID | `vendor.reddit.param.id.missing`, `.empty` |
 | `event` | Recommended. Unrecognized values warn, because `Custom` is legal | `vendor.reddit.param.event.missing`, `.empty`, `.invalid` |
+| `m.customEventName` | When populated, 1 to 64 UTF-8 characters. Empty is an unfilled template slot | `vendor.reddit.param.m.customEventName.invalid` |
+| Custom events | `event=Custom` needs `m.customEventName` | `vendor.reddit.custom.requires_name` |
 
 Standard names: `PageVisit`, `ViewContent`, `Search`, `AddToCart`,
 `AddToWishlist`, `Purchase`, `Lead`, `SignUp`, `Custom`. Reddit documents those
-on `rdt('track')`. The query spelling `event` is generated, not a published
-table. Purchase metadata on the wire (`m.value`) is unpublished and is not
-contracted.
+on `rdt('track')`. The query spelling `event` and the `m.` prefix on metadata
+are generated, not a published HTTP table. Purchase metadata on the wire
+(`m.value`) stays unpublished and is not contracted.
 
 Sources: [manual conversion events](https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel),
 [install the Reddit Pixel](https://business.reddithelp.com/s/article/Install-the-Reddit-Pixel-on-your-website).

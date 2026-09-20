@@ -18,6 +18,9 @@ All notable changes to Pixellint are documented here. The format follows
   empty slots stay allowed.
 - LinkedIn image pixels type-check Path to Conversion `oid` and conversion
   match `url` from the published collect query table.
+- Reddit Pixel Custom events require `m.customEventName` (the generated query
+  spelling of `customEventName`), at most 64 characters. Empty slots on
+  standard events stay allowed. `m.value` stays unpublished.
 
 ## 0.31.8 - 2026-09-19
 
