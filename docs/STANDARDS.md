@@ -1953,6 +1953,11 @@ Plausible Events API JSON posted to `plausible.io/api/event`. Level:
 | `name` | Required event name (`n` accepted) | `vendor.plausible.event_name_required`, `.body.name.empty` |
 | `url` | Required absolute page URL (`u` accepted) | `vendor.plausible.page_url_required`, `.body.url.empty`, `.invalid` |
 | `domain` | Required site domain (`d` accepted) | `vendor.plausible.domain_required`, `.body.domain.empty` |
+| `referrer` | When present, not empty | `vendor.plausible.body.referrer.empty` |
+| `revenue.currency` | When present, ISO 4217 three-letter code | `vendor.plausible.body.revenue.currency.invalid`, `.currency_requires_amount` |
+| `revenue.amount` | When present, a number or numeric string | `vendor.plausible.body.revenue.amount.invalid`, `.amount_requires_currency` |
+| `interactive` | When present, `true` or `false` | `vendor.plausible.body.interactive.invalid` |
+| `url` | Data URIs are not supported | `vendor.plausible.body.data_url_unsupported` |
 
 Source: [Events API](https://plausible.io/docs/events-api).
 

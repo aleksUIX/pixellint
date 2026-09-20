@@ -64,6 +64,36 @@
           "description": "Short key for `domain`, used by the JavaScript tracker.",
           "fix_hint": "Set `d` or `domain` to the Plausible site domain.",
           "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "referrer",
+          "format": { "kind": "non_empty" },
+          "description": "It is the referrer for this event. Plausible documents it as optional; the tracker sends `document.referrer`.",
+          "fix_hint": "Send the referring URL or host in `referrer`, or drop the empty pair.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "revenue.currency",
+          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format_severity": "warning",
+          "description": "It is the ISO 4217 currency of `revenue.amount`. Plausible discards revenue data when the currency is invalid, and still records the event.",
+          "fix_hint": "Send a three-letter currency code in `revenue.currency`, such as `USD`.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "revenue.amount",
+          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format_severity": "warning",
+          "description": "It is the revenue amount. Plausible documents a float or numeric string, and discards revenue data when the amount is invalid.",
+          "fix_hint": "Send `revenue.amount` as a number or numeric string, such as `1322.22`, without a currency symbol.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "name": "interactive",
+          "format": { "kind": "enum", "values": ["true", "false"] },
+          "description": "It says whether the event counts for bounce detection. Plausible documents a boolean; omit it, or send `false` for a non-interactive custom event.",
+          "fix_hint": "Send `true` or `false`, or omit `interactive`.",
+          "doc": "https://plausible.io/docs/events-api"
         }
       ],
       "rules": [
@@ -92,6 +122,36 @@
           "severity": "error",
           "message": "The event has neither `domain` nor `d`. Plausible documents `domain` as required.",
           "fix_hint": "Set `domain` (or `d`) to the site domain configured in Plausible.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "code": "vendor.plausible.body.data_url_unsupported",
+          "kind": "forbid_value_pattern",
+          "pattern": "^(?i)data:",
+          "params": ["url", "u"],
+          "severity": "error",
+          "message": "`url` uses the data URI scheme. Plausible documents that data URLs are not supported by the Events API.",
+          "fix_hint": "Send an `http`, `https`, or app URL such as `https://example.com/page` or `app://localhost/login`.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "code": "vendor.plausible.body.amount_requires_currency",
+          "kind": "required_with",
+          "when": "revenue.amount",
+          "requires": ["revenue.currency"],
+          "severity": "warning",
+          "message": "The event sends `revenue.amount` without `revenue.currency`. Plausible documents both on the revenue object.",
+          "fix_hint": "Add `revenue.currency` as an ISO 4217 code, such as `USD`.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "code": "vendor.plausible.body.currency_requires_amount",
+          "kind": "required_with",
+          "when": "revenue.currency",
+          "requires": ["revenue.amount"],
+          "severity": "warning",
+          "message": "The event sends `revenue.currency` without `revenue.amount`. Plausible documents both on the revenue object.",
+          "fix_hint": "Add `revenue.amount` as a number or numeric string, such as `1322.22`.",
           "doc": "https://plausible.io/docs/events-api"
         }
       ]

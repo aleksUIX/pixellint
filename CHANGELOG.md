@@ -27,6 +27,9 @@ All notable changes to Pixellint are documented here. The format follows
   `cd[content_category]`, `cd[content_ids]`, `cd[content_type]`
   (`product` / `product_group`), integer `cd[num_items]`,
   `cd[search_string]`, numeric `cd[predicted_ltv]`, and image-tag `eid`.
+- Plausible Events API type-checks leftover body fields from the published
+  table: non-empty `referrer`, ISO 4217 `revenue.currency` with numeric
+  `revenue.amount`, boolean `interactive`, and rejects `data:` page URLs.
 
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.
