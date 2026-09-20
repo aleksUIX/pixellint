@@ -970,6 +970,12 @@ Level: `official_vendor`.
 | Identity | Every event and purchase needs one of `external_id`, `user_alias`, `braze_id`, `email`, or `phone` | `vendor.braze.body.event_needs_an_identifier`, `.purchase_needs_an_identifier` |
 | One primary | At most one of `external_id`, `user_alias`, or `braze_id` | `vendor.braze.body.event_one_primary_identifier`, `.purchase_one_primary_identifier` |
 | Reserved properties | Event properties must not use `time` or `event_name`. Purchase properties must not use `time`, `product_id`, `quantity`, `event_name`, `price`, or `currency` | `vendor.braze.body.properties.time.forbidden`, `.properties.event_name.forbidden` |
+| `app_id` | When present, not empty | `vendor.braze.body.app_id.empty` |
+| `user_alias.alias_name`, `user_alias.alias_label` | Required together when `user_alias` is present, each at most 236 bytes | `vendor.braze.body.event_alias_requires_name_and_label`, `.purchase_alias_requires_name_and_label`, `.attribute_alias_requires_name_and_label`, `.user_alias.alias_name.invalid` |
+| `attributes[]` identity | Same identifier rules as events and purchases | `vendor.braze.body.attribute_needs_an_identifier`, `.attribute_one_primary_identifier` |
+| `attributes[].gender` | When present, one of `M`, `F`, `O`, `N`, `P`. Null stays allowed | `vendor.braze.body.gender.invalid` |
+| `attributes[].email_subscribe`, `push_subscribe` | When present, `opted_in`, `unsubscribed`, or `subscribed` | `vendor.braze.body.email_subscribe.invalid`, `.push_subscribe.invalid` |
+| `attributes[].dob` | When present, `YYYY-MM-DD` | `vendor.braze.body.dob.invalid` |
 
 Source: [POST /users/track](https://www.braze.com/docs/api/endpoints/user_data/post_user_track/).
 

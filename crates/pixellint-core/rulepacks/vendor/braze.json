@@ -75,6 +75,37 @@
           "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
         },
         {
+          "name": "app_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the App Identifier. Braze documents it as optional on events.",
+          "fix_hint": "Send `app_id` as the App Identifier from Braze, or drop the empty pair.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+        },
+        {
+          "name": "user_alias.alias_name",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,236}$"
+          },
+          "severity": "error",
+          "description": "It is the alias identifier. Braze documents it as required on a user alias object, at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_name` to a non-empty identifier of at most 236 bytes.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+        },
+        {
+          "name": "user_alias.alias_label",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,236}$"
+          },
+          "severity": "error",
+          "description": "It is the alias type. Braze documents it as required on a user alias object, at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_label` to a non-empty label of at most 236 bytes.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+        },
+        {
           "name": "name",
           "requirement": "required",
           "format": {
@@ -147,6 +178,19 @@
           "message": "The object carries none of `external_id`, `user_alias`, `braze_id`, `email`, or `phone`. Braze documents one of them as required, and cannot attach the data to a user without one.",
           "fix_hint": "Add one of the documented identifiers to the object.",
           "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "code": "vendor.braze.body.event_alias_requires_name_and_label",
+          "kind": "required_with",
+          "when": "user_alias",
+          "requires": [
+            "user_alias.alias_name",
+            "user_alias.alias_label"
+          ],
+          "severity": "error",
+          "message": "A `user_alias` object is missing `alias_name` or `alias_label`. Braze documents both as required, each at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_name` and `user_alias.alias_label`.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
         }
       ]
     },
@@ -192,6 +236,37 @@
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
           "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "app_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the App Identifier. Braze documents it as optional on purchases.",
+          "fix_hint": "Send `app_id` as the App Identifier from Braze, or drop the empty pair.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "user_alias.alias_name",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,236}$"
+          },
+          "severity": "error",
+          "description": "It is the alias identifier. Braze documents it as required on a user alias object, at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_name` to a non-empty identifier of at most 236 bytes.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+        },
+        {
+          "name": "user_alias.alias_label",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,236}$"
+          },
+          "severity": "error",
+          "description": "It is the alias type. Braze documents it as required on a user alias object, at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_label` to a non-empty label of at most 236 bytes.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
         },
         {
           "name": "product_id",
@@ -327,6 +402,188 @@
           "message": "The object carries none of `external_id`, `user_alias`, `braze_id`, `email`, or `phone`. Braze documents one of them as required, and cannot attach the data to a user without one.",
           "fix_hint": "Add one of the documented identifiers to the object.",
           "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "code": "vendor.braze.body.purchase_alias_requires_name_and_label",
+          "kind": "required_with",
+          "when": "user_alias",
+          "requires": [
+            "user_alias.alias_name",
+            "user_alias.alias_label"
+          ],
+          "severity": "error",
+          "message": "A `user_alias` object is missing `alias_name` or `alias_label`. Braze documents both as required, each at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_name` and `user_alias.alias_label`.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+        }
+      ]
+    },
+    {
+      "scope": "attributes[]",
+      "params": [
+        {
+          "name": "external_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "user_alias",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "braze_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "email",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "phone",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "user_alias.alias_name",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,236}$"
+          },
+          "severity": "error",
+          "description": "It is the alias identifier. Braze documents it as required on a user alias object, at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_name` to a non-empty identifier of at most 236 bytes.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+        },
+        {
+          "name": "user_alias.alias_label",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,236}$"
+          },
+          "severity": "error",
+          "description": "It is the alias type. Braze documents it as required on a user alias object, at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_label` to a non-empty label of at most 236 bytes.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+        },
+        {
+          "name": "_update_existing_only",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "Braze documents this as a boolean. When true, the call updates an existing profile and does not create one.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+        },
+        {
+          "name": "push_token_import",
+          "format": {
+            "kind": "enum",
+            "values": ["true", "false"]
+          },
+          "description": "Braze documents this as a boolean used when importing anonymous push tokens.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+        },
+        {
+          "name": "gender",
+          "format": {
+            "kind": "enum",
+            "values": ["M", "F", "O", "N", "P"]
+          },
+          "allow_empty": true,
+          "description": "Braze documents gender as `M`, `F`, `O`, `N`, `P`, or null.",
+          "fix_hint": "Send `M`, `F`, `O`, `N`, or `P`, or omit the field.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+        },
+        {
+          "name": "email_subscribe",
+          "format": {
+            "kind": "enum",
+            "values": ["opted_in", "unsubscribed", "subscribed"]
+          },
+          "description": "Braze documents email subscription as `opted_in`, `unsubscribed`, or `subscribed`.",
+          "fix_hint": "Send `opted_in`, `unsubscribed`, or `subscribed`.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+        },
+        {
+          "name": "push_subscribe",
+          "format": {
+            "kind": "enum",
+            "values": ["opted_in", "unsubscribed", "subscribed"]
+          },
+          "description": "Braze documents push subscription as `opted_in`, `unsubscribed`, or `subscribed`.",
+          "fix_hint": "Send `opted_in`, `unsubscribed`, or `subscribed`.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+        },
+        {
+          "name": "dob",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "description": "Braze documents date of birth as `YYYY-MM-DD`.",
+          "fix_hint": "Send the date of birth as `YYYY-MM-DD`, such as `1980-12-21`.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.braze.body.attribute_one_primary_identifier",
+          "kind": "mutually_exclusive",
+          "params": [
+            "external_id",
+            "user_alias",
+            "braze_id"
+          ],
+          "severity": "error",
+          "message": "The attribute object carries more than one primary identifier. Braze documents one of `external_id`, `user_alias`, or `braze_id` per object, and rejects the object when two are sent.",
+          "fix_hint": "Send one primary identifier. `email` and `phone` may ride alongside it as attributes.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "code": "vendor.braze.body.attribute_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "external_id",
+            "user_alias",
+            "braze_id",
+            "email",
+            "phone"
+          ],
+          "severity": "error",
+          "message": "The object carries none of `external_id`, `user_alias`, `braze_id`, `email`, or `phone`. Braze documents one of them as required, and cannot attach the data to a user without one.",
+          "fix_hint": "Add one of the documented identifiers to the object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "code": "vendor.braze.body.attribute_alias_requires_name_and_label",
+          "kind": "required_with",
+          "when": "user_alias",
+          "requires": [
+            "user_alias.alias_name",
+            "user_alias.alias_label"
+          ],
+          "severity": "error",
+          "message": "A `user_alias` object is missing `alias_name` or `alias_label`. Braze documents both as required, each at most 236 bytes.",
+          "fix_hint": "Set `user_alias.alias_name` and `user_alias.alias_label`.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
         }
       ]
     }

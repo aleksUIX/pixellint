@@ -50,6 +50,10 @@ All notable changes to Pixellint are documented here. The format follows
 - Query and body parameter checks borrow names and values from the artifact
   instead of copying them, and rule checks no longer clone the live param list.
   Directory attribution borrows the prepared host instead of cloning it first.
+- Braze `/users/track` type-checks optional `app_id`, requires `alias_name` and
+  `alias_label` on a `user_alias` object (at most 236 bytes), and contracts
+  `attributes[]` identifiers plus `gender`, `email_subscribe`, `push_subscribe`,
+  and `dob` from the published user attributes table.
 
 ## 0.31.8 - 2026-09-19
 
