@@ -66,6 +66,27 @@
         "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
       },
       {
+        "name": "eventId",
+        "format": { "kind": "non_empty" },
+        "description": "It is the advertiser's event id. Yahoo documents it as optional, and duplicate ids are dropped.",
+        "fix_hint": "Send a unique `eventId` per conversion, or drop the empty pair.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "actionSourceUrl",
+        "format": { "kind": "url" },
+        "description": "It is the page URL where the conversion happened. Yahoo documents it as optional, and null for some sources such as phone or physical_store.",
+        "fix_hint": "Send an absolute URL in `actionSourceUrl`, or omit it.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "country",
+        "format": { "kind": "regex", "pattern": "^[A-Za-z]{2}$" },
+        "description": "It is the country of the event. Yahoo documents two characters, such as `US`.",
+        "fix_hint": "Send a two-letter country code such as `US`.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
         "name": "userData",
         "requirement": "required",
         "description": "It is the wrapper for match keys. Yahoo documents userData as required, with at least one ID or clickData.",
@@ -112,7 +133,37 @@
       },
       {
         "name": "userData.pxid",
-        "description": "It is a list of partner match IDs in the form sourceId:value.",
+        "format": { "kind": "regex", "pattern": "^[^:]+:.+$" },
+        "description": "It is a partner match ID. Yahoo documents the form `pxIdSrcId:pxIdValue`.",
+        "fix_hint": "Send `userData.pxid` as `sourceId:value`, such as `999:XY50038zETeXJBOYNTRn7Z3T6VSkxDF5ZpRz3wvPEVmt1ZXHo`.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.pxid[]",
+        "format": { "kind": "regex", "pattern": "^[^:]+:.+$" },
+        "description": "Every partner match ID in the list must be `sourceId:value`.",
+        "fix_hint": "Send each `pxid` as `sourceId:value`.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.ip_address",
+        "format": { "kind": "non_empty" },
+        "description": "It is the device IP address. Yahoo documents it as unhashed.",
+        "fix_hint": "Send the raw IP in `userData.ip_address`, not a digest.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "userData.userAgent",
+        "format": { "kind": "non_empty" },
+        "description": "It is the browser user agent. Yahoo documents it as the HTTP header, unhashed.",
+        "fix_hint": "Send the raw user agent in `userData.userAgent`, not a digest.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "name": "eventData.price",
+        "format": { "kind": "regex", "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$" },
+        "description": "It is the conversion value. Yahoo documents a number, assumed USD when no currency is sent.",
+        "fix_hint": "Send `eventData.price` as a number such as `12.99`.",
         "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
       },
       {
@@ -153,6 +204,19 @@
         "severity": "error",
         "message": "The event has no match key. Yahoo documents at least one of hashed email, phone, gpsaid, idfa, pxid, or clickData.",
         "fix_hint": "Send hashed userData.email, phone, gpsaid, idfa, or pxid, or send clickData.vmcid or clickData.tblci.",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+      },
+      {
+        "code": "vendor.yahoo-conversions-api.body.hashed_plaintext_field",
+        "kind": "forbid_value_pattern",
+        "pattern": "^[A-Fa-f0-9]{64}$",
+        "params": [
+          "userData.ip_address",
+          "userData.userAgent"
+        ],
+        "severity": "error",
+        "message": "This field looks like a SHA-256 digest, but Yahoo documents `userData.ip_address` and `userData.userAgent` as unhashed.",
+        "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
         "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
       }
     ]

@@ -67,6 +67,9 @@ All notable changes to Pixellint are documented here. The format follows
   `alias_label` on a `user_alias` object (at most 236 bytes), and contracts
   `attributes[]` identifiers plus `gender`, `email_subscribe`, `push_subscribe`,
   and `dob` from the published user attributes table.
+- Yahoo Conversion API events type-check optional `eventId`, `actionSourceUrl`,
+  two-letter `country`, partner `pxid` as `sourceId:value`, unhashed
+  `userData.ip_address` and `userAgent`, and numeric `eventData.price`.
 
 ## 0.31.8 - 2026-09-19
 

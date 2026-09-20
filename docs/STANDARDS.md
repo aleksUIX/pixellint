@@ -2380,6 +2380,12 @@ Dot image pixels stay `vendor/yahoo-dot`. Product CAPI, which requires
 | `actionSource` | Required event source | `vendor.yahoo-conversions-api.body.actionSource.missing`, `.empty` |
 | `userData` | Required user-data object | `vendor.yahoo-conversions-api.body.userData.missing`, `.empty` |
 | `userData.email` / `email[]` | Optional SHA-256 hashed email | `vendor.yahoo-conversions-api.body.userData.email.invalid`, `vendor.yahoo-conversions-api.body.userData.email[].invalid` |
+| `eventId` | When present, not empty | `vendor.yahoo-conversions-api.body.eventId.empty` |
+| `actionSourceUrl` | When present, an absolute URL | `vendor.yahoo-conversions-api.body.actionSourceUrl.invalid` |
+| `country` | When present, two letters | `vendor.yahoo-conversions-api.body.country.invalid` |
+| `userData.pxid` / `pxid[]` | When present, `sourceId:value` | `vendor.yahoo-conversions-api.body.userData.pxid.invalid`, `.pxid[].invalid` |
+| `userData.ip_address`, `userAgent` | When present, not empty and not a digest | `vendor.yahoo-conversions-api.body.userData.ip_address.empty`, `.hashed_plaintext_field` |
+| `eventData.price` | When present, a number | `vendor.yahoo-conversions-api.body.eventData.price.invalid` |
 | match key | At least one of hashed email, phone, gpsaid, idfa, pxid, or clickData | `vendor.yahoo-conversions-api.body.user_needs_an_identifier` |
 | unhashed email | Forbidden | `vendor.yahoo-conversions-api.body.unhashed_email` |
 
