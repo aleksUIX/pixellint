@@ -116,9 +116,93 @@
     },
     {
       "name": "revenue",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the grand total or goal conversion value. Matomo documents it as required when tracking an ecommerce order.",
+      "fix_hint": "Set `revenue` to a number, such as `19.99`, with no currency symbol.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "urlref",
+      "format": { "kind": "url" },
+      "description": "It is the HTTP referrer URL. Matomo documents `urlref` as the full referrer used for channel attribution.",
+      "fix_hint": "Send the absolute referrer URL in `urlref`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "uid",
       "format": { "kind": "non_empty" },
-      "description": "It is the grand total. Matomo documents it as required when tracking an ecommerce order.",
-      "fix_hint": "Set `revenue` to the order grand total when sending `ec_id`.",
+      "description": "It is the User ID. Matomo documents `uid` as any non-empty unique string identifying the logged-in user.",
+      "fix_hint": "Send the logged-in user id in `uid`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "res",
+      "format": { "kind": "regex", "pattern": "^[0-9]+x[0-9]+$" },
+      "description": "It is the device resolution. Matomo documents `res` as width x height, such as `1280x1024`.",
+      "fix_hint": "Send `res` as `WIDTHxHEIGHT` digits, such as `1280x1024`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "h",
+      "format": { "kind": "integer" },
+      "description": "It is the current hour in local time.",
+      "fix_hint": "Send the local hour in `h` as an integer.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "m",
+      "format": { "kind": "integer" },
+      "description": "It is the current minute in local time.",
+      "fix_hint": "Send the local minute in `m` as an integer.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "s",
+      "format": { "kind": "integer" },
+      "description": "It is the current second in local time.",
+      "fix_hint": "Send the local second in `s` as an integer.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "cookie",
+      "format": { "kind": "enum", "values": ["1"] },
+      "description": "When set to `1`, the visitor's client is known to support cookies.",
+      "fix_hint": "Send `cookie=1` when the client supports cookies, or omit the pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "new_visit",
+      "format": { "kind": "enum", "values": ["1"] },
+      "description": "If set to `1`, Matomo forces a new visit for this action.",
+      "fix_hint": "Send `new_visit=1` to force a new visit, or omit the pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ping",
+      "format": { "kind": "enum", "values": ["1"] },
+      "description": "If set to `1`, the request is a heartbeat that only updates visit duration.",
+      "fix_hint": "Send `ping=1` for a heartbeat, or omit the pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "pv_id",
+      "format": { "kind": "regex", "pattern": "^[0-9A-Za-z]{6}$" },
+      "description": "It identifies actions on one page view. Matomo documents `pv_id` as six characters from `[0-9a-Z]`.",
+      "fix_hint": "Send a six-character alphanumeric `pv_id`, shared by events on the same page view.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "search",
+      "format": { "kind": "non_empty" },
+      "description": "It is the site-search keyword. Matomo documents that a hit with `search` is tracked as a site search, not a pageview.",
+      "fix_hint": "Send the search keyword in `search`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "search_count",
+      "format": { "kind": "integer" },
+      "description": "It is how many site-search results were shown. Matomo documents `search_count=0` for keywords with no results.",
+      "fix_hint": "Send the result count in `search_count` as an integer, including `0`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {

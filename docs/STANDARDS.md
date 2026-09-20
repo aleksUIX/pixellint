@@ -1992,8 +1992,17 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | `rand` | Recommended cache buster | `vendor.matomo.param.rand.missing`, `.empty` |
 | `apiv` | Recommended `1` | `vendor.matomo.param.apiv.missing`, `.invalid` |
 | `cid` | When present, 16 hex characters | `vendor.matomo.param.cid.invalid` |
+| `urlref` | When present, an absolute URL | `vendor.matomo.param.urlref.invalid` |
+| `uid` | When present, not empty | `vendor.matomo.param.uid.empty` |
+| `res` | When present, `WIDTHxHEIGHT` | `vendor.matomo.param.res.invalid` |
+| `h`, `m`, `s` | When present, integers (local time) | `vendor.matomo.param.h.invalid`, `.m.invalid`, `.s.invalid` |
+| `cookie`, `new_visit`, `ping` | When present, `1` | `vendor.matomo.param.cookie.invalid`, `.new_visit.invalid`, `.ping.invalid` |
+| `pv_id` | When present, six alphanumeric characters | `vendor.matomo.param.pv_id.invalid` |
+| `search` | When present, not empty | `vendor.matomo.param.search.empty` |
+| `search_count` | When present, an integer | `vendor.matomo.param.search_count.invalid` |
 | `e_v` | When present, a number | `vendor.matomo.param.e_v.invalid` |
 | `e_n` | When present, not empty | `vendor.matomo.param.e_n.empty` |
+| `revenue` | When present, a number. Required with `ec_id` | `vendor.matomo.param.revenue.invalid`, `vendor.matomo.order_requires_revenue` |
 | `dimension1`–`dimension999` | When present, not empty | `vendor.matomo.param.dimension1.empty` through `.dimension999.empty` |
 | Event | `e_c` requires `e_a` | `vendor.matomo.event_requires_action` |
 | Order | `ec_id` requires `revenue` | `vendor.matomo.order_requires_revenue` |

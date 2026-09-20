@@ -30,6 +30,10 @@ All notable changes to Pixellint are documented here. The format follows
 - Plausible Events API type-checks leftover body fields from the published
   table: non-empty `referrer`, ISO 4217 `revenue.currency` with numeric
   `revenue.amount`, boolean `interactive`, and rejects `data:` page URLs.
+- Matomo Tracking API type-checks leftover query keys from the published
+  table: absolute `urlref`, non-empty `uid`, `res` as `WIDTHxHEIGHT`, integer
+  local time `h` / `m` / `s`, `cookie` / `new_visit` / `ping` as `1`, six-character
+  `pv_id`, site-search `search` / `search_count`, and numeric `revenue`.
 
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.
