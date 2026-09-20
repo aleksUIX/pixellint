@@ -6,6 +6,13 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Changed
+
+- Mixpanel `/track` type-checks SDK default properties when present: absolute
+  `$current_url` and `$referrer`, non-empty `mp_lib`, `$lib_version`,
+  `$device_id`, and `$user_id`, and integer `$screen_height` / `$screen_width`
+  from the published default-property table.
+
 ## 0.31.9 - 2026-09-20
 
 ### Added

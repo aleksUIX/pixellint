@@ -949,13 +949,17 @@ events rather than an envelope. Level: `official_vendor`.
 | `properties.distinct_id` | Recommended | `vendor.mixpanel.body.properties.distinct_id.missing`, `.empty` |
 | `properties.$insert_id` | Recommended | `vendor.mixpanel.body.properties.$insert_id.missing`, `.empty` |
 | `properties.time` | When present, an integer Unix timestamp | `vendor.mixpanel.body.properties.time.invalid` |
+| `properties.$current_url`, `$referrer` | When present, an absolute URL | `vendor.mixpanel.body.properties.$current_url.invalid`, `.$referrer.invalid` |
+| `properties.mp_lib`, `$lib_version`, `$device_id`, `$user_id` | When present, not empty | `vendor.mixpanel.body.properties.mp_lib.empty`, `.$lib_version.empty`, `.$device_id.empty`, `.$user_id.empty` |
+| `properties.$screen_height`, `$screen_width` | When present, an integer | `vendor.mixpanel.body.properties.$screen_height.invalid`, `.$screen_width.invalid` |
 | `ip`, `verbose`, `img` | When present on the query, `0` or `1` | `vendor.mixpanel.param.ip.invalid`, `.verbose.invalid`, `.img.invalid` |
 | Over-hashing | `properties.ip` must not be a digest | `vendor.mixpanel.body.hashed_plaintext_field` |
 
 `/import` is `vendor/mixpanel-import`. `/engage` is `vendor/mixpanel-engage`.
 This pack matches `/track` and a JSON array whose events carry `properties.token`.
 
-Source: [track event](https://docs.mixpanel.com/reference/track-event).
+Source: [track event](https://docs.mixpanel.com/reference/track-event),
+[default properties](https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties).
 
 ## `vendor/mixpanel-import`
 
