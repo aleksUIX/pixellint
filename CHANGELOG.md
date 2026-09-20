@@ -13,6 +13,9 @@ All notable changes to Pixellint are documented here. The format follows
 - Adform tracking tags type-check click index `C`. Query strings that mix `&`
   and `;` are readable via `param_style: query_semicolon`, so `bn` is the
   banner ID instead of the whole semicolon tail.
+- Floodlight activity tags type-check in-app `dc_rdid` as an unhashed IDFA or
+  AdID, and COPPA `tag_for_child_directed_treatment` as `0` or `1`. Generated
+  empty slots stay allowed.
 
 ## 0.31.8 - 2026-09-19
 

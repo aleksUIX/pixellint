@@ -196,6 +196,8 @@ on the path as semicolon-delimited pairs. Level: `official_vendor`.
 | `dc_lat` | When present, `0` or `1` | `vendor.floodlight.param.dc_lat.invalid` |
 | `npa` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.npa.invalid` |
 | `tfua` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.tfua.invalid` |
+| `dc_rdid` | When populated, an unhashed IDFA or AdID. Empty is an unfilled in-app slot | `vendor.floodlight.param.dc_rdid.invalid` |
+| `tag_for_child_directed_treatment` | When populated, `0` or `1`. Empty is an unfilled template slot | `vendor.floodlight.param.tag_for_child_directed_treatment.invalid` |
 | `u1`–`u100` | When present, not empty | `vendor.floodlight.param.u1.empty` through `.u100.empty` |
 | Unique counting | `num` is only meaningful alongside `ord` | `vendor.floodlight.counting.unique_requires_ord` |
 
@@ -203,7 +205,8 @@ Campaign Manager documents custom variables through `u100`. Empty pairs on
 any of those keys warn.
 
 Source: [Floodlight tag structure](https://support.google.com/campaignmanager/answer/2823425),
-[iframe and image tags](https://support.google.com/campaignmanager/answer/2823450).
+[iframe and image tags](https://support.google.com/campaignmanager/answer/2823450),
+[mobile app conversions](https://support.google.com/campaignmanager/answer/4568975).
 
 ## `vendor/cm360-tracking-ad`
 
