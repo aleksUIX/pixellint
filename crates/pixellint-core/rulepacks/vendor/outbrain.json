@@ -1,13 +1,13 @@
 {
   "id": "vendor/outbrain",
   "display_name": "Outbrain pixel",
-  "description": "Outbrain conversion image and S2S pixels on tr.outbrain.com/pixel. The JS loader on amplify.outbrain.com is a different surface and is not contracted.",
+  "description": "Outbrain conversion image and S2S pixels on tr.outbrain.com/pixel and /unifiedPixel. Generated noscript pixels send ob_adv_id. S2S sends ob_click_id. Outbrain documents orderValue, orderId, and currency on the postback. The JS loader on amplify.outbrain.com is a different surface and is not contracted.",
   "vendor": "outbrain",
   "source_level": "ecosystem_reference",
   "docs": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/",
   "match": {
     "hosts": ["tr.outbrain.com"],
-    "paths": ["/pixel"]
+    "paths": ["/pixel", "/unifiedPixel"]
   },
   "params": [
     {
@@ -22,7 +22,60 @@
       "format": { "kind": "non_empty" },
       "description": "It is the click identifier S2S conversions send instead of `ob_adv_id`.",
       "fix_hint": "Set `ob_click_id` to the `ob_click_id` captured from the landing URL.",
-      "doc": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/"
+      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/"
+    },
+    {
+      "name": "name",
+      "format": { "kind": "non_empty" },
+      "description": "It is the event name on the S2S postback. Outbrain documents it on the unifiedPixel URL. Page-view noscript pixels send `ev` instead and omit `name`.",
+      "fix_hint": "Set `name` to the event name from Amplify, or drop the pair on a page-view pixel.",
+      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "source_level": "official_vendor"
+    },
+    {
+      "name": "orderValue",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the conversion value. Outbrain documents a decimal with a point, such as `4.99`, not `4,99`.",
+      "fix_hint": "Send a number such as `4.99`, with a point and no currency symbol.",
+      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "source_level": "official_vendor"
+    },
+    {
+      "name": "orderId",
+      "format": { "kind": "non_empty" },
+      "description": "It is the advertiser order ID. Outbrain documents it so two conversions from the same user in a short window are not deduplicated.",
+      "fix_hint": "Set orderId to the order ID, or drop the pair.",
+      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "source_level": "official_vendor"
+    },
+    {
+      "name": "currency",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "USD",
+          "CAD",
+          "EUR",
+          "GBP",
+          "ILS",
+          "AUD",
+          "MXN",
+          "BRL",
+          "SEK",
+          "SGD",
+          "RUB",
+          "NZD",
+          "INR",
+          "JPY",
+          "PHP",
+          "CHF",
+          "MYR"
+        ]
+      },
+      "description": "It is the orderValue currency. Outbrain documents this fixed list of three-letter codes.",
+      "fix_hint": "Use a documented code such as `USD` or `GBP`.",
+      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "source_level": "official_vendor"
     }
   ],
   "rules": [

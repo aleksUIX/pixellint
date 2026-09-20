@@ -29,6 +29,9 @@ All notable changes to Pixellint are documented here. The format follows
 - Taboola unip event pixels type-check dynamic `revenue`, `currency`,
   `quantity`, and `orderid` from the published conversion-value table. The
   `tfa.js` loader stays account ID only.
+- Outbrain conversion pixels match `/unifiedPixel` as well as `/pixel`, and
+  type-check `orderValue`, `orderId`, and `currency` from the published
+  dynamic-value table.
 
 ## 0.31.8 - 2026-09-19
 

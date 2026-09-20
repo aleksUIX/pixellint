@@ -1532,15 +1532,22 @@ Sources: [approved third-party providers](https://advertising.amazon.com/resourc
 
 ## `vendor/outbrain`
 
-Outbrain conversion pixels on `tr.outbrain.com/pixel`. Level:
-`ecosystem_reference`. Outbrain documents the Marketer ID in GTM, not this
-query. The JS loader on `amplify.outbrain.com` is not contracted.
+Outbrain conversion pixels on `tr.outbrain.com/pixel` and
+`tr.outbrain.com/unifiedPixel`. Level: `ecosystem_reference` for the
+identifier query names. Outbrain documents the Marketer ID in GTM, not
+`ob_adv_id`. Dynamic value keys are `official_vendor`. The JS loader on
+`amplify.outbrain.com` is not contracted.
 
 | Parameter or rule | Enforced | Rule ids |
 | --- | --- | --- |
 | Identifier | `ob_adv_id` or `ob_click_id` | `vendor.outbrain.identifier_required` |
+| `name` | When present, not empty. S2S postbacks send the event name as `name` | `vendor.outbrain.param.name.empty` |
+| `orderValue` | Decimal with a point when present, no comma and no currency symbol | `vendor.outbrain.param.orderValue.invalid` |
+| `orderId` | When present, not empty | `vendor.outbrain.param.orderId.empty` |
+| `currency` | Documented three-letter code when present | `vendor.outbrain.param.currency.invalid` |
 
-Source: [install Outbrain pixel on GTM](https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/).
+Sources: [install Outbrain pixel on GTM](https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/),
+[dynamic values](https://www.outbrain.com/help/advertisers/dynamic-values/).
 
 ## `vendor/baidu`
 

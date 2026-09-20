@@ -222,7 +222,7 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/doubleverify` | DoubleVerify `visit.jpg` beacons, `ctx` `cmp` `plc` `sid` | ecosystem reference |
 | `vendor/doubleverify-event` | DoubleVerify `event.png` quartiles, `vstevt` | ecosystem reference |
 | `vendor/freewheel` | FreeWheel GET `/ad/g/` ad requests, `nw` and `csid` or `ssid` | official vendor |
-| `vendor/outbrain` | Outbrain conversion pixel, ob_adv_id or ob_click_id | ecosystem reference |
+| `vendor/outbrain` | Outbrain conversion pixel on /pixel and /unifiedPixel | ecosystem reference |
 | `vendor/baidu` | Baidu Tongji collect `hm.gif?si=` | ecosystem reference |
 | `vendor/kwai` | Kwai Pixel loader, sdkid on s1.kwai.net | ecosystem reference |
 | `vendor/hubspot-pixel` | HubSpot `__ptq.gif` collect pixel | ecosystem reference |
