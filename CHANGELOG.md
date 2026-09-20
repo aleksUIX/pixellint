@@ -68,6 +68,9 @@ All notable changes to Pixellint are documented here. The format follows
   `$device_id`, and `$user_id`, integer `$screen_height` / `$screen_width`,
   GeoIP `$city` / `$region`, and 2-letter `mp_country_code`.
 - Heap `/api/track` type-checks top-level `session_id` when present.
+- Microsoft UET type-checks custom-event `items` as a JSON array, and
+  ecommerce `ecomm_pagetype`, `ecomm_prodid`, `ecomm_totalvalue`, and
+  `ecomm_query` from the published event examples.
 
 ## 0.31.9 - 2026-09-20
 

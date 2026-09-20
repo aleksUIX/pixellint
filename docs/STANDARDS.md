@@ -626,6 +626,11 @@ Universal Event Tracking requests on `bat.bing.com` and `bat.bing.net`. Level:
 | `search_term` | When present, the search query | `vendor.microsoft-uet.param.search_term.empty` |
 | `ecomm_category` | When present, the category browse ID | `vendor.microsoft-uet.param.ecomm_category.empty` |
 | `transaction_id` | When present, a unique transaction ID | `vendor.microsoft-uet.param.transaction_id.empty` |
+| `items` | When present, a JSON array of product objects | `vendor.microsoft-uet.param.items.empty`, `.invalid` |
+| `ecomm_pagetype` | When present, a documented ecommerce page type such as `purchase` | `vendor.microsoft-uet.param.ecomm_pagetype.empty`, `.invalid` |
+| `ecomm_prodid` | When present, not empty | `vendor.microsoft-uet.param.ecomm_prodid.empty` |
+| `ecomm_totalvalue` | When present, a number | `vendor.microsoft-uet.param.ecomm_totalvalue.empty`, `.invalid` |
+| `ecomm_query` | When present, the search query | `vendor.microsoft-uet.param.ecomm_query.empty` |
 | `flight_destid`, `flight_originid`, `flight_pagetype`, `flight_startdate`, `flight_enddate` | When present, not empty | `vendor.microsoft-uet.param.flight_destid.empty` and the same shape for the other flight IDs and dates |
 | `flight_totalvalue` | When present, a number | `vendor.microsoft-uet.param.flight_totalvalue.empty`, `.invalid` |
 | `ec`, `ea`, `el` | When present, not empty | `vendor.microsoft-uet.param.ec.empty` and the same shape for `ea` and `el` |
@@ -633,7 +638,7 @@ Universal Event Tracking requests on `bat.bing.com` and `bat.bing.net`. Level:
 | `gc` | When present, ISO 4217 three-letter code | `vendor.microsoft-uet.param.gc.invalid` |
 | Custom fields on pageLoad | `ec`, `ea`, `el`, and `ev` are forbidden when `evt` is `pageLoad` | `vendor.microsoft-uet.pageload_forbids_custom_event_fields` |
 
-Source: [UET parameters table](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table).
+Source: [UET parameters table](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table), [ecommerce custom events](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce).
 
 ## `vendor/microsoft-conversions-api`
 

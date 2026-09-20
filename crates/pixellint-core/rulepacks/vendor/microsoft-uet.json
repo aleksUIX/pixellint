@@ -1,7 +1,7 @@
 {
   "id": "vendor/microsoft-uet",
   "display_name": "Microsoft Advertising UET",
-  "description": "Universal Event Tracking requests to the Microsoft Advertising collection endpoint. Microsoft documents ti, ver, evt, mid, and rn on every event, plus pageLoad kl and tw, custom-event pagetype, prodid, search_term, ecomm_category, and transaction_id, and flight_destid, flight_originid, flight_pagetype, flight_startdate, flight_enddate, and flight_totalvalue.",
+  "description": "Universal Event Tracking requests to the Microsoft Advertising collection endpoint. Microsoft documents ti, ver, evt, mid, and rn on every event, plus pageLoad kl and tw, custom-event pagetype, prodid, search_term, ecomm_category, transaction_id, and items, ecommerce ecomm_pagetype, ecomm_prodid, ecomm_totalvalue, and ecomm_query, and flight_destid, flight_originid, flight_pagetype, flight_startdate, flight_enddate, and flight_totalvalue.",
   "vendor": "microsoft",
   "source_level": "official_vendor",
   "docs": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table",
@@ -140,13 +140,60 @@
       "fix_hint": "Send the category ID in ecomm_category, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
-    {
-      "name": "transaction_id",
-      "format": { "kind": "non_empty" },
-      "description": "It is a unique transaction ID. Microsoft documents transaction_id on custom events.",
-      "fix_hint": "Send a unique transaction ID, or drop the empty pair.",
-      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
-    },
+      {
+        "name": "transaction_id",
+        "format": { "kind": "non_empty" },
+        "description": "It is a unique transaction ID. Microsoft documents transaction_id on custom events.",
+        "fix_hint": "Send a unique transaction ID, or drop the empty pair.",
+        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+      },
+      {
+        "name": "items",
+        "format": { "kind": "regex", "pattern": "^\\[.*\\]$" },
+        "description": "It is the product array on a custom event. Microsoft documents `items` as a JSON array of objects with `id`, `quantity`, and `price`.",
+        "fix_hint": "Send `items` as a JSON array, such as `[{\"id\":\"Prod123456\",\"quantity\":2,\"price\":25.1}]`.",
+        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+      },
+      {
+        "name": "ecomm_pagetype",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "home",
+            "searchresults",
+            "category",
+            "product",
+            "cart",
+            "purchase",
+            "other"
+          ],
+          "case_insensitive": true
+        },
+        "description": "It is the ecommerce page type. Microsoft documents home, searchresults, category, product, cart, purchase, and other.",
+        "fix_hint": "Send a documented ecomm_pagetype such as purchase or product.",
+        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+      },
+      {
+        "name": "ecomm_prodid",
+        "format": { "kind": "non_empty" },
+        "description": "It is the product ID list for dynamic remarketing. Microsoft documents ecomm_prodid as matching the feed id or item_group_id.",
+        "fix_hint": "Send one or more product IDs in ecomm_prodid, or drop the empty pair.",
+        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+      },
+      {
+        "name": "ecomm_totalvalue",
+        "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+        "description": "It is the cart or purchase total. Microsoft documents ecomm_totalvalue as a number.",
+        "fix_hint": "Send a number such as 50.20, with no currency symbol.",
+        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+      },
+      {
+        "name": "ecomm_query",
+        "format": { "kind": "non_empty" },
+        "description": "It is the search query on a search-results page. Microsoft documents ecomm_query on custom events.",
+        "fix_hint": "Send the search query in ecomm_query, or drop the empty pair.",
+        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+      },
     {
       "name": "ec",
       "format": { "kind": "non_empty" },
