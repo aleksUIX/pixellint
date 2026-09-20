@@ -2132,7 +2132,8 @@ Source: [identify](https://developers.heap.io/reference/identify-1).
 
 Server-side add user properties posted to
 `heapanalytics.com/api/add_user_properties`. Level: `official_vendor`. Bulk
-`users[]` is not contracted. Identify stays `vendor/heap-identify`.
+`users[]` is not contracted. Identify stays `vendor/heap-identify`. Add
+account properties is `vendor/heap-account-properties`.
 
 | Body field | Enforced | Rule ids |
 | --- | --- | --- |
@@ -2141,6 +2142,21 @@ Server-side add user properties posted to
 | `properties` | Recommended trait object | `vendor.heap-user-properties.body.properties.missing` |
 
 Source: [add user properties](https://developers.heap.io/reference/add-user-properties).
+
+## `vendor/heap-account-properties`
+
+Server-side add account properties posted to
+`heapanalytics.com/api/add_account_properties`. Level: `official_vendor`.
+Single updates send `account_id`. Bulk updates send `accounts[]`. Track stays
+`vendor/heap-track`. Add user properties stays `vendor/heap-user-properties`.
+
+| Body field | Enforced | Rule ids |
+| --- | --- | --- |
+| `app_id` | Required environment ID | `vendor.heap-account-properties.body.app_id.missing`, `.empty` |
+| `account_id` | When present, not empty | `vendor.heap-account-properties.body.account_id.empty` |
+| `accounts[].account_id` | Required on each bulk row | `vendor.heap-account-properties.body.accounts[].account_id.missing`, `.empty` |
+
+Source: [add account properties](https://developers.heap.io/reference/add-account-properties).
 
 ## `vendor/mouseflow`
 

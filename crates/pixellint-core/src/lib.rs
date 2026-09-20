@@ -230,6 +230,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/heap-user-properties.json"),
     ),
     (
+        "vendor/heap-account-properties",
+        include_str!("../rulepacks/vendor/heap-account-properties.json"),
+    ),
+    (
         "vendor/hotjar",
         include_str!("../rulepacks/vendor/hotjar.json"),
     ),

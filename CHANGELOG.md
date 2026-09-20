@@ -6,6 +6,15 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- `vendor/heap-account-properties`, covering POST `/api/add_account_properties`:
+  required `app_id`, non-empty `account_id` on a single update, and required
+  `accounts[].account_id` on bulk rows from the published OpenAPI table. Track
+  stays `vendor/heap-track`. Add user properties stays
+  `vendor/heap-user-properties`. Quora CAPI now matches `conversion.event_name`
+  or `conversion.click_id`, so a Heap `account_id` payload is not claimed.
+
 ### Changed
 
 - Mixpanel `/track` type-checks SDK default properties when present: absolute
