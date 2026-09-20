@@ -37,6 +37,10 @@ All notable changes to Pixellint are documented here. The format follows
 - `validate_many` groups by borrowed kind and trimmed text, so duplicate rows
   do not allocate a dedupe-key string, and the unique URL moves into
   `validate` instead of cloning first.
+- Matomo Tracking API type-checks leftover plugin flags (`fla`, `java`, `dir`,
+  `qt`, `realp`, `pdf`, `wma`, `gears`, `ag` as `1`), content `c_n` / `c_p` /
+  `c_t` / `c_i` (an interaction needs a name), JSON `ec_items`, and numeric
+  `ec_st` / `ec_tx` / `ec_sh` / `ec_dt`.
 
 - Body finding field paths and fallback targets are built only when a contract
   fires, so a clean CAPI batch does not allocate one finding string per event.

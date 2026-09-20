@@ -206,6 +206,77 @@
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
+      "name": "pdf",
+      "name_pattern": "^(fla|java|dir|qt|realp|pdf|wma|gears|ag)$",
+      "format": { "kind": "enum", "values": ["1"] },
+      "description": "It is a visitor plugin flag. Matomo documents `fla`, `java`, `dir`, `qt`, `realp`, `pdf`, `wma`, `gears`, and `ag` as `1` when that plugin is present.",
+      "fix_hint": "Send `1` for a present plugin, or omit the pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "c_n",
+      "format": { "kind": "non_empty" },
+      "description": "It is the content name. Matomo documents `c_n` on content impressions and interactions.",
+      "fix_hint": "Send the content name in `c_n`, such as `Ad Foo Bar`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "c_p",
+      "format": { "kind": "non_empty" },
+      "description": "It is the content piece. Matomo documents `c_p` as the path to the image, video, audio, or text.",
+      "fix_hint": "Send the content piece in `c_p`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "c_t",
+      "format": { "kind": "url" },
+      "description": "It is the content target. Matomo documents `c_t` as the landing-page URL.",
+      "fix_hint": "Send an absolute landing URL in `c_t`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "c_i",
+      "format": { "kind": "non_empty" },
+      "description": "It is the content interaction, such as `click`. Matomo documents `c_i` together with `c_n`.",
+      "fix_hint": "Send the interaction name in `c_i`, such as `click`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ec_items",
+      "format": { "kind": "regex", "pattern": "^\\[.*\\]$" },
+      "description": "It is the JSON array of cart or order rows. Matomo documents each row as sku, name, category, price, quantity.",
+      "fix_hint": "Send `ec_items` as a JSON array of item rows, such as `[\"sku\",\"name\",\"cat\",11.11,2]`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ec_st",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the ecommerce subtotal, excluding shipping.",
+      "fix_hint": "Send `ec_st` as a number, with no currency symbol.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ec_tx",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the tax amount of the ecommerce order.",
+      "fix_hint": "Send `ec_tx` as a number, with no currency symbol.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ec_sh",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the shipping cost of the ecommerce order.",
+      "fix_hint": "Send `ec_sh` as a number, with no currency symbol.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "ec_dt",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "description": "It is the discount offered on the ecommerce order.",
+      "fix_hint": "Send `ec_dt` as a number, with no currency symbol.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
       "name": "dimension1",
       "name_pattern": "^dimension([1-9]|[1-9][0-9]{1,2})$",
       "format": { "kind": "non_empty" },
@@ -233,6 +304,16 @@
       "severity": "error",
       "message": "The hit tracks an ecommerce order (`ec_id`) without `revenue`. Matomo documents the grand total as required on an order.",
       "fix_hint": "Set `revenue` to the order grand total, and set `idgoal=0`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "code": "vendor.matomo.content_interaction_requires_name",
+      "kind": "required_with",
+      "when": "c_i",
+      "requires": ["c_n"],
+      "severity": "error",
+      "message": "The hit sends a content interaction `c_i` without a content name `c_n`. Matomo documents both on a content interaction.",
+      "fix_hint": "Set `c_n` to the same content name as the impression, such as `Ad Foo Bar`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     }
   ]

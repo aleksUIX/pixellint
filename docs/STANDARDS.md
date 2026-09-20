@@ -2000,6 +2000,12 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | `pv_id` | When present, six alphanumeric characters | `vendor.matomo.param.pv_id.invalid` |
 | `search` | When present, not empty | `vendor.matomo.param.search.empty` |
 | `search_count` | When present, an integer | `vendor.matomo.param.search_count.invalid` |
+| Plugin flags | When present, `1` (`fla`, `java`, `dir`, `qt`, `realp`, `pdf`, `wma`, `gears`, `ag`) | `vendor.matomo.param.pdf.invalid` and the other plugin keys |
+| `c_n`, `c_p`, `c_i` | When present, not empty | `vendor.matomo.param.c_n.empty`, `.c_p.empty`, `.c_i.empty` |
+| `c_t` | When present, an absolute URL | `vendor.matomo.param.c_t.invalid` |
+| Content interaction | `c_i` requires `c_n` | `vendor.matomo.content_interaction_requires_name` |
+| `ec_items` | When present, a JSON array | `vendor.matomo.param.ec_items.invalid` |
+| `ec_st`, `ec_tx`, `ec_sh`, `ec_dt` | When present, a number | `vendor.matomo.param.ec_st.invalid`, `.ec_tx.invalid`, `.ec_sh.invalid`, `.ec_dt.invalid` |
 | `e_v` | When present, a number | `vendor.matomo.param.e_v.invalid` |
 | `e_n` | When present, not empty | `vendor.matomo.param.e_n.empty` |
 | `revenue` | When present, a number. Required with `ec_id` | `vendor.matomo.param.revenue.invalid`, `vendor.matomo.order_requires_revenue` |
