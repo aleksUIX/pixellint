@@ -196,12 +196,25 @@ impl VendorDirectory {
     ///
     /// When more than one listed host matches, the earlier directory entry
     /// wins, matching the previous linear scan.
+    ///
+    /// Prepared hosts are already lowercased. This path skips a second copy in
+    /// that case.
     pub fn lookup_host(&self, host: &str) -> Option<&VendorEntry> {
-        let host = ascii_lower(host);
+        if host.bytes().any(|byte| byte.is_ascii_uppercase()) {
+            self.lookup_lowered(&host.to_ascii_lowercase())
+        } else {
+            self.lookup_lowered(host)
+        }
+    }
+
+    fn lookup_lowered(&self, host: &str) -> Option<&VendorEntry> {
         let mut best: Option<usize> = None;
-        let mut label = host.as_ref();
+        let mut label = host;
         loop {
             if let Some(&index) = self.by_host.get(label) {
+                if index == 0 {
+                    return Some(&self.entries[0]);
+                }
                 best = Some(best.map_or(index, |current| current.min(index)));
             }
             match label.find('.') {
@@ -213,12 +226,17 @@ impl VendorDirectory {
     }
 
     fn rebuild_host_index(&mut self) {
+        for entry in &mut self.entries {
+            for host in &mut entry.hosts {
+                if host.bytes().any(|byte| byte.is_ascii_uppercase()) {
+                    host.make_ascii_lowercase();
+                }
+            }
+        }
         let mut by_host = HashMap::with_capacity(self.host_count());
         for (index, entry) in self.entries.iter().enumerate() {
             for host in &entry.hosts {
-                by_host
-                    .entry(ascii_lower(host).into_owned())
-                    .or_insert(index);
+                by_host.entry(host.clone()).or_insert(index);
             }
         }
         self.by_host = by_host;

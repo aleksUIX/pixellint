@@ -60,6 +60,9 @@ All notable changes to Pixellint are documented here. The format follows
   `merchantId` / feed codes / item `productId` / `quantity` / `unitPrice`,
   custom variables, and external attribution credit from the published
   ClickConversion table.
+- Host-index lookup stores plugin slots instead of cloning rulepack ids per
+  host, and directory lookup skips a second lowercase copy when the prepared
+  host is already ASCII lowercase.
 
 ## 0.31.9 - 2026-09-20
 

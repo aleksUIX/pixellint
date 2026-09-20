@@ -756,15 +756,17 @@ impl Error for EngineError {}
 
 struct PluginEntry {
     plugin: Arc<dyn ValidatorPlugin>,
-    routing: PluginRouting,
 }
 
 #[derive(Default)]
 struct HostIndex {
-    exact: HashMap<String, Vec<String>>,
-    suffixes: HashMap<String, Vec<String>>,
-    json_ids: Vec<String>,
-    always_ids: Vec<String>,
+    /// Plugin ids in BTreeMap order. Host buckets store slots into this vec
+    /// instead of cloning the id string per host.
+    id_by_slot: Vec<String>,
+    exact: HashMap<String, Vec<u16>>,
+    suffixes: HashMap<String, Vec<u16>>,
+    json_ids: Vec<u16>,
+    always_ids: Vec<u16>,
 }
 
 pub struct Engine {
@@ -832,12 +834,10 @@ impl Engine {
     where
         P: ValidatorPlugin + 'static,
     {
-        let routing = plugin.routing();
         self.plugins.insert(
             plugin.metadata().id.clone(),
             PluginEntry {
                 plugin: Arc::new(plugin),
-                routing,
             },
         );
     }
@@ -881,31 +881,27 @@ impl Engine {
     }
 
     fn rebuild_index(&mut self) {
-        let mut index = HostIndex::default();
-        for (id, entry) in &self.plugins {
-            match &entry.routing {
-                PluginRouting::Always => index.always_ids.push(id.clone()),
+        let mut index = HostIndex {
+            id_by_slot: self.plugins.keys().cloned().collect(),
+            ..HostIndex::default()
+        };
+        for (slot, entry) in self.plugins.values().enumerate() {
+            let slot = u16::try_from(slot).expect("at most 65535 rulepacks");
+            match entry.plugin.routing() {
+                PluginRouting::Always => index.always_ids.push(slot),
                 PluginRouting::Indexed {
                     hosts,
                     suffixes,
                     json,
                 } => {
                     for host in hosts {
-                        index
-                            .exact
-                            .entry(host.clone())
-                            .or_default()
-                            .push(id.clone());
+                        index.exact.entry(host).or_default().push(slot);
                     }
                     for suffix in suffixes {
-                        index
-                            .suffixes
-                            .entry(suffix.clone())
-                            .or_default()
-                            .push(id.clone());
+                        index.suffixes.entry(suffix).or_default().push(slot);
                     }
-                    if *json {
-                        index.json_ids.push(id.clone());
+                    if json {
+                        index.json_ids.push(slot);
                     }
                 }
             }
@@ -914,21 +910,44 @@ impl Engine {
     }
 
     fn candidate_ids<'a>(&'a self, prepared: &PreparedArtifact<'_>) -> Vec<&'a str> {
-        let mut ids: Vec<&str> = Vec::new();
-        ids.extend(self.index.always_ids.iter().map(String::as_str));
+        let mut ids: Vec<&str> = Vec::with_capacity(4);
+        let mut seen = [0u64; 8];
+        let mut push = |slot: u16| {
+            let index = slot as usize;
+            let word = index / 64;
+            let bit = 1u64 << (index % 64);
+            if word >= seen.len() {
+                ids.push(self.index.id_by_slot[index].as_str());
+                return;
+            }
+            if seen[word] & bit != 0 {
+                return;
+            }
+            seen[word] |= bit;
+            ids.push(self.index.id_by_slot[index].as_str());
+        };
+        for &slot in &self.index.always_ids {
+            push(slot);
+        }
         if prepared.wants_json() {
-            ids.extend(self.index.json_ids.iter().map(String::as_str));
+            for &slot in &self.index.json_ids {
+                push(slot);
+            }
         }
         if let Some(url) = prepared.url()
             && let Some(host) = url.host.as_deref()
         {
             if let Some(list) = self.index.exact.get(host) {
-                ids.extend(list.iter().map(String::as_str));
+                for &slot in list {
+                    push(slot);
+                }
             }
             let mut label = host;
             loop {
                 if let Some(list) = self.index.suffixes.get(label) {
-                    ids.extend(list.iter().map(String::as_str));
+                    for &slot in list {
+                        push(slot);
+                    }
                 }
                 match label.find('.') {
                     Some(index) => label = &label[index + 1..],
