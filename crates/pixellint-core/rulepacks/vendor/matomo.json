@@ -357,7 +357,7 @@
     {
       "name": "ca",
       "format": { "kind": "enum", "values": ["1"] },
-      "description": "It marks a custom action that is not a page view. Matomo documents `ca=1` on events and other non-pageview hits.",
+      "description": "It marks a custom action that is not a page view. Matomo documents `ca=1` on events and on Crash Analytics hits.",
       "fix_hint": "Send `ca=1` on a non-pageview hit, or omit the pair. Do not send it with `ping=1`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -410,6 +410,29 @@
       "format": { "kind": "non_empty" },
       "description": "It is a source label for a bot request, such as `Cloudflare`.",
       "fix_hint": "Send a source label in `source`, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "cra",
+      "format": { "kind": "non_empty" },
+      "description": "It is the crash error message. Matomo documents `cra` as required on a Crash Analytics hit.",
+      "fix_hint": "Send the error message in `cra`, and send `ca=1`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "cra_st",
+      "name_pattern": "^cra_(st|ct|tp|ru)$",
+      "format": { "kind": "non_empty" },
+      "description": "It is optional crash metadata. Matomo documents `cra_st` as the stack trace, `cra_ct` as the category, `cra_tp` as the error type, and `cra_ru` as the source-file URI.",
+      "fix_hint": "Fill the crash field, or drop the empty pair.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "name": "cra_rl",
+      "name_pattern": "^cra_(rl|rc)$",
+      "format": { "kind": "integer" },
+      "description": "It is the source location of the crash. Matomo documents `cra_rl` as the line number and `cra_rc` as the column.",
+      "fix_hint": "Send `cra_rl` or `cra_rc` as an integer.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
@@ -483,6 +506,16 @@
       "severity": "error",
       "message": "The hit sends `bots=1` with `recMode`. Matomo documents `bots=1` only in visit-only mode, when `recMode` is omitted.",
       "fix_hint": "Drop `bots`, or drop `recMode`.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "code": "vendor.matomo.crash_requires_ca",
+      "kind": "required_with",
+      "when": "cra",
+      "requires": ["ca"],
+      "severity": "error",
+      "message": "The hit sends a crash message `cra` without `ca=1`. Matomo documents `ca=1` as required on a Crash Analytics hit.",
+      "fix_hint": "Send `ca=1` with `cra`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     }
   ]

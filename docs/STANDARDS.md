@@ -2002,7 +2002,10 @@ Matomo Tracking API hits to `matomo.php` on Matomo Cloud. Level:
 | `search_cat` | When present, not empty | `vendor.matomo.param.search_cat.empty` |
 | `search_count` | When present, an integer | `vendor.matomo.param.search_count.invalid` |
 | `ua`, `lang`, `cs` | When present, not empty | `vendor.matomo.param.ua.empty`, `.lang.empty`, `.cs.empty` |
-| `ca` | When present, `1`. Forbidden with `ping=1` | `vendor.matomo.param.ca.invalid`, `vendor.matomo.ca_forbids_ping` |
+| `ca` | When present, `1`. Forbidden with `ping=1`. Required with `cra` | `vendor.matomo.param.ca.invalid`, `vendor.matomo.ca_forbids_ping`, `vendor.matomo.crash_requires_ca` |
+| `cra` | When present, not empty. Requires `ca` | `vendor.matomo.param.cra.empty`, `vendor.matomo.crash_requires_ca` |
+| `cra_st`, `cra_ct`, `cra_tp`, `cra_ru` | When present, not empty | `vendor.matomo.param.cra_st.empty` and the other `cra_*` keys |
+| `cra_rl`, `cra_rc` | When present, an integer | `vendor.matomo.param.cra_rl.invalid`, `.cra_rc.invalid` |
 | `_rcn`, `_rck` | When present, not empty | `vendor.matomo.param._rcn.empty`, `._rck.empty` |
 | `_cvar`, `cvar`, `uadata` | When present, a JSON object | `vendor.matomo.param._cvar.invalid`, `.cvar.invalid`, `.uadata.invalid` |
 | `recMode` | When present, `1` (bot only) or `2` (auto). `1` requires `ua` | `vendor.matomo.param.recMode.invalid`, `vendor.matomo.bot_requires_ua` |
