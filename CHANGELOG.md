@@ -45,6 +45,8 @@ All notable changes to Pixellint are documented here. The format follows
 - JSON parse borrows unescaped strings, numbers, and literals from the
   artifact, and stores each field path once. Synth CAPI 1000-event batch
   p50 27.2ms to 26.3ms (n=5 protocol).
+- Taboola S2S postbacks reject `click_id`. Taboola documents the query key as
+  `click-id`, exactly, and says another spelling records no conversion.
 
 ## 0.31.9 - 2026-09-20
 

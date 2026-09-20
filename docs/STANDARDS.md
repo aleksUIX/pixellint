@@ -1525,7 +1525,7 @@ base pixel loader stays `vendor/taboola`. Bulk submit is `vendor/taboola-s2s-bul
 
 | Parameter | Enforced | Rule ids |
 | --- | --- | --- |
-| `click-id` | Required Click ID | `vendor.taboola-s2s.param.click-id.missing`, `.empty` |
+| `click-id` | Required Click ID. The key must be `click-id`, not `click_id` | `vendor.taboola-s2s.param.click-id.missing`, `.empty`, `.param.click_id.forbidden` |
 | `name` | Required Realize Event Name | `vendor.taboola-s2s.param.name.missing`, `.empty` |
 | `revenue` | Integer or decimal when present | `vendor.taboola-s2s.param.revenue.invalid` |
 | `currency` | Documented three-letter code when present | `vendor.taboola-s2s.param.currency.invalid` |
