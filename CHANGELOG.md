@@ -70,6 +70,9 @@ All notable changes to Pixellint are documented here. The format follows
 - Yahoo Conversion API events type-check optional `eventId`, `actionSourceUrl`,
   two-letter `country`, partner `pxid` as `sourceId:value`, unhashed
   `userData.ip_address` and `userAgent`, and numeric `eventData.price`.
+- Klaviyo Create Event requires nested `metric` and `profile` resource types,
+  type-checks `locale`, `image`, `anonymous_id`, and `_kx`, and rejects hashed
+  email and `location.ip`.
 - Auto-mode plugin selection looks up the host-index shortlist instead of
   walking every registered pack and hashing candidate ids.
 

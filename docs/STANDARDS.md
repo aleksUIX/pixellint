@@ -980,6 +980,12 @@ Event creation on the Klaviyo events API, in JSON:API shape. Level:
 | `value` and `value_currency` | Required together. Currency is ISO 4217 | `vendor.klaviyo.body.value_requires_currency`, `.currency_requires_value`, `.value_currency.invalid` |
 | `phone_number` | When present, E.164 | `vendor.klaviyo.body.data.attributes.profile.data.attributes.phone_number.invalid` |
 | Profile identity | One of id, email, phone number, or external id is required | `vendor.klaviyo.body.profile_needs_an_identifier` |
+| `profile.data.type` | Required `profile` | `vendor.klaviyo.body.data.attributes.profile.data.type.missing`, `.invalid` |
+| `metric.data.type` | Required `metric` | `vendor.klaviyo.body.data.attributes.metric.data.type.missing`, `.invalid` |
+| `anonymous_id`, `_kx` | When present, not empty | `vendor.klaviyo.body.data.attributes.profile.data.attributes.anonymous_id.empty` |
+| `locale` | When present, an IETF BCP 47 tag such as `en-US` | `vendor.klaviyo.body.data.attributes.profile.data.attributes.locale.invalid` |
+| `image` | When present, an absolute URL | `vendor.klaviyo.body.data.attributes.profile.data.attributes.image.invalid` |
+| Over-hashing | Email and `location.ip` must not be a digest | `vendor.klaviyo.body.hashed_plaintext_field` |
 
 Source: [create event](https://developers.klaviyo.com/en/reference/create_event).
 

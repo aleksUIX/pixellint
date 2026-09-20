@@ -34,13 +34,14 @@
         },
         {
           "name": "data.attributes.metric.data.type",
+          "requirement": "required",
           "format": {
             "kind": "enum",
             "values": [
               "metric"
             ]
           },
-          "description": "The nested metric resource is typed `metric`.",
+          "description": "The nested metric resource is typed `metric`. Klaviyo documents `type` as required on the metric object.",
           "fix_hint": "Set the metric's `type` to `metric`.",
           "doc": "https://developers.klaviyo.com/en/reference/create_event"
         },
@@ -128,6 +129,65 @@
           "doc": "https://developers.klaviyo.com/en/reference/create_event"
         },
         {
+          "name": "data.attributes.profile.data.type",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "profile"
+            ]
+          },
+          "description": "The nested profile resource is typed `profile`. Klaviyo documents `type` as required on the profile object.",
+          "fix_hint": "Set the profile's `type` to `profile`.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.anonymous_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is an anonymous profile identifier. Klaviyo documents `anonymous_id` on the event profile object.",
+          "fix_hint": "Send `anonymous_id`, or drop the empty pair.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes._kx",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is Klaviyo's encrypted web-tracking exchange id, also called `exchange_id`.",
+          "fix_hint": "Send `_kx` from Klaviyo web tracking, or drop the empty pair.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.locale",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z]{2})?$"
+          },
+          "description": "It is the profile locale. Klaviyo documents an IETF BCP 47 tag like `en-US` (ISO 639 plus ISO 3166 alpha-2).",
+          "fix_hint": "Send a tag such as `en-US`.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.image",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is a URL pointing at a profile image. Klaviyo documents it as a URL.",
+          "fix_hint": "Send an absolute image URL, or omit the field.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the profile IP address. Klaviyo documents `location.ip` as an IP address, unhashed.",
+          "fix_hint": "Send the raw IP in `location.ip`, not a digest.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
           "name": "data.attributes.unique_id",
           "format": {
             "kind": "non_empty"
@@ -169,6 +229,19 @@
           "severity": "error",
           "message": "The event sends `value_currency` without `value`. Klaviyo documents both together.",
           "fix_hint": "Add `value` as a number, with no currency symbol.",
+          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        },
+        {
+          "code": "vendor.klaviyo.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "data.attributes.profile.data.attributes.email",
+            "data.attributes.profile.data.attributes.location.ip"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Klaviyo documents email and `location.ip` as unhashed.",
+          "fix_hint": "Send the raw email address or IP. Hashing it makes the profile unmatchable.",
           "doc": "https://developers.klaviyo.com/en/reference/create_event"
         }
       ]
