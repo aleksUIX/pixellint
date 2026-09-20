@@ -749,13 +749,16 @@ LinkedIn conversion image pixels on `px.ads.linkedin.com/collect`. Level:
 | `conversionId` | Expected numeric conversion ID. Page-load noscript omits it | `vendor.linkedin.param.conversionId.missing`, `.invalid` |
 | `fmt` | Expected `gif`, `img`, or `js` | `vendor.linkedin.param.fmt.missing`, `.invalid` |
 | `eventId` | When present, non-empty. Dedup key LinkedIn documents on the image URL | `vendor.linkedin.param.eventId.empty` |
+| `oid` | When present, non-empty. Path to Conversion order ID | `vendor.linkedin.param.oid.empty` |
+| `url` | When present, an absolute page URL. LinkedIn uses it only when `conversionId` is absent | `vendor.linkedin.param.url.empty`, `.invalid` |
 
 Sources: [image pixel conversions](https://www.linkedin.com/help/lms/answer/a422796),
-[deduplication](https://learn.microsoft.com/en-us/linkedin/marketing/conversions/deduplication).
+[deduplication](https://learn.microsoft.com/en-us/linkedin/marketing/conversions/deduplication),
+[conversion tracking](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking).
 
-`pid`, `conversionId`, and `fmt` are generated in Campaign Manager. `eventId` is
-`official_vendor`. Page-load noscript is `pid` and `fmt` only, so
-`conversionId` stays recommended.
+`pid`, `conversionId`, and `fmt` are generated in Campaign Manager. `eventId`,
+`oid`, and `url` are `official_vendor`. Page-load noscript is `pid` and `fmt`
+only, so `conversionId` stays recommended.
 
 ## `vendor/linkedin-conversions-api`
 

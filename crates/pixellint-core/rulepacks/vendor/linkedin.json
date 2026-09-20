@@ -1,7 +1,7 @@
 {
   "id": "vendor/linkedin",
   "display_name": "LinkedIn image pixel",
-  "description": "LinkedIn conversion image pixels on px.ads.linkedin.com/collect. Campaign Manager generates pid, conversionId, and fmt. eventId is the dedup key LinkedIn documents on the image URL. Insight Tag page-load fires omit conversionId. CAPI stays vendor/linkedin-conversions-api.",
+  "description": "LinkedIn conversion image pixels on px.ads.linkedin.com/collect. Campaign Manager generates pid, conversionId, and fmt. eventId is the dedup key LinkedIn documents on the image URL. oid is the Path to Conversion order ID. url is the conversion match URL when conversionId is absent. Insight Tag page-load fires omit conversionId. CAPI stays vendor/linkedin-conversions-api.",
   "vendor": "linkedin",
   "source_level": "ecosystem_reference",
   "docs": "https://www.linkedin.com/help/lms/answer/a422796",
@@ -40,6 +40,22 @@
       "description": "It is the per-event deduplication key. LinkedIn documents it on the image URL as eventId when the same conversion is also sent through the Conversions API.",
       "fix_hint": "Set eventId to the same value the Conversions API event sends as event_id.",
       "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/conversions/deduplication",
+      "source_level": "official_vendor"
+    },
+    {
+      "name": "oid",
+      "format": { "kind": "non_empty" },
+      "description": "It is the advertiser-defined order ID. LinkedIn documents oid on the image pixel for Path to Conversion, so impressions and clicks within 90 days can be joined to the conversion.",
+      "fix_hint": "Set oid to the order ID you want Path to Conversion to attribute, or drop the pair when you are not using that feature.",
+      "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking",
+      "source_level": "official_vendor"
+    },
+    {
+      "name": "url",
+      "format": { "kind": "url" },
+      "description": "It is the conversion match URL. LinkedIn documents url as a URL-encoded page address used when conversionId is absent. The referrer is used when both are missing.",
+      "fix_hint": "Set url to the URL-encoded page you want to match, or drop the pair when conversionId is present.",
+      "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking",
       "source_level": "official_vendor"
     }
   ],

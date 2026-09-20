@@ -16,6 +16,8 @@ All notable changes to Pixellint are documented here. The format follows
 - Floodlight activity tags type-check in-app `dc_rdid` as an unhashed IDFA or
   AdID, and COPPA `tag_for_child_directed_treatment` as `0` or `1`. Generated
   empty slots stay allowed.
+- LinkedIn image pixels type-check Path to Conversion `oid` and conversion
+  match `url` from the published collect query table.
 
 ## 0.31.8 - 2026-09-19
 
