@@ -178,6 +178,48 @@
           "name": "properties.value",
           "description": "It is the total value of the order or items, not the unit price.",
           "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+        },
+        {
+          "name": "properties.contents[].content_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product item ID on a contents row. TikTok's Events API SDK documents `content_id` on each `PixelContent` object, not on `properties`.",
+          "fix_hint": "Set `properties.contents[].content_id` to the catalog item ID, or drop the empty pair.",
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+        },
+        {
+          "name": "properties.contents[].content_type",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group"
+            ]
+          },
+          "description": "It is how the row maps to the catalog. TikTok's Events API SDK documents `product` or `product_group` on each contents object.",
+          "fix_hint": "Set `properties.contents[].content_type` to `product` or `product_group`. Do not put `content_type` on `properties`.",
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+        },
+        {
+          "name": "properties.contents[].quantity",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the item count on a contents row. TikTok's Events API SDK documents `quantity` as a number.",
+          "fix_hint": "Send `properties.contents[].quantity` as a number, such as `2`.",
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+        },
+        {
+          "name": "properties.contents[].price",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the unit price of one item. TikTok's Events API SDK documents `price` as the single-item price, not the order total.",
+          "fix_hint": "Send `properties.contents[].price` as a number, such as `10`. Put the order total in `properties.value`.",
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
         }
       ],
       "rules": [

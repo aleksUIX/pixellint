@@ -737,11 +737,17 @@ event object under `batch`, with `pixel_code` on the envelope.
 | `properties.currency` | ISO 4217 three-letter code when present | `vendor.tiktok-events-api.body.properties.currency.invalid` |
 | Identifier | Hashed email, phone, `external_id`, `_ttp`, click ID, or `context.ip` | `vendor.tiktok-events-api.body.user_needs_an_identifier` |
 | `CompletePayment`, `PlaceAnOrder` | Need `properties.value` and `properties.currency` | `vendor.tiktok-events-api.body.complete_payment_requires_value_and_currency` |
+| `properties.contents[].content_id` | When present, not empty | `vendor.tiktok-events-api.body.properties.contents[].content_id.empty` |
+| `properties.contents[].content_type` | When present, `product` or `product_group` | `vendor.tiktok-events-api.body.properties.contents[].content_type.invalid` |
+| `properties.contents[].quantity`, `price` | When present, a number. `price` is the unit price | `vendor.tiktok-events-api.body.properties.contents[].quantity.invalid`, `.price.invalid` |
 
 Sources: [where to find pixel_code](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929),
 [event deduplication](https://ads.tiktok.com/marketing_api/docs?id=1739584864945154),
 [TikTok Click ID and cookies](https://ads.tiktok.com/marketing_api/docs?id=1739584860883969),
-[official Events API SDK models](https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelTrackBody.md).
+[official Events API SDK models](https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelTrackBody.md),
+[PixelContent](https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md).
+
+`content_type` lives on each contents row. It is not contracted on `properties`.
 
 The `/open_api/v1.3/event/track/` Events 2.0 envelope is `vendor/tiktok-events-2`.
 
