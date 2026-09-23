@@ -6,6 +6,8 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.10 - 2026-09-22
+
 ### Added
 
 - `vendor/heap-account-properties`, covering POST `/api/add_account_properties`:
