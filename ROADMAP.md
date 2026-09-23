@@ -58,6 +58,11 @@ What Pixellint does today and where it is heading. Not a promise of dates.
 
 - Deepen packs that already match before adding another `/{id}.js` loader.
   Cookie sync, RTB, and JS-only IDs stay attributed.
+- New first-party packs stay on pixel, CAPI, postback, MMP S2S, verification,
+  and event-collect hops. CMP loaders, chat/email widgets, session/RUM
+  loaders, profile/identify/group APIs, and a fourth ad-request family
+  (beyond Ad Manager `/gampad/ads`, FreeWheel `/ad/g/`, and Criteo retail
+  media delivery) stay attributed.
 - Snap Pixel stays attributed until a citable HTTP identifier exists on
   `scevent.min.js` or `tr.snapchat.com/p`. Spiked 2026-09-12: none published.
 - Moat and Innovid stay attributed until a citable HTTP table exists on the

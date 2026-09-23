@@ -58,6 +58,7 @@ without shipping code. Everything else is std.
 - Plan around endpoint families, not vendor logos or template catalogs.
 - A single vendor may require multiple rulepacks when its wire-level surfaces differ materially, for example Google Ads, Floodlight, and generic VAST trackers.
 - Deepen a hop that already matches before promoting another directory host. A published HTTP table is the bar. Cookie sync, RTB, and JS-only IDs stay attributed.
+- A published sibling table is not enough when the hop is a CMP loader, a chat/email widget, a session/RUM loader, a profile/identify/group API, or an ad request. Those stay in the directory unless the artifact is a pixel, postback, CAPI, MMP, verification beacon, or event-collect call.
 - The practical goal is first-party coverage for the common families that get Pixellint to roughly p99 of identifiable measurement traffic, while leaving niche, regional, private, or customer-specific integrations to custom packs.
 - Coverage expansion should follow observed traffic and real demand, not a scrape of every public vendor library.
 
