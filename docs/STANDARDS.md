@@ -33,11 +33,17 @@ gets the syntax check instead.
 | Secure transport baseline | Plain `http` endpoints are flagged for upgrade | `core.url.insecure_transport` | best practice |
 | Input baseline | Empty artifacts are rejected before URL checks run | `core.input.empty` | heuristic |
 | [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259) | A JSON body parses, and the finding names the byte where it stops | `core.json.parse_error` | normative |
-| Macro handling | A fired URL carries no unresolved macros; macros never sit in scheme, authority, host, port, or userinfo; one artifact uses one macro syntax | `core.macro.unexpanded_in_fired_url`, `core.macro.unsafe_position`, `core.macro.mixed_syntax` | heuristic |
+| Macro handling | A fired URL carries no unresolved macros; macros never sit in scheme, authority, host, port, or userinfo; one artifact uses one macro syntax, except a VAST tracker that pairs IAB `[MACRO]` with `${MACRO}` | `core.macro.unexpanded_in_fired_url`, `core.macro.unsafe_position`, `core.macro.mixed_syntax`, `core.macro.broken_delimiter` | heuristic |
+| [IAB VAST macros](https://iabtechlab.com/standards/vast/) | On `vast` artifacts, a `[TOKEN]` is a published IAB name, spelled in uppercase. `[CONTENTPLAYHEAD]` and `[MEDIAPLAYHEAD]` are the pre-4.1 names for `[ADPLAYHEAD]` | `core.macro.vast_unknown`, `core.macro.vast_lowercase`, `core.macro.vast_deprecated` | normative |
 
-Macro rules recognize `[NAME]`, `${NAME}`, and `{{NAME}}`, the three syntaxes
-in common ad-tech use. They are deliberately generic: per-vendor macro
-vocabularies belong in vendor packs.
+Macro rules recognize `[NAME]`, `${NAME}`, `{{NAME}}`, `%%NAME%%`, `!!NAME!!`,
+and `[%NAME%]`. They are deliberately generic: per-vendor macro vocabularies
+belong in vendor packs. The IAB name check runs only on `vast` artifacts and
+only on `[TOKEN]` brackets, because a pixel URL uses the same brackets for
+vendor tokens. `%%NAME%%`, `!!NAME!!`, and `[%NAME%]` count as macros for the
+fired-URL check and for the privacy-signal skip. A VAST tracker may carry
+`[CACHEBUSTING]` beside `${AUCTION_PRICE}` without a mixed-syntax warning.
+`!!GDPR!` (one bang short) and a bare `FT_GDPR` value are `core.macro.broken_delimiter`.
 
 ### Consent and privacy signals
 

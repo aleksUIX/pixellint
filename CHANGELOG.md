@@ -6,6 +6,25 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.11 - 2026-09-30
+
+### Added
+
+- `vast` artifacts check `[TOKEN]` against the IAB VAST macro table:
+  `core.macro.vast_unknown`, `core.macro.vast_lowercase`, and
+  `core.macro.vast_deprecated` for `[CONTENTPLAYHEAD]` and `[MEDIAPLAYHEAD]`.
+- Macro delimiters `%%NAME%%`, `!!NAME!!`, and `[%NAME%]`, so a fired URL and
+  the privacy-signal skip see them. `core.macro.broken_delimiter` warns on
+  `!!NAME!` and on a bare `FT_NAME` query value.
+
+### Changed
+
+- A `vast` tracker that pairs IAB `[MACRO]` with `${MACRO}` no longer warns
+  `core.macro.mixed_syntax`.
+- A query value that is already a macro is left raw. Percent-decoding was
+  eating `%` plus two hex digits inside `%%CACHEBUSTER%%`, `[%ADID%]`, and
+  `%%DEVICEUA%%`, so those `gdpr` values raised `core.privacy.gdpr_invalid`.
+
 ## 0.31.10 - 2026-09-22
 
 ### Added

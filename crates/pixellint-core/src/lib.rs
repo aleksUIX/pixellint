@@ -1289,9 +1289,16 @@ fn validate_url_like_artifact(
     prepared: &PreparedArtifact<'_>,
     violations: &mut Vec<Violation>,
 ) {
+    apply_broken_macro_delimiters(artifact, prepared, violations);
+
     let macro_spans = prepared.macro_spans();
-    let has_unsafe_macro_positions =
-        apply_macro_rules(artifact, expansion_state, macro_spans, violations);
+    let has_unsafe_macro_positions = apply_macro_rules(
+        artifact,
+        prepared.request().artifact_kind,
+        expansion_state,
+        macro_spans,
+        violations,
+    );
 
     if has_unsafe_macro_positions {
         return;
@@ -1457,6 +1464,9 @@ enum MacroSyntax {
     Bracket,
     DollarBraces,
     DoubleBraces,
+    Percent,
+    Bang,
+    FlashBracket,
 }
 
 impl MacroSyntax {
@@ -1465,6 +1475,9 @@ impl MacroSyntax {
             Self::Bracket => "[NAME]",
             Self::DollarBraces => "${NAME}",
             Self::DoubleBraces => "{{NAME}}",
+            Self::Percent => "%%NAME%%",
+            Self::Bang => "!!NAME!!",
+            Self::FlashBracket => "[%NAME%]",
         }
     }
 }
@@ -1542,6 +1555,7 @@ pub(crate) struct MacroSpan {
 
 fn apply_macro_rules(
     artifact: &str,
+    artifact_kind: ArtifactKind,
     expansion_state: ExpansionState,
     macro_spans: &[MacroSpan],
     violations: &mut Vec<Violation>,
@@ -1555,7 +1569,8 @@ fn apply_macro_rules(
         .map(|span| span.syntax)
         .collect::<BTreeSet<_>>();
 
-    if syntaxes.len() > 1 {
+    // A VAST tracker routinely carries IAB [MACROS] beside the ad server's ${MACROS}.
+    if syntaxes.len() > 1 && !vast_bracket_and_dollar(artifact_kind, &syntaxes) {
         let targets = macro_spans
             .iter()
             .map(|span| target_for_macro_span(artifact, span))
@@ -1599,6 +1614,10 @@ fn apply_macro_rules(
             source: macro_rule_source(),
             targets,
         });
+    }
+
+    if artifact_kind == ArtifactKind::VastTracker {
+        apply_vast_macro_vocabulary(artifact, macro_spans, violations);
     }
 
     let unsafe_spans = macro_spans
@@ -1656,13 +1675,303 @@ fn macro_rule_source() -> RuleSource {
     }
 }
 
+fn vast_macro_source() -> RuleSource {
+    RuleSource::normative("IAB VAST macros", "https://iabtechlab.com/standards/vast/")
+}
+
+/// IAB `[MACRO]` plus `${MACRO}` on a vast tracker is one tag, two expanders.
+fn vast_bracket_and_dollar(kind: ArtifactKind, syntaxes: &BTreeSet<MacroSyntax>) -> bool {
+    kind == ArtifactKind::VastTracker
+        && syntaxes.len() == 2
+        && syntaxes.contains(&MacroSyntax::Bracket)
+        && syntaxes.contains(&MacroSyntax::DollarBraces)
+}
+
+/// IAB VAST macro names. Same set vastlint checks. Bracket syntax only.
+const VAST_MACROS: &[&str] = &[
+    "ADCATEGORIES",
+    "ADCOUNT",
+    "ADPLAYHEAD",
+    "ADSERVINGID",
+    "ADTYPE",
+    "APIFRAMEWORKS",
+    "APPBUNDLE",
+    "ASSETURI",
+    "BLOCKEDADCATEGORIES",
+    "BREAKMAXADLENGTH",
+    "BREAKMAXADS",
+    "BREAKMAXDURATION",
+    "BREAKMINADLENGTH",
+    "BREAKMINDURATION",
+    "BREAKPOSITION",
+    "CACHEBUSTING",
+    "CLICKPOS",
+    "CLIENTUA",
+    "CONTENTID",
+    "CONTENTPLAYHEAD",
+    "CONTENTURI",
+    "DEVICEIP",
+    "DEVICEUA",
+    "DOMAIN",
+    "ERRORCODE",
+    "EXTENSIONS",
+    "GDPR",
+    "GDPRCONSENT",
+    "IFA",
+    "IFATYPE",
+    "INVENTORYSTATE",
+    "LATLONG",
+    "LIMITADTRACKING",
+    "MEDIAMIME",
+    "MEDIAPLAYHEAD",
+    "OMIDPARTNER",
+    "PAGEURL",
+    "PLACEMENTTYPE",
+    "PLAYERCAPABILITIES",
+    "PLAYERSIZE",
+    "PLAYERSTATE",
+    "PODSEQUENCE",
+    "REASON",
+    "REGULATIONS",
+    "SERVERSIDE",
+    "SERVERUA",
+    "TIMESTAMP",
+    "TRANSACTIONID",
+    "UNIVERSALADID",
+    "VASTVERSIONS",
+    "VERIFICATIONVENDORS",
+];
+
+fn apply_vast_macro_vocabulary(
+    artifact: &str,
+    macro_spans: &[MacroSpan],
+    violations: &mut Vec<Violation>,
+) {
+    let mut unknown = Vec::new();
+    let mut lowercase = Vec::new();
+    let mut deprecated = Vec::new();
+
+    for span in macro_spans {
+        if span.syntax != MacroSyntax::Bracket {
+            continue;
+        }
+
+        let token = &artifact[span.start + 1..span.end - 1];
+        if !is_vast_bracket_token(token) {
+            continue;
+        }
+
+        let upper = token.to_ascii_uppercase();
+        if VAST_MACROS.binary_search(&upper.as_str()).is_err() {
+            unknown.push(span);
+        } else if token != upper {
+            lowercase.push(span);
+        } else if upper == "CONTENTPLAYHEAD" || upper == "MEDIAPLAYHEAD" {
+            deprecated.push(span);
+        }
+    }
+
+    if !unknown.is_empty() {
+        let listed = join_macro_text(artifact, &unknown);
+        let (noun, verb) = if unknown.len() == 1 {
+            ("token", "is")
+        } else {
+            ("tokens", "are")
+        };
+        violations.push(Violation {
+            code: "core.macro.vast_unknown".to_string(),
+            message: format!(
+                "Bracket {noun} {listed} {verb} outside the IAB VAST macro table. Players substitute the published names, and a vendor token stays in the request until that vendor expands it."
+            ),
+            severity: Severity::Warning,
+            field: Some("url".to_string()),
+            fix_hint: Some(
+                "Use a published IAB macro, or keep the token only on an endpoint that expands it."
+                    .to_string(),
+            ),
+            source: vast_macro_source(),
+            targets: unknown
+                .iter()
+                .map(|span| target_for_macro_span(artifact, span))
+                .collect(),
+        });
+    }
+
+    if !lowercase.is_empty() {
+        let listed = join_macro_text(artifact, &lowercase);
+        let (noun, verb) = if lowercase.len() == 1 {
+            ("macro", "is")
+        } else {
+            ("macros", "are")
+        };
+        violations.push(Violation {
+            code: "core.macro.vast_lowercase".to_string(),
+            message: format!(
+                "IAB {noun} {listed} {verb} lowercase. Players match the uppercase spelling and leave the token in the request."
+            ),
+            severity: Severity::Warning,
+            field: Some("url".to_string()),
+            fix_hint: Some("Uppercase the macro name.".to_string()),
+            source: vast_macro_source(),
+            targets: lowercase
+                .iter()
+                .map(|span| target_for_macro_span(artifact, span))
+                .collect(),
+        });
+    }
+
+    if !deprecated.is_empty() {
+        let listed = join_macro_text(artifact, &deprecated);
+        violations.push(Violation {
+            code: "core.macro.vast_deprecated".to_string(),
+            message: format!("{listed} is a pre-4.1 playhead macro. VAST 4.1 uses [ADPLAYHEAD]."),
+            severity: Severity::Info,
+            field: Some("url".to_string()),
+            fix_hint: Some("Use [ADPLAYHEAD].".to_string()),
+            source: vast_macro_source(),
+            targets: deprecated
+                .iter()
+                .map(|span| target_for_macro_span(artifact, span))
+                .collect(),
+        });
+    }
+}
+
+fn is_vast_bracket_token(token: &str) -> bool {
+    !token.is_empty()
+        && token
+            .chars()
+            .all(|character| character.is_ascii_alphanumeric() || character == '_')
+        && token
+            .chars()
+            .any(|character| character.is_ascii_alphabetic())
+}
+
+fn join_macro_text(artifact: &str, spans: &[&MacroSpan]) -> String {
+    spans
+        .iter()
+        .map(|span| &artifact[span.start..span.end])
+        .collect::<Vec<_>>()
+        .join(", ")
+}
+
+/// `!!NAME!` is a bang short of `!!NAME!!`. `FT_NAME` is that name with no delimiter.
+fn apply_broken_macro_delimiters(
+    artifact: &str,
+    prepared: &PreparedArtifact<'_>,
+    violations: &mut Vec<Violation>,
+) {
+    let bytes = artifact.as_bytes();
+    let mut index = 0;
+
+    while index + 1 < bytes.len() {
+        if bytes[index] != b'!' || bytes[index + 1] != b'!' {
+            index += 1;
+            continue;
+        }
+
+        let body_start = index + 2;
+        let mut body_end = body_start;
+        while body_end < bytes.len() && is_macro_body_byte(bytes[body_end]) {
+            body_end += 1;
+        }
+
+        let body = &artifact[body_start..body_end];
+        if !is_macro_body(body) {
+            index += 1;
+            continue;
+        }
+
+        let closed =
+            body_end + 1 < bytes.len() && bytes[body_end] == b'!' && bytes[body_end + 1] == b'!';
+        if closed {
+            index = body_end + 2;
+            continue;
+        }
+
+        let one_bang = body_end < bytes.len()
+            && bytes[body_end] == b'!'
+            && (body_end + 1 == bytes.len() || bytes[body_end + 1] != b'!');
+        if one_bang {
+            let end = body_end + 1;
+            let token = &artifact[index..end];
+            let span = MacroSpan {
+                start: index,
+                end,
+                syntax: MacroSyntax::Bang,
+            };
+            let target = target_for_macro_span(artifact, &span);
+            let field = target
+                .name
+                .as_ref()
+                .map(|name| format!("param.{name}"))
+                .unwrap_or_else(|| "url".to_string());
+            violations.push(Violation {
+                code: "core.macro.broken_delimiter".to_string(),
+                message: format!(
+                    "`{token}` is one bang short of a closed `!!{body}!!` macro, so the request sends the token literally."
+                ),
+                severity: Severity::Warning,
+                field: Some(field),
+                fix_hint: Some(format!("Close the macro as !!{body}!!.")),
+                source: macro_rule_source(),
+                targets: vec![target],
+            });
+            index = end;
+            continue;
+        }
+
+        index += 1;
+    }
+
+    for param in prepared.params(ParamStyle::Query) {
+        if !is_bare_ft_macro(&param.value) {
+            continue;
+        }
+
+        violations.push(Violation {
+            code: "core.macro.broken_delimiter".to_string(),
+            message: format!(
+                "`{}` is `{}`, a macro name with no delimiter, so the request sends the name literally.",
+                param.name, param.value
+            ),
+            severity: Severity::Warning,
+            field: Some(format!("param.{}", param.name)),
+            fix_hint: Some(format!(
+                "Wrap the name as [%{}%] or !!{}!!, or send the expanded value.",
+                param.value, param.value
+            )),
+            source: macro_rule_source(),
+            targets: vec![param.target()],
+        });
+    }
+}
+
+fn is_macro_body_byte(byte: u8) -> bool {
+    byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'.' | b'-')
+}
+
+fn is_bare_ft_macro(value: &str) -> bool {
+    let Some(rest) = value.strip_prefix("FT_") else {
+        return false;
+    };
+
+    !rest.is_empty()
+        && rest.chars().all(|character| {
+            character.is_ascii_uppercase() || character.is_ascii_digit() || character == '_'
+        })
+        && rest
+            .chars()
+            .any(|character| character.is_ascii_alphabetic())
+}
+
 pub(crate) fn detect_macro_spans(artifact: &str) -> Vec<MacroSpan> {
     let mut spans = Vec::new();
     let mut index = 0;
 
     while index < artifact.len() {
         let remainder = &artifact[index..];
-        let Some(relative) = remainder.find(['$', '[', '{']) else {
+        let Some(relative) = remainder.find(['$', '[', '{', '%', '!']) else {
             break;
         };
         index += relative;
@@ -1683,9 +1992,12 @@ pub(crate) fn detect_macro_spans(artifact: &str) -> Vec<MacroSpan> {
 }
 
 /// Macro delimiters recognized by the generic ad-tech macro scanner, in match order.
-const MACRO_DELIMITERS: [(&str, &str, MacroSyntax); 3] = [
+const MACRO_DELIMITERS: [(&str, &str, MacroSyntax); 6] = [
     ("${", "}", MacroSyntax::DollarBraces),
     ("{{", "}}", MacroSyntax::DoubleBraces),
+    ("[%", "%]", MacroSyntax::FlashBracket),
+    ("!!", "!!", MacroSyntax::Bang),
+    ("%%", "%%", MacroSyntax::Percent),
     ("[", "]", MacroSyntax::Bracket),
 ];
 
@@ -2370,6 +2682,114 @@ mod tests {
         assert_eq!(targets.len(), 2);
         assert_eq!(targets[0].name.as_deref(), Some("cb"));
         assert_eq!(targets[1].name.as_deref(), Some("price"));
+    }
+
+    #[test]
+    fn vast_tracker_accepts_iab_brackets_beside_dollar_macros() {
+        let engine = Engine::default();
+        let summary = engine
+            .validate(
+                &sample_request_with_kind_and_state(
+                    ArtifactKind::VastTracker,
+                    ExpansionState::Template,
+                    "https://example.com/pixel?cb=[CACHEBUSTING]&price=${AUCTION_PRICE}",
+                ),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+
+        assert!(violation_codes(&summary).is_empty());
+    }
+
+    #[test]
+    fn vast_tracker_still_warns_when_a_third_macro_syntax_appears() {
+        let engine = Engine::default();
+        let summary = engine
+            .validate(
+                &sample_request_with_kind_and_state(
+                    ArtifactKind::VastTracker,
+                    ExpansionState::Template,
+                    "https://example.com/pixel?cb=[CACHEBUSTING]&x={{CLICK_URL}}",
+                ),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+
+        assert_eq!(violation_codes(&summary), vec!["core.macro.mixed_syntax"]);
+    }
+
+    #[test]
+    fn url_kind_does_not_apply_the_vast_macro_table() {
+        let engine = Engine::default();
+        let summary = engine
+            .validate(
+                &sample_request_with_kind_and_state(
+                    ArtifactKind::Url,
+                    ExpansionState::Template,
+                    "https://example.com/pixel?x=[VIEWABILITY]",
+                ),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+
+        assert!(violation_codes(&summary).is_empty());
+    }
+
+    #[test]
+    fn closed_bang_percent_and_flash_macros_skip_the_gdpr_flag_check() {
+        let engine = Engine::default();
+        for artifact in [
+            "https://example.com/pixel?gdpr=!!GDPR!!",
+            "https://example.com/pixel?gdpr=%%GDPR%%",
+            "https://example.com/pixel?gdpr=[%FT_GDPR%]",
+            // `%` plus two hex digits is the start of CACHEBUSTER, ADID, DEVICEUA.
+            "https://example.com/pixel?gdpr=%%CACHEBUSTER%%",
+            "https://example.com/pixel?gdpr=[%ADID%]",
+            "https://example.com/pixel?gdpr=%%DEVICEUA%%",
+        ] {
+            let summary = engine
+                .validate(
+                    &sample_request_with_kind_and_state(
+                        ArtifactKind::Url,
+                        ExpansionState::Template,
+                        artifact,
+                    ),
+                    &ValidationOptions::default(),
+                )
+                .unwrap();
+            assert!(
+                violation_codes(&summary).is_empty(),
+                "{artifact} -> {:?}",
+                violation_codes(&summary)
+            );
+        }
+    }
+
+    #[test]
+    fn percent_encoding_is_not_a_percent_macro() {
+        assert!(detect_macro_spans("https://example.com/a?q=%20&x=1").is_empty());
+        let encoded = Engine::default()
+            .validate(
+                &sample_request_with_kind_and_state(
+                    ArtifactKind::Url,
+                    ExpansionState::Template,
+                    "https://example.com/pixel?gdpr=%20",
+                ),
+                &ValidationOptions::default(),
+            )
+            .unwrap();
+        assert_eq!(violation_codes(&encoded), vec!["core.privacy.gdpr_invalid"]);
+        let artifact = "https://example.com/a?e=%%ERRORCODE%%";
+        let spans = detect_macro_spans(artifact);
+        assert_eq!(spans.len(), 1);
+        assert_eq!(&artifact[spans[0].start..spans[0].end], "%%ERRORCODE%%");
+    }
+
+    #[test]
+    fn vast_macro_table_is_sorted() {
+        let mut sorted = VAST_MACROS.to_vec();
+        sorted.sort_unstable();
+        assert_eq!(VAST_MACROS, sorted.as_slice());
     }
 
     #[test]

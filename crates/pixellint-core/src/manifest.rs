@@ -1333,7 +1333,7 @@ impl ManifestRulePack {
 
                 Some(RawParam::query(
                     Cow::Owned(name.to_string()),
-                    percent_decode(capture.as_str()),
+                    decode_param_value(capture.as_str()),
                     path_start + capture.start(),
                     path_start + capture.end(),
                 ))
@@ -1926,7 +1926,7 @@ pub(crate) fn contains_macro(value: &str) -> bool {
     if !value
         .as_bytes()
         .iter()
-        .any(|&byte| matches!(byte, b'$' | b'[' | b'{'))
+        .any(|&byte| matches!(byte, b'$' | b'[' | b'{' | b'%' | b'!'))
     {
         return false;
     }
@@ -2184,7 +2184,7 @@ pub(crate) fn extract_params(artifact: &str, style: ParamStyle) -> Vec<RawParam<
 
             params.push(RawParam::query(
                 percent_decode(name),
-                percent_decode(value),
+                decode_param_value(value),
                 cursor + name_offset,
                 segment_end,
             ));
@@ -2253,7 +2253,7 @@ fn extract_colon_path_params(artifact: &str) -> Vec<RawParam<'_>> {
                     let abs = path_start + rel;
                     params.push(RawParam::query(
                         percent_decode(name),
-                        percent_decode(value),
+                        decode_param_value(value),
                         abs + leading,
                         abs + inner_end,
                     ));
@@ -2280,6 +2280,19 @@ pub(crate) fn path_span(artifact: &str) -> (usize, usize) {
         .unwrap_or(path_end);
 
     (path_start, path_end)
+}
+
+/// Percent-decode a query value, unless the raw text is already a macro.
+///
+/// `%%CACHEBUSTER%%` and `[%ADID%]` contain `%` plus two hex digits. Decoding
+/// that pair deletes the token, and the privacy skip then treats the leftover
+/// as a literal flag. `%20` is not a macro, so it still decodes.
+fn decode_param_value(value: &str) -> Cow<'_, str> {
+    if contains_macro(value) {
+        Cow::Borrowed(value)
+    } else {
+        percent_decode(value)
+    }
 }
 
 /// Minimal percent-decoding for parameter names and values. `+` is decoded as a
