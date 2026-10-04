@@ -1,0 +1,37 @@
+name: Publish MCP Registry
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish-mcp-registry:
+    name: Publish to MCP Registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL \
+            "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" \
+            | tar xz mcp-publisher
+          chmod +x mcp-publisher
+          mv mcp-publisher crates/pixellint-mcp/mcp-publisher
+      - name: Validate registry manifest
+        run: ./mcp-publisher validate
+        working-directory: crates/pixellint-mcp
+      - name: Authenticate to MCP Registry
+        run: ./mcp-publisher login github-oidc
+        working-directory: crates/pixellint-mcp
+      - name: Publish to MCP Registry
+        working-directory: crates/pixellint-mcp
+        run: |
+          out=$(./mcp-publisher publish 2>&1) && echo "$out" && exit 0
+          echo "$out"
+          echo "$out" | grep -q "cannot publish duplicate version" && exit 0
+          exit 1

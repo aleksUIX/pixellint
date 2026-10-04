@@ -6,6 +6,13 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.31.12 - 2026-10-04
+
+### Added
+
+- Added visible package ownership metadata and an official MCP Registry manifest
+  for the `pixellint-mcp` Cargo server.
+
 ## 0.31.11 - 2026-09-30
 
 ### Added

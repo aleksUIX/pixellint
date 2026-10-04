@@ -109,7 +109,7 @@ warnings, `1` when any error-severity finding is present, and `2` on a usage or
 input problem.
 
 ```yaml
-- uses: aleksUIX/pixellint@v0.31.11
+- uses: aleksUIX/pixellint@v0.31.12
   with:
     path: fixtures/conversion-pixel.txt
     kind: url
@@ -137,6 +137,8 @@ cargo install pixellint-mcp
 `pixellint-mcp` speaks MCP over stdio and exposes three tools. It does not
 send artifacts; there is no hosted MCP on pixellint.org. Playground artifacts
 on pixellint.org may be stored; see [pixellint.org/privacy](https://pixellint.org/privacy/).
+
+- MCP Registry name: `mcp-name: io.github.aleksUIX/pixellint`
 
 - `list_rulepacks`
 - `list_vendors`, optionally filtered by `category` or attributing a single `host`
