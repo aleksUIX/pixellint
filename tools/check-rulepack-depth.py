@@ -2,10 +2,25 @@
 
 import hashlib
 import json
+from functools import cache
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 AUDIT = ROOT / "docs/RULEPACK_DEPTH_AUDIT.json"
+
+
+@cache
+def directory_names(directory):
+    return {entry.name for entry in directory.iterdir()}
+
+
+def has_exact_case(relative_path):
+    directory = ROOT
+    for name in Path(relative_path).parts:
+        if name not in directory_names(directory):
+            return False
+        directory /= name
+    return True
 
 
 def main():
@@ -32,6 +47,8 @@ def main():
             artifact = (ROOT / relative_path).resolve()
             if not artifact.is_relative_to(ROOT) or not artifact.is_file():
                 failures.append(f"{pack_id}: reviewed artifact missing: {relative_path}")
+            elif not has_exact_case(relative_path):
+                failures.append(f"{pack_id}: reviewed artifact filename case differs: {relative_path}")
             elif hashlib.sha256(artifact.read_bytes()).hexdigest() != expected:
                 failures.append(f"{pack_id}: artifact changed after review: {relative_path}")
         sources = (
