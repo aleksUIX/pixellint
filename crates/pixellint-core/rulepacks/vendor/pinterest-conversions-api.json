@@ -33,375 +33,1224 @@
       "name": "ad_account_id",
       "requirement": "required",
       "format": {
-        "kind": "non_empty"
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
       },
       "description": "It is the Pinterest ad account ID, and it travels in the path.",
       "fix_hint": "Put the ad account ID in the path as `/v5/ad_accounts/{ad_account_id}/events`.",
-      "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+      "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+      "max_length": 18
+    },
+    {
+      "name": "test",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "description": "The optional test query parameter selects test mode.",
+      "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json"
     }
   ],
   "rules": [],
-  "body": {
-    "scope": "data[]",
-    "params": [
-      {
-        "name": "event_name",
-        "requirement": "required",
-        "format": {
-          "kind": "non_empty"
+  "body": [
+    {
+      "params": [
+        {
+          "name": "data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 1000,
+          "requirement": "required"
         },
-        "description": "It is the conversion event name. Pinterest documents a set of standard names and also allows a custom name of up to 100 characters.",
-        "fix_hint": "Send a documented name such as `checkout`, or a custom name mapped to a standard event in Ads Manager.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "action_source",
-        "requirement": "required",
-        "format": {
-          "kind": "enum",
-          "values": [
-            "app_android",
-            "app_ios",
-            "web",
-            "offline"
+        {
+          "name": "data[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "",
+          "json_type": "object",
+          "description": "The published event or batch envelope is a JSON object.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        }
+      ]
+    },
+    {
+      "scope": "data[]",
+      "params": [
+        {
+          "name": "event_name",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the conversion event name. Pinterest documents a set of standard names and also allows a custom name of up to 100 characters.",
+          "fix_hint": "Send a documented name such as `checkout`, or a custom name mapped to a standard event in Ads Manager.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "action_source",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "app_android",
+              "app_ios",
+              "web",
+              "offline"
+            ]
+          },
+          "description": "It is the platform the event was ingested from. Pinterest documents `web`, `app_android`, `app_ios`, and `offline`.",
+          "fix_hint": "Send `web`, `app_android`, `app_ios`, or `offline`. Pinterest spells `web` in lower case, unlike Snap.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "event_id",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the event for deduplication against the Pinterest tag.",
+          "fix_hint": "Send a stable id per conversion, such as an order number.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "event_time",
+          "requirement": "required",
+          "description": "Pinterest documents a Unix timestamp in seconds. A 13-digit value is milliseconds.",
+          "fix_hint": "Send seconds, not milliseconds: divide a JavaScript `Date.now()` by 1000 and floor it.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "integer"
+        },
+        {
+          "name": "user_data",
+          "requirement": "required",
+          "description": "Pinterest requires a `user_data` object, and it must include at least one of `em`, `hashed_maids`, or an IP and user agent pair.",
+          "fix_hint": "Add `user_data` with a hashed email, hashed MAIDs, or `client_ip_address` and `client_user_agent`.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "user_data.em",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Email must be lowercased and SHA-256 hashed before it is sent.",
+          "fix_hint": "Lowercase the address, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
           ]
         },
-        "description": "It is the platform the event was ingested from. Pinterest documents `web`, `app_android`, `app_ios`, and `offline`.",
-        "fix_hint": "Send `web`, `app_android`, `app_ios`, or `offline`. Pinterest spells `web` in lower case, unlike Snap.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "event_id",
-        "requirement": "required",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "user_data.em[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Every email in the list must be lowercased and SHA-256 hashed.",
+          "fix_hint": "Hash each address with SHA-256 and send the hex digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "It identifies the event for deduplication against the Pinterest tag.",
-        "fix_hint": "Send a stable id per conversion, such as an order number.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "event_time",
-        "requirement": "required",
-        "format": {
-          "kind": "integer",
-          "min_digits": 10,
-          "max_digits": 10
+        {
+          "name": "user_data.ph",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Phone must be digits-only with country code, then SHA-256 hashed.",
+          "fix_hint": "Strip symbols, keep the country code, hash with SHA-256, and send the hex digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ]
         },
-        "description": "Pinterest documents a Unix timestamp in seconds. A 13-digit value is milliseconds.",
-        "fix_hint": "Send seconds, not milliseconds: divide a JavaScript `Date.now()` by 1000 and floor it.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data",
-        "requirement": "required",
-        "description": "Pinterest requires a `user_data` object, and it must include at least one of `em`, `hashed_maids`, or an IP and user agent pair.",
-        "fix_hint": "Add `user_data` with a hashed email, hashed MAIDs, or `client_ip_address` and `client_user_agent`.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data.em",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
+        {
+          "name": "user_data.external_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "External IDs must be SHA-256 hashed.",
+          "fix_hint": "Hash the customer id with SHA-256 and send the hex digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ]
         },
-        "description": "Email must be lowercased and SHA-256 hashed before it is sent.",
-        "fix_hint": "Lowercase the address, hash it with SHA-256, and send the hex digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data.em[]",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
+        {
+          "name": "user_data.client_ip_address",
+          "format": {
+            "kind": "ip"
+          },
+          "description": "It is the visitor IP address, sent unhashed.",
+          "fix_hint": "Send the browser's public IP, not a digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "Every email in the list must be lowercased and SHA-256 hashed.",
-        "fix_hint": "Hash each address with SHA-256 and send the hex digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data.ph",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
+        {
+          "name": "user_data.client_user_agent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the visitor user agent, sent unhashed.",
+          "fix_hint": "Send the browser's user agent string, not a digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "Phone must be digits-only with country code, then SHA-256 hashed.",
-        "fix_hint": "Strip symbols, keep the country code, hash with SHA-256, and send the hex digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data.external_id",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
+        {
+          "name": "user_data.hashed_maids",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Hashed GAID or IDFA. Pinterest documents SHA-256.",
+          "fix_hint": "Hash the MAID with SHA-256 and send the hex digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ]
         },
-        "description": "External IDs must be SHA-256 hashed.",
-        "fix_hint": "Hash the customer id with SHA-256 and send the hex digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data.client_ip_address",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "user_data.hashed_maids[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Every MAID in the list must be SHA-256 hashed.",
+          "fix_hint": "Hash each MAID with SHA-256 and send the hex digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "It is the visitor IP address, sent unhashed.",
-        "fix_hint": "Send the browser's public IP, not a digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data.client_user_agent",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.currency",
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
+          "description": "It is an ISO 4217 currency code.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
-        "description": "It is the visitor user agent, sent unhashed.",
-        "fix_hint": "Send the browser's user agent string, not a digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data.hashed_maids",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
+        {
+          "name": "custom_data.value",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the total monetary value of purchased items. Pinterest documents a string parsed as a double, with no negatives, and currency whenever it is sent.",
+          "fix_hint": "Send the pre-tax, pre-shipping total in `custom_data.value` as a number, such as `66.95`.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
-        "description": "Hashed GAID or IDFA. Pinterest documents SHA-256.",
-        "fix_hint": "Hash the MAID with SHA-256 and send the hex digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "user_data.hashed_maids[]",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
+        {
+          "name": "custom_data.content_ids",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is a product ID related to the event. Pinterest documents an array of IDs that also appear on `custom_data.contents`.",
+          "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "array"
         },
-        "description": "Every MAID in the list must be SHA-256 hashed.",
-        "fix_hint": "Hash each MAID with SHA-256 and send the hex digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.currency",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Za-z]{3}$"
+        {
+          "name": "custom_data.content_ids[]",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Every listed ID is a product ID related to the event.",
+          "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop empty entries.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "It is an ISO 4217 currency code.",
-        "fix_hint": "Use the three-letter code, such as `USD`.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.value",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        {
+          "name": "custom_data.content_name",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the name of the page or product associated with the event.",
+          "fix_hint": "Send the page or product name in `custom_data.content_name`, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
-        "description": "It is the total monetary value of purchased items. Pinterest documents a string parsed as a double, with no negatives, and currency whenever it is sent.",
-        "fix_hint": "Send the pre-tax, pre-shipping total in `custom_data.value` as a number, such as `66.95`.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.content_ids",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.content_category",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the type of merchandise. Pinterest documents `content_category` on the product event table.",
+          "fix_hint": "Send the merchandise type in `custom_data.content_category`, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
-        "description": "It is a product ID related to the event. Pinterest documents an array of IDs that also appear on `custom_data.contents`.",
-        "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.content_ids[]",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.content_brand",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the brand of merchandise. Pinterest documents `content_brand` on the product event table.",
+          "fix_hint": "Send the brand in `custom_data.content_brand`, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
-        "description": "Every listed ID is a product ID related to the event.",
-        "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop empty entries.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.content_name",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.num_items",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the total number of products involved, for example items purchased in a checkout.",
+          "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "integer"
         },
-        "description": "It is the name of the page or product associated with the event.",
-        "fix_hint": "Send the page or product name in `custom_data.content_name`, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.content_category",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.order_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the order in a purchase-related event.",
+          "fix_hint": "Send the order id in `custom_data.order_id`, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
-        "description": "It is the type of merchandise. Pinterest documents `content_category` on the product event table.",
-        "fix_hint": "Send the merchandise type in `custom_data.content_category`, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.content_brand",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.search_string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the string entered in a search event.",
+          "fix_hint": "Send the query in `custom_data.search_string`, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
-        "description": "It is the brand of merchandise. Pinterest documents `content_brand` on the product event table.",
-        "fix_hint": "Send the brand in `custom_data.content_brand`, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.num_items",
-        "format": {
-          "kind": "integer"
+        {
+          "name": "custom_data.opt_out_type",
+          "format": {
+            "kind": "enum",
+            "case_insensitive": true,
+            "values": [
+              "ldp"
+            ]
+          },
+          "description": "It is the privacy opt-out type. Pinterest documents `ldp` as the only accepted value for limited data processing.",
+          "fix_hint": "Set `custom_data.opt_out_type` to `ldp`, or drop the pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
-        "description": "It is the total number of products involved, for example items purchased in a checkout.",
-        "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.order_id",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.contents[].id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product ID of an individual merchandise item.",
+          "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "It identifies the order in a purchase-related event.",
-        "fix_hint": "Send the order id in `custom_data.order_id`, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.search_string",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.contents[].item_name",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product name of an individual merchandise item.",
+          "fix_hint": "Set `custom_data.contents[].item_name` to the product name, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "It is the string entered in a search event.",
-        "fix_hint": "Send the query in `custom_data.search_string`, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.opt_out_type",
-        "format": {
-          "kind": "enum",
-          "case_insensitive": true,
-          "values": ["ldp"]
+        {
+          "name": "custom_data.contents[].item_category",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product category of an individual merchandise item.",
+          "fix_hint": "Set `custom_data.contents[].item_category` to the category, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "It is the privacy opt-out type. Pinterest documents `ldp` as the only accepted value for limited data processing.",
-        "fix_hint": "Set `custom_data.opt_out_type` to `ldp`, or drop the pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.contents[].id",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.contents[].item_brand",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the brand of an individual merchandise item.",
+          "fix_hint": "Set `custom_data.contents[].item_brand` to the brand, or drop the empty pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "It is the product ID of an individual merchandise item.",
-        "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.contents[].item_name",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.contents[].item_price",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the price of one merchandise item (single quantity). Pinterest documents it as a string parsed as a number.",
+          "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `19.99`. Put the order total in `custom_data.value`.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string"
         },
-        "description": "It is the product name of an individual merchandise item.",
-        "fix_hint": "Set `custom_data.contents[].item_name` to the product name, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.contents[].item_category",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "custom_data.contents[].quantity",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the quantity of that merchandise item selected by the user.",
+          "fix_hint": "Send a whole number in `custom_data.contents[].quantity`, such as `2`.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "integer"
         },
-        "description": "It is the product category of an individual merchandise item.",
-        "fix_hint": "Set `custom_data.contents[].item_category` to the category, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.contents[].item_brand",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "object"
         },
-        "description": "It is the brand of an individual merchandise item.",
-        "fix_hint": "Set `custom_data.contents[].item_brand` to the brand, or drop the empty pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.contents[].item_price",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        {
+          "name": "custom_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "object"
         },
-        "description": "It is the price of one merchandise item (single quantity). Pinterest documents it as a string parsed as a number.",
-        "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `19.99`. Put the order total in `custom_data.value`.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "name": "custom_data.contents[].quantity",
-        "format": {
-          "kind": "integer"
+        {
+          "name": "user_data.ph[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
         },
-        "description": "It is the quantity of that merchandise item selected by the user.",
-        "fix_hint": "Send a whole number in `custom_data.contents[].quantity`, such as `2`.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      }
-    ],
-    "rules": [
-      {
-        "code": "vendor.pinterest-conversions-api.body.checkout_requires_value_and_currency",
-        "kind": "required_when_value",
-        "when": "event_name",
-        "equals": [
-          "checkout"
-        ],
-        "requires": [
-          "custom_data.value",
-          "custom_data.currency"
-        ],
-        "severity": "warning",
-        "message": "A `checkout` event is missing `custom_data.value` or `custom_data.currency`. Pinterest documents both as recommended for checkout.",
-        "fix_hint": "Send the checkout total and a three-letter currency code.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "code": "vendor.pinterest-conversions-api.body.value_requires_currency",
-        "kind": "required_with",
-        "when": "custom_data.value",
-        "requires": [
-          "custom_data.currency"
-        ],
-        "severity": "warning",
-        "message": "The event carries `custom_data.value` with no `custom_data.currency`. Pinterest documents currency as required whenever value is sent.",
-        "fix_hint": "Add `custom_data.currency` as a three-letter code alongside the value.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "code": "vendor.pinterest-conversions-api.body.user_needs_an_identifier",
-        "kind": "require_one_of",
-        "params": [
-          "user_data.em",
-          "user_data.em[]",
-          "user_data.hashed_maids",
-          "user_data.hashed_maids[]",
-          "user_data.client_ip_address"
-        ],
-        "severity": "error",
-        "message": "`user_data` carries none of the identifiers Pinterest requires. Send `em`, `hashed_maids`, or `client_ip_address` with `client_user_agent`.",
-        "fix_hint": "Add a hashed email, hashed MAIDs, or the IP and user agent pair.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "code": "vendor.pinterest-conversions-api.body.unhashed_email",
-        "kind": "forbid_value_pattern",
-        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
-        "severity": "error",
-        "message": "A field carries what looks like a raw email address. Pinterest requires `user_data.em` to be a SHA-256 hex digest.",
-        "fix_hint": "Lowercase the address, hash it with SHA-256, and send the hex digest.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      },
-      {
-        "code": "vendor.pinterest-conversions-api.body.hashed_plaintext_field",
-        "kind": "forbid_value_pattern",
-        "pattern": "^[A-Fa-f0-9]{64}$",
-        "params": [
-          "user_data.client_ip_address",
-          "user_data.client_user_agent"
-        ],
-        "severity": "error",
-        "message": "This field looks like a SHA-256 digest, but Pinterest documents `client_ip_address` and `client_user_agent` as unhashed.",
-        "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
-        "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
-      }
-    ]
-  }
+        {
+          "name": "user_data.external_id[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "user_data.ct",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.ct[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.country",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.country[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.db",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.db[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.fn",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.fn[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.ge",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.ge[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.ln",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.ln[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.st",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.st[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.zp",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "user_data.zp[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "custom_data.contents",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "array"
+        },
+        {
+          "name": "custom_data.contents[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "app_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "app_name",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "app_version",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "device_brand",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "device_carrier",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "device_model",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "device_type",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "os_version",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "language",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-z]{2}$"
+          }
+        },
+        {
+          "name": "wifi",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": "boolean"
+        },
+        {
+          "name": "user_data.partner_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "app_info",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "object"
+        },
+        {
+          "name": "app_info.app_id",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 200
+        },
+        {
+          "name": "app_info.app_name",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 200
+        },
+        {
+          "name": "app_info.app_package_name",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 200
+        },
+        {
+          "name": "app_info.app_store",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "app_info.app_version",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "app_info.install_time",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0
+        },
+        {
+          "name": "app_info.user_agent",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 16384
+        },
+        {
+          "name": "app_info.window_height",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 30720
+        },
+        {
+          "name": "app_info.window_width",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 30720
+        },
+        {
+          "name": "custom_data.contents[].item_brand_id",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 64
+        },
+        {
+          "name": "custom_data.external_measurement_id",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "custom_data.external_measurement_vendor_id",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": [
+            "integer",
+            "null"
+          ]
+        },
+        {
+          "name": "custom_data.np",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "custom_data.predicted_ltv",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "device_info",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "object"
+        },
+        {
+          "name": "device_info.battery_level",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "name": "device_info.brand",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "device_info.carrier",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "device_info.cpu_cores",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 1152
+        },
+        {
+          "name": "device_info.external_storage_free_space",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 1048576
+        },
+        {
+          "name": "device_info.external_storage_size",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 1048576
+        },
+        {
+          "name": "device_info.form_factor",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "desktop",
+              "laptop",
+              "cellphone",
+              "tablet",
+              "smartwatch",
+              "tv",
+              "vr",
+              "console",
+              "other"
+            ]
+          }
+        },
+        {
+          "name": "device_info.kernel_version",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "device_info.languages",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "array",
+          "max_items": 100,
+          "min_items": 0
+        },
+        {
+          "name": "device_info.languages[]",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Each array item uses the native type declared by Pinterest OpenAPI.",
+          "json_type": "string"
+        },
+        {
+          "name": "device_info.locale",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 35
+        },
+        {
+          "name": "device_info.model",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "device_info.network_type",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "wifi",
+              "cellular_2g",
+              "cellular_3g",
+              "cellular_4g",
+              "cellular_5g",
+              "cellular_6g",
+              "ethernet",
+              "unknown"
+            ]
+          }
+        },
+        {
+          "name": "device_info.os_family",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "ios",
+              "android",
+              "macos",
+              "windows",
+              "linux",
+              "bsd",
+              "other"
+            ]
+          }
+        },
+        {
+          "name": "device_info.os_name",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "device_info.os_release_name",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "device_info.os_version",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "device_info.screen_density",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        {
+          "name": "device_info.screen_height",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 30720
+        },
+        {
+          "name": "device_info.screen_width",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 30720
+        },
+        {
+          "name": "device_info.storage_free_space",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 1048576
+        },
+        {
+          "name": "device_info.storage_size",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 1048576
+        },
+        {
+          "name": "device_info.timezone",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 40
+        },
+        {
+          "name": "device_info.timezone_abbr",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 5
+        },
+        {
+          "name": "device_info.type",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "event_source_url",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "opt_out",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": "boolean"
+        },
+        {
+          "name": "partner_name",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "user_data.click_id",
+          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
+          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.pinterest-conversions-api.body.checkout_requires_value_and_currency",
+          "kind": "required_when_value",
+          "when": "event_name",
+          "equals": [
+            "checkout"
+          ],
+          "requires": [
+            "custom_data.value",
+            "custom_data.currency"
+          ],
+          "severity": "warning",
+          "message": "A `checkout` event is missing `custom_data.value` or `custom_data.currency`. Pinterest documents both as recommended for checkout.",
+          "fix_hint": "Send the checkout total and a three-letter currency code.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.value_requires_currency",
+          "kind": "required_with",
+          "when": "custom_data.value",
+          "requires": [
+            "custom_data.currency"
+          ],
+          "severity": "warning",
+          "message": "The event carries `custom_data.value` with no `custom_data.currency`. Pinterest documents currency as required whenever value is sent.",
+          "fix_hint": "Add `custom_data.currency` as a three-letter code alongside the value.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.user_needs_an_identifier",
+          "kind": "require_any_of",
+          "severity": "error",
+          "message": "`user_data` carries none of the identifiers Pinterest requires. Send `em`, `hashed_maids`, or `client_ip_address` with `client_user_agent`.",
+          "fix_hint": "Add a hashed email, hashed MAIDs, or the IP and user agent pair.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
+          "groups": [
+            [
+              "user_data.em"
+            ],
+            [
+              "user_data.em[]"
+            ],
+            [
+              "user_data.hashed_maids"
+            ],
+            [
+              "user_data.hashed_maids[]"
+            ],
+            [
+              "user_data.client_ip_address",
+              "user_data.client_user_agent"
+            ]
+          ]
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. Pinterest requires `user_data.em` to be a SHA-256 hex digest.",
+          "fix_hint": "Lowercase the address, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "user_data.client_ip_address",
+            "user_data.client_user_agent"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Pinterest documents `client_ip_address` and `client_user_agent` as unhashed.",
+          "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.zero_ip",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "user_data.client_ip_address"
+          ],
+          "pattern": "^0\\.0\\.0\\.0$",
+          "severity": "error",
+          "message": "Pinterest forbids a pure zero IPv4 matching address.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.placeholder_user_agent",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "user_data.client_user_agent"
+          ],
+          "pattern": "^(?:Other|null)$",
+          "severity": "error",
+          "message": "Pinterest forbids placeholder user agent values Other and null.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.event_time_time_window",
+          "kind": "time_window",
+          "param": "event_time",
+          "unit": "seconds",
+          "max_future_seconds": 0,
+          "severity": "error",
+          "message": "Pinterest documents that event_time cannot be later than receipt of the request.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/integrate-third-party-tracking-tools/"
+        }
+      ]
+    }
+  ]
 }

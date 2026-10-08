@@ -23,6 +23,11 @@ jobs:
       - name: Check formatting
         run: cargo fmt --all --check
 
+      - name: Check rulepack review freshness
+        run: |
+          python3 tools/check-rulepack-depth.py
+          python3 tools/update-rulepack-reference.py --check
+
       - name: Run tests
         run: cargo test --workspace
 

@@ -6,14 +6,22 @@
   "source_level": "official_vendor",
   "docs": "https://developer.matomo.org/api-reference/tracking-api",
   "match": {
-    "host_suffixes": ["matomo.cloud"],
-    "path_contains": ["/matomo.php"]
+    "host_suffixes": [
+      "matomo.cloud"
+    ],
+    "any_host": true,
+    "paths": [
+      "/matomo.php",
+      "/piwik.php"
+    ]
   },
   "params": [
     {
       "name": "idsite",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric Matomo site ID the hit is recorded against.",
       "fix_hint": "Set `idsite` to the website ID from Matomo Administration.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -21,7 +29,12 @@
     {
       "name": "rec",
       "requirement": "required",
-      "format": { "kind": "enum", "values": ["1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "Matomo documents `rec=1` as required to record the request.",
       "fix_hint": "Set `rec` to `1`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -29,7 +42,9 @@
     {
       "name": "action_name",
       "requirement": "recommended",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Matomo documents `action_name` as recommended. For page tracks it is the page title.",
       "fix_hint": "Set `action_name` to the page title or action name.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -37,7 +52,9 @@
     {
       "name": "url",
       "requirement": "recommended",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "Matomo documents `url` as recommended. It is the full URL of the current action.",
       "fix_hint": "Send the absolute page URL in `url`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -45,7 +62,10 @@
     {
       "name": "_id",
       "requirement": "recommended",
-      "format": { "kind": "regex", "pattern": "^[0-9A-Fa-f]{16}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9A-Fa-f]{16}$"
+      },
       "description": "Matomo documents `_id` as recommended. It is a 16-character hexadecimal visitor ID.",
       "fix_hint": "Send a stable 16-character hex visitor ID in `_id`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -53,7 +73,9 @@
     {
       "name": "rand",
       "requirement": "recommended",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Matomo documents `rand` as recommended so the request is not cached.",
       "fix_hint": "Send a unique `rand` on every hit.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -61,146 +83,211 @@
     {
       "name": "apiv",
       "requirement": "recommended",
-      "format": { "kind": "enum", "values": ["1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "Matomo documents `apiv=1` as the Tracking API version.",
       "fix_hint": "Send `apiv=1`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "cid",
-      "format": { "kind": "regex", "pattern": "^[0-9A-Fa-f]{16}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9A-Fa-f]{16}$"
+      },
       "description": "It forces the visitor ID. Matomo documents `cid` as a 16-character hexadecimal string.",
       "fix_hint": "Send a 16-character hex visitor ID in `cid`, or use `_id` / `uid` instead.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "e_v",
-      "format": { "kind": "regex", "pattern": "^-?[0-9]+(\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the event value. Matomo documents it as a float or integer, not a string label.",
       "fix_hint": "Send a number in `e_v`, such as `9.99`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "e_c",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the event category. Matomo documents it as required for event tracking and forbids an empty value.",
       "fix_hint": "Set `e_c` to the event category, such as `Videos`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "e_a",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the event action. Matomo documents it as required for event tracking and forbids an empty value.",
       "fix_hint": "Set `e_a` to the event action, such as `Play`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "e_n",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the event name. Matomo documents `e_n` as optional and forbids an empty value when it is sent.",
       "fix_hint": "Set `e_n` to the event name, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "idgoal",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the goal ID. Matomo documents `idgoal=0` as required for ecommerce cart and order hits.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "ec_id",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the unique ecommerce order id. Matomo documents it as required when tracking an ecommerce order.",
       "fix_hint": "Set `ec_id` to the order id when `idgoal=0` is an order, not a cart update.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "revenue",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the grand total or goal conversion value. Matomo documents it as required when tracking an ecommerce order.",
       "fix_hint": "Set `revenue` to a number, such as `19.99`, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "urlref",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the HTTP referrer URL. Matomo documents `urlref` as the full referrer used for channel attribution.",
       "fix_hint": "Send the absolute referrer URL in `urlref`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "uid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the User ID. Matomo documents `uid` as any non-empty unique string identifying the logged-in user.",
       "fix_hint": "Send the logged-in user id in `uid`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "res",
-      "format": { "kind": "regex", "pattern": "^[0-9]+x[0-9]+$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+x[0-9]+$"
+      },
       "description": "It is the device resolution. Matomo documents `res` as width x height, such as `1280x1024`.",
       "fix_hint": "Send `res` as `WIDTHxHEIGHT` digits, such as `1280x1024`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "h",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the current hour in local time.",
       "fix_hint": "Send the local hour in `h` as an integer.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "minimum": 0,
+      "maximum": 23
     },
     {
       "name": "m",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the current minute in local time.",
       "fix_hint": "Send the local minute in `m` as an integer.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "minimum": 0,
+      "maximum": 59
     },
     {
       "name": "s",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the current second in local time.",
       "fix_hint": "Send the local second in `s` as an integer.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "minimum": 0,
+      "maximum": 59
     },
     {
       "name": "cookie",
-      "format": { "kind": "enum", "values": ["1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "When set to `1`, the visitor's client is known to support cookies.",
       "fix_hint": "Send `cookie=1` when the client supports cookies, or omit the pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "new_visit",
-      "format": { "kind": "enum", "values": ["1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "If set to `1`, Matomo forces a new visit for this action.",
       "fix_hint": "Send `new_visit=1` to force a new visit, or omit the pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "ping",
-      "format": { "kind": "enum", "values": ["1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "If set to `1`, the request is a heartbeat that only updates visit duration.",
       "fix_hint": "Send `ping=1` for a heartbeat, or omit the pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "pv_id",
-      "format": { "kind": "regex", "pattern": "^[0-9A-Za-z]{6}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9A-Za-z]{6}$"
+      },
       "description": "It identifies actions on one page view. Matomo documents `pv_id` as six characters from `[0-9a-Z]`.",
       "fix_hint": "Send a six-character alphanumeric `pv_id`, shared by events on the same page view.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "search",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the site-search keyword. Matomo documents that a hit with `search` is tracked as a site search, not a pageview.",
       "fix_hint": "Send the search keyword in `search`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "search_count",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is how many site-search results were shown. Matomo documents `search_count=0` for keywords with no results.",
       "fix_hint": "Send the result count in `search_count` as an integer, including `0`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -208,98 +295,132 @@
     {
       "name": "pdf",
       "name_pattern": "^(fla|java|dir|qt|realp|pdf|wma|gears|ag)$",
-      "format": { "kind": "enum", "values": ["1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "It is a visitor plugin flag. Matomo documents `fla`, `java`, `dir`, `qt`, `realp`, `pdf`, `wma`, `gears`, and `ag` as `1` when that plugin is present.",
       "fix_hint": "Send `1` for a present plugin, or omit the pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "c_n",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the content name. Matomo documents `c_n` on content impressions and interactions.",
       "fix_hint": "Send the content name in `c_n`, such as `Ad Foo Bar`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "c_p",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the content piece. Matomo documents `c_p` as the path to the image, video, audio, or text.",
       "fix_hint": "Send the content piece in `c_p`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "c_t",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the content target. Matomo documents `c_t` as the landing-page URL.",
       "fix_hint": "Send an absolute landing URL in `c_t`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "c_i",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the content interaction, such as `click`. Matomo documents `c_i` together with `c_n`.",
       "fix_hint": "Send the interaction name in `c_i`, such as `click`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "ec_items",
-      "format": { "kind": "regex", "pattern": "^\\[.*\\]$" },
       "description": "It is the JSON array of cart or order rows. Matomo documents each row as sku, name, category, price, quantity.",
       "fix_hint": "Send `ec_items` as a JSON array of item rows, such as `[\"sku\",\"name\",\"cat\",11.11,2]`.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "allow_empty": true
     },
     {
       "name": "ec_st",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the ecommerce subtotal, excluding shipping.",
       "fix_hint": "Send `ec_st` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "ec_tx",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the tax amount of the ecommerce order.",
       "fix_hint": "Send `ec_tx` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "ec_sh",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the shipping cost of the ecommerce order.",
       "fix_hint": "Send `ec_sh` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "ec_dt",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the discount offered on the ecommerce order.",
       "fix_hint": "Send `ec_dt` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "_pkc",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the category of the product being viewed.",
       "fix_hint": "Send the product category in `_pkc`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "_pks",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the SKU of the product being viewed.",
       "fix_hint": "Send the product SKU in `_pks`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "_pkn",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the name of the product being viewed.",
       "fix_hint": "Send the product name in `_pkn`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "_pkp",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the price of the product being viewed.",
       "fix_hint": "Send `_pkp` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -307,70 +428,93 @@
     {
       "name": "pf_net",
       "name_pattern": "^pf_(net|srv|tfr|dm1|dm2|onl)$",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is a page-performance metric in milliseconds. Matomo documents `pf_net`, `pf_srv`, `pf_tfr`, `pf_dm1`, `pf_dm2`, and `pf_onl`.",
       "fix_hint": "Send the timing in milliseconds as an integer, such as `142`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "link",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is an outlink URL. Matomo documents `link` for tracking outbound clicks.",
       "fix_hint": "Send an absolute URL in `link`. Matomo also recommends repeating it in `url`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "download",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the URL of a file the user downloaded.",
       "fix_hint": "Send an absolute file URL in `download`. Matomo also recommends repeating it in `url`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "search_cat",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the site-search category. Matomo documents `search_cat` as optional when `search` is specified.",
       "fix_hint": "Send the search category in `search_cat`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "ua",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is an override for the User-Agent HTTP header. Matomo uses it to detect the operating system and browser.",
       "fix_hint": "Send the full user-agent string in `ua`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "lang",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is an override for the Accept-Language HTTP header. Matomo uses it to detect country when GeoIP is not enabled.",
       "fix_hint": "Send the Accept-Language value in `lang`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "cs",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the charset of the page being tracked. Matomo defaults to `utf-8`.",
       "fix_hint": "Send the page charset in `cs` when it is not `utf-8`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "ca",
-      "format": { "kind": "enum", "values": ["1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "It marks a custom action that is not a page view. Matomo documents `ca=1` on events and on Crash Analytics hits.",
       "fix_hint": "Send `ca=1` on a non-pageview hit, or omit the pair. Do not send it with `ping=1`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "_rcn",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the campaign name used to attribute goal conversions, not visits.",
       "fix_hint": "Send the campaign name in `_rcn`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "_rck",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the campaign keyword used to attribute goal conversions, not visits.",
       "fix_hint": "Send the campaign keyword in `_rck`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -378,21 +522,32 @@
     {
       "name": "_cvar",
       "name_pattern": "^(_cvar|cvar|uadata)$",
-      "format": { "kind": "regex", "pattern": "^\\{.*\\}$" },
       "description": "It is a JSON object. Matomo documents `_cvar` as visit-scope custom variables, `cvar` as page-scope custom variables, and `uadata` as Client Hints.",
       "fix_hint": "Send a JSON object, such as `{\"1\":[\"OS\",\"iphone 5.0\"]}`.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "allow_empty": true
     },
     {
       "name": "recMode",
-      "format": { "kind": "enum", "values": ["1", "2"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1",
+          "2"
+        ]
+      },
       "description": "It selects visit vs bot tracking. Matomo documents `1` as bot only and `2` as auto. Omit it for visit-only tracking.",
       "fix_hint": "Send `recMode=1` or `recMode=2`, or omit the pair for visit-only tracking.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "bots",
-      "format": { "kind": "enum", "values": ["1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "If set to `1`, Matomo tracks a detected bot as a normal visit. Matomo documents `bots=1` only when `recMode` is omitted.",
       "fix_hint": "Send `bots=1` without `recMode`, or omit the pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -400,21 +555,27 @@
     {
       "name": "http_status",
       "name_pattern": "^(http_status|bw_bytes)$",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is bot-tracking telemetry. Matomo documents `http_status` as the HTTP status code and `bw_bytes` as bytes transferred.",
       "fix_hint": "Send `http_status` or `bw_bytes` as an integer.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "source",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a source label for a bot request, such as `Cloudflare`.",
       "fix_hint": "Send a source label in `source`, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "cra",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the crash error message. Matomo documents `cra` as required on a Crash Analytics hit.",
       "fix_hint": "Send the error message in `cra`, and send `ca=1`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -422,7 +583,9 @@
     {
       "name": "cra_st",
       "name_pattern": "^cra_(st|ct|tp|ru)$",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is optional crash metadata. Matomo documents `cra_st` as the stack trace, `cra_ct` as the category, `cra_tp` as the error type, and `cra_ru` as the source-file URI.",
       "fix_hint": "Fill the crash field, or drop the empty pair.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
@@ -430,18 +593,508 @@
     {
       "name": "cra_rl",
       "name_pattern": "^cra_(rl|rc)$",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the source location of the crash. Matomo documents `cra_rl` as the line number and `cra_rc` as the column.",
       "fix_hint": "Send `cra_rl` or `cra_rc` as an integer.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
     {
       "name": "dimension1",
-      "name_pattern": "^dimension([1-9]|[1-9][0-9]{1,2})$",
-      "format": { "kind": "non_empty" },
+      "name_pattern": "^dimension(?:[0-9]|[1-9][0-9]{1,2})$",
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a custom dimension. Matomo documents `dimension1` through `dimension999`.",
       "fix_hint": "Fill the custom dimension, or drop the empty pair.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "doc": "https://matomo.org/faq/new-to-piwik/data-limits-in-matomo-no-limits/",
+      "max_byte_length": 255
+    },
+    {
+      "name": "_idts",
+      "description": "The vendor documents `_idts` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "_idvc",
+      "description": "The vendor documents `_idvc` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "_viewts",
+      "description": "The vendor documents `_viewts` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "_ects",
+      "description": "The vendor documents `_ects` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "_refts",
+      "description": "The vendor documents `_refts` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "pf_srv",
+      "description": "The vendor documents `pf_srv` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "pf_tfr",
+      "description": "The vendor documents `pf_tfr` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "pf_dm1",
+      "description": "The vendor documents `pf_dm1` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "pf_dm2",
+      "description": "The vendor documents `pf_dm2` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "pf_onl",
+      "description": "The vendor documents `pf_onl` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "pf_blr",
+      "description": "The vendor documents `pf_blr` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "bw_bytes",
+      "description": "The vendor documents `bw_bytes` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "cra_rc",
+      "description": "The vendor documents `cra_rc` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "ag",
+      "description": "The vendor documents `ag` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "gears",
+      "description": "The vendor documents `gears` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "java",
+      "description": "The vendor documents `java` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "fla",
+      "description": "The vendor documents `fla` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "qt",
+      "description": "The vendor documents `qt` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "realp",
+      "description": "The vendor documents `realp` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "wma",
+      "description": "The vendor documents `wma` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "dir",
+      "description": "The vendor documents `dir` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "send_image",
+      "description": "The vendor documents `send_image` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "queuedtracking",
+      "description": "The vendor documents `queuedtracking` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "country",
+      "description": "The vendor documents `country` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-z]{2}$"
+      }
+    },
+    {
+      "name": "region",
+      "description": "The vendor documents `region` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "city",
+      "description": "The vendor documents `city` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "token_auth",
+      "description": "The vendor documents `token_auth` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cra_ct",
+      "description": "The vendor documents `cra_ct` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cra_tp",
+      "description": "The vendor documents `cra_tp` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cra_ru",
+      "description": "The vendor documents `cra_ru` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "lat",
+      "description": "The vendor documents `lat` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": -90,
+      "maximum": 90
+    },
+    {
+      "name": "long",
+      "description": "The vendor documents `long` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": -180,
+      "maximum": 180
+    },
+    {
+      "name": "cip",
+      "description": "The vendor documents `cip` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cdt",
+      "description": "The vendor documents `cdt` in the request contract.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cvar",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "description": "Matomo documents this URL-encoded JSON parameter."
+    },
+    {
+      "name": "uadata",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "description": "Matomo documents this URL-encoded JSON parameter."
+    },
+    {
+      "name": "ma_id",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_re",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_mt",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "video",
+          "audio"
+        ]
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_ti",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": true,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_pn",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": true,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_st",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_le",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_ps",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_ttp",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_w",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_h",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_fs",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": false,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
+    },
+    {
+      "name": "ma_se",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?(?:,[0-9]+(?:\\.[0-9]+)?)*$"
+      },
+      "severity": "error",
+      "format_severity": "error",
+      "allow_empty": true,
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference"
     }
   ],
   "rules": [
@@ -449,7 +1102,9 @@
       "code": "vendor.matomo.event_requires_action",
       "kind": "required_with",
       "when": "e_c",
-      "requires": ["e_a"],
+      "requires": [
+        "e_a"
+      ],
       "severity": "error",
       "message": "The hit sends an event category `e_c` without an event action `e_a`. Matomo documents both as required for event tracking.",
       "fix_hint": "Set `e_a` to the event action, such as `Play`.",
@@ -459,9 +1114,12 @@
       "code": "vendor.matomo.order_requires_revenue",
       "kind": "required_with",
       "when": "ec_id",
-      "requires": ["revenue"],
+      "requires": [
+        "revenue",
+        "idgoal"
+      ],
       "severity": "error",
-      "message": "The hit tracks an ecommerce order (`ec_id`) without `revenue`. Matomo documents the grand total as required on an order.",
+      "message": "Matomo ecommerce orders require a grand total in revenue and idgoal=0.",
       "fix_hint": "Set `revenue` to the order grand total, and set `idgoal=0`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -469,7 +1127,9 @@
       "code": "vendor.matomo.content_interaction_requires_name",
       "kind": "required_with",
       "when": "c_i",
-      "requires": ["c_n"],
+      "requires": [
+        "c_n"
+      ],
       "severity": "error",
       "message": "The hit sends a content interaction `c_i` without a content name `c_n`. Matomo documents both on a content interaction.",
       "fix_hint": "Set `c_n` to the same content name as the impression, such as `Ad Foo Bar`.",
@@ -479,8 +1139,12 @@
       "code": "vendor.matomo.ca_forbids_ping",
       "kind": "forbidden_when_value",
       "when": "ping",
-      "equals": ["1"],
-      "params": ["ca"],
+      "equals": [
+        "1"
+      ],
+      "params": [
+        "ca"
+      ],
       "severity": "error",
       "message": "The hit sends `ca` with `ping=1`. Matomo documents custom action as incompatible with a heartbeat.",
       "fix_hint": "Drop `ca` from a heartbeat, or drop `ping=1` from a custom action.",
@@ -490,8 +1154,12 @@
       "code": "vendor.matomo.bot_requires_ua",
       "kind": "required_when_value",
       "when": "recMode",
-      "equals": ["1"],
-      "requires": ["ua"],
+      "equals": [
+        "1"
+      ],
+      "requires": [
+        "ua"
+      ],
       "severity": "error",
       "message": "The hit sets `recMode=1` without `ua`. Matomo documents the user-agent as required for bot-only tracking.",
       "fix_hint": "Send the full user-agent string in `ua`.",
@@ -501,8 +1169,13 @@
       "code": "vendor.matomo.bots_forbids_recMode",
       "kind": "forbidden_when_value",
       "when": "recMode",
-      "equals": ["1", "2"],
-      "params": ["bots"],
+      "equals": [
+        "1",
+        "2"
+      ],
+      "params": [
+        "bots"
+      ],
       "severity": "error",
       "message": "The hit sends `bots=1` with `recMode`. Matomo documents `bots=1` only in visit-only mode, when `recMode` is omitted.",
       "fix_hint": "Drop `bots`, or drop `recMode`.",
@@ -512,11 +1185,536 @@
       "code": "vendor.matomo.crash_requires_ca",
       "kind": "required_with",
       "when": "cra",
-      "requires": ["ca"],
+      "requires": [
+        "ca"
+      ],
       "severity": "error",
       "message": "The hit sends a crash message `cra` without `ca=1`. Matomo documents `ca=1` as required on a Crash Analytics hit.",
       "fix_hint": "Send `ca=1` with `cra`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
+    },
+    {
+      "code": "vendor.matomo.override_ip_needs_auth",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The request does not satisfy the documented override ip needs auth requirement.",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "when": "cip",
+      "requires": [
+        "token_auth"
+      ]
+    },
+    {
+      "code": "vendor.matomo.ec_id_ecommerce_goal",
+      "kind": "value_with",
+      "when": "ec_id",
+      "param": "idgoal",
+      "value": "0",
+      "severity": "error",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "message": "Ecommerce orders and cart updates require idgoal=0."
+    },
+    {
+      "code": "vendor.matomo.ec_items_ecommerce_goal",
+      "kind": "value_with",
+      "when": "ec_items",
+      "param": "idgoal",
+      "value": "0",
+      "severity": "error",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "message": "Ecommerce orders and cart updates require idgoal=0."
+    },
+    {
+      "code": "vendor.matomo.ecommerce_requires_goal",
+      "kind": "required_with",
+      "when": "ec_items",
+      "requires": [
+        "idgoal"
+      ],
+      "severity": "error",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "message": "Ecommerce orders and cart updates require idgoal=0."
+    },
+    {
+      "code": "vendor.matomo.bot_requires_url",
+      "kind": "require_one_of",
+      "params": [
+        "url",
+        "download"
+      ],
+      "condition": {
+        "kind": "value_in",
+        "param": "recMode",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "error",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "message": "Bot-only tracking requires a page URL or a download URL."
+    },
+    {
+      "code": "vendor.matomo.media_requires_identity_resource_type",
+      "kind": "require_any_of",
+      "groups": [
+        [
+          "ma_id",
+          "ma_re",
+          "ma_mt"
+        ]
+      ],
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {
+            "kind": "present",
+            "param": "ma_id"
+          },
+          {
+            "kind": "present",
+            "param": "ma_re"
+          },
+          {
+            "kind": "present",
+            "param": "ma_mt"
+          },
+          {
+            "kind": "present",
+            "param": "ma_ti"
+          },
+          {
+            "kind": "present",
+            "param": "ma_pn"
+          },
+          {
+            "kind": "present",
+            "param": "ma_st"
+          },
+          {
+            "kind": "present",
+            "param": "ma_le"
+          },
+          {
+            "kind": "present",
+            "param": "ma_ps"
+          },
+          {
+            "kind": "present",
+            "param": "ma_ttp"
+          },
+          {
+            "kind": "present",
+            "param": "ma_w"
+          },
+          {
+            "kind": "present",
+            "param": "ma_h"
+          },
+          {
+            "kind": "present",
+            "param": "ma_fs"
+          },
+          {
+            "kind": "present",
+            "param": "ma_se"
+          }
+        ]
+      },
+      "severity": "error",
+      "doc": "https://developer.matomo.org/guides/media-analytics/custom-player#media-analytics-http-tracking-api-reference",
+      "message": "Media Analytics tracking requires ma_id, ma_re and ma_mt."
+    },
+    {
+      "code": "vendor.matomo.cdt_timestamp_format",
+      "kind": "format",
+      "param": "cdt",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:-?[0-9]+(?:\\.[0-9]+)?|[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})$"
+      },
+      "severity": "error",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "message": "cdt uses a UTC YYYY-MM-DD HH:MM:SS datetime or a Unix timestamp."
+    },
+    {
+      "code": "vendor.matomo.cdt_calendar",
+      "kind": "format",
+      "param": "cdt",
+      "format": {
+        "kind": "datetime",
+        "allow_space_separator": true
+      },
+      "condition": {
+        "kind": "value_pattern",
+        "param": "cdt",
+        "pattern": "^[0-9]{4}-"
+      },
+      "severity": "error",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "message": "cdt must be a valid calendar datetime."
+    },
+    {
+      "code": "vendor.matomo.cdt_old_requires_auth",
+      "kind": "time_window",
+      "param": "cdt",
+      "unit": "seconds",
+      "max_age_seconds": 86400,
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_pattern",
+            "param": "cdt",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          {
+            "kind": "not",
+            "condition": {
+              "kind": "present",
+              "param": "token_auth"
+            }
+          }
+        ]
+      },
+      "severity": "error",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "message": "cdt older than24hours requires token_auth."
+    },
+    {
+      "code": "vendor.matomo.cdt_old_datetime_requires_auth",
+      "kind": "time_window",
+      "param": "cdt",
+      "unit": "datetime_utc",
+      "max_age_seconds": 86400,
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_pattern",
+            "param": "cdt",
+            "pattern": "^[0-9]{4}-"
+          },
+          {
+            "kind": "not",
+            "condition": {
+              "kind": "present",
+              "param": "token_auth"
+            }
+          }
+        ]
+      },
+      "severity": "error",
+      "doc": "https://developer.matomo.org/api-reference/tracking-api",
+      "message": "cdt older than24hours requires token_auth."
+    }
+  ],
+  "body": [
+    {
+      "source_param": "_cvar",
+      "encoding": "json",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://developer.matomo.org/api-reference/tracking-api"
+        },
+        {
+          "name": "invalid_slots",
+          "name_pattern": "^(?:$|0|[^1-9].*|[1-9][0-9]*[^0-9].*)$",
+          "name_pattern_parent": "",
+          "requirement": "forbidden",
+          "doc": "https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/",
+          "description": "A custom variable slot uses a positive numeric index. The default slot count is configurable."
+        },
+        {
+          "name": "variable_slots",
+          "name_pattern": "(?s)^.+$",
+          "name_pattern_parent": "",
+          "json_type": "array",
+          "min_items": 2,
+          "max_items": 2,
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "Each custom variable slot is a two-element name/value array."
+        },
+        {
+          "name": "*[]",
+          "json_type": "string",
+          "max_length": 200,
+          "doc": "https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/",
+          "allow_empty": true,
+          "description": "Each custom variable name and value is a string of at most 200 characters. Empty strings can remove a variable."
+        }
+      ]
+    },
+    {
+      "source_param": "cvar",
+      "encoding": "json",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://developer.matomo.org/api-reference/tracking-api"
+        },
+        {
+          "name": "invalid_slots",
+          "name_pattern": "^(?:$|0|[^1-9].*|[1-9][0-9]*[^0-9].*)$",
+          "name_pattern_parent": "",
+          "requirement": "forbidden",
+          "doc": "https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/",
+          "description": "A custom variable slot uses a positive numeric index. The default slot count is configurable."
+        },
+        {
+          "name": "variable_slots",
+          "name_pattern": "(?s)^.+$",
+          "name_pattern_parent": "",
+          "json_type": "array",
+          "min_items": 2,
+          "max_items": 2,
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "Each custom variable slot is a two-element name/value array."
+        },
+        {
+          "name": "*[]",
+          "json_type": "string",
+          "max_length": 200,
+          "doc": "https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/",
+          "allow_empty": true,
+          "description": "Each custom variable name and value is a string of at most 200 characters. Empty strings can remove a variable."
+        }
+      ]
+    },
+    {
+      "source_param": "ec_items",
+      "encoding": "json",
+      "params": [
+        {
+          "name": "",
+          "json_type": "array",
+          "doc": "https://developer.matomo.org/api-reference/tracking-api"
+        },
+        {
+          "name": "[]",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 5,
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "Ecommerce items are positional arrays, with required SKU and up to four further fields."
+        }
+      ]
+    },
+    {
+      "source_param": "uadata",
+      "encoding": "json",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "Matomo accepts JSON-encoded User-Agent Client Hints."
+        },
+        {
+          "name": "architecture",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "allow_empty": true
+        },
+        {
+          "name": "bitness",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "allow_empty": true
+        },
+        {
+          "name": "model",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "allow_empty": true
+        },
+        {
+          "name": "platform",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "allow_empty": true
+        },
+        {
+          "name": "platformVersion",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "allow_empty": true
+        },
+        {
+          "name": "uaFullVersion",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "allow_empty": true
+        },
+        {
+          "name": "mobile",
+          "json_type": "boolean",
+          "doc": "https://wicg.github.io/ua-client-hints/"
+        },
+        {
+          "name": "wow64",
+          "json_type": "boolean",
+          "doc": "https://wicg.github.io/ua-client-hints/"
+        },
+        {
+          "name": "brands",
+          "json_type": "array",
+          "doc": "https://raw.githubusercontent.com/matomo-org/matomo/5.x-dev/js/piwik.js"
+        },
+        {
+          "name": "fullVersionList",
+          "json_type": "array",
+          "doc": "https://raw.githubusercontent.com/matomo-org/matomo/5.x-dev/js/piwik.js"
+        },
+        {
+          "name": "formFactors",
+          "json_type": "array",
+          "doc": "https://raw.githubusercontent.com/matomo-org/matomo/5.x-dev/js/piwik.js"
+        },
+        {
+          "name": "brands[]",
+          "json_type": "object",
+          "doc": "https://wicg.github.io/ua-client-hints/"
+        },
+        {
+          "name": "fullVersionList[]",
+          "json_type": "object",
+          "doc": "https://wicg.github.io/ua-client-hints/"
+        },
+        {
+          "name": "formFactors[]",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/"
+        }
+      ]
+    },
+    {
+      "source_param": "ec_items",
+      "encoding": "json",
+      "scope": "[]",
+      "params": [
+        {
+          "name": "[0]",
+          "json_type": [
+            "string",
+            "number",
+            "array"
+          ],
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://github.com/matomo-org/matomo/blob/5.x-dev/core/Tracker/GoalManager.php",
+          "description": "SKU is required. The official tracker accepts string-like IDs and joins array-valued SKUs."
+        },
+        {
+          "name": "[1]",
+          "json_type": [
+            "string",
+            "number",
+            "array"
+          ],
+          "allow_empty": true,
+          "doc": "https://github.com/matomo-org/matomo/blob/5.x-dev/core/Tracker/GoalManager.php"
+        },
+        {
+          "name": "[2]",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "allow_empty": true,
+          "max_items": 5,
+          "doc": "https://github.com/matomo-org/matomo/blob/5.x-dev/core/Tracker/GoalManager.php",
+          "description": "An item category can be a string or up to five categories."
+        },
+        {
+          "name": "[2][]",
+          "json_type": "string",
+          "allow_empty": true,
+          "doc": "https://github.com/matomo-org/matomo/blob/5.x-dev/core/Tracker/GoalManager.php"
+        },
+        {
+          "name": "[3]",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+          },
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "The official tracker accepts numeric item prices, including numeric strings."
+        },
+        {
+          "name": "[4]",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+          },
+          "doc": "https://github.com/matomo-org/matomo/blob/5.x-dev/core/Tracker/GoalManager.php",
+          "description": "The official tracker accepts numeric quantities and converts them to an integer."
+        }
+      ]
+    },
+    {
+      "source_param": "uadata",
+      "scope": "brands[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://wicg.github.io/ua-client-hints/"
+        },
+        {
+          "name": "brand",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "requirement": "required",
+          "allow_empty": true
+        },
+        {
+          "name": "version",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "requirement": "required",
+          "allow_empty": true
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "uadata",
+      "scope": "fullVersionList[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://wicg.github.io/ua-client-hints/"
+        },
+        {
+          "name": "brand",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "requirement": "required",
+          "allow_empty": true
+        },
+        {
+          "name": "version",
+          "json_type": "string",
+          "doc": "https://wicg.github.io/ua-client-hints/",
+          "requirement": "required",
+          "allow_empty": true
+        }
+      ],
+      "rules": []
     }
   ]
 }

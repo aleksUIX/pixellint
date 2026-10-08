@@ -7,12 +7,25 @@ use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
+mod adobe_events;
+mod adobe_products;
+mod awin_basket;
+mod braze_time;
+mod currency;
+mod decimal_sum;
 pub mod directory;
 pub mod document;
+mod google_additional_consent;
+mod gpp_structure;
+mod javascript_date;
 mod json;
 pub mod manifest;
+mod path_items;
 mod prepare;
 mod privacy;
+mod query_segments;
+mod tcf_sections;
+mod timestamp;
 
 pub use directory::{DIRECTORY_ID, DirectoryError, VendorDirectory, VendorEntry};
 pub use document::{
@@ -21,10 +34,12 @@ pub use document::{
     document_request_from_value,
 };
 pub use manifest::{
-    Assertion, ManifestError, ManifestRulePack, MatchSpec, PackRule, ParamContract, ParamStyle,
-    Requirement, RulePackManifest, ValueFormat,
+    Assertion, IpVersion, JsonType, JsonTypes, ManifestError, ManifestRulePack, MatchSpec,
+    PackRule, ParamContract, ParamStyle, Requirement, RuleCondition, RulePackManifest,
+    StringNormalization, ValueFormat,
 };
 pub use prepare::PreparedArtifact;
+pub use timestamp::TimestampUnit;
 
 /// The vendor endpoint directory compiled into the crate.
 pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.json");
@@ -45,6 +60,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/adobe-analytics",
         include_str!("../rulepacks/vendor/adobe-analytics.json"),
+    ),
+    (
+        "vendor/adobe-dcs-event",
+        include_str!("../rulepacks/vendor/adobe-dcs-event.json"),
+    ),
+    (
+        "vendor/adobe-dcs-id",
+        include_str!("../rulepacks/vendor/adobe-dcs-id.json"),
     ),
     (
         "vendor/adobe-ecid",
@@ -377,6 +400,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/nielsen",
         include_str!("../rulepacks/vendor/nielsen.json"),
+    ),
+    (
+        "vendor/nielsen-config",
+        include_str!("../rulepacks/vendor/nielsen-config.json"),
     ),
     (
         "vendor/nielsen-audit",
@@ -735,6 +762,27 @@ pub trait ValidatorPlugin: Send + Sync {
     fn validate_prepared(&self, prepared: &PreparedArtifact<'_>) -> ValidationReport {
         self.validate(prepared.request())
     }
+
+    /// Whether a documented browser loader consumes this URL's fragment keys.
+    #[doc(hidden)]
+    fn accepts_client_fragment(&self, _prepared: &PreparedArtifact<'_>) -> bool {
+        false
+    }
+
+    /// Establish documented destination context before core evaluates signals.
+    #[doc(hidden)]
+    fn prepare_vendor_context(&self, prepared: &mut PreparedArtifact<'_>) {
+        if self.accepts_client_fragment(prepared) {
+            prepared.mark_client_fragment_configuration();
+        }
+    }
+
+    /// An explicit pack selection also checks malformed body envelopes that
+    /// cannot satisfy the pack's automatic shape matcher.
+    #[doc(hidden)]
+    fn validate_selected_prepared(&self, prepared: &PreparedArtifact<'_>) -> ValidationReport {
+        self.validate_prepared(prepared)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -870,12 +918,41 @@ impl Engine {
         request: &ValidationRequest,
         options: &ValidationOptions,
     ) -> Result<ValidationSummary, EngineError> {
-        let prepared = PreparedArtifact::from_request(request);
+        self.validate_at(request, options, timestamp::current_unix_seconds())
+    }
+
+    /// Validates with an explicit Unix-seconds clock, shared by every plugin.
+    /// Call this method on platforms without a native wall clock, including
+    /// wasm32-unknown-unknown, and for reproducible timestamp boundaries.
+    pub fn validate_at(
+        &self,
+        request: &ValidationRequest,
+        options: &ValidationOptions,
+        reference_time_unix_seconds: i64,
+    ) -> Result<ValidationSummary, EngineError> {
+        let mut prepared = PreparedArtifact::from_request_at(request, reference_time_unix_seconds);
         let plugins = self.select_plugins(&prepared, options)?;
+        for plugin in &plugins {
+            plugin.prepare_vendor_context(&mut prepared);
+        }
         let mut reports: Vec<ValidationReport> = plugins
             .into_iter()
-            .map(|plugin| plugin.validate_prepared(&prepared))
+            .map(|plugin| {
+                if options.only_rulepacks.is_empty() {
+                    plugin.validate_prepared(&prepared)
+                } else {
+                    plugin.validate_selected_prepared(&prepared)
+                }
+            })
             .collect();
+
+        // Vendor contracts cannot inspect an unparsed document. Syntax remains
+        // an input invariant even when the caller selects only vendor packs.
+        if prepared.json().is_some_and(Result::is_err)
+            && !reports.iter().any(|report| report.plugin_id == "core")
+        {
+            reports.insert(0, CoreRulePack::default().validate_prepared(&prepared));
+        }
 
         if let Some(report) = self.directory_report(&prepared, options, &reports) {
             reports.push(report);
@@ -1332,7 +1409,7 @@ fn validate_url_like_artifact(
             &parsed.scheme,
             parsed.host.is_none(),
             parsed.has_userinfo,
-            parsed.has_fragment,
+            parsed.has_fragment && !prepared.has_client_fragment_configuration(),
             violations,
         );
         return;
@@ -1343,7 +1420,7 @@ fn validate_url_like_artifact(
             url.scheme(),
             url.host_str().is_none(),
             !url.username().is_empty() || url.password().is_some(),
-            url.fragment().is_some(),
+            url.fragment().is_some() && !prepared.has_client_fragment_configuration(),
             violations,
         ),
         Err(_) => violations.push(Violation {
@@ -1443,12 +1520,12 @@ fn emit_parsed_url_findings(
         violations.push(Violation {
             code: "core.url.fragment_ignored".to_string(),
             message:
-                "URL fragments are not transmitted to the server and cannot carry measurement parameters."
+                "URL fragments are not transmitted to the server and cannot carry server measurement parameters."
                     .to_string(),
             severity: Severity::Warning,
             field: Some("url".to_string()),
             fix_hint: Some(
-                "Move tracking data into the query string or request body.".to_string(),
+                "Move server measurement data into the query string or request body. Keep documented browser configuration in its fragment.".to_string(),
             ),
             source: RuleSource::normative(
                 "RFC 3986 URI generic syntax",
@@ -1464,6 +1541,7 @@ enum MacroSyntax {
     Bracket,
     DollarBraces,
     DoubleBraces,
+    Braces,
     Percent,
     Bang,
     FlashBracket,
@@ -1475,6 +1553,7 @@ impl MacroSyntax {
             Self::Bracket => "[NAME]",
             Self::DollarBraces => "${NAME}",
             Self::DoubleBraces => "{{NAME}}",
+            Self::Braces => "{NAME}",
             Self::Percent => "%%NAME%%",
             Self::Bang => "!!NAME!!",
             Self::FlashBracket => "[%NAME%]",
@@ -1992,9 +2071,10 @@ pub(crate) fn detect_macro_spans(artifact: &str) -> Vec<MacroSpan> {
 }
 
 /// Macro delimiters recognized by the generic ad-tech macro scanner, in match order.
-const MACRO_DELIMITERS: [(&str, &str, MacroSyntax); 6] = [
+const MACRO_DELIMITERS: [(&str, &str, MacroSyntax); 7] = [
     ("${", "}", MacroSyntax::DollarBraces),
     ("{{", "}}", MacroSyntax::DoubleBraces),
+    ("{", "}", MacroSyntax::Braces),
     ("[%", "%]", MacroSyntax::FlashBracket),
     ("!!", "!!", MacroSyntax::Bang),
     ("%%", "%%", MacroSyntax::Percent),
@@ -2245,6 +2325,221 @@ fn has_missing_network_host(artifact: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn documented_browser_fragments_are_approved_only_on_the_loader_endpoint() {
+        let engine = Engine::default();
+        let request = |artifact: &str, kind| ValidationRequest {
+            artifact_kind: kind,
+            artifact: artifact.to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Unknown,
+        };
+        for fragment in [
+            "name=nlsnInstance&ns=NOLBUNDLE",
+            "name=&ns=NOLBUNDLE",
+            "name=x&%6Es=NOLBUNDLE",
+        ] {
+            let summary = engine
+                .validate_at(
+                    &request(
+                        &format!("https://cdn-gl.imrworldwide.com/conf/APP.js#{fragment}"),
+                        ArtifactKind::Url,
+                    ),
+                    &ValidationOptions::default(),
+                    0,
+                )
+                .unwrap();
+            assert!(violation_codes(&summary).is_empty(), "{fragment}");
+        }
+        for artifact in [
+            "https://cdn-gl.imrworldwide.com/conf/APP.js#name=x&ns=NOLBUNDLE&event=purchase",
+            "https://cdn-gl.imrworldwide.com/conf/APP.txt#name=x&ns=NOLBUNDLE",
+            "https://example.test/conf/APP.js#name=x&ns=NOLBUNDLE",
+        ] {
+            let summary = engine
+                .validate_at(
+                    &request(artifact, ArtifactKind::Url),
+                    &ValidationOptions::default(),
+                    0,
+                )
+                .unwrap();
+            assert!(
+                violation_codes(&summary).contains(&"core.url.fragment_ignored".to_string()),
+                "{artifact}"
+            );
+        }
+        // A server postback does not consume browser-loader configuration.
+        let summary = engine
+            .validate_at(
+                &request(
+                    "https://cdn-gl.imrworldwide.com/conf/APP.js#name=x&ns=NOLBUNDLE",
+                    ArtifactKind::ServerPostback,
+                ),
+                &ValidationOptions::default(),
+                0,
+            )
+            .unwrap();
+        assert!(violation_codes(&summary).contains(&"core.url.fragment_ignored".to_string()));
+        let summary = engine
+            .validate_at(
+                &request(
+                    "https://cdn-gl.imrworldwide.com/conf/APP.js#name=x&ns=NOLBUNDLE",
+                    ArtifactKind::Url,
+                ),
+                &ValidationOptions {
+                    only_rulepacks: vec!["core".to_string()],
+                    except_rulepacks: Vec::new(),
+                },
+                0,
+            )
+            .unwrap();
+        assert_eq!(violation_codes(&summary), vec!["core.url.fragment_ignored"]);
+    }
+
+    #[test]
+    fn browser_fragment_declarations_preserve_other_url_checks() {
+        let engine = Engine::default();
+        let request = ValidationRequest {
+            artifact_kind: ArtifactKind::Url,
+            artifact: "http://user@cdn-gl.imrworldwide.com/conf/APP.js?cb=[CACHEBUSTER]#name=&ns=NOLBUNDLE".to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Fired,
+        };
+        let summary = engine
+            .validate_at(&request, &ValidationOptions::default(), 0)
+            .unwrap();
+        let codes = violation_codes(&summary);
+        assert!(codes.contains(&"core.url.insecure_transport".to_string()));
+        assert!(codes.contains(&"core.url.userinfo_deprecated".to_string()));
+        assert!(codes.contains(&"core.macro.unexpanded_in_fired_url".to_string()));
+        assert!(!codes.contains(&"core.url.fragment_ignored".to_string()));
+    }
+
+    #[test]
+    fn an_explicit_clock_is_shared_by_all_plugins_and_repeated_validation() {
+        struct ClockProbe {
+            metadata: RulePackMetadata,
+            observed: Arc<std::sync::Mutex<Vec<i64>>>,
+        }
+        impl ValidatorPlugin for ClockProbe {
+            fn metadata(&self) -> &RulePackMetadata {
+                &self.metadata
+            }
+            fn supports(&self, _: &ValidationRequest) -> bool {
+                true
+            }
+            fn validate(&self, _: &ValidationRequest) -> ValidationReport {
+                unreachable!("the engine shares its prepared artifact")
+            }
+            fn validate_prepared(&self, prepared: &PreparedArtifact<'_>) -> ValidationReport {
+                self.observed
+                    .lock()
+                    .unwrap()
+                    .push(prepared.reference_time_unix_seconds());
+                ValidationReport {
+                    plugin_id: self.metadata.id.clone(),
+                    detected_vendor: None,
+                    violations: Vec::new(),
+                }
+            }
+        }
+        let observed = Arc::new(std::sync::Mutex::new(Vec::new()));
+        let mut engine = Engine::new();
+        for id in ["clock/first", "clock/second"] {
+            let mut metadata = FixtureRulePack::default().metadata;
+            metadata.id = id.to_string();
+            engine.register(ClockProbe {
+                metadata,
+                observed: Arc::clone(&observed),
+            });
+        }
+        let request = ValidationRequest {
+            artifact_kind: ArtifactKind::Url,
+            artifact: "https://example.test/".to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Unknown,
+        };
+        for _ in 0..2 {
+            assert!(
+                engine
+                    .validate_at(&request, &ValidationOptions::default(), 1234567890)
+                    .unwrap()
+                    .is_ok()
+            );
+        }
+        assert_eq!(*observed.lock().unwrap(), vec![1234567890; 4]);
+        assert_eq!(
+            PreparedArtifact::from_request_at(&request, -1).reference_time_unix_seconds(),
+            -1
+        );
+        #[cfg(not(all(target_arch = "wasm32", target_os = "unknown")))]
+        {
+            observed.lock().unwrap().clear();
+            engine
+                .validate(&request, &ValidationOptions::default())
+                .unwrap();
+            let observed = observed.lock().unwrap();
+            assert_eq!(observed.len(), 2);
+            assert_eq!(observed[0], observed[1]);
+        }
+    }
+
+    #[test]
+    fn selected_vendor_packs_retain_json_syntax_errors_without_duplicate_core_reports() {
+        let mut engine = Engine::new();
+        engine.register(FixtureRulePack::default());
+        let request = ValidationRequest {
+            artifact_kind: ArtifactKind::JsonPayload,
+            artifact: r#"{"data":"\ué😀"}"#.to_string(),
+            claimed_vendor: None,
+            expansion_state: ExpansionState::Unknown,
+        };
+        for excluded in [Vec::new(), vec!["core".to_string()]] {
+            engine.register(CoreRulePack::default());
+            let summary = engine
+                .validate_at(
+                    &request,
+                    &ValidationOptions {
+                        only_rulepacks: vec!["fixture".to_string()],
+                        except_rulepacks: excluded,
+                    },
+                    0,
+                )
+                .unwrap();
+            assert!(!summary.is_ok());
+            assert_eq!(
+                summary
+                    .reports
+                    .iter()
+                    .filter(|report| report.plugin_id == "core")
+                    .count(),
+                1
+            );
+            assert_eq!(
+                summary.reports[0].violations[0].code,
+                "core.json.parse_error"
+            );
+        }
+        let summary = engine
+            .validate_at(
+                &request,
+                &ValidationOptions {
+                    only_rulepacks: vec!["fixture".to_string(), "core".to_string()],
+                    except_rulepacks: Vec::new(),
+                },
+                0,
+            )
+            .unwrap();
+        assert_eq!(
+            summary
+                .reports
+                .iter()
+                .filter(|report| report.plugin_id == "core")
+                .count(),
+            1
+        );
+    }
 
     struct FixtureRulePack {
         metadata: RulePackMetadata,
@@ -2763,6 +3058,28 @@ mod tests {
                 violation_codes(&summary)
             );
         }
+    }
+
+    #[test]
+    fn named_braces_keep_nested_delimiters_and_json_objects_distinct() {
+        // Affise documents {ip} as a tracking-link macro:
+        // https://help-center.affise.com/en/articles/6474898-advertiser-tracking-url-macros
+        let artifact = r#"https://example.com/a?ip={ip}&ad=${AD}&id={{ID}}&json={"x":1}&empty={}&number={123}"#;
+        let spans = detect_macro_spans(artifact);
+        assert_eq!(spans.len(), 3);
+        assert_eq!(
+            spans
+                .iter()
+                .map(|span| (&artifact[span.start..span.end], span.syntax))
+                .collect::<Vec<_>>(),
+            vec![
+                ("{ip}", MacroSyntax::Braces),
+                ("${AD}", MacroSyntax::DollarBraces),
+                ("{{ID}}", MacroSyntax::DoubleBraces)
+            ]
+        );
+        assert!(spans.windows(2).all(|pair| pair[0].end <= pair[1].start));
+        assert!(detect_macro_spans(r#"{"ip":"192.0.2.1"}"#).is_empty());
     }
 
     #[test]

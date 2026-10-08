@@ -6,12 +6,20 @@
   "source_level": "official_vendor",
   "docs": "https://developers.heap.io/reference/identify-1",
   "match": {
-    "hosts": ["heapanalytics.com", "c.eu.heap-api.com"],
-    "path_prefixes": ["/api/v1/identify"],
+    "hosts": [
+      "heapanalytics.com",
+      "c.eu.heap-api.com"
+    ],
+    "path_prefixes": [
+      "/api/v1/identify"
+    ],
     "json_paths": [
       "app_id",
       {
-        "any_of": ["identity", "user_id"]
+        "any_of": [
+          "identity",
+          "user_id"
+        ]
       },
       {
         "path": "event",
@@ -44,36 +52,56 @@
       {
         "name": "app_id",
         "requirement": "required",
-        "format": { "kind": "non_empty" },
+        "format": {
+          "kind": "non_empty"
+        },
         "description": "It is the Heap environment ID. Heap documents it as required on identify.",
         "fix_hint": "Set app_id to the environment ID from Heap Projects.",
-        "doc": "https://developers.heap.io/reference/identify-1"
+        "doc": "https://developers.heap.io/reference/identify-1",
+        "json_type": "string"
       },
       {
         "name": "user_id",
         "requirement": "required",
-        "format": { "kind": "integer" },
+        "format": {
+          "kind": "integer"
+        },
         "description": "It is the anonymous user_id from the Heap SDK. Heap documents a numeric string between 0 and 2^53-1.",
         "fix_hint": "Send the Heap SDK user_id as digits, not the login email.",
-        "doc": "https://developers.heap.io/reference/identify-1"
+        "doc": "https://developers.heap.io/reference/identify-1",
+        "json_type": "string",
+        "minimum": 0,
+        "maximum": 9007199254740991
       },
       {
         "name": "identity",
         "requirement": "required",
-        "format": { "kind": "non_empty" },
+        "format": {
+          "kind": "non_empty"
+        },
         "description": "It is the known identity, such as an email. Heap documents it as required and case-sensitive, limited to 255 characters.",
         "fix_hint": "Send a unique identity. Heap drops a second identity on the same user_id.",
-        "doc": "https://developers.heap.io/reference/identify-1"
+        "doc": "https://developers.heap.io/reference/identify-1",
+        "json_type": "string",
+        "max_length": 255
       },
       {
         "name": "timestamp",
         "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+          "kind": "datetime",
+          "allow_basic": true,
+          "allow_date_only": true
         },
-        "description": "Heap documents timestamp as ISO 8601. When omitted, Heap stamps the arrival time.",
+        "description": "ISO 8601 timestamp. The source does not mandate a timezone.",
         "fix_hint": "Send an ISO 8601 timestamp, such as 2017-03-10T22:21:56+00:00.",
-        "doc": "https://developers.heap.io/reference/identify-1"
+        "doc": "https://developers.heap.io/reference/identify-1",
+        "json_type": "string"
+      },
+      {
+        "name": "",
+        "description": "The vendor documents `` in the request contract.",
+        "doc": "https://developers.heap.io/reference/identify-1",
+        "json_type": "object"
       }
     ],
     "rules": []

@@ -7,14 +7,20 @@
   "docs": "https://devdocs.drift.com/docs/installation",
   "path_pattern": "/include/(?<cache_bust>[0-9]+)/(?<embed_id>[^/]*)\\.js",
   "match": {
-    "hosts": ["js.driftt.com"],
-    "path_contains": ["/include/"]
+    "hosts": [
+      "js.driftt.com"
+    ],
+    "path_contains": [
+      "/include/"
+    ]
   },
   "params": [
     {
       "name": "embed_id",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Drift embed ID. Drift documents the loader as js.driftt.com/include/{timestamp}/{embedId}.js and drift.load('embedId').",
       "fix_hint": "Copy the snippet from Drift Install so the path ends in /{embedId}.js.",
       "doc": "https://devdocs.drift.com/docs/installation"
@@ -22,10 +28,14 @@
     {
       "name": "cache_bust",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the cache window Drift computes as Math.ceil(Date.now()/300000)*300000. The published snippet puts it in the path before the embed ID.",
       "fix_hint": "Keep the timestamp segment the Drift snippet writes. It is not the embed ID.",
-      "doc": "https://devdocs.drift.com/docs/installation"
+      "doc": "https://devdocs.drift.com/docs/installation",
+      "multiple_of": 300000,
+      "source_level": "official_template"
     }
   ],
   "rules": []

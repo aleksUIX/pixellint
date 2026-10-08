@@ -1,0 +1,92 @@
+[
+  {
+    "id": "metadata-published-rich-values",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"source\":\"desktop\",\"load\":3.67,\"contact_date\":1392036272,\"article\":{\"url\":\"https://example.org/ab1de.html\",\"value\":\"the dude abides\"},\"price\":{\"amount\":34999,\"currency\":\"eur\"}}}",
+    "code": "vendor.intercom-events.body.rich_metadata_shape",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "metadata-http-rich-link",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"article\":{\"url\":\"http://example.com\",\"value\":\"\"}}}",
+    "code": "vendor.intercom-events.body.rich_metadata_shape",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "metadata-positive-minimum-cent",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"price\":{\"amount\":1,\"currency\":\"usd\"}}}",
+    "code": "vendor.intercom-events.body.amount.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "metadata-fractional-cents",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"price\":{\"amount\":1.5,\"currency\":\"usd\"}}}",
+    "code": "vendor.intercom-events.body.amount.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "metadata-zero-cents",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"price\":{\"amount\":0,\"currency\":\"usd\"}}}",
+    "code": "vendor.intercom-events.body.amount.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "metadata-rich-link-missing-value",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"article\":{\"url\":\"https://example.com\"}}}",
+    "code": "vendor.intercom-events.body.rich_metadata_shape",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "metadata-money-missing-currency",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"price\":{\"amount\":34999}}}",
+    "code": "vendor.intercom-events.body.rich_metadata_shape",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "metadata-unsupported-nesting",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"custom\":{\"nested\":{\"field\":\"value\"}}}}",
+    "code": "vendor.intercom-events.body.rich_metadata_shape",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "metadata-date-number-not-text",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"contact_date\":\"1392036272\"}}",
+    "code": "vendor.intercom-events.body.metadata.contact_date.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "metadata-ftp-is-not-http-link",
+    "kind": "json",
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "artifact": "{\"event_name\":\"placed-order\",\"created_at\":1671028894,\"user_id\":\"314159\",\"metadata\":{\"article\":{\"url\":\"ftp://example.com\",\"value\":\"download\"}}}",
+    "code": "vendor.intercom-events.body.url.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  }
+]

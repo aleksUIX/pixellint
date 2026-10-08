@@ -50,7 +50,27 @@
           },
           "description": "It identifies the source the data lands in. Segment also accepts it as HTTP basic auth, so it is not required in the body.",
           "fix_hint": "Send the source write key in the body or as the basic auth username.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "batch",
+          "description": "The vendor documents `batch` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "batch[]",
+          "description": "The vendor documents `batch[]` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "object"
         }
       ],
       "rules": []
@@ -74,7 +94,8 @@
           },
           "description": "Segment documents that each call in a batch must carry a `type` naming a valid method.",
           "fix_hint": "Set `type` to one of identify, track, page, screen, group, or alias.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
         },
         {
           "name": "event",
@@ -83,7 +104,8 @@
           },
           "description": "It is the name of the action the user performed, and Segment documents it as required on a track call.",
           "fix_hint": "Name the event, such as `Item Purchased`.",
-          "doc": "https://segment.com/docs/connections/spec/track/"
+          "doc": "https://segment.com/docs/connections/spec/track/",
+          "json_type": "string"
         },
         {
           "name": "groupId",
@@ -92,7 +114,8 @@
           },
           "description": "It identifies the group. Segment documents it as required on a group call.",
           "fix_hint": "Set `groupId` to the group in your database.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
         },
         {
           "name": "previousId",
@@ -101,7 +124,8 @@
           },
           "description": "It is the previous unique identifier. Segment documents it as required on an alias call.",
           "fix_hint": "Set `previousId` to the id being merged.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
         }
       ],
       "rules": [
@@ -124,8 +148,12 @@
           "code": "vendor.segment.body.group_requires_group_id",
           "kind": "required_when_value",
           "when": "type",
-          "equals": ["group"],
-          "requires": ["groupId"],
+          "equals": [
+            "group"
+          ],
+          "requires": [
+            "groupId"
+          ],
           "severity": "error",
           "message": "A `group` call carries no `groupId`. Segment documents the group id as required.",
           "fix_hint": "Set `groupId` to the group in your database.",
@@ -135,8 +163,12 @@
           "code": "vendor.segment.body.alias_requires_previous_id",
           "kind": "required_when_value",
           "when": "type",
-          "equals": ["alias"],
-          "requires": ["previousId"],
+          "equals": [
+            "alias"
+          ],
+          "requires": [
+            "previousId"
+          ],
           "severity": "error",
           "message": "An `alias` call carries no `previousId`. Segment documents the previous unique identifier as required.",
           "fix_hint": "Set `previousId` to the id being merged.",
@@ -156,7 +188,8 @@
             "kind": "non_empty"
           },
           "description": "It is your own identifier for the user. Segment documents that a call needs either this or `anonymousId`.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
         },
         {
           "name": "anonymousId",
@@ -164,27 +197,28 @@
             "kind": "non_empty"
           },
           "description": "It stands in for a user id when there is none. Segment documents that a call needs either this or `userId`.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
         },
         {
           "name": "timestamp",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+            "kind": "datetime"
           },
           "description": "Segment documents the timestamp as an ISO 8601 date string. Leave it out for events happening now.",
           "fix_hint": "Send an ISO 8601 timestamp, or omit it and let Segment stamp the call.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
         },
         {
           "name": "sentAt",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"
+            "kind": "datetime"
           },
           "description": "Segment documents `sentAt` as an ISO 8601 date string, the time the client sent the event.",
           "fix_hint": "Send an ISO 8601 timestamp, such as `2026-07-26T00:30:12.984Z`.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
         },
         {
           "name": "messageId",
@@ -194,15 +228,19 @@
           },
           "description": "Segment deduplicates on `messageId` and documents fewer than 100 characters.",
           "fix_hint": "Send a unique `messageId` of at most 99 characters.",
-          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+          "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+          "json_type": "string",
+          "allow_empty": true,
+          "max_length": 99
         },
         {
           "name": "context.ip",
           "format": {
-            "kind": "non_empty"
+            "kind": "ip"
           },
           "description": "It is the visitor IP, sent unhashed.",
-          "doc": "https://segment.com/docs/connections/spec/common/"
+          "doc": "https://segment.com/docs/connections/spec/common/",
+          "json_type": "string"
         },
         {
           "name": "context.userAgent",
@@ -211,7 +249,8 @@
           },
           "description": "It is the user agent of the device making the request. Segment documents it as unhashed on `context`.",
           "fix_hint": "Send the browser or device user agent string, or drop the empty pair.",
-          "doc": "https://segment.com/docs/connections/spec/common/"
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "json_type": "string"
         },
         {
           "name": "context.page.url",
@@ -220,7 +259,9 @@
           },
           "description": "It is the current page URL. Segment documents `url` on `context.page`.",
           "fix_hint": "Send an absolute URL in `context.page.url`, including the scheme.",
-          "doc": "https://segment.com/docs/connections/spec/common/"
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "json_type": "string",
+          "allow_empty": true
         },
         {
           "name": "properties.currency",
@@ -230,27 +271,30 @@
           },
           "description": "It is the ISO 4217 currency of `properties.revenue`. Segment documents it as a reserved track property.",
           "fix_hint": "Send a three-letter code such as `USD`, or omit the field and Segment assumes US dollars.",
-          "doc": "https://segment.com/docs/connections/spec/track/"
+          "doc": "https://segment.com/docs/connections/spec/track/",
+          "json_type": "string"
         },
         {
           "name": "properties.revenue",
           "format": {
             "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
           },
           "description": "It is the dollar amount an event resulted in. Segment documents a reserved decimal number, such as `19.99`.",
           "fix_hint": "Send a number such as `19.99`, with no currency symbol.",
-          "doc": "https://segment.com/docs/connections/spec/track/"
+          "doc": "https://segment.com/docs/connections/spec/track/",
+          "json_type": "number"
         },
         {
           "name": "properties.value",
           "format": {
             "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
           },
           "description": "It is an abstract value for an event that does not generate dollar revenue. Segment documents a reserved number.",
           "fix_hint": "Send a number such as `1`, with no unit suffix.",
-          "doc": "https://segment.com/docs/connections/spec/track/"
+          "doc": "https://segment.com/docs/connections/spec/track/",
+          "json_type": "number"
         },
         {
           "name": "properties.url",
@@ -259,17 +303,596 @@
           },
           "description": "It is the page's full URL. Segment documents `url` as a reserved page property.",
           "fix_hint": "Send an absolute URL in `properties.url`, including the scheme.",
-          "doc": "https://segment.com/docs/connections/spec/page/"
+          "doc": "https://segment.com/docs/connections/spec/page/",
+          "json_type": "string"
         },
         {
           "name": "context.locale",
           "format": {
             "kind": "regex",
-            "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z]{2})?$"
+            "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$"
           },
           "description": "It is the locale of the current user. Segment documents a string such as `en-US`.",
           "fix_hint": "Send a locale tag such as `en-US`, or omit the field.",
-          "doc": "https://segment.com/docs/connections/spec/common/"
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "json_type": "string",
+          "allow_empty": true
+        },
+        {
+          "name": "context",
+          "description": "The vendor documents `context` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "context.library",
+          "description": "The vendor documents `context.library` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "context.page",
+          "description": "The vendor documents `context.page` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "properties",
+          "description": "The vendor documents `properties` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "traits",
+          "description": "The vendor documents `traits` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "integrations",
+          "description": "The vendor documents `integrations` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "type",
+          "allow_empty": true,
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/"
+        },
+        {
+          "name": "context.app",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.campaign",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.device",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.network",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.os",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.screen",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.traits",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.referrer",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.location",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "context.userAgentData",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.app.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.app.version",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.app.build",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.app.namespace",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.source",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.medium",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.term",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.content",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.id",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.advertisingId",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.manufacturer",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.model",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.type",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.version",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.os.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.os.version",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.path",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.referrer",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.search",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.title",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.library.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.library.version",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.adTrackingEnabled",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.network.carrier",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.network.bluetooth",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.network.cellular",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.network.wifi",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.screen.density",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.screen.height",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.screen.width",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.timezone",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "category",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "originalTimestamp",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "format": {
+            "kind": "datetime"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "receivedAt",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "format": {
+            "kind": "datetime"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "integrations.All",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "destination_settings",
+          "json_type": [
+            "boolean",
+            "object"
+          ],
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "name_pattern": "(?s)^.*$",
+          "name_pattern_parent": "integrations"
+        },
+        {
+          "name": "context.active",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.groupId",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "context.channel",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common",
+          "allow_empty": true
+        },
+        {
+          "name": "version",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.twilio.com/docs/segment/connections/spec/common"
+        },
+        {
+          "name": "context.referrer.type",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.referrer.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.referrer.url",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.referrer.link",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.referrer.id",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.referrer.btid",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.referrer.urid",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.location.city",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.location.country",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.location.region",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.location.latitude",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.location.longitude",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.location.speed",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "context.userAgentData.architecture",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.userAgentData.bitness",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.userAgentData.model",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.userAgentData.platform",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.userAgentData.platformVersion",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.userAgentData.uaFullVersion",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts",
+          "allow_empty": true
+        },
+        {
+          "name": "context.userAgentData.mobile",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "context.userAgentData.wow64",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "context.userAgentData.brands",
+          "json_type": "array",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "context.userAgentData.brands[]",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "context.userAgentData.fullVersionList",
+          "json_type": "array",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "context.userAgentData.fullVersionList[]",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
         }
       ],
       "rules": [
@@ -289,11 +912,166 @@
           "code": "vendor.segment.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["context.ip", "context.userAgent"],
+          "params": [
+            "context.ip",
+            "context.userAgent"
+          ],
           "severity": "error",
           "message": "`context.ip` or `context.userAgent` looks like a SHA-256 digest, but Segment documents both as plaintext.",
           "fix_hint": "Send the raw IP address or user agent string.",
           "doc": "https://segment.com/docs/connections/spec/common/"
+        },
+        {
+          "code": "vendor.segment.body.alias_requires_user_id",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented alias requires user id requirement.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "when": "type",
+          "equals": [
+            "alias"
+          ],
+          "requires": [
+            "userId"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "",
+      "params": [
+        {
+          "name": "type",
+          "description": "The vendor documents `type` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "identify",
+              "track",
+              "page",
+              "screen",
+              "group",
+              "alias"
+            ]
+          }
+        },
+        {
+          "name": "event",
+          "description": "The vendor documents `event` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "groupId",
+          "description": "The vendor documents `groupId` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "previousId",
+          "description": "The vendor documents `previousId` in the request contract.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "json_type": "string"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.segment.body.track_method_required_field",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented track method required field requirement.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "when": "type",
+          "equals": [
+            "track"
+          ],
+          "requires": [
+            "event"
+          ]
+        },
+        {
+          "code": "vendor.segment.body.group_method_required_field",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented group method required field requirement.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "when": "type",
+          "equals": [
+            "group"
+          ],
+          "requires": [
+            "groupId"
+          ]
+        },
+        {
+          "code": "vendor.segment.body.alias_method_required_field",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented alias method required field requirement.",
+          "doc": "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
+          "when": "type",
+          "equals": [
+            "alias"
+          ],
+          "requires": [
+            "previousId"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": [
+        "batch[].context.userAgentData.brands[]",
+        "context.userAgentData.brands[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "brand",
+          "json_type": "string",
+          "allow_empty": true,
+          "requirement": "required",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "version",
+          "json_type": "string",
+          "allow_empty": true,
+          "requirement": "required",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "batch[].context.userAgentData.fullVersionList[]",
+        "context.userAgentData.fullVersionList[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "brand",
+          "json_type": "string",
+          "allow_empty": true,
+          "requirement": "required",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
+        },
+        {
+          "name": "version",
+          "json_type": "string",
+          "allow_empty": true,
+          "requirement": "required",
+          "doc": "https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts"
         }
       ]
     }

@@ -6,11 +6,19 @@
   "source_level": "official_vendor",
   "docs": "https://developers.heap.io/reference/add-account-properties",
   "match": {
-    "hosts": ["heapanalytics.com", "c.eu.heap-api.com"],
-    "path_prefixes": ["/api/add_account_properties"],
+    "hosts": [
+      "heapanalytics.com",
+      "c.eu.heap-api.com"
+    ],
+    "path_prefixes": [
+      "/api/add_account_properties"
+    ],
     "json_paths": [
       {
-        "any_of": ["account_id", "accounts"]
+        "any_of": [
+          "account_id",
+          "accounts"
+        ]
       },
       {
         "path": "identity",
@@ -50,32 +58,142 @@
       }
     ]
   },
-  "body": {
-    "params": [
-      {
-        "name": "app_id",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the Heap environment ID. Heap documents it as required.",
-        "fix_hint": "Set `app_id` to the environment ID from Heap Projects.",
-        "doc": "https://developers.heap.io/reference/add-account-properties"
-      },
-      {
-        "name": "account_id",
-        "format": { "kind": "non_empty" },
-        "description": "It is the account identifier on a single-account update. Heap documents `account_id` for single updates, and `accounts[]` for bulk.",
-        "fix_hint": "Send `account_id` for one account, or an `accounts` array for bulk updates.",
-        "doc": "https://developers.heap.io/reference/add-account-properties"
-      },
-      {
-        "name": "accounts[].account_id",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the account identifier on a bulk row. Heap documents each `accounts[]` object as having `account_id`.",
-        "fix_hint": "Set `accounts[].account_id` on every bulk row.",
-        "doc": "https://developers.heap.io/reference/add-account-properties"
-      }
-    ],
-    "rules": []
-  }
+  "body": [
+    {
+      "params": [
+        {
+          "name": "app_id",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Heap environment ID. Heap documents it as required.",
+          "fix_hint": "Set `app_id` to the environment ID from Heap Projects.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "numeric_strings": true
+        },
+        {
+          "name": "account_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the account identifier on a single-account update. Heap documents `account_id` for single updates, and `accounts[]` for bulk.",
+          "fix_hint": "Send `account_id` for one account, or an `accounts` array for bulk updates.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "accounts[].account_id",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the account identifier on a bulk row. Heap documents each `accounts[]` object as having `account_id`.",
+          "fix_hint": "Set `accounts[].account_id` on every bulk row.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties",
+          "description": "The vendor documents `properties` in the request contract.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "json_type": "object"
+        },
+        {
+          "name": "accounts",
+          "description": "The vendor documents `accounts` in the request contract.",
+          "doc": "https://developers.heap.io/reference/bulk-add-account-properties",
+          "json_type": "array",
+          "max_items": 1000
+        },
+        {
+          "name": "accounts[]",
+          "description": "The vendor documents `accounts[]` in the request contract.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "json_type": "object"
+        },
+        {
+          "name": "accounts[].properties",
+          "description": "The vendor documents `accounts[].properties` in the request contract.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "json_type": "object",
+          "requirement": "required"
+        },
+        {
+          "name": "property_value",
+          "description": "The vendor documents `property_value` in the request contract.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "name_pattern": "(?s)^.*$",
+          "name_pattern_parent": "properties",
+          "max_length": 1023,
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "json_type": "object"
+        },
+        {
+          "name": "overlong_property_names",
+          "name_pattern": "(?s)^.{1024,}$",
+          "name_pattern_parent": "properties",
+          "requirement": "forbidden",
+          "severity": "error",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "description": "Property keys must have fewer than1024characters, counted afterJSONdecoding."
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.heap-account-properties.body.single_account_properties",
+          "kind": "required_with",
+          "severity": "error",
+          "message": "The request does not satisfy the documented single account properties requirement.",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "when": "account_id",
+          "requires": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "accounts[]",
+      "params": [
+        {
+          "name": "property_value",
+          "name_pattern": "(?s)^.*$",
+          "name_pattern_parent": "properties",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "max_length": 1023,
+          "allow_empty": true,
+          "doc": "https://developers.heap.io/reference/add-account-properties"
+        },
+        {
+          "name": "overlong_property_names",
+          "name_pattern": "(?s)^.{1024,}$",
+          "name_pattern_parent": "properties",
+          "requirement": "forbidden",
+          "severity": "error",
+          "doc": "https://developers.heap.io/reference/add-account-properties",
+          "description": "Property keys must have fewer than1024characters, counted afterJSONdecoding."
+        }
+      ],
+      "rules": []
+    }
+  ]
 }

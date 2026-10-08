@@ -92,9 +92,10 @@
           "1"
         ]
       },
-      "description": "It is the limited-ads signal. Campaign Manager documents `dc_lat=1` when the user has limited ad tracking enabled.",
+      "description": "Mobile limit-ad-tracking signal, 0 or 1. An absent or unpopulated value defaults to 0.",
       "fix_hint": "Send `dc_lat=1` when limited ad tracking applies, otherwise `0` or omit it.",
-      "doc": "https://support.google.com/campaignmanager/answer/2823425"
+      "doc": "https://support.google.com/campaignmanager/answer/2823450",
+      "allow_empty": true
     },
     {
       "name": "npa",
@@ -158,6 +159,16 @@
       "description": "It is a Floodlight custom variable. Campaign Manager documents u1-u100 on the activity tag.",
       "fix_hint": "Fill the custom variable, or drop the empty pair from the tag.",
       "doc": "https://support.google.com/campaignmanager/answer/2823425"
+    },
+    {
+      "name": "match_id",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9_.-]{1,50}$"
+      },
+      "max_length": 50,
+      "doc": "https://support.google.com/campaignmanager/answer/2823450",
+      "description": "Match ID is case-sensitive, at most fifty characters, and uses only letters, numbers, underscores, hyphens, and periods."
     }
   ],
   "rules": [
@@ -177,7 +188,9 @@
       "code": "vendor.floodlight.sales.qty_requires_cost",
       "kind": "required_with",
       "when": "qty",
-      "requires": ["cost"],
+      "requires": [
+        "cost"
+      ],
       "severity": "error",
       "message": "The tag sends `qty` without `cost`. Campaign Manager documents both on sales conversion tags.",
       "fix_hint": "Add `cost` as the revenue amount, with no currency symbol, or drop `qty` on a counter tag.",
@@ -187,11 +200,27 @@
       "code": "vendor.floodlight.sales.cost_requires_qty",
       "kind": "required_with",
       "when": "cost",
-      "requires": ["qty"],
+      "requires": [
+        "qty"
+      ],
       "severity": "error",
       "message": "The tag sends `cost` without `qty`. Campaign Manager documents both on sales conversion tags.",
       "fix_hint": "Add `qty` as an integer of 1 or more, or drop `cost` on a counter tag.",
       "doc": "https://support.google.com/campaignmanager/answer/2823450"
+    },
+    {
+      "code": "vendor.floodlight.counting.unique_ord_value",
+      "kind": "value_with",
+      "when": "num",
+      "param": "ord",
+      "value": "1",
+      "severity": "error",
+      "doc": "https://support.google.com/campaignmanager/answer/2823450",
+      "message": "Unique counting uses ord=1 with a random cache-buster in num.",
+      "condition": {
+        "kind": "present",
+        "param": "num"
+      }
     }
   ]
 }

@@ -1,7 +1,7 @@
 # pixellint
 
 Validator for pixels, postbacks, conversion API payloads, and tracking URLs,
-as a WASM-backed npm package. Same engine, same rule ids, and same evidence
+as a WASM-backed npm package for Node.js 18 or newer. Same engine, same rule ids, and same evidence
 levels as the [`pixellint` CLI](https://crates.io/crates/pixellint). Paste a
 URL or a CAPI JSON body at [pixellint.org](https://pixellint.org).
 
@@ -47,7 +47,7 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 - URL conformance, transport, credentials, fragments, and ad-tech macro handling
 - IAB consent signals: TCF `gdpr` and `gdpr_consent`, the deprecated US Privacy
   string, and GPP `gpp` and `gpp_sid`
-- Vendor parameter contracts for 133 endpoint families, including Meta
+- 137 vendor rulepacks across 79 vendors, including Meta
   Conversions API, TikTok Events API, Reddit CAPI, and the browser pixels
 - Endpoint attribution for 120 vendor rows, so an unrecognized pixel still gets a name.
 
@@ -68,8 +68,17 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 `vendor` for a caller's claimed vendor. `html`, `js`, and `gtm` throw: extract
 URLs first.
 
-Templates keep their macros: pass `{ state: "template" }` and unexpanded macros
-stop being findings.
+`vast` takes a tracking URL extracted from VAST and enables the IAB VAST
+macro-name checks. It does not accept a VAST XML document.
+
+Pass `{ state: "template" }` to allow unexpanded macros in a template.
+Macro syntax, position, and VAST macro-name checks still apply.
+
+## Browser integration
+
+This npm wrapper loads the Node-target WASM build. Its ESM entry uses
+`node:module`, so it cannot be imported directly in a browser. Build
+`pixellint-wasm` for a browser target and provide a browser loader.
 
 ## Links
 

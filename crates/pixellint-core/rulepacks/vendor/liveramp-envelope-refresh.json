@@ -6,22 +6,37 @@
   "source_level": "official_vendor",
   "docs": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
   "match": {
-    "hosts": ["api.rlcdn.com"],
-    "paths": ["/api/identity/v2/envelope/refresh"]
+    "hosts": [
+      "api.rlcdn.com"
+    ],
+    "paths": [
+      "/api/identity/v2/envelope/refresh"
+    ]
   },
   "params": [
     {
       "name": "pid",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
       "description": "It is the LiveRamp Placement ID.",
       "fix_hint": "Send `pid` with the Placement ID LiveRamp issued for this property.",
-      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
+      "minimum": -2147483648,
+      "maximum": 2147483647
     },
     {
       "name": "it",
       "requirement": "required",
-      "format": { "kind": "enum", "values": ["19", "24"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "19",
+          "24"
+        ]
+      },
       "description": "It is the envelope type. LiveRamp documents `19` ATS envelopes and `24` Meta-scoped envelopes. Retrieve uses identifier types 4, 11, and 15 instead.",
       "fix_hint": "Send `it=19` for an ATS envelope, or `it=24` for a Meta-scoped envelope.",
       "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
@@ -29,25 +44,342 @@
     {
       "name": "iv",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the stored envelope value, not the original hashed identifier.",
       "fix_hint": "Send `iv` with the envelope string returned by the retrieve call.",
       "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
     },
     {
       "name": "ct",
-      "format": { "kind": "enum", "values": ["3", "4"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "3",
+          "4"
+        ]
+      },
       "description": "It is the consent type. LiveRamp documents `4` TCF v2 and `3` CCPA.",
       "fix_hint": "Send `ct=4` with a TCF string in `cv`, or `ct=3` for CCPA.",
       "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
     },
     {
       "name": "atype",
-      "format": { "kind": "enum", "values": ["1", "2", "3", "4"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      },
       "description": "It is the implementation source. LiveRamp documents `1` ATS.js, `2` ATS API, `3` server-to-server, and `4` the mobile SDK.",
       "fix_hint": "Send `atype=2` from an API call, or `atype=3` from a server.",
       "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "name": "cv",
+      "description": "LiveRamp accepts cv as the consent string associated with ct.",
+      "format": {
+        "kind": "non_empty"
+      },
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "name": "gpp",
+      "description": "LiveRamp accepts gpp as the GPP consent string.",
+      "format": {
+        "kind": "non_empty"
+      },
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "name": "gpp_sid",
+      "description": "LiveRamp documents the supported US GPP section identifiers.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "19",
+          "20",
+          "21",
+          "22"
+        ]
+      },
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.liveramp-envelope-refresh.consent_value_required",
+      "kind": "required_when_value",
+      "severity": "error",
+      "message": "A selected TCF or CCPA consent type needs its consent string.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
+      "when": "ct",
+      "equals": [
+        "3",
+        "4"
+      ],
+      "requires": [
+        "cv"
+      ]
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_section_required",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "A GPP consent string needs the matching GPP section ID.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
+      "when": "gpp",
+      "requires": [
+        "gpp_sid"
+      ]
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_string_required",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "A GPP section ID needs the matching GPP consent string.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
+      "when": "gpp_sid",
+      "requires": [
+        "gpp"
+      ]
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.mobile_sdk_deprecated",
+      "kind": "forbidden_when_value",
+      "when": "atype",
+      "equals": [
+        "4"
+      ],
+      "params": [
+        "atype"
+      ],
+      "severity": "warning",
+      "message": "LiveRamp sunset the ATS Mobile SDK on September 30, 2026. Migrate this implementation source to the ATS API.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/ios-sdk-classes"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.consent_tcf_structure",
+      "kind": "format_when",
+      "when": "ct",
+      "equals": [
+        "4"
+      ],
+      "param": "cv",
+      "format": {
+        "kind": "tcf"
+      },
+      "severity": "error",
+      "message": "The cv consent value must use the structure of its declared consent type.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.consent_us_privacy_structure",
+      "kind": "format_when",
+      "when": "ct",
+      "equals": [
+        "3"
+      ],
+      "param": "cv",
+      "format": {
+        "kind": "us_privacy"
+      },
+      "severity": "error",
+      "message": "The cv consent value must use the structure of its declared consent type.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.consent_positive",
+      "kind": "tcf_consent",
+      "param": "cv",
+      "vendor_id": 97,
+      "purpose_ids": [
+        1
+      ],
+      "condition": {
+        "kind": "value_in",
+        "param": "ct",
+        "values": [
+          "4"
+        ]
+      },
+      "severity": "error",
+      "message": "For TCF consent, LiveRamp requires a positive consent signal for vendor 97 and purpose 1.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_SharingNotice",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "SharingNotice",
+      "values": [
+        1
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires SharingNotice values 1 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_SaleOptOutNotice",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "SaleOptOutNotice",
+      "values": [
+        1
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires SaleOptOutNotice values 1 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_SharingOptOutNotice",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "SharingOptOutNotice",
+      "values": [
+        1
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires SharingOptOutNotice values 1 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_TargetedAdvertisingOptOutNotice",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "TargetedAdvertisingOptOutNotice",
+      "values": [
+        1
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires TargetedAdvertisingOptOutNotice values 1 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_SensitiveDataProcessingOptOutNotice",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "SensitiveDataProcessingOptOutNotice",
+      "values": [
+        0,
+        1
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires SensitiveDataProcessingOptOutNotice values 0, 1 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_SensitiveDataLimitUseNotice",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "SensitiveDataLimitUseNotice",
+      "values": [
+        0,
+        1
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires SensitiveDataLimitUseNotice values 0, 1 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_SensitiveDataProcessing",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "SensitiveDataProcessing",
+      "values": [
+        0
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires SensitiveDataProcessing values 0 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_KnownChildSensitiveDataConsents",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "KnownChildSensitiveDataConsents",
+      "values": [
+        0
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires KnownChildSensitiveDataConsents values 0 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_SaleOptOut",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "SaleOptOut",
+      "values": [
+        2
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires SaleOptOut values 2 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_SharingOptOut",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "SharingOptOut",
+      "values": [
+        2
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires SharingOptOut values 2 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_TargetedAdvertisingOptOut",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "TargetedAdvertisingOptOut",
+      "values": [
+        2
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires TargetedAdvertisingOptOut values 2 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    },
+    {
+      "code": "vendor.liveramp-envelope-refresh.gpp_PersonalDataConsents",
+      "kind": "gpp_field_values",
+      "param": "gpp",
+      "section_param": "gpp_sid",
+      "field": "PersonalDataConsents",
+      "values": [
+        0,
+        2
+      ],
+      "severity": "error",
+      "message": "LiveRamp requires PersonalDataConsents values 0, 2 in the active GPP section.",
+      "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
+    }
+  ]
 }

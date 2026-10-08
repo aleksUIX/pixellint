@@ -6,13 +6,22 @@
   "source_level": "official_vendor",
   "docs": "https://wiki.id5.io/docs/mobile-in-app-integration",
   "match": {
-    "hosts": ["api.id5-sync.com"],
-    "path_prefixes": ["/ga/v1"],
+    "hosts": [
+      "api.id5-sync.com"
+    ],
+    "path_prefixes": [
+      "/ga/v1"
+    ],
     "json_paths": [
       "ip",
       "ua",
       {
-        "any_of": ["partner", "bundle", "ts", "hem"]
+        "any_of": [
+          "partner",
+          "bundle",
+          "ts",
+          "hem"
+        ]
       },
       {
         "path": "appid",
@@ -20,81 +29,408 @@
       }
     ]
   },
-  "body": {
-    "params": [
-      {
-        "name": "partner",
-        "requirement": "required",
-        "format": { "kind": "integer" },
-        "description": "It is the ID5 Partner Number. ID5 documents partner as required on /ga/v1.",
-        "fix_hint": "Set partner to the Partner Number ID5 issued. Use 173 only while testing.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      },
-      {
-        "name": "ts",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the request timestamp. ID5 documents ts as required, as an ISO-8601 string with a time zone offset.",
-        "fix_hint": "Set ts to an ISO-8601 timestamp with offset, such as 2013-02-01T12:52:34+09:00.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      },
-      {
-        "name": "bundle",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the app identifier. ID5 documents bundle as required: package name on Android, numeric ID on iOS.",
-        "fix_hint": "Set bundle to the app package name or iOS numeric ID.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      },
-      {
-        "name": "ver",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the application version. ID5 documents ver as required.",
-        "fix_hint": "Set ver to the app version string.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      },
-      {
-        "name": "ip",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the IPv4 address closest to the device. ID5 documents ip as required.",
-        "fix_hint": "Send the device-facing IPv4 address, unhashed.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      },
-      {
-        "name": "ua",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the device default-browser user agent. ID5 documents ua as required.",
-        "fix_hint": "Send the raw user agent string, unhashed.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      },
-      {
-        "name": "hem",
-        "format": { "kind": "hex", "length": 64 },
-        "description": "It is a SHA-256 hash of the cleansed email. ID5 documents hem as sha256 when present.",
-        "fix_hint": "Cleanse the email, hash it with SHA-256, and send 64 lowercase hex characters.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      },
-      {
-        "name": "phone",
-        "format": { "kind": "hex", "length": 64 },
-        "description": "It is a SHA-256 hash of the cleansed phone number.",
-        "fix_hint": "Cleanse the phone number, hash it with SHA-256, and send 64 lowercase hex characters.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      }
-    ],
-    "rules": [
-      {
-        "code": "vendor.id5.body.unhashed_email",
-        "kind": "forbid_value_pattern",
-        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
-        "severity": "error",
-        "message": "A field carries what looks like a raw email address. ID5 documents hem as a SHA-256 digest of a cleansed email.",
-        "fix_hint": "Cleanse the email, hash it with SHA-256, and send it as hem.",
-        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
-      }
-    ]
-  }
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "ID5 accepts a JSON object as its request body.",
+          "json_type": "object",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "partner",
+          "requirement": "required",
+          "description": "It is the ID5 Partner Number. ID5 documents partner as required on /ga/v1.",
+          "fix_hint": "Set partner to the Partner Number ID5 issued. Use 173 only while testing.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+          "json_type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647
+        },
+        {
+          "name": "ts",
+          "requirement": "required",
+          "format": {
+            "kind": "datetime",
+            "require_timezone": true,
+            "allow_basic": true
+          },
+          "description": "It is the request timestamp. ID5 documents ts as required, as an ISO-8601 string with a time zone offset.",
+          "fix_hint": "Set ts to an ISO-8601 timestamp with offset, such as 2013-02-01T12:52:34+09:00.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "bundle",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the app identifier. ID5 documents bundle as required: package name on Android, numeric ID on iOS.",
+          "fix_hint": "Set bundle to the app package name or iOS numeric ID.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "ver",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the application version. ID5 documents ver as required.",
+          "fix_hint": "Set ver to the app version string.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "ip",
+          "requirement": "required",
+          "format": {
+            "kind": "ip",
+            "version": "v4"
+          },
+          "description": "It is the IPv4 address closest to the device. ID5 documents ip as required.",
+          "fix_hint": "Send the device-facing IPv4 address, unhashed.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "ua",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the device default-browser user agent. ID5 documents ua as required.",
+          "fix_hint": "Send the raw user agent string, unhashed.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "hem",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "description": "It is a SHA-256 hash of the cleansed email. ID5 documents hem as sha256 when present.",
+          "fix_hint": "Normalize and SHA-256 hash the identifier, then send its 64-character hexadecimal digest.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "phone",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "description": "It is a SHA-256 hash of the cleansed phone number.",
+          "fix_hint": "Normalize and SHA-256 hash the identifier, then send its 64-character hexadecimal digest.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "provider",
+          "description": "ID5 documents provider as an optional string request field.",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "signature",
+          "description": "ID5 documents signature as an optional string request field.",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "gdpr_consent",
+          "description": "ID5 documents gdpr_consent as an optional string request field.",
+          "json_type": "string",
+          "format": {
+            "kind": "tcf"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "gpp_string",
+          "description": "ID5 documents gpp_string as an optional string request field.",
+          "json_type": "string",
+          "format": {
+            "kind": "gpp"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "region",
+          "description": "ID5 accepts ISO 3166-2 subdivision codes, or a two-letter state code for the USA.",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[A-Z]{2}-[A-Z0-9]{1,3}|[A-Z]{2})$"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "city",
+          "description": "ID5 names the UN/LOCODE format, two country letters followed by three letters or digits 2 through 9.",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Z]{2}[A-Z2-9]{3}$"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "accept_language",
+          "description": "ID5 requires compatibility with the browser Accept-Language header. RFC 9110 and RFC 4647 define basic language ranges and optional quality weights from 0 to 1 with at most three fractional digits.",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[ \\t]*(?:[A-Za-z]{1,8}(?:-[A-Za-z0-9]{1,8})*|\\*)(?:[ \\t]*;[ \\t]*[qQ]=(?:0(?:\\.[0-9]{0,3})?|1(?:\\.0{0,3})?))?(?:[ \\t]*,[ \\t]*(?:[A-Za-z]{1,8}(?:-[A-Za-z0-9]{1,8})*|\\*)(?:[ \\t]*;[ \\t]*[qQ]=(?:0(?:\\.[0-9]{0,3})?|1(?:\\.0{0,3})?))?)*[ \\t]*$"
+          },
+          "doc": "https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.4",
+          "source_level": "normative"
+        },
+        {
+          "name": "gdpr",
+          "description": "ID5 documents 1 when GDPR applies and 0 otherwise.",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "allowed_vendors",
+          "description": "ID5 documents allowed_vendors as an array of vendor identifier strings.",
+          "json_type": "array",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "allowed_vendors[]",
+          "description": "ID5 accepts ID5-prefixed partner identifiers or numeric IAB vendor IDs.",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:ID5-.+|[0-9]+)$"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "us_privacy",
+          "description": "ID5 accepts the IAB US Privacy String.",
+          "json_type": "string",
+          "format": {
+            "kind": "us_privacy"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "gpp_sid",
+          "description": "ID5 allows one GPP section ID or at most two comma-separated section IDs.",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:,[0-9]+)?$"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "idfv",
+          "description": "ID5 documents the Apple vendor identifier in UUID format.",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "ipv6",
+          "description": "ID5 documents ipv6 as the device IPv6 address.",
+          "json_type": "string",
+          "format": {
+            "kind": "ip",
+            "version": "v6"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "country",
+          "description": "ID5 documents country as an ISO 3166-1 alpha-2 code.",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "segments",
+          "description": "ID5 documents segments as an array of objects.",
+          "json_type": "array",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "segments[]",
+          "description": "Every ID5 segment entry is an object.",
+          "json_type": "object",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "name",
+          "description": "ID5 documents name as an optional string request field.",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "domain",
+          "description": "ID5 documents domain as an optional string request field.",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "puid",
+          "description": "ID5 documents puid as an optional string request field.",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "maid",
+          "description": "ID5 documents the device advertising identifier in UUID format.",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "maid_type",
+          "description": "ID5 documents idfa and gaid as device identifier types.",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "idfa",
+              "gaid"
+            ]
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "att",
+          "description": "ID5 declares ATT boolean while also illustrating binary integer values.",
+          "json_type": [
+            "boolean",
+            "integer"
+          ],
+          "minimum": 0,
+          "maximum": 1,
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.id5.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. ID5 documents hem as a SHA-256 digest of a cleansed email.",
+          "fix_hint": "Cleanse the email, hash it with SHA-256, and send it as hem.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "code": "vendor.id5.body.us_region_format",
+          "kind": "format_when",
+          "when": "country",
+          "equals": [
+            "US"
+          ],
+          "param": "region",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "severity": "error",
+          "message": "ID5 specifies a two-letter state code for USA regions.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "code": "vendor.id5.body.non_us_region_iso_format",
+          "kind": "format",
+          "param": "region",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$"
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "present",
+                "param": "country"
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "value_in",
+                  "param": "country",
+                  "values": [
+                    "US"
+                  ]
+                }
+              }
+            ]
+          },
+          "severity": "error",
+          "message": "ID5 permits the two-letter state abbreviation only for the United States. Other supplied countries require an ISO 3166-2 region code.",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        }
+      ]
+    },
+    {
+      "scope": "segments[]",
+      "params": [
+        {
+          "name": "destination",
+          "description": "Every segment needs its destination IAB vendor identifier.",
+          "json_type": "string",
+          "requirement": "required",
+          "format": {
+            "kind": "integer"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "ids",
+          "description": "Every segment needs an array of string segment identifiers.",
+          "json_type": "array",
+          "requirement": "required",
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        },
+        {
+          "name": "ids[]",
+          "description": "Segment identifiers are strings.",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://wiki.id5.io/docs/mobile-in-app-integration"
+        }
+      ],
+      "rules": []
+    }
+  ]
 }

@@ -17,7 +17,8 @@
       {
         "any_of": [
           "events[].name",
-          "events"
+          "events",
+          "user_data"
         ]
       },
       {
@@ -27,7 +28,8 @@
           "timestamp_micros",
           "user_properties",
           "consent",
-          "non_personalized_ads"
+          "non_personalized_ads",
+          "app_instance_id"
         ]
       }
     ]
@@ -93,37 +95,43 @@
       "params": [
         {
           "name": "client_id",
-          "requirement": "recommended",
+          "requirement": "optional",
           "format": {
             "kind": "non_empty"
           },
           "description": "It identifies the browser or device the event belongs to, and events without it are not joined to a user.",
           "fix_hint": "Send the `_ga` cookie's client id, or a stable id of your own.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
         },
         {
           "name": "events",
           "description": "Google documents the events array as the one required field of the request body. An empty array sends no events at all.",
           "fix_hint": "Send an `events` array holding at least one event.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "array",
+          "requirement": "optional",
+          "min_items": 1,
+          "max_items": 25
         },
         {
           "name": "timestamp_micros",
           "format": {
-            "kind": "integer",
-            "min_digits": 16,
-            "max_digits": 16
+            "kind": "integer"
           },
           "description": "Google documents this as a Unix timestamp in microseconds, not milliseconds. A 13-digit value is milliseconds and a 10-digit value is seconds.",
           "fix_hint": "Multiply a millisecond timestamp by 1000, or a second timestamp by 1000000.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "integer",
+          "minimum": 0
         },
         {
           "name": "non_personalized_ads",
           "requirement": "deprecated",
           "description": "Google marks it deprecated in the Measurement Protocol reference.",
           "fix_hint": "Use the `consent` object instead.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "boolean"
         },
         {
           "name": "user_id",
@@ -132,46 +140,60 @@
           },
           "description": "It is a stable user identifier. Google documents `user_id` on the Measurement Protocol envelope.",
           "fix_hint": "Send a stable `user_id` when you have one, or omit the field.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
         },
         {
           "name": "consent.ad_user_data",
           "format": {
             "kind": "enum",
-            "values": ["GRANTED", "DENIED"]
+            "values": [
+              "GRANTED",
+              "DENIED"
+            ]
           },
           "description": "It is consent for sending user data to Google for advertising. Google documents `GRANTED` or `DENIED`.",
           "fix_hint": "Set `consent.ad_user_data` to `GRANTED` or `DENIED`.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
         },
         {
           "name": "consent.ad_personalization",
           "format": {
             "kind": "enum",
-            "values": ["GRANTED", "DENIED"]
+            "values": [
+              "GRANTED",
+              "DENIED"
+            ]
           },
           "description": "It is consent for personalized advertising. Google documents `GRANTED` or `DENIED`.",
           "fix_hint": "Set `consent.ad_personalization` to `GRANTED` or `DENIED`.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
         },
         {
           "name": "validation_behavior",
           "format": {
             "kind": "enum",
-            "values": ["RELAXED", "ENFORCE_RECOMMENDATIONS"]
+            "values": [
+              "RELAXED",
+              "ENFORCE_RECOMMENDATIONS"
+            ]
           },
           "description": "It selects how strictly the Measurement Protocol validates the payload. Google documents `RELAXED` or `ENFORCE_RECOMMENDATIONS`.",
           "fix_hint": "Send `RELAXED` or `ENFORCE_RECOMMENDATIONS`, or omit the field.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
         },
         {
           "name": "ip_override",
           "format": {
-            "kind": "non_empty"
+            "kind": "ip"
           },
           "description": "It is the IP address Google Analytics uses to derive geography. Google documents it as an IP, not a digest.",
           "fix_hint": "Send the visitor IP as `ip_override`, or send `user_location` instead.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
         },
         {
           "name": "user_location.country_id",
@@ -181,7 +203,8 @@
           },
           "description": "It is the country in ISO 3166-1 alpha-2 form. Google documents `US` as the example.",
           "fix_hint": "Send a two-letter country code such as `US`.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
         },
         {
           "name": "user_properties.user_id",
@@ -189,6 +212,225 @@
           "description": "Google reserves `user_id` as a user property name. Send `user_id` on the envelope instead.",
           "fix_hint": "Move the identifier to the top-level `user_id` field.",
           "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "name": "app_instance_id",
+          "description": "The vendor documents `app_instance_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "events[]",
+          "description": "The vendor documents `events[]` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties",
+          "description": "The vendor documents `user_properties` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "json_type": "object",
+          "max_properties": 25
+        },
+        {
+          "name": "user_data",
+          "description": "The vendor documents `user_data` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "json_type": "object"
+        },
+        {
+          "name": "consent",
+          "description": "The vendor documents `consent` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "json_type": "object"
+        },
+        {
+          "name": "user_location",
+          "description": "The vendor documents `user_location` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "json_type": "object"
+        },
+        {
+          "name": "device",
+          "description": "The vendor documents `device` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "json_type": "object"
+        },
+        {
+          "name": "user_location.city",
+          "description": "The vendor documents `user_location.city` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "user_location.region_id",
+          "description": "The vendor documents `user_location.region_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}-[A-Za-z0-9]{1,3}$"
+          }
+        },
+        {
+          "name": "user_location.subcontinent_id",
+          "description": "The vendor documents `user_location.subcontinent_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{3}$"
+          }
+        },
+        {
+          "name": "user_location.continent_id",
+          "description": "The vendor documents `user_location.continent_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{3}$"
+          }
+        },
+        {
+          "name": "device.category",
+          "description": "The vendor documents `device.category` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "device.language",
+          "description": "The vendor documents `device.language` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "device.screen_resolution",
+          "description": "The vendor documents `device.screen_resolution` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+x[0-9]+$"
+          }
+        },
+        {
+          "name": "device.operating_system",
+          "description": "The vendor documents `device.operating_system` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "device.operating_system_version",
+          "description": "The vendor documents `device.operating_system_version` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "device.model",
+          "description": "The vendor documents `device.model` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "device.brand",
+          "description": "The vendor documents `device.brand` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "device.browser",
+          "description": "The vendor documents `device.browser` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "device.browser_version",
+          "description": "The vendor documents `device.browser_version` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string"
+        },
+        {
+          "name": "user_properties.first_open_time",
+          "description": "The vendor documents `user_properties.first_open_time` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "user_properties.first_visit_time",
+          "description": "The vendor documents `user_properties.first_visit_time` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "user_properties.last_deep_link_referrer",
+          "description": "The vendor documents `user_properties.last_deep_link_referrer` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "user_properties.first_open_after_install",
+          "description": "The vendor documents `user_properties.first_open_after_install` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "reserved_names",
+          "description": "The vendor documents `reserved_names` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "name_pattern": "^(?:_|firebase_|ga_|google_)",
+          "name_pattern_parent": "user_properties",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "json_type": "object"
+        },
+        {
+          "name": "overlong_names",
+          "description": "The vendor documents `overlong_names` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "name_pattern": "^.{25,}$",
+          "name_pattern_parent": "user_properties",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "events[].name",
+          "description": "The vendor documents `events[].name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "allow_empty": true
+        },
+        {
+          "name": "user_data.sha256_email_address",
+          "description": "The vendor documents `user_data.sha256_email_address` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "max_items": 3
+        },
+        {
+          "name": "user_data.sha256_phone_number",
+          "description": "The vendor documents `user_data.sha256_phone_number` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "max_items": 3
+        },
+        {
+          "name": "user_data.address",
+          "description": "The vendor documents `user_data.address` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "max_items": 2
         }
       ],
       "rules": [
@@ -196,11 +438,139 @@
           "code": "vendor.google-analytics.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["ip_override"],
+          "params": [
+            "ip_override"
+          ],
           "severity": "error",
           "message": "`ip_override` looks like a SHA-256 digest, but Google documents it as an IP address.",
           "fix_hint": "Send the raw IP address.",
           "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+        },
+        {
+          "code": "vendor.google-analytics.body.client_or_app_instance_required",
+          "kind": "require_one_of",
+          "severity": "error",
+          "message": "The request does not satisfy the documented client or app instance required requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "params": [
+            "client_id",
+            "app_instance_id"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.app_events_require_app_identifier",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented app events require app identifier requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "events[].name",
+          "equals": [
+            "ad_impression",
+            "screen_view"
+          ],
+          "requires": [
+            "app_instance_id"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.app_events_exclude_client_identifier",
+          "kind": "forbidden_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented app events exclude client identifier requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "events[].name",
+          "equals": [
+            "ad_impression",
+            "screen_view"
+          ],
+          "params": [
+            "client_id"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.events_or_user_data_required",
+          "kind": "require_one_of",
+          "severity": "error",
+          "message": "The request does not satisfy the documented events or user data required requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "params": [
+            "events",
+            "user_data"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.user_data_user_id_recommended",
+          "kind": "required_with",
+          "severity": "warning",
+          "message": "Google recommends user_id when user_data is provided.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "when": "user_data",
+          "requires": [
+            "user_id"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.request_size",
+          "kind": "max_body_bytes",
+          "max_bytes": 129999,
+          "severity": "error",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "message": "The Measurement Protocol request body must be smaller than 130kB."
+        },
+        {
+          "code": "vendor.google-analytics.body.user_location.continent_id.registry",
+          "kind": "format",
+          "param": "user_location.continent_id",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "002",
+              "009",
+              "019",
+              "142",
+              "150"
+            ]
+          },
+          "severity": "warning",
+          "doc": "https://unstats.un.org/unsd/methodology/m49/overview/",
+          "message": "The geographic code is outside the current UNM49 or ISO-alpha2 reference table. Version-specific Google interpretation may differ."
+        },
+        {
+          "code": "vendor.google-analytics.body.user_location.subcontinent_id.registry",
+          "kind": "format",
+          "param": "user_location.subcontinent_id",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "005",
+              "011",
+              "013",
+              "014",
+              "015",
+              "017",
+              "018",
+              "021",
+              "029",
+              "030",
+              "034",
+              "035",
+              "039",
+              "053",
+              "054",
+              "057",
+              "061",
+              "143",
+              "145",
+              "151",
+              "154",
+              "155",
+              "202",
+              "419"
+            ]
+          },
+          "severity": "warning",
+          "doc": "https://unstats.un.org/unsd/methodology/m49/overview/",
+          "message": "The geographic code is outside the current UNM49 or ISO-alpha2 reference table. Version-specific Google interpretation may differ."
         }
       ]
     },
@@ -217,7 +587,9 @@
           "format_severity": "warning",
           "description": "Google documents event names as 40 characters or fewer.",
           "fix_hint": "Use a short name of letters, digits, and underscores, starting with a letter.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "string",
+          "max_length": 40
         },
         {
           "name": "params.currency",
@@ -227,23 +599,31 @@
           },
           "description": "It is the ISO 4217 currency code, and Google requires it whenever `value` is set.",
           "fix_hint": "Use the three-letter code, such as `USD`.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
         },
         {
           "name": "params.value",
           "description": "It is the monetary value of the event.",
           "fix_hint": "Set it to the sum of price times quantity across the items, excluding shipping and tax.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
         },
         {
           "name": "params.transaction_id",
           "description": "It identifies the transaction, and Google requires it for purchase and refund events.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
         },
         {
           "name": "params.items",
           "description": "It lists the items the event covers.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 200
         },
         {
           "name": "params.session_id",
@@ -254,7 +634,9 @@
           },
           "description": "It identifies the user session. Google documents `session_id` as a positive number, and events without it do not contribute correctly to session reports.",
           "fix_hint": "Send `session_id` as digits, matching the Analytics session for this user.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "integer",
+          "minimum": 1
         },
         {
           "name": "params.engagement_time_msec",
@@ -264,22 +646,370 @@
           },
           "description": "It is engagement duration in milliseconds since the preceding event. Google documents it so Realtime and average engagement time stay accurate.",
           "fix_hint": "Send `engagement_time_msec` as milliseconds of engagement since the last event.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "json_type": "integer",
+          "minimum": 0
+        },
+        {
+          "name": "params",
+          "description": "The vendor documents `params` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "json_type": "object",
+          "max_properties": 25
+        },
+        {
+          "name": "params.items[]",
+          "description": "The vendor documents `params.items[]` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "object"
+        },
+        {
+          "name": "params.search_term",
+          "description": "The vendor documents `params.search_term` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.virtual_currency_name",
+          "description": "The vendor documents `params.virtual_currency_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.level",
+          "description": "The vendor documents `params.level` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
+        },
+        {
+          "name": "params.coupon",
+          "description": "The vendor documents `params.coupon` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.payment_type",
+          "description": "The vendor documents `params.payment_type` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.shipping_tier",
+          "description": "The vendor documents `params.shipping_tier` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.item_list_id",
+          "description": "The vendor documents `params.item_list_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.item_list_name",
+          "description": "The vendor documents `params.item_list_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.promotion_id",
+          "description": "The vendor documents `params.promotion_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.promotion_name",
+          "description": "The vendor documents `params.promotion_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.creative_name",
+          "description": "The vendor documents `params.creative_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.creative_slot",
+          "description": "The vendor documents `params.creative_slot` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.method",
+          "description": "The vendor documents `params.method` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.content_type",
+          "description": "The vendor documents `params.content_type` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.content_id",
+          "description": "The vendor documents `params.content_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.item_name",
+          "description": "The vendor documents `params.item_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.group_id",
+          "description": "The vendor documents `params.group_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.character",
+          "description": "The vendor documents `params.character` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.campaign_id",
+          "description": "The vendor documents `params.campaign_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.campaign",
+          "description": "The vendor documents `params.campaign` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.source",
+          "description": "The vendor documents `params.source` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.medium",
+          "description": "The vendor documents `params.medium` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.term",
+          "description": "The vendor documents `params.term` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.content",
+          "description": "The vendor documents `params.content` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.ad_platform",
+          "description": "The vendor documents `params.ad_platform` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.ad_source",
+          "description": "The vendor documents `params.ad_source` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.ad_format",
+          "description": "The vendor documents `params.ad_format` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.ad_unit_name",
+          "description": "The vendor documents `params.ad_unit_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.screen_class",
+          "description": "The vendor documents `params.screen_class` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.screen_name",
+          "description": "The vendor documents `params.screen_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.shipping",
+          "description": "The vendor documents `params.shipping` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
+        },
+        {
+          "name": "params.tax",
+          "description": "The vendor documents `params.tax` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
+        },
+        {
+          "name": "params.score",
+          "description": "The vendor documents `params.score` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
+        },
+        {
+          "name": "params.achievement_id",
+          "description": "The vendor documents `params.achievement_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.lead_source",
+          "description": "The vendor documents `params.lead_source` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.disqualified_lead_reason",
+          "description": "The vendor documents `params.disqualified_lead_reason` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.unconvert_lead_reason",
+          "description": "The vendor documents `params.unconvert_lead_reason` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "reserved_names",
+          "description": "The vendor documents `reserved_names` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+          "name_pattern": "^(?:_|firebase_|ga_|google_|gtag\\.).*",
+          "name_pattern_parent": "params",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "overlong_names",
+          "description": "The vendor documents `overlong_names` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "name_pattern": "^.{41,}$",
+          "name_pattern_parent": "params",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "params.firebase_conversion",
+          "description": "The vendor documents `params.firebase_conversion` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "params.item_id",
+          "description": "The vendor documents `params.item_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.lead_status",
+          "description": "The vendor documents `params.lead_status` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "params.unique_search_term",
+          "description": "The vendor documents `params.unique_search_term` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "integer",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1"
+            ]
+          }
+        },
+        {
+          "name": "timestamp_micros",
+          "json_type": "integer",
+          "minimum": 0,
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "description": "An event-level microsecond timestamp overrides the request timestamp."
+        },
+        {
+          "name": "invalid_parameter_names",
+          "name_pattern": "(?s)^(?:$|[^A-Za-z].*|.*[^A-Za-z0-9_].*)$",
+          "name_pattern_parent": "params",
+          "requirement": "forbidden",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "description": "Parameter names must start with an alphabetic character and contain only alphanumeric characters or underscores."
+        },
+        {
+          "name": "parameter_values",
+          "name_pattern": "(?s)^.+$",
+          "name_pattern_parent": "params",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "null"
+          ],
+          "max_length": 500,
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "description": "String parameter values are at most 500 characters on Analytics 360 and at most 100 on standard properties. This pack enforces the shared upper bound."
+        },
+        {
+          "name": "request_timestamp",
+          "root_path": "timestamp_micros",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+        },
+        {
+          "name": "request_validation",
+          "root_path": "validation_behavior",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
         }
       ],
       "rules": [
-        {
-          "code": "vendor.google-analytics.body.value_requires_currency",
-          "kind": "required_with",
-          "when": "params.value",
-          "requires": [
-            "params.currency"
-          ],
-          "severity": "error",
-          "message": "The event carries a `value` with no `currency`. Google documents currency as required whenever value is set, and drops the revenue otherwise.",
-          "fix_hint": "Add `currency` as an ISO 4217 code alongside the value.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
-        },
         {
           "code": "vendor.google-analytics.body.purchase_requires_ecommerce_fields",
           "kind": "required_when_value",
@@ -288,15 +1018,13 @@
             "purchase"
           ],
           "requires": [
-            "params.currency",
-            "params.value",
             "params.transaction_id",
             "params.items"
           ],
           "severity": "error",
-          "message": "A `purchase` event is missing fields Google documents as required for it, so it will not report revenue correctly.",
+          "message": "This event is missing documented required ecommerce fields.",
           "fix_hint": "Add the required ecommerce parameters to the event.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events"
         },
         {
           "code": "vendor.google-analytics.body.refund_requires_ecommerce_fields",
@@ -306,14 +1034,12 @@
             "refund"
           ],
           "requires": [
-            "params.currency",
-            "params.value",
             "params.transaction_id"
           ],
           "severity": "error",
-          "message": "A `refund` event is missing fields Google documents as required for it, so it will not report revenue correctly.",
+          "message": "This event is missing documented required ecommerce fields.",
           "fix_hint": "Add the required ecommerce parameters to the event.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events"
         },
         {
           "code": "vendor.google-analytics.body.cart_requires_ecommerce_fields",
@@ -326,14 +1052,12 @@
             "add_payment_info"
           ],
           "requires": [
-            "params.currency",
-            "params.value",
             "params.items"
           ],
           "severity": "error",
-          "message": "Google documents `currency`, `value`, and `items` as required for this ecommerce event.",
+          "message": "This event is missing documented required ecommerce fields.",
           "fix_hint": "Add `currency`, `value`, and the `items` array to the event.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events"
         },
         {
           "code": "vendor.google-analytics.body.view_item_requires_ecommerce_fields",
@@ -344,16 +1068,662 @@
             "add_to_wishlist"
           ],
           "requires": [
-            "params.currency",
-            "params.value",
             "params.items"
           ],
           "severity": "error",
-          "message": "Google documents `currency`, `value`, and `items` as required for this item event.",
+          "message": "This event is missing documented required ecommerce fields.",
           "fix_hint": "Add `currency`, `value`, and the `items` array to the event.",
-          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/reference/events"
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events"
+        },
+        {
+          "code": "vendor.google-analytics.body.search_required_fields",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented search required fields requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "search"
+          ],
+          "requires": [
+            "params.search_term"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.spend_virtual_currency_required_fields",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented spend virtual currency required fields requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "spend_virtual_currency"
+          ],
+          "requires": [
+            "params.value",
+            "params.virtual_currency_name"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.add_shipping_info_requires_items",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented add shipping info requires items requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "add_shipping_info"
+          ],
+          "requires": [
+            "params.items"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.remove_from_cart_requires_items",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented remove from cart requires items requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "remove_from_cart"
+          ],
+          "requires": [
+            "params.items"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.select_item_requires_items",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented select item requires items requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "select_item"
+          ],
+          "requires": [
+            "params.items"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.view_item_list_requires_items",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented view item list requires items requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "view_item_list"
+          ],
+          "requires": [
+            "params.items"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.select_promotion_requires_items",
+          "kind": "required_when_value",
+          "severity": "warning",
+          "message": "Promotion events without items are omitted from some promotion reports.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "select_promotion"
+          ],
+          "requires": [
+            "params.items"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.view_promotion_requires_items",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "view_promotion requires an items array.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "view_promotion"
+          ],
+          "requires": [
+            "params.items"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.post_score_required_fields",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented post score required fields requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "post_score"
+          ],
+          "requires": [
+            "params.score"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.unlock_achievement_required_fields",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented unlock achievement required fields requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "unlock_achievement"
+          ],
+          "requires": [
+            "params.achievement_id"
+          ]
+        },
+        {
+          "code": "vendor.google-analytics.body.value_requires_currency",
+          "kind": "required_with",
+          "severity": "error",
+          "message": "The request does not satisfy the documented value requires currency requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "params.value",
+          "requires": [
+            "params.currency"
+          ],
+          "condition": {
+            "kind": "value_in",
+            "param": "name",
+            "values": [
+              "ad_impression",
+              "add_payment_info",
+              "add_shipping_info",
+              "add_to_cart",
+              "add_to_wishlist",
+              "begin_checkout",
+              "purchase",
+              "refund",
+              "remove_from_cart",
+              "view_cart",
+              "view_item",
+              "close_convert_lead",
+              "close_unconvert_lead",
+              "disqualify_lead",
+              "generate_lead",
+              "qualify_lead",
+              "working_lead"
+            ]
+          }
+        },
+        {
+          "code": "vendor.google-analytics.body.reserved_event_name",
+          "kind": "forbid_value_pattern",
+          "severity": "error",
+          "message": "The request does not satisfy the documented reserved event name requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "params": [
+            "name"
+          ],
+          "pattern": "^(?:ad_activeview|ad_click|ad_exposure|ad_query|ad_reward|adunit_exposure|app_clear_data|app_exception|app_install|app_remove|app_store_refund|app_update|app_upgrade|dynamic_link_app_open|dynamic_link_app_update|dynamic_link_first_open|error|firebase_campaign|firebase_in_app_message_action|firebase_in_app_message_dismiss|firebase_in_app_message_impression|first_open|first_visit|notification_dismiss|notification_foreground|notification_open|notification_receive|notification_send|os_update|session_start|user_engagement)$"
+        },
+        {
+          "code": "vendor.google-analytics.body.selected_content_identifier",
+          "kind": "format_when",
+          "severity": "error",
+          "message": "The request does not satisfy the documented selected content identifier requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "name",
+          "equals": [
+            "select_content"
+          ],
+          "param": "params.content_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "[^0-9]"
+          }
+        },
+        {
+          "code": "vendor.google-analytics.body.close_convert_lead_currency_requires_value",
+          "kind": "required_with",
+          "severity": "error",
+          "message": "The request does not satisfy the documented close convert lead currency requires value requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "when": "params.currency",
+          "requires": [
+            "params.value"
+          ],
+          "condition": {
+            "kind": "value_in",
+            "param": "name",
+            "values": [
+              "close_convert_lead"
+            ]
+          }
+        },
+        {
+          "code": "vendor.google-analytics.body.event_timestamp_age",
+          "kind": "time_window",
+          "param": "timestamp_micros",
+          "fallback_param": "request_timestamp",
+          "unit": "microseconds",
+          "max_age_seconds": 259200,
+          "condition": {
+            "kind": "value_in",
+            "param": "request_validation",
+            "values": [
+              "ENFORCE_RECOMMENDATIONS"
+            ]
+          },
+          "severity": "error",
+          "message": "With ENFORCE_RECOMMENDATIONS, the effective event or user-property timestamp cannot be earlier than 72 hours ago. A local timestamp overrides the request timestamp.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
         }
       ]
+    },
+    {
+      "scope": "events[].params.items[]",
+      "params": [
+        {
+          "name": "item_id",
+          "description": "The vendor documents `item_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_name",
+          "description": "The vendor documents `item_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "affiliation",
+          "description": "The vendor documents `affiliation` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "coupon",
+          "description": "The vendor documents `coupon` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_brand",
+          "description": "The vendor documents `item_brand` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_category",
+          "description": "The vendor documents `item_category` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_category2",
+          "description": "The vendor documents `item_category2` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_category3",
+          "description": "The vendor documents `item_category3` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_category4",
+          "description": "The vendor documents `item_category4` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_category5",
+          "description": "The vendor documents `item_category5` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_list_id",
+          "description": "The vendor documents `item_list_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_list_name",
+          "description": "The vendor documents `item_list_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "item_variant",
+          "description": "The vendor documents `item_variant` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "location_id",
+          "description": "The vendor documents `location_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "promotion_id",
+          "description": "The vendor documents `promotion_id` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "promotion_name",
+          "description": "The vendor documents `promotion_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "creative_name",
+          "description": "The vendor documents `creative_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "creative_slot",
+          "description": "The vendor documents `creative_slot` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "discount",
+          "description": "The vendor documents `discount` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
+        },
+        {
+          "name": "index",
+          "description": "The vendor documents `index` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
+        },
+        {
+          "name": "price",
+          "description": "The vendor documents `price` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
+        },
+        {
+          "name": "quantity",
+          "description": "The vendor documents `quantity` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "number"
+        },
+        {
+          "name": "currency",
+          "description": "The vendor documents `currency` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "google_business_vertical",
+          "description": "The vendor documents `google_business_vertical` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "json_type": "string",
+          "max_length": 500
+        },
+        {
+          "name": "",
+          "json_type": "object",
+          "max_properties": 10,
+          "property_exclusions": [
+            "item_id",
+            "item_name",
+            "affiliation",
+            "coupon",
+            "item_brand",
+            "item_category",
+            "item_category2",
+            "item_category3",
+            "item_category4",
+            "item_category5",
+            "item_list_id",
+            "item_list_name",
+            "item_variant",
+            "location_id",
+            "promotion_id",
+            "promotion_name",
+            "creative_name",
+            "creative_slot",
+            "discount",
+            "index",
+            "price",
+            "quantity"
+          ],
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "description": "Measurement Protocol supports at most ten custom item parameters, excluding prescribed item fields."
+        },
+        {
+          "name": "invalid_parameter_names",
+          "name_pattern": "(?s)^(?:$|[^A-Za-z].*|.*[^A-Za-z0-9_].*)$",
+          "name_pattern_parent": "",
+          "requirement": "forbidden",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "description": "Parameter names must start with an alphabetic character and contain only alphanumeric characters or underscores."
+        },
+        {
+          "name": "overlong_item_parameter_names",
+          "name_pattern": "(?s)^.{41,}$",
+          "name_pattern_parent": "",
+          "requirement": "forbidden",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "description": "Item parameter names are at most forty characters."
+        },
+        {
+          "name": "parameter_values",
+          "name_pattern": "(?s)^.+$",
+          "name_pattern_parent": "",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "null"
+          ],
+          "max_length": 500,
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events",
+          "description": "String parameter values are at most 500 characters on Analytics 360 and at most 100 on standard properties. This pack enforces the shared upper bound."
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.google-analytics.body.item_identifier_required",
+          "kind": "require_one_of",
+          "severity": "error",
+          "message": "The request does not satisfy the documented item identifier required requirement.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events",
+          "params": [
+            "item_id",
+            "item_name"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "user_properties.*",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+        },
+        {
+          "name": "value",
+          "requirement": "required",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "max_length": 36,
+          "allow_empty": true,
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+        },
+        {
+          "name": "timestamp_micros",
+          "json_type": "integer",
+          "minimum": 0,
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+        },
+        {
+          "name": "request_timestamp",
+          "root_path": "timestamp_micros",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+        },
+        {
+          "name": "request_validation",
+          "root_path": "validation_behavior",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.google-analytics.body.user_property_timestamp_age",
+          "kind": "time_window",
+          "param": "timestamp_micros",
+          "fallback_param": "request_timestamp",
+          "unit": "microseconds",
+          "max_age_seconds": 259200,
+          "condition": {
+            "kind": "value_in",
+            "param": "request_validation",
+            "values": [
+              "ENFORCE_RECOMMENDATIONS"
+            ]
+          },
+          "severity": "error",
+          "message": "With ENFORCE_RECOMMENDATIONS, the effective event or user-property timestamp cannot be earlier than 72 hours ago. A local timestamp overrides the request timestamp.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "user_data.sha256_email_address[]",
+        "user_data.sha256_email_address"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": [
+        "user_data.sha256_phone_number[]",
+        "user_data.sha256_phone_number"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": [
+        "user_data.address[]",
+        "user_data.address"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data"
+        },
+        {
+          "name": "sha256_first_name",
+          "description": "The vendor documents `sha256_first_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "sha256_last_name",
+          "description": "The vendor documents `sha256_last_name` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "sha256_street",
+          "description": "The vendor documents `sha256_street` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          }
+        },
+        {
+          "name": "city",
+          "description": "The vendor documents `city` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": "string"
+        },
+        {
+          "name": "region",
+          "description": "The vendor documents `region` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": "string"
+        },
+        {
+          "name": "postal_code",
+          "description": "The vendor documents `postal_code` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": "string"
+        },
+        {
+          "name": "country",
+          "description": "The vendor documents `country` in the request contract.",
+          "doc": "https://developers.google.com/analytics/devguides/collection/ga4/uid-data",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}$"
+          }
+        }
+      ],
+      "rules": []
     }
   ]
 }

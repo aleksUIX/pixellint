@@ -6,13 +6,19 @@
   "source_level": "official_vendor",
   "docs": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
   "match": {
-    "hosts": ["googleads.googleapis.com"],
-    "path_contains": ["uploadCallConversions"],
+    "hosts": [
+      "googleads.googleapis.com"
+    ],
+    "path_contains": [
+      "uploadCallConversions"
+    ],
     "json_paths": [
       {
         "any_of": [
           "conversions[].callerId",
-          "conversions[].callStartDateTime"
+          "conversions[].caller_id",
+          "conversions[].callStartDateTime",
+          "conversions[].call_start_date_time"
         ]
       }
     ]
@@ -25,37 +31,90 @@
           "requirement": "required",
           "description": "UploadCallConversions requires a `conversions` array.",
           "fix_hint": "Send at least one CallConversion in `conversions`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 2000,
+          "null_as_missing": true
         },
         {
           "name": "partialFailure",
           "requirement": "required",
-          "format": { "kind": "enum", "values": ["true"] },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true"
+            ]
+          },
           "description": "Google documents `partial_failure` as required, and the upload guides say to always send true.",
           "fix_hint": "Set `partialFailure` to `true`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "boolean",
+          "aliases": [
+            "partial_failure"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "conversions[]",
+          "description": "The vendor documents `conversions[]` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "object"
+        },
+        {
+          "name": "validateOnly",
+          "description": "The vendor documents `validateOnly` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "boolean",
+          "aliases": [
+            "validate_only"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "object"
         }
       ],
       "rules": []
     },
     {
-      "scope": "conversions[]",
+      "scope": [
+        "conversions[]"
+      ],
       "params": [
         {
           "name": "conversionAction",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the conversion action resource name, and every uploaded call conversion requires it.",
           "fix_hint": "Set `conversionAction` to `customers/{id}/conversionActions/{id}`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "string",
+          "aliases": [
+            "conversion_action"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "callerId",
           "requirement": "required",
-          "format": { "kind": "regex", "pattern": "^\\+[1-9][0-9]{6,14}$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^\\+[1-9][0-9]{6,14}$"
+          },
           "description": "It is the caller phone number. Google documents E.164 with a leading `+`.",
           "fix_hint": "Send E.164, such as `+16502531234`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "string",
+          "aliases": [
+            "caller_id"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "callStartDateTime",
@@ -66,7 +125,12 @@
           },
           "description": "Google documents the call start time as `yyyy-mm-dd hh:mm:ss+|-hh:mm`.",
           "fix_hint": "Send a timestamp such as `2026-08-21 12:00:00+00:00`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "string",
+          "aliases": [
+            "call_start_date_time"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "conversionDateTime",
@@ -77,31 +141,96 @@
           },
           "description": "Google documents the conversion time with a timezone offset as `yyyy-mm-dd hh:mm:ss+|-hh:mm`. It must be after the call start.",
           "fix_hint": "Send a timestamp such as `2026-08-21 12:05:00+00:00`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "string",
+          "aliases": [
+            "conversion_date_time"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "conversionValue",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?|NaN|-?Infinity)$"
+          },
           "description": "It is the conversion value for the advertiser. Google documents a non-negative number together with `currencyCode`.",
           "fix_hint": "Send a number such as `1.0`, with no currency symbol, together with `currencyCode`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://protobuf.dev/programming-guides/json/",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "aliases": [
+            "conversion_value"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "currencyCode",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
           "description": "It is an ISO 4217 currency code for `conversionValue`.",
           "fix_hint": "Use the three-letter code, such as `USD`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "string",
+          "aliases": [
+            "currency_code"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "consent.adUserData",
           "format": {
             "kind": "enum",
-            "values": ["UNSPECIFIED", "UNKNOWN", "GRANTED", "DENIED"]
+            "values": [
+              "UNSPECIFIED",
+              "UNKNOWN",
+              "GRANTED",
+              "DENIED",
+              "0",
+              "1",
+              "2",
+              "3"
+            ]
           },
           "description": "Google documents `consent.ad_user_data` on the CallConversion object.",
           "fix_hint": "Send `GRANTED` or `DENIED`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+          "doc": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v24/enums/consent_status.proto",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "aliases": [
+            "consent.ad_user_data"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "consent",
+          "description": "The vendor documents `consent` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls",
+          "json_type": "object",
+          "null_as_missing": true
+        },
+        {
+          "name": "customVariables",
+          "json_type": "array",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable",
+          "aliases": [
+            "custom_variables"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "customVariables[]",
+          "json_type": "object",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable",
+          "aliases": [
+            "custom_variables[]"
+          ]
         }
       ],
       "rules": [
@@ -109,7 +238,9 @@
           "code": "vendor.google-ads-call-conversions.body.value_requires_currency",
           "kind": "required_with",
           "when": "conversionValue",
-          "requires": ["currencyCode"],
+          "requires": [
+            "currencyCode"
+          ],
           "severity": "error",
           "message": "The conversion sends `conversionValue` without `currencyCode`. Google documents the ISO 4217 code together with the value.",
           "fix_hint": "Add `currencyCode`, such as `USD`.",
@@ -119,13 +250,97 @@
           "code": "vendor.google-ads-call-conversions.body.currency_requires_value",
           "kind": "required_with",
           "when": "currencyCode",
-          "requires": ["conversionValue"],
+          "requires": [
+            "conversionValue"
+          ],
           "severity": "error",
           "message": "The conversion sends `currencyCode` without `conversionValue`. Google documents both together.",
           "fix_hint": "Add `conversionValue` as a non-negative number.",
           "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "code": "vendor.google-ads-call-conversions.body.callStartDateTime.calendar_invalid",
+          "kind": "format",
+          "param": "callStartDateTime",
+          "format": {
+            "kind": "datetime",
+            "require_timezone": true,
+            "allow_space_separator": true
+          },
+          "condition": {
+            "kind": "value_pattern",
+            "param": "callStartDateTime",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"
+          },
+          "severity": "error",
+          "message": "The conversion timestamp must represent a valid calendar date, time and timezone offset.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "code": "vendor.google-ads-call-conversions.body.conversionDateTime.calendar_invalid",
+          "kind": "format",
+          "param": "conversionDateTime",
+          "format": {
+            "kind": "datetime",
+            "require_timezone": true,
+            "allow_space_separator": true
+          },
+          "condition": {
+            "kind": "value_pattern",
+            "param": "conversionDateTime",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"
+          },
+          "severity": "error",
+          "message": "The conversion timestamp must represent a valid calendar date, time and timezone offset.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-calls"
+        },
+        {
+          "code": "vendor.google-ads-call-conversions.body.conversion_after_call",
+          "kind": "less_equal",
+          "left": "callStartDateTime",
+          "right": "conversionDateTime",
+          "strict": true,
+          "unit": "datetime",
+          "severity": "error",
+          "message": "The conversion time must be after the call start time, accounting for timezone offsets.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CallConversion"
         }
       ]
+    },
+    {
+      "scope": [
+        "conversions[].customVariables[]",
+        "conversions[].custom_variables[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable"
+        },
+        {
+          "name": "conversionCustomVariable",
+          "json_type": "string",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^customers/[0-9]+/conversionCustomVariables/[0-9]+$"
+          },
+          "aliases": [
+            "conversion_custom_variable"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "value",
+          "json_type": "string",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable",
+          "requirement": "required",
+          "null_as_missing": true
+        }
+      ],
+      "rules": []
     }
   ]
 }

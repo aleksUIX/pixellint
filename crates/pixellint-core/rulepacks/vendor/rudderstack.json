@@ -6,9 +6,16 @@
   "source_level": "official_vendor",
   "docs": "https://www.rudderstack.com/docs/api/http-api/",
   "match": {
-    "hosts": ["hosted.rudderlabs.com"],
-    "host_suffixes": ["dataplane.rudderstack.com", "rudderlabs.com"],
-    "path_contains": ["/pixel/v1/track"],
+    "hosts": [
+      "hosted.rudderlabs.com"
+    ],
+    "host_suffixes": [
+      "dataplane.rudderstack.com",
+      "rudderlabs.com"
+    ],
+    "path_contains": [
+      "/pixel/v1/track"
+    ],
     "json_paths": [
       {
         "any_of": [
@@ -17,18 +24,33 @@
         ]
       },
       {
-        "any_of": ["event", "batch[].type", "batch[].event"]
+        "any_of": [
+          "event",
+          "batch[].type",
+          "batch[].event"
+        ]
       },
-      { "path": "writeKey", "excludes": "^.+$" },
-      { "path": "api_key", "excludes": "^.+$" },
-      { "path": "distinct_id", "excludes": "^.+$" }
+      {
+        "path": "writeKey",
+        "excludes": "^.+$"
+      },
+      {
+        "path": "api_key",
+        "excludes": "^.+$"
+      },
+      {
+        "path": "distinct_id",
+        "excludes": "^.+$"
+      }
     ]
   },
   "params": [
     {
       "name": "writeKey",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "The Pixel API authenticates with the source write key in the query. HTTP POST uses basic auth instead, and is a JSON artifact.",
       "fix_hint": "Add `writeKey` from the HTTP source in the dashboard.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
@@ -36,96 +58,126 @@
     {
       "name": "event",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Name of the event being tracked. Required on /pixel/v1/track.",
       "fix_hint": "Set `event` to the action name, such as `Product Viewed`.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "anonymousId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Anonymous identifier. The Pixel API requires `userId` or `anonymousId`.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "userId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Known-user identifier. Alternative to `anonymousId`.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "name",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Page or screen name sent for context on a pixel track.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.library.name",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Name of the library or SDK, such as `Rudderstack AMP SDK`.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.library.version",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Version of the library or SDK.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.platform",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Platform context, such as `AMP`.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.locale",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "User locale, such as the browser language.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.userAgent",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "User agent string of the client that fired the pixel.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.screen.width",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "Screen width in pixels. RudderStack's Pixel API sample sends an integer.",
       "fix_hint": "Send the width in pixels, such as `1920`.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.screen.height",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "Screen height in pixels. RudderStack's Pixel API sample sends an integer.",
       "fix_hint": "Send the height in pixels, such as `1080`.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.page.path",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Path of the page being viewed.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.page.url",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "Full page URL. RudderStack documents `path`, `url`, `referrer`, and `title` on `context.page`.",
       "fix_hint": "Send an absolute URL in `context.page.url`, including the scheme.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.page.referrer",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "Referrer URL of the page being viewed.",
       "fix_hint": "Send an absolute referrer URL, or drop the empty pair.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     },
     {
       "name": "context.page.title",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "Title of the page being viewed.",
       "doc": "https://www.rudderstack.com/docs/api/pixel-api/"
     }
@@ -134,7 +186,10 @@
     {
       "code": "vendor.rudderstack.identifier_required",
       "kind": "require_one_of",
-      "params": ["userId", "anonymousId"],
+      "params": [
+        "userId",
+        "anonymousId"
+      ],
       "severity": "error",
       "message": "The pixel has neither `userId` nor `anonymousId`. RudderStack documents one of the two as required.",
       "fix_hint": "Send `userId` for a known user, or `anonymousId` for an unidentified one.",
@@ -150,32 +205,55 @@
           "requirement": "required",
           "format": {
             "kind": "enum",
-            "values": ["identify", "track", "page", "screen", "group", "alias"]
+            "values": [
+              "identify",
+              "track",
+              "page",
+              "screen",
+              "group",
+              "alias"
+            ]
           },
           "description": "Each batched call names a documented method.",
           "fix_hint": "Set `type` to identify, track, page, screen, group, or alias.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "event",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Name of the user action. Required on a track call.",
           "fix_hint": "Set `event` to the action name, such as `Product Purchased`.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "groupId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Unique identifier of the group. RudderStack documents it as required on a group call.",
           "fix_hint": "Set `groupId` to the group in your database.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "previousId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "The previous unique identifier of the user. RudderStack documents it on an alias call.",
           "fix_hint": "Set `previousId` to the id being merged.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "object"
         }
       ],
       "rules": [
@@ -183,8 +261,12 @@
           "code": "vendor.rudderstack.body.track_requires_an_event_name",
           "kind": "required_when_value",
           "when": "type",
-          "equals": ["track"],
-          "requires": ["event"],
+          "equals": [
+            "track"
+          ],
+          "requires": [
+            "event"
+          ],
           "severity": "error",
           "message": "A `track` call carries no `event`. RudderStack documents the event name as required.",
           "fix_hint": "Add the event name to the call.",
@@ -194,8 +276,12 @@
           "code": "vendor.rudderstack.body.group_requires_group_id",
           "kind": "required_when_value",
           "when": "type",
-          "equals": ["group"],
-          "requires": ["groupId"],
+          "equals": [
+            "group"
+          ],
+          "requires": [
+            "groupId"
+          ],
           "severity": "error",
           "message": "A `group` call carries no `groupId`. RudderStack documents the group id as required.",
           "fix_hint": "Set `groupId` to the group in your database.",
@@ -205,8 +291,12 @@
           "code": "vendor.rudderstack.body.alias_requires_previous_id",
           "kind": "required_when_value",
           "when": "type",
-          "equals": ["alias"],
-          "requires": ["previousId"],
+          "equals": [
+            "alias"
+          ],
+          "requires": [
+            "previousId"
+          ],
           "severity": "error",
           "message": "An `alias` call carries no `previousId`. RudderStack documents the previous unique identifier on alias.",
           "fix_hint": "Set `previousId` to the id being merged.",
@@ -215,93 +305,564 @@
       ]
     },
     {
-      "scope": ["batch[]", ""],
+      "scope": [
+        "batch[]",
+        ""
+      ],
       "params": [
         {
-          "name": "event",
-          "format": { "kind": "non_empty" },
-          "description": "Name of the user action. Required on a track call.",
-          "fix_hint": "Set `event` to the action name, such as `Product Purchased`.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
-        },
-        {
           "name": "userId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Unique identifier for the user. Either this or `anonymousId` is required.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "anonymousId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Stands in for a user id when there is none. Either this or `userId` is required.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "timestamp",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+            "kind": "datetime"
           },
           "description": "RudderStack documents timestamp as ISO 8601 `yyyy-MM-ddTHH:mm:ss.SSSZ`.",
           "fix_hint": "Send an ISO 8601 timestamp such as `2022-02-01T19:14:18.381Z`.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "sentAt",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+            "kind": "datetime"
           },
           "description": "RudderStack documents `sentAt` as the client send time, used with `anonymousId` to keep event order.",
           "fix_hint": "Send an ISO 8601 timestamp such as `2022-02-01T19:14:18.381Z`.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "context.ip",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "ip"
+          },
           "description": "It is the visitor IP, sent unhashed. RudderStack's HTTP samples send a raw address.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "name",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Name of the page or screen. RudderStack's HTTP page and screen samples send it.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "json_type": "string"
         },
         {
           "name": "context.library.name",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Name of the library that produced the call. RudderStack's HTTP samples send `http`.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "json_type": "string"
         },
         {
           "name": "properties.revenue",
           "format": {
             "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
           },
           "description": "Amount associated with the event. RudderStack's HTTP track sample sends a decimal number such as `4.99`.",
           "fix_hint": "Send a number such as `4.99`, with no currency symbol.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "number"
         },
         {
           "name": "properties.path",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Path of the page being viewed. RudderStack's HTTP page sample sends it on `properties`.",
-          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
         },
         {
           "name": "properties.title",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Title of the page being viewed. RudderStack's HTTP page sample sends it on `properties`.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "context",
+          "description": "The vendor documents `context` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "context.library",
+          "description": "The vendor documents `context.library` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "context.page",
+          "description": "The vendor documents `context.page` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "properties",
+          "description": "The vendor documents `properties` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "traits",
+          "description": "The vendor documents `traits` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "integrations",
+          "description": "The vendor documents `integrations` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "type",
+          "allow_empty": true,
           "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "name": "context.app",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.campaign",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.device",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.network",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.os",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.screen",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.traits",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.app.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.app.version",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.app.build",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.app.namespace",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.source",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.medium",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.term",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.campaign.content",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.id",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.advertisingId",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.manufacturer",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.model",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.type",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.version",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.os.name",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.os.version",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.path",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.referrer",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.search",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.title",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.url",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.library.version",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.device.adTrackingEnabled",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.network.carrier",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.network.bluetooth",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.network.cellular",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.network.wifi",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.screen.density",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.screen.height",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.screen.width",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.screen.innerHeight",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.screen.innerWidth",
+          "json_type": "number",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "context.timezone",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.userAgent",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.locale",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "messageId",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "category",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "originalTimestamp",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "format": {
+            "kind": "datetime"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "receivedAt",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "format": {
+            "kind": "datetime"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "integrations.All",
+          "json_type": "boolean",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/"
+        },
+        {
+          "name": "destination_settings",
+          "json_type": [
+            "boolean",
+            "object"
+          ],
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/",
+          "name_pattern": "(?s)^.*$",
+          "name_pattern_parent": "integrations"
+        },
+        {
+          "name": "context.page.initial_referrer",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.initial_referring_domain",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.referring_domain",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.tab_url",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "allow_empty": true
+        },
+        {
+          "name": "channel",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "mobile",
+              "web",
+              "server",
+              "sources"
+            ]
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "request_ip",
+          "json_type": "string",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+          "format": {
+            "kind": "ip"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.externalId",
+          "json_type": "array",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/"
+        },
+        {
+          "name": "context.externalId[]",
+          "json_type": "object",
+          "description": "Published common context field; validated when supplied.",
+          "doc": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/"
         }
       ],
       "rules": [
         {
           "code": "vendor.rudderstack.body.call_needs_an_identifier",
           "kind": "require_one_of",
-          "params": ["userId", "anonymousId"],
+          "params": [
+            "userId",
+            "anonymousId"
+          ],
           "severity": "error",
           "message": "The call carries neither `userId` nor `anonymousId`. RudderStack documents one of the two as required.",
           "fix_hint": "Send `userId` for a known user, or `anonymousId` for an unidentified one.",
@@ -311,11 +872,161 @@
           "code": "vendor.rudderstack.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["context.ip"],
+          "params": [
+            "context.ip"
+          ],
           "severity": "error",
           "message": "`context.ip` looks like a SHA-256 digest, but RudderStack documents it as an IP address.",
           "fix_hint": "Send the raw IP address.",
           "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        },
+        {
+          "code": "vendor.rudderstack.body.alias_requires_user_id",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented alias requires user id requirement.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "when": "type",
+          "equals": [
+            "alias"
+          ],
+          "requires": [
+            "userId"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "",
+      "params": [
+        {
+          "name": "event",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Name of the user action. Required on a track call.",
+          "fix_hint": "Set `event` to the action name, such as `Product Purchased`.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "type",
+          "description": "The vendor documents `type` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "identify",
+              "track",
+              "page",
+              "screen",
+              "group",
+              "alias"
+            ]
+          }
+        },
+        {
+          "name": "groupId",
+          "description": "The vendor documents `groupId` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "previousId",
+          "description": "The vendor documents `previousId` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "string"
+        },
+        {
+          "name": "batch",
+          "description": "The vendor documents `batch` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "batch[]",
+          "description": "The vendor documents `batch[]` in the request contract.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "json_type": "object"
+        },
+        {
+          "name": "",
+          "json_type": "object",
+          "description": "A single call or batch envelope is a JSON object.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.rudderstack.body.track_method_required_field",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented track method required field requirement.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "when": "type",
+          "equals": [
+            "track"
+          ],
+          "requires": [
+            "event"
+          ]
+        },
+        {
+          "code": "vendor.rudderstack.body.group_method_required_field",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented group method required field requirement.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "when": "type",
+          "equals": [
+            "group"
+          ],
+          "requires": [
+            "groupId"
+          ]
+        },
+        {
+          "code": "vendor.rudderstack.body.alias_method_required_field",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented alias method required field requirement.",
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "when": "type",
+          "equals": [
+            "alias"
+          ],
+          "requires": [
+            "previousId"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": [
+        "batch[].context.externalId[]",
+        "context.externalId[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/"
+        },
+        {
+          "name": "id",
+          "json_type": "string",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/"
+        },
+        {
+          "name": "type",
+          "json_type": "string",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/"
         }
       ]
     }

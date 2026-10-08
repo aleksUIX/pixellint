@@ -81,7 +81,7 @@ Validate an inline artifact, a file with `@path`, or stdin with `-`:
 ```bash
 pixellint validate url 'https://px.ads.linkedin.com/collect?pid=123456&fmt=gif'
 pixellint validate postback @conversion-endpoint.txt --json
-curl -s "$TAG_URL" | pixellint validate vast -
+printf '%s\n' 'https://example.com/tracking?cb=[CACHEBUSTING]' | pixellint validate vast - --state template
 ```
 
 Callers that already extracted many URLs (Vastlint, an HTML adapter) pass them
@@ -94,6 +94,9 @@ pixellint validate-many @extracted.json --json
 `extracted.json` is the wrapper in
 [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), or a JSON array
 of URL strings. Pixellint does not parse VAST, HTML, or GTM.
+
+`vast` means one tracking URL extracted from VAST, not a VAST XML document.
+It enables the IAB VAST macro-name checks on that URL.
 
 If the artifact is still a template with unexpanded macros, say so, and macro
 rules adjust:
@@ -148,7 +151,12 @@ on pixellint.org may be stored; see [pixellint.org/privacy](https://pixellint.or
 Responses include the structured findings, the detected vendors, and a
 severity summary, so an agent can act on the result without parsing prose.
 
-### Node and the browser
+### Node
+
+The npm wrapper requires Node.js 18 or newer. Its ESM entry uses `node:module`
+to load the Node-target WASM build. For a browser integration, build
+`pixellint-wasm` for a browser target and supply a browser loader, as the
+playground does.
 
 ```js
 import { validate, isOk } from "pixellint";
@@ -180,6 +188,9 @@ assert!(summary.is_ok());
 targets their endpoints, so you get vendor checks without asking for them, and
 nothing fires on an endpoint it does not understand. A conversion API body has
 no endpoint to go by, so those packs claim it by the shape of the payload.
+
+The table shows selected built-in packs. Run `pixellint list-rulepacks --json`
+for the complete inventory in your installed build.
 
 | Rulepack | Covers | Evidence |
 | --- | --- | --- |
@@ -262,14 +273,23 @@ no endpoint to go by, so those packs claim it by the shape of the payload.
 | `vendor/crazyegg` | Crazy Egg tracking script, account and script IDs in the path | official template |
 | `vendor/chartbeat` | Chartbeat ping, site id `h` and account UID `g` | official vendor |
 | `vendor/heap` | Heap.js 5 configuration loader, environment ID in the path | official vendor |
+| `vendor/heap-track` | Heap server-side event tracking | official vendor |
+| `vendor/heap-user-properties` | Heap server-side user property updates | official vendor |
+| `vendor/heap-account-properties` | Heap server-side account property updates | official vendor |
 | `vendor/mouseflow` | Mouseflow project script, website ID in the path | official vendor |
 | `vendor/intercom` | Intercom Messenger loader, workspace ID in the path | official vendor |
 
 ### Vendor directory
 
-Rulepacks cover 133 endpoint families across 77 vendors. The vendor directory
-covers the rest by attribution: 120 vendor rows and 299 hosts, so an unrecognized
+There are 137 vendor rulepacks across 79 vendors. The vendor directory
+covers additional hosts by attribution: 121 vendor rows and 302 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
+
+The [per-pack depth audit](docs/RULEPACK_DEPTH_AUDIT.json) records reviewed
+sources, implemented checks and remaining requirements. Pack counts and passing
+fixtures do not certify complete vendor specification coverage. Private
+protocols, unsupported request representations, account settings and request
+history remain explicit coverage limits.
 
 ```bash
 $ pixellint validate url 'https://trc.taboola.com/actions?a=1'
@@ -350,7 +370,8 @@ a PR: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## What Pixellint does not do
 
-- It does not extract artifacts from documents. `html`, `js`, and `gtm` are
+- It does not extract artifacts from documents. `vast` accepts a tracking URL,
+  not XML. `html`, `js`, and `gtm` are
   not validation kinds; the CLI exits 2 if you pass them. Callers such as
   Vastlint parse VAST, HTML, or GTM containers and hand Pixellint the URLs they
   found. `pixellint validate-many` wraps those extracted URLs. The document

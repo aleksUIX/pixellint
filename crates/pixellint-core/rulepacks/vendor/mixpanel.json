@@ -9,31 +9,73 @@
     "host_suffixes": [
       "mixpanel.com"
     ],
-    "path_contains": ["/track"],
-    "json_paths": ["[].properties.token"]
+    "path_contains": [
+      "/track"
+    ],
+    "json_paths": [
+      "[].properties.token"
+    ]
   },
   "params": [
     {
       "name": "ip",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "description": "Mixpanel documents `ip=1` so the request address is used to compute a `distinct_id` when none is sent.",
       "doc": "https://docs.mixpanel.com/reference/track-event"
     },
     {
       "name": "verbose",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "description": "Mixpanel documents `verbose=1` so the 200 body says whether the track call was accepted.",
       "doc": "https://docs.mixpanel.com/reference/track-event"
     },
     {
       "name": "img",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "description": "Mixpanel documents `img=1` so the response is a 1x1 transparent pixel.",
       "doc": "https://docs.mixpanel.com/reference/track-event"
+    },
+    {
+      "name": "data",
+      "description": "The official browser SDK encodes the event or profile update in data for the legacy base64 transport.",
+      "doc": "https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js",
+      "format": {
+        "kind": "non_empty"
+      }
     }
   ],
   "rules": [],
   "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "json_type": "array",
+          "min_items": 1,
+          "description": "The JSON body is a nonempty array of records.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        }
+      ],
+      "rules": []
+    },
     {
       "scope": "[]",
       "params": [
@@ -45,14 +87,17 @@
           },
           "description": "Mixpanel documents the event name as required.",
           "fix_hint": "Name the event, such as `Signed Up`.",
-          "doc": "https://docs.mixpanel.com/reference/track-event"
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
         },
         {
           "name": "properties",
           "requirement": "required",
           "description": "Mixpanel documents the properties object as required, since the project token rides inside it.",
           "fix_hint": "Add a `properties` object carrying at least `token`.",
-          "doc": "https://docs.mixpanel.com/reference/track-event"
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "object",
+          "max_properties": 254
         },
         {
           "name": "properties.token",
@@ -62,7 +107,8 @@
           },
           "description": "It is the project token the event is attributed to.",
           "fix_hint": "Send the project token from your Mixpanel project settings.",
-          "doc": "https://docs.mixpanel.com/reference/track-event"
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
         },
         {
           "name": "properties.distinct_id",
@@ -72,7 +118,11 @@
           },
           "description": "It identifies the user who performed the event. Mixpanel documents it as the unique user identifier; without it the event is not tied to a person.",
           "fix_hint": "Send the same `distinct_id` you use elsewhere for this user.",
-          "doc": "https://docs.mixpanel.com/reference/track-event"
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": [
+            "string",
+            "integer"
+          ]
         },
         {
           "name": "properties.time",
@@ -81,7 +131,8 @@
           },
           "description": "Mixpanel documents `time` as a Unix timestamp in seconds or milliseconds. A non-numeric value is not that format.",
           "fix_hint": "Send seconds or milliseconds since epoch, as an integer.",
-          "doc": "https://docs.mixpanel.com/reference/track-event"
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "integer"
         },
         {
           "name": "properties.$insert_id",
@@ -91,7 +142,8 @@
           },
           "description": "Mixpanel uses it to drop duplicates, so a retried request is not counted twice. `/import` requires it in vendor/mixpanel-import.",
           "fix_hint": "Send a stable id per event.",
-          "doc": "https://docs.mixpanel.com/reference/track-event"
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
         },
         {
           "name": "properties.ip",
@@ -99,7 +151,8 @@
             "kind": "non_empty"
           },
           "description": "Mixpanel uses `properties.ip` for GeoIP. This is different from the query `ip` flag. Send an address, not a digest.",
-          "doc": "https://docs.mixpanel.com/reference/track-event"
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
         },
         {
           "name": "properties.$current_url",
@@ -108,7 +161,8 @@
           },
           "description": "It is the URL of the page on which the event was tracked. Mixpanel documents `$current_url` on the JavaScript SDK default-property table.",
           "fix_hint": "Send an absolute URL in `properties.$current_url`, including the scheme.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
         },
         {
           "name": "properties.$referrer",
@@ -117,7 +171,8 @@
           },
           "description": "It is the referring URL, including your own domain. Mixpanel documents `$referrer` on the JavaScript SDK default-property table. `$direct` belongs on `$initial_referrer`, not here.",
           "fix_hint": "Send an absolute referring URL, or omit the field when `document.referrer` is empty.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
         },
         {
           "name": "properties.mp_lib",
@@ -126,7 +181,8 @@
           },
           "description": "It names the Mixpanel library that sent the event, such as `web`, `android`, `swift`, `react-native`, or `flutter`. Mixpanel documents `mp_lib` on the SDK default-property table.",
           "fix_hint": "Send `properties.mp_lib`, or drop the empty pair.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
         },
         {
           "name": "properties.$lib_version",
@@ -135,7 +191,8 @@
           },
           "description": "It is the Mixpanel library version. Mixpanel documents `$lib_version` on the SDK default-property table.",
           "fix_hint": "Send `properties.$lib_version`, or drop the empty pair.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
         },
         {
           "name": "properties.$device_id",
@@ -144,7 +201,8 @@
           },
           "description": "It is the device-local Mixpanel ID. Mixpanel documents `$device_id` as regenerated by `reset()`.",
           "fix_hint": "Send `properties.$device_id`, or drop the empty pair.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
         },
         {
           "name": "properties.$user_id",
@@ -153,7 +211,8 @@
           },
           "description": "It is the identified user ID. Mixpanel documents `$user_id` as set by `identify()`.",
           "fix_hint": "Send `properties.$user_id` after identify, or drop the empty pair.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
         },
         {
           "name": "properties.$screen_height",
@@ -162,7 +221,8 @@
           },
           "description": "It is the device screen height in pixels, or points on iOS. Mixpanel documents `$screen_height` on the SDK default-property table.",
           "fix_hint": "Send `properties.$screen_height` as an integer pixel or point count.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "integer"
         },
         {
           "name": "properties.$screen_width",
@@ -171,7 +231,14 @@
           },
           "description": "It is the device screen width in pixels, or points on iOS. Mixpanel documents `$screen_width` on the SDK default-property table.",
           "fix_hint": "Send `properties.$screen_width` as an integer pixel or point count.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "integer"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "object"
         }
       ],
       "rules": [
@@ -179,13 +246,834 @@
           "code": "vendor.mixpanel.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["properties.ip"],
+          "params": [
+            "properties.ip"
+          ],
           "severity": "error",
           "message": "`properties.ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address.",
           "fix_hint": "Send the raw IP address.",
           "doc": "https://docs.mixpanel.com/reference/track-event"
         }
       ]
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "min_items": 1,
+          "description": "The JSON body is a nonempty array of records.",
+          "doc": "https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "event",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel documents the event name as required.",
+          "fix_hint": "Name the event, such as `Signed Up`.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
+        },
+        {
+          "name": "properties",
+          "requirement": "required",
+          "description": "Mixpanel documents the properties object as required, since the project token rides inside it.",
+          "fix_hint": "Add a `properties` object carrying at least `token`.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "object",
+          "max_properties": 254
+        },
+        {
+          "name": "properties.token",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the project token the event is attributed to.",
+          "fix_hint": "Send the project token from your Mixpanel project settings.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.distinct_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the user who performed the event. Mixpanel documents it as the unique user identifier; without it the event is not tied to a person.",
+          "fix_hint": "Send the same `distinct_id` you use elsewhere for this user.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": [
+            "string",
+            "integer"
+          ]
+        },
+        {
+          "name": "properties.time",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "Mixpanel documents `time` as a Unix timestamp in seconds or milliseconds. A non-numeric value is not that format.",
+          "fix_hint": "Send seconds or milliseconds since epoch, as an integer.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "integer"
+        },
+        {
+          "name": "properties.$insert_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel uses it to drop duplicates, so a retried request is not counted twice. `/import` requires it in vendor/mixpanel-import.",
+          "fix_hint": "Send a stable id per event.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel uses `properties.ip` for GeoIP. This is different from the query `ip` flag. Send an address, not a digest.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$current_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the URL of the page on which the event was tracked. Mixpanel documents `$current_url` on the JavaScript SDK default-property table.",
+          "fix_hint": "Send an absolute URL in `properties.$current_url`, including the scheme.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$referrer",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the referring URL, including your own domain. Mixpanel documents `$referrer` on the JavaScript SDK default-property table. `$direct` belongs on `$initial_referrer`, not here.",
+          "fix_hint": "Send an absolute referring URL, or omit the field when `document.referrer` is empty.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.mp_lib",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It names the Mixpanel library that sent the event, such as `web`, `android`, `swift`, `react-native`, or `flutter`. Mixpanel documents `mp_lib` on the SDK default-property table.",
+          "fix_hint": "Send `properties.mp_lib`, or drop the empty pair.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$lib_version",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Mixpanel library version. Mixpanel documents `$lib_version` on the SDK default-property table.",
+          "fix_hint": "Send `properties.$lib_version`, or drop the empty pair.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$device_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the device-local Mixpanel ID. Mixpanel documents `$device_id` as regenerated by `reset()`.",
+          "fix_hint": "Send `properties.$device_id`, or drop the empty pair.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$user_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the identified user ID. Mixpanel documents `$user_id` as set by `identify()`.",
+          "fix_hint": "Send `properties.$user_id` after identify, or drop the empty pair.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$screen_height",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the device screen height in pixels, or points on iOS. Mixpanel documents `$screen_height` on the SDK default-property table.",
+          "fix_hint": "Send `properties.$screen_height` as an integer pixel or point count.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "integer"
+        },
+        {
+          "name": "properties.$screen_width",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the device screen width in pixels, or points on iOS. Mixpanel documents `$screen_width` on the SDK default-property table.",
+          "fix_hint": "Send `properties.$screen_width` as an integer pixel or point count.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "integer"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "object"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.mixpanel.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "properties.ip"
+          ],
+          "severity": "error",
+          "message": "`properties.ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address.",
+          "fix_hint": "Send the raw IP address.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": "[].properties.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 254,
+          "max_items": 254
+        }
+      ]
+    },
+    {
+      "scope": "[].properties.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].properties.*",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].properties.**[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": [
+        "[].properties.**",
+        "properties.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 254,
+          "max_items": 254
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].properties.**",
+        "properties.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].properties.*",
+        "properties.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].properties.**[]",
+        "properties.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "min_items": 1,
+          "description": "The JSON body is a nonempty array of records.",
+          "doc": "https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "event",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel documents the event name as required.",
+          "fix_hint": "Name the event, such as `Signed Up`.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
+        },
+        {
+          "name": "properties",
+          "requirement": "required",
+          "description": "Mixpanel documents the properties object as required, since the project token rides inside it.",
+          "fix_hint": "Add a `properties` object carrying at least `token`.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "object",
+          "max_properties": 254
+        },
+        {
+          "name": "properties.token",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the project token the event is attributed to.",
+          "fix_hint": "Send the project token from your Mixpanel project settings.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.distinct_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the user who performed the event. Mixpanel documents it as the unique user identifier; without it the event is not tied to a person.",
+          "fix_hint": "Send the same `distinct_id` you use elsewhere for this user.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": [
+            "string",
+            "integer"
+          ]
+        },
+        {
+          "name": "properties.time",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "Mixpanel documents `time` as a Unix timestamp in seconds or milliseconds. A non-numeric value is not that format.",
+          "fix_hint": "Send seconds or milliseconds since epoch, as an integer.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "integer"
+        },
+        {
+          "name": "properties.$insert_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel uses it to drop duplicates, so a retried request is not counted twice. `/import` requires it in vendor/mixpanel-import.",
+          "fix_hint": "Send a stable id per event.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel uses `properties.ip` for GeoIP. This is different from the query `ip` flag. Send an address, not a digest.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$current_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the URL of the page on which the event was tracked. Mixpanel documents `$current_url` on the JavaScript SDK default-property table.",
+          "fix_hint": "Send an absolute URL in `properties.$current_url`, including the scheme.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$referrer",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the referring URL, including your own domain. Mixpanel documents `$referrer` on the JavaScript SDK default-property table. `$direct` belongs on `$initial_referrer`, not here.",
+          "fix_hint": "Send an absolute referring URL, or omit the field when `document.referrer` is empty.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.mp_lib",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It names the Mixpanel library that sent the event, such as `web`, `android`, `swift`, `react-native`, or `flutter`. Mixpanel documents `mp_lib` on the SDK default-property table.",
+          "fix_hint": "Send `properties.mp_lib`, or drop the empty pair.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$lib_version",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Mixpanel library version. Mixpanel documents `$lib_version` on the SDK default-property table.",
+          "fix_hint": "Send `properties.$lib_version`, or drop the empty pair.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$device_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the device-local Mixpanel ID. Mixpanel documents `$device_id` as regenerated by `reset()`.",
+          "fix_hint": "Send `properties.$device_id`, or drop the empty pair.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$user_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the identified user ID. Mixpanel documents `$user_id` as set by `identify()`.",
+          "fix_hint": "Send `properties.$user_id` after identify, or drop the empty pair.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "string"
+        },
+        {
+          "name": "properties.$screen_height",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the device screen height in pixels, or points on iOS. Mixpanel documents `$screen_height` on the SDK default-property table.",
+          "fix_hint": "Send `properties.$screen_height` as an integer pixel or point count.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "integer"
+        },
+        {
+          "name": "properties.$screen_width",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the device screen width in pixels, or points on iOS. Mixpanel documents `$screen_width` on the SDK default-property table.",
+          "fix_hint": "Send `properties.$screen_width` as an integer pixel or point count.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/default-properties",
+          "json_type": "integer"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": "object"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.mixpanel.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "properties.ip"
+          ],
+          "severity": "error",
+          "message": "`properties.ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address.",
+          "fix_hint": "Send the raw IP address.",
+          "doc": "https://docs.mixpanel.com/reference/track-event"
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].properties.**",
+        "properties.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://docs.mixpanel.com/reference/track-event",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 254,
+          "max_items": 254
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].properties.**",
+        "properties.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].properties.*",
+        "properties.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].properties.**[]",
+        "properties.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
     }
   ]
 }

@@ -6,14 +6,21 @@
   "source_level": "official_vendor",
   "docs": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server",
   "match": {
-    "host_suffixes": ["adzerk.net"],
-    "paths": ["/i.gif", "/e.gif"]
+    "host_suffixes": [
+      "adzerk.net"
+    ],
+    "paths": [
+      "/i.gif",
+      "/e.gif"
+    ]
   },
   "params": [
     {
       "name": "e",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the base64 encoded event shim. Kevel documents e as unique to the event.",
       "fix_hint": "Send e from the Decision API impressionUrl or events[].url. Do not invent it.",
       "doc": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server"
@@ -21,11 +28,76 @@
     {
       "name": "s",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the signature that verifies the shim. Kevel documents s on every tracking pixel.",
       "fix_hint": "Send s from the same Decision API URL as e.",
       "doc": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server"
+    },
+    {
+      "name": "override",
+      "description": "Kevel documents override as a monetary numeric event value.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "name": "additional",
+      "description": "Kevel documents additional as a monetary numeric event value.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "name": "gmv",
+      "description": "Kevel documents gmv as a monetary numeric event value.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "name": "productId",
+      "description": "Kevel allows one to ten comma-separated productId strings on impression and custom-event URLs.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^,]+(?:,[^,]+){0,9}$"
+      },
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "name": "component",
+      "description": "Kevel allows one to ten comma-separated component strings on impression and custom-event URLs.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^,]+(?:,[^,]+){0,9}$"
+      },
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "name": "position",
+      "description": "Kevel allows one to ten comma-separated position strings on impression and custom-event URLs.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^,]+(?:,[^,]+){0,9}$"
+      },
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.kevel.query_too_long",
+      "kind": "max_query_length",
+      "max_length": 1024,
+      "severity": "error",
+      "message": "Kevel limits the complete event URL query string to 1024 characters.",
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    }
+  ]
 }

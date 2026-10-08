@@ -6,27 +6,39 @@
   "source_level": "ecosystem_reference",
   "docs": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/",
   "match": {
-    "hosts": ["tr.outbrain.com"],
-    "paths": ["/pixel", "/unifiedPixel"]
+    "hosts": [
+      "tr.outbrain.com"
+    ],
+    "paths": [
+      "/pixel",
+      "/unifiedPixel"
+    ]
   },
   "params": [
     {
       "name": "ob_adv_id",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Outbrain Advertiser ID. Generated noscript pixels send it. Outbrain documents the Marketer ID in GTM rather than this query, so the rule is ecosystem evidence.",
       "fix_hint": "Set `ob_adv_id` to the Advertiser ID from Amplify Tracking.",
       "doc": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/"
     },
     {
       "name": "ob_click_id",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the click identifier S2S conversions send instead of `ob_adv_id`.",
       "fix_hint": "Set `ob_click_id` to the `ob_click_id` captured from the landing URL.",
-      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/"
+      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "source_level": "official_vendor"
     },
     {
       "name": "name",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the event name on the S2S postback. Outbrain documents it on the unifiedPixel URL. Page-view noscript pixels send `ev` instead and omit `name`.",
       "fix_hint": "Set `name` to the event name from Amplify, or drop the pair on a page-view pixel.",
       "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
@@ -34,7 +46,10 @@
     },
     {
       "name": "orderValue",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the conversion value. Outbrain documents a decimal with a point, such as `4.99`, not `4,99`.",
       "fix_hint": "Send a number such as `4.99`, with a point and no currency symbol.",
       "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
@@ -42,7 +57,9 @@
     },
     {
       "name": "orderId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the advertiser order ID. Outbrain documents it so two conversions from the same user in a short window are not deduplicated.",
       "fix_hint": "Set orderId to the order ID, or drop the pair.",
       "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
@@ -82,11 +99,26 @@
     {
       "code": "vendor.outbrain.identifier_required",
       "kind": "require_one_of",
-      "params": ["ob_adv_id", "ob_click_id"],
+      "params": [
+        "ob_adv_id",
+        "ob_click_id"
+      ],
       "severity": "error",
       "message": "The pixel has neither `ob_adv_id` nor `ob_click_id`. Generated fires carry one of the two.",
       "fix_hint": "Send `ob_adv_id` for a noscript or page-view pixel, or `ob_click_id` for an S2S conversion.",
       "doc": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/"
+    },
+    {
+      "code": "vendor.outbrain.s2s_event_required",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "An Outbrain S2S click identifier needs its configured event name.",
+      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "when": "ob_click_id",
+      "requires": [
+        "name"
+      ],
+      "source_level": "official_vendor"
     }
   ]
 }

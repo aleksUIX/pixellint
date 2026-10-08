@@ -33,586 +33,1420 @@
     }
   ],
   "rules": [],
-  "body": {
-    "scope": "data[]",
-    "params": [
-      {
-        "name": "event_name",
-        "requirement": "required",
-        "format": {
-          "kind": "enum",
-          "values": [
-            "PURCHASE",
-            "SAVE",
-            "START_CHECKOUT",
-            "ADD_CART",
-            "VIEW_CONTENT",
-            "ADD_BILLING",
-            "SIGN_UP",
-            "SEARCH",
-            "PAGE_VIEW",
-            "SUBSCRIBE",
-            "AD_CLICK",
-            "AD_VIEW",
-            "COMPLETE_TUTORIAL",
-            "LEVEL_COMPLETE",
-            "INVITE",
-            "LOGIN",
-            "SHARE",
-            "RESERVE",
-            "ACHIEVEMENT_UNLOCKED",
-            "ADD_TO_WISHLIST",
-            "SPENT_CREDITS",
-            "RATE",
-            "START_TRIAL",
-            "LIST_VIEW",
-            "APP_INSTALL",
-            "APP_OPEN",
-            "CUSTOM_EVENT_1",
-            "CUSTOM_EVENT_2",
-            "CUSTOM_EVENT_3",
-            "CUSTOM_EVENT_4",
-            "CUSTOM_EVENT_5"
+  "body": [
+    {
+      "params": [
+        {
+          "name": "data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "data[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
+          "json_type": "object"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "data[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "event_name",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "PURCHASE",
+              "SAVE",
+              "START_CHECKOUT",
+              "ADD_CART",
+              "VIEW_CONTENT",
+              "ADD_BILLING",
+              "SIGN_UP",
+              "SEARCH",
+              "PAGE_VIEW",
+              "SUBSCRIBE",
+              "AD_CLICK",
+              "AD_VIEW",
+              "COMPLETE_TUTORIAL",
+              "LEVEL_COMPLETE",
+              "INVITE",
+              "LOGIN",
+              "SHARE",
+              "RESERVE",
+              "ACHIEVEMENT_UNLOCKED",
+              "ADD_TO_WISHLIST",
+              "SPENT_CREDITS",
+              "RATE",
+              "START_TRIAL",
+              "LIST_VIEW",
+              "APP_INSTALL",
+              "APP_OPEN",
+              "CUSTOM_EVENT_1",
+              "CUSTOM_EVENT_2",
+              "CUSTOM_EVENT_3",
+              "CUSTOM_EVENT_4",
+              "CUSTOM_EVENT_5"
+            ]
+          },
+          "description": "Snap documents a fixed set of event types, spelled in upper case with underscores.",
+          "fix_hint": "Use one of the documented event types, such as `PAGE_VIEW` or `PURCHASE`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "event_time",
+          "requirement": "required",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the epoch timestamp of the conversion, and Snap only accepts events from the last 7 days.",
+          "fix_hint": "Send the epoch timestamp of the conversion, not of the moment you forwarded it.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "integer"
+        },
+        {
+          "name": "action_source",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "WEB",
+              "OFFLINE",
+              "MOBILE_APP"
+            ]
+          },
+          "description": "It says where the event took place, and Snap accepts three values.",
+          "fix_hint": "Use `WEB`, `OFFLINE`, or `MOBILE_APP`. Snap spells these in upper case, unlike Meta.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "event_source_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the URL of the page the event happened on, and Snap requires it for web events.",
+          "fix_hint": "Send the full page URL, including the scheme.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "event_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is an advertiser-chosen identifier for deduplication against the Pixel. Snap documents it as recommended for unique events. An empty pair cannot collapse a web and CAPI pair.",
+          "fix_hint": "Send the same `event_id` the Pixel used as `client_dedup_id`, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data",
+          "requirement": "required",
+          "description": "Snap matches the conversion on customer information, and the event needs at least one identifier.",
+          "fix_hint": "Add a `user_data` object carrying a hashed email, hashed phone, mobile ad id, or IP and user agent pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "object"
+        },
+        {
+          "name": "user_data.em",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Email must be normalized and SHA-256 hashed before it is sent.",
+          "fix_hint": "Trim and lowercase the address, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
           ]
         },
-        "description": "Snap documents a fixed set of event types, spelled in upper case with underscores.",
-        "fix_hint": "Use one of the documented event types, such as `PAGE_VIEW` or `PURCHASE`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "event_time",
-        "requirement": "required",
-        "format": {
-          "kind": "integer"
+        {
+          "name": "user_data.em[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Every email in the list must be normalized and SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
         },
-        "description": "It is the epoch timestamp of the conversion, and Snap only accepts events from the last 7 days.",
-        "fix_hint": "Send the epoch timestamp of the conversion, not of the moment you forwarded it.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "action_source",
-        "requirement": "required",
-        "format": {
-          "kind": "enum",
-          "values": [
-            "WEB",
-            "OFFLINE",
+        {
+          "name": "user_data.ph",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Phone must be normalized and SHA-256 hashed before it is sent.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "user_data.ph[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Every phone number in the list must be normalized and SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.fn",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "First name must be SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "user_data.ln",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Last name must be SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "user_data.ge",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Gender must be SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "user_data.ct",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "City must be SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "user_data.st",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "State must be SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "user_data.zp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Postal code must be SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "user_data.country",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Country must be SHA-256 hashed.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "user_data.client_ip_address",
+          "format": {
+            "kind": "ip"
+          },
+          "description": "It is sent unhashed, and it must be the address of the browser rather than of your server.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.client_user_agent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is sent unhashed, and it must be the browser's user agent rather than your HTTP client's.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.sc_click_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Snap click ID from the landing-page `ScCid` query. Snap documents it as unhashed.",
+          "fix_hint": "Copy `ScCid` from the landing URL into `user_data.sc_click_id`, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.sc_cookie1",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the first-party `_scid` cookie. Snap documents it as unhashed and recommended for match rate.",
+          "fix_hint": "Read `_scid` under your domain into `user_data.sc_cookie1`, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.madid",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the mobile advertiser ID. Snap documents it as lowercase and unhashed.",
+          "fix_hint": "Send the IDFA or GAID in lowercase, unhashed, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.idfv",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the plain-text IDFV. Snap documents it as unhashed and recommended for app events.",
+          "fix_hint": "Send the IDFV unhashed, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.value",
+          "description": "It is the monetary value of the event. Snap documents a float, required for PURCHASE, with no currency symbol.",
+          "fix_hint": "Send the purchase total in `custom_data.value` as a number, such as `10`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "number"
+        },
+        {
+          "name": "custom_data.currency",
+          "format": {
+            "kind": "enum",
+            "case_insensitive": true,
+            "values": [
+              "USD",
+              "AED",
+              "AUD",
+              "BGN",
+              "BRL",
+              "CAD",
+              "CHF",
+              "CLP",
+              "CNY",
+              "COP",
+              "CZK",
+              "DKK",
+              "EGP",
+              "EUR",
+              "GBP",
+              "GIP",
+              "HKD",
+              "HRK",
+              "HUF",
+              "IDR",
+              "ILS",
+              "INR",
+              "JPY",
+              "KRW",
+              "KWD",
+              "KZT",
+              "LBP",
+              "MXN",
+              "MYR",
+              "NGN",
+              "NOK",
+              "NZD",
+              "PEN",
+              "PHP",
+              "PKR",
+              "PLN",
+              "QAR",
+              "RON",
+              "RUB",
+              "SAR",
+              "SEK",
+              "SGD",
+              "THB",
+              "TRY",
+              "TWD",
+              "TZS",
+              "UAH",
+              "VND",
+              "ZAR",
+              "ALL",
+              "BHD",
+              "DZD",
+              "GHS",
+              "IQD",
+              "ISK",
+              "JOD",
+              "KES",
+              "MAD",
+              "OMR",
+              "XOF"
+            ]
+          },
+          "description": "It is the currency of `custom_data.value`. Snap documents a subset of ISO 4217, not every three-letter code.",
+          "fix_hint": "Send a documented code such as `USD`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.order_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the order identifier. Snap documents it on the Dynamic Ads custom_data table.",
+          "fix_hint": "Send the order id in `custom_data.order_id`, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.content_type",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group"
+            ]
+          },
+          "description": "It says what `content_ids` or `contents` represent. Snap documents `product` for a single item or `product_group` for a variant group.",
+          "fix_hint": "Set `custom_data.content_type` to `product` or `product_group`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.content_ids",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is a product or category identifier. Snap documents a single id, an array, or a comma-separated list.",
+          "fix_hint": "Send a catalog id in `custom_data.content_ids`, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "custom_data.content_ids[]",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Every id in the list is a product or category identifier.",
+          "fix_hint": "Send catalog ids in `custom_data.content_ids`, or drop empty entries.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.num_items",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+$"
+          },
+          "description": "It is the total number of items. Snap documents it as a string.",
+          "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "json_type": [
+            "string",
+            "integer"
+          ]
+        },
+        {
+          "name": "custom_data.contents[].id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the item id on a contents row. Snap documents `id` on each contents object.",
+          "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.contents[].quantity",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the item count on a contents row. Snap's published example sends it as a number string.",
+          "fix_hint": "Send `custom_data.contents[].quantity` as a number, such as `1`.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "custom_data.contents[].item_price",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "It is the unit price of one item. Snap's published example sends `item_price` as a number string.",
+          "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `5`. Put the order total in `custom_data.value`.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "custom_data.content_name",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the name of the page or product associated with the event. Snap documents it on the Dynamic Ads custom_data table.",
+          "fix_hint": "Send the page or product name in `custom_data.content_name`, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.content_category",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is an item or category. Snap documents a single category or an array.",
+          "fix_hint": "Send a category in `custom_data.content_category`, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "custom_data.content_category[]",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Every entry in the list is an item or category.",
+          "fix_hint": "Send categories in `custom_data.content_category`, or drop empty entries.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.search_string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the text that was searched for. Snap documents it on the Dynamic Ads custom_data table.",
+          "fix_hint": "Send the query in `custom_data.search_string`, or drop the empty pair.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.predicted_ltv",
+          "description": "It is the predicted lifetime value of the conversion. Snap documents a float.",
+          "fix_hint": "Send `custom_data.predicted_ltv` as a number, such as `120.5`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "number"
+        },
+        {
+          "name": "custom_data.checkin_date",
+          "format": {
+            "kind": "datetime",
+            "allow_date_only": true,
+            "allow_basic": true
+          },
+          "description": "It is the hotel check-in date in the hotel's time zone. Snap documents YYYYMMDD, YYYY-MM-DD, YYYY-MM-DDThh:mmTZD, and YYYY-MM-DDThh:mm:ssTZD.",
+          "fix_hint": "Send a documented check-in date such as `20261015` or `2026-10-15`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.origin_airport",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "description": "It is the origin airport. Snap documents the official IATA code.",
+          "fix_hint": "Send a three-letter IATA code such as `JFK`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.destination_airport",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "description": "It is the destination airport. Snap documents the IATA code.",
+          "fix_hint": "Send a three-letter IATA code such as `CDG`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.num_adults",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the number of adults staying. Snap documents an integer on the Dynamic Travel Ads table.",
+          "fix_hint": "Send a whole number in `custom_data.num_adults`, such as `2`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "integer"
+        },
+        {
+          "name": "custom_data.num_children",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the number of children staying. Snap documents an integer on the Dynamic Travel Ads table.",
+          "fix_hint": "Send a whole number in `custom_data.num_children`, such as `1`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "integer"
+        },
+        {
+          "name": "custom_data.num_infants",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the number of infants staying. Snap documents an integer on the Dynamic Travel Ads table.",
+          "fix_hint": "Send a whole number in `custom_data.num_infants`, such as `0`.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "json_type": "integer"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
+          "json_type": "object"
+        },
+        {
+          "name": "custom_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
+          "json_type": "object"
+        },
+        {
+          "name": "app_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
+          "json_type": "object"
+        },
+        {
+          "name": "user_data.fn[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "user_data.ln[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "user_data.ge[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "user_data.ct[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "user_data.st[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "user_data.zp[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "user_data.country[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "custom_data.contents",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
+          "json_type": "array"
+        },
+        {
+          "name": "custom_data.contents[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
+          "json_type": "object"
+        },
+        {
+          "name": "app_data.advertiser_tracking_enabled",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "boolean",
+            "integer"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false",
+              "0",
+              "1"
+            ]
+          }
+        },
+        {
+          "name": "user_data.subscription_id",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.lead_id",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.anon_id",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.download_id",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.partner_id",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.travel_end",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.travel_start",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.country",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.city",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.region",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.neighborhood",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.departing_departure_date",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.departing_arrival_date",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.returning_departure_date",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.returning_arrival_date",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.hotel_score",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.postal_code",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.status",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.event_tag",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.suggested_destinations",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "custom_data.suggested_destinations[]",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.preferred_neighborhoods",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "custom_data.preferred_neighborhoods[]",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.preferred_star_ratings",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "custom_data.preferred_star_ratings[]",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.suggested_hotels",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "custom_data.suggested_hotels[]",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.destination_ids",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        },
+        {
+          "name": "custom_data.destination_ids[]",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "integration",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "test_event_code",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.custom_fields",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "object"
+        },
+        {
+          "name": "advertiser_tracking_enabled",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": [
+            "boolean",
+            "integer"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false",
+              "0",
+              "1"
+            ]
+          }
+        },
+        {
+          "name": "data_processing_options",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "array"
+        },
+        {
+          "name": "data_processing_options[]",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "LMU",
+              "DELETE"
+            ]
+          }
+        },
+        {
+          "name": "app_data.extinfo",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "json_type": "array",
+          "min_items": 16,
+          "max_items": 16
+        },
+        {
+          "name": "raw_request",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "asset_id",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "request_id",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.mobile_ad_id",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.delivery_category",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.brands",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.sign_up_method",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.contents[].delivery_category",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.contents[].brand",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "app_data.app_id",
+          "description": "App events require the Snap application ID, numeric for iOS and a human-readable identifier for Android.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "source_level": "official_vendor",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "app_data.campaign_ids",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "app_data.install_referrer",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "app_data.installer_package",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "app_data.windows_attribution_id",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "opt_out",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "boolean"
+        },
+        {
+          "name": "app_data.url_schemes",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "array"
+        },
+        {
+          "name": "app_data.url_schemes[]",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.custom_fields.*",
+          "description": "The vendor publishes this field in its v3 SDK schema.",
+          "doc": "https://raw.githubusercontent.com/Snapchat/business-sdk-v3-java/main/api/openapi.yaml",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "app_data.extinfo[0]",
+          "json_type": "string",
+          "description": "Ordered device slot 0 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": false,
+          "format": {
+            "kind": "enum",
+            "values": [
+              "a2",
+              "i2"
+            ]
+          }
+        },
+        {
+          "name": "app_data.extinfo[1]",
+          "json_type": "string",
+          "description": "Ordered device slot 1 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[2]",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "description": "Ordered device slot 2 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[3]",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "description": "Ordered device slot 3 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[4]",
+          "json_type": "string",
+          "description": "Ordered device slot 4 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[5]",
+          "json_type": "string",
+          "description": "Ordered device slot 5 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[6]",
+          "json_type": "string",
+          "description": "Ordered device slot 6 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[7]",
+          "json_type": "string",
+          "description": "Ordered device slot 7 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[8]",
+          "json_type": "string",
+          "description": "Ordered device slot 8 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[9]",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "description": "Ordered device slot 9 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true,
+          "format": {
+            "kind": "integer"
+          }
+        },
+        {
+          "name": "app_data.extinfo[10]",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "description": "Ordered device slot 10 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true,
+          "format": {
+            "kind": "integer"
+          }
+        },
+        {
+          "name": "app_data.extinfo[11]",
+          "json_type": "string",
+          "description": "Ordered device slot 11 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[12]",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "description": "Ordered device slot 12 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true,
+          "format": {
+            "kind": "integer"
+          }
+        },
+        {
+          "name": "app_data.extinfo[13]",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "description": "Ordered device slot 13 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true,
+          "format": {
+            "kind": "integer"
+          }
+        },
+        {
+          "name": "app_data.extinfo[14]",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "description": "Ordered device slot 14 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true,
+          "format": {
+            "kind": "integer"
+          }
+        },
+        {
+          "name": "app_data.extinfo[15]",
+          "json_type": "string",
+          "description": "Ordered device slot 15 uses the published extinfo type. Empty strings are supported for missing optional device information.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters",
+          "allow_empty": true
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.snapchat.body.web_requires_source_url",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
+            "WEB"
+          ],
+          "requires": [
+            "event_source_url"
+          ],
+          "severity": "error",
+          "message": "The event is marked `action_source: WEB` but carries no `event_source_url`, which Snap requires for website events.",
+          "fix_hint": "Send the URL of the page the event took place on.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+        },
+        {
+          "code": "vendor.snapchat.body.purchase_requires_value_and_currency",
+          "kind": "required_when_value",
+          "when": "event_name",
+          "equals": [
+            "PURCHASE"
+          ],
+          "requires": [
+            "custom_data.value",
+            "custom_data.currency"
+          ],
+          "severity": "error",
+          "message": "A `PURCHASE` event is missing its value or currency. Snap documents `value` as required for PURCHASE, and currency rides with that value.",
+          "fix_hint": "Send `custom_data.value` and `custom_data.currency` on PURCHASE events.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+        },
+        {
+          "code": "vendor.snapchat.body.value_requires_currency",
+          "kind": "required_with",
+          "when": "custom_data.value",
+          "requires": [
+            "custom_data.currency"
+          ],
+          "severity": "error",
+          "message": "The event carries `custom_data.value` with no `custom_data.currency`. Snap documents currency as the ISO code that goes with the value.",
+          "fix_hint": "Add `custom_data.currency` as a three-letter code alongside the value.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+        },
+        {
+          "code": "vendor.snapchat.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. Snap requires customer information to be normalized and SHA-256 hashed.",
+          "fix_hint": "Trim the address, lowercase it, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters",
+          "params": [
+            "user_data.em",
+            "user_data.em[]",
+            "user_data.ph",
+            "user_data.ph[]",
+            "user_data.fn",
+            "user_data.ln",
+            "user_data.ge",
+            "user_data.ct",
+            "user_data.st",
+            "user_data.zp",
+            "user_data.country",
+            "user_data.fn[]",
+            "user_data.ln[]",
+            "user_data.ge[]",
+            "user_data.ct[]",
+            "user_data.st[]",
+            "user_data.zp[]",
+            "user_data.country[]"
+          ]
+        },
+        {
+          "code": "vendor.snapchat.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "user_data.client_ip_address",
+            "user_data.client_user_agent",
+            "user_data.sc_click_id",
+            "user_data.sc_cookie1",
+            "user_data.madid",
+            "user_data.idfv"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Snap documents it as one of the parameters that is sent unhashed.",
+          "fix_hint": "Send the raw value. Hashing it makes the event unmatchable.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
+        },
+        {
+          "code": "vendor.snapchat.body.app_requires_extinfo",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
             "MOBILE_APP"
-          ]
+          ],
+          "requires": [
+            "app_data.extinfo"
+          ],
+          "severity": "error",
+          "message": "App events require the complete extinfo device array.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters"
         },
-        "description": "It says where the event took place, and Snap accepts three values.",
-        "fix_hint": "Use `WEB`, `OFFLINE`, or `MOBILE_APP`. Snap spells these in upper case, unlike Meta.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "event_source_url",
-        "format": {
-          "kind": "url"
+        {
+          "code": "vendor.snapchat.body.event_time_time_window",
+          "kind": "time_window",
+          "param": "event_time",
+          "unit": "seconds_or_milliseconds",
+          "max_age_seconds": 604800,
+          "severity": "error",
+          "message": "The timestamp is outside the documented processing window.",
+          "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI"
         },
-        "description": "It is the URL of the page the event happened on, and Snap requires it for web events.",
-        "fix_hint": "Send the full page URL, including the scheme.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "event_id",
-        "format": {
-          "kind": "non_empty"
+        {
+          "code": "vendor.snapchat.body.ios_extinfo_app_id",
+          "kind": "format_when",
+          "when": "app_data.extinfo[0]",
+          "equals": [
+            "i2"
+          ],
+          "param": "app_data.app_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+$"
+          },
+          "severity": "error",
+          "message": "iOS app events use a numeric Snap app ID.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters"
         },
-        "description": "It is an advertiser-chosen identifier for deduplication against the Pixel. Snap documents it as recommended for unique events. An empty pair cannot collapse a web and CAPI pair.",
-        "fix_hint": "Send the same `event_id` the Pixel used as `client_dedup_id`, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data",
-        "requirement": "required",
-        "description": "Snap matches the conversion on customer information, and the event needs at least one identifier.",
-        "fix_hint": "Add a `user_data` object carrying a hashed email, hashed phone, mobile ad id, or IP and user agent pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.em",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "Email must be normalized and SHA-256 hashed before it is sent.",
-        "fix_hint": "Trim and lowercase the address, hash it with SHA-256, and send the hex digest.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.em[]",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "Every email in the list must be normalized and SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.ph",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "Phone must be normalized and SHA-256 hashed before it is sent.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.ph[]",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "Every phone number in the list must be normalized and SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.fn",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "First name must be SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.ln",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "Last name must be SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.ge",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "Gender must be SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.ct",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "City must be SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.st",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "State must be SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.zp",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "Postal code must be SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.country",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Fa-f0-9]{64}$"
-        },
-        "description": "Country must be SHA-256 hashed.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.client_ip_address",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is sent unhashed, and it must be the address of the browser rather than of your server.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.client_user_agent",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is sent unhashed, and it must be the browser's user agent rather than your HTTP client's.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.sc_click_id",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the Snap click ID from the landing-page `ScCid` query. Snap documents it as unhashed.",
-        "fix_hint": "Copy `ScCid` from the landing URL into `user_data.sc_click_id`, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.sc_cookie1",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the first-party `_scid` cookie. Snap documents it as unhashed and recommended for match rate.",
-        "fix_hint": "Read `_scid` under your domain into `user_data.sc_cookie1`, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.madid",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the mobile advertiser ID. Snap documents it as lowercase and unhashed.",
-        "fix_hint": "Send the IDFA or GAID in lowercase, unhashed, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "user_data.idfv",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the plain-text IDFV. Snap documents it as unhashed and recommended for app events.",
-        "fix_hint": "Send the IDFV unhashed, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.value",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-        },
-        "description": "It is the monetary value of the event. Snap documents a float, required for PURCHASE, with no currency symbol.",
-        "fix_hint": "Send the purchase total in `custom_data.value` as a number, such as `10`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.currency",
-        "format": {
-          "kind": "enum",
-          "case_insensitive": true,
-          "values": [
-            "USD",
-            "AED",
-            "AUD",
-            "BGN",
-            "BRL",
-            "CAD",
-            "CHF",
-            "CLP",
-            "CNY",
-            "COP",
-            "CZK",
-            "DKK",
-            "EGP",
-            "EUR",
-            "GBP",
-            "GIP",
-            "HKD",
-            "HRK",
-            "HUF",
-            "IDR",
-            "ILS",
-            "INR",
-            "JPY",
-            "KRW",
-            "KWD",
-            "KZT",
-            "LBP",
-            "MXN",
-            "MYR",
-            "NGN",
-            "NOK",
-            "NZD",
-            "PEN",
-            "PHP",
-            "PKR",
-            "PLN",
-            "QAR",
-            "RON",
-            "RUB",
-            "SAR",
-            "SEK",
-            "SGD",
-            "THB",
-            "TRY",
-            "TWD",
-            "TZS",
-            "UAH",
-            "VND",
-            "ZAR",
-            "ALL",
-            "BHD",
-            "DZD",
-            "GHS",
-            "IQD",
-            "ISK",
-            "JOD",
-            "KES",
-            "MAD",
-            "OMR",
-            "XOF"
-          ]
-        },
-        "description": "It is the currency of `custom_data.value`. Snap documents a subset of ISO 4217, not every three-letter code.",
-        "fix_hint": "Send a documented code such as `USD`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.order_id",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the order identifier. Snap documents it on the Dynamic Ads custom_data table.",
-        "fix_hint": "Send the order id in `custom_data.order_id`, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.content_type",
-        "format": {
-          "kind": "enum",
-          "values": ["product", "product_group"]
-        },
-        "description": "It says what `content_ids` or `contents` represent. Snap documents `product` for a single item or `product_group` for a variant group.",
-        "fix_hint": "Set `custom_data.content_type` to `product` or `product_group`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.content_ids",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is a product or category identifier. Snap documents a single id, an array, or a comma-separated list.",
-        "fix_hint": "Send a catalog id in `custom_data.content_ids`, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.content_ids[]",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "Every id in the list is a product or category identifier.",
-        "fix_hint": "Send catalog ids in `custom_data.content_ids`, or drop empty entries.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.num_items",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+$"
-        },
-        "description": "It is the total number of items. Snap documents it as a string.",
-        "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.contents[].id",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the item id on a contents row. Snap documents `id` on each contents object.",
-        "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.contents[].quantity",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-        },
-        "description": "It is the item count on a contents row. Snap's published example sends it as a number string.",
-        "fix_hint": "Send `custom_data.contents[].quantity` as a number, such as `1`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI"
-      },
-      {
-        "name": "custom_data.contents[].item_price",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-        },
-        "description": "It is the unit price of one item. Snap's published example sends `item_price` as a number string.",
-        "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `5`. Put the order total in `custom_data.value`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI"
-      },
-      {
-        "name": "custom_data.content_name",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the name of the page or product associated with the event. Snap documents it on the Dynamic Ads custom_data table.",
-        "fix_hint": "Send the page or product name in `custom_data.content_name`, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.content_category",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is an item or category. Snap documents a single category or an array.",
-        "fix_hint": "Send a category in `custom_data.content_category`, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.content_category[]",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "Every entry in the list is an item or category.",
-        "fix_hint": "Send categories in `custom_data.content_category`, or drop empty entries.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.search_string",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the text that was searched for. Snap documents it on the Dynamic Ads custom_data table.",
-        "fix_hint": "Send the query in `custom_data.search_string`, or drop the empty pair.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.predicted_ltv",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-        },
-        "description": "It is the predicted lifetime value of the conversion. Snap documents a float.",
-        "fix_hint": "Send `custom_data.predicted_ltv` as a number, such as `120.5`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.checkin_date",
-        "format": {
-          "kind": "regex",
-          "pattern": "^([0-9]{8}|[0-9]{4}-[0-9]{2}-[0-9]{2}(?:T[0-9]{2}:[0-9]{2}(?::[0-9]{2})?(?:Z|[+-][0-9]{2}:[0-9]{2}))?)$"
-        },
-        "description": "It is the hotel check-in date in the hotel's time zone. Snap documents YYYYMMDD, YYYY-MM-DD, YYYY-MM-DDThh:mmTZD, and YYYY-MM-DDThh:mm:ssTZD.",
-        "fix_hint": "Send a documented check-in date such as `20261015` or `2026-10-15`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.origin_airport",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Za-z]{3}$"
-        },
-        "description": "It is the origin airport. Snap documents the official IATA code.",
-        "fix_hint": "Send a three-letter IATA code such as `JFK`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.destination_airport",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Za-z]{3}$"
-        },
-        "description": "It is the destination airport. Snap documents the IATA code.",
-        "fix_hint": "Send a three-letter IATA code such as `CDG`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.num_adults",
-        "format": {
-          "kind": "integer"
-        },
-        "description": "It is the number of adults staying. Snap documents an integer on the Dynamic Travel Ads table.",
-        "fix_hint": "Send a whole number in `custom_data.num_adults`, such as `2`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.num_children",
-        "format": {
-          "kind": "integer"
-        },
-        "description": "It is the number of children staying. Snap documents an integer on the Dynamic Travel Ads table.",
-        "fix_hint": "Send a whole number in `custom_data.num_children`, such as `1`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "name": "custom_data.num_infants",
-        "format": {
-          "kind": "integer"
-        },
-        "description": "It is the number of infants staying. Snap documents an integer on the Dynamic Travel Ads table.",
-        "fix_hint": "Send a whole number in `custom_data.num_infants`, such as `0`.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      }
-    ],
-    "rules": [
-      {
-        "code": "vendor.snapchat.body.web_requires_source_url",
-        "kind": "required_when_value",
-        "when": "action_source",
-        "equals": [
-          "WEB"
-        ],
-        "requires": [
-          "event_source_url"
-        ],
-        "severity": "error",
-        "message": "The event is marked `action_source: WEB` but carries no `event_source_url`, which Snap requires for website events.",
-        "fix_hint": "Send the URL of the page the event took place on.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "code": "vendor.snapchat.body.purchase_requires_value_and_currency",
-        "kind": "required_when_value",
-        "when": "event_name",
-        "equals": [
-          "PURCHASE"
-        ],
-        "requires": [
-          "custom_data.value",
-          "custom_data.currency"
-        ],
-        "severity": "error",
-        "message": "A `PURCHASE` event is missing its value or currency. Snap documents `value` as required for PURCHASE, and currency rides with that value.",
-        "fix_hint": "Send `custom_data.value` and `custom_data.currency` on PURCHASE events.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "code": "vendor.snapchat.body.value_requires_currency",
-        "kind": "required_with",
-        "when": "custom_data.value",
-        "requires": [
-          "custom_data.currency"
-        ],
-        "severity": "error",
-        "message": "The event carries `custom_data.value` with no `custom_data.currency`. Snap documents currency as the ISO code that goes with the value.",
-        "fix_hint": "Add `custom_data.currency` as a three-letter code alongside the value.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "code": "vendor.snapchat.body.unhashed_email",
-        "kind": "forbid_value_pattern",
-        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
-        "severity": "error",
-        "message": "A field carries what looks like a raw email address. Snap requires customer information to be normalized and SHA-256 hashed.",
-        "fix_hint": "Trim the address, lowercase it, hash it with SHA-256, and send the hex digest.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      },
-      {
-        "code": "vendor.snapchat.body.hashed_plaintext_field",
-        "kind": "forbid_value_pattern",
-        "pattern": "^[A-Fa-f0-9]{64}$",
-        "params": [
-          "user_data.client_ip_address",
-          "user_data.client_user_agent",
-          "user_data.sc_click_id",
-          "user_data.sc_cookie1",
-          "user_data.madid",
-          "user_data.idfv"
-        ],
-        "severity": "error",
-        "message": "This field looks like a SHA-256 digest, but Snap documents it as one of the parameters that is sent unhashed.",
-        "fix_hint": "Send the raw value. Hashing it makes the event unmatchable.",
-        "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/Parameters"
-      }
-    ]
-  }
+        {
+          "code": "vendor.snapchat.body.app_requires_app_id",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
+            "MOBILE_APP"
+          ],
+          "requires": [
+            "app_data.app_id"
+          ],
+          "severity": "error",
+          "message": "App events require the Snap application identifier.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/Parameters"
+        }
+      ]
+    }
+  ]
 }

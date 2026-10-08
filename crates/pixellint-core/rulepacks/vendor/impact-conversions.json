@@ -7,14 +7,20 @@
   "docs": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation",
   "path_pattern": "/Advertisers/(?<account_sid>[^/]+)/Conversions",
   "match": {
-    "hosts": ["api.impact.com"],
-    "path_contains": ["/Conversions"]
+    "hosts": [
+      "api.impact.com"
+    ],
+    "path_contains": [
+      "/Conversions"
+    ]
   },
   "params": [
     {
       "name": "account_sid",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the impact.com Account SID in the path as `/Advertisers/{AccountSID}/Conversions`.",
       "fix_hint": "Put the Account SID from impact.com in the path.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
@@ -22,141 +28,197 @@
     {
       "name": "CampaignId",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the program id. impact.com documents `CampaignId` as always required.",
       "fix_hint": "Set `CampaignId` to the numeric program id.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
     },
     {
       "name": "ActionTrackerId",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the event type id. impact.com documents it as required unless `EventTypeCode` or `EventTypeId` is sent.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
     },
     {
       "name": "EventTypeId",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the event type id. An alternative to `ActionTrackerId`.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
     },
     {
       "name": "EventTypeCode",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the event type code. An alternative to `ActionTrackerId`.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 128
     },
     {
       "name": "EventDate",
       "requirement": "required",
       "format": {
-        "kind": "regex",
-        "pattern": "^(NOW|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2})"
+        "kind": "non_empty"
       },
-      "description": "impact.com documents `EventDate` as required ISO 8601. `NOW` is accepted when a datetime cannot be provided.",
+      "description": "ISO8601 datetime or the documented NOW fallback. Full calendar validation is performed by the event_date_calendar rule.",
       "fix_hint": "Send ISO 8601, such as `2026-08-01T23:55:24-08:00`, or `NOW` only when that is all you have.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
     },
     {
       "name": "OrderId",
       "requirement": "recommended",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the unique order id. impact.com uses it for deduplication.",
       "fix_hint": "Set `OrderId` to the order reference.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
     },
     {
       "name": "ClickId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the impact.com click id from `im_ref`. One of the attribution keys impact.com requires.",
       "fix_hint": "Replay the stored `im_ref` click id as `ClickId`.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
     },
     {
       "name": "CustomerId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is an advertiser-side customer id. impact.com forbids a plaintext email here. One of the attribution keys.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
     },
     {
       "name": "CustomProfileId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It identifies a user on the property. One of the attribution keys impact.com requires.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 70
     },
     {
       "name": "OrderPromoCode",
-      "aliases": ["PromoCode"],
-      "format": { "kind": "non_empty" },
+      "aliases": [
+        "PromoCode"
+      ],
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the promotional code. One of the attribution keys when the code is assigned to a partner.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
     },
     {
       "name": "UniqueUrl",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is a unique partner URL. One of the attribution keys impact.com requires.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
     },
     {
       "name": "GoogAId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Google advertising id. One of the attribution keys impact.com requires.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 36
     },
     {
       "name": "AppleIfa",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Apple IDFA. One of the attribution keys impact.com requires.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 36
     },
     {
       "name": "AppleIfv",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Apple IDFV. One of the attribution keys impact.com requires.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 36
     },
     {
       "name": "IpAddress",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "ip"
+      },
       "description": "It is the customer's public IP, used for fraud checks and mobile install attribution. Send it unhashed.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 128
     },
     {
       "name": "CurrencyCode",
-      "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+      "format": {
+        "kind": "currency",
+        "case_insensitive": true
+      },
       "description": "It is the ISO 4217 currency of the conversion.",
       "fix_hint": "Use the three-letter code, such as `USD`.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
     },
     {
       "name": "OrderDiscount",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the order-level discount. impact.com documents a decimal amount that is applied proportionately across item subtotals.",
       "fix_hint": "Send `OrderDiscount` as a number such as `15.00`, without a currency symbol.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
     },
     {
       "name": "EventCode",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It names the mobile event, such as INSTALL, SIGN-UP, or SALE. impact.com documents it as required when submitting mobile conversions.",
       "fix_hint": "Send `EventCode` when the conversion is a mobile event.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 128
     },
     {
       "name": "AppPackage",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the app package name on a mobile conversion.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
     },
     {
       "name": "IrAppId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the IR App ID on a mobile conversion.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
     },
     {
       "name": "ItemSku1",
       "name_pattern": "^ItemSku[1-9][0-9]*$",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a line-item SKU. impact.com documents `ItemSkuN` on the online-sale conversion POST.",
       "fix_hint": "Send `ItemSku1`, `ItemSku2`, and so on for each SKU set.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
@@ -164,21 +226,28 @@
     {
       "name": "ItemName1",
       "name_pattern": "^ItemName[1-9][0-9]*$",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a line-item name. impact.com documents `ItemNameN` on the online-sale conversion POST.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
     },
     {
       "name": "ItemCategory1",
       "name_pattern": "^ItemCategory[1-9][0-9]*$",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a line-item category. impact.com documents `ItemCategoryN` on the online-sale conversion POST.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
     },
     {
       "name": "ItemQuantity1",
       "name_pattern": "^ItemQuantity[1-9][0-9]*$",
-      "format": { "kind": "regex", "pattern": "^[1-9][0-9]*$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[1-9][0-9]*$"
+      },
       "description": "It is a line-item quantity. impact.com documents `ItemQuantityN` as a positive integer.",
       "fix_hint": "Send `ItemQuantityN` as a positive integer, such as `2`.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
@@ -186,44 +255,1253 @@
     {
       "name": "ItemSubTotal1",
       "name_pattern": "^ItemSubTotal[1-9][0-9]*$",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is a line-item subtotal. impact.com documents `ItemSubTotalN` as the SKU-set total after unit price times quantity.",
       "fix_hint": "Send `ItemSubTotalN` as a number such as `28.00`, without a currency symbol.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
     },
     {
       "name": "ItemText1",
-      "name_pattern": "^ItemText([1-9]|10)$",
-      "format": { "kind": "regex", "pattern": "^.{1,64}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^.{1,64}$"
+      },
       "description": "It is a general item text field. impact.com documents `ItemText1` through `ItemText10` as optional strings of at most 64 characters.",
       "fix_hint": "Send `ItemTextN` as a string of at most 64 characters, or drop the pair.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
     },
     {
       "name": "ItemNumeric1",
-      "name_pattern": "^ItemNumeric([1-9]|10)$",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
-      "description": "It is a general item numeric field. impact.com documents `ItemNumeric1` through `ItemNumeric10` as decimals.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
       "fix_hint": "Send `ItemNumericN` as a number such as `10.00`, without a currency symbol.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format_severity": "warning"
     },
     {
       "name": "ItemDate1",
-      "name_pattern": "^ItemDate([1-9]|10)$",
       "format": {
-        "kind": "regex",
-        "pattern": "^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}(?:[ T][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{3})?(?:Z|[+-][0-9]{2}:[0-9]{2})?)?$"
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
       },
       "description": "It is a general item date field. impact.com documents `ItemDate1` through `ItemDate10` with ISO-like dates, with or without a time.",
       "fix_hint": "Send `ItemDateN` as a documented date such as `2026-08-06` or `2026-08-06T13:14:57-07:00`.",
-      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30
     },
     {
       "name": "ItemMoney1",
-      "name_pattern": "^ItemMoney[1-3]$",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
-      "description": "It is an item money field. impact.com documents `ItemMoney1` through `ItemMoney3` as decimals.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
       "fix_hint": "Send `ItemMoneyN` as a number such as `12.50`, without a currency symbol.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format_severity": "warning"
+    },
+    {
+      "name": "DispositionCode",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "MediaId",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "integer"
+      },
+      "aliases": [
+        "MediaPartnerId"
+      ]
+    },
+    {
+      "name": "PhoneNumber",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CallerId",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CountryCode",
+      "allow_empty": true,
+      "description": "Two-letter ISO country-code shape. Registered country policy is tracked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 2,
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{2}$"
+      }
+    },
+    {
+      "name": "CallProvider",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CallSessionId",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CalledPhoneNumber",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CallDuration",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "TalkDuration",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "AdId",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "CallStatus",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "UNKNOWN_CALLERID",
+          "FAILURE",
+          "CONGESTION",
+          "INCOMPLETE",
+          "CANCEL",
+          "IVR_DROPOFF",
+          "NO_TRANSFER_ATTEMPT",
+          "ANSWER"
+        ]
+      }
+    },
+    {
+      "name": "CallerPhoneNumberCountry",
+      "allow_empty": true,
+      "description": "Two-letter ISO country-code shape. Registered country policy is tracked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{2}$"
+      }
+    },
+    {
+      "name": "CalledPhoneNumberCountry",
+      "allow_empty": true,
+      "description": "Two-letter ISO country-code shape. Registered country policy is tracked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{2}$"
+      }
+    },
+    {
+      "name": "SubId1",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "SubId2",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "SubId3",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "Country",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "City",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "Region",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "Zip",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "RepeatCaller",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "PhoneType",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CallRecording",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "IvrDuration",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "Keypresses",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "Key1",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "Key2",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "Key3",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "Key4",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "TrafficSource",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "OptInSms",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "UserAgent",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "DispositionName",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "SaleAmount",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "ReferenceId",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomConversionEvent1Name",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomConversionEvent2Name",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomConversionEvent3Name",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomConversionEvent1Value",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomConversionEvent2Value",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomConversionEvent3Value",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "VendorEventId",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "PromoNumberDescription",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomCallEvent1Name",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomCallEvent2Name",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomCallEvent3Name",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomCallEvent1Value",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomCallEvent2Value",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "CustomCallEvent3Value",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "name": "Money1",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "Money2",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "Money3",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "Numeric1",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "Numeric2",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "Numeric3",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "Date1",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "Date2",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "Date3",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "Text1",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text2",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text3",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text4",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text5",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text6",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text7",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text8",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text9",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text10",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text11",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text12",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text13",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text14",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text15",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text16",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text17",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text18",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text19",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text20",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text21",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text22",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text23",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text24",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text25",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text26",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text27",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text28",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text29",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text30",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text31",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text32",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text33",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text34",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text35",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text36",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text37",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text38",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text39",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text40",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text41",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text42",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text43",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text44",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text45",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text46",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text47",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text48",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text49",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "Text50",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText2",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText3",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText4",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText5",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText6",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText7",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText8",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText9",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemText10",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 64
+    },
+    {
+      "name": "ItemNumeric2",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemNumeric3",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemNumeric4",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemNumeric5",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemNumeric6",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemNumeric7",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemNumeric8",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemNumeric9",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemNumeric10",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemDate2",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemDate3",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemDate4",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemDate5",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemDate6",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemDate7",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemDate8",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemDate9",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemDate10",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30,
+      "format": {
+        "kind": "datetime",
+        "allow_date_only": true,
+        "allow_space_separator": true,
+        "allow_unpadded_date": true
+      }
+    },
+    {
+      "name": "ItemMoney2",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ItemMoney3",
+      "allow_empty": true,
+      "description": "Published DECIMAL(18,3) reporting value. Extra precision may need rounding; no server rejection behavior is claimed.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,15}(?:\\.[0-9]{1,3})?$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "CustomerStatus",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 30
+    },
+    {
+      "name": "CustomerCity",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "CustomerCountry",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "CustomerPostCode",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "CustomerRegion",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "DeviceModel",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "DeviceMfr",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "AppInstallRef",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "AppVer",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "PropertyId",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "TrackingConsent",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "Note",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references",
+      "max_length": 255
+    },
+    {
+      "name": "SharedId",
+      "allow_empty": true,
+      "description": "Optional published conversion/reporting field. Conditional requiredness is checked separately.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
     }
   ],
@@ -231,7 +1509,11 @@
     {
       "code": "vendor.impact-conversions.event_type_required",
       "kind": "require_one_of",
-      "params": ["ActionTrackerId", "EventTypeId", "EventTypeCode"],
+      "params": [
+        "ActionTrackerId",
+        "EventTypeId",
+        "EventTypeCode"
+      ],
       "severity": "error",
       "message": "The conversion has no event type. impact.com documents `ActionTrackerId`, `EventTypeId`, or `EventTypeCode` as required.",
       "fix_hint": "Send `EventTypeId` or `ActionTrackerId` from Settings, Event Types.",
@@ -249,7 +1531,8 @@
         "UniqueUrl",
         "GoogAId",
         "AppleIfa",
-        "AppleIfv"
+        "AppleIfv",
+        "MediaId"
       ],
       "severity": "error",
       "message": "The conversion has no attribution key. impact.com documents at least one of `ClickId`, `CustomerId`, `CustomProfileId`, a promo code, `UniqueUrl`, `GoogAId`, `AppleIfa`, or `AppleIfv`.",
@@ -260,7 +1543,9 @@
       "code": "vendor.impact-conversions.unhashed_email",
       "kind": "forbid_value_pattern",
       "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
-      "params": ["CustomerId"],
+      "params": [
+        "CustomerId"
+      ],
       "severity": "error",
       "message": "`CustomerId` carries what looks like a raw email address. impact.com documents customer ids as non-identifying.",
       "fix_hint": "Send a non-identifying customer id, not a plaintext email.",
@@ -270,7 +1555,9 @@
       "code": "vendor.impact-conversions.hashed_plaintext_field",
       "kind": "forbid_value_pattern",
       "pattern": "^[A-Fa-f0-9]{64}$",
-      "params": ["IpAddress"],
+      "params": [
+        "IpAddress"
+      ],
       "severity": "error",
       "message": "`IpAddress` looks like a SHA-256 digest, but impact.com documents it as the customer's public IP, unhashed.",
       "fix_hint": "Send the raw IP address.",
@@ -280,10 +1567,141 @@
       "code": "vendor.impact-conversions.mobile_requires_event_code",
       "kind": "required_with",
       "when": "AppPackage",
-      "requires": ["EventCode"],
+      "requires": [
+        "EventCode"
+      ],
       "severity": "error",
       "message": "A mobile conversion has `AppPackage` and no `EventCode`. impact.com documents `EventCode` as required when submitting mobile conversions.",
       "fix_hint": "Send `EventCode` such as `SALE`, `INSTALL`, or `SIGN-UP`.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "code": "vendor.impact-conversions.event_date_calendar",
+      "kind": "format",
+      "param": "EventDate",
+      "format": {
+        "kind": "datetime",
+        "allow_basic": true
+      },
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "EventDate",
+          "values": [
+            "NOW"
+          ]
+        }
+      },
+      "severity": "error",
+      "message": "EventDate must be a calendar-valid ISO8601 datetime, or the documented NOW fallback.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "code": "vendor.impact-conversions.call_fields_required",
+      "kind": "require_any_of",
+      "groups": [
+        [
+          "CampaignId",
+          "MediaId",
+          "EventDate",
+          "ActionTrackerId",
+          "CallProvider",
+          "CallSessionId",
+          "CallerId",
+          "CalledPhoneNumber",
+          "CallDuration",
+          "TalkDuration"
+        ]
+      ],
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {
+            "kind": "exists",
+            "param": "CallProvider"
+          },
+          {
+            "kind": "exists",
+            "param": "CallSessionId"
+          },
+          {
+            "kind": "exists",
+            "param": "CalledPhoneNumber"
+          }
+        ]
+      },
+      "severity": "error",
+      "message": "A submitted call conversion must contain every required call tracking field.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "code": "vendor.impact-conversions.subids_require_click",
+      "kind": "require_any_of",
+      "groups": [
+        [
+          "ClickId"
+        ]
+      ],
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "not",
+            "condition": {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "exists",
+                  "param": "CallProvider"
+                },
+                {
+                  "kind": "exists",
+                  "param": "CallSessionId"
+                },
+                {
+                  "kind": "exists",
+                  "param": "CalledPhoneNumber"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "present",
+                "param": "SubId1"
+              },
+              {
+                "kind": "present",
+                "param": "SubId2"
+              },
+              {
+                "kind": "present",
+                "param": "SubId3"
+              },
+              {
+                "kind": "present",
+                "param": "SharedId"
+              }
+            ]
+          }
+        ]
+      },
+      "severity": "error",
+      "message": "Passing SubIds or SharedId on a normal conversion requires ClickId. Call fields have a separately documented optional ClickId branch.",
+      "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
+    },
+    {
+      "code": "vendor.impact-conversions.note_requires_media_partner",
+      "kind": "required_with",
+      "when": "Note",
+      "requires": [
+        "MediaId"
+      ],
+      "severity": "error",
+      "message": "The optional Note field requires MediaPartnerId. MediaId is its documented alias.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
     }
   ]

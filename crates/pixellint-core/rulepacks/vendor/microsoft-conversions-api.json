@@ -7,8 +7,12 @@
   "docs": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
   "path_pattern": "^/v1/(?<tag_id>[^/]+)/events$",
   "match": {
-    "hosts": ["capi.uet.microsoft.com"],
-    "path_prefixes": ["/v1/"],
+    "hosts": [
+      "capi.uet.microsoft.com"
+    ],
+    "path_prefixes": [
+      "/v1/"
+    ],
     "json_paths": [
       {
         "any_of": [
@@ -23,7 +27,9 @@
     {
       "name": "tag_id",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric UET tag ID, and it travels in the path as /v1/{tagId}/events.",
       "fix_hint": "Put the UET tag ID from Microsoft Advertising in the path as /v1/{tagId}/events.",
       "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
@@ -38,17 +44,42 @@
           "requirement": "required",
           "description": "Microsoft documents `data` as the list of events. An empty list sends nothing.",
           "fix_hint": "Send at least one event in `data`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 1000
         },
         {
           "name": "continueOnValidationError",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It is whether a batch should skip invalid events. Microsoft documents `true` to skip them and `false` (the default) to reject the whole request.",
           "fix_hint": "Send `true` or `false` in `continueOnValidationError`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "boolean"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "data[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "dataProvider",
+          "description": "Third-party senders identify themselves with this request-level string.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         }
       ],
       "rules": []
@@ -61,53 +92,74 @@
           "requirement": "required",
           "format": {
             "kind": "enum",
-            "values": ["pageLoad", "custom"]
+            "values": [
+              "pageLoad",
+              "custom"
+            ]
           },
           "description": "It is the event type. Microsoft documents `pageLoad` or `custom`.",
           "fix_hint": "Set `eventType` to `pageLoad` or `custom`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "eventTime",
           "requirement": "required",
-          "format": { "kind": "integer", "min_digits": 10, "max_digits": 10 },
+          "format": {
+            "kind": "integer",
+            "min_digits": 10,
+            "max_digits": 10
+          },
           "description": "It is Unix epoch time in seconds UTC. Microsoft documents seconds, so a 13-digit value is milliseconds and the wrong unit.",
           "fix_hint": "Send seconds, a 10-digit Unix timestamp, not milliseconds.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "integer"
         },
         {
           "name": "eventId",
           "requirement": "recommended",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It identifies the event so UET JavaScript and CAPI can deduplicate. Microsoft documents it as required for deduplication.",
           "fix_hint": "Set `eventId` to the same value the UET tag sent.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "eventName",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the custom conversion action. Microsoft documents it for custom conversion goals.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "eventSourceUrl",
-          "format": { "kind": "url" },
+          "format": {
+            "kind": "url"
+          },
           "description": "It is the page URL. Microsoft documents it as required on `pageLoad` events.",
           "fix_hint": "Set `eventSourceUrl` to the absolute page URL.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "referrerUrl",
-          "format": { "kind": "url" },
+          "format": {
+            "kind": "url"
+          },
           "description": "It is the page referrer, used for referral remarketing lists. Microsoft documents a URL.",
           "fix_hint": "Send an absolute URL in `referrerUrl`, or omit the field.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "pageLoadId",
           "format": {
             "kind": "regex",
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            "pattern": "^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-4[A-Fa-f0-9]{3}-[89ABab][A-Fa-f0-9]{3}-[A-Fa-f0-9]{12}$"
           },
           "description": "It links custom events to a page load. Microsoft documents a v4 UUID.",
           "fix_hint": "Send a UUID such as `bcf3000b-65fa-4cd2-808a-8a6cf2b1d0a5`.",
@@ -115,45 +167,67 @@
         },
         {
           "name": "adStorageConsent",
-          "format": { "kind": "enum", "values": ["G", "D"] },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "G",
+              "D"
+            ]
+          },
           "description": "It is the advertising-storage consent signal. Microsoft documents `G` for granted and `D` for denied.",
           "fix_hint": "Set `adStorageConsent` to `G` or `D`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "userData",
           "requirement": "required",
           "description": "Microsoft documents `userData` as required, with at least one supported identifier.",
           "fix_hint": "Add a `userData` object with at least one of `anonymousId`, `externalId`, `em`, `ph`, `msclkid`, `idfa`, or `gaid`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "object"
         },
         {
           "name": "userData.anonymousId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the guest visitor ID, also used for ID Sync.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "userData.externalId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is an anonymized signed-in user ID.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "userData.em",
-          "format": { "kind": "hex", "length": 64 },
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
           "format_severity": "warning",
           "description": "It is the SHA-256 hex digest of the email. Microsoft documents lowercase hex after trim and lowercase.",
           "fix_hint": "Trim, lowercase, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "userData.ph",
-          "format": { "kind": "hex", "length": 64 },
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
           "format_severity": "warning",
           "description": "It is the SHA-256 hex digest of the phone number.",
           "fix_hint": "Normalize the phone, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "userData.msclkid",
@@ -167,54 +241,74 @@
         },
         {
           "name": "userData.idfa",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
           "description": "It is the iOS Identifier for Advertisers.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "userData.gaid",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
           "description": "It is the Android advertising ID.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "userData.clientIpAddress",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "ip"
+          },
           "description": "It is the visitor IP, IPv4 or IPv6, sent unhashed. Microsoft documents it as preferred.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "userData.clientUserAgent",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the visitor user agent, sent unhashed. Microsoft documents it as preferred.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "customData.currency",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
           "description": "It is the ISO 4217 currency of `customData.value`.",
           "fix_hint": "Use a three-letter code such as `USD`.",
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         },
         {
           "name": "customData.value",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
           "description": "It is the revenue value for variable-revenue goals. Microsoft documents a decimal number together with `currency`.",
           "fix_hint": "Send a number such as `123.45`, with no currency symbol.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "number"
         },
         {
           "name": "customData.eventValue",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
           "description": "It is the event value for custom conversion goals. Microsoft documents a float.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "number"
         },
         {
           "name": "customData.transactionId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is a unique id for singular events such as a purchase. Microsoft documents it as optional but recommended.",
           "fix_hint": "Send `customData.transactionId`, or drop the empty pair.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "customData.pageType",
@@ -232,41 +326,47 @@
           },
           "description": "It is the ecommerce page type for dynamic remarketing. Microsoft documents a closed set.",
           "fix_hint": "Set `customData.pageType` to `cart`, `category`, `home`, `other`, `product`, `purchase`, or `searchresults`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "customData.ecommTotalValue",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
           "description": "It is the total value of the cart or purchase. Microsoft documents a decimal.",
           "fix_hint": "Send a number such as `123.45`, with no currency symbol.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "number"
         },
         {
           "name": "customData.items[].id",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the item id on an `items` row. Microsoft documents `id` as preferred on each product object.",
           "fix_hint": "Set `customData.items[].id` to the catalog item ID, or drop the empty pair.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         },
         {
           "name": "customData.items[].quantity",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is the item quantity on an `items` row. Microsoft documents an integer.",
           "fix_hint": "Send `customData.items[].quantity` as an integer, such as `2`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "integer"
         },
         {
           "name": "customData.items[].price",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
           "description": "It is the item price after discounts. Microsoft documents a decimal.",
           "fix_hint": "Send `customData.items[].price` as a number, such as `25.1`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "number"
         },
         {
           "name": "customData.hotelData.checkinDate",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+            "kind": "date"
           },
           "description": "It is the hotel check-in date. Microsoft documents `YYYY-MM-DD`.",
           "fix_hint": "Send `customData.hotelData.checkinDate` as `YYYY-MM-DD`, such as `2018-10-27`.",
@@ -275,8 +375,7 @@
         {
           "name": "customData.hotelData.checkoutDate",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+            "kind": "date"
           },
           "description": "It is the hotel check-out date. Microsoft documents `YYYY-MM-DD`.",
           "fix_hint": "Send `customData.hotelData.checkoutDate` as `YYYY-MM-DD`, such as `2018-10-31`.",
@@ -284,24 +383,100 @@
         },
         {
           "name": "customData.hotelData.totalPrice",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
           "description": "It is the total booking price including taxes and fees. Microsoft documents a decimal.",
           "fix_hint": "Send a number such as `188.23`, with no currency symbol.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "number"
         },
         {
           "name": "customData.hotelData.basePrice",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
           "description": "It is the booking price excluding taxes and fees. Microsoft documents a decimal.",
           "fix_hint": "Send a number such as `165.76`, with no currency symbol.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "number"
         },
         {
           "name": "customData.hotelData.lengthOfStay",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is the number of nights. Microsoft documents an integer, and it is not required when `checkoutDate` is sent.",
           "fix_hint": "Send `customData.hotelData.lengthOfStay` as an integer, such as `4`.",
-          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "integer"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "customData",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "customData.hotelData",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "customData.items",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "customData.items[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "pageTitle",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "keywords",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "customData.searchTerm",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "customData.eventCategory",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "customData.eventLabel",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "customData.itemIds",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "array"
+        },
+        {
+          "name": "customData.itemIds[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration",
+          "json_type": "string"
         }
       ],
       "rules": [
@@ -326,8 +501,12 @@
           "code": "vendor.microsoft-conversions-api.body.page_load_requires_url",
           "kind": "required_when_value",
           "when": "eventType",
-          "equals": ["pageLoad"],
-          "requires": ["eventSourceUrl"],
+          "equals": [
+            "pageLoad"
+          ],
+          "requires": [
+            "eventSourceUrl"
+          ],
           "severity": "error",
           "message": "The event is `pageLoad` but carries no `eventSourceUrl`. Microsoft documents the page URL as required on page load events.",
           "fix_hint": "Set `eventSourceUrl` to the absolute page URL.",
@@ -337,7 +516,9 @@
           "code": "vendor.microsoft-conversions-api.body.value_requires_currency",
           "kind": "required_with",
           "when": "customData.value",
-          "requires": ["customData.currency"],
+          "requires": [
+            "customData.currency"
+          ],
           "severity": "error",
           "message": "The event sends `customData.value` without `customData.currency`. Microsoft documents the ISO 4217 code together with the revenue value.",
           "fix_hint": "Add `customData.currency`, such as `USD`.",
@@ -347,7 +528,9 @@
           "code": "vendor.microsoft-conversions-api.body.currency_requires_value",
           "kind": "required_with",
           "when": "customData.currency",
-          "requires": ["customData.value"],
+          "requires": [
+            "customData.value"
+          ],
           "severity": "error",
           "message": "The event sends `customData.currency` without `customData.value`. Microsoft documents both together.",
           "fix_hint": "Add `customData.value` as a number, with no currency symbol.",
@@ -357,7 +540,9 @@
           "code": "vendor.microsoft-conversions-api.body.unhashed_email",
           "kind": "forbid_value_pattern",
           "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
-          "params": ["userData.em"],
+          "params": [
+            "userData.em"
+          ],
           "severity": "error",
           "message": "`userData.em` carries what looks like a raw email address. Microsoft documents SHA-256 lowercase hex.",
           "fix_hint": "Trim, lowercase, hash with SHA-256, and send the 64-character hex digest.",
@@ -367,10 +552,23 @@
           "code": "vendor.microsoft-conversions-api.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["userData.clientIpAddress", "userData.clientUserAgent"],
+          "params": [
+            "userData.clientIpAddress",
+            "userData.clientUserAgent"
+          ],
           "severity": "error",
           "message": "This field looks like a SHA-256 digest, but Microsoft documents `clientIpAddress` and `clientUserAgent` as unhashed.",
           "fix_hint": "Send the raw IP address or user agent.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
+        },
+        {
+          "code": "vendor.microsoft-conversions-api.body.eventTime_time_window",
+          "kind": "time_window",
+          "param": "eventTime",
+          "unit": "seconds",
+          "max_age_seconds": 604800,
+          "severity": "error",
+          "message": "The timestamp is outside the documented processing window.",
           "doc": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration"
         }
       ]

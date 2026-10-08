@@ -30,7 +30,8 @@
           },
           "description": "JSON:API resource type, which Klaviyo documents as `event` for this endpoint.",
           "fix_hint": "Set `data.type` to `event`.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "string"
         },
         {
           "name": "data.attributes.metric.data.type",
@@ -43,46 +44,56 @@
           },
           "description": "The nested metric resource is typed `metric`. Klaviyo documents `type` as required on the metric object.",
           "fix_hint": "Set the metric's `type` to `metric`.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "string"
         },
         {
           "name": "data.attributes.metric.data.attributes.name",
           "requirement": "required",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{1,127}$"
+            "kind": "non_empty"
           },
-          "description": "It is the name of the metric the event is recorded against. Klaviyo documents fewer than 128 characters.",
+          "description": "Name of the event. Must be less than 128 characters.",
           "fix_hint": "Name the metric, such as `Placed Order`, in at most 128 characters.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "string",
+          "max_length": 127
         },
         {
           "name": "data.attributes.properties",
           "requirement": "required",
           "allow_empty": true,
-          "description": "Klaviyo documents `properties` as required on the event attributes object. An empty object is allowed when there are no custom properties.",
+          "description": "Properties of this event (must not exceed 400 properties). The size of the event payload must not exceed 5 MB,\nand each string cannot be larger than 100 KB. For a full list of data limits on event payloads,\nsee [Limitations](https://developers.klaviyo.com/en/reference/events_api_overview#limitations).\n\nNote any top-level property that is not an object can be\nused to create segments. The `$extra` property records any\nnon-segmentable values that can be referenced later, e.g., HTML templates are\nuseful on a segment but are not used to create a segment.",
           "fix_hint": "Send a `properties` object. Use `{}` when there are no custom properties.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object",
+          "max_properties": 400
         },
         {
           "name": "data.attributes.time",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+            "kind": "datetime",
+            "require_timezone": true
           },
-          "description": "It is when the event occurred. Klaviyo documents an ISO 8601 datetime and defaults to request time when it is omitted.",
+          "description": "When this event occurred. By default, the time the request was received will be used.\nThe time is truncated to the second. The time must be after the year 1990 and can only\nbe up to 1 year in the future.",
           "fix_hint": "Send an ISO 8601 timestamp, such as `2022-11-08T00:00:00+00:00`.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.value",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-          },
-          "description": "It is a numeric monetary value for the event. Klaviyo documents it together with `value_currency`.",
+          "description": "A numeric, monetary value to associate with this event. For example, the dollar amount of a purchase.",
           "fix_hint": "Send a number such as `9.99`, with no currency symbol.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.value_currency",
@@ -90,17 +101,28 @@
             "kind": "regex",
             "pattern": "^[A-Za-z]{3}$"
           },
-          "description": "It is the ISO 4217 currency of `value`.",
+          "description": "The ISO 4217 currency code of the value associated with the event.",
           "fix_hint": "Use a three-letter code such as `USD`.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.profile.data.attributes.email",
           "format": {
             "kind": "non_empty"
           },
-          "description": "One of email, phone number, external id, or id identifies the profile.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "description": "Individual's email address",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_length": 100
         },
         {
           "name": "data.attributes.profile.data.attributes.phone_number",
@@ -108,25 +130,40 @@
             "kind": "regex",
             "pattern": "^\\+[1-9][0-9]{6,14}$"
           },
-          "description": "It is the profile phone number. Klaviyo documents E.164.",
+          "description": "Individual's phone number in E.164 format",
           "fix_hint": "Send E.164, such as `+15005550006`.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.profile.data.attributes.external_id",
           "format": {
             "kind": "non_empty"
           },
-          "description": "One of email, phone number, external id, or id identifies the profile.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "description": "A unique identifier used by customers to associate Klaviyo profiles with profiles in an external system, such as a point-of-sale system. Format varies based on the external system.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.profile.data.id",
           "format": {
             "kind": "non_empty"
           },
-          "description": "One of email, phone number, external id, or id identifies the profile.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "description": "Primary key that uniquely identifies this profile. Generated by Klaviyo.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.profile.data.type",
@@ -139,7 +176,8 @@
           },
           "description": "The nested profile resource is typed `profile`. Klaviyo documents `type` as required on the profile object.",
           "fix_hint": "Set the profile's `type` to `profile`.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "string"
         },
         {
           "name": "data.attributes.profile.data.attributes.anonymous_id",
@@ -148,52 +186,465 @@
           },
           "description": "It is an anonymous profile identifier. Klaviyo documents `anonymous_id` on the event profile object.",
           "fix_hint": "Send `anonymous_id`, or drop the empty pair.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.profile.data.attributes._kx",
           "format": {
             "kind": "non_empty"
           },
-          "description": "It is Klaviyo's encrypted web-tracking exchange id, also called `exchange_id`.",
+          "description": "Also known as the `exchange_id`, this is an encrypted identifier used for identifying a\nprofile by Klaviyo's web tracking.\n\nYou can use this field as a filter when retrieving profiles via the Get Profiles endpoint.",
           "fix_hint": "Send `_kx` from Klaviyo web tracking, or drop the empty pair.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.profile.data.attributes.locale",
           "format": {
             "kind": "regex",
-            "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z]{2})?$"
+            "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"
           },
-          "description": "It is the profile locale. Klaviyo documents an IETF BCP 47 tag like `en-US` (ISO 639 plus ISO 3166 alpha-2).",
+          "description": "The locale of the profile, in the IETF BCP 47 language tag format like (ISO 639-1/2)-(ISO 3166 alpha-2)",
           "fix_hint": "Send a tag such as `en-US`.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.profile.data.attributes.image",
           "format": {
             "kind": "url"
           },
-          "description": "It is a URL pointing at a profile image. Klaviyo documents it as a URL.",
+          "description": "URL pointing to the location of a profile image",
           "fix_hint": "Send an absolute image URL, or omit the field.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.profile.data.attributes.location.ip",
           "format": {
-            "kind": "non_empty"
+            "kind": "ip"
           },
-          "description": "It is the profile IP address. Klaviyo documents `location.ip` as an IP address, unhashed.",
+          "description": "IP Address",
           "fix_hint": "Send the raw IP in `location.ip`, not a digest.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true
         },
         {
           "name": "data.attributes.unique_id",
           "format": {
             "kind": "non_empty"
           },
-          "description": "Klaviyo deduplicates on it, so a retried request is not counted twice.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
+          "description": "A unique identifier for an event. If the unique_id is repeated for the same\nprofile and metric, only the first processed event will be recorded. If this is not\npresent, this will use the time to the second. Using the default, this limits only one\nevent per profile per second.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_length": 255
+        },
+        {
+          "name": "data",
+          "description": "The vendor documents `data` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes",
+          "description": "The vendor documents `data.attributes` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.metric",
+          "description": "The vendor documents `data.attributes.metric` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.metric.data",
+          "description": "The vendor documents `data.attributes.metric.data` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.metric.data.attributes",
+          "description": "The vendor documents `data.attributes.metric.data.attributes` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.profile",
+          "description": "The vendor documents `data.attributes.profile` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.profile.data",
+          "description": "The vendor documents `data.attributes.profile.data` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes",
+          "description": "The vendor documents `data.attributes.profile.data.attributes` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location",
+          "description": "The vendor documents `data.attributes.profile.data.attributes.location` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.backfill",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "description": "When true, the event is recorded but does NOT trigger flows. Use this when backfilling\nhistorical events so existing flow definitions do not re-fire on events that already\nfired in the past.",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.metric.data.attributes.service",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "This is for advanced usage. For api requests, this should use the default, which is set to api.",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.first_name",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Individual's first name",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.last_name",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Individual's last name",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.organization",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Name of the company or organization within the company for whom the individual works",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.title",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Individual's job title",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.address1",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "First line of street address",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.address2",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Second line of street address",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.city",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "City name",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.country",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Country name",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.latitude",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "description": "Latitude coordinate. We recommend providing a precision of four decimal places.",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.longitude",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "description": "Longitude coordinate. We recommend providing a precision of four decimal places.",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.region",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Region within a country, such as state or province",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.zip",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Zip code",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.location.timezone",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "description": "Time zone name. We recommend using time zones from the IANA Time Zone Database.",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.attributes.properties",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "description": "An object containing key/value pairs for any custom properties assigned to this profile",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.meta",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.meta.patch_properties",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "description": "Specify one or more patch operations to apply to existing property data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.meta.patch_properties.append",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "description": "Append a simple value or values to this property array",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.meta.patch_properties.unappend",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "description": "Remove a simple value or values from this property array",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.meta.patch_properties.unset",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "description": "Remove a key or keys (and their values) completely from properties",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.meta.patch_identifiers",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "description": "Specify one or more patch operations to apply to existing identifier data. Currently only `email` is supported, and it is used to add or remove secondary email addresses on a profile.",
+          "allow_empty": true
+        },
+        {
+          "name": "data.attributes.profile.data.meta.patch_identifiers.append",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.profile.data.meta.patch_identifiers.unappend",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "json_type": "object"
+        },
+        {
+          "name": "data.attributes.profile.data.meta.patch_properties.unset[]",
+          "requirement": "optional",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "data.attributes.profile.data.meta.patch_properties.unset",
+            "json_type": "array"
+          },
+          "allow_empty": true,
+          "doc": "https://raw.githubusercontent.com/klaviyo/openapi/main/openapi/stable/apis/create_event.json",
+          "severity": "error",
+          "format_severity": "error"
         }
       ],
       "rules": [
@@ -212,26 +663,6 @@
           "doc": "https://developers.klaviyo.com/en/reference/create_event"
         },
         {
-          "code": "vendor.klaviyo.body.value_requires_currency",
-          "kind": "required_with",
-          "when": "data.attributes.value",
-          "requires": ["data.attributes.value_currency"],
-          "severity": "error",
-          "message": "The event sends `value` without `value_currency`. Klaviyo documents the ISO 4217 code together with the monetary value.",
-          "fix_hint": "Add `value_currency`, such as `USD`.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
-        },
-        {
-          "code": "vendor.klaviyo.body.currency_requires_value",
-          "kind": "required_with",
-          "when": "data.attributes.value_currency",
-          "requires": ["data.attributes.value"],
-          "severity": "error",
-          "message": "The event sends `value_currency` without `value`. Klaviyo documents both together.",
-          "fix_hint": "Add `value` as a number, with no currency symbol.",
-          "doc": "https://developers.klaviyo.com/en/reference/create_event"
-        },
-        {
           "code": "vendor.klaviyo.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
@@ -243,6 +674,103 @@
           "message": "This field looks like a SHA-256 digest, but Klaviyo documents email and `location.ip` as unhashed.",
           "fix_hint": "Send the raw email address or IP. Hashing it makes the profile unmatchable.",
           "doc": "https://developers.klaviyo.com/en/reference/create_event"
+        }
+      ]
+    },
+    {
+      "scope": "data.attributes.properties.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "max_items": 4000,
+          "allow_empty": true,
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://developers.klaviyo.com/en/reference/events_api_overview#limitations",
+          "description": "Arrays within event data contain at most 4000 items."
+        }
+      ]
+    },
+    {
+      "scope": "data.attributes.properties.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "json_type": "integer",
+          "minimum": -9223372036854775808,
+          "maximum": 9223372036854775807,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "integer"
+          },
+          "severity": "error",
+          "format_severity": "error",
+          "doc": "https://developers.klaviyo.com/en/reference/events_api_overview#limitations",
+          "description": "Integer event property values fit signed 64 bits; fractional values are not forced to integer."
+        }
+      ]
+    },
+    {
+      "scope": "data.attributes.profile.data",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "json_type": "object",
+          "max_compact_bytes": 97280,
+          "format_severity": "warning",
+          "severity": "warning",
+          "doc": "https://developers.klaviyo.com/en/reference/events_api_overview#limitations",
+          "description": "The95KBprofile limit is interpreted as95KiB of compact normalized JSON for this advisory. Raw JSON whitespace/escaping and decimalKBunits are not defined by the source."
+        }
+      ]
+    },
+    {
+      "scope": "data.attributes.properties.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "max_byte_length": 102400,
+          "format_severity": "warning",
+          "severity": "warning",
+          "allow_empty": true,
+          "doc": "https://developers.klaviyo.com/en/reference/events_api_overview#limitations",
+          "description": "String size100KB is interpreted as100KiB of decoded UTF8 for this advisory. The primary source does not define KB or escaping semantics."
+        }
+      ]
+    },
+    {
+      "scope": "data.attributes.properties",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "json_type": "object",
+          "max_compact_bytes": 5242880,
+          "format_severity": "warning",
+          "severity": "warning",
+          "doc": "https://developers.klaviyo.com/en/reference/events_api_overview#limitations",
+          "description": "Custom event data excludes profile. This advisory compares compact property JSON to5MiB, an explicitly recorded interpretation of the source5MB limit."
         }
       ]
     }

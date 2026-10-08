@@ -1,20 +1,2340 @@
 [
-  {"id":"clean-ios-url","kind":"url","fixture":"clean-ios-url.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":true,"expected_errors":0,"expected_warnings":0,"expected_infos":0,"expected_codes":[]},
-  {"id":"clean-android-url","kind":"url","fixture":"clean-android-url.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":true,"expected_errors":0,"expected_warnings":0,"expected_infos":0,"expected_codes":[]},
-  {"id":"unprefixed-ios-app-id","kind":"url","fixture":"unprefixed-ios-app-id.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":true,"expected_errors":0,"expected_warnings":1,"expected_infos":0,"expected_codes":["vendor.appsflyer.ios_app_id_unprefixed"]},
-  {"id":"clean-event","kind":"json","fixture":"clean-event.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":true,"expected_errors":0,"expected_warnings":0,"expected_infos":0,"expected_codes":[]},
-  {"id":"missing-appsflyer-id","kind":"json","fixture":"missing-appsflyer-id.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.appsflyer_id.missing"]},
-  {"id":"missing-event-name","kind":"json","fixture":"missing-event-name.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.eventName.missing"]},
-  {"id":"epoch-event-time","kind":"json","fixture":"epoch-event-time.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.eventTime.invalid"]},
-  {"id":"unhashed-email","kind":"json","fixture":"unhashed-email.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":2,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.email_hashed.invalid","vendor.appsflyer.body.unhashed_email"]},
-  {"id":"hashed-ip","kind":"json","fixture":"hashed-ip.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.hashed_plaintext_field"]},
-  {"id":"body-with-app-id","kind":"json","fixture":"body-with-app-id.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":true,"expected_errors":0,"expected_warnings":0,"expected_infos":0,"expected_codes":[]},
-  {"id":"missing-event-value","kind":"json","fixture":"missing-event-value.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.eventValue.missing"]},
-  {"id":"invalid-att","kind":"json","fixture":"invalid-att.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.att.invalid"]},
-  {"id":"invalid-advertising-id","kind":"json","fixture":"invalid-advertising-id.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.advertising_id.invalid"]},
-  {"id":"clean-ios-ids","kind":"json","fixture":"clean-ios-ids.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":true,"expected_errors":0,"expected_warnings":0,"expected_infos":0,"expected_codes":[]},
-  {"id":"invalid-idfv","kind":"json","fixture":"invalid-idfv.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.idfv.invalid"]},
-  {"id":"invalid-fb-login-id","kind":"json","fixture":"invalid-fb-login-id.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.fb_login_id.invalid"]},
-  {"id":"empty-customer-user-id","kind":"json","fixture":"empty-customer-user-id.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":true,"expected_errors":0,"expected_warnings":1,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.customer_user_id.empty"]},
-  {"id":"invalid-consent-gdpr","kind":"json","fixture":"invalid-consent-gdpr.txt","expected_plugins":["core","vendor/appsflyer"],"expected_ok":false,"expected_errors":1,"expected_warnings":0,"expected_infos":0,"expected_codes":["vendor.appsflyer.body.consent_data.manual.gdpr_applies.invalid"]}
+  {
+    "id": "clean-ios-url",
+    "kind": "url",
+    "fixture": "clean-ios-url.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "clean-android-url",
+    "kind": "url",
+    "fixture": "clean-android-url.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "unprefixed-ios-app-id",
+    "kind": "url",
+    "fixture": "unprefixed-ios-app-id.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.ios_app_id_unprefixed"
+    ]
+  },
+  {
+    "id": "clean-event",
+    "kind": "json",
+    "fixture": "clean-event.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "missing-appsflyer-id",
+    "kind": "json",
+    "fixture": "missing-appsflyer-id.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.appsflyer_id.missing"
+    ]
+  },
+  {
+    "id": "missing-event-name",
+    "kind": "json",
+    "fixture": "missing-event-name.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventName.missing"
+    ]
+  },
+  {
+    "id": "epoch-event-time",
+    "kind": "json",
+    "fixture": "epoch-event-time.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventTime.invalid"
+    ]
+  },
+  {
+    "id": "unhashed-email",
+    "kind": "json",
+    "fixture": "unhashed-email.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.email_hashed.invalid",
+      "vendor.appsflyer.body.unhashed_email"
+    ]
+  },
+  {
+    "id": "hashed-ip",
+    "kind": "json",
+    "fixture": "hashed-ip.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.ip.invalid",
+      "vendor.appsflyer.body.hashed_plaintext_field"
+    ]
+  },
+  {
+    "id": "body-with-app-id",
+    "kind": "json",
+    "fixture": "body-with-app-id.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "missing-event-value",
+    "kind": "json",
+    "fixture": "missing-event-value.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventValue.missing"
+    ]
+  },
+  {
+    "id": "invalid-att",
+    "kind": "json",
+    "fixture": "invalid-att.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.att.invalid"
+    ]
+  },
+  {
+    "id": "invalid-advertising-id",
+    "kind": "json",
+    "fixture": "invalid-advertising-id.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.advertising_id.invalid",
+      "vendor.appsflyer.body.android_os_required"
+    ]
+  },
+  {
+    "id": "clean-ios-ids",
+    "kind": "json",
+    "fixture": "clean-ios-ids.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": []
+  },
+  {
+    "id": "invalid-idfv",
+    "kind": "json",
+    "fixture": "invalid-idfv.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.idfv.invalid",
+      "vendor.appsflyer.body.ios14_att_recommended"
+    ]
+  },
+  {
+    "id": "invalid-fb-login-id",
+    "kind": "json",
+    "fixture": "invalid-fb-login-id.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.fb_login_id.invalid"
+    ]
+  },
+  {
+    "id": "empty-customer-user-id",
+    "kind": "json",
+    "fixture": "empty-customer-user-id.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.customer_user_id.empty"
+    ]
+  },
+  {
+    "id": "invalid-consent-gdpr",
+    "kind": "json",
+    "fixture": "invalid-consent-gdpr.txt",
+    "expected_plugins": [
+      "core",
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.consent_data.manual.gdpr_applies.invalid"
+    ]
+  },
+  {
+    "id": "depth-native-type-001",
+    "kind": "json",
+    "fixture": "depth-native-type-001.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.appsflyer_id.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-002",
+    "kind": "json",
+    "fixture": "depth-native-type-002.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventName.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-003",
+    "kind": "json",
+    "fixture": "depth-native-type-003.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventValue.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-004",
+    "kind": "json",
+    "fixture": "depth-native-type-004.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.att.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-005",
+    "kind": "json",
+    "fixture": "depth-native-type-005.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.advertising_id.invalid",
+      "vendor.appsflyer.body.android_os_required"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-006",
+    "kind": "json",
+    "fixture": "depth-native-type-006.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.idfa.invalid",
+      "vendor.appsflyer.body.ios14_att_recommended"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-007",
+    "kind": "json",
+    "fixture": "depth-native-type-007.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.idfv.invalid",
+      "vendor.appsflyer.body.ios14_att_recommended"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-008",
+    "kind": "json",
+    "fixture": "depth-native-type-008.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.oaid.invalid",
+      "vendor.appsflyer.body.android_os_required"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-009",
+    "kind": "json",
+    "fixture": "depth-native-type-009.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.customer_user_id.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-010",
+    "kind": "json",
+    "fixture": "depth-native-type-010.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.fb_login_id.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-011",
+    "kind": "json",
+    "fixture": "depth-native-type-011.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.bundleIdentifier.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-012",
+    "kind": "json",
+    "fixture": "depth-native-type-012.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.app_version_name.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-013",
+    "kind": "json",
+    "fixture": "depth-native-type-013.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.consent_data.manual.gdpr_applies.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-014",
+    "kind": "json",
+    "fixture": "depth-native-type-014.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.consent_data.manual.ad_user_data_enabled.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-015",
+    "kind": "json",
+    "fixture": "depth-native-type-015.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.consent_data.manual.ad_personalization_enabled.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-016",
+    "kind": "json",
+    "fixture": "depth-native-type-016.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.aie.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-017",
+    "kind": "json",
+    "fixture": "depth-native-type-017.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.app_type.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-018",
+    "kind": "json",
+    "fixture": "depth-native-type-018.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.os.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-019",
+    "kind": "json",
+    "fixture": "depth-native-type-019.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventTime.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-020",
+    "kind": "json",
+    "fixture": "depth-native-type-020.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventCurrency.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-021",
+    "kind": "json",
+    "fixture": "depth-native-type-021.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.email_hashed.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-022",
+    "kind": "json",
+    "fixture": "depth-native-type-022.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.phone_number_hashed.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-023",
+    "kind": "json",
+    "fixture": "depth-native-type-023.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.phone_number_e164_hashed.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-024",
+    "kind": "json",
+    "fixture": "depth-native-type-024.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.first_name_hashed.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-025",
+    "kind": "json",
+    "fixture": "depth-native-type-025.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.last_name_hashed.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-026",
+    "kind": "json",
+    "fixture": "depth-native-type-026.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.ip.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-027",
+    "kind": "json",
+    "fixture": "depth-native-type-027.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 1,
+    "expected_codes": [
+      "vendor.appsflyer.payload_mismatch",
+      "vendor.appsflyer.body.root.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-028",
+    "kind": "json",
+    "fixture": "depth-native-type-028.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.amazon_aid.invalid",
+      "vendor.appsflyer.body.android_os_required"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-029",
+    "kind": "json",
+    "fixture": "depth-native-type-029.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.imei.invalid",
+      "vendor.appsflyer.body.android_os_required"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-030",
+    "kind": "json",
+    "fixture": "depth-native-type-030.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.app_store.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-031",
+    "kind": "json",
+    "fixture": "depth-native-type-031.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.custom_dimension.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-032",
+    "kind": "json",
+    "fixture": "depth-native-type-032.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.custom_data.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-033",
+    "kind": "json",
+    "fixture": "depth-native-type-033.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.sharing_filter.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-034",
+    "kind": "json",
+    "fixture": "depth-native-type-034.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 2,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.sharing_filter[].invalid",
+      "vendor.appsflyer.body.root.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-035",
+    "kind": "json",
+    "fixture": "depth-native-type-035.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.consent_data.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-036",
+    "kind": "json",
+    "fixture": "depth-native-type-036.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.consent_data.manual.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-037",
+    "kind": "json",
+    "fixture": "depth-native-type-037.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.consent_data.tcf.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-native-type-038",
+    "kind": "json",
+    "fixture": "depth-native-type-038.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.consent_data.tcf.tc_string.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-utc-space-calendar",
+    "kind": "json",
+    "fixture": "depth-utc-space-calendar.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-utc-impossible-calendar",
+    "kind": "json",
+    "fixture": "depth-utc-impossible-calendar.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventTime.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-encoded-revenue-string",
+    "kind": "json",
+    "fixture": "depth-encoded-revenue-string.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-encoded-revenue-number",
+    "kind": "json",
+    "fixture": "depth-encoded-revenue-number.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-encoded-revenue-formatted",
+    "kind": "json",
+    "fixture": "depth-encoded-revenue-formatted.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_revenue.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-encoded-event-array",
+    "kind": "json",
+    "fixture": "depth-encoded-event-array.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.root.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-encoded-event-json-syntax",
+    "kind": "json",
+    "fixture": "depth-encoded-event-json-syntax.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventValue.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-custom-data-nested",
+    "kind": "json",
+    "fixture": "depth-custom-data-nested.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-custom-data-array",
+    "kind": "json",
+    "fixture": "depth-custom-data-array.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.root.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-iso4217-00-current",
+    "kind": "json",
+    "fixture": "depth-iso4217-00-current.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-iso4217-00-unassigned",
+    "kind": "json",
+    "fixture": "depth-iso4217-00-unassigned.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventCurrency.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-iso4217-00-retired",
+    "kind": "json",
+    "fixture": "depth-iso4217-00-retired.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventCurrency.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-event-name-custom",
+    "kind": "json",
+    "fixture": "depth-event-name-custom.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-event-name-quote",
+    "kind": "json",
+    "fixture": "depth-event-name-quote.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventName.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-event-name-equals",
+    "kind": "json",
+    "fixture": "depth-event-name-equals.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventName.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-event-name-plus",
+    "kind": "json",
+    "fixture": "depth-event-name-plus.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventName.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-event-name-minus",
+    "kind": "json",
+    "fixture": "depth-event-name-minus.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventName.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-event-name-space",
+    "kind": "json",
+    "fixture": "depth-event-name-space.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventName.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-event-name-middle-minus",
+    "kind": "json",
+    "fixture": "depth-event-name-middle-minus.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-platform-android-os",
+    "kind": "json",
+    "fixture": "depth-platform-android-os.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-platform-android-missing-os",
+    "kind": "json",
+    "fixture": "depth-platform-android-missing-os.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.android_os_required"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-platform-ios13-no-att",
+    "kind": "json",
+    "fixture": "depth-platform-ios13-no-att.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-platform-ios14-att",
+    "kind": "json",
+    "fixture": "depth-platform-ios14-att.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-platform-ios14-missing-att",
+    "kind": "json",
+    "fixture": "depth-platform-ios14-missing-att.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.ios14_att_recommended"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-platform-ios-default-missing-att",
+    "kind": "json",
+    "fixture": "depth-platform-ios-default-missing-att.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.ios14_att_recommended"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-platform-ios-default-att",
+    "kind": "json",
+    "fixture": "depth-platform-ios-default-att.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-sharing-exceptions",
+    "kind": "json",
+    "fixture": "depth-sharing-exceptions.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-sharing-twitter-legacy",
+    "kind": "json",
+    "fixture": "depth-sharing-twitter-legacy.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.sharing_filter_legacy_alias"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-sharing-apple-legacy",
+    "kind": "json",
+    "fixture": "depth-sharing-apple-legacy.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.sharing_filter_legacy_alias"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-net-revenue-number",
+    "kind": "json",
+    "fixture": "depth-net-revenue-number.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-net-revenue-negative",
+    "kind": "json",
+    "fixture": "depth-net-revenue-negative.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-net-revenue-currency",
+    "kind": "json",
+    "fixture": "depth-net-revenue-currency.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_net_revenue.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-eventvalue-compact",
+    "kind": "json",
+    "fixture": "depth-order-eventvalue-compact.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-eventvalue-rows",
+    "kind": "json",
+    "fixture": "depth-order-eventvalue-rows.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-eventvalue-partial",
+    "kind": "json",
+    "fixture": "depth-order-eventvalue-partial.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-eventvalue-bad-envelope",
+    "kind": "json",
+    "fixture": "depth-order-eventvalue-bad-envelope.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_order_info.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-eventvalue-bad-field",
+    "kind": "json",
+    "fixture": "depth-order-eventvalue-bad-field.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_order_info.sku.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-eventvalue-bad-content-type",
+    "kind": "json",
+    "fixture": "depth-order-eventvalue-bad-content-type.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_order_info.content_type[].invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-eventvalue-later-row",
+    "kind": "json",
+    "fixture": "depth-order-eventvalue-later-row.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.root.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-eventvalue-later-content-type",
+    "kind": "json",
+    "fixture": "depth-order-eventvalue-later-content-type.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.content_type.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-custom_data-compact",
+    "kind": "json",
+    "fixture": "depth-order-custom_data-compact.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-custom_data-rows",
+    "kind": "json",
+    "fixture": "depth-order-custom_data-rows.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-custom_data-partial",
+    "kind": "json",
+    "fixture": "depth-order-custom_data-partial.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-custom_data-bad-envelope",
+    "kind": "json",
+    "fixture": "depth-order-custom_data-bad-envelope.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_order_info.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-custom_data-bad-field",
+    "kind": "json",
+    "fixture": "depth-order-custom_data-bad-field.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_order_info.sku.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-custom_data-bad-content-type",
+    "kind": "json",
+    "fixture": "depth-order-custom_data-bad-content-type.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_order_info.content_type[].invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-custom_data-later-row",
+    "kind": "json",
+    "fixture": "depth-order-custom_data-later-row.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.root.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-custom_data-later-content-type",
+    "kind": "json",
+    "fixture": "depth-order-custom_data-later-content-type.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.content_type.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-title",
+    "kind": "json",
+    "fixture": "depth-legacy-content-title.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-sdk-array",
+    "kind": "json",
+    "fixture": "depth-legacy-content-sdk-array.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-complex",
+    "kind": "json",
+    "fixture": "depth-legacy-content-complex.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-later-no-id",
+    "kind": "json",
+    "fixture": "depth-legacy-content-later-no-id.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.id.missing"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-later-no-quantity",
+    "kind": "json",
+    "fixture": "depth-legacy-content-later-no-quantity.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.quantity.missing"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-later-scalar",
+    "kind": "json",
+    "fixture": "depth-legacy-content-later-scalar.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.root.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-malformed",
+    "kind": "json",
+    "fixture": "depth-legacy-content-malformed.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_content.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-length-1000",
+    "kind": "json",
+    "fixture": "depth-legacy-content-length-1000.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-content-length-1001",
+    "kind": "json",
+    "fixture": "depth-legacy-content-length-1001.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.af_content.invalid"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-source-length-ascii-at",
+    "kind": "json",
+    "fixture": "depth-order-source-length-ascii-at.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-source-length-ascii-after",
+    "kind": "json",
+    "fixture": "depth-order-source-length-ascii-after.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventValue.source_length"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-source-length-unicode-at",
+    "kind": "json",
+    "fixture": "depth-order-source-length-unicode-at.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-source-length-unicode-after",
+    "kind": "json",
+    "fixture": "depth-order-source-length-unicode-after.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.eventValue.source_length"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-custom-source-no-order-cap",
+    "kind": "json",
+    "fixture": "depth-custom-source-no-order-cap.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-eventvalue-all-seven",
+    "kind": "json",
+    "fixture": "depth-order-count-eventvalue-all-seven.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-eventvalue-mismatch-later",
+    "kind": "json",
+    "fixture": "depth-order-count-eventvalue-mismatch-later.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.order_array_lengths"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-eventvalue-optional-missing",
+    "kind": "json",
+    "fixture": "depth-order-count-eventvalue-optional-missing.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-eventvalue-empty-aligned",
+    "kind": "json",
+    "fixture": "depth-order-count-eventvalue-empty-aligned.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-eventvalue-empty-versus-one",
+    "kind": "json",
+    "fixture": "depth-order-count-eventvalue-empty-versus-one.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.order_array_lengths"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-custom_data-all-seven",
+    "kind": "json",
+    "fixture": "depth-order-count-custom_data-all-seven.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-custom_data-mismatch-later",
+    "kind": "json",
+    "fixture": "depth-order-count-custom_data-mismatch-later.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.order_array_lengths"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-custom_data-optional-missing",
+    "kind": "json",
+    "fixture": "depth-order-count-custom_data-optional-missing.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-custom_data-empty-aligned",
+    "kind": "json",
+    "fixture": "depth-order-count-custom_data-empty-aligned.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-order-count-custom_data-empty-versus-one",
+    "kind": "json",
+    "fixture": "depth-order-count-custom_data-empty-versus-one.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.order_array_lengths"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-count-same",
+    "kind": "json",
+    "fixture": "depth-legacy-count-same.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-count-mismatch",
+    "kind": "json",
+    "fixture": "depth-legacy-count-mismatch.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": false,
+    "expected_errors": 1,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.legacy_array_lengths"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-count-optional",
+    "kind": "json",
+    "fixture": "depth-legacy-count-optional.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-legacy-count-scalars",
+    "kind": "json",
+    "fixture": "depth-legacy-count-scalars.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-revenue-precision-af_revenue-5",
+    "kind": "json",
+    "fixture": "depth-revenue-precision-af_revenue-5.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-revenue-precision-af_revenue-6",
+    "kind": "json",
+    "fixture": "depth-revenue-precision-af_revenue-6.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.revenue_precision"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-revenue-precision-af_net_revenue-5",
+    "kind": "json",
+    "fixture": "depth-revenue-precision-af_net_revenue-5.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 0,
+    "expected_infos": 0,
+    "expected_codes": [],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  },
+  {
+    "id": "depth-revenue-precision-af_net_revenue-6",
+    "kind": "json",
+    "fixture": "depth-revenue-precision-af_net_revenue-6.txt",
+    "rulepacks": [
+      "vendor/appsflyer"
+    ],
+    "expected_ok": true,
+    "expected_errors": 0,
+    "expected_warnings": 1,
+    "expected_infos": 0,
+    "expected_codes": [
+      "vendor.appsflyer.body.revenue_precision"
+    ],
+    "expected_plugins": [
+      "vendor/appsflyer"
+    ]
+  }
 ]

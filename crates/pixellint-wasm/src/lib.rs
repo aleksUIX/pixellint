@@ -14,6 +14,16 @@ use pixellint_core::{
 };
 use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = Date, js_name = now)]
+    fn date_now() -> f64;
+}
+
+fn current_unix_seconds() -> i64 {
+    (date_now() / 1000.0).floor() as i64
+}
+
 fn to_js<T: serde::Serialize + ?Sized>(value: &T) -> Result<JsValue, JsValue> {
     serde_wasm_bindgen::to_value(value).map_err(|error| JsValue::from_str(&error.to_string()))
 }
@@ -63,7 +73,11 @@ pub fn validate(
     };
 
     let summary = Engine::default()
-        .validate(&request, &ValidationOptions::default())
+        .validate_at(
+            &request,
+            &ValidationOptions::default(),
+            current_unix_seconds(),
+        )
         .map_err(|error| JsValue::from_str(&error.to_string()))?;
 
     to_js(&summary)
@@ -76,7 +90,11 @@ pub fn validate_many(document_json: &str) -> Result<JsValue, JsValue> {
     let request = pixellint_core::document_request_from_json(document_json)
         .map_err(|error| JsValue::from_str(&error))?;
     let report = Engine::default()
-        .validate_many(&request, &ValidationOptions::default())
+        .validate_many_at(
+            &request,
+            &ValidationOptions::default(),
+            current_unix_seconds(),
+        )
         .map_err(|error| JsValue::from_str(&error.to_string()))?;
     to_js(&report)
 }

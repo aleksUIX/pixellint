@@ -2,75 +2,592 @@
   "id": "vendor/freewheel",
   "display_name": "FreeWheel ad request",
   "vendor": "freewheel",
-  "description": "FreeWheel GET ad requests on *.v.fwmrm.net/ad/g/. FreeWheel documents nw as required from setNetwork, and setServer as /ad/g/1. Custom site section ids ride as csid; FreeWheel ids ride as ssid. Player profile is prof. Slot sections after a semicolon are not contracted. StickyAds cdn.stickyadstv.com, impression hops, and RTB are not this pack.",
+  "description": "FreeWheel GET ad requests on *.v.fwmrm.net/ad/g/. Global contracts apply to the first query group. SDK Type B temporal slots in later groups receive independent required-field and unique-ID checks. Legacy flat fields and the partial group1 VMAP slot retain optional validation. Account authorization and raw transport variants remain external or explicitly unmapped.",
   "source_level": "official_vendor",
   "docs": "https://vi.freewheel.tv/static/api_docs/html5/",
   "match": {
-    "host_suffixes": ["v.fwmrm.net"],
-    "path_prefixes": ["/ad/g/"]
+    "host_suffixes": [
+      "v.fwmrm.net"
+    ],
+    "path_prefixes": [
+      "/ad/g/"
+    ]
   },
-  "params": [
+  "param_style": "query_semicolon",
+  "query_scopes": [
     {
-      "name": "nw",
-      "requirement": "required",
-      "format": { "kind": "non_empty" },
-      "description": "It is the distributor network ID. FreeWheel documents setNetwork as required, and that call sets nw on the ad request.",
-      "fix_hint": "Set nw to the network ID from your FreeWheel sales engineer.",
-      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+      "first_index": 0,
+      "last_index": 0,
+      "params": [
+        {
+          "name": "nw",
+          "requirement": "required",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the distributor network ID. FreeWheel documents setNetwork as required, and that call sets nw on the ad request.",
+          "fix_hint": "Set nw to the network ID from your FreeWheel sales engineer.",
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "csid",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is a custom site section ID. FreeWheel setSiteSection with a custom id sets csid. FreeWheel ids use ssid instead.",
+          "fix_hint": "Send csid for a custom site section, or ssid for a FreeWheel site section id.",
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "ssid",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is a FreeWheel site section ID. FreeWheel setSiteSection with a FreeWheel id sets ssid.",
+          "fix_hint": "Send ssid for a FreeWheel site section id, or csid for a custom one.",
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "caid",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the custom video asset ID. FreeWheel setVideoAsset with ID_TYPE_CUSTOM sets caid on the ad request.",
+          "fix_hint": "Send caid for a custom asset id, or asid for a FreeWheel asset id.",
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "asid",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the FreeWheel video asset ID. FreeWheel setVideoAsset with ID_TYPE_FW sets asid on the ad request.",
+          "fix_hint": "Send asid for a FreeWheel asset id, or caid for a custom one.",
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "flag",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the player capability flags. FreeWheel setCapability and setVideoAsset autoPlayType write flag on the ad request.",
+          "fix_hint": "Send flag as the capability string the player supports, such as +play-uapl, or drop the empty pair.",
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "prof",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the player profile. FreeWheel setProfile sets prof on the ad request. Uplynk documents ad.prof as required on the constructed GET.",
+          "fix_hint": "Send prof as the player profile from FreeWheel, such as 14611:Vod.",
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "asnw",
+          "description": "FreeWheel documents asnw as a numeric network, fallback, or candidate ad identifier.",
+          "format": {
+            "kind": "integer"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "ssnw",
+          "description": "FreeWheel documents ssnw as a numeric network, fallback, or candidate ad identifier.",
+          "format": {
+            "kind": "integer"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "afid",
+          "description": "FreeWheel SDK accepts nonempty string fallback IDs. The HTML5 reference describes numeric IDs, so a nonnumeric fallback ID is advisory.",
+          "format": {
+            "kind": "integer"
+          },
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+          "format_severity": "warning",
+          "fix_hint": "Use the fallback ID configured in FreeWheel. The SDK accepts string IDs."
+        },
+        {
+          "name": "sfid",
+          "description": "FreeWheel SDK accepts nonempty string fallback IDs. The HTML5 reference describes numeric IDs, so a nonnumeric fallback ID is advisory.",
+          "format": {
+            "kind": "integer"
+          },
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+          "format_severity": "warning",
+          "fix_hint": "Use the fallback ID configured in FreeWheel. The SDK accepts string IDs."
+        },
+        {
+          "name": "cana",
+          "description": "FreeWheel serializes candidate ad IDs as a comma-separated list. Each candidate ID is a nonnegative integer.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:,[0-9]+)*$"
+          },
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js"
+        },
+        {
+          "name": "vdur",
+          "description": "FreeWheel documents vdur as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "vprn",
+          "description": "FreeWheel documents vprn as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "pvrn",
+          "description": "FreeWheel documents pvrn as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "vtpo",
+          "description": "FreeWheel documents vtpo as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "vrdu",
+          "description": "FreeWheel documents vrdu as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "tpos",
+          "description": "FreeWheel documents tpos as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "cpsq",
+          "description": "FreeWheel documents cpsq as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "maxd",
+          "description": "FreeWheel documents maxd as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "mind",
+          "description": "FreeWheel documents mind as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "maxa",
+          "description": "FreeWheel documents maxa as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "ssto",
+          "description": "HTML5 reference describes a positive integer subsession token. SDK live mode auto-generates positive fractional tokens of at least 1, so differences from the reference integer shape are advisory.",
+          "minimum": 1,
+          "format": {
+            "kind": "integer"
+          },
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+          "format_severity": "warning"
+        },
+        {
+          "name": "vip",
+          "description": "FreeWheel documents vip as the visitor IPv4 address.",
+          "format": {
+            "kind": "ip",
+            "version": "v4"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "asml",
+          "description": "FreeWheel documents the asml field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "vdty",
+          "description": "FreeWheel SDK video duration types serialize as exact or variable.",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "exact",
+              "variable"
+            ]
+          },
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js"
+        },
+        {
+          "name": "vcid",
+          "description": "FreeWheel documents the vcid field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "mode",
+          "description": "FreeWheel SDK request modes serialize as on-demand or live.",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "on-demand",
+              "live"
+            ]
+          },
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js"
+        },
+        {
+          "name": "slid",
+          "description": "FreeWheel documents the slid field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "slau",
+          "description": "FreeWheel documents the slau field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "envp",
+          "description": "FreeWheel documents the envp field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "prct",
+          "description": "FreeWheel documents the prct field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "sgid",
+          "description": "FreeWheel documents the sgid field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "ltlg",
+          "description": "FreeWheel documents the ltlg field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "cd",
+          "description": "FreeWheel documents the cd field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.freewheel.site_section_required",
+          "kind": "require_one_of",
+          "params": [
+            "csid",
+            "ssid"
+          ],
+          "severity": "error",
+          "message": "The ad request has neither csid nor ssid. FreeWheel setSiteSection sets one of the two. Uplynk documents csid when locationDesc is undefined.",
+          "fix_hint": "Send csid for a custom site section, or ssid for a FreeWheel site section id.",
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        }
+      ]
     },
     {
-      "name": "csid",
-      "format": { "kind": "non_empty" },
-      "description": "It is a custom site section ID. FreeWheel setSiteSection with a custom id sets csid. FreeWheel ids use ssid instead.",
-      "fix_hint": "Send csid for a custom site section, or ssid for a FreeWheel site section id.",
-      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+      "first_index": 1,
+      "last_index": 1,
+      "condition": {
+        "kind": "value_in",
+        "param": "ptgt",
+        "values": [
+          "a"
+        ]
+      },
+      "params": [
+        {
+          "name": "tpos",
+          "description": "FreeWheel temporal slot time positions are nonnegative seconds. The SDK refuses a slot with a negative time position.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+          "minimum": 0
+        },
+        {
+          "name": "cpsq",
+          "description": "FreeWheel documents cpsq as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "maxd",
+          "description": "FreeWheel documents maxd as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "mind",
+          "description": "FreeWheel documents mind as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "maxa",
+          "description": "FreeWheel documents maxa as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "slid",
+          "description": "FreeWheel documents the slid field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "slau",
+          "description": "FreeWheel documents the slau field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "envp",
+          "description": "FreeWheel documents the envp field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "prct",
+          "description": "FreeWheel documents the prct field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "sgid",
+          "description": "FreeWheel documents the sgid field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "ptgt",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "SDK temporal slot marker a; page slot marker s. Other raw transport markers are not contracted.",
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js"
+        }
+      ]
     },
     {
-      "name": "ssid",
-      "format": { "kind": "non_empty" },
-      "description": "It is a FreeWheel site section ID. FreeWheel setSiteSection with a FreeWheel id sets ssid.",
-      "fix_hint": "Send ssid for a FreeWheel site section id, or csid for a custom one.",
-      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+      "first_index": 2,
+      "params": [
+        {
+          "name": "tpos",
+          "description": "FreeWheel temporal slot time positions are nonnegative seconds. The SDK refuses a slot with a negative time position.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+          "minimum": 0
+        },
+        {
+          "name": "cpsq",
+          "description": "FreeWheel documents cpsq as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "maxd",
+          "description": "FreeWheel documents maxd as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "mind",
+          "description": "FreeWheel documents mind as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "maxa",
+          "description": "FreeWheel documents maxa as a numeric duration, time position, sequence, count, or random value.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "slid",
+          "description": "FreeWheel documents the slid field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "slau",
+          "description": "FreeWheel documents the slau field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "envp",
+          "description": "FreeWheel documents the envp field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "prct",
+          "description": "FreeWheel documents the prct field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "name": "sgid",
+          "description": "FreeWheel documents the sgid field in its SDK-to-request parameter mapping.",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+        }
+      ]
     },
     {
-      "name": "caid",
-      "format": { "kind": "non_empty" },
-      "description": "It is the custom video asset ID. FreeWheel setVideoAsset with ID_TYPE_CUSTOM sets caid on the ad request.",
-      "fix_hint": "Send caid for a custom asset id, or asid for a FreeWheel asset id.",
-      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
-    },
-    {
-      "name": "asid",
-      "format": { "kind": "non_empty" },
-      "description": "It is the FreeWheel video asset ID. FreeWheel setVideoAsset with ID_TYPE_FW sets asid on the ad request.",
-      "fix_hint": "Send asid for a FreeWheel asset id, or caid for a custom one.",
-      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
-    },
-    {
-      "name": "flag",
-      "format": { "kind": "non_empty" },
-      "description": "It is the player capability flags. FreeWheel setCapability and setVideoAsset autoPlayType write flag on the ad request.",
-      "fix_hint": "Send flag as the capability string the player supports, such as +play-uapl, or drop the empty pair.",
-      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
-    },
-    {
-      "name": "prof",
-      "requirement": "recommended",
-      "format": { "kind": "non_empty" },
-      "description": "It is the player profile. FreeWheel setProfile sets prof on the ad request. Uplynk documents ad.prof as required on the constructed GET.",
-      "fix_hint": "Send prof as the player profile from FreeWheel, such as 14611:Vod.",
-      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
-    }
-  ],
-  "rules": [
-    {
-      "code": "vendor.freewheel.site_section_required",
-      "kind": "require_one_of",
-      "params": ["csid", "ssid"],
-      "severity": "error",
-      "message": "The ad request has neither csid nor ssid. FreeWheel setSiteSection sets one of the two. Uplynk documents csid when locationDesc is undefined.",
-      "fix_hint": "Send csid for a custom site section, or ssid for a FreeWheel site section id.",
-      "doc": "https://vi.freewheel.tv/static/api_docs/html5/"
+      "first_index": 2,
+      "condition": {
+        "kind": "value_in",
+        "param": "ptgt",
+        "values": [
+          "a"
+        ]
+      },
+      "params": [
+        {
+          "name": "slid",
+          "requirement": "required",
+          "description": "Each SDK Type B temporal slot needs its own slid value.",
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js"
+        },
+        {
+          "name": "slau",
+          "requirement": "required",
+          "description": "Each SDK Type B temporal slot needs its own slau value.",
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js"
+        },
+        {
+          "name": "tpos",
+          "requirement": "required",
+          "description": "Each SDK Type B temporal slot needs its own tpos value.",
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js"
+        },
+        {
+          "name": "ptgt",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "SDK temporal slot marker a; page slot marker s. Other raw transport markers are not contracted.",
+          "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js"
+        }
+      ],
+      "unique_by": [
+        "slid"
+      ]
     }
   ]
 }

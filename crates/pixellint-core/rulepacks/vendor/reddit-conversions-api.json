@@ -36,362 +36,520 @@
     }
   ],
   "rules": [],
-  "body": {
-    "scope": "data.events[]",
-    "params": [
-      {
-        "name": "event_at",
-        "requirement": "required",
-        "format": {
-          "kind": "integer",
-          "min_digits": 13,
-          "max_digits": 13
+  "body": [
+    {
+      "params": [
+        {
+          "name": "data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
         },
-        "description": "Reddit CAPI v3 documents `event_at` as Unix time in milliseconds. A 10-digit value is seconds and lands in 1970.",
-        "fix_hint": "Send milliseconds: a JavaScript `Date.now()` is already in the right unit.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/migration"
-      },
-      {
-        "name": "action_source",
-        "requirement": "required",
-        "format": {
-          "kind": "enum",
-          "values": [
-            "WEBSITE",
-            "APP",
-            "PHYSICAL_STORE",
-            "OTHER"
-          ]
+        {
+          "name": "data.events",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "array",
+          "min_items": 1
         },
-        "description": "v3 makes `action_source` required. Reddit documents `WEBSITE`, `APP`, `PHYSICAL_STORE`, and `OTHER`.",
-        "fix_hint": "Send `WEBSITE`, `APP`, `PHYSICAL_STORE`, or `OTHER`.",
-        "doc": "https://business.reddithelp.com/s/article/Conversions-API"
-      },
-      {
-        "name": "type.tracking_type",
-        "requirement": "required",
-        "format": {
-          "kind": "enum",
-          "values": [
-            "PAGE_VISIT",
-            "VIEW_CONTENT",
-            "SEARCH",
-            "ADD_TO_CART",
-            "ADD_TO_WISHLIST",
-            "PURCHASE",
-            "LEAD",
-            "SIGN_UP",
+        {
+          "name": "data.events[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "",
+          "json_type": "object",
+          "description": "The published event or batch envelope is a JSON object.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+        }
+      ]
+    },
+    {
+      "scope": "data.events[]",
+      "params": [
+        {
+          "name": "event_at",
+          "requirement": "required",
+          "format": {
+            "kind": "integer",
+            "min_digits": 13,
+            "max_digits": 13
+          },
+          "description": "Reddit CAPI v3 documents `event_at` as Unix time in milliseconds. A 10-digit value is seconds and lands in 1970.",
+          "fix_hint": "Send milliseconds: a JavaScript `Date.now()` is already in the right unit.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/migration",
+          "json_type": "integer"
+        },
+        {
+          "name": "action_source",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "WEBSITE",
+              "APP",
+              "PHYSICAL_STORE",
+              "OTHER"
+            ]
+          },
+          "description": "v3 makes `action_source` required. Reddit documents `WEBSITE`, `APP`, `PHYSICAL_STORE`, and `OTHER`.",
+          "fix_hint": "Send `WEBSITE`, `APP`, `PHYSICAL_STORE`, or `OTHER`.",
+          "doc": "https://business.reddithelp.com/s/article/Conversions-API",
+          "json_type": "string"
+        },
+        {
+          "name": "type.tracking_type",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "PAGE_VISIT",
+              "VIEW_CONTENT",
+              "SEARCH",
+              "ADD_TO_CART",
+              "ADD_TO_WISHLIST",
+              "PURCHASE",
+              "LEAD",
+              "SIGN_UP",
+              "CUSTOM"
+            ]
+          },
+          "format_severity": "warning",
+          "description": "v3 spells standard events in UPPER_SNAKE_CASE. Custom events use `CUSTOM` plus `custom_event_name`.",
+          "fix_hint": "Send `PURCHASE` or another documented type. For a custom event, send `CUSTOM` and `type.custom_event_name`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "click_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Reddit click id. Reddit documents it as a match key and reads it from `event_source_url` when the field itself is omitted.",
+          "fix_hint": "Send the `rdt_cid` click id in `click_id`, or put it on `event_source_url`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "event_source_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "Reddit documents `event_source_url` as recommended on `WEBSITE` events so the domain can be extracted.",
+          "fix_hint": "Send the absolute page URL in `event_source_url`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "type.custom_event_name",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,64}$"
+          },
+          "description": "It is the custom event name. Reddit documents it as required when `tracking_type` is `CUSTOM`, any UTF-8 character up to 64 characters including spaces.",
+          "fix_hint": "Set `type.custom_event_name` to a name that is not a standard tracking type, at most 64 characters.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "max_length": 64
+        },
+        {
+          "name": "metadata.currency",
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
+          "description": "It is an ISO 4217 currency code.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+        },
+        {
+          "name": "metadata.value",
+          "description": "It is the conversion value. Reddit documents `value` as strongly recommended on revenue events.",
+          "fix_hint": "Set `metadata.value` to the order total on `PURCHASE`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "number"
+        },
+        {
+          "name": "metadata.conversion_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the id Reddit uses to deduplicate Pixel and CAPI events. Reddit strongly recommends it when both fire.",
+          "fix_hint": "Send the same `conversion_id` the Pixel sent.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "metadata.item_count",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the number of items in the conversion. Reddit documents `item_count` as strongly recommended on revenue events, and says product `quantity` is not a replacement.",
+          "fix_hint": "Set `metadata.item_count` to the order item count, such as `2`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "integer"
+        },
+        {
+          "name": "metadata.products[].id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product id on a metadata products row. Reddit documents `id` on each product object.",
+          "fix_hint": "Set `metadata.products[].id` to the SKU or catalog id, or drop the empty pair.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "metadata.products[].name",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product name on a metadata products row. Reddit documents `name` on each product object.",
+          "fix_hint": "Set `metadata.products[].name` to the product name, or drop the empty pair.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "metadata.products[].category",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product category on a metadata products row. Reddit documents `category` on each product object.",
+          "fix_hint": "Set `metadata.products[].category` to the category, or drop the empty pair.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "metadata.products[].quantity",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the quantity of that product. Reddit documents `quantity` on each product object. It is not a replacement for `metadata.item_count`.",
+          "fix_hint": "Send `metadata.products[].quantity` as a whole number, such as `2`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "integer"
+        },
+        {
+          "name": "metadata.products[].item_price",
+          "description": "It is the unit price of that product. Reddit documents `item_price` on each product object. It is not a replacement for `metadata.value`.",
+          "fix_hint": "Send `metadata.products[].item_price` as a number, such as `9.99`. Put the order total in `metadata.value`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "number"
+        },
+        {
+          "name": "user.email",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the visitor email. Reddit accepts it unhashed or as SHA-256 hex.",
+          "fix_hint": "Send a canonical email, or the SHA-256 hex digest.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "user.phone_number",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-f0-9]{64}|\\+[1-9][0-9]{1,14})$"
+          },
+          "description": "It is the visitor phone number. Reddit accepts it unhashed or as SHA-256 hex.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string",
+          "format_severity": "warning"
+        },
+        {
+          "name": "user.uuid",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Reddit UUID match key. Reddit documents it for session-based deduplication against the Pixel.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "user.external_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is an advertiser-assigned identifier. Reddit documents it as a match key.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "user.idfa",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}|[a-f0-9]{64})$"
+          },
+          "description": "It is the iOS advertising id. Reddit documents it as a match key.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string",
+          "format_severity": "warning"
+        },
+        {
+          "name": "user.aaid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}|[a-f0-9]{64})$"
+          },
+          "description": "It is the Android advertising id. Reddit documents it as a match key.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string",
+          "format_severity": "warning"
+        },
+        {
+          "name": "user.ip_address",
+          "format": {
+            "kind": "ip"
+          },
+          "description": "It is the visitor IP address. Reddit accepts it unhashed.",
+          "fix_hint": "Send the browser's public IP, not a digest.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "user.user_agent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the visitor user agent. Reddit accepts it unhashed.",
+          "fix_hint": "Send the browser's user agent string, not a digest.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "user.screen_dimensions.width",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the display width. Reddit documents `user.screen_dimensions.width` as a match-key field.",
+          "fix_hint": "Send `user.screen_dimensions.width` as an integer pixel count.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "integer"
+        },
+        {
+          "name": "user.screen_dimensions.height",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the display height. Reddit documents `user.screen_dimensions.height` as a match-key field.",
+          "fix_hint": "Send `user.screen_dimensions.height` as an integer pixel count.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "integer"
+        },
+        {
+          "name": "user.data_processing_options.modes[]",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "LDU"
+            ]
+          },
+          "description": "It is the Limited Data Use mode. Reddit documents `modes` as the fixed value `LDU`.",
+          "fix_hint": "Send `user.data_processing_options.modes` as `[\"LDU\"]`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "user.data_processing_options.country",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}$"
+          },
+          "description": "It is the country for Limited Data Use. Reddit documents country as required when LDU is set.",
+          "fix_hint": "Send `user.data_processing_options.country` when `modes` includes `LDU`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "user.data_processing_options.region",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the region for Limited Data Use. Reddit documents region as optional when LDU is set.",
+          "fix_hint": "Send `user.data_processing_options.region`, or omit it.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "type",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "metadata",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "user",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "user.screen_dimensions",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "user.data_processing_options",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "metadata.products",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "array"
+        },
+        {
+          "name": "metadata.products[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "object"
+        },
+        {
+          "name": "user.data_processing_options.modes",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration",
+          "json_type": "array"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.reddit-conversions-api.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "user.ip_address",
+            "user.user_agent"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Reddit documents `user.ip_address` and `user.user_agent` as unhashed match keys.",
+          "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+        },
+        {
+          "code": "vendor.reddit-conversions-api.body.match_key_required",
+          "kind": "require_one_of",
+          "params": [
+            "click_id",
+            "user.email",
+            "user.phone_number",
+            "user.uuid",
+            "user.external_id",
+            "user.ip_address",
+            "user.idfa",
+            "user.aaid"
+          ],
+          "severity": "warning",
+          "message": "The event has no match key. Reddit documents match keys as recommended on each conversion so the event can be matched to a Reddit user.",
+          "fix_hint": "Send `click_id`, hashed or raw `user.email`, `user.phone_number`, `user.uuid`, `user.external_id`, `user.ip_address`, `user.idfa`, or `user.aaid`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+        },
+        {
+          "code": "vendor.reddit-conversions-api.body.website_requires_source_url",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
+            "WEBSITE"
+          ],
+          "requires": [
+            "event_source_url"
+          ],
+          "severity": "warning",
+          "message": "A `WEBSITE` event has no `event_source_url`. Reddit documents it as recommended so the domain can be extracted.",
+          "fix_hint": "Send the absolute page URL in `event_source_url`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+        },
+        {
+          "code": "vendor.reddit-conversions-api.body.custom_requires_name",
+          "kind": "required_when_value",
+          "when": "type.tracking_type",
+          "equals": [
             "CUSTOM"
-          ]
+          ],
+          "requires": [
+            "type.custom_event_name"
+          ],
+          "severity": "error",
+          "message": "A `CUSTOM` event has no `custom_event_name`. Reddit documents that field as the custom event's name.",
+          "fix_hint": "Set `type.custom_event_name` to a name that is not a standard tracking type.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
         },
-        "format_severity": "warning",
-        "description": "v3 spells standard events in UPPER_SNAKE_CASE. Custom events use `CUSTOM` plus `custom_event_name`.",
-        "fix_hint": "Send `PURCHASE` or another documented type. For a custom event, send `CUSTOM` and `type.custom_event_name`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "click_id",
-        "format": {
-          "kind": "non_empty"
+        {
+          "code": "vendor.reddit-conversions-api.body.purchase_requires_value",
+          "kind": "required_when_value",
+          "when": "type.tracking_type",
+          "equals": [
+            "PURCHASE"
+          ],
+          "requires": [
+            "metadata.value"
+          ],
+          "severity": "warning",
+          "message": "A `PURCHASE` event has no `metadata.value`. Reddit documents value as strongly recommended on revenue events.",
+          "fix_hint": "Set `metadata.value` to the order total.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
         },
-        "description": "It is the Reddit click id. Reddit documents it as a match key and reads it from `event_source_url` when the field itself is omitted.",
-        "fix_hint": "Send the `rdt_cid` click id in `click_id`, or put it on `event_source_url`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "event_source_url",
-        "format": {
-          "kind": "url"
-        },
-        "description": "Reddit documents `event_source_url` as recommended on `WEBSITE` events so the domain can be extracted.",
-        "fix_hint": "Send the absolute page URL in `event_source_url`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "type.custom_event_name",
-        "format": {
-          "kind": "regex",
-          "pattern": "^.{1,64}$"
-        },
-        "description": "It is the custom event name. Reddit documents it as required when `tracking_type` is `CUSTOM`, any UTF-8 character up to 64 characters including spaces.",
-        "fix_hint": "Set `type.custom_event_name` to a name that is not a standard tracking type, at most 64 characters.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.currency",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Za-z]{3}$"
-        },
-        "description": "It is an ISO 4217 currency code.",
-        "fix_hint": "Use the three-letter code, such as `USD`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.value",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the conversion value. Reddit documents `value` as strongly recommended on revenue events.",
-        "fix_hint": "Set `metadata.value` to the order total on `PURCHASE`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.conversion_id",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the id Reddit uses to deduplicate Pixel and CAPI events. Reddit strongly recommends it when both fire.",
-        "fix_hint": "Send the same `conversion_id` the Pixel sent.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.item_count",
-        "format": {
-          "kind": "integer"
-        },
-        "description": "It is the number of items in the conversion. Reddit documents `item_count` as strongly recommended on revenue events, and says product `quantity` is not a replacement.",
-        "fix_hint": "Set `metadata.item_count` to the order item count, such as `2`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.products[].id",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the product id on a metadata products row. Reddit documents `id` on each product object.",
-        "fix_hint": "Set `metadata.products[].id` to the SKU or catalog id, or drop the empty pair.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.products[].name",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the product name on a metadata products row. Reddit documents `name` on each product object.",
-        "fix_hint": "Set `metadata.products[].name` to the product name, or drop the empty pair.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.products[].category",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the product category on a metadata products row. Reddit documents `category` on each product object.",
-        "fix_hint": "Set `metadata.products[].category` to the category, or drop the empty pair.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.products[].quantity",
-        "format": {
-          "kind": "integer"
-        },
-        "description": "It is the quantity of that product. Reddit documents `quantity` on each product object. It is not a replacement for `metadata.item_count`.",
-        "fix_hint": "Send `metadata.products[].quantity` as a whole number, such as `2`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "metadata.products[].item_price",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-        },
-        "description": "It is the unit price of that product. Reddit documents `item_price` on each product object. It is not a replacement for `metadata.value`.",
-        "fix_hint": "Send `metadata.products[].item_price` as a number, such as `9.99`. Put the order total in `metadata.value`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.email",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the visitor email. Reddit accepts it unhashed or as SHA-256 hex.",
-        "fix_hint": "Send a canonical email, or the SHA-256 hex digest.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.phone_number",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the visitor phone number. Reddit accepts it unhashed or as SHA-256 hex.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.uuid",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the Reddit UUID match key. Reddit documents it for session-based deduplication against the Pixel.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.external_id",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is an advertiser-assigned identifier. Reddit documents it as a match key.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.idfa",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the iOS advertising id. Reddit documents it as a match key.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.aaid",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the Android advertising id. Reddit documents it as a match key.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.ip_address",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the visitor IP address. Reddit accepts it unhashed.",
-        "fix_hint": "Send the browser's public IP, not a digest.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.user_agent",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the visitor user agent. Reddit accepts it unhashed.",
-        "fix_hint": "Send the browser's user agent string, not a digest.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.screen_dimensions.width",
-        "format": {
-          "kind": "integer"
-        },
-        "description": "It is the display width. Reddit documents `user.screen_dimensions.width` as a match-key field.",
-        "fix_hint": "Send `user.screen_dimensions.width` as an integer pixel count.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.screen_dimensions.height",
-        "format": {
-          "kind": "integer"
-        },
-        "description": "It is the display height. Reddit documents `user.screen_dimensions.height` as a match-key field.",
-        "fix_hint": "Send `user.screen_dimensions.height` as an integer pixel count.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.data_processing_options.modes[]",
-        "format": {
-          "kind": "enum",
-          "values": [
+        {
+          "code": "vendor.reddit-conversions-api.body.ldu_requires_country",
+          "kind": "required_when_value",
+          "when": "user.data_processing_options.modes[]",
+          "equals": [
             "LDU"
-          ]
+          ],
+          "requires": [
+            "user.data_processing_options.country"
+          ],
+          "severity": "error",
+          "message": "Limited Data Use is enabled but `user.data_processing_options.country` is missing. Reddit documents country as required when `modes` is `LDU`.",
+          "fix_hint": "Send `user.data_processing_options.country` with `modes: [\"LDU\"]`.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
         },
-        "description": "It is the Limited Data Use mode. Reddit documents `modes` as the fixed value `LDU`.",
-        "fix_hint": "Send `user.data_processing_options.modes` as `[\"LDU\"]`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.data_processing_options.country",
-        "format": {
-          "kind": "non_empty"
+        {
+          "code": "vendor.reddit-conversions-api.body.custom_name_reserved",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "type.custom_event_name"
+          ],
+          "pattern": "^(?:PAGE_VISIT|VIEW_CONTENT|SEARCH|ADD_TO_CART|ADD_TO_WISHLIST|PURCHASE|LEAD|SIGN_UP)$",
+          "condition": {
+            "kind": "value_in",
+            "param": "type.tracking_type",
+            "values": [
+              "CUSTOM"
+            ]
+          },
+          "severity": "error",
+          "message": "A custom conversion name cannot reuse a predefined event name. Names are case-sensitive.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
         },
-        "description": "It is the country for Limited Data Use. Reddit documents country as required when LDU is set.",
-        "fix_hint": "Send `user.data_processing_options.country` when `modes` includes `LDU`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "name": "user.data_processing_options.region",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the region for Limited Data Use. Reddit documents region as optional when LDU is set.",
-        "fix_hint": "Send `user.data_processing_options.region`, or omit it.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      }
-    ],
-    "rules": [
-      {
-        "code": "vendor.reddit-conversions-api.body.hashed_plaintext_field",
-        "kind": "forbid_value_pattern",
-        "pattern": "^[A-Fa-f0-9]{64}$",
-        "params": [
-          "user.ip_address",
-          "user.user_agent"
-        ],
-        "severity": "error",
-        "message": "This field looks like a SHA-256 digest, but Reddit documents `user.ip_address` and `user.user_agent` as unhashed match keys.",
-        "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "code": "vendor.reddit-conversions-api.body.match_key_required",
-        "kind": "require_one_of",
-        "params": [
-          "click_id",
-          "user.email",
-          "user.phone_number",
-          "user.uuid",
-          "user.external_id",
-          "user.ip_address",
-          "user.idfa",
-          "user.aaid"
-        ],
-        "severity": "error",
-        "message": "The event has no match key. Reddit documents match keys as required on each conversion so the event can be matched to a Reddit user.",
-        "fix_hint": "Send `click_id`, hashed or raw `user.email`, `user.phone_number`, `user.uuid`, `user.external_id`, `user.ip_address`, `user.idfa`, or `user.aaid`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "code": "vendor.reddit-conversions-api.body.website_requires_source_url",
-        "kind": "required_when_value",
-        "when": "action_source",
-        "equals": ["WEBSITE"],
-        "requires": ["event_source_url"],
-        "severity": "warning",
-        "message": "A `WEBSITE` event has no `event_source_url`. Reddit documents it as recommended so the domain can be extracted.",
-        "fix_hint": "Send the absolute page URL in `event_source_url`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "code": "vendor.reddit-conversions-api.body.custom_requires_name",
-        "kind": "required_when_value",
-        "when": "type.tracking_type",
-        "equals": ["CUSTOM"],
-        "requires": ["type.custom_event_name"],
-        "severity": "error",
-        "message": "A `CUSTOM` event has no `custom_event_name`. Reddit documents that field as the custom event's name.",
-        "fix_hint": "Set `type.custom_event_name` to a name that is not a standard tracking type.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "code": "vendor.reddit-conversions-api.body.purchase_requires_value",
-        "kind": "required_when_value",
-        "when": "type.tracking_type",
-        "equals": ["PURCHASE"],
-        "requires": ["metadata.value"],
-        "severity": "warning",
-        "message": "A `PURCHASE` event has no `metadata.value`. Reddit documents value as strongly recommended on revenue events.",
-        "fix_hint": "Set `metadata.value` to the order total.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      },
-      {
-        "code": "vendor.reddit-conversions-api.body.ldu_requires_country",
-        "kind": "required_when_value",
-        "when": "user.data_processing_options.modes[]",
-        "equals": ["LDU"],
-        "requires": ["user.data_processing_options.country"],
-        "severity": "error",
-        "message": "Limited Data Use is enabled but `user.data_processing_options.country` is missing. Reddit documents country as required when `modes` is `LDU`.",
-        "fix_hint": "Send `user.data_processing_options.country` with `modes: [\"LDU\"]`.",
-        "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
-      }
-    ]
-  }
+        {
+          "code": "vendor.reddit-conversions-api.body.placeholder_advertising_id",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "user.idfa",
+            "user.aaid"
+          ],
+          "pattern": "^00000000-0000-0000-0000-000000000000$",
+          "severity": "warning",
+          "message": "Reddit accepts placeholder mobile advertising IDs but reports them as invalid match signals.",
+          "doc": "https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration"
+        }
+      ]
+    }
+  ]
 }

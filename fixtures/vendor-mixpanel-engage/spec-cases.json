@@ -1,0 +1,282 @@
+[
+  {
+    "id": "official_empty_or_minimal_example",
+    "kind": "json",
+    "artifact": "[{\"$token\":\"YOUR_PROJECT_TOKEN\",\"$distinct_id\":\"13793\",\"$set\":{}}]",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/profile-set",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "legacy_base64_single",
+    "kind": "url",
+    "artifact": "https://api.mixpanel.com/engage?data=eyIkdG9rZW4iOiJZT1VSX1BST0pFQ1RfVE9LRU4iLCIkZGlzdGluY3RfaWQiOiIxMzc5MyIsIiRzZXQiOnt9fQ%3D%3D",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "legacy_base64_batch",
+    "kind": "url",
+    "artifact": "https://api.mixpanel.com/engage?data=W3siJHRva2VuIjoiWU9VUl9QUk9KRUNUX1RPS0VOIiwiJGRpc3RpbmN0X2lkIjoiMTM3OTMiLCIkc2V0Ijp7fX1d",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "profile_operation_$add_valid",
+    "kind": "json",
+    "artifact": "[{\"$token\":\"project-key\",\"$distinct_id\":\"u\",\"$add\":{\"visits\":3}}]",
+    "code": "vendor.mixpanel-engage.body.$add.visits.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/profile-set",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "profile_operation_$add_bad",
+    "kind": "json",
+    "artifact": "[{\"$token\":\"project-key\",\"$distinct_id\":\"u\",\"$add\":{\"visits\":\"3\"}}]",
+    "code": "vendor.mixpanel-engage.body.$add.visits.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/profile-set",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "profile_operation_$union_valid",
+    "kind": "json",
+    "artifact": "[{\"$token\":\"project-key\",\"$distinct_id\":\"u\",\"$union\":{\"tags\":[\"paid\"]}}]",
+    "code": "vendor.mixpanel-engage.body.$union.tags.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/profile-set",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "profile_operation_$union_bad",
+    "kind": "json",
+    "artifact": "[{\"$token\":\"project-key\",\"$distinct_id\":\"u\",\"$union\":{\"tags\":{}}}]",
+    "code": "vendor.mixpanel-engage.body.$union.tags.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/profile-set",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "profile_operation_$unset_valid",
+    "kind": "json",
+    "artifact": "[{\"$token\":\"project-key\",\"$distinct_id\":\"u\",\"$unset\":[\"plan\"]}]",
+    "code": "vendor.mixpanel-engage.body.$unset[].invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/profile-set",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "profile_operation_$unset_bad",
+    "kind": "json",
+    "artifact": "[{\"$token\":\"project-key\",\"$distinct_id\":\"u\",\"$unset\":[1]}]",
+    "code": "vendor.mixpanel-engage.body.$unset[].invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/profile-set",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "profile_operation_$delete_valid",
+    "kind": "json",
+    "artifact": "[{\"$token\":\"project-key\",\"$distinct_id\":\"u\",\"$delete\":\"\"}]",
+    "code": "vendor.mixpanel-engage.body.$delete.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/profile-set",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "recursive-utf8-at",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":\"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééx\"}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-encoded-utf8-at",
+    "kind": "url",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "https://api.mixpanel.com/engage?data=eyIkdG9rZW4iOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIiRkaXN0aW5jdF9pZCI6InJlYWwtdXNlciIsIiRzZXQiOnsic3BlYyI6IsOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpeCJ9fQ%3D%3D",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-utf8-over",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":\"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\"}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "recursive-encoded-utf8-over",
+    "kind": "url",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "https://api.mixpanel.com/engage?data=eyIkdG9rZW4iOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIiRkaXN0aW5jdF9pZCI6InJlYWwtdXNlciIsIiRzZXQiOnsic3BlYyI6IsOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6nDqcOpw6kifX0%3D",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "recursive-empty-string",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":\"\"}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-typed-null",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":null}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-mixed-scalars",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":[null,true,1,\"ok\"]}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-object-depth3",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":{\"a\":{\"b\":{\"c\":\"ok\"}}}}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-object-depth4",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":{\"a\":{\"b\":{\"c\":{\"d\":\"ok\"}}}}}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "recursive-cart-example",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":[{\"Brand\":\"Puma\",\"Category\":\"Jacket\",\"Price\":30},{\"Brand\":\"Adidas\",\"Category\":\"Hats\",\"Price\":15}]}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-encoded-cart-example",
+    "kind": "url",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "https://api.mixpanel.com/engage?data=eyIkdG9rZW4iOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIiRkaXN0aW5jdF9pZCI6InJlYWwtdXNlciIsIiRzZXQiOnsic3BlYyI6W3siQnJhbmQiOiJQdW1hIiwiQ2F0ZWdvcnkiOiJKYWNrZXQiLCJQcmljZSI6MzB9LHsiQnJhbmQiOiJBZGlkYXMiLCJDYXRlZ29yeSI6IkhhdHMiLCJQcmljZSI6MTV9XX19",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-cart-object-nesting",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":[{\"nested\":{\"value\":\"no\"}}]}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "recursive-encoded-cart-object-nesting",
+    "kind": "url",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "https://api.mixpanel.com/engage?data=eyIkdG9rZW4iOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsIiRkaXN0aW5jdF9pZCI6InJlYWwtdXNlciIsIiRzZXQiOnsic3BlYyI6W3sibmVzdGVkIjp7InZhbHVlIjoibm8ifX1dfX0%3D",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "recursive-object-keys-at",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":{\"field0\":1,\"field1\":1,\"field2\":1,\"field3\":1,\"field4\":1,\"field5\":1,\"field6\":1,\"field7\":1,\"field8\":1,\"field9\":1,\"field10\":1,\"field11\":1,\"field12\":1,\"field13\":1,\"field14\":1,\"field15\":1,\"field16\":1,\"field17\":1,\"field18\":1,\"field19\":1,\"field20\":1,\"field21\":1,\"field22\":1,\"field23\":1,\"field24\":1,\"field25\":1,\"field26\":1,\"field27\":1,\"field28\":1,\"field29\":1,\"field30\":1,\"field31\":1,\"field32\":1,\"field33\":1,\"field34\":1,\"field35\":1,\"field36\":1,\"field37\":1,\"field38\":1,\"field39\":1,\"field40\":1,\"field41\":1,\"field42\":1,\"field43\":1,\"field44\":1,\"field45\":1,\"field46\":1,\"field47\":1,\"field48\":1,\"field49\":1,\"field50\":1,\"field51\":1,\"field52\":1,\"field53\":1,\"field54\":1,\"field55\":1,\"field56\":1,\"field57\":1,\"field58\":1,\"field59\":1,\"field60\":1,\"field61\":1,\"field62\":1,\"field63\":1,\"field64\":1,\"field65\":1,\"field66\":1,\"field67\":1,\"field68\":1,\"field69\":1,\"field70\":1,\"field71\":1,\"field72\":1,\"field73\":1,\"field74\":1,\"field75\":1,\"field76\":1,\"field77\":1,\"field78\":1,\"field79\":1,\"field80\":1,\"field81\":1,\"field82\":1,\"field83\":1,\"field84\":1,\"field85\":1,\"field86\":1,\"field87\":1,\"field88\":1,\"field89\":1,\"field90\":1,\"field91\":1,\"field92\":1,\"field93\":1,\"field94\":1,\"field95\":1,\"field96\":1,\"field97\":1,\"field98\":1,\"field99\":1,\"field100\":1,\"field101\":1,\"field102\":1,\"field103\":1,\"field104\":1,\"field105\":1,\"field106\":1,\"field107\":1,\"field108\":1,\"field109\":1,\"field110\":1,\"field111\":1,\"field112\":1,\"field113\":1,\"field114\":1,\"field115\":1,\"field116\":1,\"field117\":1,\"field118\":1,\"field119\":1,\"field120\":1,\"field121\":1,\"field122\":1,\"field123\":1,\"field124\":1,\"field125\":1,\"field126\":1,\"field127\":1,\"field128\":1,\"field129\":1,\"field130\":1,\"field131\":1,\"field132\":1,\"field133\":1,\"field134\":1,\"field135\":1,\"field136\":1,\"field137\":1,\"field138\":1,\"field139\":1,\"field140\":1,\"field141\":1,\"field142\":1,\"field143\":1,\"field144\":1,\"field145\":1,\"field146\":1,\"field147\":1,\"field148\":1,\"field149\":1,\"field150\":1,\"field151\":1,\"field152\":1,\"field153\":1,\"field154\":1,\"field155\":1,\"field156\":1,\"field157\":1,\"field158\":1,\"field159\":1,\"field160\":1,\"field161\":1,\"field162\":1,\"field163\":1,\"field164\":1,\"field165\":1,\"field166\":1,\"field167\":1,\"field168\":1,\"field169\":1,\"field170\":1,\"field171\":1,\"field172\":1,\"field173\":1,\"field174\":1,\"field175\":1,\"field176\":1,\"field177\":1,\"field178\":1,\"field179\":1,\"field180\":1,\"field181\":1,\"field182\":1,\"field183\":1,\"field184\":1,\"field185\":1,\"field186\":1,\"field187\":1,\"field188\":1,\"field189\":1,\"field190\":1,\"field191\":1,\"field192\":1,\"field193\":1,\"field194\":1,\"field195\":1,\"field196\":1,\"field197\":1,\"field198\":1,\"field199\":1,\"field200\":1,\"field201\":1,\"field202\":1,\"field203\":1,\"field204\":1,\"field205\":1,\"field206\":1,\"field207\":1,\"field208\":1,\"field209\":1,\"field210\":1,\"field211\":1,\"field212\":1,\"field213\":1,\"field214\":1,\"field215\":1,\"field216\":1,\"field217\":1,\"field218\":1,\"field219\":1,\"field220\":1,\"field221\":1,\"field222\":1,\"field223\":1,\"field224\":1,\"field225\":1,\"field226\":1,\"field227\":1,\"field228\":1,\"field229\":1,\"field230\":1,\"field231\":1,\"field232\":1,\"field233\":1,\"field234\":1,\"field235\":1,\"field236\":1,\"field237\":1,\"field238\":1,\"field239\":1,\"field240\":1,\"field241\":1,\"field242\":1,\"field243\":1,\"field244\":1,\"field245\":1,\"field246\":1,\"field247\":1,\"field248\":1,\"field249\":1,\"field250\":1,\"field251\":1,\"field252\":1,\"field253\":1,\"field254\":1}}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "recursive-object-keys-over",
+    "kind": "json",
+    "source_url": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+    "artifact": "[{\"$token\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"$distinct_id\":\"real-user\",\"$set\":{\"spec\":{\"field0\":1,\"field1\":1,\"field2\":1,\"field3\":1,\"field4\":1,\"field5\":1,\"field6\":1,\"field7\":1,\"field8\":1,\"field9\":1,\"field10\":1,\"field11\":1,\"field12\":1,\"field13\":1,\"field14\":1,\"field15\":1,\"field16\":1,\"field17\":1,\"field18\":1,\"field19\":1,\"field20\":1,\"field21\":1,\"field22\":1,\"field23\":1,\"field24\":1,\"field25\":1,\"field26\":1,\"field27\":1,\"field28\":1,\"field29\":1,\"field30\":1,\"field31\":1,\"field32\":1,\"field33\":1,\"field34\":1,\"field35\":1,\"field36\":1,\"field37\":1,\"field38\":1,\"field39\":1,\"field40\":1,\"field41\":1,\"field42\":1,\"field43\":1,\"field44\":1,\"field45\":1,\"field46\":1,\"field47\":1,\"field48\":1,\"field49\":1,\"field50\":1,\"field51\":1,\"field52\":1,\"field53\":1,\"field54\":1,\"field55\":1,\"field56\":1,\"field57\":1,\"field58\":1,\"field59\":1,\"field60\":1,\"field61\":1,\"field62\":1,\"field63\":1,\"field64\":1,\"field65\":1,\"field66\":1,\"field67\":1,\"field68\":1,\"field69\":1,\"field70\":1,\"field71\":1,\"field72\":1,\"field73\":1,\"field74\":1,\"field75\":1,\"field76\":1,\"field77\":1,\"field78\":1,\"field79\":1,\"field80\":1,\"field81\":1,\"field82\":1,\"field83\":1,\"field84\":1,\"field85\":1,\"field86\":1,\"field87\":1,\"field88\":1,\"field89\":1,\"field90\":1,\"field91\":1,\"field92\":1,\"field93\":1,\"field94\":1,\"field95\":1,\"field96\":1,\"field97\":1,\"field98\":1,\"field99\":1,\"field100\":1,\"field101\":1,\"field102\":1,\"field103\":1,\"field104\":1,\"field105\":1,\"field106\":1,\"field107\":1,\"field108\":1,\"field109\":1,\"field110\":1,\"field111\":1,\"field112\":1,\"field113\":1,\"field114\":1,\"field115\":1,\"field116\":1,\"field117\":1,\"field118\":1,\"field119\":1,\"field120\":1,\"field121\":1,\"field122\":1,\"field123\":1,\"field124\":1,\"field125\":1,\"field126\":1,\"field127\":1,\"field128\":1,\"field129\":1,\"field130\":1,\"field131\":1,\"field132\":1,\"field133\":1,\"field134\":1,\"field135\":1,\"field136\":1,\"field137\":1,\"field138\":1,\"field139\":1,\"field140\":1,\"field141\":1,\"field142\":1,\"field143\":1,\"field144\":1,\"field145\":1,\"field146\":1,\"field147\":1,\"field148\":1,\"field149\":1,\"field150\":1,\"field151\":1,\"field152\":1,\"field153\":1,\"field154\":1,\"field155\":1,\"field156\":1,\"field157\":1,\"field158\":1,\"field159\":1,\"field160\":1,\"field161\":1,\"field162\":1,\"field163\":1,\"field164\":1,\"field165\":1,\"field166\":1,\"field167\":1,\"field168\":1,\"field169\":1,\"field170\":1,\"field171\":1,\"field172\":1,\"field173\":1,\"field174\":1,\"field175\":1,\"field176\":1,\"field177\":1,\"field178\":1,\"field179\":1,\"field180\":1,\"field181\":1,\"field182\":1,\"field183\":1,\"field184\":1,\"field185\":1,\"field186\":1,\"field187\":1,\"field188\":1,\"field189\":1,\"field190\":1,\"field191\":1,\"field192\":1,\"field193\":1,\"field194\":1,\"field195\":1,\"field196\":1,\"field197\":1,\"field198\":1,\"field199\":1,\"field200\":1,\"field201\":1,\"field202\":1,\"field203\":1,\"field204\":1,\"field205\":1,\"field206\":1,\"field207\":1,\"field208\":1,\"field209\":1,\"field210\":1,\"field211\":1,\"field212\":1,\"field213\":1,\"field214\":1,\"field215\":1,\"field216\":1,\"field217\":1,\"field218\":1,\"field219\":1,\"field220\":1,\"field221\":1,\"field222\":1,\"field223\":1,\"field224\":1,\"field225\":1,\"field226\":1,\"field227\":1,\"field228\":1,\"field229\":1,\"field230\":1,\"field231\":1,\"field232\":1,\"field233\":1,\"field234\":1,\"field235\":1,\"field236\":1,\"field237\":1,\"field238\":1,\"field239\":1,\"field240\":1,\"field241\":1,\"field242\":1,\"field243\":1,\"field244\":1,\"field245\":1,\"field246\":1,\"field247\":1,\"field248\":1,\"field249\":1,\"field250\":1,\"field251\":1,\"field252\":1,\"field253\":1,\"field254\":1,\"field255\":1}}}]",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "sdk-json-data-single",
+    "kind": "url",
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "artifact": "https://api.mixpanel.com/engage?data=%7B%22%24token%22%3A%22aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%22%2C%22%24distinct_id%22%3A%22real-user%22%2C%22%24set%22%3A%7B%22spec%22%3A%22sample%22%7D%7D",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "sdk-json-data-batch",
+    "kind": "url",
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "artifact": "https://api.mixpanel.com/engage?data=%5B%7B%22%24token%22%3A%22aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%22%2C%22%24distinct_id%22%3A%22real-user%22%2C%22%24set%22%3A%7B%22spec%22%3A%22sample%22%7D%7D%5D",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "sdk-json-data-utf8-at",
+    "kind": "url",
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "artifact": "https://api.mixpanel.com/engage?data=%7B%22%24token%22%3A%22aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%22%2C%22%24distinct_id%22%3A%22real-user%22%2C%22%24set%22%3A%7B%22spec%22%3A%22%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9x%22%7D%7D",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "sdk-json-data-utf8-over",
+    "kind": "url",
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "artifact": "https://api.mixpanel.com/engage?data=%7B%22%24token%22%3A%22aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%22%2C%22%24distinct_id%22%3A%22real-user%22%2C%22%24set%22%3A%7B%22spec%22%3A%22%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%C3%A9%22%7D%7D",
+    "code": "vendor.mixpanel-engage.body.root.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "sdk-json-data-missing-operation-or-event",
+    "kind": "url",
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "artifact": "https://api.mixpanel.com/engage?data=%7B%22%24token%22%3A%22aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%22%2C%22%24distinct_id%22%3A%22real-user%22%7D",
+    "code": "vendor.mixpanel-engage.body.operation_required",
+    "expect_violation": true,
+    "expect_no_errors": false
+  }
+]

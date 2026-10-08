@@ -1,0 +1,257 @@
+{
+  "id": "vendor/adobe-dcs-id",
+  "display_name": "Adobe Audience Manager DCS UUID request",
+  "vendor": "adobe_dcs",
+  "description": "Published DCS request attributes and identity pairs. Every generic DCS field is optional; d_rtbd=json requests a JSON response. Visitor ID-specific version andorganization requirements are handled by the ECID pack.",
+  "source_level": "official_vendor",
+  "docs": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+  "match": {
+    "paths": [
+      "/id"
+    ],
+    "hosts": [
+      "dpm.demdex.net"
+    ],
+    "query_params_none": [
+      "d_ver",
+      "d_orgid",
+      "d_mid"
+    ]
+  },
+  "params": [
+    {
+      "name": "d_mid",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "It is an existing ECID. Adobe's reuse call sends d_mid with d_ver=2.",
+      "fix_hint": "Send d_mid when you already have an Experience Cloud ID for the visitor.",
+      "doc": "https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration-examples"
+    },
+    {
+      "name": "d_cid",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:[^\\x01]+\\x01[^\\x01]+(?:\\x01[012])?|[^\\x01]+\\x01[^\\x01]+(?:\\x01[^\\x01]+\\x01[^\\x01]+)+)$"
+      },
+      "description": "Provider ID or integration code with user ID separated by %01. Single pairs may include0/1/2authentication state. The generic DCS table permits multiple provider/user pairs in one parameter; the CID guide also permits repeated keys.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys"
+    },
+    {
+      "name": "d_cb",
+      "description": "The vendor documents `d_cb` in the request contract.",
+      "doc": "https://experienceleague.adobe.com/en/docs/id-service/using/implementation/direct-integration",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "d_cid_ic",
+      "description": "Provider ID or integration code with user ID separated by %01. Single pairs may include0/1/2authentication state. The generic DCS table permits multiple provider/user pairs in one parameter; the CID guide also permits repeated keys.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/reference/cid",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:[^\\x01]+\\x01[^\\x01]+(?:\\x01[012])?|[^\\x01]+\\x01[^\\x01]+(?:\\x01[^\\x01]+\\x01[^\\x01]+)+)$"
+      }
+    },
+    {
+      "name": "d_caller",
+      "description": "Caller identification; no published character grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "d_coppa",
+      "description": "Disables third-party-cookie use. Published table specifies behavior without a complete literal-value enum.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "d_cts",
+      "description": "Optional account-enabled traits/segments return mode:1legacy segment IDs or2current IDs.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "name": "d_dpid",
+      "description": "Deprecated data provider ID, still supported in ID and event calls.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/reference/cid",
+      "format": {
+        "kind": "non_empty"
+      },
+      "aliases": [
+        "dpid"
+      ]
+    },
+    {
+      "name": "d_dpuuid",
+      "description": "Deprecated provider-specific user ID, still supported in ID and event calls.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/reference/cid",
+      "format": {
+        "kind": "non_empty"
+      },
+      "aliases": [
+        "dpuuid"
+      ]
+    },
+    {
+      "name": "d_dst",
+      "description": "Include URL destination data in a JSON response.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "d_dst_filter",
+      "description": "Reserved Analytics/Audience Manager integration attribute with unpublished value grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "d_jsonv",
+      "description": "Response JSON version1;0disables ID syncs.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "d_nsid",
+      "description": "JavaScript container namespace used by DIL for ID synchronization; account namespace registration is external.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "d_ptfm",
+      "description": "Published platform literal registry.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "ios",
+          "android",
+          "browser",
+          "all"
+        ]
+      }
+    },
+    {
+      "name": "d_rs",
+      "description": "Deprecated reserved Analytics/Audience Manager attribute, without a published value grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "d_rtbd",
+      "description": "JSON response selector. Required when a JSON response is requested; absence returns a pixel.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "json"
+        ]
+      }
+    },
+    {
+      "name": "d_sid",
+      "description": "Trait/segment score ID; membership is account configuration.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "d_tdpid",
+      "description": "Data source for trait evaluation. Public examples use/event, and the linked generic DCS table does not exclude/id.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "d_tdpid_ic",
+      "description": "Integration-code form of trait-evaluation data source. Source uses/event examples without declaring/id exclusion.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "d_uuid",
+      "description": "Audience Manager visitor UUID when absent from cookie; numeric-only grammar is not published in this table.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "h_host",
+      "description": "Client collection hostname represented as DCS HTTP-header attribute, without a complete serialized query grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "h_user-agent",
+      "description": "User-Agent header value represented as DCS HTTP-header attribute, without a complete serialized query grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "h_accept-language",
+      "description": "Accept-Language header value represented as DCS HTTP-header attribute, without a complete serialized query grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "h_referer",
+      "description": "Referer header value represented as DCS HTTP-header attribute, without a complete serialized query grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "h_referrer",
+      "description": "Referrer header value represented as DCS HTTP-header attribute, without a complete serialized query grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "h_date",
+      "description": "Date header value represented as DCS HTTP-header attribute, without a complete serialized query grammar.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "allow_empty": true
+    },
+    {
+      "name": "c_*",
+      "description": "Public customer-defined DCS attribute. The key prefix is published; the value schema is configured by the customer.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "name_pattern": "^c_.+$",
+      "allow_empty": true
+    },
+    {
+      "name": "p_*",
+      "description": "Private customer-defined DCS attribute, used for trait evaluation and not logged. The key prefix is published; the value schema is configured by the customer.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
+      "name_pattern": "^p_.+$",
+      "allow_empty": true
+    }
+  ],
+  "rules": []
+}

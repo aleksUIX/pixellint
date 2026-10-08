@@ -6,13 +6,19 @@
   "source_level": "official_vendor",
   "docs": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
   "match": {
-    "hosts": ["googleads.googleapis.com"],
-    "path_contains": ["uploadClickConversions"],
+    "hosts": [
+      "googleads.googleapis.com"
+    ],
+    "path_contains": [
+      "uploadClickConversions"
+    ],
     "json_paths": [
       {
         "any_of": [
           "conversions[].conversionAction",
-          "conversions[].conversionDateTime"
+          "conversions[].conversion_action",
+          "conversions[].conversionDateTime",
+          "conversions[].conversion_date_time"
         ]
       },
       {
@@ -37,29 +43,95 @@
           "requirement": "required",
           "description": "UploadClickConversions requires a `conversions` array.",
           "fix_hint": "Send at least one ClickConversion in `conversions`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/UploadClickConversionsRequest"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/UploadClickConversionsRequest",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 2000,
+          "null_as_missing": true
         },
         {
           "name": "partialFailure",
           "requirement": "required",
-          "format": { "kind": "enum", "values": ["true"] },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true"
+            ]
+          },
           "description": "Google documents `partial_failure` as required, and the upload guides say to always send true.",
           "fix_hint": "Set `partialFailure` to `true`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "boolean",
+          "aliases": [
+            "partial_failure"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "conversions[]",
+          "description": "The vendor documents `conversions[]` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "object"
+        },
+        {
+          "name": "validateOnly",
+          "description": "The vendor documents `validateOnly` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "boolean",
+          "aliases": [
+            "validate_only"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "jobId",
+          "description": "The vendor documents `jobId` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UploadClickConversionsRequest",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "minimum": 0,
+          "maximum": 2147483647,
+          "aliases": [
+            "job_id"
+          ],
+          "null_as_missing": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "multiple_of": 1,
+          "numeric_strings": true
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "object"
         }
       ],
       "rules": []
     },
     {
-      "scope": "conversions[]",
+      "scope": [
+        "conversions[]"
+      ],
       "params": [
         {
           "name": "conversionAction",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the conversion action resource name, and every uploaded click conversion requires it.",
           "fix_hint": "Set `conversionAction` to `customers/{id}/conversionActions/{id}`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion",
+          "json_type": "string",
+          "aliases": [
+            "conversion_action"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "conversionDateTime",
@@ -70,185 +142,557 @@
           },
           "description": "Google documents the conversion time with a timezone offset as `yyyy-mm-dd hh:mm:ss+|-hh:mm`.",
           "fix_hint": "Send a timestamp such as `2026-08-21 12:00:00+00:00`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "string",
+          "aliases": [
+            "conversion_date_time"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "gclid",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Google click ID. A click-ID upload needs exactly one of `gclid`, `gbraid`, or `wbraid`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "string",
+          "null_as_missing": true
         },
         {
           "name": "gbraid",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "App-to-web click identifier from iOS. Alternative to `gclid`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "string",
+          "null_as_missing": true
         },
         {
           "name": "wbraid",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Web-to-app click identifier. Alternative to `gclid`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "string",
+          "null_as_missing": true
         },
         {
           "name": "userIdentifiers",
           "description": "Hashed user identifiers for enhanced conversions for leads. The upload service accepts `hashedEmail` and `hashedPhoneNumber` only, at most five.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
-        },
-        {
-          "name": "userIdentifiers[].hashedEmail",
-          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
-          "description": "Email must be normalized and SHA-256 hashed before it is sent.",
-          "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/enhanced-conversions/web"
-        },
-        {
-          "name": "userIdentifiers[].hashedPhoneNumber",
-          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
-          "description": "Phone must be E.164 and SHA-256 hashed before it is sent.",
-          "fix_hint": "Normalize to E.164, hash with SHA-256, and send the hex digest.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/ClickConversion",
+          "json_type": "array",
+          "max_items": 5,
+          "aliases": [
+            "user_identifiers"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "currencyCode",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
           "description": "It is an ISO 4217 currency code for `conversionValue`. Google documents both together.",
           "fix_hint": "Use the three-letter code, such as `USD`, together with `conversionValue`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion",
+          "json_type": "string",
+          "aliases": [
+            "currency_code"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "conversionValue",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?|NaN|-?Infinity)$"
+          },
           "description": "It is the conversion value for the advertiser. Google documents it together with `currencyCode`.",
           "fix_hint": "Send a number such as `1.0`, with no currency symbol, together with `currencyCode`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+          "doc": "https://protobuf.dev/programming-guides/json/",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "aliases": [
+            "conversion_value"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "userIpAddress",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "ip"
+          },
           "description": "It is the customer IP on the landing page after the click, sent unhashed. Google documents the device address, not the advertiser server.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/ClickConversion",
+          "json_type": "string",
+          "aliases": [
+            "user_ip_address"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "orderId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the order ID for the conversion. Google documents one order id per conversion action, and recommends it for later adjustments.",
           "fix_hint": "Send `orderId` as a string, or drop the empty pair.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion",
+          "json_type": "string",
+          "aliases": [
+            "order_id"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "conversionEnvironment",
           "format": {
             "kind": "enum",
-            "values": ["UNSPECIFIED", "UNKNOWN", "APP", "WEB"]
+            "values": [
+              "UNSPECIFIED",
+              "UNKNOWN",
+              "APP",
+              "WEB",
+              "0",
+              "1",
+              "2",
+              "3"
+            ]
           },
           "description": "It is where the conversion was recorded. Google documents `APP` or `WEB`.",
           "fix_hint": "Set `conversionEnvironment` to `APP` or `WEB`.",
-          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+          "doc": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v24/enums/conversion_environment_enum.proto",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "aliases": [
+            "conversion_environment"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "customerType",
           "format": {
             "kind": "enum",
-            "values": ["UNSPECIFIED", "UNKNOWN", "NEW", "RETURNING"]
+            "values": [
+              "UNSPECIFIED",
+              "UNKNOWN",
+              "NEW",
+              "RETURNING",
+              "0",
+              "1",
+              "2",
+              "3"
+            ]
           },
           "description": "It is whether the converting user is new or returning. Google documents `NEW` or `RETURNING`.",
           "fix_hint": "Set `customerType` to `NEW` or `RETURNING`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+          "doc": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v24/enums/conversion_customer_type.proto",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "aliases": [
+            "customer_type"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "consent.adUserData",
           "format": {
             "kind": "enum",
-            "values": ["UNSPECIFIED", "UNKNOWN", "GRANTED", "DENIED"]
+            "values": [
+              "UNSPECIFIED",
+              "UNKNOWN",
+              "GRANTED",
+              "DENIED",
+              "0",
+              "1",
+              "2",
+              "3"
+            ]
           },
           "description": "It is consent for ad user data on the click conversion. Google documents `GRANTED` or `DENIED`.",
           "fix_hint": "Send `consent.adUserData` as `GRANTED` or `DENIED`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/Consent"
+          "doc": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v24/enums/consent_status.proto",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "aliases": [
+            "consent.ad_user_data"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "cartData.merchantId",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
           "description": "It is the Merchant Center ID where the cart items are uploaded.",
           "fix_hint": "Send `cartData.merchantId` as a whole number.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData"
+          "doc": "https://protobuf.dev/programming-guides/json/",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "numeric_strings": true,
+          "minimum": -9223372036854775808,
+          "maximum": 9223372036854775807,
+          "multiple_of": 1,
+          "aliases": [
+            "cartData.merchant_id",
+            "cart_data.merchantId",
+            "cart_data.merchant_id"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "cartData.feedCountryCode",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the country code of the Merchant Center feed the items come from.",
           "fix_hint": "Send `cartData.feedCountryCode`, or drop the empty pair.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData",
+          "json_type": "string",
+          "aliases": [
+            "cartData.feed_country_code",
+            "cart_data.feedCountryCode",
+            "cart_data.feed_country_code"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "cartData.feedLanguageCode",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the language code of the Merchant Center feed the items come from.",
           "fix_hint": "Send `cartData.feedLanguageCode`, or drop the empty pair.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData",
+          "json_type": "string",
+          "aliases": [
+            "cartData.feed_language_code",
+            "cart_data.feedLanguageCode",
+            "cart_data.feed_language_code"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "cartData.localTransactionCost",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?|NaN|-?Infinity)$"
+          },
           "description": "It is cart-level discounts such as free shipping or coupons. The currency is the same as `currencyCode`.",
           "fix_hint": "Send `cartData.localTransactionCost` as a number, such as `2.50`, without a currency symbol.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData"
+          "doc": "https://protobuf.dev/programming-guides/json/",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "aliases": [
+            "cartData.local_transaction_cost",
+            "cart_data.localTransactionCost",
+            "cart_data.local_transaction_cost"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "cartData.items[].productId",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the Merchant Center product identifier for a purchased item.",
           "fix_hint": "Set `cartData.items[].productId` to the Merchant Center id, or drop the empty pair.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData.Item"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData.Item",
+          "json_type": "string",
+          "aliases": [
+            "cartData.items[].product_id",
+            "cart_data.items[].productId",
+            "cart_data.items[].product_id"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "cartData.items[].quantity",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
           "description": "It is how many of that item were sold.",
           "fix_hint": "Send a whole number in `cartData.items[].quantity`, such as `1`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData.Item"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData.Item",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "multiple_of": 1,
+          "numeric_strings": true,
+          "aliases": [
+            "cart_data.items[].quantity"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "cartData.items[].unitPrice",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?|NaN|-?Infinity)$"
+          },
           "description": "It is the unit price excluding tax, shipping, and cart-level discounts.",
           "fix_hint": "Send `cartData.items[].unitPrice` as a number, such as `19.99`, without a currency symbol.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CartData.Item"
+          "doc": "https://protobuf.dev/programming-guides/json/",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "aliases": [
+            "cartData.items[].unit_price",
+            "cart_data.items[].unitPrice",
+            "cart_data.items[].unit_price"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "customVariables[].conversionCustomVariable",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the custom conversion variable resource name.",
           "fix_hint": "Set `conversionCustomVariable` to `customers/{id}/conversionCustomVariables/{id}`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CustomVariable"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CustomVariable",
+          "json_type": "string",
+          "aliases": [
+            "customVariables[].conversion_custom_variable",
+            "custom_variables[].conversionCustomVariable",
+            "custom_variables[].conversion_custom_variable"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "customVariables[].value",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the custom variable value. Google documents that it must not carry private customer data such as email or phone.",
           "fix_hint": "Send a non-empty custom variable value with no email or phone.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CustomVariable"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/CustomVariable",
+          "json_type": "string",
+          "aliases": [
+            "custom_variables[].value"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "externalAttributionData.externalAttributionCredit",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?|NaN|-?Infinity)$"
+          },
           "description": "It is the fraction of the conversion attributed to the Google Ads click.",
           "fix_hint": "Send `externalAttributionCredit` as a number, such as `0.3`.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ExternalAttributionData"
+          "doc": "https://protobuf.dev/programming-guides/json/",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "aliases": [
+            "externalAttributionData.external_attribution_credit",
+            "external_attribution_data.externalAttributionCredit",
+            "external_attribution_data.external_attribution_credit"
+          ],
+          "null_as_missing": true
         },
         {
           "name": "externalAttributionData.externalAttributionModel",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the name of the external attribution model.",
           "fix_hint": "Send `externalAttributionModel`, or drop the empty pair.",
-          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ExternalAttributionData"
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ExternalAttributionData",
+          "json_type": "string",
+          "aliases": [
+            "externalAttributionData.external_attribution_model",
+            "external_attribution_data.externalAttributionModel",
+            "external_attribution_data.external_attribution_model"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "consent",
+          "description": "The vendor documents `consent` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "object",
+          "null_as_missing": true
+        },
+        {
+          "name": "cartData",
+          "description": "The vendor documents `cartData` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "object",
+          "aliases": [
+            "cart_data"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "externalAttributionData",
+          "description": "The vendor documents `externalAttributionData` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "object",
+          "aliases": [
+            "external_attribution_data"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "sessionAttributesKeyValuePairs",
+          "description": "The vendor documents `sessionAttributesKeyValuePairs` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "object",
+          "aliases": [
+            "session_attributes_key_value_pairs"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "customVariables",
+          "description": "The vendor documents `customVariables` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable",
+          "json_type": "array",
+          "aliases": [
+            "custom_variables"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "cartData.items",
+          "description": "The vendor documents `cartData.items` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "array",
+          "aliases": [
+            "cart_data.items"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "sessionAttributesKeyValuePairs.keyValuePairs",
+          "description": "The vendor documents `sessionAttributesKeyValuePairs.keyValuePairs` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "array",
+          "aliases": [
+            "sessionAttributesKeyValuePairs.key_value_pairs",
+            "session_attributes_key_value_pairs.keyValuePairs",
+            "session_attributes_key_value_pairs.key_value_pairs"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "userIdentifiers[]",
+          "description": "The vendor documents `userIdentifiers[]` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+          "json_type": "object",
+          "aliases": [
+            "user_identifiers[]"
+          ]
+        },
+        {
+          "name": "customVariables[]",
+          "description": "The vendor documents `customVariables[]` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable",
+          "json_type": "object",
+          "aliases": [
+            "custom_variables[]"
+          ]
+        },
+        {
+          "name": "cartData.items[]",
+          "description": "The vendor documents `cartData.items[]` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "object",
+          "aliases": [
+            "cart_data.items[]"
+          ]
+        },
+        {
+          "name": "sessionAttributesKeyValuePairs.keyValuePairs[]",
+          "description": "The vendor documents `sessionAttributesKeyValuePairs.keyValuePairs[]` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline",
+          "json_type": "object",
+          "aliases": [
+            "sessionAttributesKeyValuePairs.key_value_pairs[]",
+            "session_attributes_key_value_pairs.keyValuePairs[]",
+            "session_attributes_key_value_pairs.key_value_pairs[]"
+          ]
+        },
+        {
+          "name": "sessionAttributesEncoded",
+          "description": "The vendor documents `sessionAttributesEncoded` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v22/ConversionUploadService/UploadClickConversions?hl=en&transport=rest",
+          "json_type": "string",
+          "aliases": [
+            "session_attributes_encoded"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "sessionAttributesKeyValuePairs.keyValuePairs[].sessionAttributeKey",
+          "description": "The vendor documents `sessionAttributesKeyValuePairs.keyValuePairs[].sessionAttributeKey` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v22/ConversionUploadService/UploadClickConversions?hl=en&transport=rest",
+          "json_type": "string",
+          "requirement": "required",
+          "aliases": [
+            "sessionAttributesKeyValuePairs.keyValuePairs[].session_attribute_key",
+            "sessionAttributesKeyValuePairs.key_value_pairs[].sessionAttributeKey",
+            "sessionAttributesKeyValuePairs.key_value_pairs[].session_attribute_key",
+            "session_attributes_key_value_pairs.keyValuePairs[].sessionAttributeKey",
+            "session_attributes_key_value_pairs.keyValuePairs[].session_attribute_key",
+            "session_attributes_key_value_pairs.key_value_pairs[].sessionAttributeKey",
+            "session_attributes_key_value_pairs.key_value_pairs[].session_attribute_key"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "sessionAttributesKeyValuePairs.keyValuePairs[].sessionAttributeValue",
+          "description": "The vendor documents `sessionAttributesKeyValuePairs.keyValuePairs[].sessionAttributeValue` in the request contract.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v22/ConversionUploadService/UploadClickConversions?hl=en&transport=rest",
+          "json_type": "string",
+          "requirement": "required",
+          "aliases": [
+            "sessionAttributesKeyValuePairs.keyValuePairs[].session_attribute_value",
+            "sessionAttributesKeyValuePairs.key_value_pairs[].sessionAttributeValue",
+            "sessionAttributesKeyValuePairs.key_value_pairs[].session_attribute_value",
+            "session_attributes_key_value_pairs.keyValuePairs[].sessionAttributeValue",
+            "session_attributes_key_value_pairs.keyValuePairs[].session_attribute_value",
+            "session_attributes_key_value_pairs.key_value_pairs[].sessionAttributeValue",
+            "session_attributes_key_value_pairs.key_value_pairs[].session_attribute_value"
+          ],
+          "null_as_missing": true
         }
       ],
       "rules": [
         {
           "code": "vendor.google-ads-click-conversions.body.click_id_or_user_required",
           "kind": "require_one_of",
-          "params": ["gclid", "gbraid", "wbraid", "userIdentifiers"],
+          "params": [
+            "gclid",
+            "gbraid",
+            "wbraid",
+            "userIdentifiers"
+          ],
           "severity": "error",
           "message": "The conversion has no click ID and no `userIdentifiers`. Google documents a `gclid`, `gbraid`, or `wbraid` for click-ID uploads, or hashed user identifiers for enhanced conversions for leads.",
           "fix_hint": "Send `gclid` (or `gbraid` / `wbraid`), or send hashed `userIdentifiers`.",
@@ -258,7 +702,9 @@
           "code": "vendor.google-ads-click-conversions.body.value_requires_currency",
           "kind": "required_with",
           "when": "conversionValue",
-          "requires": ["currencyCode"],
+          "requires": [
+            "currencyCode"
+          ],
           "severity": "error",
           "message": "The conversion sends `conversionValue` without `currencyCode`. Google documents the ISO 4217 code together with the value.",
           "fix_hint": "Add `currencyCode`, such as `USD`.",
@@ -268,7 +714,9 @@
           "code": "vendor.google-ads-click-conversions.body.currency_requires_value",
           "kind": "required_with",
           "when": "currencyCode",
-          "requires": ["conversionValue"],
+          "requires": [
+            "conversionValue"
+          ],
           "severity": "error",
           "message": "The conversion sends `currencyCode` without `conversionValue`. Google documents both together.",
           "fix_hint": "Add `conversionValue` as a number, with no currency symbol.",
@@ -287,11 +735,306 @@
           "code": "vendor.google-ads-click-conversions.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["userIpAddress"],
+          "params": [
+            "userIpAddress"
+          ],
           "severity": "error",
           "message": "`userIpAddress` looks like a SHA-256 digest, but Google documents it as the customer IP, unhashed.",
           "fix_hint": "Send the raw IP address of the customer's device.",
           "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/ClickConversion"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.session_attributes_exclusive",
+          "kind": "mutually_exclusive",
+          "severity": "error",
+          "message": "The request does not satisfy the documented session attributes exclusive requirement.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v22/ConversionUploadService/UploadClickConversions?hl=en&transport=rest",
+          "params": [
+            "sessionAttributesEncoded",
+            "sessionAttributesKeyValuePairs"
+          ]
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.custom_variables_unsupported_with_braids",
+          "kind": "mutually_exclusive",
+          "params": [
+            "customVariables",
+            "gbraid"
+          ],
+          "severity": "error",
+          "message": "Custom conversion variables are unsupported with GBRAID.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.custom_variables_unsupported_with_wbraid",
+          "kind": "mutually_exclusive",
+          "params": [
+            "customVariables",
+            "wbraid"
+          ],
+          "severity": "error",
+          "message": "Custom conversion variables are unsupported with WBRAID.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.custom_variables_unsupported_with_user_data",
+          "kind": "mutually_exclusive",
+          "params": [
+            "customVariables",
+            "userIdentifiers"
+          ],
+          "severity": "error",
+          "message": "Custom variables with user-provided data are invalid and dropped by Google Ads.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.external_attribution_unsupported_with_user_data",
+          "kind": "mutually_exclusive",
+          "params": [
+            "externalAttributionData",
+            "userIdentifiers"
+          ],
+          "severity": "error",
+          "message": "Enhanced conversions for leads do not support external attribution data.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.conversionDateTime.calendar_invalid",
+          "kind": "format",
+          "param": "conversionDateTime",
+          "format": {
+            "kind": "datetime",
+            "require_timezone": true,
+            "allow_space_separator": true
+          },
+          "condition": {
+            "kind": "value_pattern",
+            "param": "conversionDateTime",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"
+          },
+          "severity": "error",
+          "message": "The conversion timestamp must represent a valid calendar date, time and timezone offset.",
+          "doc": "https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "conversions[].userIdentifiers[]",
+        "conversions[].user_identifiers[]"
+      ],
+      "params": [
+        {
+          "name": "hashedEmail",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v22/ConversionUploadService/UploadClickConversions?hl=en&transport=rest",
+          "allow_empty": true,
+          "aliases": [
+            "hashed_email"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "hashedPhoneNumber",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v22/ConversionUploadService/UploadClickConversions?hl=en&transport=rest",
+          "allow_empty": true,
+          "aliases": [
+            "hashed_phone_number"
+          ],
+          "null_as_missing": true
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.google-ads-click-conversions.body.user_identifier_union",
+          "kind": "mutually_exclusive",
+          "params": [
+            "hashedEmail",
+            "hashedPhoneNumber"
+          ],
+          "severity": "error",
+          "message": "A user identifier specifies exactly one identifier.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v24/UserIdentifier"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.user_identifier_required",
+          "kind": "require_one_of",
+          "params": [
+            "hashedEmail",
+            "hashedPhoneNumber"
+          ],
+          "severity": "error",
+          "message": "Conversion uploads accept a hashed email or phone identifier.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v22/ConversionUploadService/UploadClickConversions?hl=en&transport=rest"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "conversions[].userIdentifiers[]",
+        "conversions[].user_identifiers[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier"
+        },
+        {
+          "name": "hashedEmail",
+          "json_type": "string",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "aliases": [
+            "hashed_email"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "hashedPhoneNumber",
+          "json_type": "string",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "aliases": [
+            "hashed_phone_number"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "userIdentifierSource",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "doc": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v24/enums/user_identifier_source.proto",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "UNSPECIFIED",
+              "FIRST_PARTY",
+              "THIRD_PARTY",
+              "0",
+              "2",
+              "3"
+            ]
+          },
+          "aliases": [
+            "user_identifier_source"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "mobileId",
+          "json_type": "string",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+          "requirement": "forbidden",
+          "aliases": [
+            "mobile_id"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "thirdPartyUserId",
+          "json_type": "string",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+          "requirement": "forbidden",
+          "aliases": [
+            "third_party_user_id"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "addressInfo",
+          "json_type": "object",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+          "requirement": "forbidden",
+          "aliases": [
+            "address_info"
+          ],
+          "null_as_missing": true
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.google-ads-click-conversions.body.identifier_required",
+          "kind": "require_one_of",
+          "severity": "error",
+          "message": "The request does not satisfy the documented identifier required requirement.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+          "params": [
+            "hashedEmail",
+            "hashedPhoneNumber"
+          ]
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.identifier_oneof",
+          "kind": "mutually_exclusive",
+          "severity": "error",
+          "message": "The request does not satisfy the documented identifier oneof requirement.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+          "params": [
+            "hashedEmail",
+            "hashedPhoneNumber"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": [
+        "conversions[].customVariables[]",
+        "conversions[].custom_variables[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable"
+        },
+        {
+          "name": "conversionCustomVariable",
+          "json_type": "string",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^customers/[0-9]+/conversionCustomVariables/[0-9]+$"
+          },
+          "aliases": [
+            "conversion_custom_variable"
+          ],
+          "null_as_missing": true
+        },
+        {
+          "name": "value",
+          "json_type": "string",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CustomVariable",
+          "requirement": "required",
+          "null_as_missing": true
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": [
+        "conversions[].sessionAttributesKeyValuePairs",
+        "conversions[].session_attributes_key_value_pairs"
+      ],
+      "params": [
+        {
+          "name": "keyValuePairs",
+          "requirement": "required",
+          "json_type": "array",
+          "min_items": 1,
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/SessionAttributesKeyValuePairs",
+          "aliases": [
+            "key_value_pairs"
+          ],
+          "null_as_missing": true
         }
       ]
     }

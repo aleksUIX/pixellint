@@ -6,8 +6,12 @@
   "source_level": "official_vendor",
   "docs": "https://developers.openai.com/ads/conversions-api",
   "match": {
-    "hosts": ["bzr.openai.com"],
-    "path_prefixes": ["/v1/events"],
+    "hosts": [
+      "bzr.openai.com"
+    ],
+    "path_prefixes": [
+      "/v1/events"
+    ],
     "json_paths": [
       {
         "any_of": [
@@ -22,7 +26,9 @@
     {
       "name": "pid",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Pixel ID, and it travels on the query string.",
       "fix_hint": "Send `pid` as a query parameter on `/v1/events`.",
       "doc": "https://developers.openai.com/ads/conversions-api"
@@ -36,7 +42,10 @@
           "requirement": "required",
           "description": "The Conversions API posts events under `events`, and OpenAI documents that array as required.",
           "fix_hint": "Send at least one event in `events`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 1000
         },
         {
           "name": "integration_source",
@@ -46,16 +55,42 @@
           },
           "description": "It names the integration sending the batch. OpenAI documents 1-64 ASCII characters, starting with a letter or digit.",
           "fix_hint": "Use a stable id such as `acme_measurement`. Start with a letter or digit; letters, digits, `.`, `_`, and `-` only.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string",
+          "normalization": "trim_lowercase"
         },
         {
           "name": "validate_only",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It validates events without saving them when `true`. OpenAI documents a boolean.",
           "fix_hint": "Send `true` or `false`, or omit `validate_only`.",
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "boolean"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "events[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "unknown_fields",
+          "name_pattern": ".*",
+          "name_pattern_parent": "",
+          "requirement": "forbidden",
+          "description": "The published schema rejects unrecognized fields in this object. Declared fields take precedence.",
           "doc": "https://developers.openai.com/ads/conversions-api"
         }
       ],
@@ -67,10 +102,13 @@
         {
           "name": "id",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It identifies the event for deduplication. OpenAI documents it as required on every event.",
           "fix_hint": "Set `id` to the same value the image tag sent as `event_id`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "type",
@@ -95,15 +133,21 @@
           },
           "description": "It is the event type. OpenAI documents it as required. `app_installed` and `app_opened` are CAPI-only with `action_source=mobile_app`.",
           "fix_hint": "Set `type` to a documented event name.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "string"
         },
         {
           "name": "timestamp_ms",
           "requirement": "required",
-          "format": { "kind": "integer", "min_digits": 13, "max_digits": 13 },
+          "format": {
+            "kind": "integer",
+            "min_digits": 13,
+            "max_digits": 13
+          },
           "description": "It is the event time in milliseconds. OpenAI documents `timestamp_ms`, so a 10-digit seconds value is the wrong unit.",
           "fix_hint": "Send milliseconds, a 13-digit Unix timestamp.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "integer"
         },
         {
           "name": "custom_event_name",
@@ -113,7 +157,8 @@
           },
           "description": "It names a custom event. OpenAI documents 1-64 letters, digits, underscores, or hyphens, starting and ending with a letter or digit, and forbids standard event names.",
           "fix_hint": "Send `custom_event_name` when `type` is `custom`. Do not reuse a standard event name.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "action_source",
@@ -131,262 +176,362 @@
           },
           "description": "It names where the event happened. OpenAI documents `web`, `mobile_app`, `offline`, `physical_store`, `phone_call`, `email`, or `other`. `source_url` is required when this is `web`.",
           "fix_hint": "Set `action_source` to a documented source. Use `mobile_app` for `app_installed` and `app_opened`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "source_url",
-          "format": { "kind": "url" },
+          "format": {
+            "kind": "url"
+          },
           "description": "It is the page URL. OpenAI documents a URL with a scheme and host, required when `action_source` is `web`.",
           "fix_hint": "Send `source_url` on web events, such as `https://shop.example.com/checkout`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "oppref",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is an opaque OpenAI-provided attribution identifier. Pass the original string without modification.",
           "fix_hint": "Send `oppref` unchanged when you have it, or omit the field.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "opt_out",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It opts the event out of future user-level personalization when `true`. OpenAI documents a boolean.",
           "fix_hint": "Send `true` or `false`, or omit `opt_out`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "boolean"
         },
         {
           "name": "data",
           "requirement": "required",
           "description": "It describes the conversion. OpenAI documents `data` as required, with a `type` that matches the event.",
           "fix_hint": "Send a `data` object whose `type` is the shape documented for this event, such as `contents`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "object"
         },
         {
           "name": "data.type",
           "requirement": "required",
           "format": {
             "kind": "enum",
-            "values": ["contents", "customer_action", "plan_enrollment", "custom"]
+            "values": [
+              "contents",
+              "customer_action",
+              "plan_enrollment",
+              "custom"
+            ]
           },
           "description": "It names the data shape. OpenAI documents `contents`, `customer_action`, `plan_enrollment`, or `custom`, matching the event.",
           "fix_hint": "Set `data.type` to the shape documented for this event.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "string"
         },
         {
           "name": "data.amount",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is the event-level monetary value in the currency's minor unit. OpenAI documents an integer, such as `4200` for $42.00.",
           "fix_hint": "Send the amount as an integer in minor units, and send `data.currency`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "integer"
         },
         {
           "name": "data.currency",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
           "description": "It is the ISO 4217 currency code. OpenAI documents it as required when `amount` is present.",
           "fix_hint": "Send a three-letter code such as `USD`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "data.plan_id",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It identifies a subscription or trial plan. OpenAI documents it on `plan_enrollment` and `custom` data.",
           "fix_hint": "Set `data.plan_id` to the plan id, or omit the field.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "string"
         },
         {
           "name": "data.contents",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the item list. OpenAI documents it on `contents`, `plan_enrollment`, and `custom` data, not on `customer_action`.",
           "fix_hint": "Send a `contents` array of item objects, or omit the field.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "data.contents[].id",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is your internal item identifier.",
           "fix_hint": "Set `contents[].id` to the product or content id, or omit the field.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "string"
         },
         {
           "name": "data.contents[].group_id",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It identifies the product group or parent item. OpenAI documents it as Conversions API only.",
           "fix_hint": "Set `contents[].group_id` to the group id, or omit the field.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "string"
         },
         {
           "name": "data.contents[].name",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the item's display name.",
           "fix_hint": "Set `contents[].name` to the display name, or omit the field.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "string"
         },
         {
           "name": "data.contents[].content_type",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It describes the item category, such as `product`, `plan`, or `page`.",
           "fix_hint": "Set `contents[].content_type` to a non-empty category, or omit the field.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "string"
         },
         {
           "name": "data.contents[].quantity",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is the item quantity. OpenAI documents an integer, not a string.",
           "fix_hint": "Send `contents[].quantity` as an integer.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "integer"
         },
         {
           "name": "data.contents[].amount",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is the item-level monetary value in the currency's minor unit. OpenAI documents an integer.",
           "fix_hint": "Send `contents[].amount` as an integer in minor units.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "integer"
         },
         {
           "name": "data.contents[].currency",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
           "description": "It is the ISO 4217 currency code for the item.",
           "fix_hint": "Send a three-letter code such as `USD`, or rely on event-level `data.currency`.",
-          "doc": "https://developers.openai.com/ads/supported-events"
+          "doc": "https://developers.openai.com/ads/supported-events",
+          "json_type": "string"
         },
         {
           "name": "data.contents[].variant_dict",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is an object of string keys and values, such as size and color. OpenAI documents it as Conversions API only.",
           "fix_hint": "Send `contents[].variant_dict` as an object of strings, such as `{\"size\": \"medium\", \"color\": \"blue\"}`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "object"
         },
         {
           "name": "user",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the optional conversion-matching object. OpenAI documents it as event-scoped. Include only fields you have.",
           "fix_hint": "Send a `user` object with match keys, or omit it.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "object"
         },
         {
           "name": "user.emails_sha256",
-          "format": { "kind": "hex", "length": 64 },
           "description": "It is a SHA-256 digest of a normalized email. OpenAI documents lowercase 64-character hex.",
           "fix_hint": "Trim, lowercase, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.emails_sha256[]",
-          "format": { "kind": "hex", "length": 64 },
-          "description": "Every email in the list must be a SHA-256 digest.",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "Every email in the list must be a SHA-256 digest. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Trim, lowercase, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string",
+          "format_severity": "warning"
         },
         {
           "name": "user.phone_numbers_sha256",
-          "format": { "kind": "hex", "length": 64 },
           "description": "It is a SHA-256 digest of a normalized phone number. OpenAI documents lowercase 64-character hex.",
           "fix_hint": "Normalize to 8-15 digits, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.phone_numbers_sha256[]",
-          "format": { "kind": "hex", "length": 64 },
-          "description": "Every phone number in the list must be a SHA-256 digest.",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "Every phone number in the list must be a SHA-256 digest. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Normalize to 8-15 digits, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string",
+          "format_severity": "warning"
         },
         {
           "name": "user.external_ids_sha256",
-          "format": { "kind": "hex", "length": 64 },
           "description": "It is a SHA-256 digest of a stable customer id. OpenAI documents lowercase 64-character hex.",
           "fix_hint": "Trim, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.external_ids_sha256[]",
-          "format": { "kind": "hex", "length": 64 },
-          "description": "Every external id in the list must be a SHA-256 digest.",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "Every external id in the list must be a SHA-256 digest. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Trim, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string",
+          "format_severity": "warning"
         },
         {
           "name": "user.first_names_sha256",
-          "format": { "kind": "hex", "length": 64 },
           "description": "It is a SHA-256 digest of a normalized first name. OpenAI documents lowercase 64-character hex.",
           "fix_hint": "Lowercase, strip whitespace and ASCII punctuation, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.first_names_sha256[]",
-          "format": { "kind": "hex", "length": 64 },
-          "description": "Every first name in the list must be a SHA-256 digest.",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "Every first name in the list must be a SHA-256 digest. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Lowercase, strip whitespace and ASCII punctuation, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string",
+          "format_severity": "warning"
         },
         {
           "name": "user.last_names_sha256",
-          "format": { "kind": "hex", "length": 64 },
           "description": "It is a SHA-256 digest of a normalized last name. OpenAI documents lowercase 64-character hex.",
           "fix_hint": "Lowercase, strip whitespace and ASCII punctuation, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.last_names_sha256[]",
-          "format": { "kind": "hex", "length": 64 },
-          "description": "Every last name in the list must be a SHA-256 digest.",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "Every last name in the list must be a SHA-256 digest. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Lowercase, strip whitespace and ASCII punctuation, SHA-256, and send 64 lowercase hex characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string",
+          "format_severity": "warning"
         },
         {
           "name": "user.countries",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{2}$" },
           "description": "It is a two-letter country code, such as `US`.",
           "fix_hint": "Send ISO 3166-1 alpha-2 codes, such as `US`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.countries[]",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{2}$" },
-          "description": "Every country in the list must be a two-letter code, such as `US`.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}$"
+          },
+          "description": "Every country in the list must be a two-letter code, such as `US`. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Send ISO 3166-1 alpha-2 codes, such as `US`.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string",
+          "format_severity": "warning"
         },
         {
           "name": "user.cities",
-          "format": { "kind": "regex", "pattern": "^.{1,128}$" },
           "description": "It is a raw city name. OpenAI documents geographic values as unhashed strings, limited to 128 characters after normalize.",
           "fix_hint": "Send the city as a raw string of at most 128 characters, or omit the field.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.cities[]",
-          "format": { "kind": "regex", "pattern": "^.{1,128}$" },
-          "description": "Every city in the list must be a raw, unhashed name of at most 128 characters.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,128}$"
+          },
+          "description": "Every city in the list must be a raw, unhashed name of at most 128 characters. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Send each city as a raw string of at most 128 characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "max_length": 128,
+          "json_type": "string",
+          "normalization": "trim_lowercase",
+          "format_severity": "warning"
         },
         {
           "name": "user.regions",
-          "format": { "kind": "regex", "pattern": "^.{1,128}$" },
           "description": "It is a raw region value. OpenAI documents geographic values as unhashed strings, limited to 128 characters after normalize.",
           "fix_hint": "Send the region as a raw string of at most 128 characters, or omit the field.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.regions[]",
-          "format": { "kind": "regex", "pattern": "^.{1,128}$" },
-          "description": "Every region in the list must be a raw, unhashed value of at most 128 characters.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^.{1,128}$"
+          },
+          "description": "Every region in the list must be a raw, unhashed value of at most 128 characters. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Send each region as a raw string of at most 128 characters.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "max_length": 128,
+          "json_type": "string",
+          "normalization": "trim_lowercase",
+          "format_severity": "warning"
         },
         {
           "name": "user.postal_codes",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9 -]{0,31}$"
-          },
           "description": "It is a raw postal or ZIP code. OpenAI documents letters, numbers, spaces, or hyphens, up to 32 characters.",
           "fix_hint": "Send the postal code as a raw string of letters, numbers, spaces, or hyphens.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "array"
         },
         {
           "name": "user.postal_codes[]",
@@ -394,9 +539,13 @@
             "kind": "regex",
             "pattern": "^[A-Za-z0-9][A-Za-z0-9 -]{0,31}$"
           },
-          "description": "It is a raw postal or ZIP code. OpenAI documents letters, numbers, spaces, or hyphens, up to 32 characters.",
+          "description": "It is a raw postal or ZIP code. OpenAI documents letters, numbers, spaces, or hyphens, up to 32 characters. Invalid or excess values are ignored by the API, which selects the first three valid unique values. This diagnostic does not reject the event.",
           "fix_hint": "Send the postal code as a raw string of letters, numbers, spaces, or hyphens.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "max_length": 32,
+          "json_type": "string",
+          "normalization": "trim_lowercase",
+          "format_severity": "warning"
         },
         {
           "name": "user.android_advertising_id",
@@ -406,30 +555,96 @@
           },
           "description": "It is a raw Android GAID in UUID format. OpenAI documents it as Conversions API only; IDFA is not supported.",
           "fix_hint": "Send the GAID as a UUID. Do not send IDFA.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "user.obref",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the opaque browser reference from the Pixel `__obref` cookie. Pass it without hashing.",
           "fix_hint": "Send the `__obref` cookie value unchanged, or omit the field.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "user.ip_address",
           "format": {
-            "kind": "regex",
-            "pattern": "^(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$|^[0-9a-fA-F:]{2,45}$"
+            "kind": "ip"
           },
           "description": "It is a valid IPv4 or IPv6 address. OpenAI documents it as unhashed.",
           "fix_hint": "Send the client IP as IPv4 or IPv6, not a hash.",
-          "doc": "https://developers.openai.com/ads/conversions-api"
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
         },
         {
           "name": "user.user_agent",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the raw user agent from the client that generated the event. OpenAI documents it as unhashed.",
           "fix_hint": "Send the client user agent string, not a hash.",
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "data.contents[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "data.contents[].variant_dict.*",
+          "json_type": "string",
+          "description": "Variant dictionary values are strings. Product variant keys remain unrestricted.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        },
+        {
+          "name": "unknown_fields",
+          "name_pattern": ".*",
+          "name_pattern_parent": "",
+          "requirement": "forbidden",
+          "description": "The published schema rejects unrecognized fields in this object. Declared fields take precedence.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        },
+        {
+          "name": "unknown_user",
+          "name_pattern": ".*",
+          "name_pattern_parent": "user",
+          "requirement": "forbidden",
+          "description": "The published schema rejects unrecognized fields in this object. Declared fields take precedence.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        },
+        {
+          "name": "unknown_data_contents_item",
+          "name_pattern": ".*",
+          "name_pattern_parent": "data.contents[]",
+          "requirement": "forbidden",
+          "description": "The published schema rejects unrecognized fields in this object. Declared fields take precedence.",
+          "doc": "https://developers.openai.com/ads/conversions-api"
+        },
+        {
+          "name": "unknown_data_fields",
+          "name_pattern": ".*",
+          "name_pattern_parent": "data",
+          "requirement": "forbidden",
+          "condition": {
+            "kind": "value_in",
+            "param": "data.type",
+            "values": [
+              "contents",
+              "customer_action",
+              "plan_enrollment"
+            ]
+          },
+          "description": "Custom properties are supported only for data.type custom. Standard data shapes use their declared keys.",
           "doc": "https://developers.openai.com/ads/conversions-api"
         }
       ],
@@ -438,8 +653,12 @@
           "code": "vendor.openai-conversions-api.body.web_requires_source_url",
           "kind": "required_when_value",
           "when": "action_source",
-          "equals": ["web"],
-          "requires": ["source_url"],
+          "equals": [
+            "web"
+          ],
+          "requires": [
+            "source_url"
+          ],
           "severity": "error",
           "message": "The event is marked `action_source: web` but carries no `source_url`. OpenAI documents the page URL as required for web events.",
           "fix_hint": "Set `source_url` to the page URL.",
@@ -449,8 +668,12 @@
           "code": "vendor.openai-conversions-api.body.custom_requires_name",
           "kind": "required_when_value",
           "when": "type",
-          "equals": ["custom"],
-          "requires": ["custom_event_name"],
+          "equals": [
+            "custom"
+          ],
+          "requires": [
+            "custom_event_name"
+          ],
           "severity": "error",
           "message": "`type` is `custom` but `custom_event_name` is missing. OpenAI documents that name as required for custom events.",
           "fix_hint": "Set `custom_event_name` to 1-64 letters, digits, underscores, or hyphens.",
@@ -460,8 +683,13 @@
           "code": "vendor.openai-conversions-api.body.app_requires_mobile_source",
           "kind": "required_when_value",
           "when": "type",
-          "equals": ["app_installed", "app_opened"],
-          "requires": ["action_source"],
+          "equals": [
+            "app_installed",
+            "app_opened"
+          ],
+          "requires": [
+            "action_source"
+          ],
           "severity": "error",
           "message": "The event is `app_installed` or `app_opened` but carries no `action_source`. OpenAI documents `action_source` as `mobile_app` for those events.",
           "fix_hint": "Set `action_source` to `mobile_app`.",
@@ -471,7 +699,10 @@
           "code": "vendor.openai-conversions-api.body.app_source_must_be_mobile",
           "kind": "value_when",
           "when": "type",
-          "equals": ["app_installed", "app_opened"],
+          "equals": [
+            "app_installed",
+            "app_opened"
+          ],
           "param": "action_source",
           "value": "mobile_app",
           "severity": "error",
@@ -519,7 +750,10 @@
           "code": "vendor.openai-conversions-api.body.plan_enrollment_requires_plan_enrollment_data",
           "kind": "value_when",
           "when": "type",
-          "equals": ["subscription_created", "trial_started"],
+          "equals": [
+            "subscription_created",
+            "trial_started"
+          ],
           "param": "data.type",
           "value": "plan_enrollment",
           "severity": "error",
@@ -531,7 +765,9 @@
           "code": "vendor.openai-conversions-api.body.custom_requires_custom_data",
           "kind": "value_when",
           "when": "type",
-          "equals": ["custom"],
+          "equals": [
+            "custom"
+          ],
           "param": "data.type",
           "value": "custom",
           "severity": "error",
@@ -557,7 +793,9 @@
             "subscription_created",
             "trial_started"
           ],
-          "params": ["custom_event_name"],
+          "params": [
+            "custom_event_name"
+          ],
           "severity": "error",
           "message": "A standard event carries `custom_event_name`. OpenAI documents that field as required for `custom` and omitted otherwise.",
           "fix_hint": "Drop `custom_event_name`, or set `type` to `custom`.",
@@ -567,8 +805,12 @@
           "code": "vendor.openai-conversions-api.body.customer_action_forbids_contents",
           "kind": "forbidden_when_value",
           "when": "data.type",
-          "equals": ["customer_action"],
-          "params": ["data.contents"],
+          "equals": [
+            "customer_action"
+          ],
+          "params": [
+            "data.contents"
+          ],
           "severity": "error",
           "message": "`data.type` is `customer_action` but the event carries `data.contents`. OpenAI documents contents as unavailable on that shape.",
           "fix_hint": "Remove `data.contents`.",
@@ -578,8 +820,13 @@
           "code": "vendor.openai-conversions-api.body.contents_forbids_plan_id",
           "kind": "forbidden_when_value",
           "when": "data.type",
-          "equals": ["contents", "customer_action"],
-          "params": ["data.plan_id"],
+          "equals": [
+            "contents",
+            "customer_action"
+          ],
+          "params": [
+            "data.plan_id"
+          ],
           "severity": "error",
           "message": "This data shape carries `data.plan_id`. OpenAI documents `plan_id` on `plan_enrollment` and `custom` only.",
           "fix_hint": "Remove `data.plan_id`, or use `plan_enrollment` or `custom` data.",
@@ -589,7 +836,9 @@
           "code": "vendor.openai-conversions-api.body.amount_requires_currency",
           "kind": "required_with",
           "when": "data.amount",
-          "requires": ["data.currency"],
+          "requires": [
+            "data.currency"
+          ],
           "severity": "error",
           "message": "The event carries `data.amount` with no `data.currency`. OpenAI documents currency as required whenever amount is set.",
           "fix_hint": "Add `data.currency` as an ISO 4217 code alongside the amount.",
@@ -599,7 +848,9 @@
           "code": "vendor.openai-conversions-api.body.reserved_custom_event_name",
           "kind": "forbid_value_pattern",
           "pattern": "^(?i)(appointment_scheduled|app_installed|app_opened|checkout_started|contents_viewed|custom|items_added|lead_created|order_created|page_viewed|registration_completed|subscription_created|trial_started)$",
-          "params": ["custom_event_name"],
+          "params": [
+            "custom_event_name"
+          ],
           "severity": "error",
           "message": "`custom_event_name` matches a standard event name. OpenAI documents that a custom name cannot reuse a built-in event.",
           "fix_hint": "Pick a name that is not a standard event, such as `quote_requested`.",
@@ -636,11 +887,24 @@
           "code": "vendor.openai-conversions-api.body.zero_advertising_id",
           "kind": "forbid_value_pattern",
           "pattern": "^(?i)0{8}-0{4}-0{4}-0{4}-0{12}$",
-          "params": ["user.android_advertising_id"],
+          "params": [
+            "user.android_advertising_id"
+          ],
           "severity": "warning",
           "message": "`android_advertising_id` is the all-zero UUID. OpenAI documents that the API ignores it without rejecting the event.",
           "fix_hint": "Send a real GAID, or omit `android_advertising_id`.",
           "doc": "https://developers.openai.com/ads/conversions-api"
+        },
+        {
+          "code": "vendor.openai-conversions-api.body.timestamp_ms_time_window",
+          "kind": "time_window",
+          "param": "timestamp_ms",
+          "unit": "milliseconds",
+          "max_age_seconds": 604800,
+          "severity": "error",
+          "message": "The timestamp is outside the documented processing window.",
+          "doc": "https://developers.openai.com/ads/conversions-api",
+          "max_future_seconds": 600
         }
       ]
     }

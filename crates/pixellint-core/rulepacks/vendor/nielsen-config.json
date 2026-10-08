@@ -1,0 +1,34 @@
+{
+  "id": "vendor/nielsen-config",
+  "display_name": "Nielsen DCR SDK configuration loader",
+  "vendor": "nielsen",
+  "description": "Nielsen Browser SDK 6.0 static configuration loader on cdn-gl.imrworldwide.com/conf/{apid}.js. The SDK passes its App ID in the path and browser-only name/ns fragment settings. Legacy /cgi-bin/cfg is vendor/nielsen. Measurement /cgi-bin/gn is not contracted.",
+  "source_level": "official_vendor",
+  "docs": "https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(6.0.0)",
+  "path_pattern": "^/conf/(?<apid>[^/]*)\\.js$",
+  "match": {
+    "hosts": [
+      "cdn-gl.imrworldwide.com"
+    ],
+    "path_prefixes": [
+      "/conf/"
+    ]
+  },
+  "params": [
+    {
+      "name": "apid",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Nielsen documents the SDK configuration URL as /conf/{apid}.js, using the App ID supplied during onboarding.",
+      "fix_hint": "Copy the Nielsen App ID into the path before .js.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/DCR_Static_Browser_SDK_(6.0.0)"
+    }
+  ],
+  "rules": [],
+  "client_fragment_params": [
+    "name",
+    "ns"
+  ]
+}

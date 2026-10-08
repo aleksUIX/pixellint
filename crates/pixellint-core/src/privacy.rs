@@ -18,8 +18,97 @@ const TCF_SPEC: &str = "https://github.com/InteractiveAdvertisingBureau/GDPR-Tra
 const USP_SPEC: &str = "https://github.com/InteractiveAdvertisingBureau/USPrivacy/blob/master/CCPA/US%20Privacy%20String.md";
 const GPP_SPEC: &str = "https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md";
 
+pub(crate) fn consent_spec(kind: &str) -> &'static str {
+    match kind {
+        "tcf" => TCF_SPEC,
+        "gpp" => GPP_SPEC,
+        "additional_consent" => "https://support.google.com/admanager/answer/9681920",
+        _ => USP_SPEC,
+    }
+}
+
 /// Parameters the specs say must appear at most once in a URL.
 const SIGNAL_PARAMS: [&str; 5] = ["gdpr", "gdpr_consent", "us_privacy", "gpp", "gpp_sid"];
+
+/// Reuse core's structural checks for documented body fields and URL aliases.
+/// This does not establish jurisdiction or vendor processing permissions.
+/// Standard URL signal names continue to be core's contract.
+pub(crate) fn literal_format_error(kind: &str, value: &str) -> Option<String> {
+    if skip_signal_value(value) {
+        return None;
+    }
+    let mut violations = Vec::new();
+    match kind {
+        "tcf" => {
+            if !value.split('.').all(is_base64url_segment) {
+                return Some("must use URL-safe TCF v2 base64 segments.".to_string());
+            }
+            check_tc_string_contents(
+                &RawParam::query("gdpr_consent", value, 0, value.len()),
+                &mut violations,
+            );
+        }
+        "gpp" => {
+            if !is_gpp_string(value) {
+                return Some("must use URL-safe GPP base64 sections.".to_string());
+            }
+            check_gpp_header(
+                &RawParam::query("gpp", value, 0, value.len()),
+                &mut violations,
+            );
+            if value
+                .split('~')
+                .next()
+                .is_some_and(|header| header.len() < 2)
+            {
+                return Some("must include the complete GPP type and version header.".to_string());
+            }
+        }
+        "us_privacy" => {
+            if !is_us_privacy_string(value) || !value.starts_with('1') {
+                return Some(
+                    "must use US Privacy version 1 followed by three Y, N, or - characters."
+                        .to_string(),
+                );
+            }
+        }
+        _ => unreachable!("known consent format"),
+    }
+    violations
+        .iter()
+        .find(|violation| violation.severity == Severity::Error)
+        .map(|violation| {
+            violation
+                .message
+                .replace("`gdpr_consent`", "the consent string")
+                .replace("`gpp`", "the consent string")
+        })
+}
+
+pub(crate) fn literal_format_warnings(kind: &str, value: &str) -> Vec<String> {
+    if skip_signal_value(value) {
+        return Vec::new();
+    }
+    match kind {
+        "tcf" => crate::tcf_sections::tcf_policy_warnings(value),
+        "additional_consent" => {
+            crate::google_additional_consent::additional_consent_warnings(value)
+        }
+        "gpp" => {
+            let mut violations = Vec::new();
+            check_gpp_header(
+                &RawParam::query("gpp", value, 0, value.len()),
+                &mut violations,
+            );
+            violations
+                .into_iter()
+                .filter(|violation| violation.severity == Severity::Warning)
+                .map(|violation| violation.message)
+                .collect()
+        }
+        _ => Vec::new(),
+    }
+}
 
 pub(crate) fn apply_privacy_rules(
     prepared: &PreparedArtifact<'_>,
@@ -50,7 +139,7 @@ pub(crate) fn apply_privacy_rules(
     }
 
     check_duplicates(params, violations);
-    check_tcf(artifact, params, violations);
+    check_tcf(prepared, artifact, params, violations);
     check_us_privacy(params, violations);
     check_gpp(artifact, params, violations);
 }
@@ -119,7 +208,12 @@ fn check_duplicates(params: &[RawParam<'_>], violations: &mut Vec<Violation>) {
     }
 }
 
-fn check_tcf(artifact: &str, params: &[RawParam<'_>], violations: &mut Vec<Violation>) {
+fn check_tcf(
+    prepared: &PreparedArtifact<'_>,
+    artifact: &str,
+    params: &[RawParam<'_>],
+    violations: &mut Vec<Violation>,
+) {
     let gdpr = find(params, "gdpr");
     let consent = find(params, "gdpr_consent");
 
@@ -129,6 +223,7 @@ fn check_tcf(artifact: &str, params: &[RawParam<'_>], violations: &mut Vec<Viola
         Some(param) if !skip_signal_value(&param.value) && !param.value.is_empty() => {
             match param.value.as_ref() {
                 "0" => Some(false),
+                value if prepared.gdpr_is_non_applicable(value) => Some(false),
                 "1" => Some(true),
                 other => {
                     violations.push(violation(
@@ -177,7 +272,7 @@ fn check_tcf(artifact: &str, params: &[RawParam<'_>], violations: &mut Vec<Viola
         {
             violations.push(violation(
                 "core.privacy.gdpr_consent_ignored",
-                "`gdpr=0` says GDPR does not apply, so the TC String in `gdpr_consent` is not meaningful for this call.".to_string(),
+                format!("`gdpr={}` says GDPR does not apply, so the TC String in `gdpr_consent` is not meaningful for this call.", gdpr.map(|param| param.value.as_ref()).unwrap_or("0")),
                 Severity::Info,
                 "param.gdpr_consent",
                 "Leave `gdpr_consent` out when `gdpr=0`, or check that the flag is right.",
@@ -282,6 +377,24 @@ fn check_tc_string_contents(param: &RawParam<'_>, violations: &mut Vec<Violation
             source("IAB Tech Lab TCF v2", TCF_SPEC),
             vec![param.target()],
         ));
+        return;
+    }
+    if let Err(reason) = crate::tcf_sections::validate_tcf_v2(param.value.as_ref()) {
+        violations.push(violation(
+            "core.privacy.tc_string_sections_invalid", reason,
+            Severity::Error, "param.gdpr_consent",
+            "Pass the complete TC String produced by the CMP, including its variable vendor and publisher sections.",
+            source("IAB Tech Lab TCF v2", TCF_SPEC), vec![param.target()],
+        ));
+    } else {
+        for message in literal_format_warnings("tcf", param.value.as_ref()) {
+            violations.push(violation(
+                "core.privacy.tc_string_policy_warning", message,
+                Severity::Warning, "param.gdpr_consent",
+                "Check the CMP's policy version and timestamps against the current TCF specification.",
+                source("IAB Tech Lab TCF v2", TCF_SPEC), vec![param.target()],
+            ));
+        }
     }
 }
 
@@ -397,6 +510,24 @@ fn check_gpp(artifact: &str, params: &[RawParam<'_>], violations: &mut Vec<Viola
             vec![param.target()],
         ));
     }
+    if let (Some(gpp), Some(sid)) = (gpp, sid)
+        && !skip_signal_value(&gpp.value)
+        && !skip_signal_value(&sid.value)
+        && !sid.value.is_empty()
+        && is_gpp_sid(&sid.value)
+        && let Ok(structure) = crate::gpp_structure::validate_gpp_structure(&gpp.value)
+        && let Some(reason) = crate::gpp_structure::gpp_sid_mismatch(&sid.value, &structure)
+    {
+        violations.push(violation(
+            "core.privacy.gpp_sid_sections_mismatch",
+            reason,
+            Severity::Error,
+            "param.gpp_sid",
+            "Use applicable section IDs present in the CMP's encoded GPP header.",
+            source("IAB Tech Lab GPP", GPP_SPEC),
+            vec![gpp.target(), sid.target()],
+        ));
+    }
 }
 
 /// Reads the GPP header, which the spec pins to a fixed type and version.
@@ -439,6 +570,32 @@ fn check_gpp_header(param: &RawParam<'_>, violations: &mut Vec<Violation>) {
             Severity::Warning,
             "param.gpp",
             "Send a version 1 GPP string, which starts `DB`.",
+            source("IAB Tech Lab GPP", GPP_SPEC),
+            vec![param.target()],
+        ));
+        return;
+    }
+    match crate::gpp_structure::validate_gpp_structure(&param.value) {
+        Err(reason) => violations.push(violation(
+            "core.privacy.gpp_sections_invalid", reason, Severity::Error,
+            "param.gpp", "Pass the complete CMP string with all sections declared by its header.",
+            source("IAB Tech Lab GPP", GPP_SPEC), vec![param.target()],
+        )),
+        Ok(structure) if !structure.unvalidated_sections.is_empty() => violations.push(violation(
+            "core.privacy.gpp_sections_unvalidated",
+            format!("GPP section IDs {:?} use a section or version whose field layout is not validated.", structure.unvalidated_sections),
+            Severity::Warning, "param.gpp", "Check these sections against their published versioned field tables.",
+            source("IAB Tech Lab GPP", GPP_SPEC), vec![param.target()],
+        )),
+        Ok(_) => {},
+    }
+    for message in crate::gpp_structure::gpp_policy_warnings(&param.value) {
+        violations.push(violation(
+            "core.privacy.gpp_policy_warning",
+            message,
+            Severity::Warning,
+            "param.gpp",
+            "Check the CMP fields against the versioned GPP section definition.",
             source("IAB Tech Lab GPP", GPP_SPEC),
             vec![param.target()],
         ));
@@ -537,6 +694,9 @@ fn is_us_privacy_string(value: &str) -> bool {
 }
 
 fn is_gpp_sid(value: &str) -> bool {
+    if value == "-1" {
+        return true;
+    }
     let sections: Vec<&str> = value.split(',').collect();
 
     sections.len() <= 2
@@ -570,10 +730,28 @@ mod tests {
 
     #[test]
     fn a_complete_tcf_signal_is_clean() {
-        assert!(
-            codes("https://example.com/px?gdpr=1&gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAAAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA").is_empty()
-        );
+        assert!(codes("https://example.com/px?gdpr=1&gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA").is_empty());
         assert!(codes("https://example.com/px?gdpr=0").is_empty());
+    }
+
+    #[test]
+    fn current_iab_example_preserves_its_policy_conflict_as_an_advisory() {
+        assert_eq!(
+            codes(
+                "https://example.com/px?gdpr=1&gdpr_consent=CQSbk4AQSbk4ANwAAAENAwCgAAAAAAAAAAYgACPAAAAA.IDKQA4AAgAKAGQAygAAA.YAAAAAAAAAAA"
+            ),
+            vec!["core.privacy.tc_string_policy_warning"]
+        );
+    }
+
+    #[test]
+    fn a_fixed_prefix_does_not_excuse_invalid_variable_sections() {
+        assert_eq!(
+            codes(
+                "https://example.com/px?gdpr=1&gdpr_consent=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAAAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+            ),
+            vec!["core.privacy.tc_string_sections_invalid"]
+        );
     }
 
     #[test]
@@ -751,7 +929,12 @@ mod tests {
             vec!["core.privacy.gpp_sid_missing"]
         );
         assert!(codes("https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN&gpp_sid=2").is_empty());
-        assert!(codes("https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA&gpp_sid=2,6").is_empty());
+        assert_eq!(
+            codes(
+                "https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA&gpp_sid=2,6"
+            ),
+            vec!["core.privacy.gpp_sections_invalid"]
+        );
     }
 
     #[test]
@@ -761,13 +944,11 @@ mod tests {
             vec!["core.privacy.gpp_malformed"]
         );
         assert_eq!(
-            codes(
-                "https://example.com/px?gpp=DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA&gpp_sid=usnat"
-            ),
+            codes("https://example.com/px?gpp=DBABLA~CAAAVVVVVVRA.QA&gpp_sid=usnat"),
             vec!["core.privacy.gpp_sid_malformed"]
         );
         assert_eq!(
-            codes("https://example.com/px?gpp=DBACNYA&gpp_sid=2,6,8"),
+            codes("https://example.com/px?gpp=DBABLA~CAAAVVVVVVRA.QA&gpp_sid=2,6,8"),
             vec!["core.privacy.gpp_sid_malformed"]
         );
     }

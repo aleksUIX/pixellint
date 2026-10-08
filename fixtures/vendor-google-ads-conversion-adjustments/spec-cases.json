@@ -1,0 +1,281 @@
+[
+  {
+    "id": "hash-email-identifier",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"userIdentifierSource\":\"FIRST_PARTY\"}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.identifier_required",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "identifier-two-union-members",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"hashedPhoneNumber\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.identifier_oneof",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "identifier-missing-union",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.identifier_required",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "identifier-mobile-unsupported",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"mobileId\":\"example-mobile\"}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.mobileId.forbidden",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "identifier-partner-id-unsupported",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"thirdPartyUserId\":\"example-partner\"}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.thirdPartyUserId.forbidden",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "identifiers-five-limit",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.userIdentifiers.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "identifiers-six-invalid",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifier",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.userIdentifiers.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "identifier-uppercase-hash-invalid",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-online",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"hashedEmail\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.hashedEmail.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "identifier-source-unknown-output-only",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/UserIdentifierSourceEnum.UserIdentifierSource",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"userIdentifierSource\":\"UNKNOWN\"}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.userIdentifierSource.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "official-enhancement-address-no-adjustment-time",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-online",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"addressInfo\":{\"hashedFirstName\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"hashedLastName\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"countryCode\":\"US\",\"postalCode\":\"94045\",\"city\":\"Mountain View\",\"state\":\"CA\",\"hashedStreetAddress\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}}],\"userAgent\":\"Mozilla/5.0\"}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.adjustment_time_required",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "enhancement-address-with-conversion-time",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-online",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"addressInfo\":{\"hashedFirstName\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"hashedLastName\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"countryCode\":\"US\",\"postalCode\":\"94045\",\"city\":\"Mountain View\",\"state\":\"CA\",\"hashedStreetAddress\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}}],\"gclidDateTimePair\":{\"conversionDateTime\":\"2026-10-07 11:00:00+00:00\"}}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.adjustment_time_required",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "address-missing-required-postal-code",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-online",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"addressInfo\":{\"hashedFirstName\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"hashedLastName\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"countryCode\":\"US\",\"city\":\"Mountain View\",\"state\":\"CA\",\"hashedStreetAddress\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}}]}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.postalCode.missing",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "agent-without-identifiers",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/ConversionAdjustment",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"orderId\":\"order-123\",\"userAgent\":\"Mozilla/5.0\"}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.user_agent_requires_identifiers",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "enhancement-gclid-cannot-replace-order",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/ConversionAdjustment",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"ENHANCEMENT\",\"userIdentifiers\":[{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}],\"gclidDateTimePair\":{\"gclid\":\"example-click\",\"conversionDateTime\":\"2026-10-07 11:00:00+00:00\"}}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.enhancement_order_required",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "retraction-cannot-enhance-identifiers",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/reference/rpc/v25/ConversionAdjustment",
+    "artifact": "{\"conversionAdjustments\":[{\"conversionAction\":\"customers/123/conversionActions/456\",\"adjustmentType\":\"RETRACTION\",\"orderId\":\"order-123\",\"userIdentifiers\":[{\"hashedEmail\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}],\"adjustmentDateTime\":\"2026-10-07 12:00:00+00:00\"}],\"partialFailure\":true}",
+    "code": "vendor.google-ads-conversion-adjustments.body.user_identifiers_enhancement_only",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-adjustmentDateTime-leap-day",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2024-02-29 12:00:00+00:00\",\"orderId\":\"ORDER-999\"}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.adjustmentDateTime.calendar_invalid",
+    "expect_violation": false,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-adjustmentDateTime-non-leap-day",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2025-02-29 12:00:00+00:00\",\"orderId\":\"ORDER-999\"}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.adjustmentDateTime.calendar_invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-adjustmentDateTime-month13",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-13-01 12:00:00+00:00\",\"orderId\":\"ORDER-999\"}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.adjustmentDateTime.calendar_invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-adjustmentDateTime-hour24",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-10-07 24:00:00+00:00\",\"orderId\":\"ORDER-999\"}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.adjustmentDateTime.calendar_invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-adjustmentDateTime-zone-hour24",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-10-07 12:00:00+24:00\",\"orderId\":\"ORDER-999\"}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.adjustmentDateTime.calendar_invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-gclidDateTimePair.conversionDateTime-leap-day",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-08-21 12:00:00+00:00\",\"orderId\":\"ORDER-999\",\"gclidDateTimePair\":{\"conversionDateTime\":\"2024-02-29 12:00:00+00:00\"}}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.gclidDateTimePair.conversionDateTime.calendar_invalid",
+    "expect_violation": false,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-gclidDateTimePair.conversionDateTime-non-leap-day",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-08-21 12:00:00+00:00\",\"orderId\":\"ORDER-999\",\"gclidDateTimePair\":{\"conversionDateTime\":\"2025-02-29 12:00:00+00:00\"}}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.gclidDateTimePair.conversionDateTime.calendar_invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-gclidDateTimePair.conversionDateTime-month13",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-08-21 12:00:00+00:00\",\"orderId\":\"ORDER-999\",\"gclidDateTimePair\":{\"conversionDateTime\":\"2026-13-01 12:00:00+00:00\"}}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.gclidDateTimePair.conversionDateTime.calendar_invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-gclidDateTimePair.conversionDateTime-hour24",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-08-21 12:00:00+00:00\",\"orderId\":\"ORDER-999\",\"gclidDateTimePair\":{\"conversionDateTime\":\"2026-10-07 24:00:00+00:00\"}}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.gclidDateTimePair.conversionDateTime.calendar_invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "calendar-gclidDateTimePair.conversionDateTime-zone-hour24",
+    "kind": "json",
+    "source_url": "https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-08-21 12:00:00+00:00\",\"orderId\":\"ORDER-999\",\"gclidDateTimePair\":{\"conversionDateTime\":\"2026-10-07 12:00:00+24:00\"}}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.gclidDateTimePair.conversionDateTime.calendar_invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "protojson-snake-case-request",
+    "kind": "json",
+    "source_url": "https://protobuf.dev/programming-guides/json/",
+    "artifact": "{\"partial_failure\":true,\"conversion_adjustments\":[{\"conversion_action\":\"customers/1234567890/conversionActions/987654321\",\"adjustment_type\":\"RETRACTION\",\"adjustment_date_time\":\"2026-08-21 12:00:00+00:00\",\"order_id\":\"ORDER-999\"}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.payload_mismatch",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "protojson-optional-null-unset",
+    "kind": "json",
+    "source_url": "https://protobuf.dev/programming-guides/json/",
+    "artifact": "{\"partialFailure\": true, \"conversionAdjustments\": [{\"conversionAction\": \"customers/1234567890/conversionActions/987654321\", \"adjustmentType\": \"RETRACTION\", \"adjustmentDateTime\": \"2026-08-21 12:00:00+00:00\", \"orderId\": \"ORDER-999\", \"restatementValue\": null}], \"validateOnly\": null}",
+    "code": "vendor.google-ads-conversion-adjustments.body.validateOnly.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "protojson-required-null-missing",
+    "kind": "json",
+    "source_url": "https://protobuf.dev/programming-guides/json/",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":null,\"adjustmentType\":\"RETRACTION\",\"adjustmentDateTime\":\"2026-08-21 12:00:00+00:00\",\"orderId\":\"ORDER-999\"}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.conversionAction.missing",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "protojson-repeated-null-member",
+    "kind": "json",
+    "source_url": "https://protobuf.dev/programming-guides/json/",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[null]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.conversionAdjustments[].invalid",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "protojson-numeric-restatement-enum",
+    "kind": "json",
+    "source_url": "https://protobuf.dev/programming-guides/json/",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":3,\"adjustmentDateTime\":\"2026-08-21 12:00:00+00:00\",\"orderId\":\"ORDER-999\",\"restatementValue\":{\"adjustedValue\":\"2.5e1\",\"currencyCode\":\"USD\"}}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.adjustmentType.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "protojson-numeric-restatement-dependency",
+    "kind": "json",
+    "source_url": "https://protobuf.dev/programming-guides/json/",
+    "artifact": "{\"partialFailure\":true,\"conversionAdjustments\":[{\"conversionAction\":\"customers/1234567890/conversionActions/987654321\",\"adjustmentType\":3,\"adjustmentDateTime\":\"2026-08-21 12:00:00+00:00\",\"orderId\":\"ORDER-999\"}]}",
+    "code": "vendor.google-ads-conversion-adjustments.body.restatement_requires_value",
+    "expect_violation": true,
+    "expect_no_errors": false
+  }
+]

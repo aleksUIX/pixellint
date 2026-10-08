@@ -6,14 +6,20 @@
   "source_level": "official_vendor",
   "docs": "https://amplitude.com/docs/apis/analytics/identify",
   "match": {
-    "host_suffixes": ["amplitude.com"],
-    "paths": ["/identify"]
+    "host_suffixes": [
+      "amplitude.com"
+    ],
+    "paths": [
+      "/identify"
+    ]
   },
   "params": [
     {
       "name": "api_key",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the project API key. Amplitude documents it as required on GET query and POST form.",
       "fix_hint": "Send `api_key` with the Amplitude project API key.",
       "doc": "https://amplitude.com/docs/apis/analytics/identify"
@@ -21,11 +27,311 @@
     {
       "name": "identification",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a JSON identification object or array. Amplitude documents it as required. Each object needs user_id or device_id.",
       "fix_hint": "Send `identification` as JSON with `user_id` or `device_id`.",
       "doc": "https://amplitude.com/docs/apis/analytics/identify"
     }
   ],
-  "rules": []
+  "rules": [],
+  "body": [
+    {
+      "source_param": "identification",
+      "encoding": "json",
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "min_items": 1,
+          "description": "Identification is an object or array of identification objects.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "identification",
+      "encoding": "json",
+      "scope": [
+        "[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "description": "Each identification is an object.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify"
+        },
+        {
+          "name": "user_id",
+          "description": "The vendor documents `user_id` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "device_id",
+          "description": "The vendor documents `device_id` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "user_properties",
+          "description": "The vendor documents `user_properties` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object",
+          "max_depth": 40
+        },
+        {
+          "name": "groups",
+          "description": "Amplitude accepts at most five group types and ten total scalar or array group memberships.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object",
+          "max_properties": 5,
+          "max_member_values": 10
+        },
+        {
+          "name": "app_version",
+          "description": "The vendor documents `app_version` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "platform",
+          "description": "The vendor documents `platform` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "os_name",
+          "description": "The vendor documents `os_name` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "os_version",
+          "description": "The vendor documents `os_version` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "device_brand",
+          "description": "The vendor documents `device_brand` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "device_manufacturer",
+          "description": "The vendor documents `device_manufacturer` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "device_model",
+          "description": "The vendor documents `device_model` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "carrier",
+          "description": "The vendor documents `carrier` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "country",
+          "description": "The vendor documents `country` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "region",
+          "description": "The vendor documents `region` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "city",
+          "description": "The vendor documents `city` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "dma",
+          "description": "The vendor documents `dma` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "language",
+          "description": "The vendor documents `language` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "paying",
+          "description": "The vendor documents `paying` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "start_version",
+          "description": "The vendor documents `start_version` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "string"
+        },
+        {
+          "name": "user_properties.$set",
+          "description": "The vendor documents `user_properties.$set` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$setOnce",
+          "description": "The vendor documents `user_properties.$setOnce` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$add",
+          "description": "The vendor documents `user_properties.$add` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$append",
+          "description": "The vendor documents `user_properties.$append` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$prepend",
+          "description": "The vendor documents `user_properties.$prepend` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$unset",
+          "description": "The vendor documents `user_properties.$unset` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$preInsert",
+          "description": "The vendor documents `user_properties.$preInsert` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$postInsert",
+          "description": "The vendor documents `user_properties.$postInsert` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$remove",
+          "description": "The vendor documents `user_properties.$remove` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "object"
+        },
+        {
+          "name": "user_properties.$add.number",
+          "description": "The vendor documents `user_properties.$add.number` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "json_type": "number",
+          "name_pattern": "^.+$",
+          "name_pattern_parent": "user_properties.$add",
+          "allow_empty": true
+        },
+        {
+          "name": "groups.*",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "doc": "https://www.amplitude.com/docs/sdks/analytics/node/node-js-sdk",
+          "description": "A group name is a string or an array of strings."
+        },
+        {
+          "name": "groups.*[]",
+          "json_type": "string",
+          "doc": "https://www.amplitude.com/docs/sdks/analytics/node/node-js-sdk",
+          "description": "Every array-valued group name is a string."
+        },
+        {
+          "name": "direct_property",
+          "name_pattern": "^[^$].*$",
+          "name_pattern_parent": "user_properties",
+          "requirement": "forbidden",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "present",
+                "param": "user_properties.$set"
+              },
+              {
+                "kind": "present",
+                "param": "user_properties.$setOnce"
+              },
+              {
+                "kind": "present",
+                "param": "user_properties.$add"
+              },
+              {
+                "kind": "present",
+                "param": "user_properties.$append"
+              },
+              {
+                "kind": "present",
+                "param": "user_properties.$prepend"
+              },
+              {
+                "kind": "present",
+                "param": "user_properties.$unset"
+              },
+              {
+                "kind": "present",
+                "param": "user_properties.$preInsert"
+              },
+              {
+                "kind": "present",
+                "param": "user_properties.$postInsert"
+              },
+              {
+                "kind": "present",
+                "param": "user_properties.$remove"
+              }
+            ]
+          },
+          "description": "When any operation is used, direct properties must be placed inside $set.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.amplitude-identify.body.user_or_device_required",
+          "kind": "require_one_of",
+          "severity": "error",
+          "message": "The request does not satisfy the documented user or device required requirement.",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify",
+          "params": [
+            "user_id",
+            "device_id"
+          ]
+        }
+      ]
+    }
+  ]
 }

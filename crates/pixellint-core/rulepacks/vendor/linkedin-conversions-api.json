@@ -21,259 +21,404 @@
       }
     ]
   },
-  "body": {
-    "scope": [
-      "elements[]",
-      ""
-    ],
-    "params": [
-      {
-        "name": "conversion",
-        "requirement": "required",
-        "format": {
-          "kind": "regex",
-          "pattern": "^urn:lla:llaPartnerConversion:[0-9]+$"
+  "body": [
+    {
+      "params": [
+        {
+          "name": "elements",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 5000
         },
-        "description": "It is the conversion rule URN the event is attributed to, in the form `urn:lla:llaPartnerConversion:ID`.",
-        "fix_hint": "Send the URN of a conversion rule created with `conversionMethod` set to `CONVERSIONS_API`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "name": "conversionHappenedAt",
-        "requirement": "required",
-        "format": {
-          "kind": "integer",
-          "min_digits": 13,
-          "max_digits": 13
+        {
+          "name": "elements[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "object"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "elements[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "conversion",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^urn:lla:llaPartnerConversion:[0-9]+$"
+          },
+          "description": "It is the conversion rule URN the event is attributed to, in the form `urn:lla:llaPartnerConversion:ID`.",
+          "fix_hint": "Send the URN of a conversion rule created with `conversionMethod` set to `CONVERSIONS_API`.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
         },
-        "description": "LinkedIn documents it as an epoch timestamp in milliseconds, and rejects events older than 90 days. A 10-digit value is seconds and lands in 1970.",
-        "fix_hint": "Send milliseconds, not seconds: a JavaScript `Date.now()` is already in the right unit.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "name": "user.userIds",
-        "requirement": "required",
-        "severity": "error",
-        "description": "LinkedIn returns a 422 when `user.userIds` is absent. Identifying the person by `lead`, `externalIds`, or `userInfo` instead still requires it, sent as an empty list.",
-        "fix_hint": "Add `user.userIds`. If you match on something else, send it as an empty list: `\"userIds\": []`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "name": "user.userIds[].idType",
-        "requirement": "required",
-        "format": {
-          "kind": "enum",
-          "values": [
-            "SHA256_EMAIL",
-            "LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID",
-            "ACXIOM_ID",
-            "PLAINTEXT_IP_ADDRESS",
-            "SHA256_IP_ADDRESS",
-            "GOOGLE_AID"
+        {
+          "name": "conversionHappenedAt",
+          "requirement": "required",
+          "format": {
+            "kind": "integer",
+            "min_digits": 13,
+            "max_digits": 13
+          },
+          "description": "LinkedIn documents it as an epoch timestamp in milliseconds, and rejects events older than 90 days. A 10-digit value is seconds and lands in 1970.",
+          "fix_hint": "Send milliseconds, not seconds: a JavaScript `Date.now()` is already in the right unit.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "integer"
+        },
+        {
+          "name": "user.userIds",
+          "requirement": "required",
+          "severity": "error",
+          "description": "LinkedIn returns a 422 when `user.userIds` is absent. Identifying the person by `lead`, `externalIds`, or `userInfo` instead still requires it, sent as an empty list.",
+          "fix_hint": "Add `user.userIds`. If you match on something else, send it as an empty list: `\"userIds\": []`.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "array"
+        },
+        {
+          "name": "user.userIds[].idType",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "SHA256_EMAIL",
+              "LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID",
+              "ACXIOM_ID",
+              "PLAINTEXT_IP_ADDRESS",
+              "SHA256_IP_ADDRESS",
+              "GOOGLE_AID"
+            ]
+          },
+          "format_severity": "warning",
+          "description": "It names the kind of identifier carried in `idValue`. LinkedIn documents `SHA256_EMAIL`, `LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID`, `ACXIOM_ID`, `PLAINTEXT_IP_ADDRESS`, `SHA256_IP_ADDRESS`, and `GOOGLE_AID`.",
+          "fix_hint": "Use one of the documented identifier types.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user.userIds[].idValue",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "LinkedIn rejects the event when an identifier is present but empty.",
+          "fix_hint": "Populate `idValue`, or drop the entry entirely rather than sending it blank.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user.lead",
+          "format": {
+            "kind": "regex",
+            "pattern": "^urn:li:leadGenFormResponse:.+$"
+          },
+          "description": "LinkedIn rejects a `lead` that is not a valid URN.",
+          "fix_hint": "Send it as `urn:li:leadGenFormResponse:ID`.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+        },
+        {
+          "name": "user.externalIds[]",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is an advertiser-provided identifier for the converting user. LinkedIn documents at most one value in the list, and requires a standard identifier alongside the first send.",
+          "fix_hint": "Send `user.externalIds` as a one-item list, together with `userIds` or `userInfo` on the first match.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "json_type": "string"
+        },
+        {
+          "name": "user.userInfo.firstName",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the contact first name in plain text. LinkedIn documents it with `lastName` for probabilistic matching.",
+          "fix_hint": "Send `user.userInfo.firstName` with `lastName`, or send the hashed pair instead.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "json_type": "string"
+        },
+        {
+          "name": "user.userInfo.lastName",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the contact last name in plain text. LinkedIn documents it with `firstName` for probabilistic matching.",
+          "fix_hint": "Send `user.userInfo.lastName` with `firstName`, or send the hashed pair instead.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "json_type": "string"
+        },
+        {
+          "name": "user.userInfo.hashedFirstName",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "It is the SHA-256 hex digest of the first name. LinkedIn documents lowercase, no spaces or punctuation, UTF-8, then SHA-256.",
+          "fix_hint": "Send a 64-character lowercase hex digest in `user.userInfo.hashedFirstName` with `hashedLastName`.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "json_type": "string"
+        },
+        {
+          "name": "user.userInfo.hashedLastName",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "It is the SHA-256 hex digest of the last name. LinkedIn documents lowercase, no spaces or punctuation, UTF-8, then SHA-256.",
+          "fix_hint": "Send a 64-character lowercase hex digest in `user.userInfo.hashedLastName` with `hashedFirstName`.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "json_type": "string"
+        },
+        {
+          "name": "user.userInfo.companyName",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the company name in plain text. LinkedIn documents it as an optional userInfo match field.",
+          "fix_hint": "Send `user.userInfo.companyName`, or drop the empty pair.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "json_type": "string"
+        },
+        {
+          "name": "user.userInfo.title",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the job title in plain text. LinkedIn documents it as an optional userInfo match field.",
+          "fix_hint": "Send `user.userInfo.title`, or drop the empty pair.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "json_type": "string"
+        },
+        {
+          "name": "user.userInfo.countryCode",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}$"
+          },
+          "description": "It is an ISO two-letter country or region code. LinkedIn documents `US` as the example.",
+          "fix_hint": "Send a two-letter code such as `US`.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+        },
+        {
+          "name": "conversionValue.currencyCode",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "description": "It is the three-letter currency code of the conversion value.",
+          "fix_hint": "Use the ISO 4217 code, such as `USD`.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+        },
+        {
+          "name": "conversionValue.amount",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(\\.[0-9]+)?$"
+          },
+          "description": "LinkedIn documents the amount as a decimal string, as in `\"50.0\"`.",
+          "fix_hint": "Send the amount as a string holding a decimal number, without a currency symbol.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "string"
+        },
+        {
+          "name": "eventId",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It identifies the event so repeated sends are not counted twice.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "user",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "user.userInfo",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "conversionValue",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "user.userIds[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "object"
+        },
+        {
+          "name": "user.externalIds",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "json_type": "array"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.linkedin-conversions-api.body.value_needs_both_fields",
+          "kind": "required_with",
+          "when": "conversionValue.amount",
+          "requires": [
+            "conversionValue.currencyCode"
+          ],
+          "severity": "error",
+          "message": "`conversionValue` carries an amount with no `currencyCode`. LinkedIn documents both fields together.",
+          "fix_hint": "Add `conversionValue.currencyCode` alongside the amount.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+        },
+        {
+          "code": "vendor.linkedin-conversions-api.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "params": [
+            "user.userIds[].idValue"
+          ],
+          "severity": "error",
+          "message": "An identifier carries what looks like a raw email address. LinkedIn matches on `SHA256_EMAIL`, which is the SHA-256 digest rather than the address.",
+          "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest with `idType` set to `SHA256_EMAIL`.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "elements[].user.userInfo",
+        "user.userInfo"
+      ],
+      "params": [
+        {
+          "name": "firstName",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+        },
+        {
+          "name": "lastName",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+        },
+        {
+          "name": "hashedFirstName",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+        },
+        {
+          "name": "hashedLastName",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.linkedin-conversions-api.body.userinfo_requires_first_and_last",
+          "kind": "require_any_of",
+          "severity": "error",
+          "message": "User information requires a first-name and last-name combination. Each name may be plaintext or hashed.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "groups": [
+            [
+              "firstName",
+              "lastName"
+            ],
+            [
+              "firstName",
+              "hashedLastName"
+            ],
+            [
+              "hashedFirstName",
+              "lastName"
+            ],
+            [
+              "hashedFirstName",
+              "hashedLastName"
+            ]
           ]
+        }
+      ]
+    },
+    {
+      "scope": [
+        "elements[].user.userIds[]",
+        "user.userIds[]"
+      ],
+      "params": [
+        {
+          "name": "idType",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
         },
-        "format_severity": "warning",
-        "description": "It names the kind of identifier carried in `idValue`. LinkedIn documents `SHA256_EMAIL`, `LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID`, `ACXIOM_ID`, `PLAINTEXT_IP_ADDRESS`, `SHA256_IP_ADDRESS`, and `GOOGLE_AID`.",
-        "fix_hint": "Use one of the documented identifier types.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "name": "user.userIds[].idValue",
-        "requirement": "required",
-        "format": {
-          "kind": "non_empty"
+        {
+          "name": "idValue",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.linkedin-conversions-api.body.sha256_identifiers_require_hash",
+          "kind": "format_when",
+          "severity": "error",
+          "message": "A SHA256 identifier must be a SHA256 hexadecimal digest.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "when": "idType",
+          "equals": [
+            "SHA256_EMAIL",
+            "SHA256_IP_ADDRESS"
+          ],
+          "param": "idValue",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
         },
-        "description": "LinkedIn rejects the event when an identifier is present but empty.",
-        "fix_hint": "Populate `idValue`, or drop the entry entirely rather than sending it blank.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "name": "user.lead",
-        "format": {
-          "kind": "regex",
-          "pattern": "^urn:li:leadGenFormResponse:.+$"
+        {
+          "code": "vendor.linkedin-conversions-api.body.plaintext_ip_requires_ipv4",
+          "kind": "format_when",
+          "severity": "error",
+          "message": "The PLAINTEXT_IP_ADDRESS identifier supports IPv4 only.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "when": "idType",
+          "equals": [
+            "PLAINTEXT_IP_ADDRESS"
+          ],
+          "param": "idValue",
+          "format": {
+            "kind": "ip",
+            "version": "v4"
+          }
         },
-        "description": "LinkedIn rejects a `lead` that is not a valid URN.",
-        "fix_hint": "Send it as `urn:li:leadGenFormResponse:ID`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "name": "user.externalIds[]",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is an advertiser-provided identifier for the converting user. LinkedIn documents at most one value in the list, and requires a standard identifier alongside the first send.",
-        "fix_hint": "Send `user.externalIds` as a one-item list, together with `userIds` or `userInfo` on the first match.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "name": "user.userInfo.firstName",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the contact first name in plain text. LinkedIn documents it with `lastName` for probabilistic matching.",
-        "fix_hint": "Send `user.userInfo.firstName` with `lastName`, or send the hashed pair instead.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "name": "user.userInfo.lastName",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the contact last name in plain text. LinkedIn documents it with `firstName` for probabilistic matching.",
-        "fix_hint": "Send `user.userInfo.lastName` with `firstName`, or send the hashed pair instead.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "name": "user.userInfo.hashedFirstName",
-        "format": {
-          "kind": "hex",
-          "length": 64
-        },
-        "description": "It is the SHA-256 hex digest of the first name. LinkedIn documents lowercase, no spaces or punctuation, UTF-8, then SHA-256.",
-        "fix_hint": "Send a 64-character lowercase hex digest in `user.userInfo.hashedFirstName` with `hashedLastName`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "name": "user.userInfo.hashedLastName",
-        "format": {
-          "kind": "hex",
-          "length": 64
-        },
-        "description": "It is the SHA-256 hex digest of the last name. LinkedIn documents lowercase, no spaces or punctuation, UTF-8, then SHA-256.",
-        "fix_hint": "Send a 64-character lowercase hex digest in `user.userInfo.hashedLastName` with `hashedFirstName`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "name": "user.userInfo.companyName",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the company name in plain text. LinkedIn documents it as an optional userInfo match field.",
-        "fix_hint": "Send `user.userInfo.companyName`, or drop the empty pair.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "name": "user.userInfo.title",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It is the job title in plain text. LinkedIn documents it as an optional userInfo match field.",
-        "fix_hint": "Send `user.userInfo.title`, or drop the empty pair.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "name": "user.userInfo.countryCode",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Za-z]{2}$"
-        },
-        "description": "It is an ISO two-letter country or region code. LinkedIn documents `US` as the example.",
-        "fix_hint": "Send a two-letter code such as `US`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "name": "conversionValue.currencyCode",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[A-Za-z]{3}$"
-        },
-        "description": "It is the three-letter currency code of the conversion value.",
-        "fix_hint": "Use the ISO 4217 code, such as `USD`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "name": "conversionValue.amount",
-        "format": {
-          "kind": "regex",
-          "pattern": "^[0-9]+(\\.[0-9]+)?$"
-        },
-        "description": "LinkedIn documents the amount as a decimal string, as in `\"50.0\"`.",
-        "fix_hint": "Send the amount as a string holding a decimal number, without a currency symbol.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "name": "eventId",
-        "format": {
-          "kind": "non_empty"
-        },
-        "description": "It identifies the event so repeated sends are not counted twice.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      }
-    ],
-    "rules": [
-      {
-        "code": "vendor.linkedin-conversions-api.body.value_needs_both_fields",
-        "kind": "required_with",
-        "when": "conversionValue.amount",
-        "requires": [
-          "conversionValue.currencyCode"
-        ],
-        "severity": "error",
-        "message": "`conversionValue` carries an amount with no `currencyCode`. LinkedIn documents both fields together.",
-        "fix_hint": "Add `conversionValue.currencyCode` alongside the amount.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      },
-      {
-        "code": "vendor.linkedin-conversions-api.body.userinfo_first_needs_last",
-        "kind": "required_with",
-        "when": "user.userInfo.firstName",
-        "requires": [
-          "user.userInfo.lastName"
-        ],
-        "severity": "error",
-        "message": "`userInfo` has `firstName` without `lastName`. LinkedIn documents both names together for matching.",
-        "fix_hint": "Send `user.userInfo.lastName` with `firstName`, or send `hashedFirstName` and `hashedLastName` instead.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "code": "vendor.linkedin-conversions-api.body.userinfo_last_needs_first",
-        "kind": "required_with",
-        "when": "user.userInfo.lastName",
-        "requires": [
-          "user.userInfo.firstName"
-        ],
-        "severity": "error",
-        "message": "`userInfo` has `lastName` without `firstName`. LinkedIn documents both names together for matching.",
-        "fix_hint": "Send `user.userInfo.firstName` with `lastName`, or send `hashedFirstName` and `hashedLastName` instead.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "code": "vendor.linkedin-conversions-api.body.hashed_first_needs_last",
-        "kind": "required_with",
-        "when": "user.userInfo.hashedFirstName",
-        "requires": [
-          "user.userInfo.hashedLastName"
-        ],
-        "severity": "error",
-        "message": "`userInfo` has `hashedFirstName` without `hashedLastName`. LinkedIn documents both hashed names together.",
-        "fix_hint": "Send `user.userInfo.hashedLastName` with `hashedFirstName`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "code": "vendor.linkedin-conversions-api.body.hashed_last_needs_first",
-        "kind": "required_with",
-        "when": "user.userInfo.hashedLastName",
-        "requires": [
-          "user.userInfo.hashedFirstName"
-        ],
-        "severity": "error",
-        "message": "`userInfo` has `hashedLastName` without `hashedFirstName`. LinkedIn documents both hashed names together.",
-        "fix_hint": "Send `user.userInfo.hashedFirstName` with `hashedLastName`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
-      },
-      {
-        "code": "vendor.linkedin-conversions-api.body.unhashed_email",
-        "kind": "forbid_value_pattern",
-        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
-        "params": [
-          "user.userIds[].idValue"
-        ],
-        "severity": "error",
-        "message": "An identifier carries what looks like a raw email address. LinkedIn matches on `SHA256_EMAIL`, which is the SHA-256 digest rather than the address.",
-        "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest with `idType` set to `SHA256_EMAIL`.",
-        "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
-      }
-    ]
-  }
+        {
+          "code": "vendor.linkedin-conversions-api.body.google_aid_requires_uuid",
+          "kind": "format_when",
+          "severity": "error",
+          "message": "The Google advertising ID is a UUID.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "when": "idType",
+          "equals": [
+            "GOOGLE_AID"
+          ],
+          "param": "idValue",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$"
+          }
+        }
+      ]
+    }
+  ]
 }

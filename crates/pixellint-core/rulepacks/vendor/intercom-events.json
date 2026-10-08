@@ -6,11 +6,18 @@
   "source_level": "official_vendor",
   "docs": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
   "match": {
-    "hosts": ["api.intercom.io"],
-    "path_prefixes": ["/events"],
+    "hosts": [
+      "api.intercom.io"
+    ],
+    "path_prefixes": [
+      "/events"
+    ],
     "json_paths": [
       {
-        "any_of": ["event_name", "created_at"]
+        "any_of": [
+          "event_name",
+          "created_at"
+        ]
       },
       {
         "path": "user_data",
@@ -38,59 +45,193 @@
       }
     ]
   },
-  "body": {
-    "params": [
-      {
-        "name": "event_name",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the name of the event. Intercom documents it as required.",
-        "fix_hint": "Set `event_name` to a past-tense verb-noun, such as `placed-order`.",
-        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
-      },
-      {
-        "name": "created_at",
-        "requirement": "required",
-        "format": { "kind": "integer", "min_digits": 10, "max_digits": 10 },
-        "description": "Intercom documents `created_at` as a UTC Unix timestamp in seconds. A 13-digit value is milliseconds.",
-        "fix_hint": "Send seconds since epoch, a 10-digit integer.",
-        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
-      },
-      {
-        "name": "user_id",
-        "format": { "kind": "non_empty" },
-        "description": "It is your identifier for the user. Intercom requires `user_id`, `email`, or `id`.",
-        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
-      },
-      {
-        "name": "email",
-        "format": { "kind": "non_empty" },
-        "description": "It is the user's email when email is how you identify contacts.",
-        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
-      },
-      {
-        "name": "id",
-        "format": { "kind": "non_empty" },
-        "description": "It is Intercom's contact id. Required for leads when `user_id` and `email` are absent.",
-        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
-      },
-      {
-        "name": "intercom_user_id",
-        "format": { "kind": "non_empty" },
-        "description": "It is Intercom's identifier for the user.",
-        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
-      }
-    ],
-    "rules": [
-      {
-        "code": "vendor.intercom-events.body.contact_identifier_required",
-        "kind": "require_one_of",
-        "params": ["user_id", "email", "id", "intercom_user_id"],
-        "severity": "error",
-        "message": "The event has no contact identifier. Intercom documents `user_id`, `email`, or `id` as required.",
-        "fix_hint": "Send `user_id`, `email`, or Intercom's `id`.",
-        "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
-      }
-    ]
-  }
+  "body": [
+    {
+      "params": [
+        {
+          "name": "event_name",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the name of the event. Intercom documents it as required.",
+          "fix_hint": "Set `event_name` to a past-tense verb-noun, such as `placed-order`.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "json_type": "string"
+        },
+        {
+          "name": "created_at",
+          "requirement": "required",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "Intercom documents a UTC Unix timestamp in seconds as an integer.",
+          "fix_hint": "Send an integer count of seconds since the Unix epoch.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "json_type": "integer",
+          "minimum": 0
+        },
+        {
+          "name": "user_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is your identifier for the user. Intercom requires `user_id`, `email`, or `id`.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "json_type": "string"
+        },
+        {
+          "name": "email",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the user's email when email is how you identify contacts.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "json_type": "string"
+        },
+        {
+          "name": "id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is Intercom's contact id. Required for leads when `user_id` and `email` are absent.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "json_type": "string"
+        },
+        {
+          "name": "intercom_user_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is Intercom's identifier for the user.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "json_type": "string"
+        },
+        {
+          "name": "metadata",
+          "description": "The vendor documents `metadata` in the request contract.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "json_type": "object",
+          "max_properties": 10,
+          "format_severity": "warning"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "json_type": "object"
+        },
+        {
+          "name": "metadata_date",
+          "name_pattern": ".*_date$",
+          "name_pattern_parent": "metadata",
+          "json_type": "integer",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "description": "Metadata keys ending in _date carry UTC Unix timestamp values."
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.intercom-events.body.contact_identifier_required",
+          "kind": "require_one_of",
+          "params": [
+            "user_id",
+            "email",
+            "id",
+            "intercom_user_id"
+          ],
+          "severity": "error",
+          "message": "The event has no contact identifier. Intercom documents `user_id`, `email`, or `id` as required.",
+          "fix_hint": "Send `user_id`, `email`, or Intercom's `id`.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+        }
+      ]
+    },
+    {
+      "scope": "metadata.*",
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "string",
+            "number",
+            "object"
+          ],
+          "format_severity": "warning",
+          "allow_empty": true,
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+        },
+        {
+          "name": "url",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^https?://[^\\s/?#]+(?:[/?#].*)?$"
+          },
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+        },
+        {
+          "name": "value",
+          "json_type": "string",
+          "allow_empty": true,
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+        },
+        {
+          "name": "amount",
+          "json_type": "integer",
+          "minimum": 1,
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+        },
+        {
+          "name": "currency",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+        },
+        {
+          "name": "other_member",
+          "name_pattern": ".*",
+          "name_pattern_parent": "",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ],
+          "format_severity": "warning",
+          "allow_empty": true,
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "description": "Intercom does not support nested JSON metadata structures."
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.intercom-events.body.rich_metadata_shape",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "url",
+              "value"
+            ],
+            [
+              "amount",
+              "currency"
+            ]
+          ],
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          },
+          "severity": "warning",
+          "message": "Object metadata must contain a rich link pair or monetary amount pair. Nested JSON metadata is unsupported.",
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "allow_empty": true
+        }
+      ]
+    }
+  ]
 }

@@ -6,12 +6,31 @@
   "source_level": "official_vendor",
   "docs": "https://plausible.io/docs/events-api",
   "match": {
-    "hosts": ["plausible.io"],
-    "path_prefixes": ["/api/event"],
+    "hosts": [
+      "plausible.io"
+    ],
+    "path_prefixes": [
+      "/api/event"
+    ],
     "json_paths": [
-      { "any_of": ["name", "n"] },
-      { "any_of": ["url", "u"] },
-      { "any_of": ["domain", "d"] }
+      {
+        "any_of": [
+          "name",
+          "n"
+        ]
+      },
+      {
+        "any_of": [
+          "url",
+          "u"
+        ]
+      },
+      {
+        "any_of": [
+          "domain",
+          "d"
+        ]
+      }
     ]
   },
   "body": [
@@ -20,87 +39,180 @@
         {
           "name": "name",
           "severity": "error",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the event name. `pageview` is the special page-view event; any other value is a custom event. The tracker also sends this as `n`.",
           "fix_hint": "Set `name` to `pageview` or to a custom event name.",
-          "doc": "https://plausible.io/docs/events-api"
+          "doc": "https://raw.githubusercontent.com/plausible/analytics/master/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "max_length": 120
         },
         {
           "name": "n",
           "severity": "error",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Short key for `name`, used by the JavaScript tracker.",
           "fix_hint": "Set `n` or `name` to the event name.",
-          "doc": "https://plausible.io/docs/events-api"
+          "doc": "https://raw.githubusercontent.com/plausible/analytics/master/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "max_length": 120
         },
         {
           "name": "url",
           "severity": "error",
-          "format": { "kind": "url" },
-          "description": "It is the page URL where the event fired. Plausible documents it as required and extracts UTM parameters from it. The tracker also sends this as `u`.",
-          "fix_hint": "Set `url` to an absolute URL, including the scheme and host.",
-          "doc": "https://plausible.io/docs/events-api"
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Plausible accepts absolute URLs, app URLs and relative paths. Missing host is recorded as (none).",
+          "fix_hint": "Send the page URL or relative page path.",
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "string"
         },
         {
           "name": "u",
           "severity": "error",
-          "format": { "kind": "url" },
-          "description": "Short key for `url`, used by the JavaScript tracker.",
-          "fix_hint": "Set `u` or `url` to an absolute page URL.",
-          "doc": "https://plausible.io/docs/events-api"
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Plausible accepts absolute URLs, app URLs and relative paths. Missing host is recorded as (none).",
+          "fix_hint": "Send the page URL or relative page path.",
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "string"
         },
         {
           "name": "domain",
           "severity": "error",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the site domain as configured in the Plausible account. The tracker also sends this as `d`.",
           "fix_hint": "Set `domain` to the domain you added in Plausible, such as `example.com`.",
-          "doc": "https://plausible.io/docs/events-api"
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "string"
         },
         {
           "name": "d",
           "severity": "error",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Short key for `domain`, used by the JavaScript tracker.",
           "fix_hint": "Set `d` or `domain` to the Plausible site domain.",
-          "doc": "https://plausible.io/docs/events-api"
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "string"
         },
         {
           "name": "referrer",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the referrer for this event. Plausible documents it as optional; the tracker sends `document.referrer`.",
           "fix_hint": "Send the referring URL or host in `referrer`, or drop the empty pair.",
-          "doc": "https://plausible.io/docs/events-api"
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "string"
         },
         {
           "name": "revenue.currency",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
           "format_severity": "warning",
           "description": "It is the ISO 4217 currency of `revenue.amount`. Plausible discards revenue data when the currency is invalid, and still records the event.",
           "fix_hint": "Send a three-letter currency code in `revenue.currency`, such as `USD`.",
-          "doc": "https://plausible.io/docs/events-api"
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "string"
         },
         {
           "name": "revenue.amount",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
           "format_severity": "warning",
           "description": "It is the revenue amount. Plausible documents a float or numeric string, and discards revenue data when the amount is invalid.",
           "fix_hint": "Send `revenue.amount` as a number or numeric string, such as `1322.22`, without a currency symbol.",
-          "doc": "https://plausible.io/docs/events-api"
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": [
+            "number",
+            "string"
+          ]
         },
         {
           "name": "interactive",
-          "format": { "kind": "enum", "values": ["true", "false"] },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          },
           "description": "It says whether the event counts for bounce detection. Plausible documents a boolean; omit it, or send `false` for a non-interactive custom event.",
           "fix_hint": "Send `true` or `false`, or omit `interactive`.",
-          "doc": "https://plausible.io/docs/events-api"
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "boolean"
+        },
+        {
+          "name": "props",
+          "description": "Plausible retains at most 30 custom property entries and discards additional entries.",
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "object",
+          "max_properties": 30,
+          "format_severity": "warning"
+        },
+        {
+          "name": "revenue",
+          "description": "The vendor documents `revenue` in the request contract.",
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "object"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://plausible.io/docs/events-api",
+          "json_type": "object"
+        },
+        {
+          "name": "props.*",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ],
+          "max_length": 2000,
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Custom properties accept scalar values. Arrays and objects are discarded; null is displayed as (none).",
+          "doc": "https://plausible.io/docs/custom-props/introduction"
+        },
+        {
+          "name": "overlong_property_name",
+          "name_pattern": "(?s)^.{301,}$",
+          "name_pattern_parent": "props",
+          "requirement": "forbidden",
+          "severity": "warning",
+          "description": "Custom property names are limited to 300 characters.",
+          "doc": "https://plausible.io/docs/custom-props/introduction"
         }
       ],
       "rules": [
         {
           "code": "vendor.plausible.event_name_required",
           "kind": "require_one_of",
-          "params": ["name", "n"],
+          "params": [
+            "name",
+            "n"
+          ],
           "severity": "error",
           "message": "The event has neither `name` nor `n`. Plausible documents `name` as required.",
           "fix_hint": "Set `name` (or `n`) to `pageview` or to a custom event name.",
@@ -109,7 +221,10 @@
         {
           "code": "vendor.plausible.page_url_required",
           "kind": "require_one_of",
-          "params": ["url", "u"],
+          "params": [
+            "url",
+            "u"
+          ],
           "severity": "error",
           "message": "The event has neither `url` nor `u`. Plausible documents `url` as required.",
           "fix_hint": "Set `url` (or `u`) to an absolute page URL.",
@@ -118,7 +233,10 @@
         {
           "code": "vendor.plausible.domain_required",
           "kind": "require_one_of",
-          "params": ["domain", "d"],
+          "params": [
+            "domain",
+            "d"
+          ],
           "severity": "error",
           "message": "The event has neither `domain` nor `d`. Plausible documents `domain` as required.",
           "fix_hint": "Set `domain` (or `d`) to the site domain configured in Plausible.",
@@ -128,7 +246,10 @@
           "code": "vendor.plausible.body.data_url_unsupported",
           "kind": "forbid_value_pattern",
           "pattern": "^(?i)data:",
-          "params": ["url", "u"],
+          "params": [
+            "url",
+            "u"
+          ],
           "severity": "error",
           "message": "`url` uses the data URI scheme. Plausible documents that data URLs are not supported by the Events API.",
           "fix_hint": "Send an `http`, `https`, or app URL such as `https://example.com/page` or `app://localhost/login`.",
@@ -138,7 +259,9 @@
           "code": "vendor.plausible.body.amount_requires_currency",
           "kind": "required_with",
           "when": "revenue.amount",
-          "requires": ["revenue.currency"],
+          "requires": [
+            "revenue.currency"
+          ],
           "severity": "warning",
           "message": "The event sends `revenue.amount` without `revenue.currency`. Plausible documents both on the revenue object.",
           "fix_hint": "Add `revenue.currency` as an ISO 4217 code, such as `USD`.",
@@ -148,7 +271,9 @@
           "code": "vendor.plausible.body.currency_requires_amount",
           "kind": "required_with",
           "when": "revenue.currency",
-          "requires": ["revenue.amount"],
+          "requires": [
+            "revenue.amount"
+          ],
           "severity": "warning",
           "message": "The event sends `revenue.currency` without `revenue.amount`. Plausible documents both on the revenue object.",
           "fix_hint": "Add `revenue.amount` as a number or numeric string, such as `1322.22`.",

@@ -6,6 +6,35 @@ All notable changes to Pixellint are documented here. The format follows
 
 ## Unreleased
 
+## 0.32.0 - 2026-10-08
+
+### Added
+
+- Expanded destination validation to 137 packs across 79 vendors, including
+  separate Adobe Audience Manager DCS ID/event and Nielsen configuration packs.
+- Added native JSON types, exact numeric and monetary bounds, conditional field
+  families, scoped batch and slot rules, identifier alternatives, encoded body
+  contracts, fixed-clock timestamp windows, and destination-specific consent checks.
+- Added TCF variable-section and policy checks, all 21 published US GPP layouts,
+  Google Additional Consent validation, and dated currency/language registries.
+- Added per-pack source inventories, explicit remaining coverage limits, frozen
+  source-target fixtures, and CI checks for stale review evidence and references.
+
+### Changed
+
+- Vendor manifests now contain 4,205 field contracts and 469 cross-field
+  assertions. The prior review baseline contained 1,419 contracts and 213 assertions.
+- `BodySpecs::One` contains `Box<BodySpec>`. Rust struct constructors must wrap
+  the spec in `Box::new`; JSON manifest representation is unchanged.
+
+### Fixed
+
+- Corrected vendor routing, cross-batch alias leakage, literal JSON member-path
+  collisions, malformed Unicode escape panics, privacy-context leakage, and
+  false errors caused by unknown macro lengths and values.
+- Recognize named `{NAME}` tracking placeholders. D1 replay exposed a false
+  literal IP error for `{SA_IP_ADDRESS}` on a OneLink impression template.
+
 ## 0.31.12 - 2026-10-04
 
 ### Added

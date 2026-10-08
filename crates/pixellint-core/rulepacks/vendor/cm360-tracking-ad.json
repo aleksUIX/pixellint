@@ -7,14 +7,21 @@
   "docs": "https://support.google.com/campaignmanager/answer/2829774",
   "param_style": "matrix",
   "match": {
-    "host_suffixes": ["doubleclick.net"],
-    "path_contains": ["/trackimp", "/trackclk"]
+    "host_suffixes": [
+      "doubleclick.net"
+    ],
+    "path_contains": [
+      "/trackimp",
+      "/trackclk"
+    ]
   },
   "params": [
     {
       "name": "dc_trk_aid",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric tracking ad ID. Campaign Manager 360 flags a tracking tag as missing required parameters when dc_trk_aid is absent.",
       "fix_hint": "Export the tag again from Campaign Manager 360 so dc_trk_aid is present.",
       "doc": "https://support.google.com/campaignmanager/answer/2829774"
@@ -22,14 +29,22 @@
     {
       "name": "dc_trk_cid",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric tracking creative ID. Campaign Manager 360 flags a tracking tag as missing required parameters when dc_trk_cid is absent.",
       "fix_hint": "Export the tag again from Campaign Manager 360 so dc_trk_cid is present.",
       "doc": "https://support.google.com/campaignmanager/answer/2829774"
     },
     {
       "name": "dc_lat",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "allow_empty": true,
       "description": "It is the limited-ads signal. Google documents dc_lat=1 when Limit Ad Tracking is on for IDFA or AdID, and 0 when it is off. Generated tracking tags leave the slot empty until the publisher fills it.",
       "fix_hint": "Send dc_lat=1 when Limit Ad Tracking is on, dc_lat=0 when it is off, or leave the generated empty slot.",
@@ -37,7 +52,13 @@
     },
     {
       "name": "tfua",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "allow_empty": true,
       "description": "It is the under-age signal. Google documents tfua on generated tracking ads. Exported tags leave it empty until a CMP fills it.",
       "fix_hint": "Send tfua=1 when the request may come from a user under 16, otherwise 0 or leave the generated empty slot.",
@@ -45,11 +66,52 @@
     },
     {
       "name": "tag_for_child_directed_treatment",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "allow_empty": true,
       "description": "It is the COPPA signal. Google documents tag_for_child_directed_treatment=1 when the request may come from a user under 13. Generated tracking tags leave the slot empty until the publisher fills it.",
       "fix_hint": "Send tag_for_child_directed_treatment=1 for COPPA traffic, 0 otherwise, or leave the generated empty slot.",
       "doc": "https://support.google.com/campaignmanager/answer/2826636"
+    },
+    {
+      "name": "dc_rdid",
+      "description": "The vendor documents `dc_rdid` in the request contract.",
+      "doc": "https://support.google.com/campaignmanager/answer/2826636",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "ord",
+      "description": "The vendor documents `ord` in the request contract.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^\\[\\]{}:%/\\\\=]{8,}$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "ltd",
+      "description": "The vendor documents `ltd` in the request contract.",
+      "doc": "https://support.google.com/campaignmanager/answer/2826636",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "true",
+          "false"
+        ]
+      },
+      "allow_empty": true
     }
   ],
   "rules": []

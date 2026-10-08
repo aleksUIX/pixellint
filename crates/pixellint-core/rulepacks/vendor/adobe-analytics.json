@@ -4,63 +4,93 @@
   "description": "Adobe Analytics data collection beacons, whose report suite IDs ride on the path after /b/ss/. Edge Network interact and collect are vendor/adobe-web-sdk.",
   "vendor": "adobe_analytics",
   "source_level": "official_vendor",
-  "docs": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters",
+  "docs": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
   "path_pattern": "/b/ss/(?<report_suite>[^/?]*)",
   "match": {
-    "host_suffixes": ["omtrdc.net", "2o7.net"],
-    "path_contains": ["/b/ss/"]
+    "host_suffixes": [
+      "omtrdc.net",
+      "2o7.net"
+    ],
+    "path_contains": [
+      "/b/ss/"
+    ]
   },
   "params": [
     {
       "name": "report_suite",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the report suite ID, or a comma-separated list of them, and it sits immediately after `/b/ss/` in the path.",
       "fix_hint": "Point the beacon at a report suite ID from the Adobe Analytics admin.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics-learn/tutorials/implementation/implementation-basics/how-to-identify-your-analytics-tracking-server-and-report-suites"
     },
     {
       "name": "mid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Experience Cloud ID that ties the hit to a visitor.",
       "doc": "https://experienceleague.adobe.com/en/docs/target-dev/developer/server-side/integration/a4t-reporting"
     },
     {
       "name": "g",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the page URL, up to 255 bytes. Adobe documents it as the Page URL dimension.",
       "fix_hint": "Send the absolute page URL in `g`. Longer URLs continue in `-g`.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "pageName",
-      "aliases": ["gn"],
-      "format": { "kind": "non_empty" },
+      "aliases": [
+        "gn"
+      ],
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the page name. `gn` is the documented shorthand.",
       "fix_hint": "Set `pageName` or `gn` to the page name you want in reports.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "events",
-      "aliases": ["ev"],
-      "format": { "kind": "non_empty" },
-      "description": "It is the comma-separated list of events on the page. `ev` is the documented shorthand.",
+      "aliases": [
+        "ev"
+      ],
+      "format": {
+        "kind": "adobe_events"
+      },
+      "description": "Comma-delimited event1 through event1000 or documented commerce event names; numeric assignments and nonempty opaque serialization IDs are accepted. Truncation and malformed syntax are advisory.",
       "fix_hint": "Send `events` such as `purchase` or `prodView`.",
-      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/vars/page-vars/events/events-overview",
+      "format_severity": "warning"
     },
     {
       "name": "products",
-      "aliases": ["pl"],
-      "format": { "kind": "non_empty" },
-      "description": "It is the products variable. `pl` is the documented shorthand.",
-      "fix_hint": "Send the products string Adobe documents for the Product dimension.",
-      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+      "aliases": [
+        "pl"
+      ],
+      "format": {
+        "kind": "adobe_products"
+      },
+      "description": "Comma-separated products have two to six semicolon fields: category, required product name, quantity, total price, product events and merchandising eVars. Names/category are at most 100 UTF-8 bytes. Grammar and possible truncation are advisory.",
+      "fix_hint": "Preserve empty placeholders; use pipe-separated event/eVar assignments, numeric quantity/price without currency symbols, and strip delimiter characters from names and values.",
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/vars/page-vars/products",
+      "format_severity": "warning"
     },
     {
       "name": "pe",
       "format": {
         "kind": "enum",
-        "values": ["lnk_o", "lnk_d", "lnk_e", "tnt"]
+        "values": [
+          "lnk_o",
+          "lnk_d",
+          "lnk_e",
+          "tnt"
+        ]
       },
       "description": "It is the hit type for link tracking. Adobe documents `lnk_o`, `lnk_d`, `lnk_e`, and `tnt`.",
       "fix_hint": "Use `lnk_o` for a custom link, `lnk_d` for a download, `lnk_e` for an exit, or `tnt` for Analytics for Target.",
@@ -68,72 +98,111 @@
     },
     {
       "name": "AQB",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "Adobe documents `AQB` as the start of an image request query string.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "AQE",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
       "description": "Adobe documents `AQE` as the end of an image request, meaning the request was not truncated.",
       "fix_hint": "If you send `AQB=1`, end the query with `AQE=1` so Adobe knows the hit was complete.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "cc",
-      "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{3}$"
+      },
       "description": "It is the currency code of the hit. Adobe documents `cc` as `currencyCode`.",
       "fix_hint": "Send the three-letter ISO 4217 code, such as `USD`.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "referrer",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the referring URL of the hit. Adobe documents it as the Referrer dimension.",
       "fix_hint": "Send the absolute referring URL in `referrer`.",
-      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters",
+      "aliases": [
+        "r"
+      ]
     },
     {
       "name": "purchaseID",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the purchase ID. Adobe documents it as the Purchase ID dimension.",
       "fix_hint": "Set `purchaseID` to a stable order id, or drop the empty pair.",
-      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters",
+      "aliases": [
+        "pi"
+      ]
     },
     {
       "name": "vid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the visitor ID override. Adobe documents `vid` as `visitorID`.",
       "fix_hint": "Set `vid` to the visitor ID, or drop the empty pair.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "v0",
-      "aliases": ["campaign"],
-      "format": { "kind": "non_empty" },
+      "aliases": [
+        "campaign"
+      ],
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the tracking code. Adobe documents `v0` as `campaign`.",
       "fix_hint": "Set `v0` or `campaign` to the campaign tracking code, or drop the empty pair.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "pageType",
-      "aliases": ["gt"],
-      "format": { "kind": "non_empty" },
+      "aliases": [
+        "gt"
+      ],
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the page type. Adobe documents `gt` as the shorthand. Typical value is `errorPage`.",
       "fix_hint": "Set `pageType` or `gt` to the page type, such as `errorPage`.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "server",
-      "aliases": ["sv"],
-      "format": { "kind": "non_empty" },
+      "aliases": [
+        "sv"
+      ],
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the server dimension. Adobe documents `sv` as the shorthand.",
       "fix_hint": "Set `server` or `sv` to the server name, or drop the empty pair.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "xact",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the transaction ID. Adobe documents `xact` as `transactionID`, used with Data Sources.",
       "fix_hint": "Set `xact` to the transaction ID, or drop the empty pair.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
@@ -141,47 +210,328 @@
     {
       "name": "c1",
       "name_pattern": "^c([1-9]|[1-6][0-9]|7[0-5])$",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a prop. Adobe documents `c1` through `c75` as `prop1` through `prop75`.",
       "fix_hint": "Fill the prop, or drop the empty pair.",
-      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/vars/page-vars/prop",
+      "max_byte_length": 100,
+      "format_severity": "warning"
     },
     {
       "name": "v1",
       "name_pattern": "^v([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|250)$",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is an eVar. Adobe documents `v1` through `v250` as `eVar1` through `eVar250`.",
       "fix_hint": "Fill the eVar, or drop the empty pair.",
-      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/vars/page-vars/evar",
+      "max_byte_length": 255,
+      "format_severity": "warning"
     },
     {
       "name": "l1",
       "name_pattern": "^l[1-3]$",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a list variable. Adobe documents `l1` through `l3` as `list1` through `list3`.",
       "fix_hint": "Fill the list variable, or drop the empty pair.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "ch",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the site section. Adobe documents `ch` as `channel`.",
       "fix_hint": "Set `ch` to the site section, or drop the empty pair.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "pev1",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the link URL. Adobe documents `pev1` as `linkURL`.",
       "fix_hint": "Send the absolute link URL in `pev1`.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
       "name": "pev2",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the friendly name of the custom link. Adobe documents `pev2` as the link name from `tl()`.",
       "fix_hint": "Set `pev2` to the link name, or drop the empty pair.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+    },
+    {
+      "name": "aid",
+      "description": "The vendor documents `aid` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "fid",
+      "description": "The vendor documents `fid` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "aamb",
+      "description": "The vendor documents `aamb` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "mcorgid",
+      "description": "The vendor documents `mcorgid` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ce",
+      "description": "The vendor documents `ce` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cl",
+      "description": "The vendor documents `cl` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cp",
+      "description": "The vendor documents `cp` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "D",
+      "description": "The vendor documents `D` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "sdid",
+      "description": "The vendor documents `sdid` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "tnta",
+      "description": "The vendor documents `tnta` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "tnt",
+      "description": "The vendor documents `tnt` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "zip",
+      "description": "The vendor documents `zip` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "vidn",
+      "description": "The vendor documents `vidn` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "oid",
+      "description": "The vendor documents `oid` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "aamlh",
+      "description": "The vendor documents `aamlh` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "bh",
+      "description": "The vendor documents `bh` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "bw",
+      "description": "The vendor documents `bw` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "c",
+      "description": "The vendor documents `c` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "lrt",
+      "description": "The vendor documents `lrt` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "h.architecture",
+      "description": "The vendor documents `h.architecture` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "h.bitness",
+      "description": "The vendor documents `h.bitness` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "h.brands",
+      "description": "The vendor documents `h.brands` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "h.model",
+      "description": "The vendor documents `h.model` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "h.platform",
+      "description": "The vendor documents `h.platform` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "h.platformVersion",
+      "description": "The vendor documents `h.platformVersion` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "h.mobile",
+      "description": "The vendor documents `h.mobile` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "h.wow64",
+      "description": "The vendor documents `h.wow64` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "ms_a",
+      "description": "The vendor documents `ms_a` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "ndh",
+      "description": "The vendor documents `ndh` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "pccr",
+      "description": "The vendor documents `pccr` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "-g",
+      "description": "The vendor documents `-g` in the request contract.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "format": {
+        "kind": "non_empty"
+      }
     }
   ],
   "rules": [
@@ -189,7 +539,9 @@
       "code": "vendor.adobe-analytics.truncated_request",
       "kind": "required_with",
       "when": "AQB",
-      "requires": ["AQE"],
+      "requires": [
+        "AQE"
+      ],
       "severity": "error",
       "message": "The beacon starts with `AQB` but has no `AQE`. Adobe documents `AQE` as the end marker, so a missing `AQE` means the request was truncated.",
       "fix_hint": "Append `AQE=1` to the query string.",
@@ -198,22 +550,44 @@
     {
       "code": "vendor.adobe-analytics.page_identity_required",
       "kind": "require_one_of",
-      "params": ["pageName", "g"],
+      "params": [
+        "pageName",
+        "g"
+      ],
       "severity": "warning",
       "message": "The beacon has neither pageName nor g. Adobe documents pageName and g as the page name and page URL dimensions.",
       "fix_hint": "Send pageName or gn as the page name, or g as the absolute page URL.",
       "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
     },
     {
-      "code": "vendor.adobe-analytics.link_requires_url_and_name",
-      "kind": "required_when_value",
-      "when": "pe",
-      "equals": ["lnk_o", "lnk_d", "lnk_e"],
-      "requires": ["pev1", "pev2"],
+      "code": "vendor.adobe-analytics.overflow_requires_page_url",
+      "kind": "required_with",
       "severity": "error",
-      "message": "A link hit is missing pev1 or pev2. Adobe documents pev1 as the link URL and pev2 as the link name on custom, download, and exit links.",
-      "fix_hint": "Send pev1 as the absolute link URL and pev2 as the link name from tl().",
-      "doc": "https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters"
+      "message": "The request does not satisfy the documented overflow requires page url requirement.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "when": "-g",
+      "requires": [
+        "g"
+      ]
+    },
+    {
+      "code": "vendor.adobe-analytics.location_hint_requires_ecid",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The request does not satisfy the documented location hint requires ecid requirement.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "when": "aamlh",
+      "requires": [
+        "mid"
+      ]
+    },
+    {
+      "code": "vendor.adobe-analytics.query_end_marker_is_last",
+      "kind": "last_param",
+      "severity": "error",
+      "message": "The request does not satisfy the documented query end marker is last requirement.",
+      "doc": "https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference",
+      "param": "AQE"
     }
   ]
 }

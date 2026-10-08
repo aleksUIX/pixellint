@@ -32,6 +32,56 @@
   },
   "body": [
     {
+      "params": [
+        {
+          "name": "attributes",
+          "json_type": "array",
+          "max_items": 75,
+          "description": "A track request contains attribute, event, or purchase objects.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "events",
+          "json_type": "array",
+          "max_items": 75,
+          "description": "A track request contains attribute, event, or purchase objects.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "purchases",
+          "json_type": "array",
+          "max_items": 75,
+          "description": "A track request contains attribute, event, or purchase objects.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "attributes[]",
+          "json_type": "object",
+          "description": "Each entry is an object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "events[]",
+          "json_type": "object",
+          "description": "Each entry is an object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "purchases[]",
+          "json_type": "object",
+          "description": "Each entry is an object.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "object"
+        }
+      ],
+      "rules": []
+    },
+    {
       "scope": "events[]",
       "params": [
         {
@@ -40,7 +90,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "user_alias",
@@ -48,7 +99,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "object"
         },
         {
           "name": "braze_id",
@@ -56,7 +108,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "email",
@@ -64,7 +117,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "phone",
@@ -72,7 +126,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "app_id",
@@ -81,29 +136,32 @@
           },
           "description": "It is the App Identifier. Braze documents it as optional on events.",
           "fix_hint": "Send `app_id` as the App Identifier from Braze, or drop the empty pair.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/",
+          "json_type": "string"
         },
         {
           "name": "user_alias.alias_name",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{1,236}$"
+            "kind": "non_empty"
           },
           "severity": "error",
           "description": "It is the alias identifier. Braze documents it as required on a user alias object, at most 236 bytes.",
           "fix_hint": "Set `user_alias.alias_name` to a non-empty identifier of at most 236 bytes.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/",
+          "json_type": "string",
+          "max_byte_length": 236
         },
         {
           "name": "user_alias.alias_label",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{1,236}$"
+            "kind": "non_empty"
           },
           "severity": "error",
           "description": "It is the alias type. Braze documents it as required on a user alias object, at most 236 bytes.",
           "fix_hint": "Set `user_alias.alias_label` to a non-empty label of at most 236 bytes.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/",
+          "json_type": "string",
+          "max_byte_length": 236
         },
         {
           "name": "name",
@@ -113,7 +171,8 @@
           },
           "description": "Braze documents the event name as required.",
           "fix_hint": "Name the custom event.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/",
+          "json_type": "string"
         },
         {
           "name": "time",
@@ -124,16 +183,21 @@
           },
           "description": "Braze documents the event time as an ISO 8601 datetime, such as `2026-07-26T06:00:00+00:00`.",
           "fix_hint": "Send an ISO 8601 datetime rather than an epoch number.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/",
+          "json_type": "string"
         },
         {
           "name": "_update_existing_only",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "Braze documents this as a boolean. When true, the call updates an existing profile and does not create one.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/",
+          "json_type": "boolean"
         },
         {
           "name": "properties.time",
@@ -148,6 +212,35 @@
           "description": "Braze reserves `event_name` and cannot use it as a custom property.",
           "fix_hint": "Rename the property. `event_name` is reserved.",
           "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+        },
+        {
+          "name": "properties",
+          "description": "The vendor documents `properties` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "object"
+        },
+        {
+          "name": "invalid_property_names",
+          "name_pattern": "(?s)^(?:\\$.*|.{256,}|)$",
+          "name_pattern_parent": "properties",
+          "requirement": "forbidden",
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/",
+          "description": "Braze custom property names must be nonempty, at most 255 characters, and cannot start with a dollar sign."
+        },
+        {
+          "name": "property_values",
+          "name_pattern": "(?s)^.+$",
+          "name_pattern_parent": "properties",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object"
+          ],
+          "max_length": 255,
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/",
+          "description": "Braze supports numbers, booleans, strings, arrays, and objects as property values. String values are at most 255 characters."
         }
       ],
       "rules": [
@@ -156,13 +249,12 @@
           "kind": "mutually_exclusive",
           "params": [
             "external_id",
-            "user_alias",
-            "braze_id"
+            "user_alias"
           ],
           "severity": "error",
-          "message": "The event carries more than one primary identifier. Braze documents one of `external_id`, `user_alias`, or `braze_id` per object, and rejects the object when two are sent.",
+          "message": "Braze forbids external_id and user_alias together in one object. Use the alias creation endpoint to attach an alias to a known external ID.",
           "fix_hint": "Send one primary identifier. `email` and `phone` may ride alongside it as attributes.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
         },
         {
           "code": "vendor.braze.body.event_needs_an_identifier",
@@ -203,7 +295,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "user_alias",
@@ -211,7 +304,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "object"
         },
         {
           "name": "braze_id",
@@ -219,7 +313,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "email",
@@ -227,7 +322,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "phone",
@@ -235,7 +331,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "app_id",
@@ -244,29 +341,32 @@
           },
           "description": "It is the App Identifier. Braze documents it as optional on purchases.",
           "fix_hint": "Send `app_id` as the App Identifier from Braze, or drop the empty pair.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "json_type": "string"
         },
         {
           "name": "user_alias.alias_name",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{1,236}$"
+            "kind": "non_empty"
           },
           "severity": "error",
           "description": "It is the alias identifier. Braze documents it as required on a user alias object, at most 236 bytes.",
           "fix_hint": "Set `user_alias.alias_name` to a non-empty identifier of at most 236 bytes.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/",
+          "json_type": "string",
+          "max_byte_length": 236
         },
         {
           "name": "user_alias.alias_label",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{1,236}$"
+            "kind": "non_empty"
           },
           "severity": "error",
           "description": "It is the alias type. Braze documents it as required on a user alias object, at most 236 bytes.",
           "fix_hint": "Set `user_alias.alias_label` to a non-empty label of at most 236 bytes.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/",
+          "json_type": "string",
+          "max_byte_length": 236
         },
         {
           "name": "product_id",
@@ -277,7 +377,8 @@
           },
           "description": "Braze documents the product id as required on a purchase, at most 255 characters.",
           "fix_hint": "Send a product name or category of at most 255 characters.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "json_type": "string"
         },
         {
           "name": "currency",
@@ -288,7 +389,8 @@
           },
           "description": "Braze documents the currency as required on a purchase, as an ISO 4217 code.",
           "fix_hint": "Use the three-letter code, such as `USD`.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "json_type": "string"
         },
         {
           "name": "price",
@@ -299,7 +401,8 @@
           },
           "description": "Braze documents the price as a float in the currency's base unit, such as dollars for USD.",
           "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "json_type": "number"
         },
         {
           "name": "quantity",
@@ -309,7 +412,10 @@
           },
           "description": "Braze documents quantity as an integer from 1 through 100, defaulting to 1.",
           "fix_hint": "Send an integer from 1 to 100.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "json_type": "integer",
+          "minimum": 1,
+          "maximum": 100
         },
         {
           "name": "time",
@@ -320,16 +426,21 @@
           },
           "description": "Braze documents the purchase time as an ISO 8601 datetime.",
           "fix_hint": "Send an ISO 8601 datetime rather than an epoch number.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "json_type": "string"
         },
         {
           "name": "_update_existing_only",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "Braze documents this as a boolean. When true, the call updates an existing profile and does not create one.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "json_type": "boolean"
         },
         {
           "name": "properties.time",
@@ -372,6 +483,35 @@
           "description": "Braze reserves `currency` and cannot use it as a purchase property name.",
           "fix_hint": "Rename the property. `currency` is reserved.",
           "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/"
+        },
+        {
+          "name": "properties",
+          "description": "The vendor documents `properties` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "object"
+        },
+        {
+          "name": "invalid_property_names",
+          "name_pattern": "(?s)^(?:\\$.*|.{256,}|)$",
+          "name_pattern_parent": "properties",
+          "requirement": "forbidden",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "description": "Braze custom property names must be nonempty, at most 255 characters, and cannot start with a dollar sign."
+        },
+        {
+          "name": "property_values",
+          "name_pattern": "(?s)^.+$",
+          "name_pattern_parent": "properties",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object"
+          ],
+          "max_length": 255,
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "description": "Braze supports numbers, booleans, strings, arrays, and objects as property values. String values are at most 255 characters."
         }
       ],
       "rules": [
@@ -380,13 +520,12 @@
           "kind": "mutually_exclusive",
           "params": [
             "external_id",
-            "user_alias",
-            "braze_id"
+            "user_alias"
           ],
           "severity": "error",
-          "message": "The purchase carries more than one primary identifier. Braze documents one of `external_id`, `user_alias`, or `braze_id` per object, and rejects the object when two are sent.",
+          "message": "Braze forbids external_id and user_alias together in one object. Use the alias creation endpoint to attach an alias to a known external ID.",
           "fix_hint": "Send one primary identifier. `email` and `phone` may ride alongside it as attributes.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
         },
         {
           "code": "vendor.braze.body.purchase_needs_an_identifier",
@@ -427,7 +566,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "user_alias",
@@ -435,7 +575,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "object"
         },
         {
           "name": "braze_id",
@@ -443,7 +584,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "email",
@@ -451,7 +593,8 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "phone",
@@ -459,78 +602,115 @@
             "kind": "non_empty"
           },
           "description": "Braze documents one of external_id, user_alias, braze_id, email, or phone as required on every object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "string"
         },
         {
           "name": "user_alias.alias_name",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{1,236}$"
+            "kind": "non_empty"
           },
           "severity": "error",
           "description": "It is the alias identifier. Braze documents it as required on a user alias object, at most 236 bytes.",
           "fix_hint": "Set `user_alias.alias_name` to a non-empty identifier of at most 236 bytes.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/",
+          "json_type": "string",
+          "max_byte_length": 236
         },
         {
           "name": "user_alias.alias_label",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{1,236}$"
+            "kind": "non_empty"
           },
           "severity": "error",
           "description": "It is the alias type. Braze documents it as required on a user alias object, at most 236 bytes.",
           "fix_hint": "Set `user_alias.alias_label` to a non-empty label of at most 236 bytes.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/",
+          "json_type": "string",
+          "max_byte_length": 236
         },
         {
           "name": "_update_existing_only",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "Braze documents this as a boolean. When true, the call updates an existing profile and does not create one.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "boolean"
         },
         {
           "name": "push_token_import",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "Braze documents this as a boolean used when importing anonymous push tokens.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "boolean"
         },
         {
           "name": "gender",
           "format": {
             "kind": "enum",
-            "values": ["M", "F", "O", "N", "P"]
+            "values": [
+              "M",
+              "F",
+              "O",
+              "N",
+              "P"
+            ]
           },
           "allow_empty": true,
           "description": "Braze documents gender as `M`, `F`, `O`, `N`, `P`, or null.",
           "fix_hint": "Send `M`, `F`, `O`, `N`, or `P`, or omit the field.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
         {
           "name": "email_subscribe",
           "format": {
             "kind": "enum",
-            "values": ["opted_in", "unsubscribed", "subscribed"]
+            "values": [
+              "opted_in",
+              "unsubscribed",
+              "subscribed"
+            ]
           },
           "description": "Braze documents email subscription as `opted_in`, `unsubscribed`, or `subscribed`.",
           "fix_hint": "Send `opted_in`, `unsubscribed`, or `subscribed`.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
         {
           "name": "push_subscribe",
           "format": {
             "kind": "enum",
-            "values": ["opted_in", "unsubscribed", "subscribed"]
+            "values": [
+              "opted_in",
+              "unsubscribed",
+              "subscribed"
+            ]
           },
           "description": "Braze documents push subscription as `opted_in`, `unsubscribed`, or `subscribed`.",
           "fix_hint": "Send `opted_in`, `unsubscribed`, or `subscribed`.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
         {
           "name": "dob",
@@ -540,7 +720,306 @@
           },
           "description": "Braze documents date of birth as `YYYY-MM-DD`.",
           "fix_hint": "Send the date of birth as `YYYY-MM-DD`, such as `1980-12-21`.",
-          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "properties",
+          "description": "The vendor documents `properties` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "object"
+        },
+        {
+          "name": "first_name",
+          "description": "The vendor documents `first_name` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "last_name",
+          "description": "The vendor documents `last_name` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "country",
+          "description": "The vendor documents `country` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}$"
+          },
+          "format_severity": "warning"
+        },
+        {
+          "name": "home_city",
+          "description": "The vendor documents `home_city` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "language",
+          "description": "Braze publishes this supported-language list, including three-letter codes and mo. Values outside the current list may be ignored. Null removes the profile value.",
+          "doc": "https://www.braze.com/docs/user_guide/data/unification/user_data/language_codes",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "time_zone",
+          "description": "The vendor documents `time_zone` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "date_of_first_session",
+          "description": "The vendor documents `date_of_first_session` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "date_of_last_session",
+          "description": "The vendor documents `date_of_last_session` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "marked_email_as_spam_at",
+          "description": "The vendor documents `marked_email_as_spam_at` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "email_open_tracking_disabled",
+          "description": "The vendor documents `email_open_tracking_disabled` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "name": "email_click_tracking_disabled",
+          "description": "The vendor documents `email_click_tracking_disabled` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "name": "current_location",
+          "description": "The vendor documents `current_location` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "object",
+            "null"
+          ]
+        },
+        {
+          "name": "facebook",
+          "description": "The vendor documents `facebook` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "object",
+            "null"
+          ]
+        },
+        {
+          "name": "twitter",
+          "description": "The vendor documents `twitter` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": [
+            "object",
+            "null"
+          ]
+        },
+        {
+          "name": "push_tokens",
+          "description": "The vendor documents `push_tokens` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "array"
+        },
+        {
+          "name": "subscription_groups",
+          "description": "The vendor documents `subscription_groups` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+          "json_type": "array"
+        },
+        {
+          "name": "current_location.latitude",
+          "description": "The vendor documents `current_location.latitude` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        {
+          "name": "current_location.longitude",
+          "description": "The vendor documents `current_location.longitude` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        {
+          "name": "push_tokens[]",
+          "description": "The vendor documents `push_tokens[]` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "object"
+        },
+        {
+          "name": "subscription_groups[]",
+          "description": "The vendor documents `subscription_groups[]` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "object"
+        },
+        {
+          "name": "push_tokens[].app_id",
+          "description": "The vendor documents `push_tokens[].app_id` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "string",
+          "requirement": "required"
+        },
+        {
+          "name": "push_tokens[].token",
+          "description": "The vendor documents `push_tokens[].token` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "string",
+          "requirement": "required"
+        },
+        {
+          "name": "subscription_groups[].subscription_group_id",
+          "description": "The vendor documents `subscription_groups[].subscription_group_id` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "string",
+          "requirement": "required"
+        },
+        {
+          "name": "subscription_groups[].subscription_state",
+          "description": "The vendor documents `subscription_groups[].subscription_state` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "string",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "subscribed",
+              "unsubscribed"
+            ]
+          }
+        },
+        {
+          "name": "push_tokens[].device_id",
+          "description": "The vendor documents `push_tokens[].device_id` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "string"
+        },
+        {
+          "name": "facebook.id",
+          "description": "The vendor documents `facebook.id` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "string"
+        },
+        {
+          "name": "twitter.screen_name",
+          "description": "The vendor documents `twitter.screen_name` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "string"
+        },
+        {
+          "name": "facebook.likes",
+          "description": "The vendor documents `facebook.likes` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "array"
+        },
+        {
+          "name": "facebook.likes[]",
+          "description": "The vendor documents `facebook.likes[]` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "string"
+        },
+        {
+          "name": "facebook.num_friends",
+          "description": "The vendor documents `facebook.num_friends` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "integer",
+          "minimum": 0
+        },
+        {
+          "name": "twitter.id",
+          "description": "The vendor documents `twitter.id` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "integer",
+          "minimum": 0
+        },
+        {
+          "name": "twitter.followers_count",
+          "description": "The vendor documents `twitter.followers_count` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "integer",
+          "minimum": 0
+        },
+        {
+          "name": "twitter.friends_count",
+          "description": "The vendor documents `twitter.friends_count` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "integer",
+          "minimum": 0
+        },
+        {
+          "name": "twitter.statuses_count",
+          "description": "The vendor documents `twitter.statuses_count` in the request contract.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "json_type": "integer",
+          "minimum": 0
+        },
+        {
+          "name": "_merge_objects",
+          "json_type": "boolean",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "True deep-merges nested objects. False or omission replaces them."
+        },
+        {
+          "name": "alias_name",
+          "json_type": "string",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines alias_name as string."
+        },
+        {
+          "name": "alias_label",
+          "json_type": "string",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines alias_label as string."
         }
       ],
       "rules": [
@@ -549,13 +1028,12 @@
           "kind": "mutually_exclusive",
           "params": [
             "external_id",
-            "user_alias",
-            "braze_id"
+            "user_alias"
           ],
           "severity": "error",
-          "message": "The attribute object carries more than one primary identifier. Braze documents one of `external_id`, `user_alias`, or `braze_id` per object, and rejects the object when two are sent.",
+          "message": "Braze forbids external_id and user_alias together in one object. Use the alias creation endpoint to attach an alias to a known external ID.",
           "fix_hint": "Send one primary identifier. `email` and `phone` may ride alongside it as attributes.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
         },
         {
           "code": "vendor.braze.body.attribute_needs_an_identifier",
@@ -568,9 +1046,19 @@
             "phone"
           ],
           "severity": "error",
-          "message": "The object carries none of `external_id`, `user_alias`, `braze_id`, `email`, or `phone`. Braze documents one of them as required, and cannot attach the data to a user without one.",
+          "message": "Braze requires a user identifier unless push_token_import is true for an anonymous push token import.",
           "fix_hint": "Add one of the documented identifiers to the object.",
-          "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "push_token_import",
+              "values": [
+                "true"
+              ]
+            }
+          }
         },
         {
           "code": "vendor.braze.body.attribute_alias_requires_name_and_label",
@@ -584,6 +1072,1348 @@
           "message": "A `user_alias` object is missing `alias_name` or `alias_label`. Braze documents both as required, each at most 236 bytes.",
           "fix_hint": "Set `user_alias.alias_name` and `user_alias.alias_label`.",
           "doc": "https://www.braze.com/docs/api/objects_filters/user_alias_object/"
+        },
+        {
+          "code": "vendor.braze.body.anonymous_push_token_required",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented anonymous push token required requirement.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "when": "push_token_import",
+          "equals": [
+            "true"
+          ],
+          "requires": [
+            "push_tokens"
+          ]
+        },
+        {
+          "code": "vendor.braze.body.anonymous_push_ids_forbidden",
+          "kind": "forbidden_when_value",
+          "severity": "error",
+          "message": "The request does not satisfy the documented anonymous push ids forbidden requirement.",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "when": "push_token_import",
+          "equals": [
+            "true"
+          ],
+          "params": [
+            "external_id",
+            "braze_id"
+          ]
+        },
+        {
+          "code": "vendor.braze.body.language_registry",
+          "kind": "format",
+          "param": "language",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "en",
+              "af",
+              "agq",
+              "ak",
+              "sq",
+              "am",
+              "ar",
+              "hy",
+              "as",
+              "ay",
+              "az",
+              "ksf",
+              "bas",
+              "eu",
+              "be",
+              "bem",
+              "bn",
+              "bez",
+              "bs",
+              "br",
+              "bg",
+              "my",
+              "km",
+              "ca",
+              "tzm",
+              "chr",
+              "cgg",
+              "zh",
+              "swc",
+              "kw",
+              "hr",
+              "cs",
+              "da",
+              "dav",
+              "dua",
+              "nl",
+              "dz",
+              "guz",
+              "et",
+              "eo",
+              "ewo",
+              "ee",
+              "fo",
+              "fa",
+              "fil",
+              "fi",
+              "fr",
+              "gl",
+              "lg",
+              "ka",
+              "de",
+              "gsw",
+              "el",
+              "kl",
+              "gn",
+              "gu",
+              "ha",
+              "haw",
+              "he",
+              "hi",
+              "hu",
+              "is",
+              "ig",
+              "id",
+              "iu",
+              "ga",
+              "it",
+              "jv",
+              "ja",
+              "dyo",
+              "kab",
+              "kln",
+              "kam",
+              "kn",
+              "ks",
+              "kk",
+              "ebu",
+              "ki",
+              "rw",
+              "ky",
+              "ko",
+              "ku",
+              "lo",
+              "la",
+              "lv",
+              "ln",
+              "lt",
+              "lu",
+              "lb",
+              "luo",
+              "luy",
+              "jmc",
+              "mk",
+              "mg",
+              "ms",
+              "ml",
+              "mt",
+              "gv",
+              "mr",
+              "mas",
+              "mer",
+              "mo",
+              "mn",
+              "mfe",
+              "mua",
+              "naq",
+              "ne",
+              "nd",
+              "nb",
+              "nus",
+              "nyn",
+              "nn",
+              "om",
+              "ps",
+              "ff",
+              "pl",
+              "pt",
+              "pa",
+              "qu",
+              "rm",
+              "ro",
+              "rof",
+              "ru",
+              "rwk",
+              "saq",
+              "se",
+              "sbp",
+              "sa",
+              "gd",
+              "sr",
+              "seh",
+              "ksb",
+              "sn",
+              "ii",
+              "sd",
+              "si",
+              "sk",
+              "sl",
+              "so",
+              "es",
+              "sw",
+              "sv",
+              "shi",
+              "tl",
+              "tg",
+              "ta",
+              "twq",
+              "tt",
+              "te",
+              "teo",
+              "th",
+              "bo",
+              "ti",
+              "to",
+              "tr",
+              "tk",
+              "ug",
+              "uk",
+              "ur",
+              "uz",
+              "vai",
+              "vi",
+              "vun",
+              "cy",
+              "xh",
+              "yav",
+              "yi",
+              "yo",
+              "dje",
+              "zu"
+            ]
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "language",
+            "json_type": "string"
+          },
+          "severity": "warning",
+          "doc": "https://www.braze.com/docs/user_guide/data/unification/user_data/language_codes",
+          "message": "The language is absent from the current Braze supported-language list. It may be ignored."
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "inc",
+          "json_type": "integer",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines inc as integer.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "add",
+          "json_type": "array",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines add as array.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "remove",
+          "json_type": "array",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines remove as array.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "add[]",
+          "json_type": [
+            "string",
+            "number",
+            "boolean"
+          ],
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines add[] as ['string', 'number', 'boolean'].",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "remove[]",
+          "json_type": [
+            "string",
+            "number",
+            "boolean"
+          ],
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines remove[] as ['string', 'number', 'boolean'].",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$add",
+          "json_type": "array",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $add as array.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$remove",
+          "json_type": "array",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $remove as array.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$update",
+          "json_type": "array",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $update as array.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$add[]",
+          "json_type": "object",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $add[] as object.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$remove[]",
+          "json_type": "object",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $remove[] as object.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$update[]",
+          "json_type": "object",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $update[] as object.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*.$remove[]",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines the selected value as object."
+        },
+        {
+          "name": "$identifier_key",
+          "json_type": "string",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $identifier_key as string.",
+          "requirement": "required"
+        },
+        {
+          "name": "$identifier_value",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object"
+          ],
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $identifier_value as ['string', 'number', 'boolean', 'array', 'object'].",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*.$update[]",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines the selected value as object."
+        },
+        {
+          "name": "$identifier_key",
+          "json_type": "string",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $identifier_key as string.",
+          "requirement": "required"
+        },
+        {
+          "name": "$identifier_value",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object"
+          ],
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $identifier_value as ['string', 'number', 'boolean', 'array', 'object'].",
+          "requirement": "required"
+        },
+        {
+          "name": "$new_object",
+          "json_type": "object",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines $new_object as object.",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "array",
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "null"
+          ],
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines the selected value as ['array', 'string', 'number', 'boolean', 'object', 'null'].",
+          "max_items": 500,
+          "format_severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "",
+                "json_type": "array"
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "json_type",
+                  "param": "[0]",
+                  "json_type": "object"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "[0]",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/"
+        },
+        {
+          "name": "[]",
+          "json_type": [
+            "string",
+            "number",
+            "boolean"
+          ],
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines [] as ['string', 'number', 'boolean'].",
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "json_type",
+              "param": "[0]",
+              "json_type": "object"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "[0]",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "condition": {
+            "kind": "json_type",
+            "param": "[0]",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "[]",
+          "json_type": "object",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects",
+          "description": "The published request contract defines [] as object.",
+          "condition": {
+            "kind": "json_type",
+            "param": "[0]",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "nested_values",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object"
+          ],
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "The published request contract defines nested_values as ['string', 'number', 'boolean', 'array', 'object'].",
+          "name_pattern": "(?s).*",
+          "name_pattern_parent": "",
+          "max_length": 255,
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "invalid_nested_names",
+          "name_pattern": "(?s)(?:[ .$]|.{256,})",
+          "name_pattern_parent": "",
+          "requirement": "forbidden",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "Nested custom keys have at most 255 characters and cannot contain spaces, periods, or dollar signs. Documented mutation and time operators are reserved exceptions.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$add",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$remove",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$update",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$identifier_key",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$identifier_value",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$new_object",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$time",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*.**",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "nested_values",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object"
+          ],
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "The published request contract defines nested_values as ['string', 'number', 'boolean', 'array', 'object'].",
+          "name_pattern": "(?s).*",
+          "name_pattern_parent": "",
+          "max_length": 255,
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "invalid_nested_names",
+          "name_pattern": "(?s)(?:[ .$]|.{256,})",
+          "name_pattern_parent": "",
+          "requirement": "forbidden",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "Nested custom keys have at most 255 characters and cannot contain spaces, periods, or dollar signs. Documented mutation and time operators are reserved exceptions.",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$add",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$remove",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$update",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$identifier_key",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$identifier_value",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$new_object",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "$time",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*.**",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object"
+          ],
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "The published request contract defines the selected value as ['string', 'number', 'boolean', 'array', 'object'].",
+          "allow_empty": true
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*.**",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "$time",
+          "json_type": "string",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "Nested dates use a non-null $time string. Calendar parsing must accept all documented Braze formats."
+        }
+      ]
+    },
+    {
+      "scope": "attributes[]",
+      "params": [
+        {
+          "name": "push_token_import",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "condition": {
+            "kind": "value_in",
+            "param": "push_token_import",
+            "values": [
+              "true"
+            ]
+          }
+        },
+        {
+          "name": "push_tokens",
+          "json_type": "array",
+          "doc": "https://www.braze.com/docs/api/objects_filters/user_attributes_object/",
+          "description": "The published request contract defines push_tokens as array.",
+          "min_items": 1,
+          "condition": {
+            "kind": "value_in",
+            "param": "push_token_import",
+            "values": [
+              "true"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "allow_empty": true,
+          "max_key_length": 255,
+          "key_pattern": "^[^ .$]*$",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "",
+                "json_type": "object"
+              },
+              {
+                "kind": "json_type",
+                "param": "[0]",
+                "json_type": "object"
+              }
+            ]
+          },
+          "description": "Custom object and object-array attribute names share the published nested-key grammar. Scalar attribute names keep their own semantics.",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support"
+        },
+        {
+          "name": "[0]",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects"
+        }
+      ]
+    },
+    {
+      "scope": "purchases[]",
+      "params": [
+        {
+          "name": "properties",
+          "json_type": "object",
+          "max_compact_bytes": 51200,
+          "condition": {
+            "kind": "json_type",
+            "param": "properties",
+            "json_type": "object"
+          },
+          "severity": "warning",
+          "source_level": "heuristic",
+          "doc": "https://www.braze.com/docs/api/objects_filters/purchase_object/",
+          "description": "Advisory interpretation of the published KB property size limit using compact UTF-8 JSON and a conservative KiB ceiling. Vendor serialization and KB units are not specified."
+        }
+      ]
+    },
+    {
+      "scope": "events[]",
+      "params": [
+        {
+          "name": "properties",
+          "json_type": "object",
+          "max_compact_bytes": 102400,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "properties",
+                "json_type": "object"
+              },
+              {
+                "kind": "json_type",
+                "param": "properties.*",
+                "json_type": [
+                  "array",
+                  "object"
+                ]
+              }
+            ]
+          },
+          "severity": "warning",
+          "source_level": "heuristic",
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/",
+          "description": "Advisory interpretation of the published KB property size limit using compact UTF-8 JSON and a conservative KiB ceiling. Vendor serialization and KB units are not specified."
+        },
+        {
+          "name": "properties.*",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/api/objects_filters/event_object/"
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "",
+          "allow_empty": true,
+          "max_compact_bytes": 102400,
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "",
+                "json_type": "object"
+              },
+              {
+                "kind": "json_type",
+                "param": "[0]",
+                "json_type": "object"
+              }
+            ]
+          },
+          "severity": "warning",
+          "source_level": "heuristic",
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "Advisory interpretation of the 100 KB object/object-array limit using compact UTF-8 JSON. Incremental mutation size also depends on the existing profile state."
+        },
+        {
+          "name": "[0]",
+          "allow_empty": true,
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/array_of_objects"
+        }
+      ]
+    },
+    {
+      "scope": "attributes[].*.**",
+      "scope_exclusions": [
+        "attributes[].external_id",
+        "attributes[].user_alias",
+        "attributes[].braze_id",
+        "attributes[].email",
+        "attributes[].phone",
+        "attributes[]._update_existing_only",
+        "attributes[].push_token_import",
+        "attributes[]._merge_objects",
+        "attributes[].alias_name",
+        "attributes[].alias_label",
+        "attributes[].first_name",
+        "attributes[].last_name",
+        "attributes[].country",
+        "attributes[].home_city",
+        "attributes[].language",
+        "attributes[].time_zone",
+        "attributes[].date_of_first_session",
+        "attributes[].date_of_last_session",
+        "attributes[].marked_email_as_spam_at",
+        "attributes[].dob",
+        "attributes[].gender",
+        "attributes[].email_subscribe",
+        "attributes[].push_subscribe",
+        "attributes[].email_open_tracking_disabled",
+        "attributes[].email_click_tracking_disabled",
+        "attributes[].current_location",
+        "attributes[].facebook",
+        "attributes[].twitter",
+        "attributes[].push_tokens",
+        "attributes[].subscription_groups"
+      ],
+      "params": [
+        {
+          "name": "$time",
+          "format": {
+            "kind": "braze_time"
+          },
+          "format_severity": "warning",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "$time",
+            "json_type": "string"
+          },
+          "doc": "https://www.braze.com/docs/user_guide/data/activation/attributes/nested_custom_attribute_support",
+          "description": "Explicit nested dates use published date representations and years0 through3000. Validate calendar/clock fields while preserving unspecified ISO breadth, timezone fallback and opaque TZD behavior."
         }
       ]
     }

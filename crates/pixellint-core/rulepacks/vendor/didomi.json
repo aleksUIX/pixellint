@@ -7,18 +7,72 @@
   "docs": "https://developers.didomi.io/api-and-platform/domains/reverse-proxy",
   "path_pattern": "/(?<api_key>[^/]*)/loader\\.js",
   "match": {
-    "hosts": ["sdk.privacy-center.org"],
-    "path_contains": ["loader.js"]
+    "hosts": [
+      "sdk.privacy-center.org"
+    ],
+    "path_contains": [
+      "loader.js"
+    ]
   },
   "params": [
     {
       "name": "api_key",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Didomi Public API Key. Didomi documents the loader as sdk.privacy-center.org/{Public API Key}/loader.js.",
       "fix_hint": "Copy the embed from Didomi Console so the path is /{Public API Key}/loader.js.",
       "doc": "https://developers.didomi.io/api-and-platform/domains/reverse-proxy"
+    },
+    {
+      "name": "country",
+      "description": "Didomi loader overrides use an ISO 3166-1 alpha-2 country code.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Z]{2}$"
+      },
+      "doc": "https://developers.didomi.io/api-and-platform/domains/reverse-proxy"
+    },
+    {
+      "name": "region",
+      "description": "Didomi uses the country subdivision code on loader requests.",
+      "format": {
+        "kind": "non_empty"
+      },
+      "doc": "https://developers.didomi.io/api-and-platform/domains/reverse-proxy"
+    },
+    {
+      "name": "target_type",
+      "description": "Didomi documents notice as the consent-notice loader target type.",
+      "format": {
+        "kind": "non_empty"
+      },
+      "doc": "https://developers.didomi.io/api-and-platform/domains/reverse-proxy"
+    },
+    {
+      "name": "target",
+      "description": "Didomi documents target as the consent notice identifier.",
+      "format": {
+        "kind": "non_empty"
+      },
+      "doc": "https://developers.didomi.io/api-and-platform/domains/reverse-proxy"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.didomi.notice_target_required",
+      "kind": "required_when_value",
+      "severity": "error",
+      "message": "A consent notice target requires its notice identifier.",
+      "doc": "https://developers.didomi.io/api-and-platform/domains/reverse-proxy",
+      "when": "target_type",
+      "equals": [
+        "notice"
+      ],
+      "requires": [
+        "target"
+      ]
+    }
+  ]
 }

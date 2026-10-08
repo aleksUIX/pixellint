@@ -6,14 +6,21 @@
   "source_level": "official_vendor",
   "docs": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
   "match": {
-    "hosts": ["s2s.singular.net"],
-    "path_contains": ["/api/v1/evt", "/api/v2/evt"]
+    "hosts": [
+      "s2s.singular.net"
+    ],
+    "path_contains": [
+      "/api/v1/evt",
+      "/api/v2/evt"
+    ]
   },
   "params": [
     {
       "name": "a",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Singular SDK Key, not the Reporting API Key, and every EVENT request requires it.",
       "fix_hint": "Send the SDK Key as `a`.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
@@ -42,7 +49,9 @@
     {
       "name": "i",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the app identifier, case-sensitive, and every EVENT request requires it.",
       "fix_hint": "Send the app ID as `i`.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
@@ -50,21 +59,32 @@
     {
       "name": "n",
       "requirement": "required",
-      "format": { "kind": "regex", "pattern": "^[ -~]{1,32}$" },
-      "description": "It is the event name, at most 32 ASCII characters, and every EVENT request requires it.",
-      "fix_hint": "Set `n` to an event name of 32 ASCII characters or fewer.",
-      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The event name has at most 32 UTF-8 bytes, including non-ASCII names.",
+      "fix_hint": "Use an event name of at most 32 UTF-8 bytes.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "max_byte_length": 32
     },
     {
       "name": "ip",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "ip"
+      },
       "description": "It is the public device IP. Singular requires `ip` or `use_ip`, and they are mutually exclusive.",
       "fix_hint": "Send the device IPv4 as `ip`, or send `use_ip` instead.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
     {
       "name": "use_ip",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
       "description": "It tells Singular to use the request IP. Mutually exclusive with `ip`.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
@@ -72,7 +92,7 @@
       "name": "sdid",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
       },
       "description": "It is the Singular device ID, a UUIDv4. V2 requires it. New accounts as of 15 July 2026 must use V2.",
       "fix_hint": "On `/api/v2/evt`, send `sdid` as a UUIDv4.",
@@ -80,7 +100,10 @@
     },
     {
       "name": "cur",
-      "format": { "kind": "regex", "pattern": "^[A-Z]{3}$" },
+      "format": {
+        "kind": "currency",
+        "case_insensitive": false
+      },
       "description": "It is an ISO 4217 currency code, uppercase, used with `amt` on revenue events.",
       "fix_hint": "Send `cur` as `USD` together with `amt`.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
@@ -89,7 +112,7 @@
       "name": "amt",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
       },
       "description": "It is the revenue amount. Singular documents a number used with `cur`. Sending it makes the call a revenue event.",
       "fix_hint": "Send `amt` as a number such as `2.51`, together with `cur`.",
@@ -99,7 +122,7 @@
       "name": "idfa",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
       },
       "description": "It is the iOS Identifier for Advertisers. Singular documents a UUIDv4 on EVENT V1. Omit it when unavailable. Never send an empty string.",
       "fix_hint": "Send `idfa` as a UUID, or omit the pair.",
@@ -109,7 +132,7 @@
       "name": "idfv",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
       },
       "description": "It is the iOS Identifier for Vendor. Singular documents a UUIDv4, required on iOS V1 regardless of ATT.",
       "fix_hint": "Send `idfv` as a UUID on iOS V1.",
@@ -119,7 +142,7 @@
       "name": "aifa",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
       },
       "description": "It is the Google advertising ID. Singular documents a UUIDv4 on Google Play V1.",
       "fix_hint": "Send `aifa` as a UUID, or omit the pair off Google Play.",
@@ -129,7 +152,7 @@
       "name": "asid",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
       },
       "description": "It is the Android App Set ID. Singular documents a UUIDv4 on Google Play V1.",
       "fix_hint": "Send `asid` as a UUID on Google Play V1.",
@@ -139,7 +162,7 @@
       "name": "amid",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
       },
       "description": "It is the Amazon advertising ID. Singular documents a UUIDv4 for Fire devices.",
       "fix_hint": "Send `amid` as a UUID on Amazon devices, or omit the pair.",
@@ -147,28 +170,36 @@
     },
     {
       "name": "oaid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Open Advertising Identifier on Chinese OEM Android. Singular documents a UUID, but the published example is not a valid UUID, so only emptiness is checked.",
       "fix_hint": "Send `oaid` when the device has no Google Play, or omit the pair.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
     {
       "name": "andi",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Android ID. Singular documents it only when no other identifier is available and the app is not on Google Play.",
       "fix_hint": "Send `andi` only off Google Play when AIFA and ASID are unavailable.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
     {
       "name": "ve",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the OS version at event time. Singular documents it on EVENT requests.",
       "fix_hint": "Send `ve` as the OS version, such as `9.2`.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
     {
       "name": "ua",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the device user agent. Singular documents it URL-encoded and unhashed.",
       "fix_hint": "Send the raw user agent as `ua`.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
@@ -197,7 +228,10 @@
       "name": "c",
       "format": {
         "kind": "enum",
-        "values": ["wifi", "carrier"]
+        "values": [
+          "wifi",
+          "carrier"
+        ]
       },
       "description": "It is the network connection type. Singular documents `wifi` or `carrier`.",
       "fix_hint": "Send `c` as `wifi` or `carrier`.",
@@ -207,7 +241,12 @@
       "name": "att_authorization_status",
       "format": {
         "kind": "enum",
-        "values": ["0", "1", "2", "3"]
+        "values": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ]
       },
       "description": "It is the iOS ATT status. Singular documents 0 undetermined, 1 restricted, 2 denied, 3 authorized.",
       "fix_hint": "Send `0`, `1`, `2`, or `3`. Pass `0` when ATT is not implemented.",
@@ -239,7 +278,10 @@
       "name": "is_revenue_event",
       "format": {
         "kind": "enum",
-        "values": ["true", "false"]
+        "values": [
+          "true",
+          "false"
+        ]
       },
       "description": "It marks a revenue event. Singular still treats the event as revenue when `amt` is present.",
       "fix_hint": "Send `true` or `false`. Omit `amt` if the event is not revenue.",
@@ -247,26 +289,172 @@
     },
     {
       "name": "ma",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the device make. Singular documents it together with `mo`.",
       "fix_hint": "Send `ma` and `mo` together, such as `Apple` and `iPhone 4S`.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
     {
       "name": "mo",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the device model. Singular documents it together with `ma`.",
       "fix_hint": "Send `ma` and `mo` together.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
     {
       "name": "e",
-      "format": {
-        "kind": "regex",
-        "pattern": "^\\{.*\\}$"
-      },
       "description": "It is a JSON object of custom event attributes, URL-encoded. Singular documents a JSON object.",
       "fix_hint": "Send a JSON object such as `{\"sng_attr_content_id\":5581}`, URL-encoded.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "bd",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "app_v",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cn",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "custom_user_id",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "purchase_receipt",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "receipt_signature",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "purchase_product_id",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "purchase_transaction_id",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "dnt",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "dntoff",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "is_admon_revenue",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "skan_conversion_value",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "skan_first_call_timestamp",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "skan_last_call_timestamp",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "data_sharing_options",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "global_properties",
+      "description": "A JSON-encoded object of global event properties, at most five pairs with 200-character keys and values.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "name": "api_version",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "v1",
+          "v2"
+        ]
+      },
+      "description": "The EVENT endpoint version is captured from the URL path and controls its required device identity.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     }
   ],
@@ -274,7 +462,10 @@
     {
       "code": "vendor.singular.ip_required",
       "kind": "require_one_of",
-      "params": ["ip", "use_ip"],
+      "params": [
+        "ip",
+        "use_ip"
+      ],
       "severity": "error",
       "message": "The request has neither `ip` nor `use_ip`. Singular requires one of them on every EVENT.",
       "fix_hint": "Send the device IP as `ip`, or send `use_ip` to use the request address.",
@@ -283,7 +474,10 @@
     {
       "code": "vendor.singular.ip_ambiguous",
       "kind": "mutually_exclusive",
-      "params": ["ip", "use_ip"],
+      "params": [
+        "ip",
+        "use_ip"
+      ],
       "severity": "error",
       "message": "The request sends both `ip` and `use_ip`. Singular documents them as mutually exclusive.",
       "fix_hint": "Send only `ip` or only `use_ip`.",
@@ -293,7 +487,10 @@
       "code": "vendor.singular.hashed_plaintext_field",
       "kind": "forbid_value_pattern",
       "pattern": "^[A-Fa-f0-9]{64}$",
-      "params": ["ip", "ua"],
+      "params": [
+        "ip",
+        "ua"
+      ],
       "severity": "error",
       "message": "This field looks like a SHA-256 digest, but Singular documents `ip` and `ua` as unhashed device values.",
       "fix_hint": "Send the raw IP address or user agent.",
@@ -303,7 +500,6 @@
       "code": "vendor.singular.device_id_required",
       "kind": "require_one_of",
       "params": [
-        "sdid",
         "idfa",
         "idfv",
         "aifa",
@@ -313,15 +509,24 @@
         "andi"
       ],
       "severity": "error",
-      "message": "The request has no device identifier. EVENT V2 requires `sdid`. V1 requires at least one of `idfa`, `idfv`, `aifa`, `asid`, `amid`, `oaid`, or `andi`.",
+      "message": "EVENT V1 requires a platform identifier. SDID is the identifier for EVENT V2.",
       "fix_hint": "On `/api/v2/evt` send `sdid`. On `/api/v1/evt` send a platform advertising ID.",
-      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "condition": {
+        "kind": "value_in",
+        "param": "api_version",
+        "values": [
+          "v1"
+        ]
+      }
     },
     {
       "code": "vendor.singular.amt_requires_currency",
       "kind": "required_with",
       "when": "amt",
-      "requires": ["cur"],
+      "requires": [
+        "cur"
+      ],
       "severity": "error",
       "message": "The event sends `amt` without `cur`. Singular documents the ISO 4217 code together with the amount.",
       "fix_hint": "Add `cur` as a three-letter uppercase code such as `USD`.",
@@ -331,7 +536,9 @@
       "code": "vendor.singular.make_requires_model",
       "kind": "required_with",
       "when": "ma",
-      "requires": ["mo"],
+      "requires": [
+        "mo"
+      ],
       "severity": "error",
       "message": "The request sends `ma` without `mo`. Singular documents make and model together.",
       "fix_hint": "Send `mo` with `ma`.",
@@ -341,7 +548,9 @@
       "code": "vendor.singular.model_requires_make",
       "kind": "required_with",
       "when": "mo",
-      "requires": ["ma"],
+      "requires": [
+        "ma"
+      ],
       "severity": "error",
       "message": "The request sends `mo` without `ma`. Singular documents make and model together.",
       "fix_hint": "Send `ma` with `mo`.",
@@ -351,12 +560,338 @@
       "code": "vendor.singular.use_ip_requires_country",
       "kind": "required_when_value",
       "when": "use_ip",
-      "equals": ["true"],
-      "requires": ["country"],
+      "equals": [
+        "true"
+      ],
+      "requires": [
+        "country"
+      ],
       "severity": "error",
       "message": "`use_ip=true` is missing `country`. Singular documents a two-letter country code when it cannot geolocate from `ip`.",
       "fix_hint": "Send `country` as a two-letter code such as `US`.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "code": "vendor.singular.ios_requires_idfv",
+      "kind": "required_when_value",
+      "severity": "error",
+      "message": "EVENT V1 on iOS always requires IDFV, independently of ATT and IDFA availability.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "when": "p",
+      "equals": [
+        "iOS"
+      ],
+      "requires": [
+        "idfv"
+      ],
+      "condition": {
+        "kind": "value_in",
+        "param": "api_version",
+        "values": [
+          "v1"
+        ]
+      }
+    },
+    {
+      "code": "vendor.singular.ad_revenue_requires_attributes",
+      "kind": "required_when_value",
+      "severity": "error",
+      "message": "Ad monetization events require both revenue flags, amount, currency, and mediation attributes.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "when": "n",
+      "equals": [
+        "__ADMON_USER_LEVEL_REVENUE__"
+      ],
+      "requires": [
+        "is_admon_revenue",
+        "is_revenue_event",
+        "amt",
+        "cur",
+        "e"
+      ]
+    },
+    {
+      "code": "vendor.singular.ad_revenue_is_admon_revenue",
+      "kind": "value_when",
+      "severity": "error",
+      "message": "The ad monetization event requires its revenue flag to be true.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "when": "n",
+      "equals": [
+        "__ADMON_USER_LEVEL_REVENUE__"
+      ],
+      "param": "is_admon_revenue",
+      "value": "true"
+    },
+    {
+      "code": "vendor.singular.ad_revenue_is_revenue_event",
+      "kind": "value_when",
+      "severity": "error",
+      "message": "The ad monetization event requires its revenue flag to be true.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+      "when": "n",
+      "equals": [
+        "__ADMON_USER_LEVEL_REVENUE__"
+      ],
+      "param": "is_revenue_event",
+      "value": "true"
+    },
+    {
+      "code": "vendor.singular.v2_requires_sdid",
+      "kind": "required_when_value",
+      "when": "api_version",
+      "equals": [
+        "v2"
+      ],
+      "requires": [
+        "sdid"
+      ],
+      "severity": "error",
+      "message": "EVENT V2 requires the Singular device identifier, sdid. Platform advertising IDs do not replace it.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "code": "vendor.singular.ios_requires_att",
+      "kind": "required_when_value",
+      "when": "p",
+      "equals": [
+        "iOS"
+      ],
+      "requires": [
+        "att_authorization_status"
+      ],
+      "severity": "error",
+      "message": "The iOS EVENT contract always requires ATT status. Use 0 when ATT is not implemented.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "code": "vendor.singular.google_play_requires_asid",
+      "kind": "required_with",
+      "when": "aifa",
+      "requires": [
+        "asid"
+      ],
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "api_version",
+            "values": [
+              "v1"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "p",
+            "values": [
+              "Android"
+            ]
+          }
+        ]
+      },
+      "severity": "error",
+      "message": "A Google Play EVENT V1 includes Android App Set ID regardless of GAID availability.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+    },
+    {
+      "code": "vendor.singular.android_id_is_fallback",
+      "kind": "forbidden_when_value",
+      "when": "p",
+      "equals": [
+        "Android"
+      ],
+      "params": [
+        "aifa",
+        "asid",
+        "amid",
+        "oaid"
+      ],
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "api_version",
+            "values": [
+              "v1"
+            ]
+          },
+          {
+            "kind": "present",
+            "param": "andi"
+          }
+        ]
+      },
+      "severity": "error",
+      "message": "Android ID is permitted only when other identifiers are unavailable and the app is outside Google Play.",
+      "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     }
-  ]
+  ],
+  "body": [
+    {
+      "source_param": "e",
+      "params": [
+        {
+          "name": "",
+          "description": "The EVENT reference documents this JSON field or limit.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+          "json_type": "object"
+        },
+        {
+          "name": "*",
+          "description": "The EVENT reference documents this JSON field or limit.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+          "max_length": 500,
+          "json_type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        {
+          "name": "attribute_keys_too_long",
+          "description": "The EVENT reference documents this JSON field or limit.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+          "name_pattern": "(?s)^.{501,}$",
+          "name_pattern_parent": "",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "ehash",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "This case-sensitive standard event attribute contains a SHA-256 digest.",
+          "doc": "https://support.singular.net/hc/en-us/articles/30957145603611-Standard-Event-Attributes-for-Conversion-API-Integrations"
+        },
+        {
+          "name": "phash",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "This case-sensitive standard event attribute contains a SHA-256 digest.",
+          "doc": "https://support.singular.net/hc/en-us/articles/30957145603611-Standard-Event-Attributes-for-Conversion-API-Integrations"
+        },
+        {
+          "name": "fnamehash",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "This case-sensitive standard event attribute contains a SHA-256 digest.",
+          "doc": "https://support.singular.net/hc/en-us/articles/30957145603611-Standard-Event-Attributes-for-Conversion-API-Integrations"
+        },
+        {
+          "name": "lnamehash",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "This case-sensitive standard event attribute contains a SHA-256 digest.",
+          "doc": "https://support.singular.net/hc/en-us/articles/30957145603611-Standard-Event-Attributes-for-Conversion-API-Integrations"
+        },
+        {
+          "name": "phashE164",
+          "json_type": "string",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "This case-sensitive standard event attribute contains a SHA-256 digest.",
+          "doc": "https://support.singular.net/hc/en-us/articles/30957145603611-Standard-Event-Attributes-for-Conversion-API-Integrations"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "global_properties",
+      "params": [
+        {
+          "name": "",
+          "description": "The EVENT reference documents this JSON field or limit.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+          "max_properties": 5,
+          "json_type": "object"
+        },
+        {
+          "name": "*",
+          "description": "The EVENT reference documents this JSON field or limit.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+          "max_length": 200,
+          "json_type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        {
+          "name": "property_keys_too_long",
+          "description": "The EVENT reference documents this JSON field or limit.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+          "name_pattern": "(?s)^.{201,}$",
+          "name_pattern_parent": "",
+          "requirement": "forbidden"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "data_sharing_options",
+      "params": [
+        {
+          "name": "",
+          "description": "The EVENT reference documents this JSON field or limit.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+          "json_type": "object"
+        },
+        {
+          "name": "limit_data_sharing",
+          "description": "The EVENT reference documents this JSON field or limit.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+          "requirement": "required",
+          "json_type": "boolean"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "e",
+      "condition": {
+        "kind": "value_in",
+        "param": "n",
+        "values": [
+          "__ADMON_USER_LEVEL_REVENUE__"
+        ]
+      },
+      "params": [
+        {
+          "name": "ad_platform",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Ad monetization revenue events require the ad network name in decoded e.ad_platform.",
+          "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+        }
+      ],
+      "rules": []
+    }
+  ],
+  "path_pattern": "^/api/(?P<api_version>v[12])/evt$"
 }

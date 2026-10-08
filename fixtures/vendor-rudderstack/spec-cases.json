@@ -1,0 +1,236 @@
+[
+  {
+    "id": "documented_clean_transport_control",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"event\":\"Product Purchased\",\"properties\":{\"name\":\"Shirt\",\"revenue\":4.99},\"context\":{\"ip\":\"14.5.67.21\",\"library\":{\"name\":\"http\"}},\"timestamp\":\"2020-02-02T00:23:09.544Z\"}",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.rudderstack.com/docs/api/http-api/",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "root-batch-list",
+    "kind": "json",
+    "artifact": "{\"batch\":[]}",
+    "code": "vendor.rudderstack.body.batch.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/api/http-api/"
+  },
+  {
+    "id": "root-batch-dict",
+    "kind": "json",
+    "artifact": "{\"batch\":{}}",
+    "code": "vendor.rudderstack.body.batch.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/api/http-api/"
+  },
+  {
+    "id": "root-batch-bool",
+    "kind": "json",
+    "artifact": "{\"batch\":false}",
+    "code": "vendor.rudderstack.body.batch.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/api/http-api/"
+  },
+  {
+    "id": "root-batch-valid",
+    "kind": "json",
+    "artifact": "{\"batch\":[{\"userId\":\"user-1\",\"type\":\"track\",\"event\":\"Order Completed\",\"context\":{\"library\":{\"name\":\"http\"}}}]}",
+    "code": "vendor.rudderstack.body.batch.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.rudderstack.com/docs/api/http-api/"
+  },
+  {
+    "id": "sentAt-calendar-False",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user-1\",\"type\":\"track\",\"event\":\"Order Completed\",\"context\":{\"library\":{\"name\":\"http\"}},\"sentAt\":\"2024-02-29T12:30:00Z\"}",
+    "code": "vendor.rudderstack.body.sentAt.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.rudderstack.com/docs/api/http-api/"
+  },
+  {
+    "id": "sentAt-calendar-True",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user-1\",\"type\":\"track\",\"event\":\"Order Completed\",\"context\":{\"library\":{\"name\":\"http\"}},\"sentAt\":\"2024-02-30T12:30:00Z\"}",
+    "code": "vendor.rudderstack.body.sentAt.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/api/http-api/"
+  },
+  {
+    "id": "common-context-complete-primary-example",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-complete-batch-example",
+    "kind": "json",
+    "artifact": "{\"batch\":[{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}]}",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-invalid-context.network.wifi",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":\"false\"},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.context.network.wifi.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-invalid-context.app",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":[],\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.context.app.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-invalid-context.device.adTrackingEnabled",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":1,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.context.device.adTrackingEnabled.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-invalid-context.screen.width",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":\"320\",\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.context.screen.width.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-invalid-context.app.build",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":1,\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.context.app.build.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-invalid-context.os.version",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":true},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.context.os.version.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-invalid-context.traits",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}],\"traits\":[]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.context.traits.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-invalid-integrations.All",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":\"true\",\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.integrations.All.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-destination-option-object",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false,\"Adobe Analytics\":{\"marketingCloudVisitorId\":\"12345\"}},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-destination-option-array-rejected",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false,\"Amplitude\":[\"enabled\"]},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.integrations.Amplitude.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-valid-referrer-0",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-valid-referrer-11",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"about:blank\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-external-id-string",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":1}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\"}",
+    "code": "vendor.rudderstack.body.id.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-channel-web-not-browser",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"browser\"}",
+    "code": "vendor.rudderstack.body.channel.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  },
+  {
+    "id": "common-context-request-ip-address",
+    "kind": "json",
+    "artifact": "{\"userId\":\"user123\",\"type\":\"track\",\"event\":\"Report Submitted\",\"context\":{\"app\":{\"name\":\"InitechGlobal\",\"version\":\"545\",\"build\":\"3.0.1.545\",\"namespace\":\"com.production.segment\"},\"campaign\":{\"name\":\"Newsletter\",\"source\":\"Newsletter\",\"medium\":\"email\",\"term\":\"tps reports\",\"content\":\"image link\"},\"device\":{\"id\":\"device-1\",\"advertisingId\":\"7A3CBEA0-BDF5-11E4-8DFC-AA07A5B093DB\",\"adTrackingEnabled\":true,\"manufacturer\":\"Apple\",\"model\":\"iPhone7,2\",\"name\":\"maguro\",\"type\":\"ios\"},\"ip\":\"8.8.8.8\",\"library\":{\"name\":\"http\",\"version\":\"2.11.1\"},\"locale\":\"en-US\",\"network\":{\"bluetooth\":false,\"carrier\":\"T-Mobile US\",\"cellular\":true,\"wifi\":false},\"os\":{\"name\":\"iPhone OS\",\"version\":\"8.1.3\"},\"page\":{\"path\":\"/academy/\",\"referrer\":\"\",\"search\":\"\",\"title\":\"Analytics Academy\",\"url\":\"https://segment.com/academy/\"},\"screen\":{\"width\":320,\"height\":568,\"density\":2},\"timezone\":\"Europe/Amsterdam\",\"userAgent\":\"Mozilla/5.0\",\"externalId\":[{\"type\":\"brazeExternalId\",\"id\":\"some_external_id_1\"}]},\"integrations\":{\"All\":true,\"Mixpanel\":false},\"messageId\":\"022bb90c-bbac-11e4-8dfc-aa07a5b093db\",\"timestamp\":\"2015-12-10T04:08:31.905Z\",\"channel\":\"mobile\",\"request_ip\":\"hashed-ip\"}",
+    "code": "vendor.rudderstack.body.request_ip.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/",
+    "evidence_kind": "independent_primary_common_context_example_or_boundary"
+  }
+]

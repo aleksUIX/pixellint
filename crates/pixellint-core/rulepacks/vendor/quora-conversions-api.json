@@ -32,7 +32,9 @@
           },
           "description": "It is the Quora Ads account id. Quora documents it as required on the Conversion API request.",
           "fix_hint": "Set `account_id` to the Ads account id from Quora Ads Manager.",
-          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview"
+          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+          "json_type": "number",
+          "source_level": "official_template"
         },
         {
           "name": "conversion.event_name",
@@ -55,7 +57,8 @@
           },
           "description": "It is the conversion event name. Quora documents a fixed PixelCategory set on the Conversion API.",
           "fix_hint": "Use a documented name such as `Purchase` or `Generic`.",
-          "doc": "https://github.com/quora/quora-capi-tag"
+          "doc": "https://github.com/quora/quora-capi-tag",
+          "json_type": "string"
         },
         {
           "name": "conversion.click_id",
@@ -63,9 +66,10 @@
           "format": {
             "kind": "non_empty"
           },
-          "description": "It is the Quora click id (`qclid`). Quora documents it as the match key for ad attribution. Events without it are accepted but cannot be attributed to a click.",
+          "description": "The official server-side template documents that events without qclid are accepted but cannot be attributed to an ad click.",
           "fix_hint": "Send `conversion.click_id` as the `qclid` from the landing-page URL or `quora_qclid` cookie.",
-          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview"
+          "doc": "https://github.com/quora/quora-capi-tag",
+          "json_type": "string"
         },
         {
           "name": "conversion.event_id",
@@ -74,17 +78,16 @@
           },
           "description": "It identifies the event so Pixel and CAPI can deduplicate. Quora documents sharing the same `event_id` across both.",
           "fix_hint": "Send a stable `conversion.event_id` on both the pixel and the Conversion API call.",
-          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/46220613643789-How-Quora-counts-conversions"
+          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/46220613643789-How-Quora-counts-conversions",
+          "json_type": "string"
         },
         {
           "name": "conversion.value",
-          "format": {
-            "kind": "regex",
-            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
-          },
           "description": "It is the conversion value. Quora's Conversion API tag sends it as a number.",
           "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
-          "doc": "https://github.com/quora/quora-capi-tag"
+          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+          "json_type": "number",
+          "source_level": "official_template"
         },
         {
           "name": "conversion.timestamp",
@@ -93,7 +96,8 @@
           },
           "description": "It is the event time. Quora's Conversion API tag sends microseconds since epoch.",
           "fix_hint": "Send an integer timestamp. The official tag uses microseconds.",
-          "doc": "https://github.com/quora/quora-capi-tag"
+          "doc": "https://github.com/quora/quora-capi-tag",
+          "json_type": "integer"
         },
         {
           "name": "device.user_agent",
@@ -102,7 +106,8 @@
           },
           "description": "It is the device user agent. Quora's Conversion API tag sends it unhashed when the client provides it.",
           "fix_hint": "Send `device.user_agent`, or drop the empty pair.",
-          "doc": "https://github.com/quora/quora-capi-tag"
+          "doc": "https://github.com/quora/quora-capi-tag",
+          "json_type": "string"
         },
         {
           "name": "device.referer",
@@ -111,7 +116,8 @@
           },
           "description": "It is the page referrer. Quora's Conversion API tag uses the `referer` spelling.",
           "fix_hint": "Send `device.referer`, or drop the empty pair.",
-          "doc": "https://github.com/quora/quora-capi-tag"
+          "doc": "https://github.com/quora/quora-capi-tag",
+          "json_type": "string"
         },
         {
           "name": "device.language",
@@ -120,7 +126,8 @@
           },
           "description": "It is the device language. Quora's Conversion API tag sends it when the client provides it.",
           "fix_hint": "Send `device.language`, or drop the empty pair.",
-          "doc": "https://github.com/quora/quora-capi-tag"
+          "doc": "https://github.com/quora/quora-capi-tag",
+          "json_type": "string"
         },
         {
           "name": "device.mobile_device_id",
@@ -129,7 +136,36 @@
           },
           "description": "It is the mobile advertising id. Quora's Conversion API tag sends it when the client provides it.",
           "fix_hint": "Send `device.mobile_device_id`, or drop the empty pair.",
-          "doc": "https://github.com/quora/quora-capi-tag"
+          "doc": "https://github.com/quora/quora-capi-tag",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview",
+          "json_type": "object"
+        },
+        {
+          "name": "conversion",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "device",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user",
+          "requirement": "required",
+          "json_type": "object",
+          "description": "The official Quora server-side template identifies user as a required object and sends an empty object when no user data is mapped.",
+          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+          "source_level": "official_template"
         }
       ],
       "rules": []

@@ -7,8 +7,12 @@
   "docs": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
   "path_pattern": "/v1/events/(?<pixel_id>[^/]*)",
   "match": {
-    "hosts": ["batch.datax.yahoo.com"],
-    "path_prefixes": ["/v1/events"],
+    "hosts": [
+      "batch.datax.yahoo.com"
+    ],
+    "path_prefixes": [
+      "/v1/events"
+    ],
     "json_paths": [
       "[].userData",
       {
@@ -32,193 +36,501 @@
     {
       "name": "pixel_id",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the Yahoo DSP pixel ID. Yahoo documents the batch endpoint as /v1/events/{pixelId}.",
       "fix_hint": "Put the DSP pixel ID in the path, such as /v1/events/10157549. Do not reuse a live Dot pixel ID.",
       "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
     }
   ],
-  "body": {
-    "scope": "[]",
-    "params": [
-      {
-        "name": "eventTs",
-        "requirement": "required",
-        "format": { "kind": "integer" },
-        "description": "It is the event time in seconds or milliseconds. Yahoo documents eventTs as required.",
-        "fix_hint": "Set eventTs to a Unix timestamp in seconds or milliseconds.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "eventName",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the event action name. Yahoo documents eventName as required.",
-        "fix_hint": "Set eventName to the action the DSP rule matches, such as addToCart or Purchase.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "actionSource",
-        "requirement": "required",
-        "format": { "kind": "non_empty" },
-        "description": "It is the digital or physical source of the event. Yahoo documents actionSource as required.",
-        "fix_hint": "Set actionSource to a source such as web, app, phone, email, online, or physical_store.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "eventId",
-        "format": { "kind": "non_empty" },
-        "description": "It is the advertiser's event id. Yahoo documents it as optional, and duplicate ids are dropped.",
-        "fix_hint": "Send a unique `eventId` per conversion, or drop the empty pair.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "actionSourceUrl",
-        "format": { "kind": "url" },
-        "description": "It is the page URL where the conversion happened. Yahoo documents it as optional, and null for some sources such as phone or physical_store.",
-        "fix_hint": "Send an absolute URL in `actionSourceUrl`, or omit it.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "country",
-        "format": { "kind": "regex", "pattern": "^[A-Za-z]{2}$" },
-        "description": "It is the country of the event. Yahoo documents two characters, such as `US`.",
-        "fix_hint": "Send a two-letter country code such as `US`.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData",
-        "requirement": "required",
-        "description": "It is the wrapper for match keys. Yahoo documents userData as required, with at least one ID or clickData.",
-        "fix_hint": "Send a userData object with hashed email, phone, device ID, or pxid, or send clickData.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.email",
-        "format": { "kind": "hex", "length": 64 },
-        "description": "Email must be lowercased and SHA-256 hashed. Yahoo documents userData.email as a list of hashes.",
-        "fix_hint": "Lowercase the email, hash it with SHA-256, and send 64 lowercase hex characters.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.email[]",
-        "format": { "kind": "hex", "length": 64 },
-        "description": "Every email in the list must be SHA-256 hashed.",
-        "fix_hint": "Lowercase each email, hash it with SHA-256, and send the hex digests.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.phone",
-        "format": { "kind": "hex", "length": 64 },
-        "description": "Phone numbers must be SHA-256 hashed. Yahoo documents userData.phone as a list of hashes.",
-        "fix_hint": "Hash the phone number with SHA-256 and send 64 lowercase hex characters.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.phone[]",
-        "format": { "kind": "hex", "length": 64 },
-        "description": "Every phone number in the list must be SHA-256 hashed.",
-        "fix_hint": "Hash each phone number with SHA-256 and send the hex digests.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.gpsaid",
-        "description": "It is a list of Android advertising IDs.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.idfa",
-        "description": "It is a list of Apple advertising IDs.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.pxid",
-        "format": { "kind": "regex", "pattern": "^[^:]+:.+$" },
-        "description": "It is a partner match ID. Yahoo documents the form `pxIdSrcId:pxIdValue`.",
-        "fix_hint": "Send `userData.pxid` as `sourceId:value`, such as `999:XY50038zETeXJBOYNTRn7Z3T6VSkxDF5ZpRz3wvPEVmt1ZXHo`.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.pxid[]",
-        "format": { "kind": "regex", "pattern": "^[^:]+:.+$" },
-        "description": "Every partner match ID in the list must be `sourceId:value`.",
-        "fix_hint": "Send each `pxid` as `sourceId:value`.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.ip_address",
-        "format": { "kind": "non_empty" },
-        "description": "It is the device IP address. Yahoo documents it as unhashed.",
-        "fix_hint": "Send the raw IP in `userData.ip_address`, not a digest.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "userData.userAgent",
-        "format": { "kind": "non_empty" },
-        "description": "It is the browser user agent. Yahoo documents it as the HTTP header, unhashed.",
-        "fix_hint": "Send the raw user agent in `userData.userAgent`, not a digest.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "eventData.price",
-        "format": { "kind": "regex", "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$" },
-        "description": "It is the conversion value. Yahoo documents a number, assumed USD when no currency is sent.",
-        "fix_hint": "Send `eventData.price` as a number such as `12.99`.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "clickData.vmcid",
-        "format": { "kind": "non_empty" },
-        "description": "It is the Yahoo Click ID. Yahoo documents clickData as a match key when user IDs are not available.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "name": "clickData.tblci",
-        "format": { "kind": "non_empty" },
-        "description": "It is the Taboola Click ID.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      }
-    ],
-    "rules": [
-      {
-        "code": "vendor.yahoo-conversions-api.body.unhashed_email",
-        "kind": "forbid_value_pattern",
-        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
-        "severity": "error",
-        "message": "A field carries what looks like a raw email address. Yahoo documents userData.email as SHA-256 hashed, lowercased values.",
-        "fix_hint": "Lowercase the email, hash it with SHA-256, and send the hex digest in userData.email.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "code": "vendor.yahoo-conversions-api.body.user_needs_an_identifier",
-        "kind": "require_one_of",
-        "params": [
-          "userData.email",
-          "userData.phone",
-          "userData.gpsaid",
-          "userData.idfa",
-          "userData.pxid",
-          "clickData.vmcid",
-          "clickData.tblci"
-        ],
-        "severity": "error",
-        "message": "The event has no match key. Yahoo documents at least one of hashed email, phone, gpsaid, idfa, pxid, or clickData.",
-        "fix_hint": "Send hashed userData.email, phone, gpsaid, idfa, or pxid, or send clickData.vmcid or clickData.tblci.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      },
-      {
-        "code": "vendor.yahoo-conversions-api.body.hashed_plaintext_field",
-        "kind": "forbid_value_pattern",
-        "pattern": "^[A-Fa-f0-9]{64}$",
-        "params": [
-          "userData.ip_address",
-          "userData.userAgent"
-        ],
-        "severity": "error",
-        "message": "This field looks like a SHA-256 digest, but Yahoo documents `userData.ip_address` and `userData.userAgent` as unhashed.",
-        "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
-        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
-      }
-    ]
-  }
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The Standard CAPI request body is an array of event objects.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "object"
+        }
+      ]
+    },
+    {
+      "scope": "[]",
+      "params": [
+        {
+          "name": "eventTs",
+          "requirement": "required",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the event time in seconds or milliseconds. Yahoo documents eventTs as required.",
+          "fix_hint": "Set eventTs to a Unix timestamp in seconds or milliseconds.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "integer"
+        },
+        {
+          "name": "eventName",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the event action name. Yahoo documents eventName as required.",
+          "fix_hint": "Set eventName to the action the DSP rule matches, such as addToCart or Purchase.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "actionSource",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the digital or physical source of the event. Yahoo documents actionSource as required.",
+          "fix_hint": "Set actionSource to a source such as web, app, phone, email, online, or physical_store.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "eventId",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the advertiser's event id. Yahoo documents it as optional, and duplicate ids are dropped.",
+          "fix_hint": "Send a unique `eventId` per conversion, or drop the empty pair.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "actionSourceUrl",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the page URL where the conversion happened. Yahoo documents it as optional, and null for some sources such as phone or physical_store.",
+          "fix_hint": "Send an absolute URL in `actionSourceUrl`, or omit it.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "country",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{2}$"
+          },
+          "description": "It is the country of the event. Yahoo documents two characters, such as `US`.",
+          "fix_hint": "Send a two-letter country code such as `US`.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "name": "userData",
+          "requirement": "required",
+          "description": "It is the wrapper for match keys. Yahoo documents userData as required, with at least one ID or clickData.",
+          "fix_hint": "Send a userData object with hashed email, phone, device ID, or pxid, or send clickData.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "object"
+        },
+        {
+          "name": "userData.email",
+          "description": "Email must be lowercased and SHA-256 hashed. Yahoo documents userData.email as a list of hashes.",
+          "fix_hint": "Lowercase the email, hash it with SHA-256, and send 64 lowercase hex characters.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "userData.email[]",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "Every email in the list must be SHA-256 hashed.",
+          "fix_hint": "Lowercase each email, hash it with SHA-256, and send the hex digests.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "userData.phone",
+          "description": "Phone numbers must be SHA-256 hashed. Yahoo documents userData.phone as a list of hashes.",
+          "fix_hint": "Hash the phone number with SHA-256 and send 64 lowercase hex characters.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "userData.phone[]",
+          "format": {
+            "kind": "hex",
+            "length": 64
+          },
+          "description": "Every phone number in the list must be SHA-256 hashed.",
+          "fix_hint": "Hash each phone number with SHA-256 and send the hex digests.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "userData.gpsaid",
+          "description": "It is a list of Android advertising IDs.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "userData.idfa",
+          "description": "It is a list of Apple advertising IDs.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "userData.pxid",
+          "description": "It is a partner match ID. Yahoo documents the form `pxIdSrcId:pxIdValue`.",
+          "fix_hint": "Send `userData.pxid` as `sourceId:value`, such as `999:XY50038zETeXJBOYNTRn7Z3T6VSkxDF5ZpRz3wvPEVmt1ZXHo`.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "userData.pxid[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[^:]+:.+$"
+          },
+          "description": "Every partner match ID in the list must be `sourceId:value`.",
+          "fix_hint": "Send each `pxid` as `sourceId:value`.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "name": "userData.ip_address",
+          "format": {
+            "kind": "ip"
+          },
+          "description": "It is the device IP address. Yahoo documents it as unhashed.",
+          "fix_hint": "Send the raw IP in `userData.ip_address`, not a digest.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "userData.userAgent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the browser user agent. Yahoo documents it as the HTTP header, unhashed.",
+          "fix_hint": "Send the raw user agent in `userData.userAgent`, not a digest.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "eventData.price",
+          "description": "It is the conversion value. Yahoo documents a number, assumed USD when no currency is sent.",
+          "fix_hint": "Send `eventData.price` as a number such as `12.99`.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "number"
+        },
+        {
+          "name": "clickData.vmcid",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Yahoo Click ID. Yahoo documents clickData as a match key when user IDs are not available.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "clickData.tblci",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the Taboola Click ID.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "object"
+        },
+        {
+          "name": "eventData",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "object"
+        },
+        {
+          "name": "clickData",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "object"
+        },
+        {
+          "name": "privacy",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "object"
+        },
+        {
+          "name": "userData.gpsaid[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          }
+        },
+        {
+          "name": "userData.idfa[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          }
+        },
+        {
+          "name": "region",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "privacy.privacy_type",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "GPP",
+              "GDPR",
+              "OPTOUT"
+            ]
+          }
+        },
+        {
+          "name": "privacy.consent_string",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "privacy.gpp_sid",
+          "description": "GPP requires one or two active section IDs. Yahoo rejects more than two. Section correspondence and Yahoo-supported section policy are separate checks.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 2
+        },
+        {
+          "name": "privacy.gpp_sid[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "integer"
+        },
+        {
+          "name": "eventData.products",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "array"
+        },
+        {
+          "name": "eventData.products[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "object"
+        },
+        {
+          "name": "eventData.products[].category",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "eventData.products[].subCategory",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        },
+        {
+          "name": "eventData.customKeyValues",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "object"
+        },
+        {
+          "name": "eventData.customKeyValues.*",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "json_type": "string"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.yahoo-conversions-api.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. Yahoo documents userData.email as SHA-256 hashed, lowercased values.",
+          "fix_hint": "Lowercase the email, hash it with SHA-256, and send the hex digest in userData.email.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.user_needs_an_identifier",
+          "kind": "require_one_of",
+          "params": [
+            "userData.email",
+            "userData.phone",
+            "userData.gpsaid",
+            "userData.idfa",
+            "userData.pxid",
+            "clickData.vmcid",
+            "clickData.tblci"
+          ],
+          "severity": "error",
+          "message": "The event has no match key. Yahoo documents at least one of hashed email, phone, gpsaid, idfa, pxid, or clickData.",
+          "fix_hint": "Send hashed userData.email, phone, gpsaid, idfa, or pxid, or send clickData.vmcid or clickData.tblci.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "userData.ip_address",
+            "userData.userAgent"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Yahoo documents `userData.ip_address` and `userData.userAgent` as unhashed.",
+          "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.privacy_requires_consent",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "GPP and GDPR privacy modes require their respective consent string.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "when": "privacy.privacy_type",
+          "equals": [
+            "GPP",
+            "GDPR"
+          ],
+          "requires": [
+            "privacy.consent_string"
+          ]
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.gpp_requires_section_ids",
+          "kind": "required_when_value",
+          "severity": "error",
+          "message": "GPP privacy mode requires the list of active GPP section IDs.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "when": "privacy.privacy_type",
+          "equals": [
+            "GPP"
+          ],
+          "requires": [
+            "privacy.gpp_sid"
+          ]
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.optout_forbids_consent",
+          "kind": "forbidden_when_value",
+          "severity": "error",
+          "message": "OPTOUT privacy mode must omit the consent string.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+          "when": "privacy.privacy_type",
+          "equals": [
+            "OPTOUT"
+          ],
+          "params": [
+            "privacy.consent_string"
+          ]
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.event_time_window",
+          "kind": "time_window",
+          "param": "eventTs",
+          "unit": "seconds_or_milliseconds",
+          "max_age_seconds": 2592000,
+          "max_future_seconds": 0,
+          "severity": "error",
+          "message": "Yahoo rejects future event timestamps and events older than30 days.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.click_identifiers_exclusive",
+          "kind": "mutually_exclusive",
+          "params": [
+            "clickData.vmcid",
+            "clickData.tblci"
+          ],
+          "severity": "error",
+          "message": "Yahoo Click ID and Taboola Click ID are mutually exclusive within one event.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.gdpr_consent_valid",
+          "kind": "format_when",
+          "when": "privacy.privacy_type",
+          "equals": [
+            "GDPR"
+          ],
+          "param": "privacy.consent_string",
+          "format": {
+            "kind": "tcf"
+          },
+          "severity": "error",
+          "message": "GDPR mode requires a decodable TCFv2 consent string.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.gpp_consent_valid",
+          "kind": "format_when",
+          "when": "privacy.privacy_type",
+          "equals": [
+            "GPP"
+          ],
+          "param": "privacy.consent_string",
+          "format": {
+            "kind": "gpp"
+          },
+          "severity": "error",
+          "message": "GPP mode requires a structurally valid GPP encoding and header.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        },
+        {
+          "code": "vendor.yahoo-conversions-api.body.gpp_sections_present",
+          "kind": "gpp_sections",
+          "param": "privacy.consent_string",
+          "sections": "privacy.gpp_sid",
+          "condition": {
+            "kind": "value_in",
+            "param": "privacy.privacy_type",
+            "values": [
+              "GPP"
+            ]
+          },
+          "severity": "error",
+          "message": "Every active GPP section ID must be encoded in the structurally valid consent string.",
+          "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
+        }
+      ]
+    }
+  ]
 }

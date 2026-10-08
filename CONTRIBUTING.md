@@ -68,8 +68,23 @@ Vendor packs are data. You do not need to write Rust.
 4. Add `fixtures/vendor-<name>/` with at least two clean artifacts and one
    artifact per rule you added, plus a `manifest.json` listing the expected
    findings. `every_builtin_rulepack_has_a_fixture_directory` fails without it.
-5. Document the pack in [docs/STANDARDS.md](docs/STANDARDS.md), including its
-   evidence level.
+5. Update the per-pack review in [docs/RULEPACK_DEPTH_AUDIT.json](docs/RULEPACK_DEPTH_AUDIT.json).
+   Inventory published fields, conditional rules, alternatives, bounds and
+   transport requirements, with exact source URLs. Record unavailable sources,
+   missing local checks and required external context explicitly. A loader
+   contract does not establish coverage of the vendor's measurement protocol.
+   Refresh the manifest and reviewed fixture digests after source review and
+   validation. CI rejects changed artifacts with stale review evidence.
+6. Run `python3 tools/update-rulepack-reference.py` to generate the implemented
+   inventory in [docs/STANDARDS.md](docs/STANDARDS.md). Check review freshness
+   with `python3 tools/check-rulepack-depth.py`.
+
+Coverage fixtures should include independent vendor examples, native types,
+each required field and conditional branch, every identifier alternative,
+lower and upper boundaries, every batch element, and documented custom fields.
+Schema-derived mutations supplement source cases. They cannot prove the schema
+matches the vendor. Historical timestamps declare `reference_time` in Unix
+seconds, so temporal rules run against a stable clock.
 
 One pack per endpoint family. If an endpoint already has a pack covering its
 URL, add the body contract to that pack rather than creating a second one that

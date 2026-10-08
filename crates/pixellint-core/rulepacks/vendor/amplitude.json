@@ -35,17 +35,66 @@
           },
           "description": "It is the project API key the upload is attributed to.",
           "fix_hint": "Send the API key of the Amplitude project, and keep it server-side.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string"
         },
         {
           "name": "events",
           "requirement": "required",
           "description": "Amplitude reads the events to ingest from this array.",
           "fix_hint": "Send an `events` array holding at least one event.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 1999
+        },
+        {
+          "name": "options",
+          "description": "The vendor documents `options` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "object"
+        },
+        {
+          "name": "options.min_id_length",
+          "description": "The vendor documents `options.min_id_length` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "integer",
+          "minimum": 1
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "object"
+        },
+        {
+          "name": "events[].user_id",
+          "description": "The vendor documents `events[].user_id` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "allow_empty": true
+        },
+        {
+          "name": "events[].device_id",
+          "description": "The vendor documents `events[].device_id` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "allow_empty": true
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.amplitude.body.identifier_minimum_length",
+          "kind": "min_length_from",
+          "severity": "error",
+          "message": "The request does not satisfy the documented identifier minimum length requirement.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "params": [
+            "events[].user_id",
+            "events[].device_id"
+          ],
+          "length_param": "options.min_id_length",
+          "default_length": 5
+        }
+      ]
     },
     {
       "scope": "events[]",
@@ -58,38 +107,42 @@
           },
           "description": "Amplitude documents the event type as required on every event.",
           "fix_hint": "Name the event, such as `Purchase Completed`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "user_id",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{5,}$"
+            "kind": "non_empty"
           },
           "description": "Amplitude documents user IDs as strings of 5 characters or more, and silently drops shorter ones unless `min_id_length` is set.",
           "fix_hint": "Use an identifier of at least 5 characters, or set the `min_id_length` option.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "device_id",
           "format": {
-            "kind": "regex",
-            "pattern": "^.{5,}$"
+            "kind": "non_empty"
           },
           "description": "Amplitude documents device IDs as strings of 5 characters or more, and silently drops shorter ones unless `min_id_length` is set.",
           "fix_hint": "Use an identifier of at least 5 characters, or set the `min_id_length` option.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "time",
           "format": {
-            "kind": "integer",
-            "min_digits": 13,
-            "max_digits": 13
+            "kind": "integer"
           },
           "description": "Amplitude documents this as milliseconds since epoch. A 10-digit value is seconds and lands in 1970.",
           "fix_hint": "Send milliseconds: a JavaScript `Date.now()` is already in the right unit.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "integer",
+          "minimum": 0
         },
         {
           "name": "insert_id",
@@ -98,7 +151,9 @@
           },
           "description": "Amplitude uses it to drop duplicate events on retry.",
           "fix_hint": "Send a stable id per event so a retried upload is not counted twice.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "ip",
@@ -107,15 +162,18 @@
           },
           "description": "It is the user IP, sent unhashed, or `$remote` to use the request address.",
           "fix_hint": "Send the raw IP, or `$remote`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "user_agent",
           "format": {
             "kind": "non_empty"
           },
-          "description": "It is the unparsed user agent string from the device, sent unhashed.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "description": "Send the original, unparsed and untruncated user agent as documented.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string"
         },
         {
           "name": "revenue",
@@ -125,7 +183,8 @@
           },
           "description": "It is the event revenue. Amplitude documents a float and accepts negatives for refunds.",
           "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "number"
         },
         {
           "name": "currency",
@@ -135,7 +194,8 @@
           },
           "description": "It is the 3-character uppercase ISO 4217 currency of the purchase.",
           "fix_hint": "Use an uppercase code such as `USD`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string"
         },
         {
           "name": "session_id",
@@ -144,7 +204,9 @@
             "pattern": "^-?[0-9]+$"
           },
           "description": "It is the session start time in milliseconds since epoch. Amplitude documents `-1` as the same as omitting it.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "integer",
+          "minimum": -1
         },
         {
           "name": "price",
@@ -154,7 +216,8 @@
           },
           "description": "It is the price of the item purchased. Amplitude documents a float and accepts negatives for refunds.",
           "fix_hint": "Send a number such as `4.99`, with no currency symbol.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "number"
         },
         {
           "name": "quantity",
@@ -163,7 +226,8 @@
           },
           "description": "It is the quantity of the item purchased. Amplitude documents an integer and defaults to 1 when omitted.",
           "fix_hint": "Send a whole number such as `3`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "integer"
         },
         {
           "name": "productId",
@@ -171,7 +235,9 @@
             "kind": "non_empty"
           },
           "description": "It identifies the item purchased. Amplitude documents sending price and quantity, or revenue, with this field.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "revenueType",
@@ -179,7 +245,9 @@
             "kind": "non_empty"
           },
           "description": "It is the type of revenue for the item purchased, such as `Refund`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "location_lat",
@@ -189,7 +257,10 @@
           },
           "description": "It is the current latitude of the user. Amplitude documents a float.",
           "fix_hint": "Send a number such as `37.77`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "number",
+          "minimum": -90,
+          "maximum": 90
         },
         {
           "name": "location_lng",
@@ -199,7 +270,10 @@
           },
           "description": "It is the current longitude of the user. Amplitude documents a float.",
           "fix_hint": "Send a number such as `-122.39`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "number",
+          "minimum": -180,
+          "maximum": 180
         },
         {
           "name": "event_id",
@@ -208,7 +282,8 @@
           },
           "description": "It is an incrementing counter Amplitude documents to distinguish events that share a `user_id` and timestamp.",
           "fix_hint": "Send a whole number such as `23`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "integer"
         },
         {
           "name": "app_version",
@@ -216,7 +291,9 @@
             "kind": "non_empty"
           },
           "description": "It is the current version of the application.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "platform",
@@ -224,7 +301,9 @@
             "kind": "non_empty"
           },
           "description": "It is the platform of the device, such as `iOS`.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "country",
@@ -232,7 +311,9 @@
             "kind": "non_empty"
           },
           "description": "It is the current country of the user.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "language",
@@ -240,7 +321,9 @@
             "kind": "non_empty"
           },
           "description": "It is the language set by the user. Amplitude stores a language name; a tag such as `en-US` is accepted and rewritten.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "idfa",
@@ -250,7 +333,9 @@
           },
           "description": "It is the iOS Identifier for Advertiser. Amplitude's HTTP V2 samples send a UUID, and all-zero IDFAs are dropped.",
           "fix_hint": "Send `idfa` as a UUID, or omit the field.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "idfv",
@@ -260,7 +345,9 @@
           },
           "description": "It is the iOS Identifier for Vendor. Amplitude's HTTP V2 samples send a UUID.",
           "fix_hint": "Send `idfv` as a UUID, or omit the field.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
         },
         {
           "name": "adid",
@@ -270,7 +357,164 @@
           },
           "description": "It is the Google Play Services advertising ID. Amplitude's HTTP V2 samples send a UUID.",
           "fix_hint": "Send `adid` as a UUID, or omit the field.",
-          "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "os_name",
+          "description": "The vendor documents `os_name` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "os_version",
+          "description": "The vendor documents `os_version` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "device_brand",
+          "description": "The vendor documents `device_brand` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "device_manufacturer",
+          "description": "The vendor documents `device_manufacturer` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "device_model",
+          "description": "The vendor documents `device_model` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "carrier",
+          "description": "The vendor documents `carrier` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "region",
+          "description": "The vendor documents `region` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "city",
+          "description": "The vendor documents `city` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "dma",
+          "description": "The vendor documents `dma` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "android_app_set_id",
+          "description": "The vendor documents `android_app_set_id` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "android_id",
+          "description": "The vendor documents `android_id` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "plan.branch",
+          "description": "The vendor documents `plan.branch` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "plan.source",
+          "description": "The vendor documents `plan.source` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "plan.version",
+          "description": "The vendor documents `plan.version` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "string",
+          "max_length": 1024
+        },
+        {
+          "name": "event_properties",
+          "description": "The vendor documents `event_properties` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "object",
+          "max_depth": 40
+        },
+        {
+          "name": "user_properties",
+          "description": "The vendor documents `user_properties` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "object",
+          "max_depth": 40
+        },
+        {
+          "name": "groups",
+          "description": "Amplitude accepts at most five group types and ten total scalar or array group memberships.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "object",
+          "max_properties": 5,
+          "max_member_values": 10
+        },
+        {
+          "name": "group_properties",
+          "description": "The vendor documents `group_properties` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "object"
+        },
+        {
+          "name": "plan",
+          "description": "The vendor documents `plan` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "object"
+        },
+        {
+          "name": "$skip_user_properties_sync",
+          "description": "The vendor documents `$skip_user_properties_sync` in the request contract.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "json_type": "boolean"
+        },
+        {
+          "name": "groups.*",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "doc": "https://www.amplitude.com/docs/sdks/analytics/node/node-js-sdk",
+          "description": "A group name is a string or an array of strings.",
+          "max_length": 1024
+        },
+        {
+          "name": "groups.*[]",
+          "json_type": "string",
+          "doc": "https://www.amplitude.com/docs/sdks/analytics/node/node-js-sdk",
+          "description": "Every array-valued group name is a string.",
+          "max_length": 1024
         }
       ],
       "rules": [
@@ -290,7 +534,9 @@
           "code": "vendor.amplitude.body.reserved_event_type",
           "kind": "forbid_value_pattern",
           "pattern": "^\\[Amplitude\\]",
-          "params": ["event_type"],
+          "params": [
+            "event_type"
+          ],
           "severity": "error",
           "message": "`event_type` uses a name Amplitude reserves for internal use, such as `[Amplitude] Start Session`.",
           "fix_hint": "Use your own event name. Amplitude reserves names that start with `[Amplitude]`.",
@@ -300,7 +546,10 @@
           "code": "vendor.amplitude.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["ip", "user_agent"],
+          "params": [
+            "ip",
+            "user_agent"
+          ],
           "severity": "error",
           "message": "This field looks like a SHA-256 digest, but Amplitude documents `ip` and `user_agent` as unhashed. Use `$remote` when the IP should come from the request.",
           "fix_hint": "Send the raw IP or user agent, or `$remote` for IP.",
@@ -310,13 +559,108 @@
           "code": "vendor.amplitude.body.placeholder_identifier",
           "kind": "forbid_value_pattern",
           "pattern": "^(?:(?i:anonymous|undefined|unknown|lmy47d)|00000000-0000-0000-0000-000000000000)$",
-          "params": ["user_id", "device_id"],
+          "params": [
+            "user_id",
+            "device_id"
+          ],
           "severity": "error",
           "message": "This identifier is on Amplitude's list of values that return 400, such as `anonymous` or an all-zero UUID.",
           "fix_hint": "Send a real `user_id` or `device_id` of at least 5 characters.",
           "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "code": "vendor.amplitude.body.revenue_identifier_needs_amount",
+          "kind": "require_any_of",
+          "severity": "error",
+          "message": "The request does not satisfy the documented revenue identifier needs amount requirement.",
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "groups": [
+            [
+              "revenue"
+            ],
+            [
+              "price",
+              "quantity"
+            ]
+          ],
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "present",
+                "param": "productId"
+              },
+              {
+                "kind": "present",
+                "param": "revenueType"
+              }
+            ]
+          }
         }
       ]
+    },
+    {
+      "scope": "events[].event_properties.**",
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "max_length": 1024,
+          "allow_empty": true,
+          "description": "Every descendant string property value has the documented 1024 character limit. Other JSON types remain supported."
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "events[].user_properties.**",
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "max_length": 1024,
+          "allow_empty": true,
+          "description": "Every descendant string property value has the documented 1024 character limit. Other JSON types remain supported."
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "events[].group_properties.**",
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+          "max_length": 1024,
+          "allow_empty": true,
+          "description": "Every descendant string property value has the documented 1024 character limit. Other JSON types remain supported."
+        }
+      ],
+      "rules": []
     }
   ]
 }

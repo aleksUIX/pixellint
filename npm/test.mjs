@@ -4,6 +4,7 @@
  */
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import { isOk, rulepacks, validate, validateMany, vendorForHost, vendors, version } from "./index.mjs";
 
@@ -64,11 +65,19 @@ assert.deepEqual(
   ["core.json.parse_error"],
 );
 
-assert.ok(rulepacks().length >= 15, "every rulepack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 137, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
 assert.match(version(), /^\d+\.\d+\.\d+$/);
+assert.equal(version(), JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version, "the bundled engine must match the package version");
+
+const validGpp = "DBABLA~CAAAVVVVVVRA.QA";
+assert.equal(isOk(validate(`https://example.com/px?gpp=${validGpp}&gpp_sid=7`)), true);
+assert.ok(validate(`https://example.com/px?gpp=${validGpp}&gpp_sid=8`).reports.flatMap((report) => report.violations).some((finding) => finding.code === "core.privacy.gpp_sid_sections_mismatch"));
+assert.ok(validate("https://example.com/px?gpp=DBACNYA&gpp_sid=2").reports.flatMap((report) => report.violations).some((finding) => finding.code === "core.privacy.gpp_sections_invalid"));
+const conflictedTcfExample = "CQSbk4AQSbk4ANwAAAENAwCgAAAAAAAAAAYgACPAAAAA.IDKQA4AAgAKAGQAygAAA.YAAAAAAAAAAA";
+assert.ok(validate(`https://example.com/px?gdpr=1&gdpr_consent=${conflictedTcfExample}`).reports.flatMap((report) => report.violations).some((finding) => finding.code === "core.privacy.tc_string_policy_warning" && finding.severity === "warning"));
 
 assert.throws(
   () => validate("<script src=https://example.com/px.js></script>", { kind: "html" }),
@@ -87,5 +96,39 @@ assert.equal(many.summary.artifacts_total, 3);
 assert.equal(many.summary.unique_artifacts, 2);
 assert.equal(many.summary.errors, 1);
 assert.equal(many.artifacts[0].occurrences.length, 2);
+
+const loader = validate("https://cdn-gl.imrworldwide.com/conf/P12345678-1234-1234-1234-123456789012.js#name=nlsnInstance&ns=NOLBUNDLE");
+assert.equal(isOk(loader), true);
+assert.ok(loader.reports.some((report) => report.plugin_id === "vendor/nielsen-config"));
+assert.ok(loader.reports.every((report) => report.violations.every((finding) => finding.code !== "core.url.fragment_ignored")));
+
+const freewheel = validate("https://demo.v.fwmrm.net/ad/g/1?nw=1&csid=site&prof=profile;;ptgt=a&slid=pre&slau=preroll&tpos=0;ptgt=a&slid=mid");
+const slotFindings = freewheel.reports.flatMap((report) => report.violations);
+assert.ok(slotFindings.some((finding) => finding.code === "vendor.freewheel.query.slau.missing" && finding.field === "query[3].slau"), "a later slot cannot borrow its ad unit");
+assert.ok(slotFindings.some((finding) => finding.code === "vendor.freewheel.query.tpos.missing" && finding.field === "query[3].tpos"), "a later slot cannot borrow its start time");
+
+const emailHash = "a".repeat(32);
+const phoneHash = "b".repeat(40);
+const mixed = `https://api.rlcdn.com/api/identity/v2/envelope?pid=14&it=4&iv=${emailHash}&it=11&iv=${phoneHash}`;
+assert.equal(isOk(validate(mixed)), true, "mixed identity families use their own paired format");
+assert.ok(validate(mixed.replace(phoneHash, emailHash)).reports.flatMap((report) => report.violations).some((finding) => finding.code === "vendor.liveramp-envelope.phone_hash_format"));
+
+const originalNow = Date.now;
+let clockReads = 0;
+const referenceSeconds = 1_800_000_000;
+Date.now = () => { clockReads += 1; return referenceSeconds * 1000; };
+try {
+  const conversion = (time) => JSON.stringify({ events: [{ id: "evt_clock", type: "page_viewed", timestamp_ms: time, action_source: "web", source_url: "https://shop.example/", data: { type: "contents" } }] });
+  const current = validate(conversion(referenceSeconds * 1000), { kind: "json" });
+  assert.equal(isOk(current), true, "WASM uses the supplied JavaScript clock");
+  assert.equal(clockReads, 1, "single validation reads its clock once");
+  const old = validate(conversion((referenceSeconds - 8 * 86400) * 1000), { kind: "json" });
+  assert.ok(old.reports.flatMap((report) => report.violations).some((finding) => finding.code === "vendor.openai-conversions-api.body.timestamp_ms_time_window"));
+  const before = clockReads;
+  validateMany({ artifacts: [{ artifact: mixed }, { artifact: "https://www.facebook.com/tr?id=123&ev=PageView" }] });
+  assert.equal(clockReads - before, 1, "document validation shares one clock across artifacts");
+} finally {
+  Date.now = originalNow;
+}
 
 console.log(`pixellint ${version()}: npm smoke tests passed`);

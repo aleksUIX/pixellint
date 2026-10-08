@@ -4,27 +4,71 @@
   "vendor": "oracle",
   "description": "Oracle BlueKai site tags on tags.bluekai.com/site/{siteId} and stags.bluekai.com/site/{siteId}. The site ID rides in the path. Oracle documents the ID swap tag on stags. The JS Return tag uses the same path on tags. CoreTag on tags.bkrtx.com is not contracted.",
   "source_level": "official_vendor",
-  "docs": "https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html",
+  "docs": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html",
   "path_pattern": "/site/(?<site_id>[^/]*)",
   "match": {
-    "hosts": ["tags.bluekai.com", "stags.bluekai.com"],
-    "path_prefixes": ["/site/"]
+    "hosts": [
+      "tags.bluekai.com",
+      "stags.bluekai.com"
+    ],
+    "path_prefixes": [
+      "/site/"
+    ]
   },
   "params": [
     {
       "name": "site_id",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the BlueKai site ID. Oracle documents the ID swap tag as stags.bluekai.com/site/{YOUR_SITE_ID}.",
       "fix_hint": "Copy the container site ID from BlueKai so the path is /site/{siteId}.",
-      "doc": "https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
     },
     {
       "name": "e_id_s",
-      "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{64}$"
+      },
       "description": "It is a SHA-256 oHash for email. Oracle documents that no personally identifiable information may be sent; IDs derived from PII must be hashed first.",
       "fix_hint": "Hash the email with SHA-256 and send the digest as e_id_s.",
-      "doc": "https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "name": "p_id_s",
+      "description": "Oracle documents p_id_s as a SHA-256 phone digest.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{64}$"
+      },
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "name": "e_id_m",
+      "description": "Oracle says legacy MD5 email hashing should not be used.",
+      "requirement": "deprecated",
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "name": "p_id_m",
+      "description": "Oracle says legacy MD5 phone hashing should not be used.",
+      "requirement": "deprecated",
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "name": "limit",
+      "description": "Oracle documents the pixel firing limit as an integer.",
+      "format": {
+        "kind": "integer"
+      },
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "name": "phint",
+      "description": "Oracle documents phint as an encoded key/value pair, including e_id_s and p_id_s SHA-256 oHashes. Other page-context keys are permitted.",
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
     }
   ],
   "rules": [
@@ -35,7 +79,60 @@
       "severity": "error",
       "message": "A parameter carries what looks like a raw email address. Oracle documents oHashes as SHA-256 digests and forbids sending personally identifiable information.",
       "fix_hint": "Hash the email with SHA-256 and send it as e_id_s.",
-      "doc": "https://docs.oracle.com/en/cloud/saas/data-cloud/data-cloud-help-center/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "code": "vendor.oracle-bluekai.e_id_s_limit_required",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The oHash tag needs its documented zero pixel limit.",
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html",
+      "when": "e_id_s",
+      "requires": [
+        "limit"
+      ]
+    },
+    {
+      "code": "vendor.oracle-bluekai.p_id_s_limit_required",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The oHash tag needs its documented zero pixel limit.",
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html",
+      "when": "p_id_s",
+      "requires": [
+        "limit"
+      ]
+    },
+    {
+      "code": "vendor.oracle-bluekai.e_id_s_zero_limit",
+      "kind": "value_with",
+      "when": "e_id_s",
+      "param": "limit",
+      "value": "0",
+      "severity": "error",
+      "message": "Oracle requires limit=0 when an oHash identifier is submitted.",
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "code": "vendor.oracle-bluekai.p_id_s_zero_limit",
+      "kind": "value_with",
+      "when": "p_id_s",
+      "param": "limit",
+      "value": "0",
+      "severity": "error",
+      "message": "Oracle requires limit=0 when an oHash identifier is submitted.",
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
+    },
+    {
+      "code": "vendor.oracle-bluekai.phint_hash.invalid",
+      "kind": "forbid_value_pattern",
+      "params": [
+        "phint"
+      ],
+      "pattern": "^(?:e_id_s|p_id_s)=(?:[\\s\\S]{0,63}|[\\s\\S]{65,}|[\\s\\S]*[^A-Fa-f0-9][\\s\\S]*)$",
+      "severity": "error",
+      "message": "Oracle phint email and phone oHashes must contain a 64-character hexadecimal SHA-256 digest after their encoded key.",
+      "doc": "https://docs.oracle.com/cd/E56931_01/trans/cx/F41777-04/IntegratingBlueKaiPlatform/IDManagement/sending_ohashes.html"
     }
   ]
 }

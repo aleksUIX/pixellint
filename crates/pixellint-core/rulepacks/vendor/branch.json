@@ -35,7 +35,8 @@
           },
           "description": "It is the Branch Key for the application, and the Events API requires it.",
           "fix_hint": "Send the Branch Key from Account settings or Configuration, Security and Access.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "name",
@@ -45,23 +46,26 @@
           },
           "description": "It is the event name. On `/v2/event/standard` it must be a documented Branch standard event; `/v2/event/custom` accepts any name.",
           "fix_hint": "Set `name` to a standard event such as `PURCHASE`, or post a custom name to `/v2/event/custom`.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data",
           "requirement": "required",
           "description": "Branch requires a `user_data` object with device and identity fields.",
           "fix_hint": "Add `user_data` with at least one documented identifier.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "object"
         },
         {
           "name": "user_data.ip",
           "format": {
-            "kind": "non_empty"
+            "kind": "ip"
           },
           "description": "It is the device IP address where the event occurred, sent unhashed.",
           "fix_hint": "Send the device IP, not a digest.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.developer_identity",
@@ -69,7 +73,8 @@
             "kind": "non_empty"
           },
           "description": "Developer-specified identity for the user. Branch requires at least one documented identifier in `user_data`.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.browser_fingerprint_id",
@@ -77,7 +82,8 @@
             "kind": "non_empty"
           },
           "description": "Branch browser fingerprint. One of the identifiers that can satisfy the identity requirement.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.idfa",
@@ -85,7 +91,8 @@
             "kind": "non_empty"
           },
           "description": "iOS advertising ID. Branch requires it together with `os=iOS` when it is the identifier in use.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.idfv",
@@ -93,7 +100,8 @@
             "kind": "non_empty"
           },
           "description": "iOS vendor ID. Branch requires it together with `os=iOS` when it is the identifier in use.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.android_id",
@@ -101,7 +109,8 @@
             "kind": "non_empty"
           },
           "description": "Android hardware ID. Branch requires it together with `os=Android` when it is the identifier in use.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.aaid",
@@ -109,7 +118,8 @@
             "kind": "non_empty"
           },
           "description": "Android advertising ID. Branch requires it together with `os=Android` when it is the identifier in use.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.user_agent",
@@ -117,7 +127,8 @@
             "kind": "non_empty"
           },
           "description": "It is the user agent of the browser or app where the event occurred, sent unhashed.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.country",
@@ -133,11 +144,15 @@
           "name": "user_data.limit_ad_tracking",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It is whether the partner opted out of advertiser tracking. Branch documents a boolean.",
           "fix_hint": "Send `true` or `false` in `user_data.limit_ad_tracking`.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "boolean"
         },
         {
           "name": "user_data.advertising_ids.oaid",
@@ -153,37 +168,49 @@
           "name": "user_data.dma_eea",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "Whether European regulations, including the DMA, apply to this user. Branch documents it as a boolean.",
           "fix_hint": "Send `true` or `false` in `user_data.dma_eea`.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "boolean"
         },
         {
           "name": "user_data.dma_ad_personalization",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "Whether the user granted ads personalization consent. Branch documents it as a boolean, required when `dma_eea` is true.",
           "fix_hint": "Send `true` or `false` in `user_data.dma_ad_personalization`.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "boolean"
         },
         {
           "name": "user_data.dma_ad_user_data",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "Whether the user granted consent for third-party transmission of user-level ads data. Branch documents it as a boolean, required when `dma_eea` is true.",
           "fix_hint": "Send `true` or `false` in `user_data.dma_ad_user_data`.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "boolean"
         },
         {
           "name": "event_data.currency",
           "format": {
-            "kind": "regex",
-            "pattern": "^[A-Za-z]{3}$"
+            "kind": "currency",
+            "case_insensitive": true
           },
           "description": "It is the ISO 4217 currency that revenue, price, shipping, and tax were reported in.",
           "fix_hint": "Use a three-letter code such as `USD`.",
@@ -191,33 +218,24 @@
         },
         {
           "name": "event_data.revenue",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-          },
           "description": "It is the reported revenue for the event. Branch documents a number.",
           "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "number"
         },
         {
           "name": "event_data.shipping",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-          },
           "description": "It is the shipping cost for the transaction. Branch documents a number.",
           "fix_hint": "Send a number such as `10.5`, with no currency symbol.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "number"
         },
         {
           "name": "event_data.tax",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-          },
           "description": "It is the total tax for the transaction. Branch documents a number.",
           "fix_hint": "Send a number such as `13.5`, with no currency symbol.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "number"
         },
         {
           "name": "content_items[].$content_schema",
@@ -252,7 +270,8 @@
           },
           "description": "It is the content schema on a `content_items` row. Branch documents a closed set of COMMERCE, GAME, MEDIA, TEXT, and OTHER values.",
           "fix_hint": "Set `content_items[].$content_schema` to a documented value such as `COMMERCE_PRODUCT`.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "content_items[].$og_image_url",
@@ -261,7 +280,8 @@
           },
           "description": "It is the image URL for the content item. Branch documents `$og_image_url` as a URL.",
           "fix_hint": "Send an absolute image URL in `content_items[].$og_image_url`, or omit the field.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "content_items[].$condition",
@@ -280,7 +300,382 @@
           },
           "description": "It is the product condition on a `content_items` row, used for auctions. Branch documents a closed set.",
           "fix_hint": "Set `content_items[].$condition` to `NEW`, `USED`, `REFURBISHED`, or another documented value.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "object"
+        },
+        {
+          "name": "event_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "object"
+        },
+        {
+          "name": "custom_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "object"
+        },
+        {
+          "name": "user_data.advertising_ids",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "object"
+        },
+        {
+          "name": "content_items",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "array"
+        },
+        {
+          "name": "content_items[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "object"
+        },
+        {
+          "name": "customer_event_alias",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.os",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.os_version",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.language",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.local_ip",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string",
+          "format": {
+            "kind": "ip"
+          }
+        },
+        {
+          "name": "user_data.brand",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.app_version",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.model",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.environment",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.google_analytics_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "event_data.transaction_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "event_data.coupon",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "event_data.affiliation",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "event_data.description",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "event_data.search_query",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.screen_dpi",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "integer"
+        },
+        {
+          "name": "user_data.screen_height",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "integer"
+        },
+        {
+          "name": "user_data.screen_width",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "integer"
+        },
+        {
+          "name": "content_items[].$publicly_indexable",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "boolean"
+        },
+        {
+          "name": "content_items[].$locally_indexable",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "boolean"
+        },
+        {
+          "name": "content_items[].$rating_average",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "number"
+        },
+        {
+          "name": "content_items[].$rating_count",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "number"
+        },
+        {
+          "name": "content_items[].$rating_max",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "number"
+        },
+        {
+          "name": "content_items[].$latitude",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "number"
+        },
+        {
+          "name": "content_items[].$longitude",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "number"
+        },
+        {
+          "name": "content_items[].$creation_timestamp",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "integer"
+        },
+        {
+          "name": "content_items[].$exp_date",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": [
+            "integer",
+            "null"
+          ]
+        },
+        {
+          "name": "content_items[].$og_title",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$canonical_identifier",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$price",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": [
+            "string",
+            "number"
+          ]
+        },
+        {
+          "name": "content_items[].$quantity",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": [
+            "string",
+            "number"
+          ]
+        },
+        {
+          "name": "content_items[].$sku",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$product_name",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$product_brand",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$product_variant",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$address_street",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$address_city",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$address_region",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$address_country",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$address_postal_code",
+          "description": "The content item table and official example document this property.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$keywords",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "array"
+        },
+        {
+          "name": "content_items[].$keywords[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$image_captions",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "array"
+        },
+        {
+          "name": "content_items[].$image_captions[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "content_items[].$custom_fields",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "object"
+        },
+        {
+          "name": "content_items[].$product_category",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "ANIMALS_AND_PET_SUPPLIES",
+              "APPAREL_AND_ACCESSORIES",
+              "ARTS_AND_ENTERTAINMENT",
+              "BABY_AND_TODDLER",
+              "BUSINESS_AND_INDUSTRIAL",
+              "CAMERAS_AND_OPTICS",
+              "ELECTRONICS",
+              "FOOD_BEVERAGES_AND_TOBACCO",
+              "FURNITURE",
+              "HARDWARE",
+              "HEALTH_AND_BEAUTY",
+              "HOME_AND_GARDEN",
+              "LUGGAGE_AND_BAGS",
+              "MATURE",
+              "MEDIA",
+              "OFFICE_SUPPLIES",
+              "RELIGIOUS_AND_CEREMONIAL",
+              "SOFTWARE",
+              "SPORTING_GOODS",
+              "TOYS_AND_GAMES",
+              "VEHICLES_AND_PARTS"
+            ]
+          }
+        },
+        {
+          "name": "user_data.anon_id",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.http_origin",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.http_referrer",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.randomized_device_token",
+          "description": "The current official vendor reference documents this field.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         }
       ],
       "rules": [
@@ -317,7 +712,9 @@
           "code": "vendor.branch.body.dma_consent_required",
           "kind": "required_when_value",
           "when": "user_data.dma_eea",
-          "equals": ["true"],
+          "equals": [
+            "true"
+          ],
           "requires": [
             "user_data.dma_ad_personalization",
             "user_data.dma_ad_user_data"
@@ -326,6 +723,118 @@
           "message": "`dma_eea` is true, but the event is missing `dma_ad_personalization` or `dma_ad_user_data`. Branch documents both consent signals when EU regulations apply.",
           "fix_hint": "Send `user_data.dma_ad_personalization` and `user_data.dma_ad_user_data` as booleans.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api"
+        },
+        {
+          "code": "vendor.branch.body.idfa_requires_os",
+          "kind": "required_with",
+          "severity": "error",
+          "message": "The device identifier requires the operating system documented for that identifier.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "when": "user_data.idfa",
+          "requires": [
+            "user_data.os"
+          ]
+        },
+        {
+          "code": "vendor.branch.body.idfv_requires_os",
+          "kind": "required_with",
+          "severity": "error",
+          "message": "The device identifier requires the operating system documented for that identifier.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "when": "user_data.idfv",
+          "requires": [
+            "user_data.os"
+          ]
+        },
+        {
+          "code": "vendor.branch.body.android_id_requires_os",
+          "kind": "required_with",
+          "severity": "error",
+          "message": "The device identifier requires the operating system documented for that identifier.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "when": "user_data.android_id",
+          "requires": [
+            "user_data.os"
+          ]
+        },
+        {
+          "code": "vendor.branch.body.aaid_requires_os",
+          "kind": "required_with",
+          "severity": "error",
+          "message": "The device identifier requires the operating system documented for that identifier.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "when": "user_data.aaid",
+          "requires": [
+            "user_data.os"
+          ]
+        },
+        {
+          "code": "vendor.branch.body.os_forbids_idfa",
+          "kind": "forbidden_when_value",
+          "severity": "error",
+          "message": "The device identifier belongs to a different operating system.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "when": "user_data.os",
+          "equals": [
+            "Android",
+            "Mac_OS",
+            "Linux",
+            "Windows"
+          ],
+          "params": [
+            "user_data.idfa"
+          ]
+        },
+        {
+          "code": "vendor.branch.body.os_forbids_idfv",
+          "kind": "forbidden_when_value",
+          "severity": "error",
+          "message": "The device identifier belongs to a different operating system.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "when": "user_data.os",
+          "equals": [
+            "Android",
+            "Mac_OS",
+            "Linux",
+            "Windows"
+          ],
+          "params": [
+            "user_data.idfv"
+          ]
+        },
+        {
+          "code": "vendor.branch.body.os_forbids_android_id",
+          "kind": "forbidden_when_value",
+          "severity": "error",
+          "message": "The device identifier belongs to a different operating system.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "when": "user_data.os",
+          "equals": [
+            "iOS",
+            "Mac_OS",
+            "Linux",
+            "Windows"
+          ],
+          "params": [
+            "user_data.android_id"
+          ]
+        },
+        {
+          "code": "vendor.branch.body.os_forbids_aaid",
+          "kind": "forbidden_when_value",
+          "severity": "error",
+          "message": "The device identifier belongs to a different operating system.",
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "when": "user_data.os",
+          "equals": [
+            "iOS",
+            "Mac_OS",
+            "Linux",
+            "Windows"
+          ],
+          "params": [
+            "user_data.aaid"
+          ]
         }
       ]
     }

@@ -10,7 +10,9 @@
       "in-automate.brevo.com",
       "in-automate.sendinblue.com"
     ],
-    "path_contains": ["/api/v2/trackEvent"],
+    "path_contains": [
+      "/api/v2/trackEvent"
+    ],
     "json_paths": [
       "email",
       "event"
@@ -22,28 +24,54 @@
         {
           "name": "email",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Brevo identifies the contact by email on every REST trackEvent call.",
           "fix_hint": "Send the contact email in `email`.",
-          "doc": "https://developers.brevo.com/docs/track-custom-events-rest"
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest",
+          "json_type": "string"
         },
         {
           "name": "event",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the event name to record. Any value is legal except the reserved keys inside `properties`.",
           "fix_hint": "Set `event` to the name you want in Automation, such as `cart_updated`.",
-          "doc": "https://developers.brevo.com/docs/track-custom-events-rest"
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest",
+          "json_type": "string"
         },
         {
           "name": "properties",
           "description": "Optional contact properties. Do not put `email` or `event` inside this object; those keys are reserved.",
-          "doc": "https://developers.brevo.com/docs/track-custom-events-rest"
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest",
+          "json_type": "object"
         },
         {
           "name": "eventdata",
           "description": "Optional event payload, such as cart contents under `eventdata.data`.",
-          "doc": "https://developers.brevo.com/docs/track-custom-events-rest"
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest",
+          "json_type": "object"
+        },
+        {
+          "name": "properties.email",
+          "description": "The vendor documents `properties.email` in the request contract.",
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "properties.event",
+          "description": "The vendor documents `properties.event` in the request contract.",
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest",
+          "requirement": "forbidden"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://developers.brevo.com/docs/track-custom-events-rest",
+          "json_type": "object"
         }
       ],
       "rules": []

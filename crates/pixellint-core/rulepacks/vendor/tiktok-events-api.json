@@ -35,12 +35,29 @@
           },
           "description": "It is the Pixel ID from Events Manager. TikTok documents it as required on both the single-event track call and the batch call.",
           "fix_hint": "Set `pixel_code` to the Pixel ID shown in Events Manager.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+          "json_type": "string"
         },
         {
           "name": "batch",
           "description": "The batch endpoint posts events under `batch`. The track endpoint posts a single event at the root instead.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelBatchBody.md",
+          "json_type": "array",
+          "min_items": 1,
+          "source_level": "official_template"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+          "json_type": "object"
+        },
+        {
+          "name": "batch[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelTrackBody.md",
+          "json_type": "object",
+          "source_level": "official_template"
         }
       ],
       "rules": []
@@ -59,7 +76,8 @@
           },
           "description": "It is the conversion event name. TikTok documents it as required on every track payload.",
           "fix_hint": "Set `event` to a documented web event name, such as `CompletePayment` or `ViewContent`.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+          "json_type": "string"
         },
         {
           "name": "event_id",
@@ -68,7 +86,8 @@
           },
           "description": "It identifies the event for deduplication against the browser pixel. TikTok documents it as required when the same conversion is sent from both.",
           "fix_hint": "Send the same `event_id` the Pixel fired, so the pair collapses to one conversion.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584864945154"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584864945154",
+          "json_type": "string"
         },
         {
           "name": "timestamp",
@@ -87,7 +106,8 @@
           },
           "description": "It is the visitor's public IP address, sent unhashed.",
           "fix_hint": "Send the browser's public IP, not a SHA-256 digest and not your server's address.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+          "json_type": "string"
         },
         {
           "name": "context.user_agent",
@@ -96,7 +116,8 @@
           },
           "description": "It is the visitor's user agent, sent unhashed.",
           "fix_hint": "Send the browser's user agent string, not a digest.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+          "json_type": "string"
         },
         {
           "name": "context.ad.callback",
@@ -105,7 +126,8 @@
           },
           "description": "It is the TikTok Click ID (`ttclid`) from the landing URL. TikTok documents it as unhashed on `context.ad.callback`.",
           "fix_hint": "Copy `ttclid` from the landing URL into `context.ad.callback`, or drop the empty pair.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584860883969"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584860883969",
+          "json_type": "string"
         },
         {
           "name": "context.page.url",
@@ -114,7 +136,8 @@
           },
           "description": "It is the page URL when the event happened. TikTok documents it on `context.page`.",
           "fix_hint": "Send an absolute URL in `context.page.url`, including the scheme.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+          "json_type": "string"
         },
         {
           "name": "context.page.referrer",
@@ -123,7 +146,8 @@
           },
           "description": "It is the page referrer. TikTok documents it on `context.page`.",
           "fix_hint": "Send an absolute referrer URL, or drop the empty pair.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+          "json_type": "string"
         },
         {
           "name": "context.user.email",
@@ -162,7 +186,8 @@
           },
           "description": "It is the first-party `_ttp` cookie. TikTok documents it as unhashed on `context.user.ttp`.",
           "fix_hint": "Read `_ttp` under your domain into `context.user.ttp`, or drop the empty pair.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584860883969"
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584860883969",
+          "json_type": "string"
         },
         {
           "name": "properties.currency",
@@ -177,7 +202,9 @@
         {
           "name": "properties.value",
           "description": "It is the total value of the order or items, not the unit price.",
-          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelProperties.md",
+          "json_type": "number",
+          "source_level": "official_template"
         },
         {
           "name": "properties.contents[].content_id",
@@ -186,7 +213,8 @@
           },
           "description": "It is the product item ID on a contents row. TikTok's Events API SDK documents `content_id` on each `PixelContent` object, not on `properties`.",
           "fix_hint": "Set `properties.contents[].content_id` to the catalog item ID, or drop the empty pair.",
-          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md",
+          "json_type": "string"
         },
         {
           "name": "properties.contents[].content_type",
@@ -199,27 +227,27 @@
           },
           "description": "It is how the row maps to the catalog. TikTok's Events API SDK documents `product` or `product_group` on each contents object.",
           "fix_hint": "Set `properties.contents[].content_type` to `product` or `product_group`. Do not put `content_type` on `properties`.",
-          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md",
+          "json_type": "string"
         },
         {
           "name": "properties.contents[].quantity",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+            "kind": "integer"
           },
           "description": "It is the item count on a contents row. TikTok's Events API SDK documents `quantity` as a number.",
           "fix_hint": "Send `properties.contents[].quantity` as a number, such as `2`.",
-          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelContent.md",
+          "json_type": "integer",
+          "source_level": "official_template"
         },
         {
           "name": "properties.contents[].price",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
-          },
           "description": "It is the unit price of one item. TikTok's Events API SDK documents `price` as the single-item price, not the order total.",
           "fix_hint": "Send `properties.contents[].price` as a number, such as `10`. Put the order total in `properties.value`.",
-          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelContent.md",
+          "json_type": "number",
+          "source_level": "official_template"
         },
         {
           "name": "properties.contents[].content_name",
@@ -228,7 +256,8 @@
           },
           "description": "It is the name of the page or product on a contents row. TikTok's Events API SDK documents `content_name` on each `PixelContent` object.",
           "fix_hint": "Set `properties.contents[].content_name` to the page or product name, or drop the empty pair.",
-          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md",
+          "json_type": "string"
         },
         {
           "name": "properties.contents[].content_category",
@@ -237,7 +266,8 @@
           },
           "description": "It is the category of the page or product on a contents row. TikTok's Events API SDK documents `content_category` on each `PixelContent` object.",
           "fix_hint": "Set `properties.contents[].content_category` to the category, or drop the empty pair.",
-          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md",
+          "json_type": "string"
         },
         {
           "name": "properties.contents[].status",
@@ -246,7 +276,77 @@
           },
           "description": "It is the status of an order, item, or service on a contents row. TikTok's Events API SDK documents `status` as a string with no enumerated values.",
           "fix_hint": "Set `properties.contents[].status` to the order or item status, or drop the empty pair.",
-          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md"
+          "doc": "https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
+          "json_type": "object"
+        },
+        {
+          "name": "context",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelTrackBody.md",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "context.user",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelTrackBody.md",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "context.page",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelTrackBody.md",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "context.ad",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelTrackBody.md",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "properties",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelTrackBody.md",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "properties.contents",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelTrackBody.md",
+          "json_type": "array",
+          "source_level": "official_template"
+        },
+        {
+          "name": "properties.contents[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelTrackBody.md",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "properties.description",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelProperties.md",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "properties.query",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelProperties.md",
+          "json_type": "string",
+          "source_level": "official_template"
         }
       ],
       "rules": [
@@ -294,8 +394,14 @@
           "code": "vendor.tiktok-events-api.body.complete_payment_requires_value_and_currency",
           "kind": "required_when_value",
           "when": "event",
-          "equals": ["CompletePayment", "PlaceAnOrder"],
-          "requires": ["properties.value", "properties.currency"],
+          "equals": [
+            "CompletePayment",
+            "PlaceAnOrder"
+          ],
+          "requires": [
+            "properties.value",
+            "properties.currency"
+          ],
           "severity": "error",
           "message": "A `CompletePayment` or `PlaceAnOrder` event is missing `properties.value` or `properties.currency`. TikTok documents both on those revenue events.",
           "fix_hint": "Set `properties.value` to the order total and `properties.currency` to a three-letter ISO 4217 code.",

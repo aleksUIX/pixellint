@@ -67,17 +67,20 @@
           },
           "description": "It is the AppsFlyer device identifier generated on first launch, and the endpoint requires it.",
           "fix_hint": "Send the `appsflyer_id` the SDK generated for this install.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "eventName",
           "requirement": "required",
           "format": {
-            "kind": "non_empty"
+            "kind": "regex",
+            "pattern": "^[^\"=+\\-\\s][^\\s]*$"
           },
-          "description": "It is the in-app event name, and the endpoint requires it.",
+          "description": "Event names cannot start with quote, equals, plus or minus and cannot contain spaces. Custom names remain allowed.",
           "fix_hint": "Set `eventName` to the event the marketer expects, such as `af_purchase`.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview",
+          "json_type": "string"
         },
         {
           "name": "eventValue",
@@ -85,17 +88,24 @@
           "allow_empty": true,
           "description": "AppsFlyer documents `eventValue` as required. Send an empty string when the event has no value.",
           "fix_hint": "Send a JSON object string, or `\"\"` when there is no value.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "att",
           "format": {
             "kind": "enum",
-            "values": ["0", "1", "2", "3"]
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3"
+            ]
           },
           "description": "It is the iOS ATTrackingManager status. AppsFlyer documents 0 not determined, 1 restricted, 2 denied, 3 authorized.",
           "fix_hint": "Send `0`, `1`, `2`, or `3`.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "integer"
         },
         {
           "name": "advertising_id",
@@ -105,7 +115,8 @@
           },
           "description": "It is the Android GAID. AppsFlyer documents a UUID.",
           "fix_hint": "Send the GAID as a UUID.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "idfa",
@@ -115,7 +126,8 @@
           },
           "description": "It is the iOS IDFA. AppsFlyer documents a UUID.",
           "fix_hint": "Send the IDFA as a UUID.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "idfv",
@@ -125,17 +137,18 @@
           },
           "description": "It is the iOS IDFV. AppsFlyer documents a UUID.",
           "fix_hint": "Send the IDFV as a UUID.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "oaid",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            "kind": "non_empty"
           },
           "description": "It is the Android OAID, used when GAID is not available. AppsFlyer's sample is a UUID.",
           "fix_hint": "Send the OAID as a UUID.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "customer_user_id",
@@ -144,7 +157,8 @@
           },
           "description": "It is the advertiser's user id. AppsFlyer documents `customer_user_id` as a unique user identifier set by the app owner.",
           "fix_hint": "Send `customer_user_id`, or drop the empty pair.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "fb_login_id",
@@ -154,7 +168,8 @@
           },
           "description": "It is the Facebook Login ID. AppsFlyer documents a numeric string.",
           "fix_hint": "Send `fb_login_id` as digits only, such as `10293847561029384`.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "bundleIdentifier",
@@ -163,7 +178,8 @@
           },
           "description": "It is the app bundle id. AppsFlyer documents it as best practice for campaign optimization.",
           "fix_hint": "Send the bundle id, such as `com.example.myapp`, or drop the empty pair.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "app_version_name",
@@ -172,55 +188,75 @@
           },
           "description": "It is the public app version name. AppsFlyer documents `app_version_name` on both Android and iOS payloads.",
           "fix_hint": "Send `app_version_name`, or drop the empty pair.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "consent_data.manual.gdpr_applies",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It is whether GDPR applies. AppsFlyer documents a boolean on the manual consent object.",
           "fix_hint": "Send `true` or `false` in `consent_data.manual.gdpr_applies`.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "boolean"
         },
         {
           "name": "consent_data.manual.ad_user_data_enabled",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It is the ad-user-data consent flag. AppsFlyer documents a boolean on the manual consent object.",
           "fix_hint": "Send `true` or `false` in `consent_data.manual.ad_user_data_enabled`.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "boolean"
         },
         {
           "name": "consent_data.manual.ad_personalization_enabled",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It is the ad-personalization consent flag. AppsFlyer documents a boolean on the manual consent object.",
           "fix_hint": "Send `true` or `false` in `consent_data.manual.ad_personalization_enabled`.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "boolean"
         },
         {
           "name": "aie",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "AppsFlyer documents `aie` as a boolean. `true` means the user agreed to share the advertiser ID.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "boolean"
         },
         {
           "name": "app_type",
           "format": {
             "kind": "enum",
-            "values": ["app_clip"]
+            "values": [
+              "app_clip"
+            ]
           },
           "description": "AppsFlyer documents `app_clip` when the event happened in an app clip. Omit the field otherwise.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "os",
@@ -228,27 +264,30 @@
             "kind": "non_empty"
           },
           "description": "It is the device OS version. AppsFlyer documents it as required for correct processing, and assumes iOS 14.5 when it is omitted on iOS.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "eventTime",
           "format": {
-            "kind": "regex",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?$"
+            "kind": "datetime",
+            "allow_space_separator": true
           },
           "description": "AppsFlyer documents UTC as `yyyy-mm-dd hh:mm:ss.sss`. An epoch number is stamped as the arrival time instead.",
           "fix_hint": "Send UTC as `2019-05-15 12:17:01.123`, with a space, not `T`.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "eventCurrency",
           "format": {
-            "kind": "regex",
-            "pattern": "^[A-Za-z]{3}$"
+            "kind": "currency",
+            "case_insensitive": true
           },
           "description": "It is an ISO 4217 currency code.",
           "fix_hint": "Use the three-letter code, such as `USD`.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "email_hashed",
@@ -258,7 +297,8 @@
           },
           "description": "Email must be trimmed, lowercased, and SHA-256 hashed before it is sent.",
           "fix_hint": "Trim and lowercase the address, hash it with SHA-256, and send the hex digest.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "phone_number_hashed",
@@ -268,7 +308,8 @@
           },
           "description": "Phone must be normalized and SHA-256 hashed before it is sent.",
           "fix_hint": "Strip symbols and leading zeros, keep the country code, hash with SHA-256, and send the hex digest.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "phone_number_e164_hashed",
@@ -278,7 +319,8 @@
           },
           "description": "An E.164 phone number must be SHA-256 hashed before it is sent.",
           "fix_hint": "Normalize to E.164, hash with SHA-256, and send the hex digest.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "first_name_hashed",
@@ -288,7 +330,8 @@
           },
           "description": "First name must be lowercased and SHA-256 hashed before it is sent.",
           "fix_hint": "Lowercase the name, hash it with SHA-256, and send the hex digest.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "last_name_hashed",
@@ -298,16 +341,96 @@
           },
           "description": "Last name must be lowercased and SHA-256 hashed before it is sent.",
           "fix_hint": "Lowercase the name, hash it with SHA-256, and send the hex digest.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
         },
         {
           "name": "ip",
           "format": {
-            "kind": "non_empty"
+            "kind": "ip"
           },
           "description": "It is the device IP address during the event, sent unhashed.",
           "fix_hint": "Send the device IP, not a SHA-256 digest.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "object"
+        },
+        {
+          "name": "amazon_aid",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
+        },
+        {
+          "name": "imei",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
+        },
+        {
+          "name": "app_store",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_dimension",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string"
+        },
+        {
+          "name": "sharing_filter",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "array"
+        },
+        {
+          "name": "sharing_filter[]",
+          "description": "Every blocked partner is sent as a partner identifier string.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "consent_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "object"
+        },
+        {
+          "name": "consent_data.manual",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "object"
+        },
+        {
+          "name": "consent_data.tcf",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "object"
+        },
+        {
+          "name": "consent_data.tcf.tc_string",
+          "description": "TCF consent is a structurally decodable TCFv2 string; original jurisdiction and permissions require external context.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "json_type": "string",
+          "format": {
+            "kind": "tcf"
+          }
         }
       ],
       "rules": [
@@ -331,8 +454,551 @@
           "message": "`ip` looks like a SHA-256 digest, but AppsFlyer documents it as the device IP address, unhashed.",
           "fix_hint": "Send the raw IP address. Hashing it makes geo matching fail.",
           "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "code": "vendor.appsflyer.body.android_os_required",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "os"
+            ]
+          ],
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "present",
+                "param": "advertising_id"
+              },
+              {
+                "kind": "present",
+                "param": "oaid"
+              },
+              {
+                "kind": "present",
+                "param": "amazon_aid"
+              },
+              {
+                "kind": "present",
+                "param": "imei"
+              }
+            ]
+          },
+          "severity": "error",
+          "message": "Android events identified by Android device IDs must include the device operating-system version.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "code": "vendor.appsflyer.body.ios14_att_recommended",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "att"
+            ]
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "present",
+                    "param": "idfa"
+                  },
+                  {
+                    "kind": "present",
+                    "param": "idfv"
+                  }
+                ]
+              },
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "os"
+                    }
+                  },
+                  {
+                    "kind": "value_pattern",
+                    "param": "os",
+                    "pattern": "^(?:1[4-9]|[2-9][0-9]|[1-9][0-9]{2,})(?:\\.|$)"
+                  }
+                ]
+              }
+            ]
+          },
+          "severity": "warning",
+          "message": "Populate ATTrackingManager status for iOS14 and later. When os is omitted, AppsFlyer assumes iOS14.5.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
         }
       ]
+    },
+    {
+      "source_field": "eventValue",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "description": "The API documents a JSON-encoded object inside this string-valued field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "name": "af_revenue",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "description": "Revenue may use a decimal point and a leading minus sign. Additional currency symbols and formatting are unsupported.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          }
+        },
+        {
+          "name": "af_net_revenue",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "description": "Net revenue uses the same decimal syntax as gross revenue. Revenue after fees and tax requires original business data.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        },
+        {
+          "name": "af_order_info",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "description": "Item-level order data accepts an object of per-field arrays or an array of per-item objects. Every one of the seven fields is optional.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.sku",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.revenue",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.qty",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.content_name",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.content_type",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.content_category",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.brand",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.content_type[]",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group"
+            ]
+          },
+          "description": "The only supported content types are product and product_group.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_content",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "max_length": 1000,
+          "format_severity": "warning",
+          "description": "Preserve normal content titles and SDK string arrays. Legacy complex-item JSON strings above1000 characters may be omitted from Meta postbacks.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        },
+        {
+          "name": "af_content_id",
+          "json_type": [
+            "string",
+            "number",
+            "array"
+          ],
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        },
+        {
+          "name": "af_quantity",
+          "json_type": [
+            "string",
+            "number",
+            "array"
+          ],
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        },
+        {
+          "name": "af_price",
+          "json_type": [
+            "string",
+            "number",
+            "array"
+          ],
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.appsflyer.body.order_array_lengths",
+          "kind": "equal_array_lengths",
+          "params": [
+            "af_order_info.sku",
+            "af_order_info.revenue",
+            "af_order_info.qty",
+            "af_order_info.content_name",
+            "af_order_info.content_type",
+            "af_order_info.content_category",
+            "af_order_info.brand"
+          ],
+          "severity": "error",
+          "message": "Each populated order field array must cover the same items in the same order. Item identity/order requires original basket context.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "code": "vendor.appsflyer.body.legacy_array_lengths",
+          "kind": "equal_array_lengths",
+          "params": [
+            "af_content_id",
+            "af_quantity",
+            "af_price"
+          ],
+          "severity": "error",
+          "message": "Parallel content ID, quantity and price arrays must cover the same ordered items.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        },
+        {
+          "code": "vendor.appsflyer.body.revenue_precision",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "af_revenue",
+            "af_net_revenue"
+          ],
+          "pattern": "\\.[0-9]{6,}$",
+          "severity": "warning",
+          "message": "AppsFlyer reports revenue with up to five decimal places; additional precision may be lost.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        }
+      ],
+      "source_max_length": 3000,
+      "source_max_length_when": "af_order_info"
+    },
+    {
+      "source_field": "custom_data",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "description": "The API documents a JSON-encoded object inside this string-valued field.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        },
+        {
+          "name": "af_order_info",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "description": "Item-level order data accepts an object of per-field arrays or an array of per-item objects. Every one of the seven fields is optional.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.sku",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.revenue",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.qty",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.content_name",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.content_type",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.content_category",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.brand",
+          "json_type": "array",
+          "description": "In the compact field-per-array representation, each populated item field is an array.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "af_order_info.content_type[]",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group"
+            ]
+          },
+          "description": "The only supported content types are product and product_group.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.appsflyer.body.order_array_lengths",
+          "kind": "equal_array_lengths",
+          "params": [
+            "af_order_info.sku",
+            "af_order_info.revenue",
+            "af_order_info.qty",
+            "af_order_info.content_name",
+            "af_order_info.content_type",
+            "af_order_info.content_category",
+            "af_order_info.brand"
+          ],
+          "severity": "error",
+          "message": "Each populated order field array must cover the same items in the same order. Item identity/order requires original basket context.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        }
+      ]
+    },
+    {
+      "scope": "sharing_filter[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "string",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.appsflyer.body.sharing_filter_legacy_alias",
+          "kind": "forbid_value_pattern",
+          "params": [
+            ""
+          ],
+          "pattern": "^(?:twitter_int|iossearchads_int)$",
+          "severity": "error",
+          "message": "Use twitter and Apple Search Ads for these two sharing-filter exceptions.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+        }
+      ]
+    },
+    {
+      "source_field": "eventValue",
+      "scope": "af_order_info[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "sku",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "revenue",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "qty",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "content_name",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "content_type",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group"
+            ]
+          }
+        },
+        {
+          "name": "content_category",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "brand",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_field": "custom_data",
+      "scope": "af_order_info[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "sku",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "revenue",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "qty",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "content_name",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "content_type",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group"
+            ]
+          }
+        },
+        {
+          "name": "content_category",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        },
+        {
+          "name": "brand",
+          "description": "Optional item field. The source does not define an exclusive scalar native type.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/50185623016721-Item-level-order-data-for-ad-networks-af-order-info"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_field": "eventValue",
+      "decoded_source_field": "af_content",
+      "decoded_source_condition": {
+        "path": "af_content",
+        "pattern": "^\\s*\\["
+      },
+      "params": [
+        {
+          "name": "",
+          "json_type": "array",
+          "description": "The legacy complex-item representation is a JSON array encoded within af_content.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_field": "eventValue",
+      "decoded_source_field": "af_content",
+      "decoded_source_condition": {
+        "path": "af_content",
+        "pattern": "^\\s*\\["
+      },
+      "scope": "[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        },
+        {
+          "name": "id",
+          "requirement": "required",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        },
+        {
+          "name": "quantity",
+          "requirement": "required",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview"
+        }
+      ],
+      "rules": []
     }
   ]
 }

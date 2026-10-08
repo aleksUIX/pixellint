@@ -12,8 +12,8 @@ use std::path::{Path, PathBuf};
 
 use pixellint_core::{
     ArtifactKind, BUILTIN_VENDOR_MANIFESTS, CoreRulePack, Engine, ExpansionState, ManifestRulePack,
-    Severity, ValidationOptions, ValidationReport, ValidationRequest, ValidationSummary,
-    ValidatorPlugin,
+    PreparedArtifact, Severity, ValidationOptions, ValidationReport, ValidationRequest,
+    ValidationSummary, ValidatorPlugin,
 };
 use serde::Deserialize;
 
@@ -23,6 +23,8 @@ struct FixtureCase {
     id: String,
     kind: String,
     fixture: String,
+    #[serde(default)]
+    reference_time: Option<i64>,
     #[serde(default)]
     expansion_state: Option<String>,
     #[serde(default)]
@@ -88,8 +90,12 @@ fn golden_corpus_matches_expected_findings() {
                 except_rulepacks: case.except_rulepacks.clone(),
             };
 
-            let summary = engine
-                .validate(&request, &options)
+            let summary = case
+                .reference_time
+                .map_or_else(
+                    || engine.validate(&request, &options),
+                    |time| engine.validate_at(&request, &options, time),
+                )
                 .unwrap_or_else(|error| panic!("validate fixture {label}: {error}"));
 
             if let Some(expected_plugins) = &case.expected_plugins {
@@ -170,17 +176,40 @@ fn auto_mode_matches_independent_plugin_supports_and_reports() {
 
             let excluded: BTreeSet<&str> =
                 case.except_rulepacks.iter().map(String::as_str).collect();
+            let reference_time = case.reference_time.unwrap_or_else(|| {
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .unwrap()
+                    .as_secs() as i64
+            });
+            let mut prepared = PreparedArtifact::from_request_at(&request, reference_time);
+            for (id, pack) in &packs {
+                if !excluded.contains(id) && pack.supports_prepared(&prepared) {
+                    pack.prepare_vendor_context(&mut prepared);
+                }
+            }
+            let client_fragment = packs.iter().any(|(id, pack)| {
+                !excluded.contains(id) && pack.accepts_client_fragment(&prepared)
+            });
 
             let mut expected = Vec::new();
             if !excluded.contains("core") && core.supports(&request) {
-                expected.push(core.validate(&request));
+                let mut core_report = core.validate_prepared(&prepared);
+                // Core alone has no destination context. A matching manifest
+                // can establish a browser configuration fragment's purpose.
+                if client_fragment {
+                    core_report
+                        .violations
+                        .retain(|violation| violation.code != "core.url.fragment_ignored");
+                }
+                expected.push(core_report);
             }
             for (id, pack) in &packs {
                 if excluded.contains(id) {
                     continue;
                 }
                 if pack.supports(&request) {
-                    expected.push(pack.validate(&request));
+                    expected.push(pack.validate_prepared(&prepared));
                 }
             }
 
@@ -189,7 +218,7 @@ fn auto_mode_matches_independent_plugin_supports_and_reports() {
                 except_rulepacks: case.except_rulepacks.clone(),
             };
             let summary = engine
-                .validate(&request, &options)
+                .validate_at(&request, &options, reference_time)
                 .unwrap_or_else(|error| panic!("validate fixture {label}: {error}"));
 
             let actual: Vec<&ValidationReport> = summary

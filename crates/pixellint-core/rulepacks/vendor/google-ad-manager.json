@@ -2,15 +2,19 @@
   "id": "vendor/google-ad-manager",
   "display_name": "Google Ad Manager ad request",
   "vendor": "google",
-  "description": "Google Ad Manager ad requests on pubads.g.doubleclick.net/gampad/ads and securepubads.g.doubleclick.net/gampad/ads. Google documents iu, sz, output, env, gdfp_req, and correlator as required to implement ad serving. description_url is required for web and recommended for programmatic. pagead/interaction and pcs/view stay directory-only. Floodlight activity tags stay vendor/floodlight. CM360 VAST events stay vendor/cm360-vast-event.",
+  "description": "Google Ad Manager direct VAST and VMAP ad requests. Covers published parameter formats and request-visible feature dependencies. Platform, programmatic, network configuration and player behavior requirements require request context.",
   "source_level": "official_vendor",
   "docs": "https://support.google.com/admanager/answer/10655276",
   "match": {
     "hosts": [
       "pubads.g.doubleclick.net",
-      "securepubads.g.doubleclick.net"
+      "securepubads.g.doubleclick.net",
+      "pagead2.googlesyndication.com"
     ],
-    "path_contains": ["/gampad/ads"]
+    "path_contains": [
+      "/gampad/ads",
+      "/gampad/live/ads"
+    ]
   },
   "params": [
     {
@@ -26,14 +30,16 @@
     },
     {
       "name": "sz",
-      "requirement": "required",
+      "requirement": "optional",
       "format": {
         "kind": "regex",
         "pattern": "^[0-9]+x[0-9]+(\\|[0-9]+x[0-9]+)*$"
       },
-      "description": "It is the size of the primary video ad slot. Google documents sz as required to implement ad serving, with multiple sizes separated by a pipe and no trailing v.",
+      "description": "The primary video slot size is required for video requests. Audio-only requests may omit sz. Multiple sizes use a pipe separator.",
       "fix_hint": "Set sz to the player size, such as 640x480 or 300x250|400x300.",
-      "doc": "https://support.google.com/admanager/answer/10655276"
+      "doc": "https://support.google.com/admanager/answer/10655276",
+      "format_severity": "error",
+      "severity": "error"
     },
     {
       "name": "output",
@@ -51,7 +57,10 @@
       "requirement": "required",
       "format": {
         "kind": "enum",
-        "values": ["instream", "vp"]
+        "values": [
+          "instream",
+          "vp"
+        ]
       },
       "description": "It marks an in-stream or video-player request. Google documents env as required, with instream for video or audio and vp for video only.",
       "fix_hint": "Set env=vp for video or env=instream when the request may return audio.",
@@ -62,7 +71,9 @@
       "requirement": "required",
       "format": {
         "kind": "enum",
-        "values": ["1"]
+        "values": [
+          "1"
+        ]
       },
       "description": "It is the Google Ad Manager schema indicator. Google documents gdfp_req=1 as required to implement ad serving.",
       "fix_hint": "Set gdfp_req=1.",
@@ -76,7 +87,8 @@
       },
       "description": "It is a random positive integer shared by requests from the same page view. Google documents correlator as required to implement ad serving, including competitive exclusions.",
       "fix_hint": "Set correlator to a fresh random positive integer per page view, not reused across views.",
-      "doc": "https://support.google.com/admanager/answer/10655276"
+      "doc": "https://support.google.com/admanager/answer/10655276",
+      "minimum": 1
     },
     {
       "name": "description_url",
@@ -92,11 +104,15 @@
       "name": "unviewed_position_start",
       "format": {
         "kind": "enum",
-        "values": ["1"]
+        "values": [
+          "1",
+          "false",
+          "true"
+        ]
       },
       "description": "It marks delayed impressions for video. Google documents unviewed_position_start=1 as required for web and mobile apps when the impression is delayed.",
       "fix_hint": "Set unviewed_position_start=1 on delayed-impression VAST tags.",
-      "doc": "https://support.google.com/admanager/answer/10655276"
+      "doc": "https://support.google.com/admanager/answer/10678356"
     },
     {
       "name": "url",
@@ -111,7 +127,10 @@
       "name": "plcmt",
       "format": {
         "kind": "enum",
-        "values": ["1", "2"]
+        "values": [
+          "1",
+          "2"
+        ]
       },
       "description": "It is the IAB placement. Google documents plcmt as required for programmatic, with 1 for instream and 2 for accompanying content.",
       "fix_hint": "Set plcmt=1 for instream or plcmt=2 for accompanying content.",
@@ -121,7 +140,10 @@
       "name": "vpa",
       "format": {
         "kind": "enum",
-        "values": ["auto", "click"]
+        "values": [
+          "auto",
+          "click"
+        ]
       },
       "description": "It says whether content starts on autoplay or click. Google documents vpa as required for programmatic. Leave it unset when unknown.",
       "fix_hint": "Set vpa=auto or vpa=click, or omit it when playback start is unknown.",
@@ -131,17 +153,29 @@
       "name": "vpmute",
       "format": {
         "kind": "enum",
-        "values": ["0", "1"]
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
       },
       "description": "It says whether ad playback starts muted. Google documents vpmute as required for programmatic, with 1 muted and 0 unmuted.",
       "fix_hint": "Set vpmute=1 when playback starts muted, or vpmute=0 when it starts unmuted.",
-      "doc": "https://support.google.com/admanager/answer/10655276"
+      "doc": "https://support.google.com/admanager/answer/10678356"
     },
     {
       "name": "ott_placement",
       "format": {
         "kind": "enum",
-        "values": ["1", "2", "3", "4", "5", "99"]
+        "values": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "99"
+        ]
       },
       "description": "It names a non-standard OTT placement. Google documents ott_placement as required for programmatic pause, homescreen, PIP, L-banner, overlay, or custom CTV, and unnecessary for standard instream.",
       "fix_hint": "Set ott_placement to 1 through 5 or 99 for those OTT formats. Omit it for standard instream.",
@@ -151,7 +185,11 @@
       "name": "vpos",
       "format": {
         "kind": "enum",
-        "values": ["preroll", "midroll", "postroll"]
+        "values": [
+          "preroll",
+          "midroll",
+          "postroll"
+        ]
       },
       "description": "It is the pod position. Google documents vpos as recommended for programmatic. Ad rules set it automatically.",
       "fix_hint": "Set vpos to preroll, midroll, or postroll when you are not using ad rules.",
@@ -161,7 +199,10 @@
       "name": "vconp",
       "format": {
         "kind": "enum",
-        "values": ["1", "2"]
+        "values": [
+          "1",
+          "2"
+        ]
       },
       "description": "It says whether the player intends to play video continuously. Google documents vconp as recommended for programmatic, with 2 on and 1 off. Leave it unset when unknown.",
       "fix_hint": "Set vconp=2 for continuous play, vconp=1 when it is off, or omit it when unknown.",
@@ -172,17 +213,26 @@
       "allow_empty": true,
       "format": {
         "kind": "enum",
-        "values": ["0", "1"]
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
       },
       "description": "It says whether the player will render the AdChoices icon from VAST. Google documents wta as recommended for programmatic. Omit it, send 1, or send an empty pair when the player renders the icon.",
       "fix_hint": "Set wta=1 when the player renders AdChoices, or wta=0 only when it will not.",
-      "doc": "https://support.google.com/admanager/answer/10655276"
+      "doc": "https://support.google.com/admanager/answer/10678356"
     },
     {
       "name": "aconp",
       "format": {
         "kind": "enum",
-        "values": ["0", "1", "2"]
+        "values": [
+          "0",
+          "1",
+          "2"
+        ]
       },
       "description": "It says whether the player intends to play audio continuously. Google documents aconp=2 on, aconp=1 off, and aconp=0 when unknown.",
       "fix_hint": "Set aconp=2 for continuous audio, aconp=1 when it is off, or aconp=0 when unknown.",
@@ -192,7 +242,15 @@
       "name": "dth",
       "format": {
         "kind": "enum",
-        "values": ["1", "2", "3", "4", "5", "6", "7"]
+        "values": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ]
       },
       "description": "It is a device type hint. Google documents 1 feature phone, 2 smart phone, 3 desktop, 4 tablet, 5 connected TV, 6 game console, and 7 set top box.",
       "fix_hint": "Set dth to 1 through 7 for the device class of this request.",
@@ -210,14 +268,18 @@
     },
     {
       "name": "givn",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the PAL video nonce. Google documents givn as the replacement for paln, and says not to send both.",
       "fix_hint": "Send the PAL nonce in givn, or drop the empty pair. Do not also send paln.",
       "doc": "https://support.google.com/admanager/answer/10655276"
     },
     {
       "name": "omid_p",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the OMID partner name and version when PAL is not used. Google documents a value such as examplepartnername/1.0.0.0.",
       "fix_hint": "Send omid_p as partner/version when you are not using PAL or the IMA SDK.",
       "doc": "https://support.google.com/admanager/answer/10655276"
@@ -228,9 +290,10 @@
         "kind": "regex",
         "pattern": "^[0-9]+(?:,[0-9]+)*$"
       },
-      "description": "It is the supported SDK API frameworks. Google documents a single integer or a comma-separated list, such as 7 for OMID.",
+      "description": "AdCOM frameworks1..9 or vendor-specific codes500andabove. Unregistered lower codes receive an advisory because the registry can grow.",
       "fix_hint": "Send sdk_apis as one or more integer API framework values, comma-separated.",
-      "doc": "https://support.google.com/admanager/answer/10655276"
+      "doc": "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/main/AdCOM%20v1.0%20FINAL.md#list--api-frameworks-",
+      "format_severity": "error"
     },
     {
       "name": "vid_d",
@@ -240,7 +303,1063 @@
       "description": "It is content duration in seconds. Google documents vid_d as recommended for programmatic mid-rolls without content ingestion.",
       "fix_hint": "Set vid_d to the content duration in seconds when requesting mid-rolls.",
       "doc": "https://support.google.com/admanager/answer/10655276"
+    },
+    {
+      "name": "ad_type",
+      "description": "The vendor documents `ad_type` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "audio",
+          "video",
+          "audio_video",
+          "skippablevideo",
+          "standardvideo"
+        ]
+      }
+    },
+    {
+      "name": "ad_rule",
+      "description": "The vendor documents `ad_rule` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": false
+    },
+    {
+      "name": "gdpr",
+      "description": "The vendor documents `gdpr` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": false
+    },
+    {
+      "name": "is_lat",
+      "description": "The vendor documents `is_lat` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": false
+    },
+    {
+      "name": "ltd",
+      "description": "The vendor documents `ltd` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": false
+    },
+    {
+      "name": "nofb",
+      "description": "The vendor documents `nofb` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": false
+    },
+    {
+      "name": "npa",
+      "description": "The vendor documents `npa` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "rdp",
+      "description": "The vendor documents `rdp` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "ppt",
+      "description": "The vendor documents `ppt` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": false
+    },
+    {
+      "name": "tfcd",
+      "description": "The vendor documents `tfcd` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": false
+    },
+    {
+      "name": "vpi",
+      "description": "The vendor documents `vpi` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "false",
+          "true"
+        ]
+      },
+      "allow_empty": false
+    },
+    {
+      "name": "an",
+      "description": "The vendor documents `an` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "msid",
+      "description": "The vendor documents `msid` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ct_ch",
+      "description": "The vendor documents `ct_ch` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ct_ne",
+      "description": "The vendor documents `ct_ne` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ct_se",
+      "description": "The vendor documents `ct_se` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ct_ti",
+      "description": "The vendor documents `ct_ti` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cust_params",
+      "description": "Custom targeting is an encoded query of key=value pairs joined by ampersands. A key may have comma-separated values.",
+      "doc": "https://support.google.com/admanager/answer/1080597",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^=&]+=[^&]*(?:&[^=&]+=[^&]*)*$"
+      }
+    },
+    {
+      "name": "ipd",
+      "description": "The vendor documents `ipd` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "paln",
+      "description": "The vendor documents `paln` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "pp",
+      "description": "The vendor documents `pp` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ppid",
+      "description": "A publisher-provided ID has 22 to 150 characters from the documented alphanumeric and punctuation set. Its hash/encryption provenance requires external evidence.",
+      "doc": "https://support.google.com/admanager/answer/2880055",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9A-Za-z+.=/_$,{\\}-]{22,150}$"
+      },
+      "min_length": 22,
+      "max_length": 150
+    },
+    {
+      "name": "ptpl",
+      "description": "The vendor documents `ptpl` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ptpln",
+      "description": "The vendor documents `ptpln` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "pvid",
+      "description": "The vendor documents `pvid` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "rdid",
+      "description": "Resettable device identifiers contain 32 alphanumeric characters and four hyphens grouped 8-4-4-4-12.",
+      "doc": "https://support.google.com/admanager/answer/6238701",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9A-Za-z]{8}-[0-9A-Za-z]{4}-[0-9A-Za-z]{4}-[0-9A-Za-z]{4}-[0-9A-Za-z]{12}$"
+      }
+    },
+    {
+      "name": "ssss",
+      "description": "The vendor documents `ssss` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "addtl_consent",
+      "description": "Google Additional Consent v1 or v2. ACv2 has consented IDs and a disclosed dv list; the dot after dv is optional only when that list is empty.",
+      "doc": "https://support.google.com/admanager/answer/9681920",
+      "format": {
+        "kind": "additional_consent"
+      },
+      "fix_hint": "Send an ACv1 string such as 1~1.35 or an ACv2 string such as 2~1.10~dv.2.3.4."
+    },
+    {
+      "name": "gdpr_consent",
+      "description": "The vendor documents `gdpr_consent` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "us_privacy",
+      "description": "The vendor documents `us_privacy` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "venuetype",
+      "description": "OpenOOH version1.1 venue enumeration ID, as linked by Google Ad Manager.",
+      "doc": "https://raw.githubusercontent.com/openooh/venue-taxonomy/main/specification-1.1.json",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1",
+          "101",
+          "10101",
+          "10102",
+          "10103",
+          "10104",
+          "10105",
+          "10106",
+          "10107",
+          "102",
+          "10201",
+          "10202",
+          "10203",
+          "103",
+          "104",
+          "105",
+          "10501",
+          "10502",
+          "106",
+          "10601",
+          "10602",
+          "107",
+          "2",
+          "201",
+          "20101",
+          "20102",
+          "202",
+          "203",
+          "20301",
+          "20302",
+          "20303",
+          "204",
+          "205",
+          "20501",
+          "20502",
+          "20503",
+          "206",
+          "207",
+          "208",
+          "3",
+          "301",
+          "30101",
+          "30102",
+          "30103",
+          "302",
+          "303",
+          "4",
+          "401",
+          "40101",
+          "40102",
+          "402",
+          "40201",
+          "40202",
+          "40203",
+          "403",
+          "5",
+          "501",
+          "502",
+          "6",
+          "601",
+          "602",
+          "60201",
+          "60202",
+          "60203",
+          "7",
+          "701",
+          "70101",
+          "70102",
+          "8",
+          "801",
+          "80101",
+          "80102",
+          "80103",
+          "802",
+          "80201",
+          "80202",
+          "803",
+          "80301",
+          "80302",
+          "804",
+          "805",
+          "806",
+          "807",
+          "80701",
+          "80702",
+          "80703",
+          "808",
+          "809",
+          "810",
+          "9",
+          "901",
+          "902",
+          "903",
+          "10",
+          "1001",
+          "11",
+          "1101",
+          "110101",
+          "110102"
+        ]
+      },
+      "minimum": 0
+    },
+    {
+      "name": "cmsid",
+      "description": "The vendor documents `cmsid` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "mridx",
+      "description": "The vendor documents `mridx` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "pmad",
+      "description": "The vendor documents `pmad` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "pod",
+      "description": "The vendor documents `pod` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "ppos",
+      "description": "The vendor documents `ppos` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "scor",
+      "description": "The vendor documents `scor` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "max_ad_duration",
+      "description": "The vendor documents `max_ad_duration` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "min_ad_duration",
+      "description": "The vendor documents `min_ad_duration` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "pmnd",
+      "description": "The vendor documents `pmnd` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "pmxd",
+      "description": "The vendor documents `pmxd` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "pmxfwt",
+      "description": "The vendor documents `pmxfwt` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "sdmax",
+      "description": "The vendor documents `sdmax` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "pubf",
+      "description": "The vendor documents `pubf` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "pvtf",
+      "description": "The vendor documents `pvtf` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "minimum": 0
+    },
+    {
+      "name": "adtest",
+      "description": "The vendor documents `adtest` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "on",
+          "off"
+        ]
+      }
+    },
+    {
+      "name": "devt",
+      "description": "The vendor documents `devt` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "stb"
+        ]
+      }
+    },
+    {
+      "name": "ipe",
+      "description": "The vendor documents `ipe` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "ssb"
+        ]
+      }
+    },
+    {
+      "name": "pvid_s",
+      "description": "The vendor documents `pvid_s` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "scope_app",
+          "scope_developer"
+        ]
+      }
+    },
+    {
+      "name": "tfat",
+      "description": "The vendor documents `tfat` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "name": "trt",
+      "description": "The vendor documents `trt` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "name": "vad_type",
+      "description": "The vendor documents `vad_type` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "linear",
+          "nonlinear"
+        ]
+      }
+    },
+    {
+      "name": "idtype",
+      "description": "Device identifier types use the documented case-sensitive names.",
+      "doc": "https://support.google.com/admanager/answer/6238701",
+      "allow_empty": true,
+      "format": {
+        "kind": "enum",
+        "values": [
+          "aaid",
+          "adid",
+          "afai",
+          "idfa",
+          "lgudid",
+          "msai",
+          "rida",
+          "tifa",
+          "tvOS",
+          "vaid",
+          "vida",
+          "dpid"
+        ]
+      }
+    },
+    {
+      "name": "sid",
+      "description": "The vendor documents `sid` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:0|[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12})$"
+      }
+    },
+    {
+      "name": "afvsz",
+      "description": "The vendor documents `afvsz` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "allow_empty": true,
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:200x200|250x250|300x250|336x280|450x50|468x60|480x90|728x90)(?:,(?:200x200|250x250|300x250|336x280|450x50|468x60|480x90|728x90))*$"
+      }
+    },
+    {
+      "name": "ciu_szs",
+      "description": "The vendor documents `ciu_szs` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+x[0-9]+(?:[|,][0-9]+x[0-9]+)*$"
+      }
+    },
+    {
+      "name": "allcues",
+      "description": "The vendor documents `allcues` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:,[0-9]+)*$"
+      }
+    },
+    {
+      "name": "iabexcl",
+      "description": "Comma-separated registered numeric Content Taxonomy3.0 IDs from the current vendor-linked registry. Unregistered IDs are advisory to permit later registry revisions.",
+      "doc": "https://iabtechlab.com/wp-content/uploads/2023/03/Content-Taxonomy-v3.0-FINAL.xlsx",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:,[0-9]+)*$"
+      },
+      "format_severity": "error"
+    },
+    {
+      "name": "vid",
+      "description": "The vendor documents `vid` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ppsj",
+      "description": "The vendor documents `ppsj` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ssj",
+      "description": "The vendor documents `ssj` in the request contract.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "format": {
+        "kind": "non_empty"
+      }
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.google-ad-manager.video_slot_size_required",
+      "kind": "require_one_of",
+      "severity": "error",
+      "message": "The request does not satisfy the documented video slot size required requirement.",
+      "doc": "https://support.google.com/admanager/answer/10655276",
+      "params": [
+        "sz"
+      ],
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "ad_type",
+          "values": [
+            "audio"
+          ]
+        }
+      }
+    },
+    {
+      "code": "vendor.google-ad-manager.audio_requires_unmuted",
+      "kind": "required_when_value",
+      "severity": "error",
+      "message": "The request does not satisfy the documented audio requires unmuted requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "ad_type",
+      "equals": [
+        "audio",
+        "audio_video"
+      ],
+      "requires": [
+        "vpmute"
+      ]
+    },
+    {
+      "code": "vendor.google-ad-manager.audio_is_unmuted",
+      "kind": "format_when",
+      "severity": "error",
+      "message": "The request does not satisfy the documented audio is unmuted requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "ad_type",
+      "equals": [
+        "audio",
+        "audio_video"
+      ],
+      "param": "vpmute",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "false"
+        ]
+      }
+    },
+    {
+      "code": "vendor.google-ad-manager.audio_environment",
+      "kind": "value_when",
+      "severity": "error",
+      "message": "The request does not satisfy the documented audio environment requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "ad_type",
+      "equals": [
+        "audio",
+        "audio_video"
+      ],
+      "param": "env",
+      "value": "instream"
+    },
+    {
+      "code": "vendor.google-ad-manager.pal_nonce_exclusive",
+      "kind": "mutually_exclusive",
+      "severity": "error",
+      "message": "The request does not satisfy the documented pal nonce exclusive requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "params": [
+        "givn",
+        "paln"
+      ]
+    },
+    {
+      "code": "vendor.google-ad-manager.gdpr_requires_consent",
+      "kind": "required_when_value",
+      "severity": "error",
+      "message": "The request does not satisfy the documented gdpr requires consent requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "gdpr",
+      "equals": [
+        "1",
+        "true"
+      ],
+      "requires": [
+        "gdpr_consent"
+      ]
+    },
+    {
+      "code": "vendor.google-ad-manager.set_top_box_hint_required",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The request does not satisfy the documented set top box hint required requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "devt",
+      "requires": [
+        "dth"
+      ]
+    },
+    {
+      "code": "vendor.google-ad-manager.set_top_box_hint",
+      "kind": "value_with",
+      "severity": "error",
+      "message": "The request does not satisfy the documented set top box hint requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "devt",
+      "param": "dth",
+      "value": "7"
+    },
+    {
+      "code": "vendor.google-ad-manager.content_source_requires_video",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The request does not satisfy the documented content source requires video requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "cmsid",
+      "requires": [
+        "vid"
+      ]
+    },
+    {
+      "code": "vendor.google-ad-manager.video_requires_content_source",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The request does not satisfy the documented video requires content source requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "vid",
+      "requires": [
+        "cmsid"
+      ]
+    },
+    {
+      "code": "vendor.google-ad-manager.pod_fields_not_vmap",
+      "kind": "forbidden_when_value",
+      "severity": "error",
+      "message": "The request does not satisfy the documented pod fields not vmap requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "ad_rule",
+      "equals": [
+        "1",
+        "true"
+      ],
+      "params": [
+        "pmad",
+        "pmnd",
+        "pmxd"
+      ]
+    },
+    {
+      "code": "vendor.google-ad-manager.cues_require_duration",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The request does not satisfy the documented cues require duration requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "when": "allcues",
+      "requires": [
+        "vid_d"
+      ]
+    },
+    {
+      "code": "vendor.google-ad-manager.ad_duration_range",
+      "kind": "less_equal",
+      "severity": "error",
+      "message": "The request does not satisfy the documented ad duration range requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "left": "min_ad_duration",
+      "right": "max_ad_duration"
+    },
+    {
+      "code": "vendor.google-ad-manager.pod_duration_range",
+      "kind": "less_equal",
+      "severity": "error",
+      "message": "The request does not satisfy the documented pod duration range requirement.",
+      "doc": "https://support.google.com/admanager/answer/10678356",
+      "left": "pmnd",
+      "right": "pmxd"
+    },
+    {
+      "code": "vendor.google-ad-manager.sdk_apis_registry",
+      "kind": "format",
+      "param": "sdk_apis",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:[1-9]|[5-9][0-9]{2}|[1-9][0-9]{3,})(?:,(?:[1-9]|[5-9][0-9]{2}|[1-9][0-9]{3,}))*$"
+      },
+      "severity": "warning",
+      "message": "The value includes an ID outside the current vendor-linked registry.",
+      "doc": "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/main/AdCOM%20v1.0%20FINAL.md#list--api-frameworks-",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "sdk_apis",
+        "pattern": "^[0-9]+(?:,[0-9]+)*$"
+      }
+    },
+    {
+      "code": "vendor.google-ad-manager.iabexcl_registry",
+      "kind": "format",
+      "param": "iabexcl",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|46|48|49|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|76|77|78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|93|94|95|96|97|98|99|100|101|102|103|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|119|120|121|122|123|124|125|126|127|128|129|130|131|132|133|134|135|136|137|138|139|140|141|142|143|144|145|146|147|148|149|150|151|153|154|155|156|157|158|159|160|161|162|163|164|165|166|167|168|169|170|171|172|173|177|178|179|180|181|185|186|187|188|189|190|191|192|193|194|195|196|197|198|199|200|201|202|203|204|205|206|207|208|209|210|211|212|213|214|215|216|217|218|219|220|221|222|223|224|225|226|227|228|229|230|231|232|233|234|235|236|237|238|239|240|241|242|243|244|245|246|247|248|249|250|251|252|253|254|255|256|257|258|259|260|261|262|263|264|265|266|267|268|269|270|271|272|273|274|275|276|277|278|279|280|281|282|283|284|285|286|287|288|289|290|291|292|293|294|295|296|297|298|299|300|301|302|303|304|305|306|307|308|309|310|311|312|313|314|315|316|317|318|319|320|321|322|323|324|325|326|331|332|335|336|338|339|340|341|342|343|344|345|346|347|348|349|350|351|352|353|354|355|356|357|358|359|360|361|362|363|364|365|366|367|368|369|370|371|376|377|378|380|381|383|386|387|388|389|390|391|392|393|394|395|396|397|398|399|400|401|402|403|404|405|406|407|408|409|410|411|412|413|414|415|416|417|418|419|420|421|422|423|424|425|426|427|428|429|430|431|432|433|434|435|436|437|438|439|440|441|442|443|444|445|446|447|448|449|450|451|452|453|454|455|456|457|458|459|460|461|462|463|464|465|466|467|468|469|470|471|472|473|474|475|476|477|478|479|480|481|482|483|484|485|486|487|488|489|490|491|492|493|494|495|496|497|498|499|500|501|502|503|504|505|506|507|508|509|510|511|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|667|668|669|670|671|672|673|674|675|676|677|678|679|680|681|682|683|684|685|686|687|688|689|690|691|692|693|694|695|696|697|698)(?:,(?:1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|46|48|49|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|76|77|78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|93|94|95|96|97|98|99|100|101|102|103|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|119|120|121|122|123|124|125|126|127|128|129|130|131|132|133|134|135|136|137|138|139|140|141|142|143|144|145|146|147|148|149|150|151|153|154|155|156|157|158|159|160|161|162|163|164|165|166|167|168|169|170|171|172|173|177|178|179|180|181|185|186|187|188|189|190|191|192|193|194|195|196|197|198|199|200|201|202|203|204|205|206|207|208|209|210|211|212|213|214|215|216|217|218|219|220|221|222|223|224|225|226|227|228|229|230|231|232|233|234|235|236|237|238|239|240|241|242|243|244|245|246|247|248|249|250|251|252|253|254|255|256|257|258|259|260|261|262|263|264|265|266|267|268|269|270|271|272|273|274|275|276|277|278|279|280|281|282|283|284|285|286|287|288|289|290|291|292|293|294|295|296|297|298|299|300|301|302|303|304|305|306|307|308|309|310|311|312|313|314|315|316|317|318|319|320|321|322|323|324|325|326|331|332|335|336|338|339|340|341|342|343|344|345|346|347|348|349|350|351|352|353|354|355|356|357|358|359|360|361|362|363|364|365|366|367|368|369|370|371|376|377|378|380|381|383|386|387|388|389|390|391|392|393|394|395|396|397|398|399|400|401|402|403|404|405|406|407|408|409|410|411|412|413|414|415|416|417|418|419|420|421|422|423|424|425|426|427|428|429|430|431|432|433|434|435|436|437|438|439|440|441|442|443|444|445|446|447|448|449|450|451|452|453|454|455|456|457|458|459|460|461|462|463|464|465|466|467|468|469|470|471|472|473|474|475|476|477|478|479|480|481|482|483|484|485|486|487|488|489|490|491|492|493|494|495|496|497|498|499|500|501|502|503|504|505|506|507|508|509|510|511|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|667|668|669|670|671|672|673|674|675|676|677|678|679|680|681|682|683|684|685|686|687|688|689|690|691|692|693|694|695|696|697|698))*$"
+      },
+      "severity": "warning",
+      "message": "The value includes an ID outside the current vendor-linked registry.",
+      "doc": "https://iabtechlab.com/wp-content/uploads/2023/03/Content-Taxonomy-v3.0-FINAL.xlsx",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "iabexcl",
+        "pattern": "^[0-9]+(?:,[0-9]+)*$"
+      }
+    },
+    {
+      "code": "vendor.google-ad-manager.additional_consent_requires_tc_string",
+      "kind": "required_with",
+      "when": "addtl_consent",
+      "requires": [
+        "gdpr_consent"
+      ],
+      "severity": "error",
+      "message": "Google discards an Additional Consent string without a TC string in the same request.",
+      "doc": "https://support.google.com/admanager/answer/9681920"
+    }
+  ],
+  "body": [
+    {
+      "source_param": "ppsj",
+      "encoding": "base64_json",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "PublisherProvidedTaxonomySignals",
+          "json_type": "array",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "PublisherProvidedTaxonomySignals[]",
+          "json_type": "object",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "PublisherProvidedTaxonomySignals[].taxonomy",
+          "json_type": "string",
+          "requirement": "required",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "PublisherProvidedTaxonomySignals[].values",
+          "json_type": "array",
+          "requirement": "required",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "PublisherProvidedTaxonomySignals[].values[]",
+          "json_type": "string",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "ssj",
+      "encoding": "base64_json",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "signals",
+          "json_type": "array",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "signals[]",
+          "json_type": "object",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "signals[].source",
+          "json_type": "string",
+          "requirement": "required",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "signals[].data",
+          "json_type": "string",
+          "requirement": "required",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        },
+        {
+          "name": "signals[].isPubCreated",
+          "json_type": "boolean",
+          "requirement": "required",
+          "doc": "https://support.google.com/admanager/answer/10678356"
+        }
+      ],
+      "rules": []
+    }
+  ]
 }

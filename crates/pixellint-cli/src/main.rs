@@ -31,6 +31,7 @@ struct CliOptions {
     claimed_vendor: Option<String>,
     rulepack_files: Vec<String>,
     directory_files: Vec<String>,
+    reference_time: Option<i64>,
 }
 
 fn main() -> ExitCode {
@@ -174,7 +175,10 @@ fn run_validate(args: &[String]) -> ExitCode {
         expansion_state: options.expansion_state,
     };
 
-    match engine.validate(&request, &options.validation) {
+    match options.reference_time.map_or_else(
+        || engine.validate(&request, &options.validation),
+        |time| engine.validate_at(&request, &options.validation, time),
+    ) {
         Ok(summary) => {
             if let Err(error) = emit_summary(&summary, options.output_format) {
                 return usage_error(&error.to_string());
@@ -216,7 +220,10 @@ fn run_validate_many(args: &[String]) -> ExitCode {
         Err(message) => return usage_error(&message),
     };
 
-    match engine.validate_many(&request, &options.validation) {
+    match options.reference_time.map_or_else(
+        || engine.validate_many(&request, &options.validation),
+        |time| engine.validate_many_at(&request, &options.validation, time),
+    ) {
         Ok(report) => {
             if let Err(error) = emit_document(&report, options.output_format) {
                 return usage_error(&error.to_string());
@@ -310,6 +317,7 @@ fn parse_cli_options(args: &[String]) -> Result<CliOptions, String> {
     let mut claimed_vendor = None;
     let mut rulepack_files = Vec::new();
     let mut directory_files = Vec::new();
+    let mut reference_time = None;
     let mut index = 0;
 
     while index < args.len() {
@@ -321,7 +329,7 @@ fn parse_cli_options(args: &[String]) -> Result<CliOptions, String> {
                 index += 1;
             }
             "--state" | "--rulepack" | "--except" | "--vendor" | "--rulepack-file"
-            | "--directory-file" => {
+            | "--directory-file" | "--at" => {
                 let value = args
                     .get(index + 1)
                     .ok_or_else(|| format!("missing value for {argument}"))?;
@@ -333,6 +341,12 @@ fn parse_cli_options(args: &[String]) -> Result<CliOptions, String> {
                     "--vendor" => claimed_vendor = Some(value.clone()),
                     "--rulepack-file" => rulepack_files.push(value.clone()),
                     "--directory-file" => directory_files.push(value.clone()),
+                    "--at" => {
+                        reference_time =
+                            Some(value.parse::<i64>().map_err(|_| {
+                                "--at requires Unix seconds as an integer".to_string()
+                            })?)
+                    }
                     _ => unreachable!(),
                 }
 
@@ -351,6 +365,7 @@ fn parse_cli_options(args: &[String]) -> Result<CliOptions, String> {
         claimed_vendor,
         rulepack_files,
         directory_files,
+        reference_time,
     })
 }
 
@@ -543,6 +558,7 @@ OPTIONS
   --except <id>           Skip these rulepacks (repeatable)
   --rulepack-file <path>  Load a custom rulepack manifest (repeatable)
   --directory-file <path>  Merge extra vendor directory entries (repeatable)
+  --at <unix-seconds>     Validate timestamp windows against this reference time
 
 EXIT CODES
   0  clean, or warnings and info only

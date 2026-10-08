@@ -125,8 +125,8 @@
     {
       "name": "currency",
       "format": {
-        "kind": "regex",
-        "pattern": "^[A-Za-z]{3}$"
+        "kind": "currency",
+        "case_insensitive": true
       },
       "description": "It is the ISO 4217 currency of the order. Criteo documents it as required only when the retailer sells in more than one currency.",
       "fix_hint": "Send a three-letter code such as `USD` or `EUR`.",
@@ -180,6 +180,143 @@
       "description": "It names the identifier in `device-id`. Criteo documents `gaid` or `idfa`.",
       "fix_hint": "Set `device-id-type` to `gaid` or `idfa`.",
       "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "name": "placement-id",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "allow_empty": false,
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "regionId",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "allow_empty": false,
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "implementation",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "allow_empty": false,
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "json",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "allow_empty": false,
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "item-whitelist",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "allow_empty": true,
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "gdpr_consent",
+      "description": "A populated gdpr_consent is a TCFv2 consent string. The complete local core and additional-segment structure is decoded. Account/GVL permissions need external state.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "allow_empty": false,
+      "format": {
+        "kind": "tcf"
+      }
+    },
+    {
+      "name": "gdpr",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "name": "block",
+      "description": "The vendor documents the JSON shape or value type of this field.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "keywords",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The event reference documents this request field and its value format.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/search-page"
+    },
+    {
+      "name": "category",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The event reference documents this request field and its value format.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/category-page"
+    },
+    {
+      "name": "parent-item",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The event reference documents this request field and its value format.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/product-details-page"
+    },
+    {
+      "name": "list-size",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "The event reference documents this request field and its value format.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/search-page"
+    },
+    {
+      "name": "page-number",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[1-9][0-9]*$"
+      },
+      "description": "The event reference documents this request field and its value format.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/search-page"
+    },
+    {
+      "name": "availability",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[01](?:\\|[01])*$"
+      },
+      "description": "The event reference documents this request field and its value format.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/product-details-page"
+    },
+    {
+      "name": "filters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^\\([^,()]+,(?:(?:eq|neq|in|nin),[^()]+|(?:gt|lt|ge|le),[^,()]+)\\)(?:,\\([^,()]+,(?:(?:eq|neq|in|nin),[^()]+|(?:gt|lt|ge|le),[^,()]+)\\))*$"
+      },
+      "description": "The event reference documents this request field and its value format.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/filtering"
     }
   ],
   "rules": [
@@ -187,8 +324,15 @@
       "code": "vendor.criteo-retail-media.add_to_cart_requires_item",
       "kind": "required_when_value",
       "when": "event-type",
-      "equals": ["addToCart"],
-      "requires": ["page-uid", "item", "price", "quantity"],
+      "equals": [
+        "addToCart"
+      ],
+      "requires": [
+        "page-uid",
+        "item",
+        "price",
+        "quantity"
+      ],
       "severity": "error",
       "message": "An `addToCart` event is missing `page-uid`, `item`, `price`, or `quantity`. Criteo documents all four on organic add-to-cart.",
       "fix_hint": "Send `page-uid` from the page-load response plus `item`, unit `price`, and `quantity`.",
@@ -198,8 +342,15 @@
       "code": "vendor.criteo-retail-media.transaction_requires_order",
       "kind": "required_when_value",
       "when": "event-type",
-      "equals": ["trackTransaction"],
-      "requires": ["item", "price", "quantity", "transaction-id"],
+      "equals": [
+        "trackTransaction"
+      ],
+      "requires": [
+        "item",
+        "price",
+        "quantity",
+        "transaction-id"
+      ],
       "severity": "error",
       "message": "A `trackTransaction` event is missing `item`, `price`, `quantity`, or `transaction-id`. Criteo documents all four on order confirmation.",
       "fix_hint": "Send pipe-separated `item`, unit `price`, and `quantity` lists plus `transaction-id`.",
@@ -218,6 +369,228 @@
       "message": "This field looks like a SHA-256 digest, but Criteo documents `retailer-visitor-id`, `customer-id`, and `device-id` as unhashed. Hash email instead.",
       "fix_hint": "Send the raw visitor, customer, or device ID. Hash only `email`.",
       "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1"
+    },
+    {
+      "code": "vendor.criteo-retail-media.device_id_requires_type",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "The mobile device identifier must declare whether it is GAID or IDFA.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "when": "device-id",
+      "requires": [
+        "device-id-type"
+      ]
+    },
+    {
+      "code": "vendor.criteo-retail-media.device_type_requires_id",
+      "kind": "required_with",
+      "severity": "error",
+      "message": "A mobile identifier type needs its corresponding device identifier.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/api-parameters-1",
+      "when": "device-id-type",
+      "requires": [
+        "device-id"
+      ]
+    },
+    {
+      "code": "vendor.criteo-retail-media.search_requires_keywords",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": [
+        "viewSearchResult",
+        "viewSearchBar"
+      ],
+      "requires": [
+        "keywords"
+      ],
+      "severity": "error",
+      "message": "The event reference requires keywords for this event type.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/search-page"
+    },
+    {
+      "code": "vendor.criteo-retail-media.searchbar_requires_page_uid",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": [
+        "viewSearchBar"
+      ],
+      "requires": [
+        "page-uid"
+      ],
+      "severity": "error",
+      "message": "The event reference requires page-uid for this event type.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/search-bar-dropdown"
+    },
+    {
+      "code": "vendor.criteo-retail-media.category_requires_taxonomy",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": [
+        "viewCategory",
+        "viewCategoryMenu"
+      ],
+      "requires": [
+        "category"
+      ],
+      "severity": "error",
+      "message": "The event reference requires category for this event type.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/category-page"
+    },
+    {
+      "code": "vendor.criteo-retail-media.category_menu_requires_page_uid",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": [
+        "viewCategoryMenu"
+      ],
+      "requires": [
+        "page-uid"
+      ],
+      "severity": "error",
+      "message": "The event reference requires page-uid for this event type.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/category-flyout"
+    },
+    {
+      "code": "vendor.criteo-retail-media.product_requires_details",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": [
+        "viewItem"
+      ],
+      "requires": [
+        "item",
+        "price",
+        "availability"
+      ],
+      "severity": "error",
+      "message": "The event reference requires item, price, availability for this event type.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/product-details-page"
+    },
+    {
+      "code": "vendor.criteo-retail-media.favorites_requires_item",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": [
+        "viewFavorites"
+      ],
+      "requires": [
+        "item"
+      ],
+      "severity": "error",
+      "message": "The event reference requires item for this event type.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/favorites-page"
+    },
+    {
+      "code": "vendor.criteo-retail-media.basket_requires_items",
+      "kind": "required_when_value",
+      "when": "event-type",
+      "equals": [
+        "viewBasket"
+      ],
+      "requires": [
+        "item",
+        "quantity"
+      ],
+      "severity": "error",
+      "message": "The event reference requires item, quantity for this event type.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/cart-page"
+    },
+    {
+      "code": "vendor.criteo-retail-media.add_to_cart_single_item",
+      "kind": "format_when",
+      "when": "event-type",
+      "equals": [
+        "addToCart"
+      ],
+      "param": "item",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^|]+$"
+      },
+      "severity": "error",
+      "message": "An addToCart request allows one item, not a pipe-separated product list.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/organic-add-to-cart-events"
+    },
+    {
+      "code": "vendor.criteo-retail-media.add_to_cart_single_parent",
+      "kind": "format_when",
+      "when": "event-type",
+      "equals": [
+        "addToCart"
+      ],
+      "param": "parent-item",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^|]+$"
+      },
+      "severity": "error",
+      "message": "An addToCart request allows one parent item.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/organic-add-to-cart-events"
+    },
+    {
+      "code": "vendor.criteo-retail-media.pdp_lists_align",
+      "kind": "equal_split_lengths",
+      "params": [
+        "item",
+        "price",
+        "availability",
+        "parent-item"
+      ],
+      "separator": "|",
+      "condition": {
+        "kind": "value_in",
+        "param": "event-type",
+        "values": [
+          "viewItem"
+        ]
+      },
+      "severity": "error",
+      "message": "Pipe-separated product lists must have corresponding values in the same order.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/product-details-page"
+    },
+    {
+      "code": "vendor.criteo-retail-media.basket_lists_align",
+      "kind": "equal_split_lengths",
+      "params": [
+        "item",
+        "quantity",
+        "parent-item"
+      ],
+      "separator": "|",
+      "condition": {
+        "kind": "value_in",
+        "param": "event-type",
+        "values": [
+          "viewBasket"
+        ]
+      },
+      "severity": "error",
+      "message": "Pipe-separated product lists must have corresponding values in the same order.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/cart-page"
+    },
+    {
+      "code": "vendor.criteo-retail-media.transaction_lists_align",
+      "kind": "equal_split_lengths",
+      "params": [
+        "item",
+        "price",
+        "quantity",
+        "parent-item"
+      ],
+      "separator": "|",
+      "condition": {
+        "kind": "value_in",
+        "param": "event-type",
+        "values": [
+          "trackTransaction"
+        ]
+      },
+      "severity": "error",
+      "message": "Pipe-separated product lists must have corresponding values in the same order.",
+      "doc": "https://developers.criteo.com/retailer-integration/docs/order-confirmation-page"
     }
+  ],
+  "gdpr_non_applicable_values": [
+    "2"
   ]
 }

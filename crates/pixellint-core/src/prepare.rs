@@ -42,10 +42,21 @@ pub struct PreparedArtifact<'a> {
     json: OnceCell<Result<JsonDocument<'a>, JsonError>>,
     macros: OnceCell<Vec<MacroSpan>>,
     params: [OnceCell<Vec<RawParam<'a>>>; 4],
+    reference_time_unix_seconds: i64,
+    client_fragment_configuration: bool,
+    gdpr_non_applicable_values: Vec<String>,
 }
 
 impl<'a> PreparedArtifact<'a> {
     pub fn from_request(request: &'a ValidationRequest) -> Self {
+        Self::from_request_at(request, crate::timestamp::current_unix_seconds())
+    }
+
+    /// Prepares an artifact against a fixed clock for deterministic validation.
+    pub fn from_request_at(
+        request: &'a ValidationRequest,
+        reference_time_unix_seconds: i64,
+    ) -> Self {
         Self {
             request,
             trimmed: request.artifact.trim(),
@@ -53,11 +64,43 @@ impl<'a> PreparedArtifact<'a> {
             json: OnceCell::new(),
             macros: OnceCell::new(),
             params: Default::default(),
+            reference_time_unix_seconds,
+            client_fragment_configuration: false,
+            gdpr_non_applicable_values: Vec::new(),
         }
     }
 
     pub fn request(&self) -> &ValidationRequest {
         self.request
+    }
+
+    /// Clock shared by every rulepack evaluating this artifact.
+    pub fn reference_time_unix_seconds(&self) -> i64 {
+        self.reference_time_unix_seconds
+    }
+
+    pub(crate) fn mark_client_fragment_configuration(&mut self) {
+        self.client_fragment_configuration = true;
+    }
+
+    pub(crate) fn has_client_fragment_configuration(&self) -> bool {
+        self.client_fragment_configuration
+    }
+
+    pub(crate) fn allow_non_applicable_gdpr(&mut self, value: &str) {
+        if !self
+            .gdpr_non_applicable_values
+            .iter()
+            .any(|candidate| candidate == value)
+        {
+            self.gdpr_non_applicable_values.push(value.to_string());
+        }
+    }
+
+    pub(crate) fn gdpr_is_non_applicable(&self, value: &str) -> bool {
+        self.gdpr_non_applicable_values
+            .iter()
+            .any(|candidate| candidate == value)
     }
 
     pub(crate) fn trimmed(&self) -> &str {

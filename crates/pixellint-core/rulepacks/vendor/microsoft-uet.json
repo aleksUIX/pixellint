@@ -6,23 +6,36 @@
   "source_level": "official_vendor",
   "docs": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table",
   "match": {
-    "hosts": ["bat.bing.com", "bat.bing.net"],
-    "path_prefixes": ["/action", "/bat.js", "/p/action"]
+    "hosts": [
+      "bat.bing.com",
+      "bat.bing.net"
+    ],
+    "path_prefixes": [
+      "/action",
+      "/p/action"
+    ]
   },
   "params": [
     {
       "name": "ti",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric UET tag ID. Microsoft documents ti as required on every event.",
       "fix_hint": "Copy the UET tag ID from Microsoft Advertising into the tag snippet.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "ver",
-      "aliases": ["Ver"],
+      "aliases": [
+        "Ver"
+      ],
       "requirement": "required",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(\\.[0-9]+)?$"
+      },
       "description": "It is the UET tag version. Microsoft documents ver as required, and 2.3 for a custom implementation.",
       "fix_hint": "Send ver as 2.3 on a custom implementation, or the version the generated snippet reports.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
@@ -30,7 +43,13 @@
     {
       "name": "evt",
       "requirement": "required",
-      "format": { "kind": "enum", "values": ["pageLoad", "custom"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "pageLoad",
+          "custom"
+        ]
+      },
       "description": "It names the event. Microsoft documents evt as required, and only pageLoad or custom.",
       "fix_hint": "Send evt=pageLoad on a page view, or evt=custom on a custom event.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
@@ -38,7 +57,9 @@
     {
       "name": "mid",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It identifies events from a single page. Microsoft documents mid as a unique identifier that must change when the page changes.",
       "fix_hint": "Send a fresh mid per page, such as a GUID.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
@@ -46,7 +67,11 @@
     {
       "name": "rn",
       "requirement": "required",
-      "format": { "kind": "integer", "min_digits": 6, "max_digits": 6 },
+      "format": {
+        "kind": "integer",
+        "min_digits": 6,
+        "max_digits": 6
+      },
       "description": "It is a cache buster. Microsoft documents rn as a required random 6-digit number.",
       "fix_hint": "Send a random 6-digit rn on every fire.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
@@ -54,48 +79,63 @@
     {
       "name": "p",
       "requirement": "recommended",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the page URL. Microsoft documents p on pageLoad events, and as mandatory when page URL remarketing lists are used.",
       "fix_hint": "Send the absolute page URL in p.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "r",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the referrer URL. Microsoft documents r on pageLoad events.",
       "fix_hint": "Send the absolute referrer URL in r, or omit it.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "uid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a customer-defined logged-in user ID that stays the same across browsers and devices.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "vid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a customer-defined anonymous user ID.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "msclkid",
-      "requirement": "recommended",
-      "format": { "kind": "regex", "pattern": "^(N|[A-Fa-f0-9]{32}-[01]N?)$" },
-      "description": "It is the Microsoft Click ID. Microsoft documents a 32-hex GUID plus -0 or -1, an optional N when cookies are blocked, or N alone when no click exists.",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(N|[A-Fa-f0-9]{32}-[01]N?)$"
+      },
+      "description": "The current published UET table requires msclkid on every event. Send the documented N sentinel when no ad click exists or cookies are blocked; otherwise send the click GUID with its freshness/cookie suffix.",
       "fix_hint": "Forward the _uetmsclkid cookie as {guid}-0 or {guid}-1, or send N when there is no click.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "kl",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the page title. Microsoft documents kl on pageLoad events.",
       "fix_hint": "Send the page title in kl, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "tw",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the SEO meta keywords for the current page. Microsoft documents tw on pageLoad events.",
       "fix_hint": "Send the page keywords in tw, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
@@ -121,156 +161,203 @@
     },
     {
       "name": "prodid",
-      "format": { "kind": "regex", "pattern": "^[^,]+(?:,[^,]+)*$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^,]+(?:,[^,]+)*$"
+      },
       "description": "It is a comma-separated list of product IDs. Microsoft documents prodid as matching the ID or item_group_id in the MMC product feed.",
       "fix_hint": "Send one or more product IDs, comma-separated, such as Prod123456.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "search_term",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the search query that led to the search results page. Microsoft documents search_term on custom events.",
       "fix_hint": "Send the search query in search_term, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "ecomm_category",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the category ID on a category browse page. Microsoft documents ecomm_category on custom events.",
       "fix_hint": "Send the category ID in ecomm_category, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
-      {
-        "name": "transaction_id",
-        "format": { "kind": "non_empty" },
-        "description": "It is a unique transaction ID. Microsoft documents transaction_id on custom events.",
-        "fix_hint": "Send a unique transaction ID, or drop the empty pair.",
-        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    {
+      "name": "transaction_id",
+      "format": {
+        "kind": "non_empty"
       },
-      {
-        "name": "items",
-        "format": { "kind": "regex", "pattern": "^\\[.*\\]$" },
-        "description": "It is the product array on a custom event. Microsoft documents `items` as a JSON array of objects with `id`, `quantity`, and `price`.",
-        "fix_hint": "Send `items` as a JSON array, such as `[{\"id\":\"Prod123456\",\"quantity\":2,\"price\":25.1}]`.",
-        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+      "description": "It is a unique transaction ID. Microsoft documents transaction_id on custom events.",
+      "fix_hint": "Send a unique transaction ID, or drop the empty pair.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "items",
+      "format": {
+        "kind": "regex",
+        "pattern": "^\\[.*\\]$"
       },
-      {
-        "name": "ecomm_pagetype",
-        "format": {
-          "kind": "enum",
-          "values": [
-            "home",
-            "searchresults",
-            "category",
-            "product",
-            "cart",
-            "purchase",
-            "other"
-          ],
-          "case_insensitive": true
-        },
-        "description": "It is the ecommerce page type. Microsoft documents home, searchresults, category, product, cart, purchase, and other.",
-        "fix_hint": "Send a documented ecomm_pagetype such as purchase or product.",
-        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+      "description": "It is the product array on a custom event. Microsoft documents `items` as a JSON array of objects with `id`, `quantity`, and `price`.",
+      "fix_hint": "Send `items` as a JSON array, such as `[{\"id\":\"Prod123456\",\"quantity\":2,\"price\":25.1}]`.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    },
+    {
+      "name": "ecomm_pagetype",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "home",
+          "searchresults",
+          "category",
+          "product",
+          "cart",
+          "purchase",
+          "other"
+        ],
+        "case_insensitive": true
       },
-      {
-        "name": "ecomm_prodid",
-        "format": { "kind": "non_empty" },
-        "description": "It is the product ID list for dynamic remarketing. Microsoft documents ecomm_prodid as matching the feed id or item_group_id.",
-        "fix_hint": "Send one or more product IDs in ecomm_prodid, or drop the empty pair.",
-        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+      "description": "It is the ecommerce page type. Microsoft documents home, searchresults, category, product, cart, purchase, and other.",
+      "fix_hint": "Send a documented ecomm_pagetype such as purchase or product.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+    },
+    {
+      "name": "ecomm_prodid",
+      "format": {
+        "kind": "non_empty"
       },
-      {
-        "name": "ecomm_totalvalue",
-        "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
-        "description": "It is the cart or purchase total. Microsoft documents ecomm_totalvalue as a number.",
-        "fix_hint": "Send a number such as 50.20, with no currency symbol.",
-        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+      "description": "It is the product ID list for dynamic remarketing. Microsoft documents ecomm_prodid as matching the feed id or item_group_id.",
+      "fix_hint": "Send one or more product IDs in ecomm_prodid, or drop the empty pair.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+    },
+    {
+      "name": "ecomm_totalvalue",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(\\.[0-9]+)?$"
       },
-      {
-        "name": "ecomm_query",
-        "format": { "kind": "non_empty" },
-        "description": "It is the search query on a search-results page. Microsoft documents ecomm_query on custom events.",
-        "fix_hint": "Send the search query in ecomm_query, or drop the empty pair.",
-        "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+      "description": "It is the cart or purchase total. Microsoft documents ecomm_totalvalue as a number.",
+      "fix_hint": "Send a number such as 50.20, with no currency symbol.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+    },
+    {
+      "name": "ecomm_query",
+      "format": {
+        "kind": "non_empty"
       },
+      "description": "It is the search query on a search-results page. Microsoft documents ecomm_query on custom events.",
+      "fix_hint": "Send the search query in ecomm_query, or drop the empty pair.",
+      "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_uet_exampleeventsecommerce"
+    },
     {
       "name": "ec",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the custom event category. Microsoft documents ec on custom events, and forbids it on pageLoad.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "ea",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the custom event action. Microsoft documents ea on custom events, and forbids it on pageLoad.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "el",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the custom event label. Microsoft documents el on custom events, and forbids it on pageLoad.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "ev",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(\\.[0-9]+)?$"
+      },
       "description": "It is the custom event value. Microsoft documents ev as numeric, on custom events only.",
       "fix_hint": "Send a number such as 42, not a currency string.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "flight_destid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the flight destination ID. Microsoft documents flight_destid on the travel parameter table.",
       "fix_hint": "Send the destination ID in flight_destid, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "flight_originid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the flight origin ID. Microsoft documents flight_originid on the travel parameter table.",
       "fix_hint": "Send the origin ID in flight_originid, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "flight_pagetype",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the flight page type. Microsoft documents flight_pagetype on the travel parameter table.",
       "fix_hint": "Send the flight page type in flight_pagetype, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "flight_startdate",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the flight start date. Microsoft documents flight_startdate on the travel parameter table.",
       "fix_hint": "Send the start date in flight_startdate, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "flight_enddate",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the flight end date. Microsoft documents flight_enddate on the travel parameter table.",
       "fix_hint": "Send the end date in flight_enddate, or drop the empty pair.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "flight_totalvalue",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(\\.[0-9]+)?$"
+      },
       "description": "It is the flight total value. Microsoft documents flight_totalvalue on the travel parameter table. Other UET value fields are numbers with no currency symbol.",
       "fix_hint": "Send a number such as 249.00, with no currency symbol.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "gv",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(\\.[0-9]+)?$"
+      },
       "description": "It is variable revenue for conversion tracking.",
       "fix_hint": "Send a number such as 20.55, with no currency symbol.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
     },
     {
       "name": "gc",
-      "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+      "format": {
+        "kind": "currency",
+        "case_insensitive": true
+      },
       "description": "It is the ISO 4217 currency of gv.",
       "fix_hint": "Send the three-letter code, such as USD.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
@@ -281,12 +368,64 @@
       "code": "vendor.microsoft-uet.pageload_forbids_custom_event_fields",
       "kind": "forbidden_when_value",
       "when": "evt",
-      "equals": ["pageLoad"],
-      "params": ["ec", "ea", "el", "ev"],
+      "equals": [
+        "pageLoad"
+      ],
+      "params": [
+        "ec",
+        "ea",
+        "el",
+        "ev"
+      ],
       "severity": "error",
       "message": "A pageLoad event carries a custom-event field. Microsoft documents ec, ea, el, and ev as custom-event parameters that cannot be used with pageLoad.",
       "fix_hint": "Drop ec, ea, el, and ev from pageLoad, or set evt=custom.",
       "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+    }
+  ],
+  "body": [
+    {
+      "source_param": "items",
+      "params": [
+        {
+          "name": "",
+          "json_type": "array",
+          "description": "The published UET items value is a JSON product array.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "items",
+      "scope": "[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "description": "Each product in the published UET array is an object.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+        },
+        {
+          "name": "id",
+          "json_type": "string",
+          "description": "Product identifier in the vendor JSON item example.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+        },
+        {
+          "name": "quantity",
+          "json_type": "integer",
+          "description": "Product quantity is a whole number in the vendor item example.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+        },
+        {
+          "name": "price",
+          "json_type": "number",
+          "description": "Discounted item price is numeric in the vendor item example.",
+          "doc": "https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_conc_uet_parameters_table"
+        }
+      ],
+      "rules": []
     }
   ]
 }

@@ -6,8 +6,12 @@
   "source_level": "official_vendor",
   "docs": "https://docs.mixpanel.com/reference/profile-set",
   "match": {
-    "host_suffixes": ["mixpanel.com"],
-    "path_contains": ["/engage"],
+    "host_suffixes": [
+      "mixpanel.com"
+    ],
+    "path_contains": [
+      "/engage"
+    ],
     "json_paths": [
       "[].$token",
       "[].$distinct_id"
@@ -17,105 +21,199 @@
     {
       "name": "verbose",
       "requirement": "recommended",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "description": "Mixpanel documents `verbose=1` so the 200 body says whether the update was accepted.",
       "fix_hint": "Send `verbose=1` on `/engage` while you are implementing.",
       "doc": "https://docs.mixpanel.com/reference/profile-set"
     },
     {
       "name": "strict",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "description": "Mixpanel documents `strict=1` so failed records are named in the response.",
       "fix_hint": "Send `strict=1` to see per-record validation errors.",
       "doc": "https://docs.mixpanel.com/reference/profile-set"
     },
     {
       "name": "ip",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "description": "Mixpanel documents `ip=0` on server-side calls so the profile is not geolocated to your server.",
       "fix_hint": "Send `ip=0` from a server.",
       "doc": "https://docs.mixpanel.com/reference/profile-set"
+    },
+    {
+      "name": "data",
+      "description": "The official browser SDK encodes the event or profile update in data for the legacy base64 transport.",
+      "doc": "https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js",
+      "format": {
+        "kind": "non_empty"
+      }
     }
   ],
   "rules": [],
   "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "json_type": "array",
+          "min_items": 1,
+          "description": "The JSON body is a nonempty array of records.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set"
+        }
+      ],
+      "rules": []
+    },
     {
       "scope": "[]",
       "params": [
         {
           "name": "$token",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Mixpanel documents `$token` as required. It is the project token.",
           "fix_hint": "Send the project token from Mixpanel project settings as `$token`.",
-          "doc": "https://docs.mixpanel.com/reference/profile-set"
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "string"
         },
         {
           "name": "$distinct_id",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Mixpanel documents `$distinct_id` as required. It must be the same id you send on events.",
           "fix_hint": "Send the same `distinct_id` you use on `/track` for this user.",
-          "doc": "https://docs.mixpanel.com/reference/profile-set"
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "string"
         },
         {
           "name": "$set",
           "description": "Sets profile properties, creating the profile if needed. Mixpanel documents it as required for the profile-set call.",
-          "doc": "https://docs.mixpanel.com/reference/profile-set"
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "object"
         },
         {
           "name": "$set_once",
           "description": "Sets profile properties only when they are not already set.",
-          "doc": "https://docs.mixpanel.com/reference/profile-set-property-once"
+          "doc": "https://docs.mixpanel.com/reference/profile-set-property-once",
+          "json_type": "object"
         },
         {
           "name": "$add",
           "description": "Increments numeric profile properties.",
-          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
         },
         {
           "name": "$union",
           "description": "Unions list profile properties.",
-          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
         },
         {
           "name": "$append",
           "description": "Appends to list profile properties.",
-          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
         },
         {
           "name": "$remove",
           "description": "Removes values from list profile properties.",
-          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
         },
         {
           "name": "$unset",
           "description": "Unsets named profile properties.",
-          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "array"
         },
         {
           "name": "$delete",
           "description": "Deletes the profile.",
-          "doc": "https://docs.mixpanel.com/reference/profile-batch-update"
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "string",
+          "allow_empty": true
         },
         {
           "name": "$ip",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "Mixpanel uses `$ip` to geolocate the profile. Send a raw address, not a digest.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "string"
         },
         {
           "name": "$time",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "Mixpanel documents `$time` as seconds since epoch for the profile update.",
           "fix_hint": "Send a Unix timestamp in seconds, not milliseconds and not an ISO string.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "integer"
         },
         {
           "name": "$ignore_time",
-          "format": { "kind": "enum", "values": ["true", "false"] },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          },
           "description": "Mixpanel documents `$ignore_time` as a boolean. `true` leaves Last Seen unchanged.",
-          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "boolean"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "object"
+        },
+        {
+          "name": "$unset[]",
+          "description": "The vendor documents `$unset[]` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "string"
+        },
+        {
+          "name": "increment",
+          "description": "The vendor documents `increment` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "number",
+          "name_pattern": "^.+$",
+          "name_pattern_parent": "$add"
+        },
+        {
+          "name": "union",
+          "description": "The vendor documents `union` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "array",
+          "name_pattern": "^.+$",
+          "name_pattern_parent": "$union"
         }
       ],
       "rules": [
@@ -123,7 +221,9 @@
           "code": "vendor.mixpanel-engage.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["$ip"],
+          "params": [
+            "$ip"
+          ],
           "severity": "error",
           "message": "`$ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address used for geolocation.",
           "fix_hint": "Send the raw IP address, or omit `$ip`.",
@@ -148,6 +248,2342 @@
           "doc": "https://docs.mixpanel.com/reference/profile-set"
         }
       ]
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "min_items": 1,
+          "description": "The JSON body is a nonempty array of records.",
+          "doc": "https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "$token",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel documents `$token` as required. It is the project token.",
+          "fix_hint": "Send the project token from Mixpanel project settings as `$token`.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "string"
+        },
+        {
+          "name": "$distinct_id",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel documents `$distinct_id` as required. It must be the same id you send on events.",
+          "fix_hint": "Send the same `distinct_id` you use on `/track` for this user.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "string"
+        },
+        {
+          "name": "$set",
+          "description": "Sets profile properties, creating the profile if needed. Mixpanel documents it as required for the profile-set call.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "object"
+        },
+        {
+          "name": "$set_once",
+          "description": "Sets profile properties only when they are not already set.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set-property-once",
+          "json_type": "object"
+        },
+        {
+          "name": "$add",
+          "description": "Increments numeric profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
+        },
+        {
+          "name": "$union",
+          "description": "Unions list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
+        },
+        {
+          "name": "$append",
+          "description": "Appends to list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
+        },
+        {
+          "name": "$remove",
+          "description": "Removes values from list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
+        },
+        {
+          "name": "$unset",
+          "description": "Unsets named profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "array"
+        },
+        {
+          "name": "$delete",
+          "description": "Deletes the profile.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "string",
+          "allow_empty": true
+        },
+        {
+          "name": "$ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel uses `$ip` to geolocate the profile. Send a raw address, not a digest.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "string"
+        },
+        {
+          "name": "$time",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "Mixpanel documents `$time` as seconds since epoch for the profile update.",
+          "fix_hint": "Send a Unix timestamp in seconds, not milliseconds and not an ISO string.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "integer"
+        },
+        {
+          "name": "$ignore_time",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          },
+          "description": "Mixpanel documents `$ignore_time` as a boolean. `true` leaves Last Seen unchanged.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "boolean"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "object"
+        },
+        {
+          "name": "$unset[]",
+          "description": "The vendor documents `$unset[]` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "string"
+        },
+        {
+          "name": "increment",
+          "description": "The vendor documents `increment` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "number",
+          "name_pattern": "^.+$",
+          "name_pattern_parent": "$add"
+        },
+        {
+          "name": "union",
+          "description": "The vendor documents `union` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "array",
+          "name_pattern": "^.+$",
+          "name_pattern_parent": "$union"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.mixpanel-engage.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "$ip"
+          ],
+          "severity": "error",
+          "message": "`$ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address used for geolocation.",
+          "fix_hint": "Send the raw IP address, or omit `$ip`.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
+        },
+        {
+          "code": "vendor.mixpanel-engage.body.operation_required",
+          "kind": "require_one_of",
+          "params": [
+            "$set",
+            "$set_once",
+            "$add",
+            "$union",
+            "$append",
+            "$remove",
+            "$unset",
+            "$delete"
+          ],
+          "severity": "error",
+          "message": "The profile update has no operation. Mixpanel documents `$set`, `$set_once`, `$add`, `$union`, `$append`, `$remove`, `$unset`, or `$delete`.",
+          "fix_hint": "Send `$set` with the properties to write, or another documented engage operator.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set"
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": "[].$set.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$set.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$set.*",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$set.**[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$set_once.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$set_once.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$set_once.*",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$set_once.**[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$append.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$append.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$append.*",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$append.**[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$remove.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$remove.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$remove.*",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$remove.**[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$union.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$union.**",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ]
+    },
+    {
+      "scope": "[].$union.*",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].$union.**[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": [
+        "[].$set.**",
+        "$set.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$set.**",
+        "$set.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$set.*",
+        "$set.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$set.**[]",
+        "$set.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$set_once.**",
+        "$set_once.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$set_once.**",
+        "$set_once.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$set_once.*",
+        "$set_once.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$set_once.**[]",
+        "$set_once.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$append.**",
+        "$append.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$append.**",
+        "$append.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$append.*",
+        "$append.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$append.**[]",
+        "$append.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$remove.**",
+        "$remove.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$remove.**",
+        "$remove.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$remove.*",
+        "$remove.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$remove.**[]",
+        "$remove.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$union.**",
+        "$union.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$union.**",
+        "$union.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$union.*",
+        "$union.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "scope": [
+        "[].$union.**[]",
+        "$union.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "base64_json",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "data",
+          "pattern": "^\\s*[\\[{]"
+        }
+      }
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "min_items": 1,
+          "description": "The JSON body is a nonempty array of records.",
+          "doc": "https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "$token",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel documents `$token` as required. It is the project token.",
+          "fix_hint": "Send the project token from Mixpanel project settings as `$token`.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "string"
+        },
+        {
+          "name": "$distinct_id",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel documents `$distinct_id` as required. It must be the same id you send on events.",
+          "fix_hint": "Send the same `distinct_id` you use on `/track` for this user.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "string"
+        },
+        {
+          "name": "$set",
+          "description": "Sets profile properties, creating the profile if needed. Mixpanel documents it as required for the profile-set call.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "object"
+        },
+        {
+          "name": "$set_once",
+          "description": "Sets profile properties only when they are not already set.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set-property-once",
+          "json_type": "object"
+        },
+        {
+          "name": "$add",
+          "description": "Increments numeric profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
+        },
+        {
+          "name": "$union",
+          "description": "Unions list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
+        },
+        {
+          "name": "$append",
+          "description": "Appends to list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
+        },
+        {
+          "name": "$remove",
+          "description": "Removes values from list profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "object"
+        },
+        {
+          "name": "$unset",
+          "description": "Unsets named profile properties.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "array"
+        },
+        {
+          "name": "$delete",
+          "description": "Deletes the profile.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "string",
+          "allow_empty": true
+        },
+        {
+          "name": "$ip",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Mixpanel uses `$ip` to geolocate the profile. Send a raw address, not a digest.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "string"
+        },
+        {
+          "name": "$time",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "Mixpanel documents `$time` as seconds since epoch for the profile update.",
+          "fix_hint": "Send a Unix timestamp in seconds, not milliseconds and not an ISO string.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "integer"
+        },
+        {
+          "name": "$ignore_time",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          },
+          "description": "Mixpanel documents `$ignore_time` as a boolean. `true` leaves Last Seen unchanged.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles",
+          "json_type": "boolean"
+        },
+        {
+          "name": "",
+          "description": "The vendor documents `` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set",
+          "json_type": "object"
+        },
+        {
+          "name": "$unset[]",
+          "description": "The vendor documents `$unset[]` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "string"
+        },
+        {
+          "name": "increment",
+          "description": "The vendor documents `increment` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "number",
+          "name_pattern": "^.+$",
+          "name_pattern_parent": "$add"
+        },
+        {
+          "name": "union",
+          "description": "The vendor documents `union` in the request contract.",
+          "doc": "https://docs.mixpanel.com/reference/profile-batch-update",
+          "json_type": "array",
+          "name_pattern": "^.+$",
+          "name_pattern_parent": "$union"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.mixpanel-engage.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "$ip"
+          ],
+          "severity": "error",
+          "message": "`$ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address used for geolocation.",
+          "fix_hint": "Send the raw IP address, or omit `$ip`.",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/user-profiles"
+        },
+        {
+          "code": "vendor.mixpanel-engage.body.operation_required",
+          "kind": "require_one_of",
+          "params": [
+            "$set",
+            "$set_once",
+            "$add",
+            "$union",
+            "$append",
+            "$remove",
+            "$unset",
+            "$delete"
+          ],
+          "severity": "error",
+          "message": "The profile update has no operation. Mixpanel documents `$set`, `$set_once`, `$add`, `$union`, `$append`, `$remove`, `$unset`, or `$delete`.",
+          "fix_hint": "Send `$set` with the properties to write, or another documented engage operator.",
+          "doc": "https://docs.mixpanel.com/reference/profile-set"
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$set.**",
+        "$set.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$set.**",
+        "$set.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$set.*",
+        "$set.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$set.**[]",
+        "$set.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$set_once.**",
+        "$set_once.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$set_once.**",
+        "$set_once.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$set_once.*",
+        "$set_once.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$set_once.**[]",
+        "$set_once.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$append.**",
+        "$append.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$append.**",
+        "$append.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$append.*",
+        "$append.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$append.**[]",
+        "$append.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$remove.**",
+        "$remove.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$remove.**",
+        "$remove.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$remove.*",
+        "$remove.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$remove.**[]",
+        "$remove.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$union.**",
+        "$union.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_properties": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$union.**",
+        "$union.**"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_byte_length": 255
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$union.*",
+        "$union.*"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 3,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
+    },
+    {
+      "scope": [
+        "[].$union.**[]",
+        "$union.**[]"
+      ],
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "error",
+          "format_severity": "warning",
+          "doc": "https://docs.mixpanel.com/docs/data-structure/property-reference/data-type",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_depth": 1,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "source_param": "data",
+      "encoding": "json",
+      "condition": {
+        "kind": "value_pattern",
+        "param": "data",
+        "pattern": "^\\s*[\\[{]"
+      }
     }
   ]
 }

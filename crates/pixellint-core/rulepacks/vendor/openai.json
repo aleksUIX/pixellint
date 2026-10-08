@@ -6,14 +6,20 @@
   "source_level": "official_vendor",
   "docs": "https://developers.openai.com/ads/image-tag",
   "match": {
-    "hosts": ["bzr.openai.com"],
-    "path_prefixes": ["/v1/sdk/events"]
+    "hosts": [
+      "bzr.openai.com"
+    ],
+    "path_prefixes": [
+      "/v1/sdk/events"
+    ]
   },
   "params": [
     {
       "name": "pid",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Pixel ID, and the image tag requires it.",
       "fix_hint": "Set `pid` to the Pixel ID from OpenAI Ads.",
       "doc": "https://developers.openai.com/ads/image-tag"
@@ -46,7 +52,12 @@
       "requirement": "required",
       "format": {
         "kind": "enum",
-        "values": ["contents", "customer_action", "plan_enrollment", "custom"]
+        "values": [
+          "contents",
+          "customer_action",
+          "plan_enrollment",
+          "custom"
+        ]
       },
       "description": "It names the data shape for the event. OpenAI documents it as required, matching the event.",
       "fix_hint": "Set `data[type]` to the shape documented for this event, such as `contents`.",
@@ -64,44 +75,80 @@
     },
     {
       "name": "event_id",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It identifies the event for deduplication against the Conversions API. Use the same value as CAPI `id`.",
       "fix_hint": "Send the same `event_id` the Conversions API event uses as `id`.",
       "doc": "https://developers.openai.com/ads/image-tag"
     },
     {
       "name": "oppref",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is an OpenAI-provided attribution identifier. The image tag does not capture it for you.",
       "fix_hint": "Pass `oppref` only when the page already has the value, or drop the empty pair.",
       "doc": "https://developers.openai.com/ads/image-tag"
     },
     {
       "name": "data[amount]",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the event-level monetary value in the currency's minor unit. OpenAI documents an integer.",
       "fix_hint": "Send `data[amount]` as an integer in minor units, and send `data[currency]`.",
       "doc": "https://developers.openai.com/ads/image-tag"
     },
     {
       "name": "data[currency]",
-      "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+      "format": {
+        "kind": "currency",
+        "case_insensitive": true
+      },
       "description": "It is the ISO 4217 currency code. OpenAI documents it as required when `data[amount]` is present.",
       "fix_hint": "Send a three-letter code such as `USD`.",
       "doc": "https://developers.openai.com/ads/image-tag"
     },
     {
       "name": "data[plan_id]",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It identifies a subscription or trial plan. OpenAI documents it on `plan_enrollment` and `custom` data.",
       "fix_hint": "Set `data[plan_id]` to the plan id, or drop the empty pair.",
       "doc": "https://developers.openai.com/ads/supported-events"
     },
     {
       "name": "data[contents]",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the contents array, serialized as JSON and URL-encoded. OpenAI documents it on `contents`, `plan_enrollment`, and `custom` data.",
       "fix_hint": "Serialize the contents array as JSON, URL-encode it, or drop the empty pair.",
+      "doc": "https://developers.openai.com/ads/image-tag"
+    },
+    {
+      "name": "unknown_data_fields",
+      "name_pattern": "^data\\[.+\\]$",
+      "requirement": "forbidden",
+      "condition": {
+        "kind": "value_in",
+        "param": "data[type]",
+        "values": [
+          "contents",
+          "customer_action",
+          "plan_enrollment"
+        ]
+      },
+      "description": "Standard event data accepts only fields documented for its selected data type. Custom data may carry additional supported fields.",
+      "doc": "https://developers.openai.com/ads/image-tag"
+    },
+    {
+      "name": "unsupported_user_object",
+      "name_pattern": "^user(?:\\[.*\\])?$",
+      "requirement": "forbidden",
+      "description": "The image tag does not support a user object.",
       "doc": "https://developers.openai.com/ads/image-tag"
     }
   ],
@@ -110,8 +157,12 @@
       "code": "vendor.openai.custom_requires_name",
       "kind": "required_when_value",
       "when": "event",
-      "equals": ["custom"],
-      "requires": ["custom_event_name"],
+      "equals": [
+        "custom"
+      ],
+      "requires": [
+        "custom_event_name"
+      ],
       "severity": "error",
       "message": "`event` is `custom` but `custom_event_name` is missing. OpenAI documents that name as required for custom events.",
       "fix_hint": "Add `custom_event_name` with the custom event name.",
@@ -121,7 +172,9 @@
       "code": "vendor.openai.amount_requires_currency",
       "kind": "required_with",
       "when": "data[amount]",
-      "requires": ["data[currency]"],
+      "requires": [
+        "data[currency]"
+      ],
       "severity": "error",
       "message": "The tag carries `data[amount]` with no `data[currency]`. OpenAI documents currency as required whenever amount is set.",
       "fix_hint": "Add `data[currency]` as an ISO 4217 code alongside the amount.",
@@ -165,7 +218,10 @@
       "code": "vendor.openai.plan_enrollment_requires_plan_enrollment_data",
       "kind": "value_when",
       "when": "event",
-      "equals": ["subscription_created", "trial_started"],
+      "equals": [
+        "subscription_created",
+        "trial_started"
+      ],
       "param": "data[type]",
       "value": "plan_enrollment",
       "severity": "error",
@@ -177,7 +233,9 @@
       "code": "vendor.openai.custom_requires_custom_data",
       "kind": "value_when",
       "when": "event",
-      "equals": ["custom"],
+      "equals": [
+        "custom"
+      ],
       "param": "data[type]",
       "value": "custom",
       "severity": "error",
@@ -201,7 +259,9 @@
         "subscription_created",
         "trial_started"
       ],
-      "params": ["custom_event_name"],
+      "params": [
+        "custom_event_name"
+      ],
       "severity": "error",
       "message": "A standard event carries `custom_event_name`. OpenAI documents that parameter as required for `custom` and omitted otherwise.",
       "fix_hint": "Drop `custom_event_name`, or set `event` to `custom`.",
@@ -211,8 +271,12 @@
       "code": "vendor.openai.customer_action_forbids_contents",
       "kind": "forbidden_when_value",
       "when": "data[type]",
-      "equals": ["customer_action"],
-      "params": ["data[contents]"],
+      "equals": [
+        "customer_action"
+      ],
+      "params": [
+        "data[contents]"
+      ],
       "severity": "error",
       "message": "`data[type]` is `customer_action` but the tag carries `data[contents]`. OpenAI documents contents as unavailable on that shape.",
       "fix_hint": "Remove `data[contents]`.",
@@ -222,8 +286,13 @@
       "code": "vendor.openai.contents_forbids_plan_id",
       "kind": "forbidden_when_value",
       "when": "data[type]",
-      "equals": ["contents", "customer_action"],
-      "params": ["data[plan_id]"],
+      "equals": [
+        "contents",
+        "customer_action"
+      ],
+      "params": [
+        "data[plan_id]"
+      ],
       "severity": "error",
       "message": "This data shape carries `data[plan_id]`. OpenAI documents `plan_id` on `plan_enrollment` and `custom` only.",
       "fix_hint": "Remove `data[plan_id]`, or use `plan_enrollment` or `custom` data.",
@@ -233,7 +302,9 @@
       "code": "vendor.openai.reserved_custom_event_name",
       "kind": "forbid_value_pattern",
       "pattern": "^(?i)(appointment_scheduled|app_installed|app_opened|checkout_started|contents_viewed|custom|items_added|lead_created|order_created|page_viewed|registration_completed|subscription_created|trial_started)$",
-      "params": ["custom_event_name"],
+      "params": [
+        "custom_event_name"
+      ],
       "severity": "error",
       "message": "`custom_event_name` matches a standard event name. OpenAI documents that a custom name cannot reuse a built-in event.",
       "fix_hint": "Pick a name that is not a standard event, such as `quote_requested`.",
@@ -247,6 +318,84 @@
       "message": "A query parameter carries what looks like a raw email address. The image tag does not support a user object, and OpenAI forbids personal data on the query string.",
       "fix_hint": "Remove the address from the image tag. Send hashed identifiers on the Conversions API instead.",
       "doc": "https://developers.openai.com/ads/image-tag"
+    }
+  ],
+  "body": [
+    {
+      "source_param": "data[contents]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "array",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[]",
+          "json_type": "object",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[].id",
+          "json_type": "string",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[].group_id",
+          "json_type": "string",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[].name",
+          "json_type": "string",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[].content_type",
+          "json_type": "string",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[].quantity",
+          "json_type": "integer",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[].amount",
+          "json_type": "integer",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[].currency",
+          "json_type": "string",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          }
+        },
+        {
+          "name": "[].variant_dict",
+          "json_type": "object",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        },
+        {
+          "name": "[].variant_dict.*",
+          "json_type": "string",
+          "description": "The image tag uses a JSON-serialized contents array with the published content item fields.",
+          "doc": "https://developers.openai.com/ads/image-tag"
+        }
+      ],
+      "rules": []
     }
   ]
 }

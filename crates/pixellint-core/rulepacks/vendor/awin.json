@@ -6,14 +6,21 @@
   "source_level": "official_vendor",
   "docs": "https://help.awin.com/developers/docs/fall-back-conversion-pixel",
   "match": {
-    "hosts": ["www.awin1.com"],
-    "path_prefixes": ["/sread.img", "/sread.php"]
+    "hosts": [
+      "www.awin1.com"
+    ],
+    "path_prefixes": [
+      "/sread.img",
+      "/sread.php"
+    ]
   },
   "params": [
     {
       "name": "merchant",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric Awin advertiser ID. The published pixel template requires it.",
       "fix_hint": "Set `merchant` to the Advertiser ID from the Awin UI.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
@@ -21,7 +28,13 @@
     {
       "name": "tt",
       "requirement": "required",
-      "format": { "kind": "enum", "values": ["ns", "ss"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "ns",
+          "ss"
+        ]
+      },
       "description": "It is the tracking type. The image pixel sends `ns`; server-to-server sends `ss`.",
       "fix_hint": "Use `tt=ns` on the image pixel and `tt=ss` on the S2S read.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
@@ -29,7 +42,12 @@
     {
       "name": "tv",
       "requirement": "required",
-      "format": { "kind": "enum", "values": ["2"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "2"
+        ]
+      },
       "description": "It is the tracking version. The published template sends `tv=2`.",
       "fix_hint": "Set `tv=2`.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
@@ -37,7 +55,10 @@
     {
       "name": "amount",
       "requirement": "required",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
       "description": "It is the sale subtotal after discounts, excluding tax and shipping. Awin documents a float with a dot decimal and no thousands separator.",
       "fix_hint": "Set `amount` to the order subtotal, such as `1083.29`.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
@@ -45,7 +66,9 @@
     {
       "name": "ch",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It names the last-click channel. Awin documents `aw` for Awin traffic.",
       "fix_hint": "Set `ch=aw` for Awin last-click, or the documented channel for that conversion.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
@@ -53,23 +76,31 @@
     {
       "name": "parts",
       "requirement": "required",
-      "format": { "kind": "regex", "pattern": "^(?:[^:]+:[0-9]+(?:\\.[0-9]+)?)(?:\\|[^:]+:[0-9]+(?:\\.[0-9]+)?)*$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:[^:|]+:[0-9]+(?:\\.[0-9]+)?)(?:\\|[^:|]+:[0-9]+(?:\\.[0-9]+)?)*$"
+      },
       "description": "It is the commission group code plus amount, such as `DEFAULT:8.33`. Multiple groups are pipe-delimited, such as `CD:11.10|DVD:14.99`. Awin documents `{group}:{amount}` as required.",
       "fix_hint": "Set `parts` to `{group}:{amount}`, using `DEFAULT` when no group is configured.",
-      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+      "doc": "https://help.awin.com/developers/docs/commission-groups"
     },
     {
       "name": "ref",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the unique order reference. Awin documents it as required and unique per conversion.",
       "fix_hint": "Set `ref` to a unique, URL-encoded order identifier.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
     },
     {
       "name": "cr",
-      "requirement": "recommended",
-      "format": { "kind": "regex", "pattern": "^[A-Z]{3}$" },
+      "requirement": "required",
+      "format": {
+        "kind": "currency",
+        "case_insensitive": false
+      },
       "format_severity": "warning",
       "description": "It is the ISO 4217 currency code. The published template includes it.",
       "fix_hint": "Set `cr` to a three-letter currency code such as `GBP`.",
@@ -77,7 +108,13 @@
     },
     {
       "name": "testmode",
-      "format": { "kind": "enum", "values": ["0", "1"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
       "format_severity": "warning",
       "description": "Awin documents `0` for live conversions and `1` to skip processing.",
       "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
@@ -85,20 +122,31 @@
     {
       "name": "vc",
       "allow_empty": true,
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the voucher code when a discount was used. Awin documents returning the pair even when the value is empty.",
-      "doc": "https://help.awin.com/developers/docs/fall-back-conversion-pixel"
+      "doc": "https://help.awin.com/developers/docs/parameter-guidance",
+      "requirement": "required"
     },
     {
       "name": "cks",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Awin click identifier (`awc`) on server-to-server reads. Awin documents it as required when `tt=ss`.",
       "fix_hint": "Replay the stored `awc` value as `cks` on `/sread.php`.",
       "doc": "https://help.awin.com/developers/docs/direct-s2s"
     },
     {
       "name": "customeracquisition",
-      "format": { "kind": "enum", "values": ["NEW", "RETURNING"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "NEW",
+          "RETURNING"
+        ]
+      },
       "description": "It names the customer type. Awin documents `NEW` or `RETURNING` on the fall-back pixel.",
       "fix_hint": "Set `customeracquisition` to `NEW` or `RETURNING`.",
       "doc": "https://help.awin.com/developers/docs/customer-acquisition"
@@ -118,7 +166,9 @@
       "name": "p1",
       "name_pattern": "^p[1-9][0-9]*$",
       "allow_empty": true,
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is a custom parameter on the fall-back pixel. Awin documents `p1` through `pN` as URL-encoded GET keys.",
       "fix_hint": "URL-encode the custom value, or drop the empty pair.",
       "doc": "https://help.awin.com/developers/docs/custom-parameters"
@@ -129,12 +179,45 @@
       "code": "vendor.awin.s2s_requires_cks",
       "kind": "required_when_value",
       "when": "tt",
-      "equals": ["ss"],
-      "requires": ["cks"],
+      "equals": [
+        "ss"
+      ],
+      "requires": [
+        "cks"
+      ],
       "severity": "error",
       "message": "A server-to-server read has no `cks`. Awin documents the Awin click checksum as required when `tt=ss`.",
       "fix_hint": "Replay the landing-page `awc` value as `cks`.",
       "doc": "https://help.awin.com/developers/docs/direct-s2s"
+    },
+    {
+      "code": "vendor.awin.parts_sum_matches_amount",
+      "kind": "delimited_sum",
+      "param": "parts",
+      "total": "amount",
+      "separator": "|",
+      "value_separator": ":",
+      "severity": "error",
+      "message": "The exact sum of commission group amounts must equal the sale subtotal amount.",
+      "doc": "https://help.awin.com/developers/docs/commission-groups"
+    },
+    {
+      "code": "vendor.awin.basket_index_sequence",
+      "kind": "awin_basket",
+      "parts": "parts",
+      "check": "index_sequence",
+      "severity": "error",
+      "message": "Each product needs a distinct sequential bd[n] index starting at zero.",
+      "doc": "https://help.awin.com/developers/docs/product-level-tracking-2"
+    },
+    {
+      "code": "vendor.awin.basket_group_membership",
+      "kind": "awin_basket",
+      "parts": "parts",
+      "check": "group_membership",
+      "severity": "error",
+      "message": "Every product commission group must appear in the sale parts breakdown.",
+      "doc": "https://help.awin.com/developers/docs/product-level-tracking-2"
     }
   ]
 }

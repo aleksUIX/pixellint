@@ -82,8 +82,8 @@
     {
       "name": "ed[currency]",
       "format": {
-        "kind": "regex",
-        "pattern": "^[A-Za-z]{3}$"
+        "kind": "currency",
+        "case_insensitive": true
       },
       "description": "It is the ISO 4217 currency of `ed[value]`. Pinterest documents `ed[currency]` on the image tag.",
       "fix_hint": "Send a three-letter currency code in `ed[currency]`, such as `USD`.",
@@ -268,8 +268,14 @@
       "code": "vendor.pinterest.checkout_requires_value_and_currency",
       "kind": "required_when_value",
       "when": "event",
-      "equals": ["checkout", "addtocart"],
-      "requires": ["ed[value]", "ed[currency]"],
+      "equals": [
+        "checkout",
+        "addtocart"
+      ],
+      "requires": [
+        "ed[value]",
+        "ed[currency]"
+      ],
       "severity": "warning",
       "message": "A checkout or add-to-cart tag is missing `ed[value]` or `ed[currency]`. Pinterest documents those keys on the image tag for conversion reporting.",
       "fix_hint": "Add `ed[value]` and `ed[currency]` to the noscript image, or fire the event from JavaScript.",

@@ -1,0 +1,137 @@
+[
+  {
+    "id": "official_single_identification",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%7B%22user_id%22%3A%22value%22%2C%22user_properties%22%3A%7B%22propertyNameToUpdate%22%3A%22newValue%22%7D%7D",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "official_array_identification",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%5B%7B%22user_id%22%3A%22value%22%2C%22user_properties%22%3A%7B%22propertyNameToUpdate%22%3A%22newValue%22%7D%7D%5D",
+    "code": "",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "numeric_identifier_rejected",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%7B%22user_id%22%3A1%2C%22user_properties%22%3A%7B%22propertyNameToUpdate%22%3A%22newValue%22%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_id.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "missing_both_identifiers",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%7B%22user_properties%22%3A%7B%22plan%22%3A%22paid%22%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_or_device_required",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "add_requires_numeric_values",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%7B%22device_id%22%3A%22device-1%22%2C%22user_properties%22%3A%7B%22%24add%22%3A%7B%22count%22%3A%223%22%7D%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_properties.$add.count.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "user_properties_depth_40",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%7B%22user_id%22%3A%22user123%22%2C%22user_properties%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22leaf%22%3A%22value%22%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_properties.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "user_properties_depth_41",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%7B%22user_id%22%3A%22user123%22%2C%22user_properties%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22nested%22%3A%7B%22leaf%22%3A%22value%22%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_properties.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "aggregate_group_memberships_10",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%7B%22user_id%22%3A%22user123%22%2C%22groups%22%3A%7B%22orgId%22%3A%5B%2210%22%2C%2215%22%2C%2216%22%2C%2217%22%5D%2C%22sport%22%3A%5B%22tennis%22%2C%22baseball%22%2C%22soccer%22%2C%22golf%22%5D%2C%22plan%22%3A%22enterprise%22%2C%22company%22%3A%5B%22acme%22%5D%7D%7D",
+    "code": "vendor.amplitude-identify.body.groups.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "aggregate_group_memberships_11",
+    "kind": "url",
+    "artifact": "https://api2.amplitude.com/identify?api_key=project-key&identification=%7B%22user_id%22%3A%22user123%22%2C%22groups%22%3A%7B%22orgId%22%3A%5B%2210%22%2C%2215%22%2C%2216%22%2C%2217%22%5D%2C%22sport%22%3A%5B%22tennis%22%2C%22baseball%22%2C%22soccer%22%2C%22golf%22%5D%2C%22plan%22%3A%22enterprise%22%2C%22company%22%3A%5B%22acme%22%2C%22zeta%22%5D%7D%7D",
+    "code": "vendor.amplitude-identify.body.groups.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "evidence_kind": "independent_vendor_example_or_documented_contract_boundary"
+  },
+  {
+    "id": "operation-direct-direct-only",
+    "kind": "url",
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "artifact": "https://api2.amplitude.com/identify?api_key=example-key&identification=%7B%22user_id%22%3A%22example-user%22%2C%22user_properties%22%3A%7B%22subscription%20type%22%3A%22paid%22%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_properties.subscription type.forbidden",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "operation-direct-operators-only",
+    "kind": "url",
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "artifact": "https://api2.amplitude.com/identify?api_key=example-key&identification=%7B%22user_id%22%3A%22example-user%22%2C%22user_properties%22%3A%7B%22%24append%22%3A%7B%22interests%22%3A%22Music%22%7D%2C%22%24set%22%3A%7B%22subscription%20type%22%3A%22paid%22%7D%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_properties.subscription type.forbidden",
+    "expect_violation": false,
+    "expect_no_errors": true
+  },
+  {
+    "id": "operation-direct-mixed",
+    "kind": "url",
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "artifact": "https://api2.amplitude.com/identify?api_key=example-key&identification=%7B%22user_id%22%3A%22example-user%22%2C%22user_properties%22%3A%7B%22%24append%22%3A%7B%22interests%22%3A%22Music%22%7D%2C%22subscription%20type%22%3A%22paid%22%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_properties.subscription type.forbidden",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "operation-direct-empty-operator-mixed",
+    "kind": "url",
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "artifact": "https://api2.amplitude.com/identify?api_key=example-key&identification=%7B%22user_id%22%3A%22example-user%22%2C%22user_properties%22%3A%7B%22%24set%22%3A%7B%7D%2C%22direct%22%3A%22paid%22%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_properties.direct.forbidden",
+    "expect_violation": true,
+    "expect_no_errors": false
+  },
+  {
+    "id": "operation-direct-nested-set-field-valid",
+    "kind": "url",
+    "source_url": "https://amplitude.com/docs/apis/analytics/identify",
+    "artifact": "https://api2.amplitude.com/identify?api_key=example-key&identification=%7B%22user_id%22%3A%22example-user%22%2C%22user_properties%22%3A%7B%22%24set%22%3A%7B%22direct%22%3A%22paid%22%2C%22nested%22%3A%7B%22member%22%3A%22value%22%7D%7D%7D%7D",
+    "code": "vendor.amplitude-identify.body.user_properties.direct.forbidden",
+    "expect_violation": false,
+    "expect_no_errors": true
+  }
+]

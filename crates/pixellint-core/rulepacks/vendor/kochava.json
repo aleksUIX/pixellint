@@ -6,8 +6,12 @@
   "source_level": "official_vendor",
   "docs": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
   "match": {
-    "hosts": ["control.kochava.com"],
-    "path_contains": ["/track/json"],
+    "hosts": [
+      "control.kochava.com"
+    ],
+    "path_contains": [
+      "/track/json"
+    ],
     "json_paths": [
       {
         "any_of": [
@@ -23,18 +27,27 @@
         {
           "name": "kochava_app_id",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the Kochava app GUID, and the S2S event article requires it on every post-install payload.",
           "fix_hint": "Set `kochava_app_id` to the app GUID from the Kochava dashboard.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "action",
           "requirement": "required",
-          "format": { "kind": "enum", "values": ["event"] },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "event"
+            ]
+          },
           "description": "It names the S2S call. The post-install event article's sample sends `event`.",
           "fix_hint": "Set `action` to `event` for a post-install event.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "kochava_device_id",
@@ -42,169 +55,233 @@
           "allow_empty": true,
           "description": "The article requires the `kochava_device_id` key on every post-install payload. The value may be empty when `device_ids` carries an ID instead.",
           "fix_hint": "Send `kochava_device_id` as a stable per-install string, or send it empty and put an ID in `device_ids`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data",
           "requirement": "required",
           "description": "Kochava documents a `data` object on every post-install event payload.",
           "fix_hint": "Add a `data` object with `event_name`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "object"
         },
         {
           "name": "data.event_name",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the event name. The article places `event_name` inside `data`.",
           "fix_hint": "Set `data.event_name` to the event the marketer expects.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "origination_ip",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "ip"
+          },
           "description": "It is the device IP. Kochava documents `origination_ip` as required; the field table puts it at the root and the samples put it inside `data`.",
           "fix_hint": "Send the device IP as `origination_ip` or `data.origination_ip`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.origination_ip",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "ip"
+          },
           "description": "It is the device IP inside `data`, which is where Kochava's JSON samples put `origination_ip`.",
           "fix_hint": "Send the device IP as `data.origination_ip` or `origination_ip`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "device_ua",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the device user agent. Kochava documents `device_ua` as required so it can parse the OS version.",
           "fix_hint": "Send the client user agent as `device_ua` or `data.device_ua`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.device_ua",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the device user agent inside `data`, which is where Kochava's JSON samples put `device_ua`.",
           "fix_hint": "Send the client user agent as `data.device_ua` or `device_ua`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "device_ver",
           "allow_empty": true,
           "description": "It is the device version string. Kochava documents the key as required and allows an empty value when `device_ua` is sent instead.",
           "fix_hint": "Send `device_ver` or `data.device_ver`. An empty string is valid.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.device_ver",
           "allow_empty": true,
           "description": "It is the device version string inside `data`. Kochava's samples send `device_ver` as an empty string.",
           "fix_hint": "Send `data.device_ver` or `device_ver`. An empty string is valid.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "currency",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
           "description": "It is an ISO 4217 currency code on revenue events. Kochava's samples send `USD`.",
           "fix_hint": "Send a three-letter code such as `USD`.",
           "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
         },
         {
           "name": "data.currency",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
           "description": "It is an ISO 4217 currency code inside `data`. Kochava's samples send `USD`.",
           "fix_hint": "Send a three-letter code such as `USD`.",
           "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
         },
         {
           "name": "usertime",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is the time the user completed the event, as Unix seconds.",
           "fix_hint": "Send `usertime` as seconds since epoch.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "integer"
         },
         {
           "name": "data.usertime",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is the time the user completed the event, as Unix seconds inside `data`.",
           "fix_hint": "Send `data.usertime` as seconds since epoch.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "integer"
         },
         {
           "name": "data.app_version",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the app version string. Kochava documents `app_version` as optional.",
           "fix_hint": "Send `data.app_version` as a version string such as `1.0.0`, or drop the pair.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.device_ids.idfa",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the iOS advertising ID inside `device_ids`. Kochava requires at least one identifier in that object.",
           "fix_hint": "Send `data.device_ids.idfa`, or another documented identifier such as `adid` or `android_id`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.device_ids.idfv",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the iOS vendor ID inside `device_ids`. Kochava allows more than one identifier.",
           "fix_hint": "Send `data.device_ids.idfv` when it is available.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.device_ids.adid",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the Android advertising ID inside `device_ids`. Kochava requires at least one identifier in that object.",
           "fix_hint": "Send `data.device_ids.adid`, or another documented identifier such as `idfa` or `android_id`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.device_ids.android_id",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the Android ID inside `device_ids`. Kochava requires at least one identifier in that object.",
           "fix_hint": "Send `data.device_ids.android_id`, or another documented identifier such as `idfa` or `adid`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "device_ids.idfa",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the iOS advertising ID when `device_ids` sits at the root. Kochava's table lists the object alongside other required keys.",
           "fix_hint": "Send `device_ids.idfa`, or put the object inside `data`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "device_ids.idfv",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the iOS vendor ID when `device_ids` sits at the root.",
           "fix_hint": "Send `device_ids.idfv` when it is available.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "device_ids.adid",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the Android advertising ID when `device_ids` sits at the root.",
           "fix_hint": "Send `device_ids.adid`, or put the object inside `data`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "device_ids.android_id",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the Android ID when `device_ids` sits at the root.",
           "fix_hint": "Send `device_ids.android_id`, or put the object inside `data`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.event_data.id",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the item id inside `event_data`. Kochava's post-install sample sends it.",
           "fix_hint": "Send `data.event_data.id`, or drop the empty pair.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.event_data.name",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the item name inside `event_data`. Kochava's post-install sample sends it.",
           "fix_hint": "Send `data.event_data.name`, or drop the empty pair.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.event_data.sum",
@@ -220,62 +297,245 @@
           "name": "data.att",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It is the iOS App Tracking Transparency result. Kochava documents `true` when tracking is authorized and `false` when it is not, on iOS 14+ events.",
           "fix_hint": "Send `data.att` as `true` or `false`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "boolean"
         },
         {
           "name": "data.att_detail",
           "format": {
             "kind": "enum",
-            "values": ["authorized", "denied", "notDetermined", "restricted"]
+            "values": [
+              "authorized",
+              "denied",
+              "notDetermined",
+              "restricted"
+            ]
           },
           "description": "It is the ATTrackingManager.AuthorizationStatus. Kochava documents `authorized`, `denied`, `notDetermined`, and `restricted`.",
           "fix_hint": "Send `authorized`, `denied`, `notDetermined`, or `restricted`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.app_tracking_transparency.att",
           "format": {
             "kind": "enum",
-            "values": ["true", "false"]
+            "values": [
+              "true",
+              "false"
+            ]
           },
           "description": "It is the ATT result inside Kochava's iOS 14+ `app_tracking_transparency` object.",
           "fix_hint": "Send `data.app_tracking_transparency.att` as `true` or `false`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "boolean"
         },
         {
           "name": "data.app_tracking_transparency.att_detail",
           "format": {
             "kind": "enum",
-            "values": ["authorized", "denied", "notDetermined", "restricted"]
+            "values": [
+              "authorized",
+              "denied",
+              "notDetermined",
+              "restricted"
+            ]
           },
           "description": "It is the ATTrackingManager.AuthorizationStatus inside `app_tracking_transparency`.",
           "fix_hint": "Send `authorized`, `denied`, `notDetermined`, or `restricted`.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string"
         },
         {
           "name": "data.app_tracking_transparency.att_time",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is the ATT authorization time. Kochava documents `att_time` as optional on iOS 14+ events.",
           "fix_hint": "Send `att_time` as Unix seconds.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "integer"
         },
         {
           "name": "data.app_tracking_transparency.att_duration",
-          "format": { "kind": "integer" },
+          "format": {
+            "kind": "integer"
+          },
           "description": "It is how long the user took to answer the ATT prompt, in seconds.",
           "fix_hint": "Send `att_duration` as an integer number of seconds.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "integer"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "object"
+        },
+        {
+          "name": "device_ids",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "object"
+        },
+        {
+          "name": "data.device_ids",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "object"
+        },
+        {
+          "name": "data.app_tracking_transparency",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "object"
+        },
+        {
+          "name": "device_ids.*",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "data.device_ids.*",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "data.ip_alternate",
+          "description": "The alternate device address must be publicly routable IPv4 outside the exact excluded CIDRs published by Kochava. This field is processed when the primary address is IPv6.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string",
+          "format": {
+            "kind": "ip",
+            "version": "v4",
+            "exclude_ranges": [
+              "0.0.0.0/8",
+              "10.0.0.0/8",
+              "100.64.0.0/10",
+              "127.0.0.0/8",
+              "169.254.0.0/16",
+              "172.16.0.0/12",
+              "192.0.0.0/24",
+              "192.0.2.0/24",
+              "192.88.99.0/24",
+              "192.168.0.0/16",
+              "198.18.0.0/15",
+              "198.51.100.0/24",
+              "203.0.113.0/24",
+              "224.0.0.0/4",
+              "240.0.0.0/4"
+            ]
+          },
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "value_pattern",
+                "param": "data.origination_ip",
+                "pattern": ":"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "origination_ip",
+                "pattern": ":"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_limit_tracking",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": [
+            "boolean",
+            "string"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          }
+        },
+        {
+          "name": "data.gdpr_privacy_consent",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "object"
+        },
+        {
+          "name": "data.gdpr_privacy_consent.gdpr_applies",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "integer",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1"
+            ]
+          }
+        },
+        {
+          "name": "data.gdpr_privacy_consent.ad_user_data",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "integer",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1"
+            ]
+          }
+        },
+        {
+          "name": "data.gdpr_privacy_consent.ad_personalization",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "integer",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1"
+            ]
+          }
+        },
+        {
+          "name": "data.gdpr_privacy_consent.tc_string",
+          "description": "The published vendor reference specifies this field.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
         }
       ],
       "rules": [
         {
           "code": "vendor.kochava.body.origination_ip_required",
           "kind": "require_one_of",
-          "params": ["origination_ip", "data.origination_ip"],
+          "params": [
+            "origination_ip",
+            "data.origination_ip"
+          ],
           "severity": "error",
           "message": "The payload has no device IP. Kochava documents `origination_ip` as required on every post-install event.",
           "fix_hint": "Send `origination_ip` at the root or inside `data`.",
@@ -284,7 +544,10 @@
         {
           "code": "vendor.kochava.body.device_ua_required",
           "kind": "require_one_of",
-          "params": ["device_ua", "data.device_ua"],
+          "params": [
+            "device_ua",
+            "data.device_ua"
+          ],
           "severity": "error",
           "message": "The payload has no device user agent. Kochava documents `device_ua` as required so it can parse the OS version.",
           "fix_hint": "Send `device_ua` at the root or inside `data`.",
@@ -293,28 +556,13 @@
         {
           "code": "vendor.kochava.body.device_ver_required",
           "kind": "require_one_of",
-          "params": ["device_ver", "data.device_ver"],
+          "params": [
+            "device_ver",
+            "data.device_ver"
+          ],
           "severity": "error",
           "message": "The payload has no `device_ver` key. Kochava documents the key as required and allows an empty value.",
           "fix_hint": "Send `device_ver` at the root or inside `data`. An empty string is valid.",
-          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
-        },
-        {
-          "code": "vendor.kochava.body.device_ids_required",
-          "kind": "require_one_of",
-          "params": [
-            "data.device_ids.idfa",
-            "data.device_ids.idfv",
-            "data.device_ids.adid",
-            "data.device_ids.android_id",
-            "device_ids.idfa",
-            "device_ids.idfv",
-            "device_ids.adid",
-            "device_ids.android_id"
-          ],
-          "severity": "error",
-          "message": "The payload has no identifier in `device_ids`. Kochava requires at least one of IDFA, IDFV, ADID, or Android ID.",
-          "fix_hint": "Send `data.device_ids` with `idfa`, `idfv`, `adid`, or `android_id`.",
           "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
         },
         {
@@ -330,6 +578,44 @@
           "severity": "error",
           "message": "This field looks like a SHA-256 digest, but Kochava documents `origination_ip` and `device_ua` as unhashed device values.",
           "fix_hint": "Send the raw IP address or user agent. Hashing it makes the event unmatchable.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "code": "vendor.kochava.body.device_ids_required",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "kochava_device_id"
+            ],
+            [
+              "data.device_ids.*"
+            ],
+            [
+              "device_ids.*"
+            ]
+          ],
+          "severity": "error",
+          "message": "Send a nonempty Kochava device ID or an identifier in device_ids. Custom variants are supported.",
+          "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+        },
+        {
+          "code": "vendor.kochava.body.consent_signal_alternative",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "data.gdpr_privacy_consent.tc_string"
+            ],
+            [
+              "data.gdpr_privacy_consent.ad_user_data",
+              "data.gdpr_privacy_consent.ad_personalization"
+            ]
+          ],
+          "condition": {
+            "kind": "present",
+            "param": "data.gdpr_privacy_consent"
+          },
+          "severity": "error",
+          "message": "Consent signals require a TCF string or both explicit advertising consent values.",
           "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
         }
       ]

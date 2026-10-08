@@ -263,6 +263,16 @@ impl Engine {
         request: &DocumentRequest,
         options: &ValidationOptions,
     ) -> Result<DocumentReport, DocumentError> {
+        self.validate_many_at(request, options, crate::timestamp::current_unix_seconds())
+    }
+
+    /// Validate every extracted artifact against the same reference clock.
+    pub fn validate_many_at(
+        &self,
+        request: &DocumentRequest,
+        options: &ValidationOptions,
+        reference_time_unix_seconds: i64,
+    ) -> Result<DocumentReport, DocumentError> {
         let mut groups: Vec<Group> = Vec::new();
         let mut index: HashMap<(&str, &str), usize> = HashMap::new();
 
@@ -310,12 +320,12 @@ impl Engine {
                 claimed_vendor: group.claimed_vendor,
                 expansion_state: group.expansion_state,
             };
-            let summary =
-                self.validate(&validation, options)
-                    .map_err(|error| DocumentError::Engine {
-                        index: group.first_index,
-                        error,
-                    })?;
+            let summary = self
+                .validate_at(&validation, options, reference_time_unix_seconds)
+                .map_err(|error| DocumentError::Engine {
+                    index: group.first_index,
+                    error,
+                })?;
 
             let (artifact_errors, artifact_warnings, artifact_infos) = counts_from(&summary);
             errors += artifact_errors;
