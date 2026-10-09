@@ -337,6 +337,7 @@ Rust callers on a WebAssembly target without a clock must use the explicit API.
 
 A rule can declare `condition` to restrict when its assertion runs. Supported
 predicates are `exists` or `present` with `param`, `value_in` with `param` and `values`,
+`all_values_in` with nonempty `params` and `values`,
 `value_pattern` with `param` and `pattern`, `json_type` with `param` and a type or
 type list, `all` or `any` with nested `conditions`, and `not` with one nested
 `condition`. Presence includes empty containers. Scalar empty strings do not
@@ -350,6 +351,14 @@ values never satisfy a value predicate, including under negation.
 decimal exponents can be normalized. Thus `-1`, `-1.0`, and `-1e0` select the
 same numeric condition. Strings and URL values keep exact textual matching.
 For exponents outside normalization range, identical numeric spellings match.
+`all_values_in` requires at least one submitted scalar across its declared
+fields and every submitted scalar occurrence to belong to `values`. It ignores
+container parents, checks repeated array members independently, and uses the
+same numeric equality as `value_in`. Empty strings are submitted values. A
+known conflicting value makes the condition false. Otherwise an unresolved
+macro makes it unknown, including under negation. This lets a mode-specific
+presence rule defer conflicting or unresolved repeated discriminators without
+assuming the destination's duplicate-selection policy.
 
 `format_when` with `pair_occurrences: true` pairs the nth discriminator with the
 nth value. Empty and macro positions retain their indices. It does not require

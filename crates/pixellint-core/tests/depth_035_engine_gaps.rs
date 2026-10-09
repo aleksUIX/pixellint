@@ -72,11 +72,9 @@ fn primary_requirements_and_boundaries_have_exact_findings() {
                 .map(|finding| finding.code.clone())
                 .collect();
             codes.sort();
-            assert_eq!(
-                codes, case.expected_codes,
-                "{pack}/{}: {summary:?}",
-                case.id
-            );
+            let mut expected_codes = case.expected_codes;
+            expected_codes.sort();
+            assert_eq!(codes, expected_codes, "{pack}/{}: {summary:?}", case.id);
             for finding in findings {
                 assert_eq!(
                     format!("{:?}", finding.severity).to_ascii_lowercase(),
@@ -88,7 +86,66 @@ fn primary_requirements_and_boundaries_have_exact_findings() {
             checked += 1;
         }
     }
-    assert_eq!(checked, 177);
+    assert_eq!(checked, 217);
+}
+
+#[test]
+fn all_values_in_proves_every_visible_mode_and_preserves_macro_unknowns() {
+    for negated in [false, true] {
+        let guard = json!({"kind":"all_values_in", "params":["query.mode", "query.mode[]"], "values":["3"]});
+        let condition = if negated {
+            json!({"kind":"not", "condition":guard})
+        } else {
+            guard
+        };
+        let mut engine = Engine::new();
+        engine.register_manifest_json(&json!({
+            "id":"custom/mode", "display_name":"Mode", "description":"Unambiguous observed mode.",
+            "source_level":"heuristic", "match":{"hosts":["example.test"]},
+            "http":{"params":[{"name":"query.mode","aliases":["query.type"],"allow_empty":true},
+                {"name":"query.mode[]","aliases":["query.type[]"],"allow_empty":true},
+                {"name":"headers.x-marker","requirement":"required","condition":condition}]}
+        }).to_string()).unwrap();
+        for (query, proven) in [
+            ("", Some(false)),
+            ("mode=3", Some(true)),
+            ("mode=3&mode=3", Some(true)),
+            ("mode=3&%6dode=3", Some(true)),
+            ("type=3&type=3", Some(true)),
+            ("mode=1&mode=3", Some(false)),
+            ("mode=3&mode=1", Some(false)),
+            ("mode=3&mode=", Some(false)),
+            ("mode&mode=3", Some(false)),
+            ("mode=3&mode=%5BTYPE%5D", None),
+            ("mode=%5BTYPE%5D&mode=3", None),
+            ("mode=%5BTYPE%5D", None),
+            ("mode=1&mode=%5BTYPE%5D", Some(false)),
+        ] {
+            let summary = engine.validate_at(
+                &request(ArtifactKind::NetworkRequest, json!({
+                    "url":format!("https://example.test/?{query}"),"method":"GET","headers":{}
+                }).to_string()),
+                &ValidationOptions::default(), 1_800_000_000
+            ).unwrap();
+            let expected = proven.is_some_and(|value| value != negated);
+            assert_eq!(
+                summary.reports[0].violations.len(),
+                usize::from(expected),
+                "{negated}/{query}: {summary:?}"
+            );
+        }
+    }
+    for condition in [
+        json!({"kind":"all_values_in","params":[],"values":["3"]}),
+        json!({"kind":"all_values_in","params":["mode"],"values":[]}),
+        json!({"kind":"all_values_in","params":["uncontracted"],"values":["3"]}),
+    ] {
+        assert!(Engine::new().register_manifest_json(&json!({
+            "id":"custom/mode", "display_name":"Mode", "description":"Guard declarations.",
+            "source_level":"heuristic", "match":{"hosts":["example.test"]},
+            "params":[{"name":"mode"},{"name":"marker","condition":condition}]
+        }).to_string()).is_err());
+    }
 }
 
 #[test]

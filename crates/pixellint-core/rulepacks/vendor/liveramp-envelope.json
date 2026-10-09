@@ -484,29 +484,17 @@
       },
       {
         "name": "headers.x-forwarded-for",
-        "description": "LiveRamp requires X-Forwarded-For for explicit server-to-server calls. Literal client/proxy entries must be IPv4 or IPv6 addresses. Macro entries remain unresolved, while malformed literal neighbors receive a syntax advisory. Client identity, trusted proxy selection and Placement-country approval require external context.",
+        "description": "LiveRamp requires X-Forwarded-For for server-to-server calls. Require it only when every observed atype occurrence is literal 3. Conflicting modes or unresolved macros do not establish the integration mode. Client identity, trusted proxy selection and Placement-country approval require external context.",
         "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api",
         "requirement": "required",
-        "format": {
-          "kind": "ip_chain"
-        },
         "condition": {
-          "kind": "any",
-          "conditions": [
-            {
-              "kind": "value_in",
-              "param": "query.atype",
-              "values": [
-                "3"
-              ]
-            },
-            {
-              "kind": "value_in",
-              "param": "query.atype[]",
-              "values": [
-                "3"
-              ]
-            }
+          "kind": "all_values_in",
+          "params": [
+            "query.atype",
+            "query.atype[]"
+          ],
+          "values": [
+            "3"
           ]
         },
         "format_severity": "warning",
@@ -546,6 +534,46 @@
         "json_type": "string"
       }
     ],
-    "rules": []
+    "rules": [
+      {
+        "code": "vendor.liveramp-envelope.http.headers.x-forwarded-for.invalid",
+        "kind": "format",
+        "param": "headers.x-forwarded-for",
+        "format": {
+          "kind": "ip_chain"
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "query.atype",
+                  "values": [
+                    "3"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "query.atype[]",
+                  "values": [
+                    "3"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "present",
+              "param": "headers.x-forwarded-for"
+            }
+          ]
+        },
+        "severity": "warning",
+        "message": "Supplied X-Forwarded-For client/proxy entries should be IPv4 or IPv6 addresses. Complete macro entries remain unresolved without hiding invalid literal neighbors.",
+        "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api"
+      }
+    ]
   }
 }

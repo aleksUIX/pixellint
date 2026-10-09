@@ -587,14 +587,38 @@ pub enum Assertion {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum RuleCondition {
-    Exists { param: String },
-    Present { param: String },
-    ValueIn { param: String, values: Vec<String> },
-    ValuePattern { param: String, pattern: String },
-    JsonType { param: String, json_type: JsonTypes },
-    All { conditions: Vec<RuleCondition> },
-    Any { conditions: Vec<RuleCondition> },
-    Not { condition: Box<RuleCondition> },
+    Exists {
+        param: String,
+    },
+    Present {
+        param: String,
+    },
+    ValueIn {
+        param: String,
+        values: Vec<String>,
+    },
+    /// At least one scalar is submitted and every occurrence is allowed.
+    AllValuesIn {
+        params: Vec<String>,
+        values: Vec<String>,
+    },
+    ValuePattern {
+        param: String,
+        pattern: String,
+    },
+    JsonType {
+        param: String,
+        json_type: JsonTypes,
+    },
+    All {
+        conditions: Vec<RuleCondition>,
+    },
+    Any {
+        conditions: Vec<RuleCondition>,
+    },
+    Not {
+        condition: Box<RuleCondition>,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -612,6 +636,7 @@ impl RuleCondition {
             | Self::ValueIn { param, .. }
             | Self::ValuePattern { param, .. }
             | Self::JsonType { param, .. } => vec![param],
+            Self::AllValuesIn { params, .. } => params.iter().collect(),
             Self::All { conditions } | Self::Any { conditions } => {
                 conditions.iter().flat_map(Self::params).collect()
             }
@@ -694,6 +719,31 @@ impl RuleCondition {
                 }
                 if unknown { None } else { Some(false) }
             }
+            Self::AllValuesIn {
+                params: names,
+                values,
+            } => {
+                let mut submitted = false;
+                let mut unknown = false;
+                for field in params.iter().filter(|field| {
+                    !field.missing
+                        && !field.container
+                        && names.iter().any(|name| name == field.name.as_ref())
+                }) {
+                    submitted = true;
+                    if contains_macro(field.value.as_ref()) {
+                        unknown = true;
+                    } else if !values.iter().any(|value| {
+                        value == field.value.as_ref()
+                            || field.json_kind == Some(JsonValueKind::Number)
+                                && compare_numeric_text(value, field.value.as_ref())
+                                    == Some(std::cmp::Ordering::Equal)
+                    }) {
+                        return Some(false);
+                    }
+                }
+                if unknown { None } else { Some(submitted) }
+            }
             Self::All { conditions } => {
                 let values: Vec<_> = conditions
                     .iter()
@@ -749,6 +799,9 @@ fn validate_condition(
         }
         RuleCondition::JsonType { json_type, .. } if json_type.types().is_empty() => {
             return Err(invalid("json_type condition needs at least one type"));
+        }
+        RuleCondition::AllValuesIn { params, values } if params.is_empty() || values.is_empty() => {
+            return Err(invalid("all_values_in needs nonempty params and values"));
         }
         RuleCondition::All { conditions } | RuleCondition::Any { conditions } => {
             if conditions.is_empty() {
@@ -5539,6 +5592,11 @@ fn normalize_condition_aliases(condition: &mut RuleCondition, contracts: &[Param
         | RuleCondition::ValueIn { param, .. }
         | RuleCondition::ValuePattern { param, .. }
         | RuleCondition::JsonType { param, .. } => normalize_alias(param, contracts),
+        RuleCondition::AllValuesIn { params, .. } => {
+            for param in params {
+                normalize_alias(param, contracts);
+            }
+        }
         RuleCondition::All { conditions } | RuleCondition::Any { conditions } => {
             for condition in conditions {
                 normalize_condition_aliases(condition, contracts);
