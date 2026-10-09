@@ -3426,7 +3426,7 @@ impl ManifestRulePack {
             if body
                 .condition
                 .as_ref()
-                .is_some_and(&condition_reads_unavailable_body)
+                .is_some_and(condition_reads_unavailable_body)
             {
                 continue;
             }
@@ -3468,7 +3468,7 @@ impl ManifestRulePack {
                             .contract
                             .condition
                             .as_ref()
-                            .is_some_and(&condition_reads_unavailable_body))
+                            .is_some_and(condition_reads_unavailable_body))
                 {
                     continue;
                 }
@@ -3487,7 +3487,7 @@ impl ManifestRulePack {
                             .rule
                             .condition
                             .as_ref()
-                            .is_some_and(&condition_reads_unavailable_body))
+                            .is_some_and(condition_reads_unavailable_body))
                 {
                     continue;
                 }
