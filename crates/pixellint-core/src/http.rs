@@ -179,7 +179,7 @@ impl Engine {
         // Endpoint probing can populate parameter caches. Keep it separate
         // from the request prepared after decoded form fields are available.
         let endpoint = PreparedArtifact::from_request_at(&url_request, clock);
-        let headerless_form = capture_allows_headerless_form(&request.artifact)
+        let headerless_form = capture_allows_headerless_form(&capture, &context)
             && self.candidate_ids(&endpoint).into_iter().any(|id| {
                 !options
                     .except_rulepacks
@@ -366,34 +366,17 @@ fn header_lines(headers: &HttpHeaders) -> Vec<(&str, &str)> {
 
 /// Keep capture uncertainty separate from observed absent MIME. The optional
 /// importer metadata must never turn redacted content into observed evidence.
-fn capture_allows_headerless_form(artifact: &str) -> bool {
-    let Ok(value) = serde_json::from_str::<Value>(artifact) else {
-        return false;
+fn capture_allows_headerless_form(request: &HttpRequest, context: &HttpCaptureContext) -> bool {
+    let headers = header_lines(&request.headers);
+    let present = |name: &str| {
+        headers
+            .iter()
+            .any(|(key, _)| key.eq_ignore_ascii_case(name))
     };
-    let Some(capture) = value.get("capture") else {
-        return true;
-    };
-    !capture
-        .get("headers_unavailable")
-        .and_then(Value::as_bool)
-        .unwrap_or(false)
-        && !["unavailable_headers", "redacted_headers"]
-            .into_iter()
-            .any(|field| {
-                capture
-                    .get(field)
-                    .and_then(Value::as_array)
-                    .is_some_and(|names| {
-                        names
-                            .iter()
-                            .filter_map(Value::as_str)
-                            .any(|name| name.eq_ignore_ascii_case("content-type"))
-                    })
-            })
-        && !capture
-            .get("body")
-            .and_then(Value::as_str)
-            .is_some_and(|body| matches!(body, "absent" | "unavailable" | "redacted"))
+    !context.header_unknown("content-type", present("content-type"))
+        && !context.header_unknown("content-encoding", present("content-encoding"))
+        && !context.body_unavailable()
+        && context.body != Some(HttpBodyAvailability::Absent)
 }
 
 fn decode_request_with_form_hint(
@@ -486,10 +469,17 @@ fn decode_request_with_form_hint(
     }
     let unavailable_content_type =
         context.header_unknown("content-type", headers.contains_key("content-type"));
+    let unavailable_content_encoding =
+        context.header_unknown("content-encoding", headers.contains_key("content-encoding"));
     if unavailable_content_type {
         unavailable_paths.extend(["content_type".into(), "body_encoding".into()]);
     }
     if capture_body_unavailable {
+        unavailable_paths.extend(["body".into(), "body_encoding".into()]);
+    }
+    let decoder_context_unavailable =
+        wire.is_some() && (unavailable_content_type || unavailable_content_encoding);
+    if decoder_context_unavailable {
         unavailable_paths.extend(["body".into(), "body_encoding".into()]);
     }
     if !unavailable_paths.is_empty() {
@@ -511,13 +501,14 @@ fn decode_request_with_form_hint(
             .is_none_or(|value| !value.eq_ignore_ascii_case("identity"))
     });
     let mut unsupported = capture_body_unavailable
+        || decoder_context_unavailable
         || (wire.is_some()
             && (compressed
                 || ambiguous_content_type
                 || content_type.as_deref().is_some_and(|mime| {
                     mime.starts_with("multipart/") && mime != "multipart/form-data"
                 })));
-    if unsupported && !capture_body_unavailable {
+    if unsupported && !capture_body_unavailable && !decoder_context_unavailable {
         violations.push(request_violation("unsupported_body_encoding", Some("body"), "This capture contains compressed data, repeated Content-Type headers or an unsupported multipart media type. Provide an unambiguous decoded capture for local body checks.", Severity::Info));
     }
     let mut decoded_body = Value::Null;
@@ -677,6 +668,7 @@ fn decode_request_with_form_hint(
     let unavailable_form = unsupported
         && (ambiguous_content_type
             || encoding == "form"
+            || decoder_context_unavailable
             || (capture_body_unavailable && content_type.is_none())
             || content_type_from_headers(request)
                 .is_some_and(|mime| mime.starts_with("multipart/")));

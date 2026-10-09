@@ -2729,12 +2729,30 @@ impl ValidatorPlugin for ManifestRulePack {
                     )
                 })
             });
+        let query_body_unavailable = !self.http_queries.is_empty()
+            && document.as_ref().is_some_and(|document| {
+                document
+                    .get("body_encoding")
+                    .is_some_and(|field| field.text == "unsupported")
+            });
         let mut report = if bulk {
             ValidationReport {
                 plugin_id: self.metadata.id.clone(),
                 detected_vendor: self.vendor.clone(),
                 violations: Vec::new(),
             }
+        } else if query_body_unavailable {
+            // An unavailable entity may contain bulk events. Missing URL
+            // event fields are speculative, but supplied URL values remain
+            // observable and keep their syntax and value checks.
+            let mut url_only = PreparedArtifact::from_request_at(
+                prepared.request(),
+                prepared.reference_time_unix_seconds(),
+            );
+            url_only.mark_complete_http_request();
+            url_only.mark_unavailable_form_body();
+            self.prepare_vendor_context(&mut url_only);
+            self.validate_prepared(&url_only)
         } else {
             self.validate_prepared(prepared)
         };

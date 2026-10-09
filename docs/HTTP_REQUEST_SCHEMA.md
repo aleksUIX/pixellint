@@ -72,6 +72,11 @@ could be in an unavailable form body, and body-dependent HTTP contracts, are
 deferred. A capture with no errors can therefore still have incomplete coverage.
 Provide decoded entity bytes and matching headers for those body checks.
 
+Explicitly unavailable MIME or compression headers defer entity decoding.
+For a destination with bulk query bodies, an unavailable entity can contain
+events that are absent from the URL. Those missing URL fields remain unknown;
+supplied URL values and observable transport violations still receive checks.
+
 Complete-capture findings carry fields and citations. Targets are omitted
 because ranges in decoded JSON cannot be used as offsets into the capture's
 escaped body string. Authentication header values, decoded Basic credentials and credential-like
