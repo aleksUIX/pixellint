@@ -129,17 +129,14 @@ fn murmurhash3(bytes: &[u8]) -> u32 {
             .rotate_left(15)
             .wrapping_mul(461_845_907)
     };
-    let mut chunks = bytes.chunks_exact(4);
-    for chunk in &mut chunks {
-        hash ^= mix(u32::from_le_bytes(
-            chunk.try_into().expect("four-byte chunk"),
-        ));
+    let (chunks, remainder) = bytes.as_chunks::<4>();
+    for chunk in chunks {
+        hash ^= mix(u32::from_le_bytes(*chunk));
         hash = hash
             .rotate_left(13)
             .wrapping_mul(5)
             .wrapping_add(0xe654_6b64);
     }
-    let remainder = chunks.remainder();
     if !remainder.is_empty() {
         let word = remainder.iter().enumerate().fold(0, |word, (index, byte)| {
             word | (u32::from(*byte) << (8 * index))
