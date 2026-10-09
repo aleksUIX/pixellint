@@ -787,6 +787,9 @@ pub struct RulePackManifest {
     /// Destination-documented alternative query names carrying a TC String.
     #[serde(default)]
     pub gdpr_consent_aliases: Vec<String>,
+    /// URL presence checked by declared HTTP alternatives on complete captures.
+    #[serde(default)]
+    pub http_url_presence_overrides: Vec<String>,
     /// Pack id such as `vendor/meta`. Becomes the code prefix `vendor.meta`.
     pub id: String,
     pub display_name: String,
@@ -848,6 +851,18 @@ pub struct RequestQuerySpec {
     pub inherited_params: std::collections::BTreeMap<String, String>,
     #[serde(default)]
     pub inherited_overrides: bool,
+    /// Opt-in native map reader with explicitly sourced server semantics.
+    #[serde(default)]
+    pub native_map: Option<RequestQueryMapCoercion>,
+    /// Advisory oldest-first order for explicit Matomo cdt values.
+    #[serde(default)]
+    pub check_chronological_order: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RequestQueryMapCoercion {
+    MatomoPhp8,
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -1013,14 +1028,18 @@ pub enum ParamEncoding {
     Base64Latin1Json,
     /// Pipe-separated tuple components, preserved as JSON strings.
     PipeDelimitedJson,
+    /// One strict encodeURIComponent layer over UTF-8 JSON, preserving plus.
+    PercentEncodedJson,
+    /// Form-style query fields represented as JSON strings or repeated arrays.
+    QueryParamsJson,
 }
 
 impl ParamEncoding {
     fn decoded_byte_length(self, source: &str, text: &str) -> usize {
         match self {
             Self::Base64Latin1Json => text.chars().count(),
-            Self::PipeDelimitedJson => source.len(),
-            Self::Json | Self::Base64Json => text.len(),
+            Self::PipeDelimitedJson | Self::QueryParamsJson => source.len(),
+            Self::Json | Self::Base64Json | Self::PercentEncodedJson => text.len(),
         }
     }
 
@@ -1029,6 +1048,8 @@ impl ParamEncoding {
             Self::Json => Ok(source.to_string()),
             Self::Base64Json => decode_base64_json(source),
             Self::Base64Latin1Json => decode_base64_latin1_json(source),
+            Self::PercentEncodedJson => decode_percent_encoded_json(source),
+            Self::QueryParamsJson => decode_query_params_json(source),
             Self::PipeDelimitedJson => {
                 serde_json::to_string(&source.split('|').collect::<Vec<_>>())
                     .map_err(|error| error.to_string())
@@ -1394,6 +1415,7 @@ pub struct ManifestRulePack {
     metadata: RulePackMetadata,
     gdpr_non_applicable_values: Vec<String>,
     gdpr_consent_aliases: Vec<String>,
+    http_url_presence_overrides: BTreeSet<String>,
     code_prefix: String,
     vendor: Option<String>,
     docs: Option<String>,
@@ -1918,6 +1940,7 @@ impl ManifestRulePack {
             transport.client_fragment_params.clear();
             transport.gdpr_non_applicable_values.clear();
             transport.gdpr_consent_aliases.clear();
+            transport.http_url_presence_overrides.clear();
             transport.matcher.json_paths = vec![ShapeMatch::Present("method".into())];
             let mut bodies = specs.specs().to_vec();
             for spec in &mut bodies {
@@ -1961,6 +1984,16 @@ impl ManifestRulePack {
         let pack_id = manifest.id.clone();
         validate_pack_id(&pack_id)?;
         for spec in &manifest.http_queries {
+            if spec.check_chronological_order
+                && spec.native_map != Some(RequestQueryMapCoercion::MatomoPhp8)
+            {
+                return Err(ManifestError::InvalidConstraint {
+                    pack_id: pack_id.clone(),
+                    name: "http_queries.check_chronological_order".into(),
+                    reason: "chronological order uses the explicit matomo_php8 cdt source profile"
+                        .into(),
+                });
+            }
             if !spec.source_field.starts_with("body.")
                 || !spec.source_field.ends_with("[]")
                 || !json::is_valid_pattern(&spec.source_field)
@@ -2409,9 +2442,34 @@ impl ManifestRulePack {
             }
         }
 
+        let mut http_url_presence_overrides = BTreeSet::new();
+        for name in &manifest.http_url_presence_overrides {
+            if !http_url_presence_overrides.insert(name.clone())
+                || matcher.any_host
+                || (matcher.hosts.is_empty() && matcher.host_suffixes.is_empty())
+                || http
+                    .as_ref()
+                    .is_none_or(|transport| transport.bodies.is_empty())
+                || !manifest.params.iter().any(|contract| {
+                    contract.name == *name
+                        && matches!(
+                            contract.requirement,
+                            Requirement::Required | Requirement::Recommended
+                        )
+                })
+            {
+                return Err(ManifestError::InvalidConstraint {
+                    pack_id,
+                    name: "http_url_presence_overrides".to_string(),
+                    reason: "HTTP presence overrides require unique declared required or recommended URL fields, a host-bound endpoint, and complete HTTP contract scopes".to_string(),
+                });
+            }
+        }
+
         Ok(Self {
             gdpr_non_applicable_values: manifest.gdpr_non_applicable_values,
             gdpr_consent_aliases: manifest.gdpr_consent_aliases,
+            http_url_presence_overrides,
             metadata: RulePackMetadata {
                 id: manifest.id.clone(),
                 display_name: manifest.display_name.clone(),
@@ -2569,6 +2627,25 @@ impl ManifestRulePack {
     }
 }
 
+fn matomo_explicit_timestamp(value: &str) -> Option<String> {
+    static NUMERIC: std::sync::OnceLock<Regex> = std::sync::OnceLock::new();
+    if NUMERIC
+        .get_or_init(|| Regex::new(r"^-?[0-9]+(?:\.[0-9]+)?$").expect("static Matomo cdt grammar"))
+        .is_match(value)
+    {
+        return value
+            .parse::<f64>()
+            .ok()
+            .filter(|v| v.is_finite())
+            .map(|_| value.to_string());
+    }
+    if value.len() != 19 || !value.contains(' ') {
+        return None;
+    }
+    let millis = crate::timestamp::timestamp_millis(value, TimestampUnit::DatetimeUtc)?;
+    Some((millis / 1000).to_string())
+}
+
 impl ValidatorPlugin for ManifestRulePack {
     fn supports_http(&self, prepared: &PreparedArtifact<'_>) -> bool {
         self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query))
@@ -2614,22 +2691,90 @@ impl ValidatorPlugin for ManifestRulePack {
                 .next()
                 .unwrap_or_default();
             for spec in &self.http_queries {
-                for path in document.expand(&spec.source_field) {
+                let mut previous_timestamp: Option<String> = None;
+                let source_parent = spec
+                    .source_field
+                    .strip_suffix("[]")
+                    .unwrap_or(&spec.source_field);
+                let paths = if spec.native_map == Some(RequestQueryMapCoercion::MatomoPhp8)
+                    && document
+                        .get(source_parent)
+                        .is_some_and(|source| source.kind == JsonValueKind::Object)
+                {
+                    document
+                        .members(source_parent)
+                        .into_iter()
+                        .map(|(_, path)| path)
+                        .collect()
+                } else {
+                    document.expand(&spec.source_field)
+                };
+                for path in paths {
                     let Some(field) = document.get(&path) else {
                         continue;
                     };
-                    if field.kind == JsonValueKind::Object {
+                    let uncertain_outer_token = spec.native_map
+                        == Some(RequestQueryMapCoercion::MatomoPhp8)
+                        && spec
+                            .inherited_params
+                            .get("token_auth")
+                            .and_then(|source| document.get(source))
+                            .is_some_and(|token| {
+                                let value: serde_json::Value =
+                                    serde_json::from_str(&normalized[token.start..token.end])
+                                        .expect("validated normalized JSON field");
+                                crate::php_query::matomo_php8_auth_string(&value).is_err()
+                            });
+                    if uncertain_outer_token {
                         report.violations.push(Violation {
-                            code:format!("{}.http.query_source.unvalidated", self.code_prefix),
-                            message:"Native parameter maps need destination-specific coercion contracts; this item's event fields were not validated.".into(),
-                            severity:Severity::Info, field:Some(format!("http.{path}")), fix_hint:None,
-                            source:self.source_for(RuleSourceLevel::OfficialVendor,self.docs.as_deref()), targets:Vec::new(),
+                            code: format!("{}.http.query_source.unvalidated", self.code_prefix),
+                            message: "The native outer token needs PHP architecture or precision configuration. This item's authentication-dependent event checks remain unvalidated.".into(),
+                            severity: Severity::Info,
+                            field: Some(format!("http.{path}")),
+                            fix_hint: None,
+                            source: self.source_for(RuleSourceLevel::OfficialTemplate, Some(crate::php_query::MATOMO_PHP8_SOURCE)),
+                            targets: Vec::new(),
                         });
                         continue;
                     }
-                    if field.kind != JsonValueKind::String {
-                        continue;
-                    }
+                    let native_pairs = if spec.native_map
+                        == Some(RequestQueryMapCoercion::MatomoPhp8)
+                        && field.kind != JsonValueKind::String
+                    {
+                        let native: serde_json::Value =
+                            serde_json::from_str(&normalized[field.start..field.end])
+                                .expect("validated normalized JSON field");
+                        match crate::php_query::matomo_php8_map(&native) {
+                            crate::php_query::MatomoMap::Ignored => continue,
+                            crate::php_query::MatomoMap::Ready(pairs) => Some(pairs),
+                            crate::php_query::MatomoMap::Unsupported(names) => {
+                                report.violations.push(Violation {
+                                    code: format!("{}.http.query_source.unvalidated", self.code_prefix),
+                                    message: format!("This native map needs PHP architecture, precision configuration, or an unmapped field reader for: {}. Its event checks remain unvalidated.", names.join(", ")),
+                                    severity: Severity::Info,
+                                    field: Some(format!("http.{path}")),
+                                    fix_hint: None,
+                                    source: self.source_for(RuleSourceLevel::OfficialTemplate, Some(crate::php_query::MATOMO_PHP8_SOURCE)),
+                                    targets: Vec::new(),
+                                });
+                                continue;
+                            }
+                        }
+                    } else {
+                        if field.kind == JsonValueKind::Object {
+                            report.violations.push(Violation {
+                                code:format!("{}.http.query_source.unvalidated", self.code_prefix),
+                                message:"Native parameter maps need destination-specific coercion contracts; this item's event fields were not validated.".into(),
+                                severity:Severity::Info, field:Some(format!("http.{path}")), fix_hint:None,
+                                source:self.source_for(RuleSourceLevel::OfficialVendor,self.docs.as_deref()), targets:Vec::new(),
+                            });
+                            continue;
+                        }
+                        if field.kind != JsonValueKind::String {
+                            continue;
+                        }
+                        None
+                    };
                     let query = match spec.encoding {
                         RequestQueryEncoding::Query => {
                             field.text.strip_prefix('?').unwrap_or(&field.text)
@@ -2643,33 +2788,57 @@ impl ValidatorPlugin for ManifestRulePack {
                             .map(|(_, query)| query)
                             .unwrap_or_default(),
                     };
-                    if query.is_empty() {
+                    if query.is_empty() && native_pairs.is_none() {
                         continue;
                     }
-                    let mut pairs: Vec<(String, String)> =
+                    let native = native_pairs.is_some();
+                    let mut pairs: Vec<(String, String)> = native_pairs.unwrap_or_else(|| {
                         url::form_urlencoded::parse(query.as_bytes())
                             .map(|(name, value)| (name.into_owned(), value.into_owned()))
-                            .collect();
+                            .collect()
+                    });
+                    let matomo = spec.native_map == Some(RequestQueryMapCoercion::MatomoPhp8);
+                    if matomo {
+                        pairs.retain(|(name, value)| {
+                            name != "token_auth" || (!value.is_empty() && value != "0")
+                        });
+                    }
                     let mut inherited = Vec::new();
                     for (name, fallback_path) in &spec.inherited_params {
                         let contract = self.params.iter().find(|param| param.names.contains(name));
                         let supplied = pairs.iter().any(|(submitted, _)| {
                             contract.is_some_and(|param| param.names.contains(submitted))
                         });
+                        let fallback = document.get(fallback_path).and_then(|fallback| {
+                            if matomo && name == "token_auth" {
+                                let value: serde_json::Value =
+                                    serde_json::from_str(&normalized[fallback.start..fallback.end])
+                                        .expect("validated normalized JSON field");
+                                crate::php_query::matomo_php8_auth_string(&value)
+                                    .ok()
+                                    .flatten()
+                            } else {
+                                (fallback.kind == JsonValueKind::String
+                                    && !fallback.text.is_empty())
+                                .then(|| fallback.text.to_string())
+                            }
+                        });
                         if (spec.inherited_overrides || !supplied)
-                            && let Some(fallback) = document.get(fallback_path)
-                            && fallback.kind == JsonValueKind::String
-                            && !fallback.text.is_empty()
+                            && let Some(fallback) = fallback
                         {
                             if spec.inherited_overrides {
                                 pairs.retain(|(submitted, _)| {
                                     !contract.is_some_and(|param| param.names.contains(submitted))
                                 });
                             }
-                            inherited.push((name.clone(), fallback.text.to_string()));
+                            inherited.push((name.clone(), fallback));
                         }
                     }
-                    let mut wire_query = if spec.inherited_overrides && !inherited.is_empty() {
+                    let mut wire_query = if native {
+                        url::form_urlencoded::Serializer::new(String::new())
+                            .extend_pairs(pairs.iter().map(|(name, value)| (name, value)))
+                            .finish()
+                    } else if (spec.inherited_overrides && !inherited.is_empty()) || matomo {
                         // Only remove overridden keys. Preserve every other
                         // original field's encoding, order and macro spans.
                         query
@@ -2678,15 +2847,23 @@ impl ValidatorPlugin for ManifestRulePack {
                                 let name = url::form_urlencoded::parse(part.as_bytes())
                                     .next()
                                     .map(|(name, _)| name.into_owned());
-                                !inherited.iter().any(|(inherited_name, _)| {
-                                    self.params
-                                        .iter()
-                                        .find(|param| param.names.contains(inherited_name))
-                                        .is_some_and(|param| {
-                                            name.as_ref()
-                                                .is_some_and(|name| param.names.contains(name))
-                                        })
-                                })
+                                let empty_matomo_token = matomo
+                                    && url::form_urlencoded::parse(part.as_bytes())
+                                        .next()
+                                        .is_some_and(|(name, value)| {
+                                            name == "token_auth"
+                                                && (value.is_empty() || value == "0")
+                                        });
+                                !empty_matomo_token
+                                    && !inherited.iter().any(|(inherited_name, _)| {
+                                        self.params
+                                            .iter()
+                                            .find(|param| param.names.contains(inherited_name))
+                                            .is_some_and(|param| {
+                                                name.as_ref()
+                                                    .is_some_and(|name| param.names.contains(name))
+                                            })
+                                    })
                             })
                             .collect::<Vec<_>>()
                             .join("&")
@@ -2702,6 +2879,29 @@ impl ValidatorPlugin for ManifestRulePack {
                                 .extend_pairs(inherited.iter().map(|(name, value)| (name, value)))
                                 .finish(),
                         );
+                    }
+                    if spec.check_chronological_order {
+                        let clocks: Vec<_> =
+                            pairs.iter().filter(|(name, _)| name == "cdt").collect();
+                        if clocks.len() == 1
+                            && let Some(timestamp) = matomo_explicit_timestamp(&clocks[0].1)
+                        {
+                            if previous_timestamp.as_deref().is_some_and(|previous| {
+                                compare_numeric_text(previous, &timestamp)
+                                    == Some(std::cmp::Ordering::Greater)
+                            }) {
+                                report.violations.push(Violation {
+                                    code: format!("{}.http.chronological_order", self.code_prefix),
+                                    message: "Matomo recommends bulk events in chronological order, oldest first. This explicit cdt is earlier than the previous explicit event time.".into(),
+                                    severity: Severity::Warning,
+                                    field: Some(format!("http.{path}.cdt")),
+                                    fix_hint: Some("Order events with explicit timestamps from oldest to newest.".into()),
+                                    source: self.source_for(RuleSourceLevel::OfficialVendor, self.docs.as_deref()),
+                                    targets: Vec::new(),
+                                });
+                            }
+                            previous_timestamp = Some(timestamp);
+                        }
                     }
                     let inner_request = ValidationRequest {
                         artifact_kind: ArtifactKind::Url,
@@ -2972,6 +3172,25 @@ impl ValidatorPlugin for ManifestRulePack {
 
         let exact_names = &self.exact_param_names;
         for compiled in &self.params {
+            if matches_endpoint
+                && prepared.is_complete_http_request()
+                && self
+                    .http_url_presence_overrides
+                    .contains(&compiled.contract.name)
+                && matches!(
+                    compiled.contract.requirement,
+                    Requirement::Required | Requirement::Recommended
+                )
+                && !params.iter().any(|field| {
+                    !field.missing
+                        && compiled
+                            .names
+                            .iter()
+                            .any(|name| name == field.name.as_ref())
+                })
+            {
+                continue;
+            }
             // A multipart/compressed form may contain these query-style keys.
             // Path captures remain observable and cannot be supplied by a form.
             if prepared.has_unavailable_form_body()
@@ -3415,18 +3634,28 @@ impl ManifestRulePack {
             {
                 continue;
             }
+            let unavailable_content_type = body.code_segment == "http"
+                && document
+                    .get("content_type_unavailable")
+                    .is_some_and(|field| field.text == "true");
+            let param_unavailable = |param: &CompiledParam| {
+                (unavailable_body && http_param_reads_body(param))
+                    || (unavailable_content_type
+                        && (param.contract.root_path.as_deref() == Some("content_type")
+                            || param.names.iter().any(|name| name == "content_type")))
+            };
             let condition_reads_unavailable_body = |condition: &RuleCondition| {
-                unavailable_body
+                (unavailable_body || unavailable_content_type)
                     && condition.params().iter().any(|name| {
                         body.params
                             .iter()
-                            .any(|param| param.names.contains(name) && http_param_reads_body(param))
+                            .any(|param| param.names.contains(name) && param_unavailable(param))
                     })
             };
             if body
                 .condition
                 .as_ref()
-                .is_some_and(&condition_reads_unavailable_body)
+                .is_some_and(condition_reads_unavailable_body)
             {
                 continue;
             }
@@ -3462,32 +3691,32 @@ impl ManifestRulePack {
                 query: None,
             };
             for compiled in &body.params {
-                if unavailable_body
-                    && (http_param_reads_body(compiled)
+                if (unavailable_body || unavailable_content_type)
+                    && (param_unavailable(compiled)
                         || compiled
                             .contract
                             .condition
                             .as_ref()
-                            .is_some_and(&condition_reads_unavailable_body))
+                            .is_some_and(condition_reads_unavailable_body))
                 {
                     continue;
                 }
                 self.check_param(&scope, compiled, &params, &body.exact_names, violations);
             }
             for compiled in &body.rules {
-                if unavailable_body
+                if (unavailable_body || unavailable_content_type)
                     && (assertion_params(&compiled.rule.assertion)
                         .iter()
                         .any(|name| {
-                            body.params.iter().any(|param| {
-                                param.names.contains(name) && http_param_reads_body(param)
-                            })
+                            body.params
+                                .iter()
+                                .any(|param| param.names.contains(name) && param_unavailable(param))
                         })
                         || compiled
                             .rule
                             .condition
                             .as_ref()
-                            .is_some_and(&condition_reads_unavailable_body))
+                            .is_some_and(condition_reads_unavailable_body))
                 {
                     continue;
                 }
@@ -3531,7 +3760,9 @@ impl ManifestRulePack {
                 let decoded = match decoded {
                     Ok(decoded) => decoded,
                     Err(reason) => {
-                        if !contains_macro(param.value.as_ref()) {
+                        if encoding == ParamEncoding::PercentEncodedJson
+                            || !contains_macro(param.value.as_ref())
+                        {
                             self.encoded_body_error(
                                 source,
                                 param,
@@ -3546,7 +3777,10 @@ impl ManifestRulePack {
                 let document = match JsonDocument::parse(&decoded) {
                     Ok(document) => document,
                     Err(error) => {
-                        if !contains_macro(param.value.as_ref()) {
+                        if !contains_macro(param.value.as_ref())
+                            && !(encoding == ParamEncoding::PercentEncodedJson
+                                && contains_macro(&decoded))
+                        {
                             self.encoded_body_error(
                                 source,
                                 param,
@@ -3674,7 +3908,9 @@ impl ManifestRulePack {
                 let decoded = match decoded {
                     Ok(decoded) => decoded,
                     Err(reason) => {
-                        if !contains_macro(field.text.as_ref()) {
+                        if encoding == ParamEncoding::PercentEncodedJson
+                            || !contains_macro(field.text.as_ref())
+                        {
                             self.embedded_body_error(
                                 source,
                                 &path,
@@ -3690,7 +3926,10 @@ impl ManifestRulePack {
                 let document = match JsonDocument::parse(&decoded) {
                     Ok(document) => document,
                     Err(error) => {
-                        if !contains_macro(field.text.as_ref()) {
+                        if !contains_macro(field.text.as_ref())
+                            && !(encoding == ParamEncoding::PercentEncodedJson
+                                && contains_macro(&decoded))
+                        {
                             self.embedded_body_error(
                                 source,
                                 &path,
@@ -5457,6 +5696,52 @@ fn decode_base64_latin1_json(value: &str) -> Result<String, String> {
         .into_iter()
         .map(char::from)
         .collect())
+}
+
+fn decode_percent_encoded_json(value: &str) -> Result<String, String> {
+    let mut output = Vec::with_capacity(value.len());
+    let mut bytes = value.bytes();
+    while let Some(byte) = bytes.next() {
+        if byte == b'%' {
+            let high = bytes
+                .next()
+                .and_then(|digit| char::from(digit).to_digit(16));
+            let low = bytes
+                .next()
+                .and_then(|digit| char::from(digit).to_digit(16));
+            let (Some(high), Some(low)) = (high, low) else {
+                return Err("invalid percent escape in encoded JSON".into());
+            };
+            output.push((high * 16 + low) as u8);
+        } else {
+            output.push(byte);
+        }
+    }
+    String::from_utf8(output).map_err(|_| "percent-decoded JSON is not UTF-8".into())
+}
+
+fn decode_query_params_json(value: &str) -> Result<String, String> {
+    let mut fields = serde_json::Map::new();
+    for field in value.split('&').filter(|field| !field.is_empty()) {
+        let (name, value) = field.split_once('=').unwrap_or((field, ""));
+        let name = decode_percent_encoded_json(&name.replace('+', " "))?;
+        let value =
+            serde_json::Value::String(decode_percent_encoded_json(&value.replace('+', " "))?);
+        match fields.entry(name) {
+            serde_json::map::Entry::Vacant(entry) => {
+                entry.insert(value);
+            }
+            serde_json::map::Entry::Occupied(mut entry) => {
+                if let serde_json::Value::Array(values) = entry.get_mut() {
+                    values.push(value);
+                } else {
+                    let first = entry.get().clone();
+                    entry.insert(serde_json::Value::Array(vec![first, value]));
+                }
+            }
+        }
+    }
+    serde_json::to_string(&fields).map_err(|error| error.to_string())
 }
 
 fn decode_base64_bytes(value: &str) -> Result<Vec<u8>, String> {

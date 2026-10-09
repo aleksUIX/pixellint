@@ -1,0 +1,1562 @@
+{
+  "id": "vendor/cloudflare-rum",
+  "display_name": "Cloudflare Web Analytics RUM collector",
+  "vendor": "cloudflare",
+  "description": "Reserved /cdn-cgi/rum collector routes on manual and automatic customer domains. Methods follow published ingestion requirements; body findings describe the current official beacon producer and remain warnings. Arbitrary configured forwarding URLs are not automatically claimed.",
+  "source_level": "official_vendor",
+  "docs": "https://developers.cloudflare.com/web-analytics/faq/",
+  "match": {
+    "any_host": true,
+    "paths": [
+      "/cdn-cgi/rum",
+      "/cdn-cgi/rum/"
+    ]
+  },
+  "params": [],
+  "rules": [],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST",
+              "OPTIONS"
+            ]
+          },
+          "doc": "https://developers.cloudflare.com/web-analytics/faq/",
+          "description": "The documented collector ingests POST and permits OPTIONS preflight."
+        }
+      ]
+    },
+    {
+      "condition": {
+        "kind": "value_in",
+        "param": "method",
+        "values": [
+          "POST"
+        ]
+      },
+      "params": [
+        {
+          "name": "method",
+          "root_path": "method",
+          "allow_empty": true,
+          "doc": "https://developers.cloudflare.com/web-analytics/faq/"
+        },
+        {
+          "name": "content_type",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "application/json"
+            ]
+          },
+          "severity": "warning"
+        },
+        {
+          "name": "headers.origin",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "headers.referer",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "requirement": "required",
+          "severity": "warning"
+        },
+        {
+          "name": "body.startTime",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "requirement": "required",
+          "severity": "warning"
+        },
+        {
+          "name": "body.pageloadId",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+          },
+          "severity": "warning"
+        },
+        {
+          "name": "body.eventType",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "integer",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "1",
+              "2",
+              "3"
+            ]
+          },
+          "severity": "warning"
+        },
+        {
+          "name": "body.location",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[^?#]*$"
+          }
+        },
+        {
+          "name": "body.siteToken",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "requirement": "required",
+          "severity": "warning"
+        },
+        {
+          "name": "body.st",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "integer",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "1",
+              "2"
+            ]
+          },
+          "severity": "warning"
+        },
+        {
+          "name": "body.versions",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "requirement": "required",
+          "severity": "warning"
+        },
+        {
+          "name": "body.versions.js",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "requirement": "required",
+          "severity": "warning"
+        },
+        {
+          "name": "body.versions.fl",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.versions.timings",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "integer",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "1",
+              "2"
+            ]
+          },
+          "severity": "warning"
+        },
+        {
+          "name": "body.n",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "integer",
+          "severity": "warning"
+        },
+        {
+          "name": "body.ntapi",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "integer",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "1"
+            ]
+          },
+          "severity": "warning"
+        },
+        {
+          "name": "body.nt",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "navigate",
+              "reload",
+              "back-forward",
+              "back-forward-cache",
+              "prerender",
+              "restore",
+              "soft-navigation",
+              "routing-apis"
+            ]
+          },
+          "severity": "warning"
+        },
+        {
+          "name": "body.referrer",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[^?#]*$"
+          }
+        },
+        {
+          "name": "body.bi",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.dt",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.serverTimings",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "array",
+          "severity": "warning"
+        },
+        {
+          "name": "body.memory",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.firstPaint",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.firstContentfulPaint",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.bi.be",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.bi.bev",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.bi.bv",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.bi.ov",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.value",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.cls"
+          }
+        },
+        {
+          "name": "body.cls.path",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.cls"
+          }
+        },
+        {
+          "name": "body.lcp",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.value",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.lcp"
+          }
+        },
+        {
+          "name": "body.lcp.path",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.lcp"
+          }
+        },
+        {
+          "name": "body.fcp",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.fcp.value",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.fcp"
+          }
+        },
+        {
+          "name": "body.fcp.path",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.fcp"
+          }
+        },
+        {
+          "name": "body.ttfb",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.ttfb.value",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.ttfb"
+          }
+        },
+        {
+          "name": "body.ttfb.path",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.ttfb"
+          }
+        },
+        {
+          "name": "body.inp",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.inp.value",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.inp"
+          }
+        },
+        {
+          "name": "body.inp.path",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning",
+          "requirement": "required",
+          "condition": {
+            "kind": "present",
+            "param": "body.inp"
+          }
+        },
+        {
+          "name": "body.cls.element",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.element",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.url",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.it",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.inp.element",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.inp.name",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.fp",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.size",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.rld",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.rlt",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.lcp.erd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.inp.idy",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.inp.pdn",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.inp.pdy",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect.x",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect.y",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect.width",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect.height",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect.top",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect.right",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect.bottom",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.currentRect.left",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect.x",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect.y",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect.width",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect.height",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect.top",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect.right",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect.bottom",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.cls.previousRect.left",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.navigationStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.domainLookupStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.domainLookupEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.connectStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.connectEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.secureConnectionStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.redirectStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.redirectEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.requestStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.responseStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.responseEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.domLoading",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.domComplete",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.loadEventStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timings.loadEventEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.nextHopProtocol",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.domainLookupStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.domainLookupEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.connectStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.connectEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.secureConnectionStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.redirectStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.redirectEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.requestStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.responseStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.responseEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.domInteractive",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.domComplete",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.loadEventStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.loadEventEnd",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.finalResponseHeadersStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.firstInterimResponseStart",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.transferSize",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timingsV2.decodedBodySize",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        }
+      ],
+      "rules": [
+        {
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "headers.origin"
+            ],
+            [
+              "headers.referer"
+            ]
+          ],
+          "code": "vendor.cloudflare-rum.origin_or_referer",
+          "severity": "warning",
+          "message": "Cloudflare documents a Referer requirement with an in-flight transition to Origin. Include the browser origin or referring page.",
+          "doc": "https://developers.cloudflare.com/web-analytics/faq/"
+        },
+        {
+          "code": "vendor.cloudflare-rum.location_credentials",
+          "kind": "format",
+          "param": "body.location",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z][A-Za-z0-9+.-]*://[^/?#@]*(?:/[^?#]*)?$"
+          },
+          "condition": {
+            "kind": "value_pattern",
+            "param": "body.location",
+            "pattern": "^[A-Za-z][A-Za-z0-9+.-]*://"
+          },
+          "severity": "warning",
+          "message": "The official beacon removes username and password from parsed page URLs before reporting them.",
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template"
+        },
+        {
+          "code": "vendor.cloudflare-rum.referrer_credentials",
+          "kind": "format",
+          "param": "body.referrer",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z][A-Za-z0-9+.-]*://[^/?#@]*(?:/[^?#]*)?$"
+          },
+          "condition": {
+            "kind": "value_pattern",
+            "param": "body.referrer",
+            "pattern": "^[A-Za-z][A-Za-z0-9+.-]*://"
+          },
+          "severity": "warning",
+          "message": "The official beacon removes username and password from parsed page URLs before reporting them.",
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template"
+        }
+      ]
+    },
+    {
+      "scope": "body.memory.*",
+      "condition": {
+        "kind": "value_in",
+        "param": "method",
+        "values": [
+          "POST"
+        ]
+      },
+      "params": [
+        {
+          "name": "method",
+          "root_path": "method",
+          "allow_empty": true,
+          "doc": "https://developers.cloudflare.com/web-analytics/faq/"
+        },
+        {
+          "name": "",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "string",
+            "null"
+          ],
+          "severity": "warning"
+        }
+      ]
+    },
+    {
+      "scope": "body.serverTimings[]",
+      "condition": {
+        "kind": "value_in",
+        "param": "method",
+        "values": [
+          "POST"
+        ]
+      },
+      "params": [
+        {
+          "name": "method",
+          "root_path": "method",
+          "allow_empty": true,
+          "doc": "https://developers.cloudflare.com/web-analytics/faq/"
+        },
+        {
+          "name": "",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "name",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "requirement": "required",
+          "severity": "warning"
+        },
+        {
+          "name": "dur",
+          "allow_empty": false,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "requirement": "required",
+          "severity": "warning"
+        },
+        {
+          "name": "desc",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "requirement": "required",
+          "severity": "warning"
+        },
+        {
+          "name": "location",
+          "allow_empty": true,
+          "doc": "https://static.cloudflareinsights.com/beacon.min.js",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[^?#]*$"
+          }
+        }
+      ]
+    }
+  ]
+}

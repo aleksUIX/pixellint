@@ -202,22 +202,24 @@
     "kind": "request",
     "artifact": "{\"url\":\"https://self-hosted.example/matomo.php\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"requests\\\":[true]}\"}",
     "code": "vendor.matomo.http.root.invalid",
-    "expect_violation": true,
-    "expect_no_errors": false,
-    "source_url": "https://developer.matomo.org/api-reference/tracking-api",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/core/Tracker/Request.php",
     "evidence_kind": "independent_primary_vendor_example_or_single_requirement_mutation",
-    "expected_code_count": 1
+    "expected_code_count": 0,
+    "source_correction": "The pinned server constructor converts non-array entry scalars to an empty request. Tracker::trackRequest ignores it. The previous hard entry-type oracle was not supported by that implementation."
   },
   {
     "id": "bulk_outer_token_wrong_type",
     "kind": "request",
     "artifact": "{\"url\":\"https://self-hosted.example/matomo.php\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"requests\\\":[\\\"?idsite=1&rec=1&url=https%3A%2F%2Fexample.org&action_name=Bulk%20page\\\"],\\\"token_auth\\\":12}\"}",
     "code": "vendor.matomo.http.body.token_auth.invalid",
-    "expect_violation": true,
-    "expect_no_errors": false,
-    "source_url": "https://developer.matomo.org/api-reference/tracking-api",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/core/Common.php",
     "evidence_kind": "independent_primary_vendor_example_or_single_requirement_mutation",
-    "expected_code_count": 1
+    "expected_code_count": 0,
+    "source_correction": "The outer token uses Common::getRequestVar string mode, which accepts numeric scalars. The previous string-only oracle rejected a supported integer conversion."
   },
   {
     "id": "bulk_empty_batch_has_no_invented_minimum",
@@ -319,14 +321,15 @@
     "evidence_kind": "independent_official_5x_backend_parser_example; current_6x_source_unavailable"
   },
   {
-    "id": "bulk_parameter_object_has_explicit_coercion_validation_gap",
+    "id": "bulk_parameter_object_core_readers_now_validated",
     "kind": "request",
     "artifact": "{\"url\":\"https://self-hosted.example/matomo.php\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"requests\\\":[{\\\"idsite\\\":1,\\\"rec\\\":1}]}\"}",
     "code": "vendor.matomo.http.query_source.unvalidated",
-    "expect_violation": true,
+    "expect_violation": false,
     "expect_no_errors": true,
-    "expected_code_count": 1,
-    "source_url": "https://raw.githubusercontent.com/matomo-org/matomo/5.x-dev/plugins/BulkTracking/Tracker/Requests.php",
-    "evidence_kind": "independent_official_5x_backend_parser_example; current_6x_source_unavailable"
+    "expected_code_count": 0,
+    "source_url": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/core/Common.php",
+    "evidence_kind": "independent_pinned_current_6x_php8_backend_parser_example",
+    "source_correction": "Native idsite/rec now run source-backed PHP8 readers. The previous info finding documented the engine gap, which this pass closes for these fields."
   }
 ]

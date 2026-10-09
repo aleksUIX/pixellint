@@ -1,0 +1,454 @@
+{
+  "id": "vendor/flashtalking-ftrack",
+  "display_name": "Flashtalking FTrack legacy collector",
+  "vendor": "flashtalking",
+  "source_level": "official_template",
+  "docs": "https://d9.flashtalking.com/d9core",
+  "description": "Published d9core legacy POST /lgc producer schema. Double encodeURIComponent form JSON, native types and fixed empty containers are snapshot advisories, not a published server rejection contract. Current /img/img.png D9c/D9v and /ft.stat protocols remain unvalidated.",
+  "match": {
+    "hosts": [
+      "d9.flashtalking.com"
+    ],
+    "paths": [
+      "/lgc"
+    ]
+  },
+  "params": [
+    {
+      "name": "tbx",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Form value after the first URL/form decode still contains one encodeURIComponent layer."
+    }
+  ],
+  "body": [
+    {
+      "source_param": "tbx",
+      "encoding": "percent_encoded_json",
+      "encoding_severity": "warning",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "object",
+          "description": "SDK d9legacy serializes one native device object. Unknown extra fields remain open."
+        },
+        {
+          "name": "D9_1",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "integer",
+          "description": "Date.getTime() milliseconds, not a service recency limit."
+        },
+        {
+          "name": "D9_6",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "description": "Flash version string or null, including mobile."
+        },
+        {
+          "name": "D9_7",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "description": "Acrobat plugin string or ActiveX parseFloat number, or null."
+        },
+        {
+          "name": "D9_8",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "description": "Silverlight version string or null."
+        },
+        {
+          "name": "D9_9",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": [
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "description": "MIME descriptions array or null on browser access failure."
+        },
+        {
+          "name": "D9_10",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": [
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "description": "Plugin descriptions array or null on browser access failure."
+        },
+        {
+          "name": "D9_61",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "description": "The published SDK assigns a 32-character lowercase hexadecimal literal. Its service-side meaning is unpublished."
+        },
+        {
+          "name": "D9_67",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "description": "The published SDK assigns a 32-character lowercase hexadecimal literal. Its service-side meaning is unpublished."
+        },
+        {
+          "name": "D9_18",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "object",
+          "allow_empty": true,
+          "max_properties": 0,
+          "description": "This SDK snapshot emits an empty object."
+        },
+        {
+          "name": "D9_16",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "integer",
+          "description": "Date.getTimezoneOffset() integer minutes; no timezone registry inferred."
+        },
+        {
+          "name": "D9_4",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "object",
+          "allow_empty": true,
+          "description": "Screen object is conditional on screen width or timezone offset; undefined members are omitted."
+        },
+        {
+          "name": "D9_4.width",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "integer",
+          "minimum": 0,
+          "description": "Screen width, when available."
+        },
+        {
+          "name": "D9_4.height",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "integer",
+          "minimum": 0,
+          "description": "Screen height, when available."
+        },
+        {
+          "name": "D9_14",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "navigator.platform when navigator is exposed on window."
+        },
+        {
+          "name": "D9_15",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "navigator.language or legacy browserLanguage; no closed language enumeration."
+        },
+        {
+          "name": "D9_19",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "navigator.appCodeName."
+        },
+        {
+          "name": "D9_123",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "integer",
+          "minimum": 0,
+          "description": "navigator.maxTouchPoints or zero."
+        },
+        {
+          "name": "D9_33",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          },
+          "description": "Browser btoa of an indexed text fingerprint. It contains text, not JSON."
+        },
+        {
+          "name": "D9_34",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295,
+          "description": "Murmurhash3 returns unsigned 32-bit h1 >>> 0."
+        },
+        {
+          "name": "D9_30",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "array",
+          "allow_empty": true,
+          "max_items": 0,
+          "description": "This SDK snapshot emits an empty array."
+        },
+        {
+          "name": "D9_52",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "object",
+          "allow_empty": true,
+          "max_properties": 0,
+          "description": "This SDK snapshot emits an empty object."
+        },
+        {
+          "name": "D9_57",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "boolean",
+          "description": "Whether caller D9r.callback is a function."
+        },
+        {
+          "name": "D9_58",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "description": "Caller-owned D9r. The source does not establish a server field inventory or enforce an object."
+        },
+        {
+          "name": "D9_59",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "description": "Caller-owned D9v. Undefined values are omitted; account configuration stays opaque."
+        },
+        {
+          "name": "D9_63",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "encodeURIComponent of top ancestor/current hostname, possibly empty, not an absolute URL."
+        },
+        {
+          "name": "D9_64",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "number",
+          "minimum": 0,
+          "description": "devicePixelRatio when available, including fractional ratios."
+        },
+        {
+          "name": "D9_66",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "encodeURIComponent of different referrer hostname or empty string."
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "tbx",
+      "encoding": "percent_encoded_json",
+      "encoding_severity": "warning",
+      "scope": "D9_9[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "Each plugin or MIME entry is built by concatenating strings."
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "tbx",
+      "encoding": "percent_encoded_json",
+      "encoding_severity": "warning",
+      "scope": "D9_10[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "Each plugin or MIME entry is built by concatenating strings."
+        }
+      ],
+      "rules": []
+    }
+  ],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST"
+            ]
+          },
+          "description": "Both XHR and legacy XDomainRequest use POST."
+        },
+        {
+          "name": "content_type",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "allow_empty": true,
+          "format": {
+            "kind": "enum",
+            "values": [
+              "",
+              "application/x-www-form-urlencoded"
+            ]
+          },
+          "description": "XHR sends form MIME. XDomainRequest cannot set the header, so an absent MIME remains valid."
+        }
+      ],
+      "rules": []
+    },
+    {
+      "condition": {
+        "kind": "value_in",
+        "param": "body_encoding",
+        "values": [
+          "form"
+        ]
+      },
+      "params": [
+        {
+          "name": "body_encoding",
+          "requirement": "optional",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string"
+        },
+        {
+          "name": "body.tbx",
+          "requirement": "recommended",
+          "severity": "warning",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "source_level": "official_template",
+          "json_type": "string",
+          "description": "SDK sends tbx in the form body. A bare URL has no body evidence and is not penalized."
+        }
+      ],
+      "rules": []
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.flashtalking-ftrack.https",
+      "kind": "require_https",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://d9.flashtalking.com/d9core",
+      "message": "The published d9core producer sends this collector request over HTTPS."
+    }
+  ]
+}

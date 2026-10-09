@@ -22,9 +22,10 @@
       "format": {
         "kind": "integer"
       },
-      "description": "It is the numeric Matomo site ID the hit is recorded against.",
+      "description": "It is the numeric Matomo site ID the hit is recorded against. The server requires a positive site ID before looking up its account configuration.",
       "fix_hint": "Set `idsite` to the website ID from Matomo Administration.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "doc": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/core/Tracker/Request.php",
+      "minimum": 1
     },
     {
       "name": "rec",
@@ -107,9 +108,9 @@
       "name": "e_v",
       "format": {
         "kind": "regex",
-        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
-      "description": "It is the event value. Matomo documents it as a float or integer, not a string label.",
+      "description": "It is the event value. Matomo documents it as a float or integer, not a string label. The official PHP float reader accepts signed decimal and exponent spellings.",
       "fix_hint": "Send a number in `e_v`, such as `9.99`.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -161,9 +162,9 @@
       "name": "revenue",
       "format": {
         "kind": "regex",
-        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
-      "description": "It is the grand total or goal conversion value. Matomo documents it as required when tracking an ecommerce order.",
+      "description": "It is the grand total or goal conversion value. Matomo documents it as required when tracking an ecommerce order. The official PHP float reader accepts signed decimal and exponent spellings.",
       "fix_hint": "Set `revenue` to a number, such as `19.99`, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -352,9 +353,9 @@
       "name": "ec_st",
       "format": {
         "kind": "regex",
-        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
-      "description": "It is the ecommerce subtotal, excluding shipping.",
+      "description": "It is the ecommerce subtotal, excluding shipping. The official PHP float reader accepts signed decimal and exponent spellings.",
       "fix_hint": "Send `ec_st` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -362,9 +363,9 @@
       "name": "ec_tx",
       "format": {
         "kind": "regex",
-        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
-      "description": "It is the tax amount of the ecommerce order.",
+      "description": "It is the tax amount of the ecommerce order. The official PHP float reader accepts signed decimal and exponent spellings.",
       "fix_hint": "Send `ec_tx` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -372,9 +373,9 @@
       "name": "ec_sh",
       "format": {
         "kind": "regex",
-        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
-      "description": "It is the shipping cost of the ecommerce order.",
+      "description": "It is the shipping cost of the ecommerce order. The official PHP float reader accepts signed decimal and exponent spellings.",
       "fix_hint": "Send `ec_sh` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -382,9 +383,9 @@
       "name": "ec_dt",
       "format": {
         "kind": "regex",
-        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
-      "description": "It is the discount offered on the ecommerce order.",
+      "description": "It is the discount offered on the ecommerce order. The official PHP float reader accepts signed decimal and exponent spellings.",
       "fix_hint": "Send `ec_dt` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -419,9 +420,9 @@
       "name": "_pkp",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
-      "description": "It is the price of the product being viewed.",
+      "description": "It is the price of the product being viewed. The official PHP float reader accepts signed decimal and exponent spellings.",
       "fix_hint": "Send `_pkp` as a number, with no currency symbol.",
       "doc": "https://developer.matomo.org/api-reference/tracking-api"
     },
@@ -1780,18 +1781,19 @@
         {
           "name": "body.requests",
           "requirement": "required",
-          "json_type": "array",
-          "doc": "https://developer.matomo.org/api-reference/tracking-api",
-          "description": "Bulk requests contains individual tracking queries. No universal batch count limit is published."
+          "json_type": [
+            "array",
+            "object"
+          ],
+          "doc": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/plugins/BulkTracking/Tracker/Requests.php",
+          "description": "Published API examples use a JSON array. The pinned PHP8 parser decodes objects as associative arrays and iterates their members identically. Empty collections are accepted without an invented minimum count.",
+          "allow_empty": true
         },
         {
           "name": "body.token_auth",
-          "json_type": "string",
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.matomo.org/api-reference/tracking-api",
-          "description": "Optional outer authorization token for fields requiring authentication. Credentials and site permissions remain external."
+          "doc": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/plugins/BulkTracking/Tracker/Requests.php",
+          "description": "The outer bulk token uses the official PHP string reader. Empty, false, null and the PHP-empty string 0 permit per-item fallback. Permission checks remain external.",
+          "allow_empty": true
         }
       ]
     },
@@ -1802,11 +1804,15 @@
           "name": "",
           "json_type": [
             "string",
-            "object"
+            "object",
+            "array",
+            "number",
+            "boolean",
+            "null"
           ],
           "allow_empty": true,
-          "doc": "https://raw.githubusercontent.com/matomo-org/matomo/5.x-dev/plugins/BulkTracking/Tracker/Requests.php",
-          "description": "Published examples use query strings. The official 5.x BulkTracking implementation also accepts parameter objects and ignores empty string entries; no minimum length is invented."
+          "doc": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/plugins/BulkTracking/Tracker/Requests.php",
+          "description": "The pinned PHP8 server accepts query strings and native parameter maps. Non-array scalars become empty requests, and empty maps/arrays are ignored. Native fields use the opt-in source-backed reader; unknown plugin or precision-sensitive conversions remain explicit information findings."
         }
       ]
     }
@@ -1818,7 +1824,9 @@
         "token_auth": "body.token_auth"
       },
       "encoding": "url_query",
-      "inherited_overrides": true
+      "inherited_overrides": true,
+      "native_map": "matomo_php8",
+      "check_chronological_order": true
     }
   ]
 }

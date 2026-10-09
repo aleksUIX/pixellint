@@ -21,7 +21,9 @@ pub mod http;
 mod javascript_date;
 mod json;
 pub mod manifest;
+mod multipart;
 mod path_items;
+mod php_query;
 mod prepare;
 mod privacy;
 mod query_segments;
@@ -659,6 +661,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/innovid-legacy-state",
         include_str!("../rulepacks/vendor/innovid-legacy-state.json"),
+    ),
+    (
+        "vendor/cloudflare-rum",
+        include_str!("../rulepacks/vendor/cloudflare-rum.json"),
+    ),
+    (
+        "vendor/flashtalking-ftrack",
+        include_str!("../rulepacks/vendor/flashtalking-ftrack.json"),
     ),
 ];
 

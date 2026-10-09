@@ -1,23 +1,964 @@
 {
   "id": "vendor/hubspot-pixel",
-  "display_name": "HubSpot tracking pixel",
-  "description": "HubSpot collect pixel on track.hubspot.com/__ptq.gif, whose Hub ID rides as a. The embed loader is vendor/hubspot.",
+  "display_name": "HubSpot browser tracking pixels",
   "vendor": "hubspot",
-  "source_level": "ecosystem_reference",
-  "docs": "https://knowledge.hubspot.com/reports/how-do-i-know-if-my-hubspot-tracking-code-is-working",
+  "source_level": "official_template",
+  "docs": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+  "description": "Published browser SDK build1.4506 maps client, page, identity, privacy and event data to __ptq.gif, __ptbe.gif and __ptc.gif. Producer completeness and grammar checks are warnings. The loader is vendor/hubspot; tenant event configuration, remote acceptance and private runtime state remain outside this pack.",
   "match": {
-    "hosts": ["track.hubspot.com"],
-    "paths": ["/__ptq.gif"]
+    "hosts": [
+      "track.hubspot.com"
+    ],
+    "paths": [
+      "/__ptq.gif",
+      "/__ptbe.gif",
+      "/__ptc.gif"
+    ]
   },
+  "path_pattern": "^/(?<collector>__ptq|__ptbe|__ptc)\\.gif$",
   "params": [
     {
+      "name": "collector",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Authoritative exact path capture. Query values cannot spoof the selected endpoint."
+    },
+    {
       "name": "a",
-      "requirement": "required",
-      "format": { "kind": "integer" },
-      "description": "It is the numeric HubSpot Hub ID. HubSpot tells you to look for `__ptq.gif` and documents `_hsq`, not this query, so the rule is ecosystem evidence.",
-      "fix_hint": "Keep `a` from the generated tracking pixel so it carries the Hub ID.",
-      "doc": "https://knowledge.hubspot.com/reports/how-do-i-know-if-my-hubspot-tracking-code-is-working"
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK portalId, copied into the query. Server mandatory status is not published.",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "v",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK JS_VERSION is emitted, currently 1.1. Future versions remain open.",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cts",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK Date.getTime() integer milliseconds. No undocumented age window.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      }
+    },
+    {
+      "name": "cc",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Consent category bitmask: necessary1, analytics2, advertisement4, functionality8.",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 0,
+      "maximum": 15
+    },
+    {
+      "name": "sd",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Screen width x height, when a screen is available.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+x[0-9]+$"
+      }
+    },
+    {
+      "name": "cd",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Screen colorDepth followed by -bit.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+-bit$"
+      }
+    },
+    {
+      "name": "cs",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Document character set, without a closed charset list."
+    },
+    {
+      "name": "ln",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Lowercased navigator.language or browserLanguage, without an ISO-only restriction."
+    },
+    {
+      "name": "bfp",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Consented browser fingerprint, omitted when unavailable. Algorithm and runtime state remain opaque."
+    },
+    {
+      "name": "pt",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK privacy mode OPT_IN/hideDecline0, OPT_IN1, NO_COOKIES2, COOKIES_BY_CATEGORY3.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ]
+      }
+    },
+    {
+      "name": "ce",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Cookie tracking disabled flag, emitted false when consent is unavailable.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "nc",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "utk.isNew() Boolean, when a visitor token exists.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "rv",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Reset visitor marker, currently emitted as1.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "qo",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Whether the original path was enriched by initial URL parameters.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "rqo",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Whether referrer was enriched by initial referrer parameters.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "puqo",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Whether page URL was enriched by initial URL parameters.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "icv",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Page metadata inChatView. The SDK copies caller data without enforcing a type."
+    },
+    {
+      "name": "i",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Inner hstc.utils.param identity query. Custom keys and repeated arrays remain literal."
+    },
+    {
+      "name": "tc",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Up to five targeted-content triples, emitted as repeated query strings. Tuple identifiers may contain hyphens."
+    },
+    {
+      "name": "k",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Integer event kind on the general tracking route. Known branches are constrained; future numbers stay open.",
+      "format": {
+        "kind": "integer"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "collector",
+        "values": [
+          "__ptq"
+        ]
+      }
+    },
+    {
+      "name": "n",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://developers.hubspot.com/docs/api-reference/latest/account/settings/tracking-code/track-event",
+      "description": "JS custom-event internal name pe{HubID}_{name}, mapped directly to wire n.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^pe[0-9]+_[\\s\\S]+$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "collector",
+        "values": [
+          "__ptbe"
+        ]
+      }
+    },
+    {
+      "name": "fi",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Form activity always emits safeString(formId), which can be empty.",
+      "condition": {
+        "kind": "value_in",
+        "param": "k",
+        "values": [
+          "15",
+          "16",
+          "17",
+          "18",
+          "19"
+        ]
+      }
+    },
+    {
+      "name": "st",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Feedback event always emits safeString(surveyType), which can be empty.",
+      "condition": {
+        "kind": "value_in",
+        "param": "k",
+        "values": [
+          "26"
+        ]
+      }
+    },
+    {
+      "name": "si",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Feedback event always emits safeString(surveyId), which can be empty.",
+      "condition": {
+        "kind": "value_in",
+        "param": "k",
+        "values": [
+          "26"
+        ]
+      }
+    },
+    {
+      "name": "aij",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "CTA event builds a JSON two-string tuple. It does not escape arbitrary caller quotation marks.",
+      "condition": {
+        "kind": "value_in",
+        "param": "k",
+        "values": [
+          "12"
+        ]
+      }
+    },
+    {
+      "name": "rfc",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Published CTA branch emits rfc8.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "8"
+        ]
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "k",
+        "values": [
+          "12"
+        ]
+      }
+    },
+    {
+      "name": "ad",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Audio duration is copied only for native JS number input. The SDK also emits NaN/Infinity; service semantics are unpublished.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:[-+]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][-+]?[0-9]+)?|NaN|[-+]?Infinity)$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "k",
+        "values": [
+          "33"
+        ]
+      }
+    },
+    {
+      "name": "pi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies pageId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "ct",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentType; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "ccu",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies canonicalUrl; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "po",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies path, possibly enriched with initial parameters; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "opo",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies original path before enrichment; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "rpo",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies referrerPath; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "rcu",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies relCanonicalUrl when explicit canonicalUrl is absent; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "cpi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentMetadata.contentPageId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "cgi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentMetadata.contentGroupId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "cfi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentMetadata.contentFolderId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "lpi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentMetadata.legacyPageId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "abi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentMetadata.abTestId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "lvi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentMetadata.languageVariantId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "lvc",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentMetadata.languageCode; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "mabci",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies mabData.correlationId, emitted together with experimentId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "mabei",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies mabData.experimentId, emitted together with correlationId; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "scpct",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies contentMetadata.scpContentType; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "r",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies resolved document referrer; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "orf",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies original referrer before enrichment; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "pu",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies resolved page URL; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "opu",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies original page URL; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "t",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies document title; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "vi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies visitor token from current runtime; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "u",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies hubspotutk cookie value; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "b",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies __hssc session cookie value; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "fci",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies form conversion ID; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "fvi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies form variant ID; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "lfi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies lead-flow ID; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "ft",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies form type, including0; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "afi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies audio file ID; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "aei",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies audio episode ID; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "asi",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies audio show ID; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "amt",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies audio module type; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "aps",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies audio play-session ID; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name": "aep",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "SDK copies audio event phase; no unpublished business-value grammar is inferred."
+    },
+    {
+      "name_pattern": "(?s)^_.*$",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "description": "Custom-event/click properties are prefixed with _. Native arrays emit repeated fields; other JS values use URI string coercion.",
+      "name": "custom_properties"
     }
   ],
-  "rules": []
+  "body": [
+    {
+      "source_param": "i",
+      "encoding": "query_params_json",
+      "encoding_severity": "warning",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+          "description": "Identity query becomes a native object.",
+          "json_type": "object"
+        },
+        {
+          "name": "email",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+          "description": "Email may be scalar or repeated query values; request transport does not prove server multiplicity semantics.",
+          "json_type": [
+            "string",
+            "array"
+          ]
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "i",
+      "encoding": "query_params_json",
+      "encoding_severity": "warning",
+      "params": [
+        {
+          "name": "email",
+          "requirement": "optional",
+          "allow_empty": false,
+          "severity": "warning",
+          "source_level": "heuristic",
+          "doc": "https://developers.hubspot.com/docs/api-reference/latest/account/settings/tracking-code/identify",
+          "description": "Basic email-shape advisory, not the unavailable complete HubSpot validator grammar.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[^\\s@]+@[^\\s@]+$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "email",
+            "json_type": "string"
+          }
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "i",
+      "encoding": "query_params_json",
+      "encoding_severity": "warning",
+      "scope": "email[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "allow_empty": false,
+          "severity": "warning",
+          "source_level": "heuristic",
+          "doc": "https://developers.hubspot.com/docs/api-reference/latest/account/settings/tracking-code/identify",
+          "description": "Basic email shape for each repeated string, while preserving all occurrences.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[^\\s@]+@[^\\s@]+$"
+          },
+          "json_type": "string"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "aij",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "k",
+        "values": [
+          "12"
+        ]
+      },
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+          "description": "SDK CTA tuple contains exactly two entries.",
+          "json_type": "array",
+          "min_items": 2,
+          "max_items": 2
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "aij",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "k",
+        "values": [
+          "12"
+        ]
+      },
+      "scope": "[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+          "description": "Each CTA tuple entry is quoted as a JSON string by the SDK.",
+          "json_type": "string"
+        }
+      ],
+      "rules": []
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "allow_empty": false,
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+        "description": "SDK loads each request through new Image(1,1).src, which issues GET.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "json_type": "string"
+      },
+      {
+        "name": "body_encoding",
+        "requirement": "optional",
+        "allow_empty": false,
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+        "description": "The published image producer sends no request entity.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "none"
+          ]
+        },
+        "json_type": "string"
+      },
+      {
+        "name": "query.tc",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+        "description": "SDK emits at most five targeted-content entries. Native query arrays preserve repeated occurrences.",
+        "json_type": [
+          "string",
+          "array"
+        ],
+        "max_items": 5
+      }
+    ],
+    "rules": []
+  },
+  "rules": [
+    {
+      "code": "vendor.hubspot-pixel.https",
+      "kind": "require_https",
+      "severity": "warning",
+      "message": "The published browser SDK constructs HTTPS collector URLs.",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js",
+      "source_level": "official_template"
+    },
+    {
+      "code": "vendor.hubspot-pixel.mab_experiment",
+      "kind": "required_with",
+      "when": "mabci",
+      "requires": [
+        "mabei"
+      ],
+      "severity": "warning",
+      "message": "The SDK emits MAB correlation and experiment IDs together.",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js"
+    },
+    {
+      "code": "vendor.hubspot-pixel.mab_correlation",
+      "kind": "required_with",
+      "when": "mabei",
+      "requires": [
+        "mabci"
+      ],
+      "severity": "warning",
+      "message": "The SDK emits MAB experiment and correlation IDs together.",
+      "doc": "https://js.hs-analytics.net/analytics/1791543000000/53.js"
+    }
+  ]
 }

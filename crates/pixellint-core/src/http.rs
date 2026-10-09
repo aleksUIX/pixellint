@@ -42,6 +42,7 @@ struct DecodedRequest {
     normalized: String,
     json_body: Option<String>,
     form: bool,
+    multipart_fields: Option<Vec<crate::manifest::RawParam<'static>>>,
     unavailable_form: bool,
     violations: Vec<Violation>,
 }
@@ -91,8 +92,12 @@ impl Engine {
             expansion_state: request.expansion_state,
         };
         let mut prepared = PreparedArtifact::from_request_at(&url_request, clock);
+        prepared.mark_complete_http_request();
         if decoded.form {
             prepared.set_form_body(capture.body.as_deref().unwrap_or_default());
+        }
+        if let Some(fields) = &decoded.multipart_fields {
+            prepared.set_form_fields(fields.clone());
         }
         if decoded.unavailable_form {
             prepared.mark_unavailable_form_body();
@@ -168,7 +173,20 @@ impl Engine {
         }
         // Normalized JSON and decoded-body byte ranges are not capture ranges.
         // Keep field names and source citations, never fabricate input offsets.
-        let secrets = secret_values(&capture);
+        let mut secrets = secret_values(&capture);
+        for field in prepared.params(crate::manifest::ParamStyle::Query) {
+            let name = field.name.to_ascii_lowercase();
+            if name.contains("key")
+                || name.contains("token")
+                || name.contains("secret")
+                || name.contains("password")
+            {
+                secrets.push(field.value.to_string());
+            }
+        }
+        secrets.retain(|value| !value.is_empty());
+        secrets.sort_by_key(|value| std::cmp::Reverse(value.len()));
+        secrets.dedup();
         for report in &mut reports {
             for violation in &mut report.violations {
                 violation.targets.clear();
@@ -284,6 +302,7 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
             value.trim_matches([' ', '\t']).into(),
         );
     }
+    let ambiguous_content_type = headers.get("content-type").is_some_and(Value::is_array);
     let content_type = headers
         .get("content-type")
         .and_then(Value::as_str)
@@ -299,6 +318,7 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
         (false, _) => "none",
         (true, Some("application/x-www-form-urlencoded")) => "form",
         (true, Some("application/x-ndjson")) => "ndjson",
+        (true, Some("multipart/form-data")) => "multipart",
         (true, Some(mime)) if mime == "application/json" || mime.ends_with("+json") => "json",
         _ => "text",
     };
@@ -308,18 +328,57 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
             .as_str()
             .is_none_or(|value| !value.eq_ignore_ascii_case("identity"))
     });
-    let unsupported = wire.is_some()
+    let mut unsupported = wire.is_some()
         && (compressed
-            || content_type
-                .as_deref()
-                .is_some_and(|mime| mime.starts_with("multipart/")));
+            || ambiguous_content_type
+            || content_type.as_deref().is_some_and(|mime| {
+                mime.starts_with("multipart/") && mime != "multipart/form-data"
+            }));
     if unsupported {
-        violations.push(request_violation("unsupported_body_encoding", Some("body"), "This capture contains a compressed or multipart body. Provide the decoded body and corresponding headers for local body checks.", Severity::Info));
+        violations.push(request_violation("unsupported_body_encoding", Some("body"), "This capture contains compressed data, repeated Content-Type headers or an unsupported multipart media type. Provide an unambiguous decoded capture for local body checks.", Severity::Info));
     }
     let mut decoded_body = Value::Null;
     let mut json_body = None;
+    let mut multipart_fields = None;
     if !unsupported && let Some(body) = wire {
         match encoding {
+            "multipart" => {
+                let raw_type = headers
+                    .get("content-type")
+                    .and_then(Value::as_str)
+                    .unwrap_or_default();
+                match crate::multipart::decode(raw_type, body) {
+                    Ok(fields) => {
+                        let mut values = Map::new();
+                        for field in &fields {
+                            insert_repeated(
+                                &mut values,
+                                field.name.to_string(),
+                                field.value.to_string(),
+                            );
+                        }
+                        decoded_body = Value::Object(values);
+                        multipart_fields = Some(fields);
+                    }
+                    Err(problem) => {
+                        let (code, severity, message) = match problem {
+                            crate::multipart::MultipartError::Invalid(message) => {
+                                ("invalid_multipart", Severity::Error, message)
+                            }
+                            crate::multipart::MultipartError::Unsupported(message) => {
+                                ("unsupported_body_encoding", Severity::Info, message)
+                            }
+                        };
+                        let mut finding = request_violation(code, Some("body"), message, severity);
+                        finding.source = RuleSource::normative(
+                            "Multipart form data (RFC 7578 and RFC 2046)",
+                            "https://www.rfc-editor.org/rfc/rfc7578",
+                        );
+                        violations.push(finding);
+                        unsupported = true;
+                    }
+                }
+            }
             "form" if body.trim_start().starts_with(['{', '[']) => {
                 // Some official curl examples send raw JSON with curl's form
                 // default. Keep the MIME evidence while inspecting the entity.
@@ -417,6 +476,9 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
             normalized.insert("basic_auth".into(), serde_json::json!({ "username":username, "password":password, "has_colon":has_colon }));
         }
     }
+    if ambiguous_content_type {
+        normalized.insert("content_type_unavailable".into(), Value::Bool(true));
+    }
     normalized.insert("headers".into(), Value::Object(headers));
     normalized.insert("body".into(), decoded_body);
     normalized.insert(
@@ -424,7 +486,8 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
         Value::String(if unsupported { "unsupported" } else { encoding }.into()),
     );
     let unavailable_form = unsupported
-        && (encoding == "form"
+        && (ambiguous_content_type
+            || encoding == "form"
             || content_type_from_headers(request)
                 .is_some_and(|mime| mime.starts_with("multipart/")));
     let form = encoding == "form" && !unsupported && json_body.is_none();
@@ -432,6 +495,7 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
         normalized: Value::Object(normalized).to_string(),
         json_body,
         form,
+        multipart_fields,
         unavailable_form,
         violations,
     }
