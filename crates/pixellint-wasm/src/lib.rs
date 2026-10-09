@@ -28,6 +28,15 @@ fn to_js<T: serde::Serialize + ?Sized>(value: &T) -> Result<JsValue, JsValue> {
     serde_wasm_bindgen::to_value(value).map_err(|error| JsValue::from_str(&error.to_string()))
 }
 
+fn to_js_object<T: serde::Serialize + ?Sized>(value: &T) -> Result<JsValue, JsValue> {
+    let serializer = serde_wasm_bindgen::Serializer::new()
+        .serialize_maps_as_objects(true)
+        .serialize_missing_as_null(true);
+    value
+        .serialize(&serializer)
+        .map_err(|error| JsValue::from_str(&error.to_string()))
+}
+
 fn parse_artifact_kind(value: &str) -> Result<ArtifactKind, JsValue> {
     match value {
         "url" => Ok(ArtifactKind::Url),
@@ -118,7 +127,7 @@ fn har_import_options(header_policy: &str) -> Result<pixellint_core::HarImportOp
 pub fn import_har(har_json: &str, header_policy: &str) -> Result<JsValue, JsValue> {
     let imported = pixellint_core::import_har(har_json, &har_import_options(header_policy)?)
         .map_err(|error| JsValue::from_str(&error))?;
-    to_js(&imported)
+    to_js_object(&imported)
 }
 
 /// Validates offline at each capture timestamp, or one caller-supplied override.
@@ -145,7 +154,7 @@ pub fn validate_har(
         None => engine.validate_har(&imported, &ValidationOptions::default()),
     }
     .map_err(|error| JsValue::from_str(&error))?;
-    to_js(&report)
+    to_js_object(&report)
 }
 
 /// Validates a URL artifact with default options, the common case.

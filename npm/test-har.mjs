@@ -12,6 +12,7 @@ const clean = validateHar(fixture("known-clean"), { headerPolicy: "complete" });
 assert.equal(clean.summary.artifacts_total, 2);
 assert.equal(clean.summary.unique_artifacts, 1);
 assert.equal(clean.summary.errors, 0);
+assert.equal(clean.reference_time_override, null);
 assert.equal(clean.artifacts[0].occurrences.length, 2);
 assert.deepEqual(codes(clean), []);
 assert.deepEqual(cjs.validateHar(fixture("known-clean"), { headerPolicy: "complete" }), clean);
@@ -31,7 +32,9 @@ assert.deepEqual(cjs.importHar(fixture("credential-omitted"), { headerPolicy: "c
 const missingClock = JSON.parse(fixture("known-clean"));
 for (const entry of missingClock.log.entries) delete entry.startedDateTime;
 assert.throws(() => validateHar(missingClock), /explicit reference-time override/);
-assert.equal(validateHar(missingClock, { at: 1770000060 }).summary.errors, 0);
+const overridden = validateHar(missingClock, { at: 1770000060 });
+assert.equal(overridden.summary.errors, 0);
+assert.equal(overridden.reference_time_override, 1770000060);
 for (const at of [NaN, Infinity, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
   assert.throws(() => validateHar(missingClock, { at }), /safe integer/);
 }

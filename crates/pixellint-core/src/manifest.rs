@@ -5736,6 +5736,21 @@ fn http_capture_condition(
         RuleCondition::Not { condition } => {
             http_capture_condition(condition, params, unknown).map(|value| !value)
         }
+        RuleCondition::AllValuesIn { params: names, .. } => {
+            let value = condition.evaluate(params);
+            let submitted = params.iter().any(|field| {
+                !field.missing
+                    && !field.container
+                    && names.iter().any(|name| name == field.name.as_ref())
+            });
+            if value == Some(false) && submitted {
+                Some(false)
+            } else if names.iter().any(|name| unknown(name)) {
+                None
+            } else {
+                value
+            }
+        }
         _ => {
             let value = condition.evaluate(params);
             if value == Some(true) {
