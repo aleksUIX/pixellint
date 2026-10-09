@@ -10,9 +10,9 @@ use std::io::{self, Read};
 use std::process::ExitCode;
 
 use pixellint_core::{
-    ArtifactKind, DocumentReport, Engine, ExpansionState, RuleSourceLevel, Severity,
-    ValidationOptions, ValidationRequest, ValidationSummary, VendorDirectory,
-    document_request_from_json,
+    ArtifactKind, DocumentReport, Engine, ExpansionState, HarHeaderPolicy, HarImportOptions,
+    RuleSourceLevel, Severity, ValidationOptions, ValidationRequest, ValidationSummary,
+    VendorDirectory, document_request_from_json, import_har,
 };
 
 const USAGE_EXIT: u8 = 2;
@@ -54,6 +54,8 @@ fn main() -> ExitCode {
         [command, rest @ ..] if command == "list-vendors" => run_list_vendors(rest),
         [command, rest @ ..] if command == "validate" => run_validate(rest),
         [command, rest @ ..] if command == "validate-many" => run_validate_many(rest),
+        [command, rest @ ..] if command == "import-har" => run_har(rest, false),
+        [command, rest @ ..] if command == "validate-har" => run_har(rest, true),
         [command, ..] => {
             eprintln!("unknown command: {command}");
             print_usage();
@@ -276,6 +278,88 @@ fn snippet_kind_rejected(kind: &str) -> String {
     format!(
         "{kind} is not a validation kind. Extract tracking URLs from the snippet, then pixellint validate url. Pixellint does not parse HTML, JavaScript, or GTM containers."
     )
+}
+
+fn run_har(args: &[String], validate: bool) -> ExitCode {
+    let [input, rest @ ..] = args else {
+        print_usage();
+        return ExitCode::from(USAGE_EXIT);
+    };
+    let raw = match read_artifact(input) {
+        Ok(raw) => raw,
+        Err(message) => return usage_error(&message),
+    };
+    let mut import_options = HarImportOptions::default();
+    let mut validation_args = Vec::new();
+    let mut args = rest.iter();
+    while let Some(argument) = args.next() {
+        if argument == "--har-headers" {
+            import_options.header_policy = match args.next().map(String::as_str) {
+                Some("unknown") => HarHeaderPolicy::Unknown,
+                Some("complete") => HarHeaderPolicy::Complete,
+                Some("chrome_sanitized") => HarHeaderPolicy::ChromeSanitized,
+                _ => {
+                    return usage_error(
+                        "--har-headers requires unknown, complete or chrome_sanitized",
+                    );
+                }
+            };
+        } else {
+            validation_args.push(argument.clone());
+        }
+    }
+    if !validate && validation_args.iter().any(|arg| arg != "--json") {
+        return usage_error(
+            "import-har accepts --har-headers and --json; validation options belong to validate-har",
+        );
+    }
+    let mut imported = match import_har(&raw, &import_options) {
+        Ok(imported) => imported,
+        Err(message) => return usage_error(&message),
+    };
+    if !validate {
+        match serde_json::to_string_pretty(&imported) {
+            Ok(payload) => println!("{payload}"),
+            Err(error) => return usage_error(&error.to_string()),
+        }
+        return ExitCode::SUCCESS;
+    }
+    let options = match parse_cli_options(&validation_args) {
+        Ok(options) => options,
+        Err(message) => return usage_error(&message),
+    };
+    for artifact in &mut imported.document.artifacts {
+        artifact.claimed_vendor = options.claimed_vendor.clone();
+        if validation_args.iter().any(|argument| argument == "--state") {
+            artifact.expansion_state = options.expansion_state;
+        }
+    }
+    let engine = match build_engine(&options) {
+        Ok(engine) => engine,
+        Err(message) => return usage_error(&message),
+    };
+    let result = match options.reference_time {
+        Some(time) => engine.validate_har_at(&imported, &options.validation, time),
+        None => engine.validate_har(&imported, &options.validation),
+    };
+    match result {
+        Ok(report) => {
+            let emitted = if options.output_format == OutputFormat::Json {
+                serde_json::to_string_pretty(&report).map(|payload| println!("{payload}"))
+            } else {
+                emit_document(&report.document, OutputFormat::Text)
+            };
+            if let Err(error) = emitted {
+                return usage_error(&error.to_string());
+            }
+            if report.is_ok() {
+                ExitCode::SUCCESS
+            } else {
+                ExitCode::FAILURE
+            }
+        }
+        Err(message) => usage_error(&message),
+    }
 }
 
 fn parse_artifact_kind(value: &str) -> Result<ArtifactKind, String> {
@@ -534,6 +618,8 @@ Spec-first validator for pixels, postbacks, and other measurement artifacts.
 USAGE
   pixellint validate <kind> <artifact> [options]
   pixellint validate-many <document> [options]
+  pixellint import-har <har> [--har-headers <policy>]
+  pixellint validate-har <har> [options] [--har-headers <policy>]
   pixellint list-rulepacks [--json] [--rulepack-file <path>]...
   pixellint list-vendors [--json] [--directory-file <path>]...
   pixellint help
@@ -560,6 +646,9 @@ OPTIONS
   --rulepack-file <path>  Load a custom rulepack manifest (repeatable)
   --directory-file <path>  Merge extra vendor directory entries (repeatable)
   --at <unix-seconds>     Validate timestamp windows against this reference time
+                          Overrides capture clocks in validate-har
+  --har-headers <policy>  HAR only: unknown (default), complete, chrome_sanitized
+                          HAR import and validation are offline; requests are not sent
 
 EXIT CODES
   0  clean, or warnings and info only

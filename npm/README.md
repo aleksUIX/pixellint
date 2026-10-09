@@ -95,3 +95,23 @@ This npm wrapper loads the Node-target WASM build. Its ESM entry uses
 - [Writing a rulepack](https://github.com/aleksUIX/pixellint/blob/main/docs/RULEPACK_SCHEMA.md)
 
 Apache-2.0. Not affiliated with any vendor named in its rulepacks.
+
+## HAR requests use recorded clocks and explicit availability.
+
+```js
+import { importHar, validateHar } from "pixellint";
+const imported = importHar(harText, { headerPolicy: "chrome_sanitized" });
+const report = validateHar(harText, { headerPolicy: "chrome_sanitized" });
+```
+
+HAR input stays offline. Default replay uses each capture's startedDateTime;
+`at` overrides it with safe integer Unix seconds. Missing/invalid capture clocks
+require an explicit override. The default `unknown` header policy treats absent
+Authorization/Cookie as unavailable. `chrome_sanitized` records their omission
+as redaction; `complete` establishes absent headers and enables missing-field
+findings. Observable methods, headers and bodies retain their checks.
+
+Import and replay results preserve original URLs, headers and bodies and can
+contain credentials. They are private capture data, not sanitized output.
+See [the HAR request schema](https://github.com/aleksUIX/pixellint/blob/main/docs/HAR_REQUEST_SCHEMA.md)
+for body encoding, byte limits, deduplication and provenance details.

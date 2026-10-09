@@ -19,6 +19,7 @@ pub mod document;
 mod ftrack_fingerprint;
 mod google_additional_consent;
 mod gpp_structure;
+pub mod har;
 pub mod http;
 mod javascript_date;
 mod json;
@@ -38,7 +39,14 @@ pub use document::{
     DocumentExtractor, DocumentReport, DocumentRequest, FindingCounts, document_request_from_json,
     document_request_from_value,
 };
-pub use http::{HttpHeader, HttpHeaders, HttpRequest};
+pub use har::{
+    HarBodyAvailability, HarEntryMetadata, HarHeaderPolicy, HarImport, HarImportOptions, HarReport,
+    import_har,
+};
+pub use http::{
+    CapturedHttpRequest, HttpBodyAvailability, HttpCaptureContext, HttpHeader, HttpHeaders,
+    HttpRequest,
+};
 pub use manifest::{
     Assertion, DateTimeRepresentation, IpVersion, JsonType, JsonTypes, ManifestError,
     ManifestRulePack, MatchSpec, PackRule, ParamContract, ParamStyle, RequestQuerySpec,

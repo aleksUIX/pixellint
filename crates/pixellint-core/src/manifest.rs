@@ -3702,19 +3702,56 @@ impl ManifestRulePack {
                 && document
                     .get("content_type_unavailable")
                     .is_some_and(|field| field.text == "true");
+            let unavailable_capture =
+                body.code_segment == "http" && document.contains("capture_unavailable_paths[0]");
+            if unavailable_capture
+                && scope_path != "headers"
+                && http_capture_path_unavailable(document, &scope_path)
+            {
+                continue;
+            }
             let param_unavailable = |param: &CompiledParam| {
                 (unavailable_body && http_param_reads_body(param))
                     || (unavailable_content_type
                         && (param.contract.root_path.as_deref() == Some("content_type")
                             || param.names.iter().any(|name| name == "content_type")))
+                    || (unavailable_capture
+                        && http_capture_param_unavailable(document, &scope_path, param))
+            };
+            let mut params = collect_body_params(document, &scope_path, &body.params);
+            if unavailable_capture {
+                params.retain(|param| {
+                    param
+                        .location
+                        .as_deref()
+                        .is_none_or(|path| !http_capture_path_unavailable(document, path))
+                });
+            }
+            let dependency_unavailable = |param: &CompiledParam| {
+                param_unavailable(param)
+                    || (unavailable_capture
+                        && http_capture_param_has_unknown(document, &scope_path, param))
             };
             let condition_reads_unavailable_body = |condition: &RuleCondition| {
-                (unavailable_body || unavailable_content_type)
-                    && condition.params().iter().any(|name| {
-                        body.params
-                            .iter()
-                            .any(|param| param.names.contains(name) && param_unavailable(param))
+                if unavailable_capture {
+                    http_capture_condition(condition, &params, &|name| {
+                        body.params.iter().any(|param| {
+                            param
+                                .names
+                                .iter()
+                                .any(|candidate| candidate.as_str() == name)
+                                && dependency_unavailable(param)
+                        })
                     })
+                    .is_none()
+                } else {
+                    (unavailable_body || unavailable_content_type)
+                        && condition.params().iter().any(|name| {
+                            body.params
+                                .iter()
+                                .any(|param| param.names.contains(name) && param_unavailable(param))
+                        })
+                }
             };
             if body
                 .condition
@@ -3734,7 +3771,6 @@ impl ManifestRulePack {
             }) {
                 continue;
             }
-            let params = collect_body_params(document, &scope_path, &body.params);
             if body.code_segment == "http"
                 && body
                     .condition
@@ -3756,7 +3792,7 @@ impl ManifestRulePack {
                 query: None,
             };
             for compiled in &body.params {
-                if (unavailable_body || unavailable_content_type)
+                if (unavailable_body || unavailable_content_type || unavailable_capture)
                     && (param_unavailable(compiled)
                         || compiled
                             .contract
@@ -3769,13 +3805,22 @@ impl ManifestRulePack {
                 self.check_param(&scope, compiled, &params, &body.exact_names, violations);
             }
             for compiled in &body.rules {
-                if (unavailable_body || unavailable_content_type)
+                if (unavailable_body || unavailable_content_type || unavailable_capture)
                     && (assertion_params(&compiled.rule.assertion)
                         .iter()
                         .any(|name| {
-                            body.params
-                                .iter()
-                                .any(|param| param.names.contains(name) && param_unavailable(param))
+                            body.params.iter().any(|param| {
+                                param.names.contains(name)
+                                    && if matches!(
+                                        compiled.rule.assertion,
+                                        Assertion::Format { .. }
+                                            | Assertion::ForbidValuePattern { .. }
+                                    ) {
+                                        param_unavailable(param)
+                                    } else {
+                                        dependency_unavailable(param)
+                                    }
+                            })
                         })
                         || compiled
                             .rule
@@ -5508,6 +5553,123 @@ fn describe(message: String, description: Option<&str>) -> String {
             format!("{message} {description}")
         }
         _ => message,
+    }
+}
+
+fn http_capture_path_unavailable(document: &JsonDocument<'_>, path: &str) -> bool {
+    document
+        .expand("capture_unavailable_paths[]")
+        .iter()
+        .filter_map(|entry| document.get(entry))
+        .any(|entry| {
+            let missing = entry.text.as_ref();
+            let reads_missing = path == missing
+                || path
+                    .strip_prefix(missing)
+                    .is_some_and(|rest| rest.starts_with('.') || rest.starts_with('['));
+            // A partially observed header list still establishes the values it has.
+            reads_missing
+                && !(missing == "headers"
+                    && path != "headers"
+                    && document
+                        .expand(path)
+                        .iter()
+                        .any(|concrete| document.contains(concrete)))
+        })
+}
+
+fn http_capture_param_paths(scope: &str, param: &CompiledParam) -> Vec<String> {
+    if let Some(root) = &param.contract.root_path {
+        return vec![root.clone()];
+    }
+    param
+        .names
+        .iter()
+        .map(|name| {
+            if scope.is_empty() {
+                name.clone()
+            } else {
+                format!("{scope}.{name}")
+            }
+        })
+        .collect()
+}
+
+fn http_capture_param_has_unknown(
+    document: &JsonDocument<'_>,
+    scope: &str,
+    param: &CompiledParam,
+) -> bool {
+    http_capture_param_paths(scope, param)
+        .iter()
+        .any(|path| http_capture_path_unavailable(document, path))
+}
+
+fn http_capture_param_unavailable(
+    document: &JsonDocument<'_>,
+    scope: &str,
+    param: &CompiledParam,
+) -> bool {
+    let paths = http_capture_param_paths(scope, param);
+    // An omitted alias cannot suppress a format check on an observed value.
+    let observed = paths.iter().any(|path| {
+        !http_capture_path_unavailable(document, path)
+            && document
+                .expand(path)
+                .iter()
+                .any(|concrete| document.contains(concrete))
+    });
+    !observed
+        && paths
+            .iter()
+            .any(|path| http_capture_path_unavailable(document, path))
+}
+
+fn http_capture_condition(
+    condition: &RuleCondition,
+    params: &[RawParam<'_>],
+    unknown: &impl Fn(&str) -> bool,
+) -> Option<bool> {
+    match condition {
+        RuleCondition::All { conditions } => {
+            let values: Vec<_> = conditions
+                .iter()
+                .map(|condition| http_capture_condition(condition, params, unknown))
+                .collect();
+            if values.contains(&Some(false)) {
+                Some(false)
+            } else if values.contains(&None) {
+                None
+            } else {
+                Some(true)
+            }
+        }
+        RuleCondition::Any { conditions } => {
+            let values: Vec<_> = conditions
+                .iter()
+                .map(|condition| http_capture_condition(condition, params, unknown))
+                .collect();
+            if values.contains(&Some(true)) {
+                Some(true)
+            } else if values.contains(&None) {
+                None
+            } else {
+                Some(false)
+            }
+        }
+        RuleCondition::Not { condition } => {
+            http_capture_condition(condition, params, unknown).map(|value| !value)
+        }
+        _ => {
+            let value = condition.evaluate(params);
+            if value == Some(true) {
+                value
+            } else if condition.params().iter().any(|name| unknown(name)) {
+                None
+            } else {
+                value
+            }
+        }
     }
 }
 

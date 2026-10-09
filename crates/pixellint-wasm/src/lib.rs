@@ -99,6 +99,55 @@ pub fn validate_many(document_json: &str) -> Result<JsValue, JsValue> {
     to_js(&report)
 }
 
+fn har_import_options(header_policy: &str) -> Result<pixellint_core::HarImportOptions, JsValue> {
+    let header_policy = match header_policy {
+        "unknown" => pixellint_core::HarHeaderPolicy::Unknown,
+        "complete" => pixellint_core::HarHeaderPolicy::Complete,
+        "chrome_sanitized" => pixellint_core::HarHeaderPolicy::ChromeSanitized,
+        _ => {
+            return Err(JsValue::from_str(
+                "HAR header policy must be unknown, complete or chrome_sanitized",
+            ));
+        }
+    };
+    Ok(pixellint_core::HarImportOptions { header_policy })
+}
+
+/// Extracts local HAR 1.2 requests and records unavailable capture fields.
+#[wasm_bindgen]
+pub fn import_har(har_json: &str, header_policy: &str) -> Result<JsValue, JsValue> {
+    let imported = pixellint_core::import_har(har_json, &har_import_options(header_policy)?)
+        .map_err(|error| JsValue::from_str(&error))?;
+    to_js(&imported)
+}
+
+/// Validates offline at each capture timestamp, or one caller-supplied override.
+#[wasm_bindgen]
+pub fn validate_har(
+    har_json: &str,
+    header_policy: &str,
+    reference_time: Option<f64>,
+) -> Result<JsValue, JsValue> {
+    let imported = pixellint_core::import_har(har_json, &har_import_options(header_policy)?)
+        .map_err(|error| JsValue::from_str(&error))?;
+    let engine = Engine::default();
+    let report = match reference_time {
+        Some(time)
+            if time.is_finite() && time.fract() == 0.0 && time.abs() <= 9_007_199_254_740_991.0 =>
+        {
+            engine.validate_har_at(&imported, &ValidationOptions::default(), time as i64)
+        }
+        Some(_) => {
+            return Err(JsValue::from_str(
+                "HAR reference time must be a safe integer number of Unix seconds",
+            ));
+        }
+        None => engine.validate_har(&imported, &ValidationOptions::default()),
+    }
+    .map_err(|error| JsValue::from_str(&error))?;
+    to_js(&report)
+}
+
 /// Validates a URL artifact with default options, the common case.
 #[wasm_bindgen]
 pub fn validate_url(artifact: &str) -> Result<JsValue, JsValue> {
