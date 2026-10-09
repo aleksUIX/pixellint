@@ -2,6 +2,11 @@
 /* eslint-disable */
 
 /**
+ * Extracts local HAR 1.2 requests and records unavailable capture fields.
+ */
+export function import_har(har_json: string, header_policy: string): any;
+
+/**
  * Every rulepack the engine ships, with its evidence level.
  */
 export function rulepacks(): any;
@@ -11,6 +16,11 @@ export function rulepacks(): any;
  * JS object.
  */
 export function validate(artifact_kind: string, artifact: string, expansion_state?: string | null, claimed_vendor?: string | null): any;
+
+/**
+ * Validates offline at each capture timestamp, or one caller-supplied override.
+ */
+export function validate_har(har_json: string, header_policy: string, reference_time?: number | null): any;
 
 /**
  * Validates extracted artifacts as one document. The caller already pulled

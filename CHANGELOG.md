@@ -4,6 +4,28 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.35.0 - Unreleased
+
+### Added
+
+- Added local HAR 1.2 request import and replay to the Rust API, CLI, MCP and
+  JavaScript package. Requests retain capture times, repeated headers, raw
+  body text and provenance. Missing or stripped capture data remains explicit.
+- Deepened HubSpot query cardinality, LiveRamp forwarded IP chains and
+  Outbrain documented calendar representations with source-backed advisories.
+- Added bounded FTrack fingerprint reconstruction and MurmurHash parity from
+  executed public SDK producers. Unknown or ambiguous layouts remain unvalidated.
+- Added a bounded Matomo PHP 8 scalar query profile, checked against native
+  PHP and pinned vendor field readers. Unsupported container and runtime
+  dependent query forms retain explicit coverage limits.
+
+### Fixed
+
+- Match Matomo's native float reader when validation normalizes commas but
+  casting uses the original value.
+- Keep observed request violations active when another captured field is
+  unavailable. Explicitly redacted header values do not supply wire bytes.
+
 ## 0.34.0 - 2026-10-09
 
 ### Added

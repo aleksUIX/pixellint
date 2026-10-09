@@ -1,8 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export const import_har: (a: number, b: number, c: number, d: number) => [number, number, number];
 export const rulepacks: () => [number, number, number];
 export const validate: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => [number, number, number];
+export const validate_har: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number, number];
 export const validate_many: (a: number, b: number) => [number, number, number];
 export const validate_url: (a: number, b: number) => [number, number, number];
 export const vendor_for_host: (a: number, b: number) => [number, number, number];
