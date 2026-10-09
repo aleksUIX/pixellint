@@ -25,7 +25,7 @@ pub struct DocumentExtractor {
 }
 
 /// One extracted artifact plus the places it appeared.
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DocumentArtifactInput {
     #[serde(default = "default_url_kind")]
     pub artifact_kind: ArtifactKind,
@@ -61,7 +61,7 @@ pub struct ArtifactOccurrence {
 }
 
 /// Extracted artifacts from one document. The caller already pulled URLs out.
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DocumentRequest {
     #[serde(default = "default_document_kind")]
     pub document_kind: String,
@@ -273,8 +273,18 @@ impl Engine {
         options: &ValidationOptions,
         reference_time_unix_seconds: i64,
     ) -> Result<DocumentReport, DocumentError> {
+        self.validate_many_with_clocks(request, options, reference_time_unix_seconds, &[])
+    }
+
+    pub(crate) fn validate_many_with_clocks(
+        &self,
+        request: &DocumentRequest,
+        options: &ValidationOptions,
+        reference_time_unix_seconds: i64,
+        clocks: &[Option<i64>],
+    ) -> Result<DocumentReport, DocumentError> {
         let mut groups: Vec<Group> = Vec::new();
-        let mut index: HashMap<(&str, &str), usize> = HashMap::new();
+        let mut index: HashMap<(&str, &str, i64), usize> = HashMap::new();
 
         for (item_index, artifact) in request.artifacts.iter().enumerate() {
             if kind_rejected(artifact.artifact_kind) {
@@ -285,7 +295,12 @@ impl Engine {
             }
 
             let trimmed = artifact.artifact.trim();
-            if let Some(&slot) = index.get(&(kind_label(artifact.artifact_kind), trimmed)) {
+            let clock = clocks
+                .get(item_index)
+                .copied()
+                .flatten()
+                .unwrap_or(reference_time_unix_seconds);
+            if let Some(&slot) = index.get(&(kind_label(artifact.artifact_kind), trimmed, clock)) {
                 groups[slot].occurrences.push_row(&artifact.occurrences);
                 continue;
             }
@@ -296,7 +311,10 @@ impl Engine {
                 (Some(artifact.artifact.clone()), trimmed.to_string())
             };
 
-            index.insert((kind_label(artifact.artifact_kind), trimmed), groups.len());
+            index.insert(
+                (kind_label(artifact.artifact_kind), trimmed, clock),
+                groups.len(),
+            );
             groups.push(Group {
                 first_index: item_index,
                 artifact_kind: artifact.artifact_kind,
@@ -321,7 +339,15 @@ impl Engine {
                 expansion_state: group.expansion_state,
             };
             let summary = self
-                .validate_at(&validation, options, reference_time_unix_seconds)
+                .validate_at(
+                    &validation,
+                    options,
+                    clocks
+                        .get(group.first_index)
+                        .copied()
+                        .flatten()
+                        .unwrap_or(reference_time_unix_seconds),
+                )
                 .map_err(|error| DocumentError::Engine {
                     index: group.first_index,
                     error,
@@ -339,7 +365,15 @@ impl Engine {
 
             artifacts.push(AggregatedArtifact {
                 artifact_id: format!("artifact-{}", artifact_number + 1),
-                dedupe_key: dedupe_key(group.artifact_kind, &normalized_artifact),
+                dedupe_key: if clocks.is_empty() {
+                    dedupe_key(group.artifact_kind, &normalized_artifact)
+                } else {
+                    format!(
+                        "{}\nclock:{}",
+                        dedupe_key(group.artifact_kind, &normalized_artifact),
+                        clocks[group.first_index].unwrap_or(reference_time_unix_seconds)
+                    )
+                },
                 artifact_kind: group.artifact_kind,
                 raw_artifact,
                 normalized_artifact,

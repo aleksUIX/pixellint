@@ -97,11 +97,17 @@
     {
       "name": "timestamp",
       "format": {
-        "kind": "regex",
-        "pattern": "^(?:[0-9]{2}/[0-9]{2}/[0-9]{4} (?:[0-9]{1,2}:[0-9]{2}:[0-9]{2} (?:AM|PM)|[0-9]{2}:[0-9]{2}:[0-9]{2})|[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:[+-][0-9]{4}|Z| [^\\s].*)?)$"
+        "kind": "datetime_formats",
+        "formats": [
+          "us12_hour",
+          "us24_hour",
+          "iso_local",
+          "iso_offset",
+          "iso_named_timezone"
+        ]
       },
       "format_severity": "warning",
-      "description": "Outbrain documents eight optional S2S timestamp representations: US month/day with 12-hour AM/PM or 24-hour time, and extended ISO date/time with space or T plus an optional numeric or named timezone. This advisory checks representation only; timezone names and calendar semantics remain unproven.",
+      "description": "Outbrain documents eight optional S2S timestamp representations. This advisory validates Gregorian calendar dates, 12-hour or 24-hour clocks and published numeric offset bounds. ISO UTC Z remains accepted for compatibility. Named zones retain their text without timezone membership, DST or instant resolution claims.",
       "doc": "https://www.outbrain.com/help/advertisers/server2server-integrations/",
       "source_level": "official_vendor",
       "condition": {

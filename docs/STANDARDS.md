@@ -3953,7 +3953,7 @@ Path captures: `/include/(?<cache_bust>[0-9]+)/(?<embed_id>[^/]*)\.js`. Captured
 
 ## `vendor/flashtalking-ftrack`
 
-Published d9core legacy POST /lgc producer schema. Double encodeURIComponent form JSON, native types and fixed empty containers are snapshot advisories, not a published server rejection contract. Current /img/img.png D9c/D9v and /ft.stat protocols remain unvalidated.
+Published d9core legacy POST /lgc producer schema. Double encodeURIComponent form JSON, native types, indexed fingerprint parity and fixed empty containers are snapshot advisories, not a published server rejection contract. Headerless legacy XDomainRequest form bodies are decoded only when MIME absence is observed. Current /img/img.png D9c/D9v and /ft.stat protocols remain unvalidated.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/flashtalking-ftrack.json).
 
@@ -4003,6 +4003,10 @@ Context: `{"source_param":"tbx","encoding":"percent_encoded_json","encoding_seve
 | `D9_63` | recommended | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
 | `D9_64` | optional | `{"severity":"warning","json_type":"number","minimum":0}` | [official_template](https://d9.flashtalking.com/d9core) |
 | `D9_66` | recommended | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.flashtalking-ftrack.fingerprint` | `{"kind":"ftrack_fingerprint","indexed":"D9_33","hash":"D9_34"}` | warning | [official_template](https://d9.flashtalking.com/d9core) |
 
 ### JSON contract 2
 
@@ -5407,6 +5411,7 @@ Path captures: `^/(?<collector>__ptq\|__ptbe\|__ptc)\.gif$`. Captured values tak
 | `vendor.hubspot-pixel.https` | `{"kind":"require_https"}` | warning | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
 | `vendor.hubspot-pixel.mab_experiment` | `{"kind":"required_with","when":"mabci","requires":["mabei"]}` | warning | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
 | `vendor.hubspot-pixel.mab_correlation` | `{"kind":"required_with","when":"mabei","requires":["mabci"]}` | warning | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `vendor.hubspot-pixel.tc_max_occurrences` | `{"kind":"max_occurrences","param":"tc","max_occurrences":5,"bare_url_only":true}` | warning | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
 
 ### JSON contract 1
 
@@ -6607,7 +6612,12 @@ Context: `{}`.
 | `headers.origin` | required | `{"format":{"kind":"regex","pattern":"^[\\t ]*(?:null\|[A-Za-z][A-Za-z0-9+.-]*://[^/?#@\\s]+)[\\t ]*$"},"format_severity":"warning"}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api) |
 | `query.atype` | optional | `{}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api) |
 | `query.atype[]` | optional | `{}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api) |
-| `headers.x-forwarded-for` | required | `{"format":{"kind":"non_empty"},"condition":{"kind":"any","conditions":[{"kind":"value_in","param":"query.atype","values":["3"]},{"kind":"value_in","param":"query.atype[]","values":["3"]}]}}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api) |
+| `headers.x-forwarded-for` | required | `{"condition":{"kind":"all_values_in","params":["query.atype","query.atype[]"],"values":["3"]},"format_severity":"warning","json_type":["string","array"]}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api) |
+| `headers.x-forwarded-for[]` | optional | `{"format":{"kind":"ip_chain"},"condition":{"kind":"any","conditions":[{"kind":"value_in","param":"query.atype","values":["3"]},{"kind":"value_in","param":"query.atype[]","values":["3"]}]},"format_severity":"warning","json_type":"string"}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.liveramp-envelope-refresh.http.headers.x-forwarded-for.invalid` | `{"kind":"format","param":"headers.x-forwarded-for","format":{"kind":"ip_chain"},"condition":{"kind":"all","conditions":[{"kind":"any","conditions":[{"kind":"value_in","param":"query.atype","values":["3"]},{"kind":"value_in","param":"query.atype[]","values":["3"]}]},{"kind":"present","param":"headers.x-forwarded-for"}]}}` | warning | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api) |
 
 ## `vendor/liveramp-envelope`
 
@@ -6666,7 +6676,12 @@ Context: `{}`.
 | `headers.origin` | required | `{"format":{"kind":"regex","pattern":"^[\\t ]*(?:null\|[A-Za-z][A-Za-z0-9+.-]*://[^/?#@\\s]+)[\\t ]*$"},"format_severity":"warning"}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api) |
 | `query.atype` | optional | `{}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api) |
 | `query.atype[]` | optional | `{}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api) |
-| `headers.x-forwarded-for` | required | `{"format":{"kind":"non_empty"},"condition":{"kind":"any","conditions":[{"kind":"value_in","param":"query.atype","values":["3"]},{"kind":"value_in","param":"query.atype[]","values":["3"]}]}}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api) |
+| `headers.x-forwarded-for` | required | `{"condition":{"kind":"all_values_in","params":["query.atype","query.atype[]"],"values":["3"]},"format_severity":"warning","json_type":["string","array"]}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api) |
+| `headers.x-forwarded-for[]` | optional | `{"format":{"kind":"ip_chain"},"condition":{"kind":"any","conditions":[{"kind":"value_in","param":"query.atype","values":["3"]},{"kind":"value_in","param":"query.atype[]","values":["3"]}]},"format_severity":"warning","json_type":"string"}` | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.liveramp-envelope.http.headers.x-forwarded-for.invalid` | `{"kind":"format","param":"headers.x-forwarded-for","format":{"kind":"ip_chain"},"condition":{"kind":"all","conditions":[{"kind":"any","conditions":[{"kind":"value_in","param":"query.atype","values":["3"]},{"kind":"value_in","param":"query.atype[]","values":["3"]}]},{"kind":"present","param":"headers.x-forwarded-for"}]}}` | warning | [official_vendor](https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api) |
 
 ## `vendor/lotame`
 
@@ -6703,7 +6718,7 @@ Path captures: `/mcjs-connected/js/users/(?<user_id>[^/]+)/(?<site_id>[^/]*)\.js
 
 ## `vendor/matomo`
 
-Matomo single and bulk HTTP Tracking API requests to matomo.php or piwik.php, including self-hosted endpoints.
+Matomo single and bulk HTTP Tracking API requests to matomo.php or piwik.php, including self-hosted endpoints. The pinned PHP8 bulk profile models scalar parse_str key normalization, last-value shadowing and mapped field readers. Bracket trees, sanitizer-sensitive values and runtime-dependent query forms remain explicitly unvalidated.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/matomo.json).
 
@@ -9796,7 +9811,7 @@ Matcher: `{"hosts":["tr.outbrain.com"],"paths":["/pixel","/unifiedPixel"]}`.
 | `orderValue` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://www.outbrain.com/help/advertisers/dynamic-values/) |
 | `orderId` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://www.outbrain.com/help/advertisers/dynamic-values/) |
 | `currency` | optional | `{"format":{"kind":"enum","values":["USD","CAD","EUR","GBP","ILS","AUD","MXN","BRL","SEK","SGD","RUB","NZD","INR","JPY","PHP","CHF","MYR"]}}` | [official_vendor](https://www.outbrain.com/help/advertisers/dynamic-values/) |
-| `timestamp` | optional | `{"format":{"kind":"regex","pattern":"^(?:[0-9]{2}/[0-9]{2}/[0-9]{4} (?:[0-9]{1,2}:[0-9]{2}:[0-9]{2} (?:AM\|PM)\|[0-9]{2}:[0-9]{2}:[0-9]{2})\|[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:[+-][0-9]{4}\|Z\| [^\\s].*)?)$"},"format_severity":"warning","condition":{"kind":"present","param":"ob_click_id"}}` | [official_vendor](https://www.outbrain.com/help/advertisers/server2server-integrations/) |
+| `timestamp` | optional | `{"format":{"kind":"datetime_formats","formats":["us12_hour","us24_hour","iso_local","iso_offset","iso_named_timezone"]},"format_severity":"warning","condition":{"kind":"present","param":"ob_click_id"}}` | [official_vendor](https://www.outbrain.com/help/advertisers/server2server-integrations/) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |

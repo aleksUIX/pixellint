@@ -205,7 +205,7 @@ Exact contracts take precedence over families, as they do on URLs:
 }
 ```
 
-Values carrying an unexpanded macro skip format checks: unresolved macros are
+Values carrying an unexpanded macro skip scalar format checks: unresolved macros are
 the `core` pack's finding to report, and reporting both would double-count one
 defect.
 
@@ -220,6 +220,8 @@ defect.
 | `url` | `require_https` | the percent-decoded value parses as an absolute URL |
 | `hex` | `length` | the value is exactly `length` lowercase hex characters, for hashed identifiers |
 | `ip` | optional `version`: `v4` or `v6`, `exclude_ranges` | the value parses as an IP address literal of the specified family outside the declared CIDR ranges |
+| `ip_chain` | none | every comma-separated entry is an IPv4 or IPv6 literal, after trimming space/tab padding; a complete unresolved macro entry is skipped independently, so an invalid literal neighbor still fails |
+| `datetime_formats` | nonempty `formats` | a calendar-valid second-resolution representation selected from `us12_hour`, `us24_hour`, `iso_local`, `iso_offset`, or `iso_named_timezone`; ISO forms accept a space or uppercase T separator |
 | `datetime` | `require_timezone`, `allow_date_only`, `allow_basic`, `allow_space_separator`, `allow_javascript_date`, `allow_unpadded_date` | calendar-valid date and time; alternate forms and ECMA-262 Date string output are opt-in |
 | `date` | none | a calendar-valid `YYYY-MM-DD` date |
 | `json` | none | valid JSON syntax in a string, accepting any JSON value |
@@ -227,6 +229,23 @@ defect.
 | `adobe_products` | none | Adobe product rows, required names, UTF-8 byte limits, numeric cells, and merchandising event/eVar grammar |
 | `adobe_events` | none | Adobe built-in and numbered event names, numeric assignments, and nonempty serialization suffixes |
 | `currency` | `allow_historical`, `case_insensitive` | membership in the dated SIX ISO 4217 registry; current uppercase codes by default |
+
+`ip_chain` checks each comma-separated entry independently. Only a recognized
+macro occupying the complete trimmed entry is unresolved. Empty entries,
+hostnames, address ports, brackets around IPv6, CIDR suffixes and control
+characters are invalid literal IP-chain syntax. This format does not establish
+the actual client identity, trusted proxy boundary or geographic eligibility.
+
+`datetime_formats` uses Gregorian calendar validity and seconds from 00 through
+59. `us12_hour` is `MM/dd/yyyy h:mm:ss AM|PM`, with hours from 1 through 12;
+`us24_hour` is `MM/dd/yyyy HH:mm:ss`. ISO forms use `yyyy-MM-dd HH:mm:ss`
+or `yyyy-MM-ddTHH:mm:ss`. `iso_offset` adds a signed `HHmm` offset (hours 00
+through 23, minutes 00 through 59), or the UTC `Z` marker. `iso_named_timezone`
+adds a space and nonempty zone text. Explicit `GMT+H:mm`, `GMT+HH:mm`, negative
+GMT offsets and signed `HHmm` zone tails receive numeric bound checks.
+Other zone text remains opaque, including localized names. No timezone registry,
+locale-specific name, DST transition or absolute instant is resolved. Use an
+advisory severity when the destination's exact timestamp parser is unpublished.
 | `tcf` | none | TCF v2 fixed fields, vendor vectors/ranges, publisher restrictions and optional segments; policy conflicts produce warnings |
 | `additional_consent` | none | Google Additional Consent v1/v2 provider-list grammar; overlap and dated ATP registry conflicts produce warnings |
 | `gpp` | none | GPP header IDs/counts, TCF, Canada, US Privacy and all 21 published US layouts; unknown layouts and source conflicts produce warnings |
@@ -300,6 +319,7 @@ rule names must also appear in `params`.
 | `unique_array_by` | `param`, `field` | objects in one native JSON array repeat a literal scalar member value; `field` is an exact member name, including punctuation; missing members, containers and macros are skipped; strings, numbers and Booleans remain distinct; numeric spellings normalize exactly within signed 64-bit exponent arithmetic, and identical numeric spellings outside that range still count as duplicates |
 | `equal_split_lengths` | `params`, `separator` | populated delimited lists contain different numbers of records; missing optional lists and macros are skipped |
 | `equal_occurrences` | `params` | repeated field families have different occurrence counts, including empty and macro positions |
+| `max_occurrences` | `param`, `max_occurrences`, optional `bare_url_only` | the submitted field exceeds its occurrence bound; empty and macro values count, query names are percent-decoded, and bare query keys without an equals sign count too; `bare_url_only: true` excludes body scopes and URL scopes supplied by complete HTTP captures |
 | `time_window` | `param`, `unit`, optional `fallback_param`, `max_age_seconds`, `max_future_seconds` | the effective timestamp falls outside inclusive age or future bounds relative to the shared validation clock |
 
 Timestamp units are `seconds`, `milliseconds`, `microseconds`,
@@ -317,6 +337,7 @@ Rust callers on a WebAssembly target without a clock must use the explicit API.
 
 A rule can declare `condition` to restrict when its assertion runs. Supported
 predicates are `exists` or `present` with `param`, `value_in` with `param` and `values`,
+`all_values_in` with nonempty `params` and `values`,
 `value_pattern` with `param` and `pattern`, `json_type` with `param` and a type or
 type list, `all` or `any` with nested `conditions`, and `not` with one nested
 `condition`. Presence includes empty containers. Scalar empty strings do not
@@ -330,6 +351,14 @@ values never satisfy a value predicate, including under negation.
 decimal exponents can be normalized. Thus `-1`, `-1.0`, and `-1e0` select the
 same numeric condition. Strings and URL values keep exact textual matching.
 For exponents outside normalization range, identical numeric spellings match.
+`all_values_in` requires at least one submitted scalar across its declared
+fields and every submitted scalar occurrence to belong to `values`. It ignores
+container parents, checks repeated array members independently, and uses the
+same numeric equality as `value_in`. Empty strings are submitted values. A
+known conflicting value makes the condition false. Otherwise an unresolved
+macro makes it unknown, including under negation. This lets a mode-specific
+presence rule defer conflicting or unresolved repeated discriminators without
+assuming the destination's duplicate-selection policy.
 
 `format_when` with `pair_occurrences: true` pairs the nth discriminator with the
 nth value. Empty and macro positions retain their indices. It does not require

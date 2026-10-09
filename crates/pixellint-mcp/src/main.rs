@@ -1,13 +1,14 @@
 use std::io::{self, BufRead, BufReader, Write};
 
 use pixellint_core::{
-    ArtifactKind, Engine, ExpansionState, Severity, ValidationOptions, ValidationRequest,
+    ArtifactKind, Engine, ExpansionState, HarHeaderPolicy, HarImportOptions, Severity,
+    ValidationOptions, ValidationRequest, import_har,
 };
 use serde::Deserialize;
 use serde_json::{Value, json};
 
 const PROTOCOL_VERSION: &str = "2024-11-05";
-const INSTRUCTIONS: &str = "Pixellint validates pixels, postbacks, VAST tracking URLs, conversion API request bodies, and related measurement artifacts. The core rulepack applies spec-backed URL and macro checks to every artifact; vendor rulepacks add parameter contracts and only run when the artifact targets that vendor's endpoints. Use list_rulepacks to discover what is available, then call validate_artifact with artifact_kind url, request, vast, postback, json, or unknown. Extract tracking URLs from HTML, JavaScript, or GTM before validating. Every finding carries a stable code, a severity, an evidence level, and the documentation it came from.";
+const INSTRUCTIONS: &str = "Pixellint validates pixels, postbacks, VAST tracking URLs, conversion API request bodies, and related measurement artifacts. The core rulepack applies spec-backed URL and macro checks to every artifact; vendor rulepacks add parameter contracts and only run when the artifact targets that vendor's endpoints. Use list_rulepacks to discover what is available, then call validate_artifact with artifact_kind url, request, vast, postback, json, or unknown. Extract tracking URLs from HTML, JavaScript, or GTM before validating. Use validate_har for offline HAR 1.2 requests with explicit capture availability and recorded clocks. Every finding carries a stable code, a severity, an evidence level, and the documentation it came from.";
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -72,6 +73,20 @@ struct ValidateArtifactArgs {
     #[serde(default)]
     rulepacks: Vec<String>,
     #[serde(default, alias = "exceptRulepacks")]
+    except_rulepacks: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ValidateHarArgs {
+    har: String,
+    #[serde(default)]
+    header_policy: HarHeaderPolicy,
+    #[serde(default)]
+    at: Option<i64>,
+    #[serde(default)]
+    rulepacks: Vec<String>,
+    #[serde(default)]
     except_rulepacks: Vec<String>,
 }
 
@@ -216,6 +231,24 @@ fn tools_list_result(engine: &Engine) -> Value {
                     "required": ["artifact_kind", "artifact"],
                     "additionalProperties": false,
                 },
+            },
+            {
+                "name": "validate_har",
+                "description": "Validate inline HAR 1.2 request captures offline, without sending requests. Preserve original capture fields and availability. Default replay uses recorded timestamps; at overrides them. Raw capture output can contain credentials.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "har": { "type": "string", "description": "Inline local HAR 1.2 JSON. Responses are ignored." },
+                        "header_policy": { "type": "string", "enum": ["unknown", "complete", "chrome_sanitized"],
+                            "description": "Default unknown leaves omitted Authorization/Cookie unavailable. Complete establishes absence; chrome_sanitized records omitted credentials as redacted." },
+                        "at": { "type": "integer", "minimum": -9007199254740991_i64, "maximum": 9007199254740991_i64,
+                            "description": "Optional Unix-seconds clock overriding every capture timestamp. Required when capture timestamps are unavailable." },
+                        "rulepacks": { "type": "array", "items": { "type": "string", "enum": rulepack_ids } },
+                        "except_rulepacks": { "type": "array", "items": { "type": "string", "enum": rulepack_ids } }
+                    },
+                    "required": ["har"],
+                    "additionalProperties": false
+                }
             }
         ]
     })
@@ -256,6 +289,7 @@ fn handle_tool_call(id: Value, params: Option<Value>, engine: &Engine) -> Value 
         ),
         "list_vendors" => handle_list_vendors(id, tool_call.arguments, engine),
         "validate_artifact" => handle_validate_artifact(id, tool_call.arguments, engine),
+        "validate_har" => handle_validate_har(id, tool_call.arguments, engine),
         other => error_response(id, -32602, &format!("unknown tool: {other}")),
     }
 }
@@ -412,6 +446,63 @@ fn handle_validate_artifact(id: Value, arguments: Value, engine: &Engine) -> Val
                     "error": error.to_string(),
                 },
                 "isError": true,
+            }),
+        ),
+    }
+}
+
+fn handle_validate_har(id: Value, arguments: Value, engine: &Engine) -> Value {
+    let args = match serde_json::from_value::<ValidateHarArgs>(arguments) {
+        Ok(args) => args,
+        Err(error) => {
+            return error_response(
+                id,
+                -32602,
+                &format!("invalid validate_har arguments: {error}"),
+            );
+        }
+    };
+    if args
+        .at
+        .is_some_and(|time| !(-9_007_199_254_740_991..=9_007_199_254_740_991).contains(&time))
+    {
+        return error_response(
+            id,
+            -32602,
+            "HAR reference time must be a safe integer number of Unix seconds",
+        );
+    }
+    let result = import_har(
+        &args.har,
+        &HarImportOptions {
+            header_policy: args.header_policy,
+        },
+    )
+    .and_then(|imported| {
+        let options = ValidationOptions {
+            only_rulepacks: args.rulepacks,
+            except_rulepacks: args.except_rulepacks,
+        };
+        match args.at {
+            Some(time) => engine.validate_har_at(&imported, &options, time),
+            None => engine.validate_har(&imported, &options),
+        }
+    });
+    match result {
+        Ok(report) => success_response(
+            id,
+            json!({
+                "content": [{"type":"text", "text":format!(
+                    "Offline HAR validation completed for {} request(s), {} unique validation(s), with {} error(s), {} warning(s), and {} info message(s).",
+                    report.document.summary.artifacts_total.unwrap_or(0), report.document.summary.unique_artifacts.unwrap_or(0),
+                    report.document.summary.errors, report.document.summary.warnings, report.document.summary.infos)}],
+                "structuredContent": report
+            }),
+        ),
+        Err(error) => success_response(
+            id,
+            json!({
+                "content":[{"type":"text","text":error}], "structuredContent":{"error":error}, "isError":true
             }),
         ),
     }

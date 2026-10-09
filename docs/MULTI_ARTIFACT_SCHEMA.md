@@ -163,7 +163,10 @@ Pixellint itself should stay neutral about extraction in the core.
 2. `Engine::validate_many` plus `pixellint validate-many` wrap extracted artifacts.
    npm `validateMany` is the same wrapper. A JSON array of URL strings is a
    `list` of `url` artifacts.
-3. `validate_document` as an MCP tool stays later, until extractors settle.
+3. The explicit [HAR request adapter](HAR_REQUEST_SCHEMA.md) extracts HTTP envelopes
+   into this wrapper, retains per-entry availability and provenance, and replays
+   at recorded clocks. Single-artifact validation does not detect HAR automatically.
+4. `validate_document` as an MCP tool stays later, until extractors settle.
 
 The CLI and library return:
 

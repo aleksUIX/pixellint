@@ -484,11 +484,32 @@
       },
       {
         "name": "headers.x-forwarded-for",
-        "description": "LiveRamp mandates X-Forwarded-For when retrieving or refreshing ATS envelopes server-to-server. The header must carry the client-side IP, whose truth and approved country need external context.",
+        "description": "LiveRamp requires X-Forwarded-For for server-to-server calls. Require it only when every observed atype occurrence is literal 3. Conflicting modes or unresolved macros do not establish the integration mode. Client identity, trusted proxy selection and Placement-country approval require external context.",
         "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api",
         "requirement": "required",
+        "condition": {
+          "kind": "all_values_in",
+          "params": [
+            "query.atype",
+            "query.atype[]"
+          ],
+          "values": [
+            "3"
+          ]
+        },
+        "format_severity": "warning",
+        "json_type": [
+          "string",
+          "array"
+        ]
+      },
+      {
+        "name": "headers.x-forwarded-for[]",
+        "description": "Repeated X-Forwarded-For lines are retained as normalized array members. Validate the literal chain in each line independently; full macro entries remain unresolved without hiding invalid literal neighbors.",
+        "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api",
+        "requirement": "optional",
         "format": {
-          "kind": "non_empty"
+          "kind": "ip_chain"
         },
         "condition": {
           "kind": "any",
@@ -508,9 +529,51 @@
               ]
             }
           ]
-        }
+        },
+        "format_severity": "warning",
+        "json_type": "string"
       }
     ],
-    "rules": []
+    "rules": [
+      {
+        "code": "vendor.liveramp-envelope.http.headers.x-forwarded-for.invalid",
+        "kind": "format",
+        "param": "headers.x-forwarded-for",
+        "format": {
+          "kind": "ip_chain"
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "query.atype",
+                  "values": [
+                    "3"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "query.atype[]",
+                  "values": [
+                    "3"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "present",
+              "param": "headers.x-forwarded-for"
+            }
+          ]
+        },
+        "severity": "warning",
+        "message": "Supplied X-Forwarded-For client/proxy entries should be IPv4 or IPv6 addresses. Complete macro entries remain unresolved without hiding invalid literal neighbors.",
+        "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/4-call-the-ats-envelope-api"
+      }
+    ]
   }
 }

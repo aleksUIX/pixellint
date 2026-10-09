@@ -429,3 +429,8 @@ See [bench/README.md](bench/README.md).
 
 Apache-2.0. Pixellint is not affiliated with or endorsed by any vendor named
 in its rulepacks; see [NOTICE](NOTICE).
+
+Local HAR 1.2 request capture import and offline replay are available through
+`pixellint import-har`, `pixellint validate-har`, Rust, npm and WASM. See
+[HAR request replay and capture availability](docs/HAR_REQUEST_SCHEMA.md) for
+header policies, omitted-body handling and recorded-clock validation.

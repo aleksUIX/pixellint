@@ -111,6 +111,13 @@ pub enum ValueFormat {
         #[serde(default)]
         exclude_ranges: Vec<String>,
     },
+    /// Comma-separated literal IP addresses, with unresolved entries preserved.
+    IpChain,
+    /// Calendar-valid date/time representations selected by a destination.
+    #[serde(rename = "datetime_formats")]
+    DateTimeFormats {
+        formats: Vec<DateTimeRepresentation>,
+    },
     /// A calendar-valid RFC 3339 timestamp, optionally allowing local time.
     #[serde(rename = "datetime")]
     DateTime {
@@ -159,6 +166,18 @@ pub enum ValueFormat {
 pub enum IpVersion {
     V4,
     V6,
+}
+
+/// Supported second-resolution date/time representations. Named zones remain
+/// opaque text: validating their date does not resolve the zone or an instant.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DateTimeRepresentation {
+    Us12Hour,
+    Us24Hour,
+    IsoLocal,
+    IsoOffset,
+    IsoNamedTimezone,
 }
 
 /// Which artifacts a pack claims.
@@ -500,6 +519,8 @@ pub enum Assertion {
     },
     /// Both populated literal scalar fields must carry the same value.
     EqualValues { left: String, right: String },
+    /// Pinned d9core indexed btoa text and unindexed seed-31 MurmurHash parity.
+    FtrackFingerprint { indexed: String, hash: String },
     /// Limit a URL field's path, excluding its origin, query and fragment.
     UrlPathLength { param: String, max_length: usize },
     /// Present delimited lists must describe the same number of records.
@@ -540,6 +561,14 @@ pub enum Assertion {
     UniqueArrayBy { param: String, field: String },
     /// Repeated parameter families must have the same occurrence count.
     EqualOccurrences { params: Vec<String> },
+    /// Limit submitted occurrences, including empty and unresolved values.
+    MaxOccurrences {
+        param: String,
+        max_occurrences: usize,
+        /// Run only on URL scopes without a complete HTTP capture.
+        #[serde(default)]
+        bare_url_only: bool,
+    },
     /// A timestamp must fall within the permitted window around validation time.
     TimeWindow {
         param: String,
@@ -558,14 +587,38 @@ pub enum Assertion {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum RuleCondition {
-    Exists { param: String },
-    Present { param: String },
-    ValueIn { param: String, values: Vec<String> },
-    ValuePattern { param: String, pattern: String },
-    JsonType { param: String, json_type: JsonTypes },
-    All { conditions: Vec<RuleCondition> },
-    Any { conditions: Vec<RuleCondition> },
-    Not { condition: Box<RuleCondition> },
+    Exists {
+        param: String,
+    },
+    Present {
+        param: String,
+    },
+    ValueIn {
+        param: String,
+        values: Vec<String>,
+    },
+    /// At least one scalar is submitted and every occurrence is allowed.
+    AllValuesIn {
+        params: Vec<String>,
+        values: Vec<String>,
+    },
+    ValuePattern {
+        param: String,
+        pattern: String,
+    },
+    JsonType {
+        param: String,
+        json_type: JsonTypes,
+    },
+    All {
+        conditions: Vec<RuleCondition>,
+    },
+    Any {
+        conditions: Vec<RuleCondition>,
+    },
+    Not {
+        condition: Box<RuleCondition>,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -583,6 +636,7 @@ impl RuleCondition {
             | Self::ValueIn { param, .. }
             | Self::ValuePattern { param, .. }
             | Self::JsonType { param, .. } => vec![param],
+            Self::AllValuesIn { params, .. } => params.iter().collect(),
             Self::All { conditions } | Self::Any { conditions } => {
                 conditions.iter().flat_map(Self::params).collect()
             }
@@ -665,6 +719,31 @@ impl RuleCondition {
                 }
                 if unknown { None } else { Some(false) }
             }
+            Self::AllValuesIn {
+                params: names,
+                values,
+            } => {
+                let mut submitted = false;
+                let mut unknown = false;
+                for field in params.iter().filter(|field| {
+                    !field.missing
+                        && !field.container
+                        && names.iter().any(|name| name == field.name.as_ref())
+                }) {
+                    submitted = true;
+                    if contains_macro(field.value.as_ref()) {
+                        unknown = true;
+                    } else if !values.iter().any(|value| {
+                        value == field.value.as_ref()
+                            || field.json_kind == Some(JsonValueKind::Number)
+                                && compare_numeric_text(value, field.value.as_ref())
+                                    == Some(std::cmp::Ordering::Equal)
+                    }) {
+                        return Some(false);
+                    }
+                }
+                if unknown { None } else { Some(submitted) }
+            }
             Self::All { conditions } => {
                 let values: Vec<_> = conditions
                     .iter()
@@ -721,6 +800,9 @@ fn validate_condition(
         RuleCondition::JsonType { json_type, .. } if json_type.types().is_empty() => {
             return Err(invalid("json_type condition needs at least one type"));
         }
+        RuleCondition::AllValuesIn { params, values } if params.is_empty() || values.is_empty() => {
+            return Err(invalid("all_values_in needs nonempty params and values"));
+        }
         RuleCondition::All { conditions } | RuleCondition::Any { conditions } => {
             if conditions.is_empty() {
                 return Err(invalid("condition group must not be empty"));
@@ -736,6 +818,14 @@ fn validate_condition(
 }
 
 fn validate_format(pack_id: &str, name: &str, format: &ValueFormat) -> Result<(), ManifestError> {
+    if let ValueFormat::DateTimeFormats { formats } = format
+        && formats.is_empty()
+    {
+        return Err(ManifestError::EmptyFormatValues {
+            pack_id: pack_id.to_string(),
+            name: name.to_string(),
+        });
+    }
     if let ValueFormat::Enum { values, .. } = format
         && values.is_empty()
     {
@@ -835,6 +925,9 @@ pub struct RulePackManifest {
     /// URL query fields, and a decoded body. Bare artifacts do not run these.
     #[serde(default)]
     pub http: Option<BodySpecs>,
+    /// Explicit source-backed form decoding when Content-Type is observed absent.
+    #[serde(default)]
+    pub http_headerless_form: bool,
     /// Query-only event strings inside a captured bulk request. Each item uses
     /// this pack's existing URL contracts, bound to the captured endpoint.
     #[serde(default)]
@@ -1255,6 +1348,7 @@ struct Scope<'a> {
     artifact: &'a str,
     raw_artifact_len: usize,
     reference_time_unix_seconds: i64,
+    complete_http_request: bool,
     /// The payload being read, when this scope is a body rather than a URL.
     body: Option<BodyScope<'a>>,
     query: Option<QuerySpan>,
@@ -1430,6 +1524,7 @@ pub struct ManifestRulePack {
     queries: Vec<CompiledQuery>,
     shapes: Vec<CompiledShape>,
     http: Option<Box<ManifestRulePack>>,
+    http_headerless_form: bool,
     http_queries: Vec<RequestQuerySpec>,
 }
 
@@ -2419,6 +2514,17 @@ impl ManifestRulePack {
             suffix.make_ascii_lowercase();
         }
         let exact_param_names = exact_param_names(&params);
+        if manifest.http_headerless_form
+            && (matcher.any_host
+                || (matcher.paths.is_empty() && matcher.path_prefixes.is_empty())
+                || manifest.docs.is_none())
+        {
+            return Err(ManifestError::InvalidConstraint {
+                pack_id,
+                name: "http_headerless_form".into(),
+                reason: "headerless form decoding needs a cited host-bound endpoint path".into(),
+            });
+        }
         for value in &manifest.gdpr_non_applicable_values {
             if value.is_empty() || value == "1" || matcher.any_host ||
                 !manifest.params.iter().any(|contract| contract.name == "gdpr" && matches!(&contract.format, Some(ValueFormat::Enum { values, .. }) if values.contains(value))) {
@@ -2495,6 +2601,7 @@ impl ManifestRulePack {
             queries,
             shapes,
             http,
+            http_headerless_form: manifest.http_headerless_form,
             http_queries: manifest.http_queries,
         })
     }
@@ -2647,6 +2754,10 @@ fn matomo_explicit_timestamp(value: &str) -> Option<String> {
 }
 
 impl ValidatorPlugin for ManifestRulePack {
+    fn uses_headerless_form_body(&self, prepared: &PreparedArtifact<'_>) -> bool {
+        self.http_headerless_form && self.supports_http(prepared)
+    }
+
     fn supports_http(&self, prepared: &PreparedArtifact<'_>) -> bool {
         self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query))
     }
@@ -2671,12 +2782,30 @@ impl ValidatorPlugin for ManifestRulePack {
                     )
                 })
             });
+        let query_body_unavailable = !self.http_queries.is_empty()
+            && document.as_ref().is_some_and(|document| {
+                document
+                    .get("body_encoding")
+                    .is_some_and(|field| field.text == "unsupported")
+            });
         let mut report = if bulk {
             ValidationReport {
                 plugin_id: self.metadata.id.clone(),
                 detected_vendor: self.vendor.clone(),
                 violations: Vec::new(),
             }
+        } else if query_body_unavailable {
+            // An unavailable entity may contain bulk events. Missing URL
+            // event fields are speculative, but supplied URL values remain
+            // observable and keep their syntax and value checks.
+            let mut url_only = PreparedArtifact::from_request_at(
+                prepared.request(),
+                prepared.reference_time_unix_seconds(),
+            );
+            url_only.mark_complete_http_request();
+            url_only.mark_unavailable_form_body();
+            self.prepare_vendor_context(&mut url_only);
+            self.validate_prepared(&url_only)
         } else {
             self.validate_prepared(prepared)
         };
@@ -2737,20 +2866,37 @@ impl ValidatorPlugin for ManifestRulePack {
                         });
                         continue;
                     }
+                    let query = match spec.encoding {
+                        RequestQueryEncoding::Query => {
+                            field.text.strip_prefix('?').unwrap_or(&field.text)
+                        }
+                        RequestQueryEncoding::UrlQuery => field
+                            .text
+                            .split('#')
+                            .next()
+                            .unwrap_or_default()
+                            .split_once('?')
+                            .map(|(_, query)| query)
+                            .unwrap_or_default(),
+                    };
                     let native_pairs = if spec.native_map
                         == Some(RequestQueryMapCoercion::MatomoPhp8)
-                        && field.kind != JsonValueKind::String
                     {
                         let native: serde_json::Value =
                             serde_json::from_str(&normalized[field.start..field.end])
                                 .expect("validated normalized JSON field");
-                        match crate::php_query::matomo_php8_map(&native) {
+                        let mapped = if field.kind == JsonValueKind::String {
+                            crate::php_query::matomo_php8_query(query)
+                        } else {
+                            crate::php_query::matomo_php8_map(&native)
+                        };
+                        match mapped {
                             crate::php_query::MatomoMap::Ignored => continue,
                             crate::php_query::MatomoMap::Ready(pairs) => Some(pairs),
                             crate::php_query::MatomoMap::Unsupported(names) => {
                                 report.violations.push(Violation {
                                     code: format!("{}.http.query_source.unvalidated", self.code_prefix),
-                                    message: format!("This native map needs PHP architecture, precision configuration, or an unmapped field reader for: {}. Its event checks remain unvalidated.", names.join(", ")),
+                                    message: format!("This item's PHP query representation or native field reader needs additional runtime context for: {}. Its event checks remain unvalidated.", names.join(", ")),
                                     severity: Severity::Info,
                                     field: Some(format!("http.{path}")),
                                     fix_hint: None,
@@ -2774,19 +2920,6 @@ impl ValidatorPlugin for ManifestRulePack {
                             continue;
                         }
                         None
-                    };
-                    let query = match spec.encoding {
-                        RequestQueryEncoding::Query => {
-                            field.text.strip_prefix('?').unwrap_or(&field.text)
-                        }
-                        RequestQueryEncoding::UrlQuery => field
-                            .text
-                            .split('#')
-                            .next()
-                            .unwrap_or_default()
-                            .split_once('?')
-                            .map(|(_, query)| query)
-                            .unwrap_or_default(),
                     };
                     if query.is_empty() && native_pairs.is_none() {
                         continue;
@@ -3166,6 +3299,7 @@ impl ValidatorPlugin for ManifestRulePack {
             artifact,
             raw_artifact_len: request.artifact.len(),
             reference_time_unix_seconds: prepared.reference_time_unix_seconds(),
+            complete_http_request: prepared.is_complete_http_request(),
             body: None,
             query: None,
         };
@@ -3397,6 +3531,7 @@ impl ManifestRulePack {
                     artifact: prepared.trimmed(),
                     raw_artifact_len: prepared.request().artifact.len(),
                     reference_time_unix_seconds: prepared.reference_time_unix_seconds(),
+                    complete_http_request: prepared.is_complete_http_request(),
                     body: None,
                     query: Some(QuerySpan {
                         index: segment.index,
@@ -3638,19 +3773,56 @@ impl ManifestRulePack {
                 && document
                     .get("content_type_unavailable")
                     .is_some_and(|field| field.text == "true");
+            let unavailable_capture =
+                body.code_segment == "http" && document.contains("capture_unavailable_paths[0]");
+            if unavailable_capture
+                && scope_path != "headers"
+                && http_capture_path_unavailable(document, &scope_path)
+            {
+                continue;
+            }
             let param_unavailable = |param: &CompiledParam| {
                 (unavailable_body && http_param_reads_body(param))
                     || (unavailable_content_type
                         && (param.contract.root_path.as_deref() == Some("content_type")
                             || param.names.iter().any(|name| name == "content_type")))
+                    || (unavailable_capture
+                        && http_capture_param_unavailable(document, &scope_path, param))
+            };
+            let mut params = collect_body_params(document, &scope_path, &body.params);
+            if unavailable_capture {
+                params.retain(|param| {
+                    param
+                        .location
+                        .as_deref()
+                        .is_none_or(|path| !http_capture_path_unavailable(document, path))
+                });
+            }
+            let dependency_unavailable = |param: &CompiledParam| {
+                param_unavailable(param)
+                    || (unavailable_capture
+                        && http_capture_param_has_unknown(document, &scope_path, param))
             };
             let condition_reads_unavailable_body = |condition: &RuleCondition| {
-                (unavailable_body || unavailable_content_type)
-                    && condition.params().iter().any(|name| {
-                        body.params
-                            .iter()
-                            .any(|param| param.names.contains(name) && param_unavailable(param))
+                if unavailable_capture {
+                    http_capture_condition(condition, &params, &|name| {
+                        body.params.iter().any(|param| {
+                            param
+                                .names
+                                .iter()
+                                .any(|candidate| candidate.as_str() == name)
+                                && dependency_unavailable(param)
+                        })
                     })
+                    .is_none()
+                } else {
+                    (unavailable_body || unavailable_content_type)
+                        && condition.params().iter().any(|name| {
+                            body.params
+                                .iter()
+                                .any(|param| param.names.contains(name) && param_unavailable(param))
+                        })
+                }
             };
             if body
                 .condition
@@ -3670,7 +3842,6 @@ impl ManifestRulePack {
             }) {
                 continue;
             }
-            let params = collect_body_params(document, &scope_path, &body.params);
             if body.code_segment == "http"
                 && body
                     .condition
@@ -3684,6 +3855,7 @@ impl ManifestRulePack {
                 artifact,
                 raw_artifact_len,
                 reference_time_unix_seconds,
+                complete_http_request: false,
                 body: Some(BodyScope {
                     document,
                     path: &scope_path,
@@ -3691,7 +3863,7 @@ impl ManifestRulePack {
                 query: None,
             };
             for compiled in &body.params {
-                if (unavailable_body || unavailable_content_type)
+                if (unavailable_body || unavailable_content_type || unavailable_capture)
                     && (param_unavailable(compiled)
                         || compiled
                             .contract
@@ -3704,13 +3876,22 @@ impl ManifestRulePack {
                 self.check_param(&scope, compiled, &params, &body.exact_names, violations);
             }
             for compiled in &body.rules {
-                if (unavailable_body || unavailable_content_type)
+                if (unavailable_body || unavailable_content_type || unavailable_capture)
                     && (assertion_params(&compiled.rule.assertion)
                         .iter()
                         .any(|name| {
-                            body.params
-                                .iter()
-                                .any(|param| param.names.contains(name) && param_unavailable(param))
+                            body.params.iter().any(|param| {
+                                param.names.contains(name)
+                                    && if matches!(
+                                        compiled.rule.assertion,
+                                        Assertion::Format { .. }
+                                            | Assertion::ForbidValuePattern { .. }
+                                    ) {
+                                        param_unavailable(param)
+                                    } else {
+                                        dependency_unavailable(param)
+                                    }
+                            })
                         })
                         || compiled
                             .rule
@@ -4382,7 +4563,9 @@ impl ManifestRulePack {
             // Unexpanded macros are the core pack's business. Checking the
             // literal macro text against a value format would double-report the
             // same defect with a worse message.
-            if contains_macro(param.value.as_ref()) {
+            if contains_macro(param.value.as_ref())
+                && !matches!(contract.format, Some(ValueFormat::IpChain))
+            {
                 continue;
             }
 
@@ -4687,7 +4870,7 @@ impl ManifestRulePack {
                     if applies
                         && paired_applies
                         && !candidate.container
-                        && !contains_macro(candidate.value.as_ref())
+                        && !format_has_unresolved_macro(format, candidate.value.as_ref())
                     {
                         self.check_format_warnings(
                             &rule.code,
@@ -4712,7 +4895,7 @@ impl ManifestRulePack {
                             && live(candidate)
                             && candidate.name.as_ref() == param
                             && !candidate.container
-                            && !contains_macro(candidate.value.as_ref())
+                            && !format_has_unresolved_macro(format, candidate.value.as_ref())
                             && format_violation(
                                 format,
                                 compiled.regex.as_ref(),
@@ -4844,7 +5027,7 @@ impl ManifestRulePack {
                     live(field)
                         && field.name.as_ref() == param
                         && !field.container
-                        && !contains_macro(field.value.as_ref())
+                        && !format_has_unresolved_macro(format, field.value.as_ref())
                 }) {
                     self.check_format_warnings(
                         &rule.code,
@@ -4860,7 +5043,7 @@ impl ManifestRulePack {
                         live(field)
                             && field.name.as_ref() == param
                             && !field.container
-                            && !contains_macro(field.value.as_ref())
+                            && !format_has_unresolved_macro(format, field.value.as_ref())
                             && format_violation(
                                 format,
                                 compiled.regex.as_ref(),
@@ -4953,6 +5136,83 @@ impl ManifestRulePack {
                     Vec::new()
                 };
                 (triggered, targets)
+            }
+            Assertion::MaxOccurrences {
+                param,
+                max_occurrences,
+                bare_url_only,
+            } => {
+                if *bare_url_only && (scope.complete_http_request || scope.body.is_some()) {
+                    return;
+                }
+                let mut targets: Vec<_> = params
+                    .iter()
+                    .filter(|field| !field.missing && field.name.as_ref() == param)
+                    .map(RawParam::target)
+                    .collect();
+                // URL parameter contracts normally read key=value pairs. A
+                // cardinality bound also counts a submitted key without '='.
+                if scope.body.is_none()
+                    && scope.query.is_none()
+                    && matches!(
+                        self.param_style,
+                        ParamStyle::Query | ParamStyle::QuerySemicolon
+                    )
+                {
+                    let names = self
+                        .params
+                        .iter()
+                        .find(|compiled| compiled.contract.name == *param)
+                        .map(|compiled| compiled.names.as_slice());
+                    targets.extend(bare_query_targets(
+                        scope.artifact,
+                        self.param_style,
+                        param,
+                        names,
+                    ));
+                }
+                let triggered = targets.len() > *max_occurrences;
+                (triggered, if triggered { targets } else { Vec::new() })
+            }
+            Assertion::FtrackFingerprint { indexed, hash } => {
+                let (Some(indexed_field), Some(hash_field)) = (named(indexed), named(hash)) else {
+                    return;
+                };
+                if indexed_field.json_kind != Some(JsonValueKind::String)
+                    || hash_field.json_kind != Some(JsonValueKind::Number)
+                    || contains_macro(indexed_field.value.as_ref())
+                {
+                    return;
+                }
+                let Some(hash_value) = hash_field.value.parse::<f64>().ok().filter(|value| {
+                    value.is_finite()
+                        && *value >= 0.0
+                        && *value <= f64::from(u32::MAX)
+                        && value.fract() == 0.0
+                }) else {
+                    return;
+                };
+                match crate::ftrack_fingerprint::check(
+                    indexed_field.value.as_ref(),
+                    hash_value as u32,
+                ) {
+                    Some(crate::ftrack_fingerprint::FingerprintCheck::Unvalidated) => {
+                        violations.push(Violation {
+                            code: format!("{}.unvalidated", rule.code),
+                            message: "The indexed fingerprint is outside the pinned d9core profile, has ambiguous delimiter boundaries, or exceeds the local decoder resource bound. Hash parity remains unvalidated; no receiver rejection is inferred.".into(),
+                            severity: Severity::Info,
+                            field: Some(scope.field(indexed)),
+                            fix_hint: None,
+                            source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
+                            targets: vec![indexed_field.target()],
+                        });
+                        return;
+                    }
+                    Some(crate::ftrack_fingerprint::FingerprintCheck::Mismatch) => {
+                        (true, vec![indexed_field.target(), hash_field.target()])
+                    }
+                    _ => (false, Vec::new()),
+                }
             }
             Assertion::DelimitedSum {
                 param,
@@ -5332,6 +5592,11 @@ fn normalize_condition_aliases(condition: &mut RuleCondition, contracts: &[Param
         | RuleCondition::ValueIn { param, .. }
         | RuleCondition::ValuePattern { param, .. }
         | RuleCondition::JsonType { param, .. } => normalize_alias(param, contracts),
+        RuleCondition::AllValuesIn { params, .. } => {
+            for param in params {
+                normalize_alias(param, contracts);
+            }
+        }
         RuleCondition::All { conditions } | RuleCondition::Any { conditions } => {
             for condition in conditions {
                 normalize_condition_aliases(condition, contracts);
@@ -5364,6 +5629,138 @@ fn describe(message: String, description: Option<&str>) -> String {
             format!("{message} {description}")
         }
         _ => message,
+    }
+}
+
+fn http_capture_path_unavailable(document: &JsonDocument<'_>, path: &str) -> bool {
+    document
+        .expand("capture_unavailable_paths[]")
+        .iter()
+        .filter_map(|entry| document.get(entry))
+        .any(|entry| {
+            let missing = entry.text.as_ref();
+            let reads_missing = path == missing
+                || path
+                    .strip_prefix(missing)
+                    .is_some_and(|rest| rest.starts_with('.') || rest.starts_with('['));
+            // A partially observed header list still establishes the values it has.
+            reads_missing
+                && !(missing == "headers"
+                    && path != "headers"
+                    && document
+                        .expand(path)
+                        .iter()
+                        .any(|concrete| document.contains(concrete)))
+        })
+}
+
+fn http_capture_param_paths(scope: &str, param: &CompiledParam) -> Vec<String> {
+    if let Some(root) = &param.contract.root_path {
+        return vec![root.clone()];
+    }
+    param
+        .names
+        .iter()
+        .map(|name| {
+            if scope.is_empty() {
+                name.clone()
+            } else {
+                format!("{scope}.{name}")
+            }
+        })
+        .collect()
+}
+
+fn http_capture_param_has_unknown(
+    document: &JsonDocument<'_>,
+    scope: &str,
+    param: &CompiledParam,
+) -> bool {
+    http_capture_param_paths(scope, param)
+        .iter()
+        .any(|path| http_capture_path_unavailable(document, path))
+}
+
+fn http_capture_param_unavailable(
+    document: &JsonDocument<'_>,
+    scope: &str,
+    param: &CompiledParam,
+) -> bool {
+    let paths = http_capture_param_paths(scope, param);
+    // An omitted alias cannot suppress a format check on an observed value.
+    let observed = paths.iter().any(|path| {
+        !http_capture_path_unavailable(document, path)
+            && document
+                .expand(path)
+                .iter()
+                .any(|concrete| document.contains(concrete))
+    });
+    !observed
+        && paths
+            .iter()
+            .any(|path| http_capture_path_unavailable(document, path))
+}
+
+fn http_capture_condition(
+    condition: &RuleCondition,
+    params: &[RawParam<'_>],
+    unknown: &impl Fn(&str) -> bool,
+) -> Option<bool> {
+    match condition {
+        RuleCondition::All { conditions } => {
+            let values: Vec<_> = conditions
+                .iter()
+                .map(|condition| http_capture_condition(condition, params, unknown))
+                .collect();
+            if values.contains(&Some(false)) {
+                Some(false)
+            } else if values.contains(&None) {
+                None
+            } else {
+                Some(true)
+            }
+        }
+        RuleCondition::Any { conditions } => {
+            let values: Vec<_> = conditions
+                .iter()
+                .map(|condition| http_capture_condition(condition, params, unknown))
+                .collect();
+            if values.contains(&Some(true)) {
+                Some(true)
+            } else if values.contains(&None) {
+                None
+            } else {
+                Some(false)
+            }
+        }
+        RuleCondition::Not { condition } => {
+            http_capture_condition(condition, params, unknown).map(|value| !value)
+        }
+        RuleCondition::AllValuesIn { params: names, .. } => {
+            let value = condition.evaluate(params);
+            let submitted = params.iter().any(|field| {
+                !field.missing
+                    && !field.container
+                    && names.iter().any(|name| name == field.name.as_ref())
+            });
+            if value == Some(false) && submitted {
+                Some(false)
+            } else if names.iter().any(|name| unknown(name)) {
+                None
+            } else {
+                value
+            }
+        }
+        _ => {
+            let value = condition.evaluate(params);
+            if value == Some(true) {
+                value
+            } else if condition.params().iter().any(|name| unknown(name)) {
+                None
+            } else {
+                value
+            }
+        }
     }
 }
 
@@ -5414,6 +5811,7 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
         Assertion::UrlPathLength { param, .. } => vec![param],
         Assertion::EqualSplitLengths { params, .. } => params.iter().collect(),
         Assertion::DelimitedSum { param, total, .. } => vec![param, total],
+        Assertion::FtrackFingerprint { indexed, hash } => vec![indexed, hash],
         Assertion::AwinBasket { parts, .. } => vec![parts],
         Assertion::GppSections { param, sections } => vec![param, sections],
         Assertion::TcfConsent { param, .. } => vec![param],
@@ -5425,6 +5823,7 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
         Assertion::EqualArrayLengths { params } => params.iter().collect(),
         Assertion::UniqueArrayBy { param, .. } => vec![param],
         Assertion::EqualOccurrences { params } => params.iter().collect(),
+        Assertion::MaxOccurrences { param, .. } => vec![param],
         Assertion::TimeWindow {
             param,
             fallback_param,
@@ -5473,6 +5872,7 @@ fn assertion_params_mut(assertion: &mut Assertion) -> Vec<&mut String> {
         Assertion::UrlPathLength { param, .. } => vec![param],
         Assertion::EqualSplitLengths { params, .. } => params.iter_mut().collect(),
         Assertion::DelimitedSum { param, total, .. } => vec![param, total],
+        Assertion::FtrackFingerprint { indexed, hash } => vec![indexed, hash],
         Assertion::AwinBasket { parts, .. } => vec![parts],
         Assertion::GppSections { param, sections } => vec![param, sections],
         Assertion::TcfConsent { param, .. } => vec![param],
@@ -5484,6 +5884,7 @@ fn assertion_params_mut(assertion: &mut Assertion) -> Vec<&mut String> {
         Assertion::EqualArrayLengths { params } => params.iter_mut().collect(),
         Assertion::UniqueArrayBy { param, .. } => vec![param],
         Assertion::EqualOccurrences { params } => params.iter_mut().collect(),
+        Assertion::MaxOccurrences { param, .. } => vec![param],
         Assertion::TimeWindow {
             param,
             fallback_param,
@@ -5744,7 +6145,7 @@ fn decode_query_params_json(value: &str) -> Result<String, String> {
     serde_json::to_string(&fields).map_err(|error| error.to_string())
 }
 
-fn decode_base64_bytes(value: &str) -> Result<Vec<u8>, String> {
+pub(crate) fn decode_base64_bytes(value: &str) -> Result<Vec<u8>, String> {
     let data = value.trim_end_matches('=');
     let padding = value.len() - data.len();
     if padding > 2
@@ -6202,6 +6603,10 @@ fn in_cidr(address: std::net::IpAddr, network: std::net::IpAddr, prefix: u8) -> 
     }
 }
 
+fn format_has_unresolved_macro(format: &ValueFormat, value: &str) -> bool {
+    !matches!(format, ValueFormat::IpChain) && contains_macro(value)
+}
+
 fn format_violation(format: &ValueFormat, regex: Option<&Regex>, value: &str) -> Option<String> {
     match format {
         ValueFormat::NonEmpty => None,
@@ -6310,6 +6715,25 @@ fn format_violation(format: &ValueFormat, regex: Option<&Regex>, value: &str) ->
                     "must be an IP address literal of the documented family outside excluded ranges, but is `{value}`."
                 ))
             }
+        }
+        ValueFormat::IpChain => {
+            let valid = value.split(',').all(|entry| {
+                let entry = entry.trim_matches([' ', '\t']);
+                entry.parse::<std::net::IpAddr>().is_ok() || {
+                    let macros = detect_macro_spans(entry);
+                    macros.len() == 1 && macros[0].start == 0 && macros[0].end == entry.len()
+                }
+            });
+            (!valid).then(|| format!(
+                "must contain a comma-separated chain of IPv4 or IPv6 literals; `{value}` contains an invalid entry."
+            ))
+        }
+        ValueFormat::DateTimeFormats { formats } => {
+            (!formats.iter().any(|representation|
+                crate::datetime_formats::valid_representation(value, *representation)
+            )).then(|| format!(
+                "must use a selected second-resolution date/time representation with a valid calendar, clock and numeric offset; `{value}` is invalid. Named timezone text is not resolved."
+            ))
         }
         ValueFormat::DateTime {
             require_timezone,
@@ -6812,6 +7236,41 @@ fn body_target(document: &JsonDocument<'_>, scope: &str, artifact: &str) -> Viol
             end: artifact.len(),
         },
     }
+}
+
+fn bare_query_targets(
+    artifact: &str,
+    style: ParamStyle,
+    param: &str,
+    aliases: Option<&[String]>,
+) -> Vec<ViolationTarget> {
+    let fragment_start = artifact.find('#').unwrap_or(artifact.len());
+    let Some(query_start) = artifact[..fragment_start].find('?') else {
+        return Vec::new();
+    };
+    let mut cursor = query_start + 1;
+    let mut targets = Vec::new();
+    for segment in artifact[cursor..fragment_start]
+        .split(|c| c == '&' || (style == ParamStyle::QuerySemicolon && c == ';'))
+    {
+        let name = percent_decode(segment);
+        if !segment.is_empty()
+            && !segment.contains('=')
+            && (name == param
+                || aliases
+                    .is_some_and(|aliases| aliases.iter().any(|alias| alias == name.as_ref())))
+        {
+            targets.push(ViolationTarget {
+                component: ViolationTargetComponent::QueryParam,
+                name: Some(name.into_owned()),
+                value: Some(String::new()),
+                start: cursor,
+                end: cursor + segment.len(),
+            });
+        }
+        cursor += segment.len() + 1;
+    }
+    targets
 }
 
 fn whole_url_target(artifact: &str) -> ViolationTarget {

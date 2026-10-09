@@ -19,7 +19,8 @@ engine, npm library, WASM and MCP use the same representation:
 capture establishes that no headers were supplied. `body` is optional; when
 present it must be a raw string, including original whitespace. A parsed JSON
 object loses the wire representation needed for byte limits and is rejected.
-Unknown envelope fields and duplicate object keys are rejected.
+An optional `capture` availability declaration is documented in
+[HAR request replay](HAR_REQUEST_SCHEMA.md). Other unknown envelope fields and duplicate object keys are rejected.
 
 Headers may instead be a list of objects with string `name` and `value` fields.
 This preserves repeated header lines. Names are case insensitive, surrounding
@@ -71,6 +72,11 @@ could be in an unavailable form body, and body-dependent HTTP contracts, are
 deferred. A capture with no errors can therefore still have incomplete coverage.
 Provide decoded entity bytes and matching headers for those body checks.
 
+Explicitly unavailable MIME or compression headers defer entity decoding.
+For a destination with bulk query bodies, an unavailable entity can contain
+events that are absent from the URL. Those missing URL fields remain unknown;
+supplied URL values and observable transport violations still receive checks.
+
 Complete-capture findings carry fields and citations. Targets are omitted
 because ranges in decoded JSON cannot be used as offsets into the capture's
 escaped body string. Authentication header values, decoded Basic credentials and credential-like
@@ -85,7 +91,8 @@ valid decoded Basic authentication, `basic_auth.username`,
 colonless keys without silently inventing a separator. Query and form values
 are strings; repeated values are arrays. Header values preserve their case.
 
-HTTP contracts run only on complete captures. Generated field codes use
+HTTP contracts run on request captures. Explicit availability metadata defers
+only checks that depend on unavailable fields, while observed checks stay active. Generated field codes use
 `<pack-prefix>.http.<field>.<issue>`. A top-level HTTP spec's `condition` reads
 its declared normalized fields. Raw body limits and encoded sources belong in
 `body`, since the normalized wrapper has a different size and representation.

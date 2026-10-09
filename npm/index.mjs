@@ -30,6 +30,18 @@ export function validateMany(document) {
   return wasm.validate_many(JSON.stringify(document));
 }
 
+/** Extract local HAR 1.2 requests. Returned captures can contain credentials. */
+export function importHar(har, options = {}) {
+  const raw = typeof har === "string" ? har : JSON.stringify(har);
+  return wasm.import_har(raw, options.headerPolicy ?? "unknown");
+}
+
+/** Replay local HAR requests at capture timestamps, or an explicit Unix clock. */
+export function validateHar(har, options = {}) {
+  const raw = typeof har === "string" ? har : JSON.stringify(har);
+  return wasm.validate_har(raw, options.headerPolicy ?? "unknown", options.at);
+}
+
 /** Rulepacks this build ships, with their evidence levels. */
 export function rulepacks() {
   return wasm.rulepacks();

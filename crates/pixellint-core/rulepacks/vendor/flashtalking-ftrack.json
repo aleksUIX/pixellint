@@ -4,7 +4,7 @@
   "vendor": "flashtalking",
   "source_level": "official_template",
   "docs": "https://d9.flashtalking.com/d9core",
-  "description": "Published d9core legacy POST /lgc producer schema. Double encodeURIComponent form JSON, native types and fixed empty containers are snapshot advisories, not a published server rejection contract. Current /img/img.png D9c/D9v and /ft.stat protocols remain unvalidated.",
+  "description": "Published d9core legacy POST /lgc producer schema. Double encodeURIComponent form JSON, native types, indexed fingerprint parity and fixed empty containers are snapshot advisories, not a published server rejection contract. Headerless legacy XDomainRequest form bodies are decoded only when MIME absence is observed. Current /img/img.png D9c/D9v and /ft.stat protocols remain unvalidated.",
   "match": {
     "hosts": [
       "d9.flashtalking.com"
@@ -332,7 +332,18 @@
           "description": "encodeURIComponent of different referrer hostname or empty string."
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.flashtalking-ftrack.fingerprint",
+          "kind": "ftrack_fingerprint",
+          "indexed": "D9_33",
+          "hash": "D9_34",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://d9.flashtalking.com/d9core",
+          "message": "D9_34 differs from the pinned d9core producer MurmurHash of the reconstructable unindexed D9_33 fingerprint. This is producer advice, not a published collector rejection requirement."
+        }
+      ]
     },
     {
       "source_param": "tbx",
@@ -450,5 +461,6 @@
       "doc": "https://d9.flashtalking.com/d9core",
       "message": "The published d9core producer sends this collector request over HTTPS."
     }
-  ]
+  ],
+  "http_headerless_form": true
 }

@@ -38,6 +38,90 @@ pub struct HttpRequest {
     pub body: Option<String>,
 }
 
+/// Availability declarations describe omitted capture data, not vendor waivers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
+pub struct HttpCaptureContext {
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub headers_unavailable: bool,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub unavailable_headers: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub redacted_headers: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub body: Option<HttpBodyAvailability>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum HttpBodyAvailability {
+    Available,
+    Absent,
+    Unavailable,
+    Redacted,
+}
+
+/// Serialize this additive envelope when capture fields are incomplete.
+/// Plain [`HttpRequest`] serialization retains its complete-capture semantics.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct CapturedHttpRequest {
+    #[serde(flatten)]
+    pub request: HttpRequest,
+    pub capture: HttpCaptureContext,
+}
+
+impl HttpCaptureContext {
+    pub(crate) fn body_unavailable(&self) -> bool {
+        matches!(
+            self.body,
+            Some(HttpBodyAvailability::Unavailable | HttpBodyAvailability::Redacted)
+        )
+    }
+
+    fn redacted_header(&self, name: &str) -> bool {
+        self.redacted_headers
+            .iter()
+            .any(|entry| entry.eq_ignore_ascii_case(name))
+    }
+
+    fn header_unknown(&self, name: &str, present: bool) -> bool {
+        self.redacted_header(name)
+            || (!present
+                && (self.headers_unavailable
+                    || self
+                        .unavailable_headers
+                        .iter()
+                        .any(|entry| entry.eq_ignore_ascii_case(name))))
+    }
+}
+
+fn parse_capture(value: Value) -> Option<(HttpRequest, HttpCaptureContext)> {
+    let Value::Object(mut object) = value else {
+        return None;
+    };
+    let context = match object.remove("capture") {
+        Some(value) => serde_json::from_value::<HttpCaptureContext>(value).ok()?,
+        None => HttpCaptureContext::default(),
+    };
+    let request = serde_json::from_value::<HttpRequest>(Value::Object(object)).ok()?;
+    if matches!(context.body, Some(HttpBodyAvailability::Available)) && request.body.is_none()
+        || matches!(context.body, Some(HttpBodyAvailability::Absent)) && request.body.is_some()
+    {
+        return None;
+    }
+    let mut names = BTreeSet::new();
+    for name in context
+        .unavailable_headers
+        .iter()
+        .chain(&context.redacted_headers)
+    {
+        if !token(name) || !names.insert(name.to_ascii_lowercase()) {
+            return None;
+        }
+    }
+    Some((request, context))
+}
+
 struct DecodedRequest {
     normalized: String,
     json_body: Option<String>,
@@ -70,11 +154,13 @@ impl Engine {
                         == names.len()
                 };
                 unique("")
+                    && unique("capture")
                     && unique("headers")
                     && document.expand("headers[]").iter().all(|path| unique(path))
             })
-            .and_then(|_| serde_json::from_str::<HttpRequest>(&request.artifact).ok());
-        let Some(capture) = capture else {
+            .and_then(|_| serde_json::from_str::<Value>(&request.artifact).ok())
+            .and_then(parse_capture);
+        let Some((capture, context)) = capture else {
             return Ok(ValidationSummary {
                 reports: vec![core_report(vec![request_violation(
                     "invalid_envelope",
@@ -84,13 +170,29 @@ impl Engine {
                 )])],
             });
         };
-        let decoded = decode_request(&capture, clock);
         let url_request = ValidationRequest {
             artifact_kind: ArtifactKind::Url,
             artifact: capture.url.clone(),
             claimed_vendor: request.claimed_vendor.clone(),
             expansion_state: request.expansion_state,
         };
+        // Endpoint probing can populate parameter caches. Keep it separate
+        // from the request prepared after decoded form fields are available.
+        let endpoint = PreparedArtifact::from_request_at(&url_request, clock);
+        let headerless_form = capture_allows_headerless_form(&capture, &context)
+            && self.candidate_ids(&endpoint).into_iter().any(|id| {
+                !options
+                    .except_rulepacks
+                    .iter()
+                    .any(|excluded| excluded == id)
+                    && (options.only_rulepacks.is_empty()
+                        || options.only_rulepacks.iter().any(|selected| selected == id))
+                    && self
+                        .plugins
+                        .get(id)
+                        .is_some_and(|entry| entry.plugin.uses_headerless_form_body(&endpoint))
+            });
+        let decoded = decode_request_with_form_hint(&capture, &context, clock, headerless_form);
         let mut prepared = PreparedArtifact::from_request_at(&url_request, clock);
         prepared.mark_complete_http_request();
         if decoded.form {
@@ -262,7 +364,27 @@ fn header_lines(headers: &HttpHeaders) -> Vec<(&str, &str)> {
     }
 }
 
-fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
+/// Keep capture uncertainty separate from observed absent MIME. The optional
+/// importer metadata must never turn redacted content into observed evidence.
+fn capture_allows_headerless_form(request: &HttpRequest, context: &HttpCaptureContext) -> bool {
+    let headers = header_lines(&request.headers);
+    let present = |name: &str| {
+        headers
+            .iter()
+            .any(|(key, _)| key.eq_ignore_ascii_case(name))
+    };
+    !context.header_unknown("content-type", present("content-type"))
+        && !context.header_unknown("content-encoding", present("content-encoding"))
+        && !context.body_unavailable()
+        && context.body != Some(HttpBodyAvailability::Absent)
+}
+
+fn decode_request_with_form_hint(
+    request: &HttpRequest,
+    context: &HttpCaptureContext,
+    clock: i64,
+    headerless_form: bool,
+) -> DecodedRequest {
     let mut violations = Vec::new();
     if !token(&request.method) && detect_macro_spans(&request.method).is_empty() {
         violations.push(request_violation(
@@ -281,6 +403,9 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
                 "HTTP header names must be nonempty tokens.",
                 Severity::Error,
             ));
+        }
+        if context.redacted_header(name) {
+            continue;
         }
         if value.bytes().any(|byte| {
             byte == 0
@@ -317,24 +442,73 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
     let encoding = match (request.body.is_some(), content_type.as_deref()) {
         (false, _) => "none",
         (true, Some("application/x-www-form-urlencoded")) => "form",
+        (true, None) if headerless_form && !headers.contains_key("content-type") => "form",
         (true, Some("application/x-ndjson")) => "ndjson",
         (true, Some("multipart/form-data")) => "multipart",
         (true, Some(mime)) if mime == "application/json" || mime.ends_with("+json") => "json",
         _ => "text",
     };
     let wire = request.body.as_deref();
+    let capture_body_unavailable = context.body_unavailable();
+    let mut unavailable_paths = Vec::new();
+    if context.headers_unavailable {
+        unavailable_paths.push("headers".to_string());
+    }
+    for name in context
+        .unavailable_headers
+        .iter()
+        .chain(&context.redacted_headers)
+    {
+        let name = name.to_ascii_lowercase();
+        if context.header_unknown(&name, headers.contains_key(&name)) {
+            unavailable_paths.push(crate::json::member_path("headers", &name));
+        }
+    }
+    if context.header_unknown("authorization", headers.contains_key("authorization")) {
+        unavailable_paths.extend(["authorization_scheme".into(), "basic_auth".into()]);
+    }
+    let unavailable_content_type =
+        context.header_unknown("content-type", headers.contains_key("content-type"));
+    let unavailable_content_encoding =
+        context.header_unknown("content-encoding", headers.contains_key("content-encoding"));
+    if unavailable_content_type {
+        unavailable_paths.extend(["content_type".into(), "body_encoding".into()]);
+    }
+    if capture_body_unavailable {
+        unavailable_paths.extend(["body".into(), "body_encoding".into()]);
+    }
+    let decoder_context_unavailable =
+        wire.is_some() && (unavailable_content_type || unavailable_content_encoding);
+    if decoder_context_unavailable {
+        unavailable_paths.extend(["body".into(), "body_encoding".into()]);
+    }
+    if !unavailable_paths.is_empty() {
+        let mut finding = request_violation(
+            "capture_incomplete",
+            Some("capture"),
+            "Declared capture fields are unavailable or redacted. Checks that depend on them remain unvalidated; observed method, URL and other fields still run.",
+            Severity::Info,
+        );
+        finding.source = RuleSource::normative(
+            "HTTP Archive 1.2 request representation",
+            "https://webperfwg.org/specs/HAR/Overview.html#request",
+        );
+        violations.push(finding);
+    }
     let compressed = headers.get("content-encoding").is_some_and(|value| {
         value
             .as_str()
             .is_none_or(|value| !value.eq_ignore_ascii_case("identity"))
     });
-    let mut unsupported = wire.is_some()
-        && (compressed
-            || ambiguous_content_type
-            || content_type.as_deref().is_some_and(|mime| {
-                mime.starts_with("multipart/") && mime != "multipart/form-data"
-            }));
-    if unsupported {
+    let mut unsupported = capture_body_unavailable
+        || decoder_context_unavailable
+        || (wire.is_some()
+            && (compressed
+                || ambiguous_content_type
+                || content_type.as_deref().is_some_and(|mime| {
+                    mime.starts_with("multipart/") && mime != "multipart/form-data"
+                })));
+    if unsupported && !capture_body_unavailable && !decoder_context_unavailable {
         violations.push(request_violation("unsupported_body_encoding", Some("body"), "This capture contains compressed data, repeated Content-Type headers or an unsupported multipart media type. Provide an unambiguous decoded capture for local body checks.", Severity::Info));
     }
     let mut decoded_body = Value::Null;
@@ -455,8 +629,8 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
         }
     }
     normalized.insert("query".into(), Value::Object(query));
-    if let Some(content_type) = content_type {
-        normalized.insert("content_type".into(), Value::String(content_type));
+    if let Some(content_type) = &content_type {
+        normalized.insert("content_type".into(), Value::String(content_type.clone()));
     }
     if let Some(auth) = headers.get("authorization").and_then(Value::as_str)
         && let Some((scheme, credentials)) = auth.split_once([' ', '\t'])
@@ -476,8 +650,14 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
             normalized.insert("basic_auth".into(), serde_json::json!({ "username":username, "password":password, "has_colon":has_colon }));
         }
     }
-    if ambiguous_content_type {
+    if ambiguous_content_type || unavailable_content_type {
         normalized.insert("content_type_unavailable".into(), Value::Bool(true));
+    }
+    if !unavailable_paths.is_empty() {
+        normalized.insert(
+            "capture_unavailable_paths".into(),
+            serde_json::json!(unavailable_paths),
+        );
     }
     normalized.insert("headers".into(), Value::Object(headers));
     normalized.insert("body".into(), decoded_body);
@@ -488,6 +668,8 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
     let unavailable_form = unsupported
         && (ambiguous_content_type
             || encoding == "form"
+            || decoder_context_unavailable
+            || (capture_body_unavailable && content_type.is_none())
             || content_type_from_headers(request)
                 .is_some_and(|mime| mime.starts_with("multipart/")));
     let form = encoding == "form" && !unsupported && json_body.is_none();

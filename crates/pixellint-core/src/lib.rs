@@ -12,11 +12,14 @@ mod adobe_products;
 mod awin_basket;
 mod braze_time;
 mod currency;
+mod datetime_formats;
 mod decimal_sum;
 pub mod directory;
 pub mod document;
+mod ftrack_fingerprint;
 mod google_additional_consent;
 mod gpp_structure;
+pub mod har;
 pub mod http;
 mod javascript_date;
 mod json;
@@ -36,11 +39,18 @@ pub use document::{
     DocumentExtractor, DocumentReport, DocumentRequest, FindingCounts, document_request_from_json,
     document_request_from_value,
 };
-pub use http::{HttpHeader, HttpHeaders, HttpRequest};
+pub use har::{
+    HarBodyAvailability, HarEntryMetadata, HarHeaderPolicy, HarImport, HarImportOptions, HarReport,
+    import_har,
+};
+pub use http::{
+    CapturedHttpRequest, HttpBodyAvailability, HttpCaptureContext, HttpHeader, HttpHeaders,
+    HttpRequest,
+};
 pub use manifest::{
-    Assertion, IpVersion, JsonType, JsonTypes, ManifestError, ManifestRulePack, MatchSpec,
-    PackRule, ParamContract, ParamStyle, RequestQuerySpec, Requirement, RuleCondition,
-    RulePackManifest, StringNormalization, ValueFormat,
+    Assertion, DateTimeRepresentation, IpVersion, JsonType, JsonTypes, ManifestError,
+    ManifestRulePack, MatchSpec, PackRule, ParamContract, ParamStyle, RequestQuerySpec,
+    Requirement, RuleCondition, RulePackManifest, StringNormalization, ValueFormat,
 };
 pub use prepare::PreparedArtifact;
 pub use timestamp::TimestampUnit;
@@ -863,6 +873,13 @@ pub trait ValidatorPlugin: Send + Sync {
     #[doc(hidden)]
     fn supports_http(&self, prepared: &PreparedArtifact<'_>) -> bool {
         self.supports_prepared(prepared)
+    }
+
+    /// A documented transport may send form data without a MIME header.
+    /// The HTTP decoder applies this only to observed absent Content-Type.
+    #[doc(hidden)]
+    fn uses_headerless_form_body(&self, _prepared: &PreparedArtifact<'_>) -> bool {
+        false
     }
 
     #[doc(hidden)]

@@ -17,6 +17,8 @@ export interface HttpRequest {
   method: string;
   headers: Record<string, string> | Array<{ name: string; value: string }>;
   body?: string;
+  /** Omitted capture fields remain unvalidated. Absent metadata retains complete-capture semantics. */
+  capture?: HttpCaptureContext;
 }
 
 export type Severity = "error" | "warning" | "info";
@@ -144,3 +146,69 @@ export function vendorForHost(host: string): VendorEntry | null;
 
 /** The pixellint-core version this build wraps. */
 export function version(): string;
+
+export type HarBodyAvailability = "available" | "absent" | "unavailable" | "redacted";
+export type HarHeaderPolicy = "unknown" | "complete" | "chrome_sanitized";
+
+export interface HttpCaptureContext {
+  headers_unavailable?: boolean;
+  unavailable_headers?: string[];
+  redacted_headers?: string[];
+  body?: HarBodyAvailability;
+}
+
+export interface HarOptions {
+  /** unknown assumes omitted Authorization/Cookie may have been removed by the exporter. */
+  headerPolicy?: HarHeaderPolicy;
+}
+
+export interface HarValidateOptions extends HarOptions {
+  /** Safe integer Unix seconds. Overrides every HAR capture timestamp. */
+  at?: number;
+}
+
+export interface DocumentArtifactInput {
+  artifact_kind?: ArtifactKind;
+  artifact: string;
+  claimed_vendor?: string | null;
+  expansion_state?: ExpansionState;
+  occurrences?: ArtifactOccurrence[];
+}
+
+export interface DocumentRequest {
+  document_kind: string;
+  extractor?: { id: string; version?: string | null };
+  artifacts: DocumentArtifactInput[];
+}
+
+export interface HarEntryMetadata {
+  entry_index: number;
+  occurrence_id: string;
+  path: string;
+  started_date_time: string | null;
+  reference_time_unix_seconds: number | null;
+  page_ref: string | null;
+  body_size: number | null;
+  body_availability: HarBodyAvailability;
+  body_reason: string | null;
+  post_data: object | null;
+  capture: HttpCaptureContext;
+}
+
+export interface HarImport {
+  document: DocumentRequest;
+  header_policy: HarHeaderPolicy;
+  entries: HarEntryMetadata[];
+}
+
+export interface HarReport extends DocumentReport {
+  header_policy: HarHeaderPolicy;
+  reference_time_override: number | null;
+  captures: HarEntryMetadata[];
+}
+
+/** Import local HAR requests. This does not fetch URLs or sanitize the returned private captures. */
+export function importHar(har: string | object, options?: HarOptions): HarImport;
+
+/** Validate local HAR requests at their recorded clocks. Missing clocks require an explicit at override. */
+export function validateHar(har: string | object, options?: HarValidateOptions): HarReport;

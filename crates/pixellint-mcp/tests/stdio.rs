@@ -81,7 +81,12 @@ fn tools_list_advertises_every_tool_with_live_rulepack_ids() {
         .collect();
     assert_eq!(
         names,
-        vec!["list_rulepacks", "list_vendors", "validate_artifact"]
+        vec![
+            "list_rulepacks",
+            "list_vendors",
+            "validate_artifact",
+            "validate_har"
+        ]
     );
 
     let rulepacks = tools[2]["inputSchema"]["properties"]["rulepacks"]["items"]["enum"]
@@ -295,4 +300,78 @@ fn validation_reports_a_directory_attribution_when_no_pack_matches() {
     let content = &responses[0]["result"]["structuredContent"];
     assert_eq!(content["ok"], true);
     assert_eq!(content["detected_vendors"], json!(["taboola"]));
+}
+
+#[test]
+fn har_tool_retains_omitted_credential_uncertainty_and_complete_capture_errors() {
+    let har = include_str!("../../pixellint-core/tests/data/har/credential-omitted.har");
+    let responses = exchange(&[
+        json!({"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":har}}}),
+        json!({"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":har,"header_policy":"complete"}}}),
+        json!({"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":har,"header_policy":"chrome_sanitized"}}}),
+    ]);
+    assert_eq!(
+        responses[0]["result"]["structuredContent"]["summary"]["errors"],
+        0
+    );
+    assert_eq!(
+        responses[0]["result"]["structuredContent"]["summary"]["infos"],
+        1
+    );
+    assert_eq!(
+        responses[1]["result"]["structuredContent"]["summary"]["errors"],
+        1
+    );
+    assert_eq!(
+        responses[2]["result"]["structuredContent"]["captures"][0]["capture"]["redacted_headers"],
+        json!(["authorization", "cookie"])
+    );
+    assert_eq!(
+        responses[2]["result"]["structuredContent"]["artifacts"][0]["occurrences"][0]["path"],
+        "/log/entries/0/request"
+    );
+}
+
+#[test]
+fn har_tool_clock_override_is_explicit_and_input_errors_are_tool_errors() {
+    let mut har: Value = serde_json::from_str(include_str!(
+        "../../pixellint-core/tests/data/har/known-clean.har"
+    ))
+    .unwrap();
+    for entry in har["log"]["entries"].as_array_mut().unwrap() {
+        entry.as_object_mut().unwrap().remove("startedDateTime");
+    }
+    let responses = exchange(&[
+        json!({"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":har.to_string()}}}),
+        json!({"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":har.to_string(),"at":1770000060}}}),
+        json!({"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":"{}"}}}),
+    ]);
+    assert_eq!(responses[0]["result"]["isError"], true);
+    assert!(
+        responses[0]["result"]["structuredContent"]["error"]
+            .as_str()
+            .unwrap()
+            .contains("explicit reference-time override")
+    );
+    assert_eq!(
+        responses[1]["result"]["structuredContent"]["summary"]["errors"],
+        0
+    );
+    assert_eq!(
+        responses[1]["result"]["structuredContent"]["summary"]["unique_artifacts"],
+        1
+    );
+    assert_eq!(responses[2]["result"]["isError"], true);
+}
+
+#[test]
+fn har_tool_rejects_unknown_policy_unknown_arguments_and_unsafe_clock() {
+    let responses = exchange(&[
+        json!({"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":"{}","header_policy":"guess"}}}),
+        json!({"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":"{}","upload":true}}}),
+        json!({"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"validate_har","arguments":{"har":"{}","at":9007199254740992_i64}}}),
+    ]);
+    for response in responses {
+        assert_eq!(response["error"]["code"], -32602);
+    }
 }

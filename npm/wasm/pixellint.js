@@ -1,6 +1,25 @@
 /* @ts-self-types="./pixellint.d.ts" */
 
 /**
+ * Extracts local HAR 1.2 requests and records unavailable capture fields.
+ * @param {string} har_json
+ * @param {string} header_policy
+ * @returns {any}
+ */
+function import_har(har_json, header_policy) {
+    const ptr0 = passStringToWasm0(har_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm0(header_policy, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.import_har(ptr0, len0, ptr1, len1);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return takeFromExternrefTable0(ret[0]);
+}
+exports.import_har = import_har;
+
+/**
  * Every rulepack the engine ships, with its evidence level.
  * @returns {any}
  */
@@ -38,6 +57,26 @@ function validate(artifact_kind, artifact, expansion_state, claimed_vendor) {
     return takeFromExternrefTable0(ret[0]);
 }
 exports.validate = validate;
+
+/**
+ * Validates offline at each capture timestamp, or one caller-supplied override.
+ * @param {string} har_json
+ * @param {string} header_policy
+ * @param {number | null} [reference_time]
+ * @returns {any}
+ */
+function validate_har(har_json, header_policy, reference_time) {
+    const ptr0 = passStringToWasm0(har_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm0(header_policy, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.validate_har(ptr0, len0, ptr1, len1, !isLikeNone(reference_time), isLikeNone(reference_time) ? 0 : reference_time);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return takeFromExternrefTable0(ret[0]);
+}
+exports.validate_har = validate_har;
 
 /**
  * Validates extracted artifacts as one document. The caller already pulled
@@ -132,6 +171,10 @@ function __wbg_get_imports() {
             getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
             getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
         },
+        __wbg___wbindgen_is_string_ea5e6cc2e4141dfe: function(arg0) {
+            const ret = typeof(arg0) === 'string';
+            return ret;
+        },
         __wbg___wbindgen_throw_344f42d3211c4765: function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
         },
@@ -139,12 +182,20 @@ function __wbg_get_imports() {
             const ret = new Array();
             return ret;
         },
+        __wbg_new_7796ffc7ed656783: function() {
+            const ret = new Map();
+            return ret;
+        },
         __wbg_new_da52cf8fe3429cb2: function() {
             const ret = new Object();
             return ret;
         },
-        __wbg_now_1e2da45fa673f925: function() {
+        __wbg_now_bc3321f782ab6de7: function() {
             const ret = Date.now();
+            return ret;
+        },
+        __wbg_set_575dd786d51585f8: function(arg0, arg1, arg2) {
+            const ret = arg0.set(arg1, arg2);
             return ret;
         },
         __wbg_set_6be42768c690e380: function(arg0, arg1, arg2) {
@@ -158,12 +209,17 @@ function __wbg_get_imports() {
             const ret = arg0;
             return ret;
         },
-        __wbindgen_cast_0000000000000002: function(arg0, arg1) {
+        __wbindgen_cast_0000000000000002: function(arg0) {
+            // Cast intrinsic for `I64 -> Externref`.
+            const ret = arg0;
+            return ret;
+        },
+        __wbindgen_cast_0000000000000003: function(arg0, arg1) {
             // Cast intrinsic for `Ref(String) -> Externref`.
             const ret = getStringFromWasm0(arg0, arg1);
             return ret;
         },
-        __wbindgen_cast_0000000000000003: function(arg0) {
+        __wbindgen_cast_0000000000000004: function(arg0) {
             // Cast intrinsic for `U64 -> Externref`.
             const ret = BigInt.asUintN(64, arg0);
             return ret;
