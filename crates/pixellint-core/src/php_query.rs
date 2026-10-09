@@ -131,7 +131,7 @@ fn float(value: &Value) -> Result<Option<String>, ()> {
             text
         }
         Value::String(text) if text.is_empty() => return Ok(None),
-        Value::String(text) => text.replace(',', "."),
+        Value::String(text) => text.clone(),
         // str_replace preserves arrays; preg_match then has runtime-dependent
         // failure behavior. Do not pretend that PHP returns a numeric default.
         Value::Array(_) | Value::Object(_) => return Err(()),
@@ -141,8 +141,17 @@ fn float(value: &Value) -> Result<Option<String>, ()> {
         regex::Regex::new(r"^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$")
             .expect("static PHP float grammar")
     });
-    if !pattern.is_match(&text) {
+    // Common validates a comma-normalized copy, then settype casts the
+    // original value. In PHP, "1,5" consequently becomes 1, not 1.5.
+    if !pattern.is_match(&text.replace(',', ".")) {
         return Ok(Some("0".into()));
+    }
+    if let Some((prefix, _)) = text.split_once(',') {
+        let number = numeric_text(prefix).unwrap_or(0.0);
+        if !number.is_finite() || number < f64::from(i32::MIN) || number > f64::from(i32::MAX) {
+            return Err(());
+        }
+        return Ok(Some((number as i32).to_string()));
     }
     let Some(number) = numeric_text(&text) else {
         return Err(());
@@ -205,6 +214,76 @@ pub(crate) fn matomo_php8_map(value: &Value) -> MatomoMap {
     }
 }
 
+/// Bounded scalar parse_str profile for string bulk entries. The pinned PHP8
+/// defaults use '&' and max_input_vars=1000. Bracket trees, alternate separator
+/// candidates, invalid UTF-8 and sanitizer-sensitive values stay explicit gaps.
+pub(crate) fn matomo_php8_query(query: &str) -> MatomoMap {
+    // BulkTracking tests PHP empty() on the parse_url query before parse_str.
+    if query.is_empty() || query == "0" {
+        return MatomoMap::Ignored;
+    }
+    if query.contains(';') || query.split('&').filter(|part| !part.is_empty()).count() > 1000 {
+        return MatomoMap::Unsupported(vec!["PHP query separator or input-limit context".into()]);
+    }
+    let mut fields = serde_json::Map::new();
+    let mut macros = Vec::new();
+    for part in query.split('&').filter(|part| !part.is_empty()) {
+        let (name, value) = part.split_once('=').unwrap_or((part, ""));
+        let decode = |text: &str| {
+            let mut bytes = Vec::new();
+            let mut input = text.as_bytes().iter().copied().peekable();
+            while let Some(byte) = input.next() {
+                if byte == b'%' {
+                    let mut probe = input.clone();
+                    let hex = |byte: u8| char::from(byte).to_digit(16).map(|value| value as u8);
+                    if let Some((high, low)) =
+                        probe.next().and_then(hex).zip(probe.next().and_then(hex))
+                    {
+                        bytes.push((high << 4) | low);
+                        input = probe;
+                        continue;
+                    }
+                }
+                bytes.push(if byte == b'+' { b' ' } else { byte });
+            }
+            String::from_utf8(bytes)
+        };
+        let (Ok(name), Ok(value)) = (decode(name), decode(value)) else {
+            return MatomoMap::Unsupported(vec!["non-UTF-8 PHP query bytes".into()]);
+        };
+        let name = name.trim_start_matches(' ').replace([' ', '.'], "_");
+        if name.contains(['[', '\0']) || value.contains(['\0', '&', '<', '>']) {
+            return MatomoMap::Unsupported(vec![
+                "PHP bracket, sanitizer or float conversion context".into(),
+            ]);
+        }
+        if name.is_empty() {
+            continue;
+        }
+        if !crate::detect_macro_spans(&value).is_empty() {
+            macros.push(name.clone());
+        } else {
+            macros.retain(|previous| previous != &name);
+        }
+        // PHP scalar assignments shadow prior values after name normalization.
+        fields.insert(name, Value::String(value));
+    }
+    let mut preserved = Vec::new();
+    for name in macros {
+        if let Some(Value::String(value)) = fields.remove(&name) {
+            preserved.push((name, value));
+        }
+    }
+    match matomo_php8_map(&Value::Object(fields)) {
+        MatomoMap::Ready(mut pairs) => {
+            pairs.extend(preserved);
+            MatomoMap::Ready(pairs)
+        }
+        MatomoMap::Ignored if !preserved.is_empty() => MatomoMap::Ready(preserved),
+        other => other,
+    }
+}
+
 /// Outer bulk credentials use Common's string reader, then PHP empty().
 /// String "0" is empty in PHP and must permit per-item token fallback.
 pub(crate) fn matomo_php8_auth_string(value: &Value) -> Result<Option<String>, ()> {
@@ -219,6 +298,32 @@ mod tests {
         match matomo_php8_map(&value) {
             MatomoMap::Ready(pairs) => pairs,
             _ => panic!("expected supported map"),
+        }
+    }
+    #[test]
+    fn native_float_readers_match_executed_pinned_php_source() {
+        let oracle: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/vendor-matomo-php-scalar-depth/producer-proof.json"
+        ))
+        .unwrap();
+        for row in oracle["native_float_rows"].as_array().unwrap() {
+            let input = &row["input"];
+            let actual = float(input);
+            let portable_comma = input.as_str().is_some_and(|text| {
+                text.split_once(',').is_some_and(|(prefix, _)| {
+                    numeric_text(prefix).is_some_and(|number| {
+                        number < f64::from(i32::MIN) || number > f64::from(i32::MAX)
+                    })
+                })
+            });
+            if row.get("exception_class").is_some() || portable_comma {
+                assert!(actual.is_err(), "source-dependent boundary: {row}");
+            } else if row["output"] == Value::Bool(false) {
+                assert_eq!(actual, Ok(None), "{row}");
+            } else {
+                let value = actual.unwrap().unwrap().parse::<f64>().unwrap();
+                assert_eq!(Some(value), row["output"].as_f64(), "{row}");
+            }
         }
     }
     #[test]

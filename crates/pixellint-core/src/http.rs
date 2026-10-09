@@ -84,13 +84,29 @@ impl Engine {
                 )])],
             });
         };
-        let decoded = decode_request(&capture, clock);
         let url_request = ValidationRequest {
             artifact_kind: ArtifactKind::Url,
             artifact: capture.url.clone(),
             claimed_vendor: request.claimed_vendor.clone(),
             expansion_state: request.expansion_state,
         };
+        // Endpoint probing can populate parameter caches. Keep it separate
+        // from the request prepared after decoded form fields are available.
+        let endpoint = PreparedArtifact::from_request_at(&url_request, clock);
+        let headerless_form = capture_allows_headerless_form(&request.artifact)
+            && self.candidate_ids(&endpoint).into_iter().any(|id| {
+                !options
+                    .except_rulepacks
+                    .iter()
+                    .any(|excluded| excluded == id)
+                    && (options.only_rulepacks.is_empty()
+                        || options.only_rulepacks.iter().any(|selected| selected == id))
+                    && self
+                        .plugins
+                        .get(id)
+                        .is_some_and(|entry| entry.plugin.uses_headerless_form_body(&endpoint))
+            });
+        let decoded = decode_request_with_form_hint(&capture, clock, headerless_form);
         let mut prepared = PreparedArtifact::from_request_at(&url_request, clock);
         prepared.mark_complete_http_request();
         if decoded.form {
@@ -262,7 +278,43 @@ fn header_lines(headers: &HttpHeaders) -> Vec<(&str, &str)> {
     }
 }
 
-fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
+/// Keep capture uncertainty separate from observed absent MIME. The optional
+/// importer metadata must never turn redacted content into observed evidence.
+fn capture_allows_headerless_form(artifact: &str) -> bool {
+    let Ok(value) = serde_json::from_str::<Value>(artifact) else {
+        return false;
+    };
+    let Some(capture) = value.get("capture") else {
+        return true;
+    };
+    !capture
+        .get("headers_unavailable")
+        .and_then(Value::as_bool)
+        .unwrap_or(false)
+        && !["unavailable_headers", "redacted_headers"]
+            .into_iter()
+            .any(|field| {
+                capture
+                    .get(field)
+                    .and_then(Value::as_array)
+                    .is_some_and(|names| {
+                        names
+                            .iter()
+                            .filter_map(Value::as_str)
+                            .any(|name| name.eq_ignore_ascii_case("content-type"))
+                    })
+            })
+        && !capture
+            .get("body")
+            .and_then(Value::as_str)
+            .is_some_and(|body| matches!(body, "absent" | "unavailable" | "redacted"))
+}
+
+fn decode_request_with_form_hint(
+    request: &HttpRequest,
+    clock: i64,
+    headerless_form: bool,
+) -> DecodedRequest {
     let mut violations = Vec::new();
     if !token(&request.method) && detect_macro_spans(&request.method).is_empty() {
         violations.push(request_violation(
@@ -317,6 +369,7 @@ fn decode_request(request: &HttpRequest, clock: i64) -> DecodedRequest {
     let encoding = match (request.body.is_some(), content_type.as_deref()) {
         (false, _) => "none",
         (true, Some("application/x-www-form-urlencoded")) => "form",
+        (true, None) if headerless_form && !headers.contains_key("content-type") => "form",
         (true, Some("application/x-ndjson")) => "ndjson",
         (true, Some("multipart/form-data")) => "multipart",
         (true, Some(mime)) if mime == "application/json" || mime.ends_with("+json") => "json",

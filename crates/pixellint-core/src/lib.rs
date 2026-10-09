@@ -16,6 +16,7 @@ mod datetime_formats;
 mod decimal_sum;
 pub mod directory;
 pub mod document;
+mod ftrack_fingerprint;
 mod google_additional_consent;
 mod gpp_structure;
 pub mod http;
@@ -864,6 +865,13 @@ pub trait ValidatorPlugin: Send + Sync {
     #[doc(hidden)]
     fn supports_http(&self, prepared: &PreparedArtifact<'_>) -> bool {
         self.supports_prepared(prepared)
+    }
+
+    /// A documented transport may send form data without a MIME header.
+    /// The HTTP decoder applies this only to observed absent Content-Type.
+    #[doc(hidden)]
+    fn uses_headerless_form_body(&self, _prepared: &PreparedArtifact<'_>) -> bool {
+        false
     }
 
     #[doc(hidden)]

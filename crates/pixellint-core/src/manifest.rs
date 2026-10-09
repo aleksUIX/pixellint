@@ -519,6 +519,8 @@ pub enum Assertion {
     },
     /// Both populated literal scalar fields must carry the same value.
     EqualValues { left: String, right: String },
+    /// Pinned d9core indexed btoa text and unindexed seed-31 MurmurHash parity.
+    FtrackFingerprint { indexed: String, hash: String },
     /// Limit a URL field's path, excluding its origin, query and fragment.
     UrlPathLength { param: String, max_length: usize },
     /// Present delimited lists must describe the same number of records.
@@ -870,6 +872,9 @@ pub struct RulePackManifest {
     /// URL query fields, and a decoded body. Bare artifacts do not run these.
     #[serde(default)]
     pub http: Option<BodySpecs>,
+    /// Explicit source-backed form decoding when Content-Type is observed absent.
+    #[serde(default)]
+    pub http_headerless_form: bool,
     /// Query-only event strings inside a captured bulk request. Each item uses
     /// this pack's existing URL contracts, bound to the captured endpoint.
     #[serde(default)]
@@ -1466,6 +1471,7 @@ pub struct ManifestRulePack {
     queries: Vec<CompiledQuery>,
     shapes: Vec<CompiledShape>,
     http: Option<Box<ManifestRulePack>>,
+    http_headerless_form: bool,
     http_queries: Vec<RequestQuerySpec>,
 }
 
@@ -2455,6 +2461,17 @@ impl ManifestRulePack {
             suffix.make_ascii_lowercase();
         }
         let exact_param_names = exact_param_names(&params);
+        if manifest.http_headerless_form
+            && (matcher.any_host
+                || (matcher.paths.is_empty() && matcher.path_prefixes.is_empty())
+                || manifest.docs.is_none())
+        {
+            return Err(ManifestError::InvalidConstraint {
+                pack_id,
+                name: "http_headerless_form".into(),
+                reason: "headerless form decoding needs a cited host-bound endpoint path".into(),
+            });
+        }
         for value in &manifest.gdpr_non_applicable_values {
             if value.is_empty() || value == "1" || matcher.any_host ||
                 !manifest.params.iter().any(|contract| contract.name == "gdpr" && matches!(&contract.format, Some(ValueFormat::Enum { values, .. }) if values.contains(value))) {
@@ -2531,6 +2548,7 @@ impl ManifestRulePack {
             queries,
             shapes,
             http,
+            http_headerless_form: manifest.http_headerless_form,
             http_queries: manifest.http_queries,
         })
     }
@@ -2683,6 +2701,10 @@ fn matomo_explicit_timestamp(value: &str) -> Option<String> {
 }
 
 impl ValidatorPlugin for ManifestRulePack {
+    fn uses_headerless_form_body(&self, prepared: &PreparedArtifact<'_>) -> bool {
+        self.http_headerless_form && self.supports_http(prepared)
+    }
+
     fn supports_http(&self, prepared: &PreparedArtifact<'_>) -> bool {
         self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query))
     }
@@ -2773,20 +2795,37 @@ impl ValidatorPlugin for ManifestRulePack {
                         });
                         continue;
                     }
+                    let query = match spec.encoding {
+                        RequestQueryEncoding::Query => {
+                            field.text.strip_prefix('?').unwrap_or(&field.text)
+                        }
+                        RequestQueryEncoding::UrlQuery => field
+                            .text
+                            .split('#')
+                            .next()
+                            .unwrap_or_default()
+                            .split_once('?')
+                            .map(|(_, query)| query)
+                            .unwrap_or_default(),
+                    };
                     let native_pairs = if spec.native_map
                         == Some(RequestQueryMapCoercion::MatomoPhp8)
-                        && field.kind != JsonValueKind::String
                     {
                         let native: serde_json::Value =
                             serde_json::from_str(&normalized[field.start..field.end])
                                 .expect("validated normalized JSON field");
-                        match crate::php_query::matomo_php8_map(&native) {
+                        let mapped = if field.kind == JsonValueKind::String {
+                            crate::php_query::matomo_php8_query(query)
+                        } else {
+                            crate::php_query::matomo_php8_map(&native)
+                        };
+                        match mapped {
                             crate::php_query::MatomoMap::Ignored => continue,
                             crate::php_query::MatomoMap::Ready(pairs) => Some(pairs),
                             crate::php_query::MatomoMap::Unsupported(names) => {
                                 report.violations.push(Violation {
                                     code: format!("{}.http.query_source.unvalidated", self.code_prefix),
-                                    message: format!("This native map needs PHP architecture, precision configuration, or an unmapped field reader for: {}. Its event checks remain unvalidated.", names.join(", ")),
+                                    message: format!("This item's PHP query representation or native field reader needs additional runtime context for: {}. Its event checks remain unvalidated.", names.join(", ")),
                                     severity: Severity::Info,
                                     field: Some(format!("http.{path}")),
                                     fix_hint: None,
@@ -2810,19 +2849,6 @@ impl ValidatorPlugin for ManifestRulePack {
                             continue;
                         }
                         None
-                    };
-                    let query = match spec.encoding {
-                        RequestQueryEncoding::Query => {
-                            field.text.strip_prefix('?').unwrap_or(&field.text)
-                        }
-                        RequestQueryEncoding::UrlQuery => field
-                            .text
-                            .split('#')
-                            .next()
-                            .unwrap_or_default()
-                            .split_once('?')
-                            .map(|(_, query)| query)
-                            .unwrap_or_default(),
                     };
                     if query.is_empty() && native_pairs.is_none() {
                         continue;
@@ -5032,6 +5058,46 @@ impl ManifestRulePack {
                 let triggered = targets.len() > *max_occurrences;
                 (triggered, if triggered { targets } else { Vec::new() })
             }
+            Assertion::FtrackFingerprint { indexed, hash } => {
+                let (Some(indexed_field), Some(hash_field)) = (named(indexed), named(hash)) else {
+                    return;
+                };
+                if indexed_field.json_kind != Some(JsonValueKind::String)
+                    || hash_field.json_kind != Some(JsonValueKind::Number)
+                    || contains_macro(indexed_field.value.as_ref())
+                {
+                    return;
+                }
+                let Some(hash_value) = hash_field.value.parse::<f64>().ok().filter(|value| {
+                    value.is_finite()
+                        && *value >= 0.0
+                        && *value <= f64::from(u32::MAX)
+                        && value.fract() == 0.0
+                }) else {
+                    return;
+                };
+                match crate::ftrack_fingerprint::check(
+                    indexed_field.value.as_ref(),
+                    hash_value as u32,
+                ) {
+                    Some(crate::ftrack_fingerprint::FingerprintCheck::Unvalidated) => {
+                        violations.push(Violation {
+                            code: format!("{}.unvalidated", rule.code),
+                            message: "The indexed fingerprint is outside the pinned d9core profile, has ambiguous delimiter boundaries, or exceeds the local decoder resource bound. Hash parity remains unvalidated; no receiver rejection is inferred.".into(),
+                            severity: Severity::Info,
+                            field: Some(scope.field(indexed)),
+                            fix_hint: None,
+                            source: self.source_for(compiled.source_level, compiled.doc.as_deref()),
+                            targets: vec![indexed_field.target()],
+                        });
+                        return;
+                    }
+                    Some(crate::ftrack_fingerprint::FingerprintCheck::Mismatch) => {
+                        (true, vec![indexed_field.target(), hash_field.target()])
+                    }
+                    _ => (false, Vec::new()),
+                }
+            }
             Assertion::DelimitedSum {
                 param,
                 total,
@@ -5492,6 +5558,7 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
         Assertion::UrlPathLength { param, .. } => vec![param],
         Assertion::EqualSplitLengths { params, .. } => params.iter().collect(),
         Assertion::DelimitedSum { param, total, .. } => vec![param, total],
+        Assertion::FtrackFingerprint { indexed, hash } => vec![indexed, hash],
         Assertion::AwinBasket { parts, .. } => vec![parts],
         Assertion::GppSections { param, sections } => vec![param, sections],
         Assertion::TcfConsent { param, .. } => vec![param],
@@ -5552,6 +5619,7 @@ fn assertion_params_mut(assertion: &mut Assertion) -> Vec<&mut String> {
         Assertion::UrlPathLength { param, .. } => vec![param],
         Assertion::EqualSplitLengths { params, .. } => params.iter_mut().collect(),
         Assertion::DelimitedSum { param, total, .. } => vec![param, total],
+        Assertion::FtrackFingerprint { indexed, hash } => vec![indexed, hash],
         Assertion::AwinBasket { parts, .. } => vec![parts],
         Assertion::GppSections { param, sections } => vec![param, sections],
         Assertion::TcfConsent { param, .. } => vec![param],
@@ -5824,7 +5892,7 @@ fn decode_query_params_json(value: &str) -> Result<String, String> {
     serde_json::to_string(&fields).map_err(|error| error.to_string())
 }
 
-fn decode_base64_bytes(value: &str) -> Result<Vec<u8>, String> {
+pub(crate) fn decode_base64_bytes(value: &str) -> Result<Vec<u8>, String> {
     let data = value.trim_end_matches('=');
     let padding = value.len() - data.len();
     if padding > 2
