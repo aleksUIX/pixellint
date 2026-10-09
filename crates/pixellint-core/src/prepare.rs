@@ -47,7 +47,9 @@ pub struct PreparedArtifact<'a> {
     gdpr_non_applicable_values: Vec<String>,
     gdpr_consent_aliases: Vec<String>,
     form_body: Option<&'a str>,
+    form_fields: Option<Vec<RawParam<'static>>>,
     unavailable_form_body: bool,
+    complete_http_request: bool,
 }
 
 impl<'a> PreparedArtifact<'a> {
@@ -72,7 +74,9 @@ impl<'a> PreparedArtifact<'a> {
             gdpr_non_applicable_values: Vec::new(),
             gdpr_consent_aliases: Vec::new(),
             form_body: None,
+            form_fields: None,
             unavailable_form_body: false,
+            complete_http_request: false,
         }
     }
 
@@ -84,8 +88,20 @@ impl<'a> PreparedArtifact<'a> {
         self.form_body = Some(body);
     }
 
+    pub(crate) fn set_form_fields(&mut self, fields: Vec<RawParam<'static>>) {
+        self.form_fields = Some(fields);
+    }
+
+    pub(crate) fn mark_complete_http_request(&mut self) {
+        self.complete_http_request = true;
+    }
+
+    pub(crate) fn is_complete_http_request(&self) -> bool {
+        self.complete_http_request
+    }
+
     pub(crate) fn has_form_body(&self) -> bool {
-        self.form_body.is_some()
+        self.form_body.is_some() || self.form_fields.is_some()
     }
 
     pub(crate) fn mark_unavailable_form_body(&mut self) {
@@ -184,6 +200,18 @@ impl<'a> PreparedArtifact<'a> {
                             params.push(field);
                         }
                     }
+                }
+                if matches!(style, ParamStyle::Query | ParamStyle::QuerySemicolon)
+                    && let Some(fields) = &self.form_fields
+                {
+                    let names: std::collections::BTreeSet<_> =
+                        params.iter().map(|p| p.name.to_string()).collect();
+                    params.extend(
+                        fields
+                            .iter()
+                            .filter(|field| !names.contains(field.name.as_ref()))
+                            .cloned(),
+                    );
                 }
                 params
             })

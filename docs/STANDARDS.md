@@ -105,7 +105,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 159 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 161 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -3521,6 +3521,169 @@ Matcher: `{"hosts":["www.emjcd.com"],"paths":["/u"]}`.
 | `TYPE` | recommended | `{"format":{"kind":"integer"}}` | [official_vendor](https://developers.cj.com/docs/plugins/mmp---adjust) |
 | `OID` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.cj.com/docs/plugins/mmp---adjust) |
 
+## `vendor/cloudflare-rum`
+
+Reserved /cdn-cgi/rum collector routes on manual and automatic customer domains. Methods follow published ingestion requirements; body findings describe the current official beacon producer and remain warnings. Arbitrary configured forwarding URLs are not automatically claimed.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/cloudflare-rum.json).
+
+Matcher: `{"any_host":true,"paths":["/cdn-cgi/rum","/cdn-cgi/rum/"]}`.
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["POST","OPTIONS"]}}` | [official_vendor](https://developers.cloudflare.com/web-analytics/faq/) |
+
+### Complete HTTP contract 2
+
+Context: `{"condition":{"kind":"value_in","param":"method","values":["POST"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"root_path":"method","allow_empty":true}` | [official_vendor](https://developers.cloudflare.com/web-analytics/faq/) |
+| `content_type` | required | `{"allow_empty":false,"format_severity":"warning","format":{"kind":"enum","values":["application/json"]},"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `headers.origin` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `headers.referer` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body` | required | `{"allow_empty":false,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.startTime` | required | `{"allow_empty":false,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.pageloadId` | required | `{"allow_empty":false,"format_severity":"warning","json_type":"string","format":{"kind":"regex","pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"},"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.eventType` | required | `{"allow_empty":false,"format_severity":"warning","json_type":"integer","format":{"kind":"enum","values":["1","2","3"]},"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.location` | required | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[^?#]*$"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.siteToken` | required | `{"allow_empty":false,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.st` | required | `{"allow_empty":false,"format_severity":"warning","json_type":"integer","format":{"kind":"enum","values":["1","2"]},"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.versions` | required | `{"allow_empty":false,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.versions.js` | required | `{"allow_empty":false,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.versions.fl` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["string","number"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.versions.timings` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"integer","format":{"kind":"enum","values":["1","2"]},"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.n` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"integer","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.ntapi` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"integer","format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.nt` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","format":{"kind":"enum","values":["navigate","reload","back-forward","back-forward-cache","prerender","restore","soft-navigation","routing-apis"]},"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.referrer` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[^?#]*$"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.bi` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.dt` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.serverTimings` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"array","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.memory` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.firstPaint` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.firstContentfulPaint` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.bi.be` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.bi.bev` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.bi.bv` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.bi.ov` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.value` | required | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning","condition":{"kind":"present","param":"body.cls"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.path` | required | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning","condition":{"kind":"present","param":"body.cls"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.value` | required | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning","condition":{"kind":"present","param":"body.lcp"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.path` | required | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning","condition":{"kind":"present","param":"body.lcp"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.fcp` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.fcp.value` | required | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning","condition":{"kind":"present","param":"body.fcp"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.fcp.path` | required | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning","condition":{"kind":"present","param":"body.fcp"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.ttfb` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.ttfb.value` | required | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning","condition":{"kind":"present","param":"body.ttfb"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.ttfb.path` | required | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning","condition":{"kind":"present","param":"body.ttfb"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.inp` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.inp.value` | required | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning","condition":{"kind":"present","param":"body.inp"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.inp.path` | required | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning","condition":{"kind":"present","param":"body.inp"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.element` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.element` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.url` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.it` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.inp.element` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.inp.name` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.fp` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.size` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.rld` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.rlt` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.lcp.erd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.inp.idy` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.inp.pdn` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.inp.pdy` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect.x` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect.y` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect.width` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect.height` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect.top` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect.right` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect.bottom` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.currentRect.left` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect.x` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect.y` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect.width` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect.height` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect.top` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect.right` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect.bottom` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.cls.previousRect.left` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.navigationStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.domainLookupStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.domainLookupEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.connectStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.connectEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.secureConnectionStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.redirectStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.redirectEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.requestStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.responseStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.responseEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.domLoading` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.domComplete` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.loadEventStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timings.loadEventEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.nextHopProtocol` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.domainLookupStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.domainLookupEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.connectStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.connectEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.secureConnectionStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.redirectStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.redirectEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.requestStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.responseStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.responseEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.domInteractive` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.domComplete` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.loadEventStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.loadEventEnd` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.finalResponseHeadersStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.firstInterimResponseStart` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.transferSize` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `body.timingsV2.decodedBodySize` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["integer","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.cloudflare-rum.origin_or_referer` | `{"kind":"require_any_of","groups":[["headers.origin"],["headers.referer"]]}` | warning | [official_vendor](https://developers.cloudflare.com/web-analytics/faq/) |
+| `vendor.cloudflare-rum.location_credentials` | `{"kind":"format","param":"body.location","format":{"kind":"regex","pattern":"^[A-Za-z][A-Za-z0-9+.-]*://[^/?#@]*(?:/[^?#]*)?$"},"condition":{"kind":"value_pattern","param":"body.location","pattern":"^[A-Za-z][A-Za-z0-9+.-]*://"}}` | warning | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `vendor.cloudflare-rum.referrer_credentials` | `{"kind":"format","param":"body.referrer","format":{"kind":"regex","pattern":"^[A-Za-z][A-Za-z0-9+.-]*://[^/?#@]*(?:/[^?#]*)?$"},"condition":{"kind":"value_pattern","param":"body.referrer","pattern":"^[A-Za-z][A-Za-z0-9+.-]*://"}}` | warning | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+
+### Complete HTTP contract 3
+
+Context: `{"scope":"body.memory.*","condition":{"kind":"value_in","param":"method","values":["POST"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"root_path":"method","allow_empty":true}` | [official_vendor](https://developers.cloudflare.com/web-analytics/faq/) |
+| `(current scope)` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":["number","string","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+
+### Complete HTTP contract 4
+
+Context: `{"scope":"body.serverTimings[]","condition":{"kind":"value_in","param":"method","values":["POST"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"root_path":"method","allow_empty":true}` | [official_vendor](https://developers.cloudflare.com/web-analytics/faq/) |
+| `(current scope)` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"object","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `name` | required | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `dur` | required | `{"allow_empty":false,"format_severity":"warning","json_type":["number","null"],"severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `desc` | required | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning"}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+| `location` | optional | `{"allow_empty":true,"format_severity":"warning","json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[^?#]*$"}}` | [official_template](https://static.cloudflareinsights.com/beacon.min.js) |
+
 ## `vendor/cloudflare`
 
 Cloudflare Web Analytics beacon on static.cloudflareinsights.com/beacon.min.js. GTM and query installs put the site token on the URL. Automatic injection puts it in data-cf-beacon instead. POST /cdn-cgi/rum is not contracted.
@@ -3787,6 +3950,93 @@ Path captures: `/include/(?<cache_bust>[0-9]+)/(?<embed_id>[^/]*)\.js`. Captured
 | --- | --- | --- | --- |
 | `embed_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://devdocs.drift.com/docs/installation) |
 | `cache_bust` | required | `{"format":{"kind":"integer"},"multiple_of":300000}` | [official_template](https://devdocs.drift.com/docs/installation) |
+
+## `vendor/flashtalking-ftrack`
+
+Published d9core legacy POST /lgc producer schema. Double encodeURIComponent form JSON, native types and fixed empty containers are snapshot advisories, not a published server rejection contract. Current /img/img.png D9c/D9v and /ft.stat protocols remain unvalidated.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/flashtalking-ftrack.json).
+
+Matcher: `{"hosts":["d9.flashtalking.com"],"paths":["/lgc"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `tbx` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://d9.flashtalking.com/d9core) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.flashtalking-ftrack.https` | `{"kind":"require_https"}` | warning | [official_template](https://d9.flashtalking.com/d9core) |
+
+### JSON contract 1
+
+Context: `{"source_param":"tbx","encoding":"percent_encoded_json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"severity":"warning","json_type":"object"}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_1` | recommended | `{"severity":"warning","json_type":"integer"}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_6` | recommended | `{"severity":"warning","json_type":["string","null"],"allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_7` | recommended | `{"severity":"warning","json_type":["string","number","null"],"allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_8` | recommended | `{"severity":"warning","json_type":["string","null"],"allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_9` | recommended | `{"severity":"warning","json_type":["array","null"],"allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_10` | recommended | `{"severity":"warning","json_type":["array","null"],"allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_61` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"regex","pattern":"^[0-9a-f]{32}$"}}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_67` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"regex","pattern":"^[0-9a-f]{32}$"}}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_18` | recommended | `{"severity":"warning","json_type":"object","allow_empty":true,"max_properties":0}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_16` | recommended | `{"severity":"warning","json_type":"integer"}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_4` | optional | `{"severity":"warning","json_type":"object","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_4.width` | optional | `{"severity":"warning","json_type":"integer","minimum":0}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_4.height` | optional | `{"severity":"warning","json_type":"integer","minimum":0}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_14` | optional | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_15` | optional | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_19` | optional | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_123` | optional | `{"severity":"warning","json_type":"integer","minimum":0}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_33` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$"}}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_34` | recommended | `{"severity":"warning","json_type":"integer","minimum":0,"maximum":4294967295}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_30` | recommended | `{"severity":"warning","json_type":"array","allow_empty":true,"max_items":0}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_52` | recommended | `{"severity":"warning","json_type":"object","allow_empty":true,"max_properties":0}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_57` | recommended | `{"severity":"warning","json_type":"boolean"}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_58` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_59` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_63` | recommended | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_64` | optional | `{"severity":"warning","json_type":"number","minimum":0}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `D9_66` | recommended | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+
+### JSON contract 2
+
+Context: `{"source_param":"tbx","encoding":"percent_encoded_json","encoding_severity":"warning","scope":"D9_9[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+
+### JSON contract 3
+
+Context: `{"source_param":"tbx","encoding":"percent_encoded_json","encoding_severity":"warning","scope":"D9_10[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://d9.flashtalking.com/d9core) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"severity":"warning","json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `content_type` | optional | `{"severity":"warning","json_type":"string","allow_empty":true,"format":{"kind":"enum","values":["","application/x-www-form-urlencoded"]}}` | [official_template](https://d9.flashtalking.com/d9core) |
+
+### Complete HTTP contract 2
+
+Context: `{"condition":{"kind":"value_in","param":"body_encoding","values":["form"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `body_encoding` | optional | `{"severity":"warning","json_type":"string"}` | [official_template](https://d9.flashtalking.com/d9core) |
+| `body.tbx` | recommended | `{"severity":"warning","json_type":"string"}` | [official_template](https://d9.flashtalking.com/d9core) |
 
 ## `vendor/flashtalking-impression`
 
@@ -5075,17 +5325,139 @@ Path captures: `/c/hotjar-(?<hjid>[0-9]+)\.js`. Captured values take precedence 
 
 ## `vendor/hubspot-pixel`
 
-HubSpot collect pixel on track.hubspot.com/__ptq.gif, whose Hub ID rides as a. The embed loader is vendor/hubspot.
+Published browser SDK build1.4506 maps client, page, identity, privacy and event data to __ptq.gif, __ptbe.gif and __ptc.gif. Producer completeness and grammar checks are warnings. The loader is vendor/hubspot; tenant event configuration, remote acceptance and private runtime state remain outside this pack.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/hubspot-pixel.json).
 
-Matcher: `{"hosts":["track.hubspot.com"],"paths":["/__ptq.gif"]}`.
+Matcher: `{"hosts":["track.hubspot.com"],"paths":["/__ptq.gif","/__ptbe.gif","/__ptc.gif"]}`.
+
+Path captures: `^/(?<collector>__ptq\|__ptbe\|__ptc)\.gif$`. Captured values take precedence over query keys with the same name.
 
 ### URL parameters
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `a` | required | `{"format":{"kind":"integer"}}` | [ecosystem_reference](https://knowledge.hubspot.com/reports/how-do-i-know-if-my-hubspot-tracking-code-is-working) |
+| `collector` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `a` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"integer"}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `v` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `cts` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^-?[0-9]+$"}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `cc` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"integer"},"minimum":0,"maximum":15}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `sd` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+x[0-9]+$"}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `cd` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+-bit$"}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `cs` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `ln` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `bfp` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `pt` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["0","1","2","3"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `ce` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["true","false"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `nc` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["true","false"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `rv` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["1"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `qo` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["true","false"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `rqo` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["true","false"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `puqo` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["true","false"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `icv` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `i` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `tc` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `k` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"integer"},"condition":{"kind":"value_in","param":"collector","values":["__ptq"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `n` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^pe[0-9]+_[\\s\\S]+$"},"condition":{"kind":"value_in","param":"collector","values":["__ptbe"]}}` | [official_template](https://developers.hubspot.com/docs/api-reference/latest/account/settings/tracking-code/track-event) |
+| `fi` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"value_in","param":"k","values":["15","16","17","18","19"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `st` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"value_in","param":"k","values":["26"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `si` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"value_in","param":"k","values":["26"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `aij` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"value_in","param":"k","values":["12"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `rfc` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["8"]},"condition":{"kind":"value_in","param":"k","values":["12"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `ad` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^(?:[-+]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][-+]?[0-9]+)?\|NaN\|[-+]?Infinity)$"},"condition":{"kind":"value_in","param":"k","values":["33"]}}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `pi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `ct` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `ccu` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `po` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `opo` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `rpo` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `rcu` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `cpi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `cgi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `cfi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `lpi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `abi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `lvi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `lvc` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `mabci` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `mabei` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `scpct` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `r` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `orf` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `pu` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `opu` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `t` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `vi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `u` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `b` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `fci` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `fvi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `lfi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `ft` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `afi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `aei` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `asi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `amt` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `aps` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `aep` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `custom_properties` | optional | `{"name_pattern":"(?s)^_.*$","allow_empty":true,"severity":"warning"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.hubspot-pixel.https` | `{"kind":"require_https"}` | warning | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `vendor.hubspot-pixel.mab_experiment` | `{"kind":"required_with","when":"mabci","requires":["mabei"]}` | warning | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `vendor.hubspot-pixel.mab_correlation` | `{"kind":"required_with","when":"mabei","requires":["mabci"]}` | warning | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+
+### JSON contract 1
+
+Context: `{"source_param":"i","encoding":"query_params_json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"allow_empty":true,"severity":"warning","json_type":"object"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `email` | optional | `{"allow_empty":true,"severity":"warning","json_type":["string","array"]}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+
+### JSON contract 2
+
+Context: `{"source_param":"i","encoding":"query_params_json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `email` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^[^\\s@]+@[^\\s@]+$"},"condition":{"kind":"json_type","param":"email","json_type":"string"}}` | [heuristic](https://developers.hubspot.com/docs/api-reference/latest/account/settings/tracking-code/identify) |
+
+### JSON contract 3
+
+Context: `{"source_param":"i","encoding":"query_params_json","encoding_severity":"warning","scope":"email[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^[^\\s@]+@[^\\s@]+$"},"json_type":"string"}` | [heuristic](https://developers.hubspot.com/docs/api-reference/latest/account/settings/tracking-code/identify) |
+
+### JSON contract 4
+
+Context: `{"source_param":"aij","encoding_severity":"warning","condition":{"kind":"value_in","param":"k","values":["12"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"allow_empty":true,"severity":"warning","json_type":"array","min_items":2,"max_items":2}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+
+### JSON contract 5
+
+Context: `{"source_param":"aij","encoding_severity":"warning","condition":{"kind":"value_in","param":"k","values":["12"]},"scope":"[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"allow_empty":true,"severity":"warning","json_type":"string"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["GET"]},"json_type":"string"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `body_encoding` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["none"]},"json_type":"string"}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
+| `query.tc` | optional | `{"allow_empty":true,"severity":"warning","json_type":["string","array"],"max_items":5}` | [official_template](https://js.hs-analytics.net/analytics/1791543000000/53.js) |
 
 ## `vendor/hubspot`
 
@@ -6341,7 +6713,7 @@ Matcher: `{"host_suffixes":["matomo.cloud"],"any_host":true,"paths":["/matomo.ph
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `idsite` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `idsite` | required | `{"format":{"kind":"integer"},"minimum":1}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/core/Tracker/Request.php) |
 | `rec` | required | `{"format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `action_name` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `url` | recommended | `{"format":{"kind":"url"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
@@ -6349,13 +6721,13 @@ Matcher: `{"host_suffixes":["matomo.cloud"],"any_host":true,"paths":["/matomo.ph
 | `rand` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `apiv` | recommended | `{"format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `cid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9A-Fa-f]{16}$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `e_v` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `e_v` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `e_c` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `e_a` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `e_n` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `idgoal` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `ec_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `revenue` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `revenue` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `urlref` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `uid` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `res` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+x[0-9]+$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
@@ -6374,14 +6746,14 @@ Matcher: `{"host_suffixes":["matomo.cloud"],"any_host":true,"paths":["/matomo.ph
 | `c_t` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `c_i` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `ec_items` | optional | `{"allow_empty":true}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `ec_st` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `ec_tx` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `ec_sh` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `ec_dt` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `ec_st` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `ec_tx` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `ec_sh` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `ec_dt` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `_pkc` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `_pks` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `_pkn` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `_pkp` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `_pkp` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `pf_net` | optional | `{"name_pattern":"^pf_(net\|srv\|tfr\|dm1\|dm2\|onl)$","format":{"kind":"integer"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `link` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `download` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
@@ -6557,7 +6929,7 @@ Context: `{"source_param":"uadata","scope":"fullVersionList[]"}`.
 | `brand` | required | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://wicg.github.io/ua-client-hints/) |
 | `version` | required | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://wicg.github.io/ua-client-hints/) |
 
-Bulk query sources: `[{"source_field":"body.requests[]","inherited_params":{"token_auth":"body.token_auth"},"encoding":"url_query","inherited_overrides":true}]`.
+Bulk query sources: `[{"source_field":"body.requests[]","inherited_params":{"token_auth":"body.token_auth"},"encoding":"url_query","inherited_overrides":true,"native_map":"matomo_php8","check_chronological_order":true}]`.
 
 ### Complete HTTP contract 1
 
@@ -6576,8 +6948,8 @@ Context: `{"condition":{"kind":"any","conditions":[{"kind":"present","param":"bo
 | `body_encoding` | optional | `{}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `bulk_method` | required | `{"root_path":"method","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `body` | required | `{"json_type":"object"}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `body.requests` | required | `{"json_type":"array"}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `body.token_auth` | optional | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `body.requests` | required | `{"json_type":["array","object"],"allow_empty":true}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/plugins/BulkTracking/Tracker/Requests.php) |
+| `body.token_auth` | optional | `{"allow_empty":true}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/plugins/BulkTracking/Tracker/Requests.php) |
 
 ### Complete HTTP contract 3
 
@@ -6585,7 +6957,7 @@ Context: `{"scope":"body.requests[]"}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `(current scope)` | optional | `{"json_type":["string","object"],"allow_empty":true}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/matomo/5.x-dev/plugins/BulkTracking/Tracker/Requests.php) |
+| `(current scope)` | optional | `{"json_type":["string","object","array","number","boolean","null"],"allow_empty":true}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/plugins/BulkTracking/Tracker/Requests.php) |
 
 ## `vendor/mediamath-mobile`
 
@@ -6645,6 +7017,7 @@ Matcher: `{"host_suffixes":["graph.facebook.com"],"path_contains":["/events"],"j
 | --- | --- | --- | --- |
 | `access_token` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api) |
 | `test_event_code` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api) |
+| `data` | optional | `{"format":{"kind":"non_empty"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
@@ -6677,7 +7050,7 @@ Context: `{"scope":["data[]",""]}`.
 | `data_processing_options_country` | optional | `{"format":{"kind":"enum","values":["0","1"]},"json_type":"integer"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
 | `data_processing_options_state` | optional | `{"format":{"kind":"enum","values":["0","1000"]},"json_type":"integer"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
 | `custom_data.value` | optional | `{"json_type":"number"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
-| `custom_data.currency` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{3}$"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.currency` | optional | `{"format":{"kind":"currency","case_insensitive":true},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
 | `custom_data.content_ids[]` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
 | `custom_data.content_type` | optional | `{"format":{"kind":"enum","values":["product","product_group"]},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
 | `custom_data.contents[].id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
@@ -6691,9 +7064,9 @@ Context: `{"scope":["data[]",""]}`.
 | `custom_data.predicted_ltv` | optional | `{"json_type":"number"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
 | `referrer_url` | optional | `{"format":{"kind":"url"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
 | `user_data.em` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
-| `user_data.em[]` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `user_data.em[]` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
 | `user_data.ph` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
-| `user_data.ph[]` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `user_data.ph[]` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
 | `user_data.fn` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
 | `user_data.ln` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
 | `user_data.ge` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
@@ -6703,10 +7076,10 @@ Context: `{"scope":["data[]",""]}`.
 | `user_data.zp` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
 | `user_data.country` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
 | `user_data.external_id` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
-| `user_data.client_ip_address` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `user_data.client_ip_address` | optional | `{"format":{"kind":"ip"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
 | `user_data.client_user_agent` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
-| `user_data.fbc` | optional | `{"format":{"kind":"regex","pattern":"^fb\\.[0-9]\\.[0-9]+\\..+$"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
-| `user_data.fbp` | optional | `{"format":{"kind":"regex","pattern":"^fb\\.[0-9]\\.[0-9]+\\..+$"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `user_data.fbc` | optional | `{"format":{"kind":"regex","pattern":"^fb\\.[0-9]\\.[0-9]+\\..+$"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fbp` | optional | `{"format":{"kind":"regex","pattern":"^fb\\.[0-9]\\.[0-9]+\\..+$"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
 | `user_data.lead_id` | optional | `{"format":{"kind":"integer"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api) |
 | `custom_data` | optional | `{"json_type":"object"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
@@ -6742,6 +7115,404 @@ Context: `{"scope":["data[]",""]}`.
 | `vendor.meta-conversions-api.body.ldu_requires_country` | `{"kind":"required_when_value","when":"data_processing_options[]","equals":["LDU"],"requires":["data_processing_options_country"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
 | `vendor.meta-conversions-api.body.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
 | `vendor.meta-conversions-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user_data.client_ip_address","user_data.client_user_agent"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `vendor.meta-conversions-api.body.website_user_agent_expected` | `{"kind":"required_when_value","when":"action_source","equals":["website"],"requires":["user_data.client_user_agent"],"condition":{"kind":"json_type","param":"user_data","json_type":"object"}}` | warning | [official_template](https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json) |
+
+### JSON contract 3
+
+Context: `{"scope":["data[]",""]}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `app_data.application_tracking_enabled` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.advertiser_tracking_enabled` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.campaign_ids` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.consider_views` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.extinfo` | optional | `{"json_type":"array","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.include_dwell_data` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.include_video_data` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.install_referrer` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.installer_package` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.receipt_data` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.url_schemes` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.windows_attribution_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `original_event_data` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_name` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_time` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.order_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `attribution_data` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.scope` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.visit_time` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.ad_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.adset_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.campaign_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attr_window` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_value` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_source` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_type` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_ts` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.auditing_token` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.linkage_key` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_setting` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.total_credit` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.partner_client_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_setting.inactivity_window_hours` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py) |
+| `attribution_data.attribution_setting.reattribution_window_hours` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py) |
+| `app_data.extinfo[0]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[1]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[2]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[3]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[4]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[5]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[6]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[7]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[8]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[9]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[10]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[11]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[12]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[13]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[14]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[15]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `advanced_measurement_table` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `messaging_channel` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.net_revenue` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.content_name` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.content_category` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.status` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.item_number` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `attribution_data.attribution_share` | optional | `{"json_type":"number","minimum":0,"maximum":1,"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+
+### JSON contract 4
+
+Context: `{"source_param":"data"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py) |
+| `[]` | optional | `{"json_type":["object","string"]}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py) |
+
+### JSON contract 5
+
+Context: `{"scope":"[]","source_param":"data"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `event_name` | required | `{"format":{"kind":"non_empty"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `event_time` | required | `{"format":{"kind":"integer","min_digits":10,"max_digits":10},"json_type":"integer","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `action_source` | required | `{"format":{"kind":"enum","values":["email","website","app","phone_call","chat","physical_store","system_generated","business_messaging","other"]},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `user_data` | required | `{"json_type":"object","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `event_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events) |
+| `event_source_url` | optional | `{"format":{"kind":"url"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `opt_out` | optional | `{"json_type":"boolean","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `data_processing_options[]` | optional | `{"format":{"kind":"enum","values":["LDU"]},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `data_processing_options_country` | optional | `{"format":{"kind":"enum","values":["0","1"]},"json_type":"integer","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `data_processing_options_state` | optional | `{"format":{"kind":"enum","values":["0","1000"]},"json_type":"integer","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.value` | optional | `{"json_type":"number","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.currency` | optional | `{"format":{"kind":"currency","case_insensitive":true},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.content_ids[]` | optional | `{"format":{"kind":"non_empty"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.content_type` | optional | `{"format":{"kind":"enum","values":["product","product_group"]},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.contents[].id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.contents[].quantity` | optional | `{"format":{"kind":"integer"},"json_type":"integer","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.contents[].item_price` | optional | `{"json_type":"number","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.contents[].delivery_category` | optional | `{"format":{"kind":"enum","values":["in_store","curbside","home_delivery"]},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.delivery_category` | optional | `{"format":{"kind":"enum","values":["in_store","curbside","home_delivery"]},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.num_items` | optional | `{"format":{"kind":"integer"},"json_type":"integer","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.order_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.search_string` | optional | `{"format":{"kind":"non_empty"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.predicted_ltv` | optional | `{"json_type":"number","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `referrer_url` | optional | `{"format":{"kind":"url"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `user_data.em` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.em[]` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ph` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ph[]` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fn` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ln` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ge` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.db` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ct` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.st` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.zp` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.country` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.external_id` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.client_ip_address` | optional | `{"format":{"kind":"ip"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.client_user_agent` | optional | `{"format":{"kind":"non_empty"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `user_data.fbc` | optional | `{"format":{"kind":"regex","pattern":"^fb\\.[0-9]\\.[0-9]+\\..+$"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fbp` | optional | `{"format":{"kind":"regex","pattern":"^fb\\.[0-9]\\.[0-9]+\\..+$"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.lead_id` | optional | `{"format":{"kind":"integer"},"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `(current scope)` | optional | `{}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api) |
+| `custom_data` | optional | `{"json_type":"object","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `app_data` | optional | `{"json_type":"object","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `data_processing_options` | optional | `{"json_type":"array","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.content_ids` | optional | `{"json_type":"array","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.contents` | optional | `{"json_type":"array","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.contents[]` | optional | `{"json_type":"object","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `user_data.fn[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ln[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ge[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.db[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ct[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.st[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.zp[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.country[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.external_id[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.subscription_id` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fb_login_id` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.madid` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.anon_id` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.f5first` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.f5last` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fi` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.dobd` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.dobm` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.doby` | optional | `{"json_type":"string","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.meta-conversions-api.body.purchase_requires_value_and_currency` | `{"kind":"required_when_value","when":"event_name","equals":["Purchase"],"requires":["custom_data.value","custom_data.currency"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `vendor.meta-conversions-api.body.website_requires_source_url` | `{"kind":"required_when_value","when":"action_source","equals":["website"],"requires":["event_source_url"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `vendor.meta-conversions-api.body.ldu_requires_country` | `{"kind":"required_when_value","when":"data_processing_options[]","equals":["LDU"],"requires":["data_processing_options_country"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `vendor.meta-conversions-api.body.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}","condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `vendor.meta-conversions-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user_data.client_ip_address","user_data.client_user_agent"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `vendor.meta-conversions-api.body.website_user_agent_expected` | `{"kind":"required_when_value","when":"action_source","equals":["website"],"requires":["user_data.client_user_agent"],"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"","json_type":"object"},{"kind":"json_type","param":"user_data","json_type":"object"}]}}` | warning | [official_template](https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json) |
+
+### JSON contract 6
+
+Context: `{"scope":"","source_param":"data","source_field":"[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `event_name` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `event_time` | required | `{"format":{"kind":"integer","min_digits":10,"max_digits":10},"json_type":"integer"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `action_source` | required | `{"format":{"kind":"enum","values":["email","website","app","phone_call","chat","physical_store","system_generated","business_messaging","other"]},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `user_data` | required | `{"json_type":"object"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `event_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events) |
+| `event_source_url` | optional | `{"format":{"kind":"url"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `opt_out` | optional | `{"json_type":"boolean"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `data_processing_options[]` | optional | `{"format":{"kind":"enum","values":["LDU"]},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `data_processing_options_country` | optional | `{"format":{"kind":"enum","values":["0","1"]},"json_type":"integer"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `data_processing_options_state` | optional | `{"format":{"kind":"enum","values":["0","1000"]},"json_type":"integer"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.value` | optional | `{"json_type":"number"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.currency` | optional | `{"format":{"kind":"currency","case_insensitive":true},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.content_ids[]` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.content_type` | optional | `{"format":{"kind":"enum","values":["product","product_group"]},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.contents[].id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.contents[].quantity` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.contents[].item_price` | optional | `{"json_type":"number"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.contents[].delivery_category` | optional | `{"format":{"kind":"enum","values":["in_store","curbside","home_delivery"]},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.delivery_category` | optional | `{"format":{"kind":"enum","values":["in_store","curbside","home_delivery"]},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.num_items` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.order_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.search_string` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `custom_data.predicted_ltv` | optional | `{"json_type":"number"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `referrer_url` | optional | `{"format":{"kind":"url"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `user_data.em` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.em[]` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ph` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ph[]` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fn` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ln` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ge` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.db` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ct` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.st` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.zp` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.country` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.external_id` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"json_type":["string","array"]}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.client_ip_address` | optional | `{"format":{"kind":"ip"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.client_user_agent` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `user_data.fbc` | optional | `{"format":{"kind":"regex","pattern":"^fb\\.[0-9]\\.[0-9]+\\..+$"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fbp` | optional | `{"format":{"kind":"regex","pattern":"^fb\\.[0-9]\\.[0-9]+\\..+$"},"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.lead_id` | optional | `{"format":{"kind":"integer"},"json_type":"string"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api) |
+| `custom_data` | optional | `{"json_type":"object"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `app_data` | optional | `{"json_type":"object"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `data_processing_options` | optional | `{"json_type":"array"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.content_ids` | optional | `{"json_type":"array"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.contents` | optional | `{"json_type":"array"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.contents[]` | optional | `{"json_type":"object"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `user_data.fn[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ln[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ge[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.db[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.ct[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.st[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.zp[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.country[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.external_id[]` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.subscription_id` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fb_login_id` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.madid` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.anon_id` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.f5first` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.f5last` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.fi` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.dobd` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.dobm` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+| `user_data.doby` | optional | `{"json_type":"string"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.meta-conversions-api.body.purchase_requires_value_and_currency` | `{"kind":"required_when_value","when":"event_name","equals":["Purchase"],"requires":["custom_data.value","custom_data.currency"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
+| `vendor.meta-conversions-api.body.website_requires_source_url` | `{"kind":"required_when_value","when":"action_source","equals":["website"],"requires":["event_source_url"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `vendor.meta-conversions-api.body.ldu_requires_country` | `{"kind":"required_when_value","when":"data_processing_options[]","equals":["LDU"],"requires":["data_processing_options_country"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
+| `vendor.meta-conversions-api.body.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `vendor.meta-conversions-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user_data.client_ip_address","user_data.client_user_agent"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters) |
+| `vendor.meta-conversions-api.body.website_user_agent_expected` | `{"kind":"required_when_value","when":"action_source","equals":["website"],"requires":["user_data.client_user_agent"],"condition":{"kind":"json_type","param":"user_data","json_type":"object"}}` | warning | [official_template](https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json) |
+
+### JSON contract 7
+
+Context: `{"scope":"[]","source_param":"data"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `app_data.application_tracking_enabled` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.advertiser_tracking_enabled` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.campaign_ids` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.consider_views` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.extinfo` | optional | `{"json_type":"array","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.include_dwell_data` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.include_video_data` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.install_referrer` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.installer_package` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.receipt_data` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.url_schemes` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.windows_attribution_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `original_event_data` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_name` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_time` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.order_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `attribution_data` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.scope` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.visit_time` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.ad_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.adset_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.campaign_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attr_window` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_value` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_source` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_type` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_ts` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.auditing_token` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.linkage_key` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_setting` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.total_credit` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.partner_client_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_setting.inactivity_window_hours` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py) |
+| `attribution_data.attribution_setting.reattribution_window_hours` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py) |
+| `app_data.extinfo[0]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[1]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[2]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[3]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[4]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[5]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[6]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[7]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[8]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[9]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[10]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[11]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[12]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[13]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[14]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[15]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `advanced_measurement_table` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `messaging_channel` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.net_revenue` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.content_name` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.content_category` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.status` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.item_number` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `attribution_data.attribution_share` | optional | `{"json_type":"number","minimum":0,"maximum":1,"format_severity":"warning","allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `(current scope)` | optional | `{}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py) |
+
+### JSON contract 8
+
+Context: `{"scope":"","source_param":"data","source_field":"[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `app_data.application_tracking_enabled` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.advertiser_tracking_enabled` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.campaign_ids` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.consider_views` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.extinfo` | optional | `{"json_type":"array","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.include_dwell_data` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.include_video_data` | optional | `{"json_type":"boolean","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.install_referrer` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.installer_package` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.receipt_data` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.url_schemes` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `app_data.windows_attribution_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py) |
+| `original_event_data` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_name` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_time` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.order_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `original_event_data.event_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py) |
+| `attribution_data` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.scope` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.visit_time` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.ad_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.adset_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.campaign_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attr_window` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_value` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_source` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_type` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_ts` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.auditing_token` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.linkage_key` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.touchpoint_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_setting` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.total_credit` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.partner_client_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+| `attribution_data.attribution_setting.inactivity_window_hours` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py) |
+| `attribution_data.attribution_setting.reattribution_window_hours` | optional | `{"json_type":"integer","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py) |
+| `app_data.extinfo[0]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[1]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[2]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[3]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[4]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[5]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[6]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[7]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[8]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[9]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[10]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[11]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[12]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[13]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[14]` | optional | `{"json_type":["integer","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `app_data.extinfo[15]` | optional | `{"json_type":["string","null"],"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py) |
+| `advanced_measurement_table` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `messaging_channel` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
+| `custom_data.net_revenue` | optional | `{"json_type":"number","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.content_name` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.content_category` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.status` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `custom_data.item_number` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py) |
+| `attribution_data.attribution_share` | optional | `{"json_type":"number","minimum":0,"maximum":1,"format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"format":{"kind":"enum","values":["POST"]},"format_severity":"warning"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py) |
+| `query.access_token` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/api.py) |
+| `body.access_token` | optional | `{"json_type":"string","format":{"kind":"non_empty"},"severity":"error"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-nodejs-business-sdk/main/src/objects/serverside/event-request.js) |
+| `headers.authorization` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"(?i)^Bearer[ \\t]+[^ \\t]+$"},"severity":"error"}` | [official_vendor](https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json) |
+| `query.data` | optional | `{"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py) |
+| `body.data` | optional | `{"json_type":["array","string"]}` | [official_vendor](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.meta-conversions-api.http.authentication_required` | `{"kind":"require_any_of","groups":[["query.access_token"],["body.access_token"],["headers.authorization"]]}` | error | [official_vendor](https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json) |
+| `vendor.meta-conversions-api.http.data_required` | `{"kind":"require_any_of","groups":[["query.data"],["body.data"]]}` | error | [official_vendor](https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json) |
 
 ## `vendor/meta`
 
@@ -9436,6 +10207,17 @@ Context: `{"scope":"data[]"}`.
 | `vendor.pinterest-conversions-api.body.placeholder_user_agent` | `{"kind":"forbid_value_pattern","params":["user_data.client_user_agent"],"pattern":"^(?:Other\|null)$"}` | error | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `vendor.pinterest-conversions-api.body.event_time_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds","max_future_seconds":0}` | error | [official_vendor](https://developers.pinterest.com/docs/track-conversions/integrate-third-party-tracking-tools/) |
 
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.yaml) |
+| `content_type` | required | `{"json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.yaml) |
+| `headers.authorization` | required | `{"json_type":"string","format":{"kind":"regex","pattern":"(?i)^Bearer[ \\t]+[^ \\t]+$"}}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.yaml) |
+| `body` | required | `{"json_type":"object"}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.yaml) |
+
 ## `vendor/pinterest`
 
 Pinterest conversion tag requests to ct.pinterest.com, including the noscript image fallback.
@@ -11151,9 +11933,11 @@ Context: `{}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `event_source` | required | `{"format":{"kind":"enum","values":["web","app","offline","crm"]}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
-| `event_source_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
-| `data` | required | `{}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
+| `event_source` | required | `{"format":{"kind":"enum","values":["web","app","offline","crm"]},"json_type":"string"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `event_source_id` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `data` | required | `{"json_type":"array","min_items":1,"max_items":1000}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `data[]` | optional | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
 
 ### JSON contract 2
 
@@ -11161,10 +11945,10 @@ Context: `{"scope":"data[]"}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `event` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
-| `event_time` | required | `{"format":{"kind":"integer","min_digits":10,"max_digits":10}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
-| `event_id` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
-| `page.url` | recommended | `{"format":{"kind":"url"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
+| `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `event_time` | required | `{"format":{"kind":"integer","min_digits":10,"max_digits":10},"json_type":"integer"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `event_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `page.url` | recommended | `{"format":{"kind":"url"},"condition":{"kind":"value_in","param":"event_source","values":["web"]}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
 | `page.referrer` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
 | `user.email` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
 | `user.phone` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
@@ -11179,13 +11963,69 @@ Context: `{"scope":"data[]"}`.
 | `properties.content_type` | optional | `{"format":{"kind":"enum","values":["product","product_group"]}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
 | `properties.contents[].content_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
 | `properties.contents[].price` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
+| `event_source` | optional | `{"root_path":"event_source"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `(current scope)` | optional | `{}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `user` | optional | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `properties` | optional | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `page` | optional | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `app` | optional | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `ad` | optional | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `lead` | optional | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `limited_data_use` | optional | `{"json_type":"boolean"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
-| `vendor.tiktok-events-2.body.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"}` | error | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
-| `vendor.tiktok-events-2.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user.ip","user.user_agent","user.ttp"]}` | error | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
-| `vendor.tiktok-events-2.body.user_needs_an_identifier` | `{"kind":"require_one_of","params":["user.email","user.phone","user.external_id","user.ttclid","user.ttp","user.ip"]}` | warning | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
-| `vendor.tiktok-events-2.body.purchase_requires_value_and_currency` | `{"kind":"required_when_value","when":"event","equals":["Purchase","CompletePayment","PlaceAnOrder"],"requires":["properties.value","properties.currency"]}` | error | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
+| `vendor.tiktok-events-2.body.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}","condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
+| `vendor.tiktok-events-2.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user.ip","user.user_agent","user.ttp"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
+| `vendor.tiktok-events-2.body.user_needs_an_identifier` | `{"kind":"require_one_of","params":["user.email","user.phone","user.external_id","user.ttclid","user.ttp","user.ip"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | warning | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
+| `vendor.tiktok-events-2.body.purchase_requires_value_and_currency` | `{"kind":"required_when_value","when":"event","equals":["Purchase","CompletePayment","PlaceAnOrder"],"requires":["properties.value","properties.currency"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3) |
+| `vendor.tiktok-events-2.body.web_requires_page` | `{"kind":"required_when_value","when":"event_source","equals":["web"],"requires":["page"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `vendor.tiktok-events-2.body.app_requires_app` | `{"kind":"required_when_value","when":"event_source","equals":["app"],"requires":["app"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `vendor.tiktok-events-2.body.crm_requires_lead` | `{"kind":"required_when_value","when":"event_source","equals":["crm"],"requires":["lead"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `vendor.tiktok-events-2.body.limited_data_use_unsupported_source` | `{"kind":"forbidden_when_value","when":"event_source","equals":["offline","crm"],"params":["limited_data_use"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `vendor.tiktok-events-2.body.ad_unsupported_source` | `{"kind":"forbidden_when_value","when":"event_source","equals":["web","offline","crm"],"params":["ad"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+
+### JSON contract 3
+
+Context: `{"scope":"data[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `page.url` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `page.referrer` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.email` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.phone` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.external_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.ttclid` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.ttp` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.ip` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.user_agent` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.locale` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `properties.currency` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `properties.content_type` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `properties.contents[].content_id` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `properties.contents` | optional | `{"json_type":"array","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `properties.contents[]` | optional | `{"json_type":"object","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.first_name` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"format_severity":"warning"}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.last_name` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"format_severity":"warning"}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.zip_code` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"},"format_severity":"warning"}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.city` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.state` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `user.country` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `properties.contents[].content_name` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `properties.contents[].content_category` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+| `properties.contents[].brand` | optional | `{"json_type":"string","format_severity":"warning","allow_empty":true}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"json_type":"string","format":{"kind":"enum","values":["POST"]},"format_severity":"warning"}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `content_type` | recommended | `{"json_type":"string","format":{"kind":"enum","values":["application/json"]},"format_severity":"warning"}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `headers.access-token` | recommended | `{"json_type":"string","format":{"kind":"non_empty"},"severity":"warning","format_severity":"warning"}` | [official_template](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
+| `body` | required | `{"json_type":"object"}` | [official_vendor](https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH) |
 
 ## `vendor/tiktok-events-api`
 

@@ -54,6 +54,15 @@
       "description": "It routes events to the Events Manager test tool instead of production reporting, so it should not appear on live traffic.",
       "fix_hint": "Drop `test_event_code` outside of testing.",
       "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api"
+    },
+    {
+      "name": "data",
+      "description": "The cited primary model documents this field representation.",
+      "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py",
+      "format": {
+        "kind": "non_empty"
+      },
+      "source_level": "official_template"
     }
   ],
   "rules": [
@@ -240,12 +249,13 @@
         {
           "name": "custom_data.currency",
           "format": {
-            "kind": "regex",
-            "pattern": "^[A-Za-z]{3}$"
+            "kind": "currency",
+            "case_insensitive": true
           },
           "description": "Meta requires a valid ISO 4217 three-digit currency code.",
           "fix_hint": "Use the three-letter code, such as `USD`.",
-          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string"
         },
         {
           "name": "custom_data.content_ids[]",
@@ -400,7 +410,8 @@
           },
           "description": "Every email in the list must be normalized and SHA-256 hashed.",
           "fix_hint": "Normalize each address, hash it with SHA-256, and send the hex digests.",
-          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters"
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
         },
         {
           "name": "user_data.ph",
@@ -425,7 +436,8 @@
           },
           "description": "Every phone number in the list must be normalized and SHA-256 hashed.",
           "fix_hint": "Normalize each number to digits with the country code and hash it with SHA-256.",
-          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters"
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
         },
         {
           "name": "user_data.fn",
@@ -557,11 +569,11 @@
         {
           "name": "user_data.client_ip_address",
           "format": {
-            "kind": "non_empty"
+            "kind": "ip"
           },
           "description": "It is sent unhashed, and it must be the real IPv4 or IPv6 address of the browser.",
           "fix_hint": "Send the client address as-is; do not hash it and do not send your server's address.",
-          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
           "json_type": "string"
         },
         {
@@ -582,7 +594,8 @@
           },
           "description": "Meta documents the click id cookie as `fb.${subdomain_index}.${creation_time}.${fbclid}`.",
           "fix_hint": "Send the `_fbc` cookie verbatim, or rebuild it in the documented format.",
-          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters"
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
         },
         {
           "name": "user_data.fbp",
@@ -592,7 +605,8 @@
           },
           "description": "Meta documents the browser id cookie as `fb.${subdomain_index}.${creation_time}.${random_number}`.",
           "fix_hint": "Send the `_fbp` cookie verbatim.",
-          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters"
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
         },
         {
           "name": "user_data.lead_id",
@@ -889,8 +903,4245 @@
           "message": "This field looks like a SHA-256 digest, but Meta documents it as one of the parameters that is sent unhashed.",
           "fix_hint": "Send the raw value. Hashing it makes the event unmatchable.",
           "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters"
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.website_user_agent_expected",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
+            "website"
+          ],
+          "requires": [
+            "user_data.client_user_agent"
+          ],
+          "condition": {
+            "kind": "json_type",
+            "param": "user_data",
+            "json_type": "object"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "message": "The official Meta Conversions API collection lists client_user_agent for website events.",
+          "doc": "https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json"
         }
       ]
+    },
+    {
+      "scope": [
+        "data[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "app_data.application_tracking_enabled",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.advertiser_tracking_enabled",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.campaign_ids",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.consider_views",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "array",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.include_dwell_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.include_video_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.install_referrer",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.installer_package",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.receipt_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.url_schemes",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.windows_attribution_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data.event_name",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data.event_time",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data.order_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data.event_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.scope",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.visit_time",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.ad_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.adset_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.campaign_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attr_window",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_value",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_source",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.touchpoint_type",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.touchpoint_ts",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.auditing_token",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.linkage_key",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.touchpoint_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_setting",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.total_credit",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.partner_client_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_setting.inactivity_window_hours",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_setting.reattribution_window_hours",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[0]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[1]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[2]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[3]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[4]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[5]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[6]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[7]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[8]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[9]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[10]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[11]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[12]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[13]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[14]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[15]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "advanced_measurement_table",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "messaging_channel",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.net_revenue",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.content_name",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.content_category",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.status",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.item_number",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_share",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        }
+      ]
+    },
+    {
+      "source_param": "data",
+      "params": [
+        {
+          "name": "",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py",
+          "json_type": "array",
+          "min_items": 1
+        },
+        {
+          "name": "[]",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py",
+          "json_type": [
+            "object",
+            "string"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "[]",
+      "params": [
+        {
+          "name": "event_name",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the standard or custom event name, and it has to match the browser event for deduplication to work.",
+          "fix_hint": "Set `event_name` to the standard event, such as `Purchase`, or to your custom event name.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "event_time",
+          "requirement": "required",
+          "format": {
+            "kind": "integer",
+            "min_digits": 10,
+            "max_digits": 10
+          },
+          "description": "Meta documents it as a Unix timestamp in seconds, and it can be up to 7 days before the event is sent. A 13-digit value is milliseconds and lands far in the future.",
+          "fix_hint": "Send seconds, not milliseconds: divide a JavaScript `Date.now()` by 1000 and floor it.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "integer",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "action_source",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "email",
+              "website",
+              "app",
+              "phone_call",
+              "chat",
+              "physical_store",
+              "system_generated",
+              "business_messaging",
+              "other"
+            ]
+          },
+          "description": "It tells Meta where the conversion happened, and Meta accepts a fixed set of values.",
+          "fix_hint": "Use one of the documented values; website conversions are `website`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data",
+          "requirement": "required",
+          "description": "Customer information is required on every server event, and it is what Meta matches the conversion to a person with.",
+          "fix_hint": "Add a `user_data` object with at least one normalized, hashed identifier.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "object",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "event_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Meta recommends it for deduplication: the browser pixel and the server event have to carry the same `event_id` and `event_name` to be counted once.",
+          "fix_hint": "Generate one id per conversion and send the same value from the pixel and the Conversions API.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "event_source_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the page URL where the conversion happened, and Meta requires it for website events.",
+          "fix_hint": "Send the full URL of the page, including the scheme.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "opt_out",
+          "description": "When true, the event is used for attribution only and not for ads delivery optimization.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "boolean",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "data_processing_options[]",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "LDU"
+            ]
+          },
+          "description": "Meta accepts `LDU` for Limited Data Use, or an empty array.",
+          "fix_hint": "Send `[\"LDU\"]` to enable Limited Data Use, or `[]` to leave it off.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "data_processing_options_country",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1"
+            ]
+          },
+          "description": "It is 1 for the United States, or 0 to let Meta geolocate.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "integer",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "data_processing_options_state",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1000"
+            ]
+          },
+          "description": "It is 1000 for California, or 0 to let Meta geolocate.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "integer",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.value",
+          "description": "Meta requires it for purchase events and for any event that uses value optimization.",
+          "fix_hint": "Send the monetary value as a number, without a currency symbol.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.currency",
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
+          "description": "Meta requires a valid ISO 4217 three-digit currency code.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.content_ids[]",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is a product ID associated with the event, such as a SKU on AddToCart.",
+          "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop empty entries.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.content_type",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group"
+            ]
+          },
+          "description": "It says whether `content_ids` and `contents` are products or product groups. Meta documents `product` or `product_group`.",
+          "fix_hint": "Set `custom_data.content_type` to `product` or `product_group`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.contents[].id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product ID on a contents row. Meta documents `id`, `quantity`, `item_price`, and `delivery_category` on that object.",
+          "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.contents[].quantity",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is how many of that product the event covers.",
+          "fix_hint": "Send a whole number in `custom_data.contents[].quantity`, such as `1`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "integer",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.contents[].item_price",
+          "description": "It is the price of that product. Put the order total in `custom_data.value`.",
+          "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `129.99`, without a currency symbol.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.contents[].delivery_category",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "in_store",
+              "curbside",
+              "home_delivery"
+            ]
+          },
+          "description": "It is the delivery type on a contents row. Meta documents `in_store`, `curbside`, and `home_delivery`.",
+          "fix_hint": "Set the contents `delivery_category` to `in_store`, `curbside`, or `home_delivery`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.delivery_category",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "in_store",
+              "curbside",
+              "home_delivery"
+            ]
+          },
+          "description": "It is the delivery type for a purchase event. Meta documents `in_store`, `curbside`, and `home_delivery`.",
+          "fix_hint": "Set `custom_data.delivery_category` to `in_store`, `curbside`, or `home_delivery`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.num_items",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the number of items in checkout. Meta documents it for InitiateCheckout events.",
+          "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "integer",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.order_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the order ID for this transaction, as a string.",
+          "fix_hint": "Send `custom_data.order_id`, or drop the empty pair.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.search_string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the query the user searched for. Meta documents it for Search events.",
+          "fix_hint": "Send the query in `custom_data.search_string`, or drop the empty pair.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.predicted_ltv",
+          "description": "It is the predicted lifetime value of a conversion event.",
+          "fix_hint": "Send `custom_data.predicted_ltv` as a number, such as `250.00`.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "referrer_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the referrer URL for the event.",
+          "fix_hint": "Send an absolute URL in `referrer_url`, including the scheme.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.em",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Email must be trimmed, lowercased, and SHA-256 hashed before it is sent.",
+          "fix_hint": "Normalize the address, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.em[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Every email in the list must be normalized and SHA-256 hashed.",
+          "fix_hint": "Normalize each address, hash it with SHA-256, and send the hex digests.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.ph",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Phone numbers must have symbols and letters removed, carry the country code, and be SHA-256 hashed.",
+          "fix_hint": "Normalize the number to digits with the country code, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.ph[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Every phone number in the list must be normalized and SHA-256 hashed.",
+          "fix_hint": "Normalize each number to digits with the country code and hash it with SHA-256.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.fn",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "First name must be lowercased and SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.ln",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Last name must be lowercased and SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.ge",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Gender is sent as a lowercase initial and SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.db",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Date of birth is normalized to YYYYMMDD and SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.ct",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "City is lowercased with punctuation and spaces removed, then SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.st",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "State is the lowercase two-character code, SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.zp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Zip is lowercased without spaces or dashes, then SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.country",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Country is the lowercase ISO 3166-1 alpha-2 code, SHA-256 hashed.",
+          "fix_hint": "Hash the two-letter code rather than sending it in the clear.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.external_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Meta recommends hashing the advertiser's own identifier with SHA-256.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.client_ip_address",
+          "format": {
+            "kind": "ip"
+          },
+          "description": "It is sent unhashed, and it must be the real IPv4 or IPv6 address of the browser.",
+          "fix_hint": "Send the client address as-is; do not hash it and do not send your server's address.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.client_user_agent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is sent unhashed, and it must be the browser's user agent rather than your HTTP client's.",
+          "fix_hint": "Forward the browser `User-Agent` header from the original request.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.fbc",
+          "format": {
+            "kind": "regex",
+            "pattern": "^fb\\.[0-9]\\.[0-9]+\\..+$"
+          },
+          "description": "Meta documents the click id cookie as `fb.${subdomain_index}.${creation_time}.${fbclid}`.",
+          "fix_hint": "Send the `_fbc` cookie verbatim, or rebuild it in the documented format.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.fbp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^fb\\.[0-9]\\.[0-9]+\\..+$"
+          },
+          "description": "Meta documents the browser id cookie as `fb.${subdomain_index}.${creation_time}.${random_number}`.",
+          "fix_hint": "Send the `_fbp` cookie verbatim.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.lead_id",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the numeric id Meta generated for a Lead Ads lead.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters",
+          "json_type": "string",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api"
+        },
+        {
+          "name": "custom_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "object",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "object",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "data_processing_options",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "array",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.content_ids",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "array",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.contents",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "array",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.contents[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "object",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.fn[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.ln[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.ge[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.db[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.ct[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.st[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.zp[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.country[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.external_id[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.subscription_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.fb_login_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.madid",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.anon_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.f5first",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.f5last",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.fi",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.dobd",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.dobm",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "user_data.doby",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.meta-conversions-api.body.purchase_requires_value_and_currency",
+          "kind": "required_when_value",
+          "when": "event_name",
+          "equals": [
+            "Purchase"
+          ],
+          "requires": [
+            "custom_data.value",
+            "custom_data.currency"
+          ],
+          "severity": "error",
+          "message": "A `Purchase` event is missing `custom_data.value` or `custom_data.currency`. Meta documents both as required for purchase events.",
+          "fix_hint": "Add `custom_data.value` as a number and `custom_data.currency` as an ISO 4217 code.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.website_requires_source_url",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
+            "website"
+          ],
+          "requires": [
+            "event_source_url"
+          ],
+          "severity": "error",
+          "message": "The event is marked `action_source: website` but carries no `event_source_url`, which Meta requires for website events.",
+          "fix_hint": "Send the page URL the conversion happened on.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.ldu_requires_country",
+          "kind": "required_when_value",
+          "when": "data_processing_options[]",
+          "equals": [
+            "LDU"
+          ],
+          "requires": [
+            "data_processing_options_country"
+          ],
+          "severity": "error",
+          "message": "Limited Data Use is enabled but `data_processing_options_country` is missing.",
+          "fix_hint": "Send `data_processing_options_country` as 1 for the United States, or 0 to let Meta geolocate.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. Meta requires customer information to be normalized and SHA-256 hashed before it is sent.",
+          "fix_hint": "Trim the address, lowercase it, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "user_data.client_ip_address",
+            "user_data.client_user_agent"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Meta documents it as one of the parameters that is sent unhashed.",
+          "fix_hint": "Send the raw value. Hashing it makes the event unmatchable.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.website_user_agent_expected",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
+            "website"
+          ],
+          "requires": [
+            "user_data.client_user_agent"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "",
+                "json_type": "object"
+              },
+              {
+                "kind": "json_type",
+                "param": "user_data",
+                "json_type": "object"
+              }
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "message": "The official Meta Conversions API collection lists client_user_agent for website events.",
+          "doc": "https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json"
+        }
+      ],
+      "source_param": "data"
+    },
+    {
+      "scope": "",
+      "params": [
+        {
+          "name": "event_name",
+          "requirement": "required",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the standard or custom event name, and it has to match the browser event for deduplication to work.",
+          "fix_hint": "Set `event_name` to the standard event, such as `Purchase`, or to your custom event name.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string"
+        },
+        {
+          "name": "event_time",
+          "requirement": "required",
+          "format": {
+            "kind": "integer",
+            "min_digits": 10,
+            "max_digits": 10
+          },
+          "description": "Meta documents it as a Unix timestamp in seconds, and it can be up to 7 days before the event is sent. A 13-digit value is milliseconds and lands far in the future.",
+          "fix_hint": "Send seconds, not milliseconds: divide a JavaScript `Date.now()` by 1000 and floor it.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "integer"
+        },
+        {
+          "name": "action_source",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "email",
+              "website",
+              "app",
+              "phone_call",
+              "chat",
+              "physical_store",
+              "system_generated",
+              "business_messaging",
+              "other"
+            ]
+          },
+          "description": "It tells Meta where the conversion happened, and Meta accepts a fixed set of values.",
+          "fix_hint": "Use one of the documented values; website conversions are `website`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data",
+          "requirement": "required",
+          "description": "Customer information is required on every server event, and it is what Meta matches the conversion to a person with.",
+          "fix_hint": "Add a `user_data` object with at least one normalized, hashed identifier.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "event_id",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "Meta recommends it for deduplication: the browser pixel and the server event have to carry the same `event_id` and `event_name` to be counted once.",
+          "fix_hint": "Generate one id per conversion and send the same value from the pixel and the Conversions API.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events",
+          "json_type": "string"
+        },
+        {
+          "name": "event_source_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the page URL where the conversion happened, and Meta requires it for website events.",
+          "fix_hint": "Send the full URL of the page, including the scheme.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string"
+        },
+        {
+          "name": "opt_out",
+          "description": "When true, the event is used for attribution only and not for ads delivery optimization.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "boolean",
+          "source_level": "official_template"
+        },
+        {
+          "name": "data_processing_options[]",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "LDU"
+            ]
+          },
+          "description": "Meta accepts `LDU` for Limited Data Use, or an empty array.",
+          "fix_hint": "Send `[\"LDU\"]` to enable Limited Data Use, or `[]` to leave it off.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string"
+        },
+        {
+          "name": "data_processing_options_country",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1"
+            ]
+          },
+          "description": "It is 1 for the United States, or 0 to let Meta geolocate.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "integer",
+          "source_level": "official_template"
+        },
+        {
+          "name": "data_processing_options_state",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1000"
+            ]
+          },
+          "description": "It is 1000 for California, or 0 to let Meta geolocate.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "integer",
+          "source_level": "official_template"
+        },
+        {
+          "name": "custom_data.value",
+          "description": "Meta requires it for purchase events and for any event that uses value optimization.",
+          "fix_hint": "Send the monetary value as a number, without a currency symbol.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "source_level": "official_template"
+        },
+        {
+          "name": "custom_data.currency",
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
+          "description": "Meta requires a valid ISO 4217 three-digit currency code.",
+          "fix_hint": "Use the three-letter code, such as `USD`.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.content_ids[]",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is a product ID associated with the event, such as a SKU on AddToCart.",
+          "fix_hint": "Send catalog IDs in `custom_data.content_ids`, or drop empty entries.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.content_type",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group"
+            ]
+          },
+          "description": "It says whether `content_ids` and `contents` are products or product groups. Meta documents `product` or `product_group`.",
+          "fix_hint": "Set `custom_data.content_type` to `product` or `product_group`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.contents[].id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the product ID on a contents row. Meta documents `id`, `quantity`, `item_price`, and `delivery_category` on that object.",
+          "fix_hint": "Set `custom_data.contents[].id` to the catalog item ID, or drop the empty pair.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.contents[].quantity",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is how many of that product the event covers.",
+          "fix_hint": "Send a whole number in `custom_data.contents[].quantity`, such as `1`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "integer"
+        },
+        {
+          "name": "custom_data.contents[].item_price",
+          "description": "It is the price of that product. Put the order total in `custom_data.value`.",
+          "fix_hint": "Send `custom_data.contents[].item_price` as a number, such as `129.99`, without a currency symbol.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "source_level": "official_template"
+        },
+        {
+          "name": "custom_data.contents[].delivery_category",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "in_store",
+              "curbside",
+              "home_delivery"
+            ]
+          },
+          "description": "It is the delivery type on a contents row. Meta documents `in_store`, `curbside`, and `home_delivery`.",
+          "fix_hint": "Set the contents `delivery_category` to `in_store`, `curbside`, or `home_delivery`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.delivery_category",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "in_store",
+              "curbside",
+              "home_delivery"
+            ]
+          },
+          "description": "It is the delivery type for a purchase event. Meta documents `in_store`, `curbside`, and `home_delivery`.",
+          "fix_hint": "Set `custom_data.delivery_category` to `in_store`, `curbside`, or `home_delivery`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.num_items",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the number of items in checkout. Meta documents it for InitiateCheckout events.",
+          "fix_hint": "Send a whole number in `custom_data.num_items`, such as `2`.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "integer"
+        },
+        {
+          "name": "custom_data.order_id",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the order ID for this transaction, as a string.",
+          "fix_hint": "Send `custom_data.order_id`, or drop the empty pair.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.search_string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is the query the user searched for. Meta documents it for Search events.",
+          "fix_hint": "Send the query in `custom_data.search_string`, or drop the empty pair.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data",
+          "json_type": "string"
+        },
+        {
+          "name": "custom_data.predicted_ltv",
+          "description": "It is the predicted lifetime value of a conversion event.",
+          "fix_hint": "Send `custom_data.predicted_ltv` as a number, such as `250.00`.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "source_level": "official_template"
+        },
+        {
+          "name": "referrer_url",
+          "format": {
+            "kind": "url"
+          },
+          "description": "It is the referrer URL for the event.",
+          "fix_hint": "Send an absolute URL in `referrer_url`, including the scheme.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.em",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Email must be trimmed, lowercased, and SHA-256 hashed before it is sent.",
+          "fix_hint": "Normalize the address, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.em[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Every email in the list must be normalized and SHA-256 hashed.",
+          "fix_hint": "Normalize each address, hash it with SHA-256, and send the hex digests.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.ph",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Phone numbers must have symbols and letters removed, carry the country code, and be SHA-256 hashed.",
+          "fix_hint": "Normalize the number to digits with the country code, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.ph[]",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Every phone number in the list must be normalized and SHA-256 hashed.",
+          "fix_hint": "Normalize each number to digits with the country code and hash it with SHA-256.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.fn",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "First name must be lowercased and SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.ln",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Last name must be lowercased and SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.ge",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Gender is sent as a lowercase initial and SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.db",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Date of birth is normalized to YYYYMMDD and SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.ct",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "City is lowercased with punctuation and spaces removed, then SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.st",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "State is the lowercase two-character code, SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.zp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Zip is lowercased without spaces or dashes, then SHA-256 hashed.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.country",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Country is the lowercase ISO 3166-1 alpha-2 code, SHA-256 hashed.",
+          "fix_hint": "Hash the two-letter code rather than sending it in the clear.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.external_id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "description": "Meta recommends hashing the advertiser's own identifier with SHA-256.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.client_ip_address",
+          "format": {
+            "kind": "ip"
+          },
+          "description": "It is sent unhashed, and it must be the real IPv4 or IPv6 address of the browser.",
+          "fix_hint": "Send the client address as-is; do not hash it and do not send your server's address.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.client_user_agent",
+          "format": {
+            "kind": "non_empty"
+          },
+          "description": "It is sent unhashed, and it must be the browser's user agent rather than your HTTP client's.",
+          "fix_hint": "Forward the browser `User-Agent` header from the original request.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.fbc",
+          "format": {
+            "kind": "regex",
+            "pattern": "^fb\\.[0-9]\\.[0-9]+\\..+$"
+          },
+          "description": "Meta documents the click id cookie as `fb.${subdomain_index}.${creation_time}.${fbclid}`.",
+          "fix_hint": "Send the `_fbc` cookie verbatim, or rebuild it in the documented format.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.fbp",
+          "format": {
+            "kind": "regex",
+            "pattern": "^fb\\.[0-9]\\.[0-9]+\\..+$"
+          },
+          "description": "Meta documents the browser id cookie as `fb.${subdomain_index}.${creation_time}.${random_number}`.",
+          "fix_hint": "Send the `_fbp` cookie verbatim.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string"
+        },
+        {
+          "name": "user_data.lead_id",
+          "format": {
+            "kind": "integer"
+          },
+          "description": "It is the numeric id Meta generated for a Lead Ads lead.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters",
+          "json_type": "string"
+        },
+        {
+          "name": "",
+          "description": "Each event is a JSON object, rather than a scalar or list.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api",
+          "json_type": "object"
+        },
+        {
+          "name": "custom_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "app_data",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "data_processing_options",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "array",
+          "source_level": "official_template"
+        },
+        {
+          "name": "custom_data.content_ids",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "array",
+          "source_level": "official_template"
+        },
+        {
+          "name": "custom_data.contents",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "array",
+          "source_level": "official_template"
+        },
+        {
+          "name": "custom_data.contents[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "object",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.fn[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.ln[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.ge[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.db[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.ct[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.st[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.zp[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.country[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.external_id[]",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.subscription_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.fb_login_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.madid",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.anon_id",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.f5first",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.f5last",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.fi",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.dobd",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.dobm",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        },
+        {
+          "name": "user_data.doby",
+          "description": "The vendor documents the JSON shape or value type of this field.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/user_data.py",
+          "json_type": "string",
+          "source_level": "official_template"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.meta-conversions-api.body.purchase_requires_value_and_currency",
+          "kind": "required_when_value",
+          "when": "event_name",
+          "equals": [
+            "Purchase"
+          ],
+          "requires": [
+            "custom_data.value",
+            "custom_data.currency"
+          ],
+          "severity": "error",
+          "message": "A `Purchase` event is missing `custom_data.value` or `custom_data.currency`. Meta documents both as required for purchase events.",
+          "fix_hint": "Add `custom_data.value` as a number and `custom_data.currency` as an ISO 4217 code.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data"
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.website_requires_source_url",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
+            "website"
+          ],
+          "requires": [
+            "event_source_url"
+          ],
+          "severity": "error",
+          "message": "The event is marked `action_source: website` but carries no `event_source_url`, which Meta requires for website events.",
+          "fix_hint": "Send the page URL the conversion happened on.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event"
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.ldu_requires_country",
+          "kind": "required_when_value",
+          "when": "data_processing_options[]",
+          "equals": [
+            "LDU"
+          ],
+          "requires": [
+            "data_processing_options_country"
+          ],
+          "severity": "error",
+          "message": "Limited Data Use is enabled but `data_processing_options_country` is missing.",
+          "fix_hint": "Send `data_processing_options_country` as 1 for the United States, or 0 to let Meta geolocate.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event"
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.unhashed_email",
+          "kind": "forbid_value_pattern",
+          "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+          "severity": "error",
+          "message": "A field carries what looks like a raw email address. Meta requires customer information to be normalized and SHA-256 hashed before it is sent.",
+          "fix_hint": "Trim the address, lowercase it, hash it with SHA-256, and send the hex digest.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters"
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.hashed_plaintext_field",
+          "kind": "forbid_value_pattern",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "params": [
+            "user_data.client_ip_address",
+            "user_data.client_user_agent"
+          ],
+          "severity": "error",
+          "message": "This field looks like a SHA-256 digest, but Meta documents it as one of the parameters that is sent unhashed.",
+          "fix_hint": "Send the raw value. Hashing it makes the event unmatchable.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters"
+        },
+        {
+          "code": "vendor.meta-conversions-api.body.website_user_agent_expected",
+          "kind": "required_when_value",
+          "when": "action_source",
+          "equals": [
+            "website"
+          ],
+          "requires": [
+            "user_data.client_user_agent"
+          ],
+          "condition": {
+            "kind": "json_type",
+            "param": "user_data",
+            "json_type": "object"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "message": "The official Meta Conversions API collection lists client_user_agent for website events.",
+          "doc": "https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json"
+        }
+      ],
+      "source_param": "data",
+      "source_field": "[]"
+    },
+    {
+      "scope": "[]",
+      "params": [
+        {
+          "name": "app_data.application_tracking_enabled",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.advertiser_tracking_enabled",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.campaign_ids",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.consider_views",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "array",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.include_dwell_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.include_video_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.install_referrer",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.installer_package",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.receipt_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.url_schemes",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.windows_attribution_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "original_event_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "original_event_data.event_name",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "original_event_data.event_time",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "original_event_data.order_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "original_event_data.event_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.scope",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.visit_time",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.ad_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.adset_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.campaign_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.attr_window",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.attribution_value",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.attribution_source",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.touchpoint_type",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.touchpoint_ts",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.auditing_token",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.linkage_key",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.touchpoint_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.attribution_setting",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.total_credit",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.partner_client_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.attribution_setting.inactivity_window_hours",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.attribution_setting.reattribution_window_hours",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[0]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[1]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[2]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[3]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[4]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[5]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[6]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[7]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[8]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[9]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[10]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[11]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[12]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[13]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[14]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "app_data.extinfo[15]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "advanced_measurement_table",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "messaging_channel",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.net_revenue",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.content_name",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.content_category",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.status",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "custom_data.item_number",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "attribution_data.attribution_share",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true,
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "name": "",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py"
+        }
+      ],
+      "source_param": "data"
+    },
+    {
+      "scope": "",
+      "params": [
+        {
+          "name": "app_data.application_tracking_enabled",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.advertiser_tracking_enabled",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.campaign_ids",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.consider_views",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "array",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.include_dwell_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.include_video_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "boolean",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.install_referrer",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.installer_package",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.receipt_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.url_schemes",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.windows_attribution_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/app_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data.event_name",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data.event_time",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data.order_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "original_event_data.event_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/original_event_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.scope",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.visit_time",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.ad_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.adset_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.campaign_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attr_window",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_value",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_source",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.touchpoint_type",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.touchpoint_ts",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.auditing_token",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.linkage_key",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.touchpoint_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_setting",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "object",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.total_credit",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.partner_client_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_setting.inactivity_window_hours",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_setting.reattribution_window_hours",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_setting.py",
+          "json_type": "integer",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[0]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[1]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[2]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[3]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[4]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[5]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[6]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[7]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[8]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[9]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[10]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[11]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[12]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[13]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[14]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "app_data.extinfo[15]",
+          "description": "The SDK serializes this documented position, retaining null for omitted device values.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/extended_device_info.py",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "advanced_measurement_table",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "messaging_channel",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.net_revenue",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "number",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.content_name",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.content_category",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.status",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "custom_data.item_number",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/custom_data.py",
+          "json_type": "string",
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        },
+        {
+          "name": "attribution_data.attribution_share",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/attribution_data.py",
+          "json_type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "format_severity": "warning",
+          "source_level": "official_template",
+          "allow_empty": true
+        }
+      ],
+      "source_param": "data",
+      "source_field": "[]"
     }
-  ]
+  ],
+  "http_url_presence_overrides": [
+    "access_token"
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        },
+        "format_severity": "warning",
+        "source_level": "official_template"
+      },
+      {
+        "name": "query.access_token",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/api.py",
+        "json_type": "string",
+        "allow_empty": true
+      },
+      {
+        "name": "body.access_token",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://raw.githubusercontent.com/facebook/facebook-nodejs-business-sdk/main/src/objects/serverside/event-request.js",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "severity": "error"
+      },
+      {
+        "name": "headers.authorization",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "(?i)^Bearer[ \\t]+[^ \\t]+$"
+        },
+        "severity": "error"
+      },
+      {
+        "name": "query.data",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py",
+        "json_type": "string"
+      },
+      {
+        "name": "body.data",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event_request.py",
+        "json_type": [
+          "array",
+          "string"
+        ]
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.meta-conversions-api.http.authentication_required",
+        "kind": "require_any_of",
+        "groups": [
+          [
+            "query.access_token"
+          ],
+          [
+            "body.access_token"
+          ],
+          [
+            "headers.authorization"
+          ]
+        ],
+        "severity": "error",
+        "message": "Provide an access token in the query, form/JSON body, or Bearer header.",
+        "doc": "https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json"
+      },
+      {
+        "code": "vendor.meta-conversions-api.http.data_required",
+        "kind": "require_any_of",
+        "groups": [
+          [
+            "query.data"
+          ],
+          [
+            "body.data"
+          ]
+        ],
+        "severity": "error",
+        "message": "The events edge requires data containing its submitted events.",
+        "doc": "https://raw.githubusercontent.com/fbsamples/lead-ads-webhook-sample/main/postman/FB%20Conversions%20API%20%28Part%201%20-%20online%29.postman_collection.json"
+      }
+    ]
+  }
 }

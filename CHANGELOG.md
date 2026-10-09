@@ -4,6 +4,23 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.34.0 - 2026-10-09
+
+### Added
+
+- Added Cloudflare RUM and Flashtalking FTrack protocol packs from public
+  vendor documentation and pinned SDK producers. Source-derived telemetry
+  shapes remain advisories and retain explicit private collector gaps.
+- Deepened Meta, Pinterest and TikTok conversion APIs with native application,
+  identity and event contracts. Complete Meta captures accept published
+  Bearer, query and form credential carriers while bare URL checks remain.
+- Added the Matomo PHP 8 bulk-map profile and source-defined field readers,
+  inheritance and ignored-item behavior. Unmodeled coercions remain explicit.
+- Deepened HubSpot tracking with public producer routes and field contracts.
+  Added opt-in percent-encoded JSON and nested query-field decoding.
+- Added bounded UTF-8 multipart form text decoding for Amplitude Identify.
+  File and unsupported charset captures remain informational coverage gaps.
+
 ## 0.33.0 - 2026-10-09
 
 ### Added

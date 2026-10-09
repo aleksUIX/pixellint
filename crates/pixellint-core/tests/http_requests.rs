@@ -352,7 +352,7 @@ fn unavailable_body_does_not_invent_missing_fields_but_checks_known_path() {
                 "severity":"error","message":"Observable values must agree."}]}
     }).to_string()).unwrap();
     let valid = json!({"url":"https://form.example/event/123", "method":"POST",
-        "headers":{"Content-Type":"multipart/form-data; boundary=boundary"}, "body":"opaque"});
+        "headers":{"Content-Type":"multipart/form-data; boundary=boundary"}, "body":"--boundary\r\nContent-Disposition: form-data; name=\"file\"; filename=\"capture.bin\"\r\n\r\nopaque\r\n--boundary--\r\n"});
     let summary = validate(&engine, valid.clone(), &[]);
     assert_eq!(codes(&summary), ["core.request.unsupported_body_encoding"]);
     let mut bad_path = valid;

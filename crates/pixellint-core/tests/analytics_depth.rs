@@ -26,6 +26,7 @@ fn check_case(engine: &Engine, name: &str, case: ContractCase) -> Option<String>
         artifact_kind: match case.kind.as_str() {
             "url" => ArtifactKind::Url,
             "json" => ArtifactKind::JsonPayload,
+            "request" => ArtifactKind::NetworkRequest,
             other => panic!("unsupported fixture kind {other}"),
         },
         artifact: case.artifact,
@@ -203,6 +204,7 @@ fn analytics_existing_transport_fixtures_preserve_selection_and_findings() {
                 artifact_kind: match case["kind"].as_str().unwrap() {
                     "url" => ArtifactKind::Url,
                     "json" => ArtifactKind::JsonPayload,
+                    "request" => ArtifactKind::NetworkRequest,
                     kind => panic!("unsupported fixture kind {kind}"),
                 },
                 artifact: fs::read_to_string(directory.join(case["fixture"].as_str().unwrap()))

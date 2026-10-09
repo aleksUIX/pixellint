@@ -37,6 +37,7 @@ engine.register_manifest_path("acme.json")?;
 | `rules` | no | Rules that span more than one parameter. |
 | `body` | no | Contracts on the JSON request body. |
 | `http` | no | Complete-request contracts over URL, method, headers, query and decoded body. See [HTTP_REQUEST_SCHEMA.md](HTTP_REQUEST_SCHEMA.md). |
+| `http_url_presence_overrides` | no | Canonical required or recommended URL fields whose missing presence is checked by `http` alternatives on matching complete captures. Bare URL requirements and submitted value checks still run. |
 | `http_queries` | no | Query strings in captured bulk bodies, each evaluated with this pack's URL contracts. |
 
 `source_level` is one of `normative`, `official_vendor`, `official_template`,
@@ -408,8 +409,8 @@ its own bytes.
 | `decoded_source_condition` | no | A JSON shape selecting that second representation in the first decoded document. Requires `decoded_source_field`. |
 | `source_max_length` | no | Unicode character limit on the original `source_field` string, including its embedded JSON whitespace. |
 | `source_max_length_when` | no | A first-decoded-document JSON shape controlling `source_max_length`. Requires the limit. |
-| `field_encoding` | no | Inner field encoding when both sources are declared. Defaults to `json`; `base64_json`, `base64_latin1_json` and `pipe_delimited_json` are opt-in. |
-| `encoding` | no | `json` by default; `base64_json` decodes UTF-8 JSON and `base64_latin1_json` decodes browser `btoa` JSON. Both accept standard or URL-safe base64 and optional padding. `pipe_delimited_json` represents a pipe-separated tuple as a JSON array of strings. |
+| `field_encoding` | no | Inner field encoding when both sources are declared. Defaults to `json`; `base64_json`, `base64_latin1_json` `pipe_delimited_json`, `percent_encoded_json` and `query_params_json` are opt-in. |
+| `encoding` | no | `json` by default; `base64_json` decodes UTF-8 JSON and `base64_latin1_json` decodes browser `btoa` JSON. Both accept standard or URL-safe base64 and optional padding. `pipe_delimited_json` represents a pipe-separated tuple as a JSON array of strings. `percent_encoded_json` decodes one additional URI component layer. `query_params_json` reads a nested form-style query as a JSON object of strings or repeated arrays. |
 | `encoding_severity` | no | `error` by default, or `warning` or `info`, for encoded-source decoding and JSON syntax failures. Requires `source_param` or `source_field`. Applies to outer, inner and `decoded_source_field` decoding; field contracts and source-length limits retain their own severities. |
 | `condition` | no | An outer URL parameter condition for a `source_param` spec. |
 | `params` | no | Parameter contracts, named by path relative to the scope. |
@@ -432,6 +433,20 @@ empty components without numeric coercion. Tuple positions use paths such as
 byte limits count the decoded original tuple's UTF-8 bytes, before its synthetic
 JSON representation adds quoting and escapes. Macro components remain unknown,
 and findings point to the original parameter or string field.
+
+`percent_encoded_json` decodes one strict percent-encoded UTF-8 layer after
+the enclosing URL or form transport has already decoded its layer. Literal
+plus signs remain plus signs, matching JavaScript `encodeURIComponent`.
+Malformed escapes and invalid UTF-8 produce the declared encoding severity.
+Successfully decoded whole-source macros remain unknown; they do not become
+fabricated JSON syntax failures.
+
+`query_params_json` reads an inner form-style query. Plus signs become spaces,
+percent escapes must decode to UTF-8, and duplicate literal names preserve
+ordered arrays. Bracketed names remain literal names. This codec does not invent
+PHP object semantics. Body byte limits count the original inner wire string,
+before the synthetic JSON representation adds quoting or escapes. Its field
+contracts decide the source-specific severity.
 
 Declaring both `source_param` and `source_field` decodes the URL parameter first,
 then reads the inner string field from that document. `encoding` applies to the

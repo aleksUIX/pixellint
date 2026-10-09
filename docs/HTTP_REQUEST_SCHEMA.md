@@ -55,9 +55,17 @@ or form fields. Encoded `body.source_param` contracts can validate JSON/Base64
 inside form fields. Ordinary native JSON body scopes do not run on the enclosing
 form object.
 
-Compressed and multipart bodies produce
-`core.request.unsupported_body_encoding` at informational severity. Pixellint
-does not claim to have inspected those payloads. Observable endpoint, method,
+`multipart/form-data` decodes UTF-8 text fields using its declared boundary.
+Names, repeated values, Unicode, literal plus signs and percent characters are
+preserved. JSON inside a field uses that destination's existing encoded body
+contracts. The local decoder is bounded to 4 MiB, 1024 parts and 16 KiB of
+headers per part. File parts, alternate charsets, transfer encodings, folded or
+ambiguous headers and captures above these limits remain unavailable.
+Malformed required framing or disposition produces `core.request.invalid_multipart`
+with the multipart RFC citation. Valid but unsupported representations and
+compressed bodies produce `core.request.unsupported_body_encoding` at
+informational severity. Pixellint does not claim to have inspected those
+payloads. Observable endpoint, method,
 header and submitted query contracts can still run. Requirements whose values
 could be in an unavailable form body, and body-dependent HTTP contracts, are
 deferred. A capture with no errors can therefore still have incomplete coverage.
@@ -65,8 +73,8 @@ Provide decoded entity bytes and matching headers for those body checks.
 
 Complete-capture findings carry fields and citations. Targets are omitted
 because ranges in decoded JSON cannot be used as offsets into the capture's
-escaped body string. Authentication header values and decoded Basic credentials
-are redacted from findings. Captures themselves can contain credentials and
+escaped body string. Authentication header values, decoded Basic credentials and credential-like
+query or decoded form values are redacted from findings. Captures themselves can contain credentials and
 should remain private; this input feature does not add production collection.
 
 Manifest `http` contracts reuse body contract fields, scopes and guards. The
@@ -83,6 +91,44 @@ its declared normalized fields. Raw body limits and encoded sources belong in
 `body`, since the normalized wrapper has a different size and representation.
 These local contracts cannot prove credential validity, account permissions,
 historical duplicate events or remote acceptance.
+
+`http_url_presence_overrides` transfers missing URL presence checks to explicit
+HTTP alternatives when the complete capture matches the pack's host, path and
+query selectors. Use it for a documented credential that can be carried in the
+query, form body or header:
+
+```json
+"http_url_presence_overrides": ["access_token"],
+"params": [
+  {"name": "access_token", "requirement": "required"}
+],
+"http": {
+  "params": [
+    {"name": "query.access_token", "json_type": "string", "allow_empty": true},
+    {"name": "body.access_token", "json_type": "string"},
+    {"name": "headers.authorization", "json_type": "string",
+     "format": {"kind": "regex", "pattern": "(?i)^Bearer[ \\t]+[^ \\t]+$"}}
+  ],
+  "rules": [
+    {"code": "vendor.example.http.auth", "kind": "require_any_of",
+     "groups": [["query.access_token"], ["body.access_token"], ["headers.authorization"]],
+     "severity": "error", "message": "Provide a populated authentication carrier."}
+  ]
+}
+```
+
+Names must be unique canonical names of exact required or recommended URL
+contracts. Aliases, unknown names, optional, forbidden and deprecated contracts
+are rejected. At least one HTTP contract scope and a host or host suffix matcher
+are required. A self-hosted `any_host` matcher cannot enable this deferral.
+
+The list alone does not validate alternatives. Declare their formats and presence
+rules in `http`, using the destination's documented carriers. A populated URL or
+form value retains its original format and blank checks, even when a valid header
+is also supplied. Forbidden and deprecated fields keep their checks. Bare URLs,
+legacy URL strings with kind `request`, and unmatched capture branches retain
+ordinary URL behavior. Explicit selection of an unrelated endpoint still reports
+its endpoint mismatch and does not validate that endpoint's body.
 
 `http_queries` declares bulk event strings, such as Matomo's `requests` array:
 
@@ -108,8 +154,18 @@ validate the array and its native string items. Bulk field presence replaces
 outer event-query checks, including empty or malformed arrays, whose shape is
 then checked by those contracts. Findings identify `http.body.requests[index]`.
 Core URL checks run for inner queries when core is selected.
-Native parameter objects remain an explicit per-item information finding
-because destination-specific native coercions are not modeled by URL contracts.
+Native maps are opt-in with `native_map: "matomo_php8"`. The pinned Matomo
+PHP 8 reader profile applies documented per-field integer, float, string and
+embedded JSON readers, including its empty-value credential inheritance.
+Ignored scalar or empty bulk entries follow the source behavior. Unsupported
+plugin fields and platform-sensitive numeric conversions produce per-item
+information findings instead of invented missing values. Other packs retain
+an explicit native-map information finding.
+
+`check_chronological_order: true` requires that Matomo profile. It compares
+only explicit parseable `cdt` timestamps across supported bulk entries and
+warns on a backward step under the documented oldest-first recommendation.
+Missing or unresolved timestamps never acquire an inferred clock.
 
 The bounded JSON reader accepts entity nesting through depth 64. Deeper
 documents exceed a local parser limit, even when a vendor permits them. They

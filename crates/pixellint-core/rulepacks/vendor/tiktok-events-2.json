@@ -6,11 +6,18 @@
   "source_level": "official_vendor",
   "docs": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3",
   "match": {
-    "hosts": ["business-api.tiktok.com"],
-    "path_contains": ["/event/track"],
+    "hosts": [
+      "business-api.tiktok.com"
+    ],
+    "path_contains": [
+      "/event/track"
+    ],
     "json_paths": [
       {
-        "any_of": ["event_source", "event_source_id"]
+        "any_of": [
+          "event_source",
+          "event_source_id"
+        ]
       }
     ]
   },
@@ -22,26 +29,50 @@
           "requirement": "required",
           "format": {
             "kind": "enum",
-            "values": ["web", "app", "offline", "crm"]
+            "values": [
+              "web",
+              "app",
+              "offline",
+              "crm"
+            ]
           },
           "description": "It names the channel. TikTok documents `web`, `app`, `offline`, and `crm`.",
           "fix_hint": "Set `event_source` to `web` for Pixel-measured website events.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "string"
         },
         {
           "name": "event_source_id",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the Pixel Code when `event_source` is `web`, or the matching event-set ID for app, offline, and CRM.",
           "fix_hint": "Set `event_source_id` to the Pixel Code from Events Manager for web events.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "string"
         },
         {
           "name": "data",
           "requirement": "required",
           "description": "TikTok documents `data` as the array of events to report, at most 1,000.",
           "fix_hint": "Send one event object, or a batch, under `data`.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "array",
+          "min_items": 1,
+          "max_items": 1000
+        },
+        {
+          "name": "",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "object"
+        },
+        {
+          "name": "data[]",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "object"
         }
       ],
       "rules": []
@@ -52,84 +83,123 @@
         {
           "name": "event",
           "requirement": "required",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the conversion event name. TikTok documents it as required on every Events 2.0 event.",
           "fix_hint": "Set `event` to a documented standard name such as `Purchase` or `ViewContent`.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "string"
         },
         {
           "name": "event_time",
           "requirement": "required",
-          "format": { "kind": "integer", "min_digits": 10, "max_digits": 10 },
+          "format": {
+            "kind": "integer",
+            "min_digits": 10,
+            "max_digits": 10
+          },
           "description": "TikTok documents `event_time` as Unix time in seconds, UTC. A 13-digit value is milliseconds.",
           "fix_hint": "Send seconds since epoch, a 10-digit integer.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "integer"
         },
         {
           "name": "event_id",
           "requirement": "recommended",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "TikTok documents `event_id` as required when the same conversion is also sent from the browser Pixel.",
           "fix_hint": "Send the same `event_id` the Pixel fired.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "string"
         },
         {
           "name": "page.url",
           "requirement": "recommended",
-          "format": { "kind": "url" },
+          "format": {
+            "kind": "url"
+          },
           "description": "TikTok documents `page.url` as required on web events.",
           "fix_hint": "Send the absolute page URL in `page.url`.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3",
+          "condition": {
+            "kind": "value_in",
+            "param": "event_source",
+            "values": [
+              "web"
+            ]
+          }
         },
         {
           "name": "page.referrer",
-          "format": { "kind": "url" },
+          "format": {
+            "kind": "url"
+          },
           "description": "It is the referrer URL. TikTok documents the full URL, including query, as `document.referrer` or the Referer header.",
           "fix_hint": "Send an absolute URL in `page.referrer`, including the scheme.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "user.email",
-          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
           "description": "Email must be SHA-256 hashed after trim and lowercase.",
           "fix_hint": "Trim, lowercase, SHA-256, send the hex digest.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "user.phone",
-          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
           "description": "Phone must be E.164 then SHA-256 hashed.",
           "fix_hint": "Normalize to E.164, hash with SHA-256, send the hex digest.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "user.external_id",
-          "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
           "description": "Advertiser-side identifiers must be SHA-256 hashed.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "user.ttclid",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the TikTok click id. TikTok documents it as a web match key.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "user.ttp",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the `_ttp` cookie Pixel SDK writes. TikTok documents it as an unhashed web match key.",
           "fix_hint": "Read `_ttp` under your domain into `user.ttp`, or drop the empty pair.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "user.ip",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the visitor IP, sent unhashed.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "user.user_agent",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the visitor user agent, sent unhashed.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
@@ -145,14 +215,20 @@
         },
         {
           "name": "properties.currency",
-          "format": { "kind": "regex", "pattern": "^[A-Za-z]{3}$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z]{3}$"
+          },
           "description": "It is an ISO 4217 currency code. TikTok documents it as required for ROAS events.",
           "fix_hint": "Use the three-letter code, such as `USD`.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "properties.value",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
           "description": "It is the total order value. TikTok documents a float with no currency symbol, such as `10.00`.",
           "fix_hint": "Send a number such as `20`, with no currency symbol.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
@@ -161,7 +237,10 @@
           "name": "properties.content_type",
           "format": {
             "kind": "enum",
-            "values": ["product", "product_group"]
+            "values": [
+              "product",
+              "product_group"
+            ]
           },
           "description": "It is how catalog ids map. TikTok documents `product` when `content_id` is a sku, or `product_group` when it is an item group.",
           "fix_hint": "Set `properties.content_type` to `product` or `product_group`.",
@@ -169,17 +248,75 @@
         },
         {
           "name": "properties.contents[].content_id",
-          "format": { "kind": "non_empty" },
+          "format": {
+            "kind": "non_empty"
+          },
           "description": "It is the product or content id on a contents row. TikTok documents matching catalog `sku_id` or `item_group_id`.",
           "fix_hint": "Set `properties.contents[].content_id` to the catalog item ID, or drop the empty pair.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
         },
         {
           "name": "properties.contents[].price",
-          "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+          },
           "description": "It is the unit price of one item. TikTok documents `price` as the single-item price, not the order total.",
           "fix_hint": "Send `properties.contents[].price` as a number, such as `10`. Put the order total in `properties.value`.",
           "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+        },
+        {
+          "name": "event_source",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "root_path": "event_source"
+        },
+        {
+          "name": "",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH"
+        },
+        {
+          "name": "user",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "object"
+        },
+        {
+          "name": "properties",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "object"
+        },
+        {
+          "name": "page",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "object"
+        },
+        {
+          "name": "app",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "object"
+        },
+        {
+          "name": "ad",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "object"
+        },
+        {
+          "name": "lead",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "object"
+        },
+        {
+          "name": "limited_data_use",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "json_type": "boolean"
         }
       ],
       "rules": [
@@ -190,39 +327,458 @@
           "severity": "error",
           "message": "A field carries what looks like a raw email address. TikTok requires SHA-256 hashed email on Events API 2.0.",
           "fix_hint": "Trim, lowercase, hash with SHA-256, and send the hex digest.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
         },
         {
           "code": "vendor.tiktok-events-2.body.hashed_plaintext_field",
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
-          "params": ["user.ip", "user.user_agent", "user.ttp"],
+          "params": [
+            "user.ip",
+            "user.user_agent",
+            "user.ttp"
+          ],
           "severity": "error",
           "message": "This field looks like a SHA-256 digest, but TikTok documents `user.ip`, `user.user_agent`, and `user.ttp` as unhashed.",
           "fix_hint": "Send the raw IP address, user agent, or `_ttp` cookie.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
         },
         {
           "code": "vendor.tiktok-events-2.body.user_needs_an_identifier",
           "kind": "require_one_of",
-          "params": ["user.email", "user.phone", "user.external_id", "user.ttclid", "user.ttp", "user.ip"],
+          "params": [
+            "user.email",
+            "user.phone",
+            "user.external_id",
+            "user.ttclid",
+            "user.ttp",
+            "user.ip"
+          ],
           "severity": "warning",
           "message": "The event has no match key. TikTok documents hashed email, phone, external_id, ttclid, ttp, or IP as the identifiers that attach the conversion to a person.",
           "fix_hint": "Send hashed `user.email`, `phone`, or `external_id`, or `ttclid`, `ttp`, or `user.ip`.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
         },
         {
           "code": "vendor.tiktok-events-2.body.purchase_requires_value_and_currency",
           "kind": "required_when_value",
           "when": "event",
-          "equals": ["Purchase", "CompletePayment", "PlaceAnOrder"],
-          "requires": ["properties.value", "properties.currency"],
+          "equals": [
+            "Purchase",
+            "CompletePayment",
+            "PlaceAnOrder"
+          ],
+          "requires": [
+            "properties.value",
+            "properties.currency"
+          ],
           "severity": "error",
           "message": "A revenue event is missing `properties.value` or `properties.currency`. TikTok documents both for ROAS events.",
           "fix_hint": "Set `properties.value` to the order total and `properties.currency` to a three-letter ISO 4217 code.",
-          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3"
+          "doc": "https://business-api.tiktok.com/portal/docs/report-app-web-offline-or-crm-events/v1.3",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.tiktok-events-2.body.web_requires_page",
+          "kind": "required_when_value",
+          "when": "event_source",
+          "equals": [
+            "web"
+          ],
+          "requires": [
+            "page"
+          ],
+          "severity": "error",
+          "message": "TikTok requires page for web events.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.tiktok-events-2.body.app_requires_app",
+          "kind": "required_when_value",
+          "when": "event_source",
+          "equals": [
+            "app"
+          ],
+          "requires": [
+            "app"
+          ],
+          "severity": "error",
+          "message": "TikTok requires app for app events.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.tiktok-events-2.body.crm_requires_lead",
+          "kind": "required_when_value",
+          "when": "event_source",
+          "equals": [
+            "crm"
+          ],
+          "requires": [
+            "lead"
+          ],
+          "severity": "error",
+          "message": "TikTok requires lead for crm events.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.tiktok-events-2.body.limited_data_use_unsupported_source",
+          "kind": "forbidden_when_value",
+          "when": "event_source",
+          "equals": [
+            "offline",
+            "crm"
+          ],
+          "params": [
+            "limited_data_use"
+          ],
+          "severity": "error",
+          "message": "TikTok does not support limited_data_use for the selected event source.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.tiktok-events-2.body.ad_unsupported_source",
+          "kind": "forbidden_when_value",
+          "when": "event_source",
+          "equals": [
+            "web",
+            "offline",
+            "crm"
+          ],
+          "params": [
+            "ad"
+          ],
+          "severity": "error",
+          "message": "TikTok does not support ad for the selected event source.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "data[]",
+      "params": [
+        {
+          "name": "page.url",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "page.referrer",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.email",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.phone",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.external_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.ttclid",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.ttp",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.ip",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.user_agent",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.locale",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties.currency",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties.content_type",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties.contents[].content_id",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties.contents",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "array",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties.contents[]",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "object",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.first_name",
+          "description": "The official GTM mapping hashes this optional customer field before serializing it.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "format_severity": "warning"
+        },
+        {
+          "name": "user.last_name",
+          "description": "The official GTM mapping hashes this optional customer field before serializing it.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "format_severity": "warning"
+        },
+        {
+          "name": "user.zip_code",
+          "description": "The official GTM mapping hashes this optional customer field before serializing it.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          },
+          "source_level": "official_template",
+          "format_severity": "warning"
+        },
+        {
+          "name": "user.city",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.state",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "user.country",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties.contents[].content_name",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties.contents[].content_category",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties.contents[].brand",
+          "description": "The cited primary model documents this field representation.",
+          "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1799004097478658&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b",
+          "json_type": "string",
+          "source_level": "official_template",
+          "format_severity": "warning",
+          "allow_empty": true
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        },
+        "format_severity": "warning",
+        "source_level": "official_template"
+      },
+      {
+        "name": "content_type",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+        "json_type": "string",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "format_severity": "warning",
+        "source_level": "official_template"
+      },
+      {
+        "name": "headers.access-token",
+        "description": "The official Events API 2.0 curl template sends the authentication token in the Access-Token header. Token necessity is explicit; header-only requiredness is not established by the accessible reference.",
+        "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+        "json_type": "string",
+        "requirement": "recommended",
+        "format": {
+          "kind": "non_empty"
+        },
+        "severity": "warning",
+        "format_severity": "warning",
+        "source_level": "official_template"
+      },
+      {
+        "name": "body",
+        "description": "The cited primary model documents this field representation.",
+        "doc": "https://business-api.tiktok.com/gateway/docs/index?doc_id=1771100779668482&identify_key=c0138ffadd90a955c1f0670a56fe348d1d40680b3c89461e09f78ed26785164b&language=ENGLISH",
+        "json_type": "object",
+        "requirement": "required"
+      }
+    ]
+  }
 }
