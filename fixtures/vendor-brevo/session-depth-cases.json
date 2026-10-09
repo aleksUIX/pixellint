@@ -1,0 +1,42 @@
+[
+  {
+    "id": "published_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://in-automate.brevo.com/api/v2/trackEvent\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"ma-key\":\"TEST_ONLY_MA_KEY\"},\"body\":\"{\\\"email\\\":\\\"example@brevo.com\\\",\\\"event\\\":\\\"cart_updated\\\",\\\"properties\\\":{\\\"FIRSTNAME\\\":\\\"Ada\\\"},\\\"eventdata\\\":{\\\"data\\\":{\\\"total\\\":50}}}\"}",
+    "code": "vendor.brevo.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://developers.brevo.com/docs/track-custom-events-rest",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "wrong_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://in-automate.brevo.com/api/v2/trackEvent\",\"method\":\"GET\",\"headers\":{\"Content-Type\":\"application/json\",\"ma-key\":\"TEST_ONLY_MA_KEY\"},\"body\":\"{\\\"email\\\":\\\"example@brevo.com\\\",\\\"event\\\":\\\"cart_updated\\\",\\\"properties\\\":{\\\"FIRSTNAME\\\":\\\"Ada\\\"},\\\"eventdata\\\":{\\\"data\\\":{\\\"total\\\":50}}}\"}",
+    "code": "vendor.brevo.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.brevo.com/docs/track-custom-events-rest",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "authentication_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://in-automate.brevo.com/api/v2/trackEvent\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"email\\\":\\\"example@brevo.com\\\",\\\"event\\\":\\\"cart_updated\\\",\\\"properties\\\":{\\\"FIRSTNAME\\\":\\\"Ada\\\"},\\\"eventdata\\\":{\\\"data\\\":{\\\"total\\\":50}}}\"}",
+    "code": "vendor.brevo.http.headers.ma-key.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.brevo.com/docs/track-custom-events-rest",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "unpublished_mime_advisory",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://in-automate.brevo.com/api/v2/trackEvent\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/xml\",\"ma-key\":\"TEST_ONLY_MA_KEY\"},\"body\":\"{\\\"email\\\":\\\"example@brevo.com\\\",\\\"event\\\":\\\"cart_updated\\\",\\\"properties\\\":{\\\"FIRSTNAME\\\":\\\"Ada\\\"},\\\"eventdata\\\":{\\\"data\\\":{\\\"total\\\":50}}}\"}",
+    "code": "vendor.brevo.http.content_type.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.brevo.com/docs/track-custom-events-rest",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

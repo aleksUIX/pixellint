@@ -1,0 +1,72 @@
+{
+  "id": "vendor/flashtalking-state",
+  "display_name": "Flashtalking state tracker",
+  "vendor": "flashtalking",
+  "source_level": "official_template",
+  "docs": "https://help.innovid.com/hc/en-us/articles/28042598512284-Innovid-Tag-Assistant-User-Guide",
+  "description": "Five-part state tracker recognized by official Innovid Tag Assistant 1.1.5 on legacy Flashtalking servedby hosts. Numeric tuple fields and a nonempty impression identifier are template completeness advisories. The recognizer does not establish server rejection, event enumeration or session correctness.",
+  "match": {
+    "hosts": [
+      "servedby.flashtalking.com",
+      "servedby-us.flashtalking.com",
+      "servedby-eu.flashtalking.com",
+      "servedby-emea.flashtalking.com"
+    ],
+    "path_prefixes": [
+      "/state/"
+    ]
+  },
+  "path_pattern": "^/state/(?<placement_id>[^;/?]*);(?<creative_id>[^;/?]*);(?<version_id>[^;/?]*);(?<event_id>[^;/?]*);(?<impression_id>[^/?]*)/?$",
+  "params": [
+    {
+      "name": "placement_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "description": "Official diagnostic recognizer uses a decimal-digit group for this tuple position. Completeness advice only."
+    },
+    {
+      "name": "creative_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "description": "Official diagnostic recognizer uses a decimal-digit group for this tuple position. Completeness advice only."
+    },
+    {
+      "name": "version_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "description": "Official diagnostic recognizer uses a decimal-digit group for this tuple position. Completeness advice only."
+    },
+    {
+      "name": "event_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "description": "Official diagnostic recognizer uses a decimal-digit group for this tuple position. Completeness advice only."
+    },
+    {
+      "name": "impression_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Official recognizer retains the fifth tuple member as an opaque impression ID."
+    }
+  ],
+  "rules": []
+}

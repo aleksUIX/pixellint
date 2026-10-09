@@ -1,0 +1,162 @@
+[
+  {
+    "id": "published_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99},\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "wrong_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"GET\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99},\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "content_type_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99},\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.content_type.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "content_type_unsupported",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/xml\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99},\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.content_type.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "no_authentication",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99}}\"}",
+    "code": "vendor.segment.http.authentication_required",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "basic_with_colon",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic VEVTVF9PTkxZX1dSSVRFX0tFWTo=\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99}}\"}",
+    "code": "vendor.segment.http.basic_colon_recommended",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "basic_legacy_without_colon",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic VEVTVF9PTkxZX1dSSVRFX0tFWQ==\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99}}\"}",
+    "code": "vendor.segment.http.basic_colon_recommended",
+    "expect_violation": true,
+    "expect_no_errors": true,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "oauth_with_body_writekey",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer TEST_ONLY_OAUTH\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99},\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.oauth_write_key_required",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "oauth_without_body_writekey",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer TEST_ONLY_OAUTH\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99}}\"}",
+    "code": "vendor.segment.http.oauth_write_key_required",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "malformed_basic",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic INVALID_BASE64\"},\"body\":\"{\\\"userId\\\":\\\"019mr8mf4r\\\",\\\"event\\\":\\\"Item Purchased\\\",\\\"properties\\\":{\\\"revenue\\\":14.99},\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.basic_auth.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "track_route_field_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"user123\\\",\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.body.event.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "track_route_type_inferred",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"user123\\\",\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\",\\\"event\\\":\\\"value123\\\"}\"}",
+    "code": "vendor.segment.http.body.event.missing",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "group_route_field_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/group\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"user123\\\",\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.body.groupId.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "group_route_type_inferred",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/group\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"user123\\\",\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\",\\\"groupId\\\":\\\"value123\\\"}\"}",
+    "code": "vendor.segment.http.body.groupId.missing",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "alias_route_field_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/alias\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"user123\\\",\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\"}\"}",
+    "code": "vendor.segment.http.body.previousId.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "alias_route_type_inferred",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.segment.io/v1/alias\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"userId\\\":\\\"user123\\\",\\\"writeKey\\\":\\\"TEST_ONLY_WRITE_KEY\\\",\\\"previousId\\\":\\\"value123\\\"}\"}",
+    "code": "vendor.segment.http.body.previousId.missing",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

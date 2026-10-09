@@ -138,7 +138,7 @@ pub(crate) fn apply_privacy_rules(
         return;
     }
 
-    check_duplicates(params, violations);
+    check_duplicates(prepared, params, violations);
     check_tcf(prepared, artifact, params, violations);
     check_us_privacy(params, violations);
     check_gpp(artifact, params, violations);
@@ -187,8 +187,17 @@ fn violation(
 
 /// Both the TCF and GPP specs tell URL creators to add each signal exactly once.
 /// A repeated signal leaves the callee choosing which copy to believe.
-fn check_duplicates(params: &[RawParam<'_>], violations: &mut Vec<Violation>) {
+fn check_duplicates(
+    prepared: &PreparedArtifact<'_>,
+    params: &[RawParam<'_>],
+    violations: &mut Vec<Violation>,
+) {
     for name in SIGNAL_PARAMS {
+        // Destination aliases form one logical consent signal. check_tcf reports
+        // that group once, including canonical and alternate carriers.
+        if name == "gdpr_consent" && !prepared.gdpr_consent_aliases().is_empty() {
+            continue;
+        }
         let matches: Vec<&RawParam> = params.iter().filter(|param| param.name == name).collect();
 
         if matches.len() > 1 {
@@ -215,7 +224,35 @@ fn check_tcf(
     violations: &mut Vec<Violation>,
 ) {
     let gdpr = find(params, "gdpr");
-    let consent = find(params, "gdpr_consent");
+    let consent_carriers: Vec<_> = params
+        .iter()
+        .filter(|param| {
+            param.name == "gdpr_consent"
+                || prepared
+                    .gdpr_consent_aliases()
+                    .iter()
+                    .any(|alias| alias == param.name.as_ref())
+        })
+        .collect();
+    if !prepared.gdpr_consent_aliases().is_empty() && consent_carriers.len() > 1 {
+        violations.push(violation(
+            "core.privacy.duplicate_signal",
+            format!(
+                "The GDPR consent signal has {} canonical or destination-supported alternate carriers. The callee has to choose which copy is authoritative.",
+                consent_carriers.len()
+            ),
+            Severity::Warning,
+            "param.gdpr_consent",
+            "Keep one destination-supported consent parameter and drop the other carriers.",
+            source("IAB Tech Lab TCF v2", TCF_SPEC),
+            consent_carriers.iter().map(|param| param.target()).collect(),
+        ));
+    }
+    let consent = consent_carriers
+        .iter()
+        .find(|param| !param.value.is_empty())
+        .or_else(|| consent_carriers.first())
+        .copied();
 
     // An empty signal is a template waiting to be filled by an ad server, which
     // is how Floodlight and VAST tags ship. Only a populated value is a claim.
@@ -283,9 +320,11 @@ fn check_tcf(
         _ => {}
     }
 
-    if let Some(param) = consent
-        && !param.value.is_empty()
-        && !skip_signal_value(&param.value)
+    // Each literal carrier is checked. A valid alias cannot hide malformed
+    // canonical consent, and a macro cannot hide a malformed second carrier.
+    for param in consent_carriers
+        .into_iter()
+        .filter(|param| !param.value.is_empty() && !skip_signal_value(&param.value))
     {
         if gdpr.is_none() {
             violations.push(violation(

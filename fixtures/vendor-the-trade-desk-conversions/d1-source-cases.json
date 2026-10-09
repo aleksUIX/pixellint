@@ -1,0 +1,764 @@
+[
+  {
+    "id": "clean-nonmerchant",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-merchant",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"merchant_id\\\":\\\"merchant-synthetic\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-multiple-pixel-ids",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"pixel_ids\\\":[\\\"pixel-a\\\",\\\"pixel-b\\\"]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-pixel-id-ignored-when-array-present",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"old-ignored\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"pixel_ids\\\":[\\\"pixel-a\\\"]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-custom-event-open",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"custom-configured-event\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "missing-adv",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.owner_missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "missing-pixel_id",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.pixel_missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "purchase-value-required",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"purchase\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.purchase_value_missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-purchase-decimal",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"purchase\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"value\\\":12.25,\\\"currency\\\":\\\"USD\\\",\\\"order_id\\\":\\\"order-synthetic\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-decimal-native-string",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"value\\\":\\\"12.25\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.value.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-currency",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"currency\\\":\\\"ZZZ\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.currency.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "missing-adid-type",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque-synthetic\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.adid_type_missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-uid2-opaque-token",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque-token\\\",\\\"adid_type\\\":\\\"UID2\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-euid-opaque-token",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque-token\\\",\\\"adid_type\\\":\\\"EUID\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-adid-type",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque-token\\\",\\\"adid_type\\\":\\\"OTHER\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.adid_type.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-tdid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"tdid\\\":\\\"00000000-0000-0000-0000-000000000000\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-tdid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"tdid\\\":\\\"opaque\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.tdid.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-daid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"daid\\\":\\\"00000000-0000-0000-0000-000000000000\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-daid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"daid\\\":\\\"opaque\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.daid.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-idfa",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"idfa\\\":\\\"00000000-0000-0000-0000-000000000000\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-idfa",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"idfa\\\":\\\"opaque\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.idfa.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-aaid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"aaid\\\":\\\"00000000-0000-0000-0000-000000000000\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-aaid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"aaid\\\":\\\"opaque\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.aaid.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-naid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"naid\\\":\\\"00000000-0000-0000-0000-000000000000\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-naid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"naid\\\":\\\"opaque\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.naid.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-adid-tdid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"00000000-0000-0000-0000-000000000000\\\",\\\"adid_type\\\":\\\"TDID\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-adid-tdid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque\\\",\\\"adid_type\\\":\\\"TDID\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.adid_tdid_invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-adid-idfa",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"00000000-0000-0000-0000-000000000000\\\",\\\"adid_type\\\":\\\"IDFA\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-adid-idfa",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque\\\",\\\"adid_type\\\":\\\"IDFA\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.adid_idfa_invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-adid-aaid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"00000000-0000-0000-0000-000000000000\\\",\\\"adid_type\\\":\\\"AAID\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-adid-aaid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque\\\",\\\"adid_type\\\":\\\"AAID\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.adid_aaid_invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-adid-daid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"00000000-0000-0000-0000-000000000000\\\",\\\"adid_type\\\":\\\"DAID\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-adid-daid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque\\\",\\\"adid_type\\\":\\\"DAID\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.adid_daid_invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-adid-naid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"00000000-0000-0000-0000-000000000000\\\",\\\"adid_type\\\":\\\"NAID\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-adid-naid",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"adid\\\":\\\"opaque\\\",\\\"adid_type\\\":\\\"NAID\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.adid_naid_invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-rampid-49",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"idl\\\":\\\"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\\\",\\\"adid\\\":\\\"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\\\",\\\"adid_type\\\":\\\"IDL\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-rampid-70",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"idl\\\":\\\"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\\\",\\\"adid\\\":\\\"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\\\",\\\"adid_type\\\":\\\"IDL\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-rampid-length",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"idl\\\":\\\"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.idl.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-ipv4",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"client_ip\\\":\\\"192.0.2.10\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-ipv6",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"client_ip\\\":\\\"2001:db8::1\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-ip",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"client_ip\\\":\\\"not-an-ip\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.client_ip.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "us-region-required",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"country\\\":\\\"United States\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.us_region_missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-us-region-name",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"country\\\":\\\"United States\\\",\\\"region\\\":\\\"New York\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-us-region-code",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"country\\\":\\\"United States\\\",\\\"region\\\":\\\"NY\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-nielsen-dma-published-string",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"NielsenDMA\\\":\\\"678\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-nielsen-dma-integer",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"NielsenDMA\\\":678}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-nielsen-dma",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"NielsenDMA\\\":\\\"unknown\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.NielsenDMA.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-all-item-fields",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"items\\\":[{\\\"item_code\\\":\\\"synthetic-item\\\",\\\"name\\\":\\\"Example item\\\",\\\"qty\\\":1,\\\"price\\\":1.25,\\\"cat\\\":\\\"custom-category\\\",\\\"item_brand\\\":\\\"Example brand\\\"}]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-item-name-150",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"items\\\":[{\\\"item_code\\\":\\\"synthetic-item\\\",\\\"name\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\\",\\\"qty\\\":1,\\\"price\\\":1.25,\\\"cat\\\":\\\"custom-category\\\",\\\"item_brand\\\":\\\"Example brand\\\"}]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "item-name-151",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"items\\\":[{\\\"item_code\\\":\\\"synthetic-item\\\",\\\"name\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\\",\\\"qty\\\":1,\\\"price\\\":1.25,\\\"cat\\\":\\\"custom-category\\\",\\\"item_brand\\\":\\\"Example brand\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.name.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "second-item-missing-code",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"items\\\":[{\\\"item_code\\\":\\\"synthetic-item\\\",\\\"name\\\":\\\"Example item\\\",\\\"qty\\\":1,\\\"price\\\":1.25,\\\"cat\\\":\\\"custom-category\\\",\\\"item_brand\\\":\\\"Example brand\\\"},{\\\"name\\\":\\\"Example item\\\",\\\"qty\\\":1,\\\"price\\\":1.25,\\\"cat\\\":\\\"custom-category\\\",\\\"item_brand\\\":\\\"Example brand\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.item_code.missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-item-quantity",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"items\\\":[{\\\"item_code\\\":\\\"synthetic-item\\\",\\\"name\\\":\\\"Example item\\\",\\\"qty\\\":1.5,\\\"price\\\":1.25,\\\"cat\\\":\\\"custom-category\\\",\\\"item_brand\\\":\\\"Example brand\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.qty.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-item-price",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"items\\\":[{\\\"item_code\\\":\\\"synthetic-item\\\",\\\"name\\\":\\\"Example item\\\",\\\"qty\\\":1,\\\"price\\\":\\\"free\\\",\\\"cat\\\":\\\"custom-category\\\",\\\"item_brand\\\":\\\"Example brand\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.price.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-custom-value-150",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"td1\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\\",\\\"td10\\\":\\\"value\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "custom-value-151",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"td1\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.td1.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-inapplicable-empty-consent-sdk",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"privacy_type\\\":\\\"GDPR\\\",\\\"is_applicable\\\":false,\\\"consent_string\\\":\\\"\\\"}]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-inapplicable-numeric-boolean",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"privacy_type\\\":\\\"GDPR\\\",\\\"is_applicable\\\":0,\\\"consent_string\\\":\\\"\\\"}]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-applicability-two",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"privacy_type\\\":\\\"GDPR\\\",\\\"is_applicable\\\":2,\\\"consent_string\\\":\\\"\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.is_applicable.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "privacy-missing-privacy_type",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"is_applicable\\\":false,\\\"consent_string\\\":\\\"\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.privacy_type.missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "privacy-missing-is_applicable",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"privacy_type\\\":\\\"GDPR\\\",\\\"consent_string\\\":\\\"\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.is_applicable.missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "privacy-missing-consent_string",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"privacy_type\\\":\\\"GDPR\\\",\\\"is_applicable\\\":false}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.consent_string.missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "privacy-unknown-type",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"privacy_type\\\":\\\"OTHER\\\",\\\"is_applicable\\\":false,\\\"consent_string\\\":\\\"\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.privacy_type.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-applicable-gdpr",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"privacy_type\\\":\\\"GDPR\\\",\\\"is_applicable\\\":true,\\\"consent_string\\\":\\\"invalid\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.privacy_gdpr_invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "invalid-applicable-gpp",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"privacy_settings\\\":[{\\\"privacy_type\\\":\\\"GPP\\\",\\\"is_applicable\\\":true,\\\"consent_string\\\":\\\"invalid\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.privacy_gpp_invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-dpo",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"data_processing_option\\\":{\\\"policies\\\":[\\\"LDU\\\"],\\\"region\\\":\\\"US-CO\\\"}}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "dpo-policy-required",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"data_processing_option\\\":{\\\"region\\\":\\\"US-CO\\\"}}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.policies.missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "dpo-region-source-ambiguity",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"data_processing_option\\\":{\\\"policies\\\":[\\\"LDU\\\"]}}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.region.missing"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "dpo-invalid-policy",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"data_processing_option\\\":{\\\"policies\\\":[\\\"OTHER\\\"],\\\"region\\\":\\\"US-CO\\\"}}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.policies[].invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "dpo-invalid-region",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\",\\\"data_processing_option\\\":{\\\"policies\\\":[\\\"LDU\\\"],\\\"region\\\":\\\"Colorado\\\"}}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.region.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "second-event-owner-missing",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"},{\\\"pixel_id\\\":\\\"pixel-second\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.owner_missing"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "malformed-batch-member",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"},12]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.root.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "malformed-envelope-array",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"[]\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.body.root.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-request-post",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "request-wrong-method",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"GET\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.http.method.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "request-wrong-mime",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"text/plain\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.http.content_type.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "request-http-insecure",
+    "kind": "request",
+    "artifact": "{\"url\": \"http://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\":[{\\\"adv\\\":\\\"advertiser-synthetic\\\",\\\"pixel_id\\\":\\\"pixel-synthetic\\\",\\\"event_name\\\":\\\"sitevisit\\\",\\\"referrer_url\\\":\\\"publisher.example\\\"}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.https_required"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-applicable-gdpr",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\": [{\\\"adv\\\": \\\"advertiser-synthetic\\\", \\\"pixel_id\\\": \\\"pixel-synthetic\\\", \\\"event_name\\\": \\\"sitevisit\\\", \\\"referrer_url\\\": \\\"publisher.example\\\", \\\"privacy_settings\\\": [{\\\"privacy_type\\\": \\\"GDPR\\\", \\\"is_applicable\\\": true, \\\"consent_string\\\": \\\"CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA\\\"}]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "clean-applicable-gpp",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\": [{\\\"adv\\\": \\\"advertiser-synthetic\\\", \\\"pixel_id\\\": \\\"pixel-synthetic\\\", \\\"event_name\\\": \\\"sitevisit\\\", \\\"referrer_url\\\": \\\"publisher.example\\\", \\\"privacy_settings\\\": [{\\\"privacy_type\\\": \\\"GPP\\\", \\\"is_applicable\\\": true, \\\"consent_string\\\": \\\"DBABLA~CVQqAAAAAABA.QA\\\"}]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "privacy-one-per-type",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\": [{\\\"adv\\\": \\\"advertiser-synthetic\\\", \\\"pixel_id\\\": \\\"pixel-synthetic\\\", \\\"event_name\\\": \\\"sitevisit\\\", \\\"referrer_url\\\": \\\"publisher.example\\\", \\\"privacy_settings\\\": [{\\\"privacy_type\\\": \\\"GDPR\\\", \\\"is_applicable\\\": false, \\\"consent_string\\\": \\\"\\\"}, {\\\"privacy_type\\\": \\\"GPP\\\", \\\"is_applicable\\\": false, \\\"consent_string\\\": \\\"\\\"}]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "privacy-duplicate-type",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\": [{\\\"adv\\\": \\\"advertiser-synthetic\\\", \\\"pixel_id\\\": \\\"pixel-synthetic\\\", \\\"event_name\\\": \\\"sitevisit\\\", \\\"referrer_url\\\": \\\"publisher.example\\\", \\\"privacy_settings\\\": [{\\\"privacy_type\\\": \\\"GDPR\\\", \\\"is_applicable\\\": false, \\\"consent_string\\\": \\\"\\\"}, {\\\"privacy_type\\\": \\\"GDPR\\\", \\\"is_applicable\\\": false, \\\"consent_string\\\": \\\"\\\"}]}]}\"}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.privacy_type_duplicate"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "privacy-same-type-different-events",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\": [{\\\"adv\\\": \\\"advertiser-synthetic\\\", \\\"pixel_id\\\": \\\"pixel-synthetic\\\", \\\"event_name\\\": \\\"sitevisit\\\", \\\"referrer_url\\\": \\\"publisher.example\\\", \\\"privacy_settings\\\": [{\\\"privacy_type\\\": \\\"GDPR\\\", \\\"is_applicable\\\": false, \\\"consent_string\\\": \\\"\\\"}]}, {\\\"adv\\\": \\\"advertiser-synthetic\\\", \\\"pixel_id\\\": \\\"pixel-synthetic\\\", \\\"event_name\\\": \\\"sitevisit\\\", \\\"referrer_url\\\": \\\"publisher.example\\\", \\\"privacy_settings\\\": [{\\\"privacy_type\\\": \\\"GDPR\\\", \\\"is_applicable\\\": false, \\\"consent_string\\\": \\\"\\\"}]}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "request-body-absent",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}}",
+    "expected_codes": [
+      "vendor.the-trade-desk-conversions.http.body.invalid"
+    ],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "no-undocumented-event-count-minimum",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\": []}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  },
+  {
+    "id": "no-undocumented-policy-count-minimum",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/realtimeconversion\", \"method\": \"POST\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"data\\\": [{\\\"adv\\\": \\\"advertiser-synthetic\\\", \\\"pixel_id\\\": \\\"pixel-synthetic\\\", \\\"data_processing_option\\\": {\\\"policies\\\": [], \\\"region\\\": \\\"US-CO\\\"}}]}\"}",
+    "expected_codes": [],
+    "severity": "error",
+    "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+  }
+]

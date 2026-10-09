@@ -1,0 +1,110 @@
+[
+  {
+    "id": "clean-enhanced-dynamic-values",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&order_id=order-1&value=123.45&currency=USD&td1=Product+A&td10=Checkout&policies=LDU&region=US-CO",
+    "expected_codes": [],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "clean-previous-dynamic-values",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&orderid=order-2&v=1.25&vf=USD&dpop=LDU&dpor=US-CA",
+    "expected_codes": [],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "clean-td-64-character-boundary",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&td1=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "expected_codes": [],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "td-65-character-truncation",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&td1=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "expected_codes": [
+      "vendor.the-trade-desk.param.td1.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "invalid-revenue-comma",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&value=12%2C25",
+    "expected_codes": [
+      "vendor.the-trade-desk.param.value.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "invalid-legacy-revenue",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&v=not-numeric",
+    "expected_codes": [
+      "vendor.the-trade-desk.param.value.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "invalid-policy",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&policies=UNKNOWN",
+    "expected_codes": [
+      "vendor.the-trade-desk.param.policies.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "invalid-region",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&region=Colorado",
+    "expected_codes": [
+      "vendor.the-trade-desk.param.region.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "clean-optional-empty-slots",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&order_id=&value=&currency=&td1=&policies=&region=",
+    "expected_codes": [],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "clean-revenue-negative-and-exponent",
+    "kind": "url",
+    "artifact": "https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0&value=-1.25e2",
+    "expected_codes": [],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "clean-request-get",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0\", \"method\": \"GET\", \"headers\": {}}",
+    "expected_codes": [],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  },
+  {
+    "id": "invalid-request-post",
+    "kind": "request",
+    "artifact": "{\"url\": \"https://insight.adsrvr.org/track/up?adv=synthetic-advertiser&upid=synthetic-pixel&ref=https%3A%2F%2Fpublisher.example%2Fpage&upv=3.3.0\", \"method\": \"POST\", \"headers\": {}}",
+    "expected_codes": [
+      "vendor.the-trade-desk.http.method.invalid"
+    ],
+    "severity": "warning",
+    "source_url": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+  }
+]

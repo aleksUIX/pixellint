@@ -1,0 +1,152 @@
+[
+  {
+    "id": "published_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"User-Agent\":\"TestBrowser/1.0\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "wrong_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"GET\",\"headers\":{\"Content-Type\":\"application/json\",\"User-Agent\":\"TestBrowser/1.0\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "content_type_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"POST\",\"headers\":{\"User-Agent\":\"TestBrowser/1.0\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.content_type.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "content_type_unsupported",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/xml\",\"User-Agent\":\"TestBrowser/1.0\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.content_type.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "user_agent_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.headers.user-agent.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "user_agent_blank",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"User-Agent\":\"\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.headers.user-agent.empty",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "mime_text_plain",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"text/plain\",\"User-Agent\":\"TestBrowser/1.0\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.content_type.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "mime_Application_JSON",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"Application/JSON; charset=utf-8\",\"User-Agent\":\"TestBrowser/1.0\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.content_type.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "ip_chain_first_valid_ipv6",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://plausible.io/api/event\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"User-Agent\":\"TestBrowser/1.0\",\"X-Forwarded-For\":\"unknown, 2001:db8::1, 203.0.113.1\"},\"body\":\"{\\\"name\\\":\\\"pageview\\\",\\\"url\\\":\\\"https://example.com/pricing\\\",\\\"domain\\\":\\\"example.com\\\"}\"}",
+    "code": "vendor.plausible.http.headers.x-forwarded-for.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "path_5",
+    "kind": "json",
+    "artifact": "{\"name\":\"pageview\",\"url\":\"/blog\",\"domain\":\"example.com\"}",
+    "code": "vendor.plausible.url_path_limit",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "path_21",
+    "kind": "json",
+    "artifact": "{\"name\":\"pageview\",\"url\":\"app://localhost/login\",\"domain\":\"example.com\"}",
+    "code": "vendor.plausible.url_path_limit",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "path_2019",
+    "kind": "json",
+    "artifact": "{\"name\":\"pageview\",\"url\":\"https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"domain\":\"example.com\"}",
+    "code": "vendor.plausible.url_path_limit",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "path_2020",
+    "kind": "json",
+    "artifact": "{\"name\":\"pageview\",\"url\":\"https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"domain\":\"example.com\"}",
+    "code": "vendor.plausible.url_path_limit",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "long_query_excluded_from_path_limit",
+    "kind": "json",
+    "artifact": "{\"name\":\"pageview\",\"url\":\"https://example.com/a?qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\",\"domain\":\"example.com\"}",
+    "code": "vendor.plausible.url_path_limit",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "data_uri_unsupported",
+    "kind": "json",
+    "artifact": "{\"name\":\"pageview\",\"url\":\"data:text/plain,hello\",\"domain\":\"example.com\"}",
+    "code": "vendor.plausible.body.data_url_unsupported",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://plausible.io/docs/events-api",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

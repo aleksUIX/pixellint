@@ -1,0 +1,65 @@
+{
+  "id": "vendor/ias-display-pixel",
+  "display_name": "IAS image verification pixel",
+  "vendor": "ias",
+  "source_level": "official_template",
+  "docs": "https://assets.ctfassets.net/o1orzsgogjpz/4OK7zovv3r7gT1gDJzzlzR/821ffa2a9a85598836c8f36bf50dd5fd/Guide_IAS__Netflix_Customer_Guide_6_30_2025.pdf",
+  "description": "IAS generated /rfw/st image verification pixels. The vendor Netflix guide publishes advertiser and publisher entity path identifiers plus optional publisher reporting fields. Campaign activation is external.",
+  "match": {
+    "hosts": [
+      "pixel.adsafeprotected.com"
+    ],
+    "path_prefixes": [
+      "/rfw/st/"
+    ],
+    "path_contains": [
+      "/skeleton.gif"
+    ]
+  },
+  "path_pattern": "^/rfw/st/(?<advertiser_id>[^/]*)/(?<publisher_id>[^/]*)/skeleton\\.gif$",
+  "params": [
+    {
+      "name": "advertiser_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Official vendor template places an account-assigned identifier here. Completeness advice only; placeholder ADVID/PUBENTITYID does not establish an integer grammar or server rejection.",
+      "severity": "warning"
+    },
+    {
+      "name": "publisher_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Official vendor template places an account-assigned identifier here. Completeness advice only; placeholder ADVID/PUBENTITYID does not establish an integer grammar or server rejection.",
+      "severity": "warning"
+    },
+    {
+      "name": "ias_campId",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional reporting field published in the generated Netflix pixel. Publisher-specific macro expansion is checked by core."
+    },
+    {
+      "name": "ias_chanId",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional reporting field published in the generated Netflix pixel. Publisher-specific macro expansion is checked by core."
+    },
+    {
+      "name": "ias_placementId",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional reporting field published in the generated Netflix pixel. Publisher-specific macro expansion is checked by core."
+    },
+    {
+      "name": "ias_pubId",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional reporting field published in the generated Netflix pixel. Publisher-specific macro expansion is checked by core."
+    }
+  ],
+  "rules": []
+}

@@ -420,5 +420,207 @@
         }
       ]
     }
+  ],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "method",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "This endpoint documents POST requests.",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST"
+            ]
+          }
+        },
+        {
+          "name": "path",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "Use the documented event endpoint route.",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^/rest/conversionEvents/?$"
+          }
+        },
+        {
+          "name": "content_type",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "The request carries an application/json body.",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "application/json"
+            ]
+          }
+        },
+        {
+          "name": "body_encoding",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "The event request is encoded as JSON.",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "json"
+            ]
+          }
+        },
+        {
+          "name": "headers.authorization",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "Authenticate with a populated Bearer token.",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?i)^Bearer +[^\\s]+$"
+          }
+        },
+        {
+          "name": "headers.linkedin-version",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "LinkedIn requires its YYYYMM API version header.",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{4}(?:0[1-9]|1[0-2])$"
+          }
+        },
+        {
+          "name": "headers.x-restli-protocol-version",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "The required Rest.li protocol version is 2.0.0.",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "2.0.0"
+            ]
+          }
+        },
+        {
+          "name": "body.elements",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "The elements array selects the documented batch-create transport."
+        },
+        {
+          "name": "headers.x-restli-method",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "description": "Batch conversion creation requires BATCH_CREATE.",
+          "json_type": "string"
+        },
+        {
+          "name": "url",
+          "requirement": "required",
+          "json_type": "string",
+          "format": {
+            "kind": "url",
+            "require_https": true
+          },
+          "description": "The published request endpoint uses HTTPS.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.linkedin-conversions-api.http.batch_create_header_required",
+          "kind": "required_with",
+          "severity": "error",
+          "message": "Batch conversionEvents requests require X-RestLi-Method.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "when": "body.elements",
+          "requires": [
+            "headers.x-restli-method"
+          ]
+        },
+        {
+          "code": "vendor.linkedin-conversions-api.http.batch_create_header_value",
+          "kind": "value_with",
+          "severity": "error",
+          "message": "The batch operation header must be BATCH_CREATE.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api?view=li-lms-2026-09",
+          "when": "body.elements",
+          "param": "headers.x-restli-method",
+          "value": "BATCH_CREATE"
+        }
+      ]
+    },
+    {
+      "scope": [
+        "body.elements[].user.userInfo",
+        "body.user.userInfo"
+      ],
+      "params": [
+        {
+          "name": "api_version",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema?view=li-lms-2026-09",
+          "description": "Version is read from the actual request header.",
+          "root_path": "headers.linkedin-version"
+        },
+        {
+          "name": "firstName",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema?view=li-lms-2026-09",
+          "description": "Before API version 202609, userInfo requires the plain first and last names.",
+          "requirement": "required",
+          "json_type": "string",
+          "condition": {
+            "kind": "value_pattern",
+            "param": "api_version",
+            "pattern": "^(?:[01][0-9]{5}|20[01][0-9]{3}|202[0-5][0-9]{2}|20260[1-8])$"
+          },
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "lastName",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema?view=li-lms-2026-09",
+          "description": "Before API version 202609, userInfo requires the plain first and last names.",
+          "requirement": "required",
+          "json_type": "string",
+          "condition": {
+            "kind": "value_pattern",
+            "param": "api_version",
+            "pattern": "^(?:[01][0-9]{5}|20[01][0-9]{3}|202[0-5][0-9]{2}|20260[1-8])$"
+          },
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "hashedFirstName",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema?view=li-lms-2026-09",
+          "description": "Hashed name fields became available in API version 202609.",
+          "requirement": "forbidden",
+          "condition": {
+            "kind": "value_pattern",
+            "param": "api_version",
+            "pattern": "^(?:[01][0-9]{5}|20[01][0-9]{3}|202[0-5][0-9]{2}|20260[1-8])$"
+          }
+        },
+        {
+          "name": "hashedLastName",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema?view=li-lms-2026-09",
+          "description": "Hashed name fields became available in API version 202609.",
+          "requirement": "forbidden",
+          "condition": {
+            "kind": "value_pattern",
+            "param": "api_version",
+            "pattern": "^(?:[01][0-9]{5}|20[01][0-9]{3}|202[0-5][0-9]{2}|20260[1-8])$"
+          }
+        }
+      ]
+    }
   ]
 }

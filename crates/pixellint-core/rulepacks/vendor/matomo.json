@@ -1,7 +1,7 @@
 {
   "id": "vendor/matomo",
   "display_name": "Matomo HTTP Tracking API",
-  "description": "Matomo Tracking API hits to matomo.php on Matomo Cloud. Self-hosted matomo.php on other hosts is not contracted.",
+  "description": "Matomo single and bulk HTTP Tracking API requests to matomo.php or piwik.php, including self-hosted endpoints.",
   "vendor": "matomo",
   "source_level": "official_vendor",
   "docs": "https://developer.matomo.org/api-reference/tracking-api",
@@ -1715,6 +1715,110 @@
         }
       ],
       "rules": []
+    }
+  ],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "GET",
+              "POST"
+            ]
+          },
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "The Tracking HTTP API accepts GET or POST."
+        }
+      ]
+    },
+    {
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {
+            "kind": "present",
+            "param": "body.requests"
+          },
+          {
+            "kind": "value_in",
+            "param": "body_encoding",
+            "values": [
+              "json"
+            ]
+          }
+        ]
+      },
+      "params": [
+        {
+          "name": "body_encoding",
+          "doc": "https://developer.matomo.org/api-reference/tracking-api"
+        },
+        {
+          "name": "bulk_method",
+          "root_path": "method",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST"
+            ]
+          },
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "Bulk Tracking requires HTTP POST."
+        },
+        {
+          "name": "body",
+          "requirement": "required",
+          "json_type": "object",
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "A bulk request uses a JSON object envelope."
+        },
+        {
+          "name": "body.requests",
+          "requirement": "required",
+          "json_type": "array",
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "Bulk requests contains individual tracking queries. No universal batch count limit is published."
+        },
+        {
+          "name": "body.token_auth",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          },
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "description": "Optional outer authorization token for fields requiring authentication. Credentials and site permissions remain external."
+        }
+      ]
+    },
+    {
+      "scope": "body.requests[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": [
+            "string",
+            "object"
+          ],
+          "allow_empty": true,
+          "doc": "https://raw.githubusercontent.com/matomo-org/matomo/5.x-dev/plugins/BulkTracking/Tracker/Requests.php",
+          "description": "Published examples use query strings. The official 5.x BulkTracking implementation also accepts parameter objects and ignores empty string entries; no minimum length is invented."
+        }
+      ]
+    }
+  ],
+  "http_queries": [
+    {
+      "source_field": "body.requests[]",
+      "inherited_params": {
+        "token_auth": "body.token_auth"
+      },
+      "encoding": "url_query",
+      "inherited_overrides": true
     }
   ]
 }

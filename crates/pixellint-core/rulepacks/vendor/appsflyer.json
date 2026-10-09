@@ -392,9 +392,18 @@
         },
         {
           "name": "sharing_filter",
-          "description": "The vendor documents the JSON shape or value type of this field.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
-          "json_type": "array"
+          "description": "Send the scalar all to block every partner, or an array of partner identifiers.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post",
+          "json_type": [
+            "string",
+            "array"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "all"
+            ]
+          }
         },
         {
           "name": "sharing_filter[]",
@@ -431,6 +440,18 @@
           "format": {
             "kind": "tcf"
           }
+        },
+        {
+          "name": "ua",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post",
+          "description": "The device user agent is a string.",
+          "json_type": "string"
+        },
+        {
+          "name": "app_set_id",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post",
+          "description": "The app-set identifier is documented as an object; unspecified member keys remain open.",
+          "json_type": "object"
         }
       ],
       "rules": [
@@ -484,9 +505,9 @@
               }
             ]
           },
-          "severity": "error",
-          "message": "Android events identified by Android device IDs must include the device operating-system version.",
-          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview"
+          "severity": "warning",
+          "message": "Send the Android OS version for correct processing. The endpoint accepts omission for backward compatibility.",
+          "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post"
         },
         {
           "code": "vendor.appsflyer.body.ios14_att_recommended",
@@ -1000,5 +1021,80 @@
       ],
       "rules": []
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post",
+        "description": "This endpoint documents POST requests.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "path",
+        "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post",
+        "description": "Use the documented event endpoint route.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^/inappevent/[^/]+/?$"
+        }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post",
+        "description": "The request carries an application/json body.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post",
+        "description": "The event request is encoded as JSON.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "json"
+          ]
+        }
+      },
+      {
+        "name": "headers.authentication",
+        "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post",
+        "description": "Use the S2S key in the authentication header, not an Authorization Bearer header.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "url",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "url",
+          "require_https": true
+        },
+        "description": "The published request endpoint uses HTTPS.",
+        "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-post"
+      }
+    ]
+  }
 }

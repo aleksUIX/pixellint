@@ -7714,5 +7714,153 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Both current direct API and pinned SDK transports use POST.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "host",
+        "description": "The host distinguishes authenticated server and anonymous Edge calls.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "path",
+        "description": "The path selects the API version and action.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "JSON request MIME and the official SDK text/plain transport are retained.",
+        "doc": "https://github.com/adobe/alloy/blob/87b5173f53398a4ad0294fe93cd9fdd6b0643fbd/packages/browser/src/services/injectSendFetchRequest.js",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json",
+            "text/plain"
+          ]
+        },
+        "severity": "warning",
+        "format_severity": "warning"
+      },
+      {
+        "name": "body",
+        "description": "Collection sends a JSON object.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/",
+        "requirement": "required",
+        "json_type": "object"
+      },
+      {
+        "name": "headers.authorization",
+        "description": "Authenticated server Edge calls require Bearer authentication.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "(?i)^Bearer[ \\t]+\\S+[ \\t]*$"
+        },
+        "condition": {
+          "kind": "value_in",
+          "param": "host",
+          "values": [
+            "server.adobedc.net"
+          ]
+        }
+      },
+      {
+        "name": "headers.x-api-key",
+        "description": "Authenticated server Edge calls require the API client ID.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "value_in",
+          "param": "host",
+          "values": [
+            "server.adobedc.net"
+          ]
+        }
+      },
+      {
+        "name": "headers.x-gw-ims-org-id",
+        "description": "Authenticated server Edge calls require the IMS organization ID.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "value_in",
+          "param": "host",
+          "values": [
+            "server.adobedc.net"
+          ]
+        }
+      },
+      {
+        "name": "body.event",
+        "description": "The v2 interact API uses a singular event object.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/",
+        "requirement": "required",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "/v2/interact$"
+        }
+      },
+      {
+        "name": "body.events",
+        "description": "Collect and v1 SDK interact use the event array.",
+        "doc": "https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/",
+        "requirement": "required",
+        "json_type": "array",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "/(?:v[12]/collect|v1/interact)$"
+        },
+        "min_items": 1
+      },
+      {
+        "name": "body.consent",
+        "json_type": "array",
+        "requirement": "required",
+        "min_items": 1,
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "/v1/privacy/set-consent$"
+        },
+        "description": "The pinned Web SDK requires a nonempty consent array for the setConsent action.",
+        "doc": "https://github.com/adobe/alloy/blob/87b5173f53398a4ad0294fe93cd9fdd6b0643fbd/packages/core/src/components/Consent/validateSetConsentOptions.js"
+      }
+    ],
+    "rules": []
+  }
 }

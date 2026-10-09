@@ -1,0 +1,213 @@
+{
+  "id": "vendor/triplelift-sync",
+  "display_name": "TripleLift user sync",
+  "description": "Published TripleLift xuid, getuid and sync parameter contracts. Partner dongles, redirect allowlists, geographical applicability and browser cookies require external context.",
+  "vendor": "tripleLift",
+  "source_level": "official_vendor",
+  "docs": "https://docs.triplelift.com/docs/user-sync",
+  "path_pattern": "^/(?<route>xuid|getuid|sync)$",
+  "match": {
+    "hosts": [
+      "eb2.3lift.com"
+    ],
+    "paths": [
+      "/xuid",
+      "/getuid",
+      "/sync"
+    ]
+  },
+  "params": [
+    {
+      "name": "route",
+      "description": "Published sync endpoint path.",
+      "doc": "https://docs.triplelift.com/docs/user-sync"
+    },
+    {
+      "name": "mid",
+      "description": "TripleLift explicitly requires the buyer member ID to be a positive integer. It is assigned by TripleLift, with no locally testable registry.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]*[1-9][0-9]*$"
+      }
+    },
+    {
+      "name": "xuid",
+      "description": "The /xuid endpoint stores this opaque buyer identifier.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "severity": "warning",
+      "format_severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "dongle",
+      "description": "TripleLift provides this opaque partner mapping code. Its account association requires external configuration.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "severity": "warning",
+      "format_severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "redir",
+      "description": "The documented redirect destination is an encoded absolute URL. $UID is substituted by TripleLift. The decoded URL is checked here; raw query encoding and the allowlist are separate limitations.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "format": {
+        "kind": "url"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "gdpr",
+      "description": "GDPR territory is signaled as 1; the published quick-check example also uses 0.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "gdpr_consent",
+      "description": "An IAB TCF consent string is accepted under gdpr_consent or cmp_cs. Consent fields are optional, but absent or invalid consent prevents GDPR sync.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "aliases": [
+        "cmp_cs"
+      ],
+      "format": {
+        "kind": "tcf"
+      }
+    },
+    {
+      "name": "us_privacy",
+      "description": "Optional CCPA signal uses the IAB US Privacy string.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "format": {
+        "kind": "us_privacy"
+      }
+    },
+    {
+      "name": "gpp",
+      "description": "Optional GPP encoded consent string.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "format": {
+        "kind": "gpp"
+      }
+    },
+    {
+      "name": "gpp_sid",
+      "description": "The IAB URL macro specification defines one applicable section ID or at most two comma-separated IDs. This limit applies to URL macros, not the unrestricted JS API array.",
+      "doc": "https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:,[0-9]+)?$"
+      },
+      "source_level": "normative"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.triplelift-sync.mapping_fields_missing",
+      "kind": "required_when_value",
+      "severity": "warning",
+      "message": "A documented /xuid mapping call supplies mid, xuid and the partner dongle. The documentation does not publish a rejection schema for absence.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "when": "route",
+      "equals": [
+        "xuid"
+      ],
+      "requires": [
+        "mid",
+        "xuid",
+        "dongle"
+      ]
+    },
+    {
+      "code": "vendor.triplelift-sync.redirect_missing",
+      "kind": "required_when_value",
+      "severity": "warning",
+      "message": "The documented getuid and sync flows supply an encoded redir destination.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "when": "route",
+      "equals": [
+        "getuid",
+        "sync"
+      ],
+      "requires": [
+        "redir"
+      ]
+    },
+    {
+      "code": "vendor.triplelift-sync.gdpr_sync_without_consent",
+      "kind": "required_when_value",
+      "severity": "warning",
+      "message": "TripleLift will not perform a GDPR sync without a valid consent string. Consent parameters themselves are explicitly optional.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "when": "gdpr",
+      "equals": [
+        "1"
+      ],
+      "requires": [
+        "gdpr_consent"
+      ]
+    },
+    {
+      "code": "vendor.triplelift-sync.gpp_without_sections",
+      "kind": "required_with",
+      "severity": "warning",
+      "message": "GPP sync signals are documented as an encoded string and applicable section IDs.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "when": "gpp",
+      "requires": [
+        "gpp_sid"
+      ]
+    },
+    {
+      "code": "vendor.triplelift-sync.sections_without_gpp",
+      "kind": "required_with",
+      "severity": "warning",
+      "message": "Applicable GPP IDs need the corresponding encoded consent string.",
+      "doc": "https://docs.triplelift.com/docs/user-sync",
+      "when": "gpp_sid",
+      "requires": [
+        "gpp"
+      ]
+    },
+    {
+      "code": "vendor.triplelift-sync.gpp_sections_missing_from_header",
+      "kind": "gpp_sections",
+      "param": "gpp",
+      "sections": "gpp_sid",
+      "severity": "error",
+      "message": "Applicable GPP section IDs must identify sections in the encoded consent header.",
+      "doc": "https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md",
+      "source_level": "normative"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The documented browser redirect flow uses HTTPS GET.",
+        "doc": "https://docs.triplelift.com/docs/user-sync",
+        "severity": "warning",
+        "format_severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        }
+      }
+    ]
+  },
+  "gdpr_consent_aliases": [
+    "cmp_cs"
+  ]
+}

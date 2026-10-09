@@ -12,6 +12,10 @@ from concurrent.futures import ThreadPoolExecutor
 
 # vendor slug -> (display name, category, [hosts], rulepack or None)
 VENDORS = {
+    "adnami": ("Adnami", "video", ["functions.adnami.io"], "vendor/adnami-tracker"),
+    "amplified": ("Amplified", "video", ["pixel.amplified.co"], "vendor/amplified"),
+    "adcanvas": ("AdCanvas", "video", ["adcanvas.com"], "vendor/adcanvas-csc"),
+    "xpln": ("XPLN", "video", ["xpln.tech"], "vendor/xpln-video"),
     # Social and platform pixels
     "meta": ("Meta", "social", ["connect.facebook.net", "www.facebook.com", "graph.facebook.com", "business.facebook.com"], "vendor/meta"),
     "tiktok": ("TikTok", "social", ["analytics.tiktok.com", "analytics.us.tiktok.com", "business-api.tiktok.com"], "vendor/tiktok"),
@@ -49,7 +53,7 @@ VENDORS = {
     "magnite": ("Magnite", "programmatic", ["pixel.rubiconproject.com", "eus.rubiconproject.com", "fastlane.rubiconproject.com"], None),
     "openx": ("OpenX", "programmatic", ["us-ads.openx.net", "rtb.openx.net"], None),
     "indexexchange": ("Index Exchange", "programmatic", ["js-sec.indexww.com", "htlb.casalemedia.com"], None),
-    "tripleLift": ("TripleLift", "programmatic", ["eb2.3lift.com", "tlx.3lift.com"], None),
+    "tripleLift": ("TripleLift", "programmatic", ["eb2.3lift.com", "tlx.3lift.com"], "vendor/triplelift-sync"),
     "mediamath": ("MediaMath", "programmatic", ["pixel.mathtag.com", "sync.mathtag.com"], "vendor/mediamath"),
     "iqm": ("IQM", "programmatic", ["iqm.com"], "vendor/iqm"),
     "adzerk": ("Adzerk", "programmatic", ["adzerk.net"], "vendor/kevel"),
@@ -77,7 +81,7 @@ VENDORS = {
     "comscore": ("Comscore", "measurement", ["sb.scorecardresearch.com", "b.scorecardresearch.com"], None),
     "ispot": ("iSpot.tv", "measurement", ["pi.ispot.tv", "pt.ispot.tv"], "vendor/ispot"),
     "quantcast": ("Quantcast", "measurement", ["pixel.quantserve.com", "secure.quantserve.com"], None),
-    "innovid": ("Innovid", "video", ["dts.innovid.com", "static.innovid.com"], None),
+    "innovid": ("Innovid", "video", ["dts.innovid.com", "static.innovid.com", "servedby.innovid.com"], "vendor/innovid-legacy-impression"),
     "freewheel": ("FreeWheel", "video", ["v.fwmrm.net", "cdn.stickyadstv.com"], "vendor/freewheel"),
 
     # Product and web analytics

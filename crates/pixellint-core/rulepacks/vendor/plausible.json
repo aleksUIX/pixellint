@@ -72,7 +72,7 @@
           "format": {
             "kind": "non_empty"
           },
-          "description": "Plausible accepts absolute URLs, app URLs and relative paths. Missing host is recorded as (none).",
+          "description": "Plausible accepts absolute, app and relative URLs. Data URIs are unsupported.",
           "fix_hint": "Send the page URL or relative page path.",
           "doc": "https://plausible.io/docs/events-api",
           "json_type": "string"
@@ -83,7 +83,7 @@
           "format": {
             "kind": "non_empty"
           },
-          "description": "Plausible accepts absolute URLs, app URLs and relative paths. Missing host is recorded as (none).",
+          "description": "Plausible accepts absolute, app and relative URLs. Data URIs are unsupported.",
           "fix_hint": "Send the page URL or relative page path.",
           "doc": "https://plausible.io/docs/events-api",
           "json_type": "string"
@@ -278,8 +278,85 @@
           "message": "The event sends `revenue.currency` without `revenue.amount`. Plausible documents both on the revenue object.",
           "fix_hint": "Add `revenue.amount` as a number or numeric string, such as `1322.22`.",
           "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "code": "vendor.plausible.url_path_limit",
+          "kind": "url_path_length",
+          "param": "url",
+          "max_length": 2000,
+          "severity": "error",
+          "message": "The page URL path exceeds Plausible's published 2000-character limit.",
+          "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "code": "vendor.plausible.u_path_limit",
+          "kind": "url_path_length",
+          "param": "u",
+          "max_length": 2000,
+          "severity": "error",
+          "message": "The page URL path exceeds Plausible's published 2000-character limit.",
+          "doc": "https://plausible.io/docs/events-api"
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "This published ingestion operation uses HTTP POST.",
+        "doc": "https://plausible.io/docs/events-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "Use a published request media type.",
+        "doc": "https://plausible.io/docs/events-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json",
+            "text/plain"
+          ]
+        }
+      },
+      {
+        "name": "body",
+        "description": "The request body is a JSON object.",
+        "doc": "https://plausible.io/docs/events-api",
+        "requirement": "required",
+        "json_type": "object"
+      },
+      {
+        "name": "headers.user-agent",
+        "description": "Plausible requires the original visitor User-Agent.",
+        "doc": "https://plausible.io/docs/events-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "headers.x-forwarded-for",
+        "description": "Optional IP chain. Plausible uses the first valid IPv4 or IPv6 address.",
+        "doc": "https://plausible.io/docs/events-api",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "allow_empty": true
+      }
+    ],
+    "rules": []
+  }
 }

@@ -31,7 +31,7 @@
       },
       "description": "It is the click identifier S2S conversions send instead of `ob_adv_id`.",
       "fix_hint": "Set `ob_click_id` to the `ob_click_id` captured from the landing URL.",
-      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "doc": "https://www.outbrain.com/help/advertisers/server2server-integrations/",
       "source_level": "official_vendor"
     },
     {
@@ -41,7 +41,7 @@
       },
       "description": "It is the event name on the S2S postback. Outbrain documents it on the unifiedPixel URL. Page-view noscript pixels send `ev` instead and omit `name`.",
       "fix_hint": "Set `name` to the event name from Amplify, or drop the pair on a page-view pixel.",
-      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "doc": "https://www.outbrain.com/help/advertisers/server2server-integrations/",
       "source_level": "official_vendor"
     },
     {
@@ -93,6 +93,21 @@
       "fix_hint": "Use a documented code such as `USD` or `GBP`.",
       "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
       "source_level": "official_vendor"
+    },
+    {
+      "name": "timestamp",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:[0-9]{2}/[0-9]{2}/[0-9]{4} (?:[0-9]{1,2}:[0-9]{2}:[0-9]{2} (?:AM|PM)|[0-9]{2}:[0-9]{2}:[0-9]{2})|[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:[+-][0-9]{4}|Z| [^\\s].*)?)$"
+      },
+      "format_severity": "warning",
+      "description": "Outbrain documents eight optional S2S timestamp representations: US month/day with 12-hour AM/PM or 24-hour time, and extended ISO date/time with space or T plus an optional numeric or named timezone. This advisory checks representation only; timezone names and calendar semantics remain unproven.",
+      "doc": "https://www.outbrain.com/help/advertisers/server2server-integrations/",
+      "source_level": "official_vendor",
+      "condition": {
+        "kind": "present",
+        "param": "ob_click_id"
+      }
     }
   ],
   "rules": [
@@ -113,12 +128,38 @@
       "kind": "required_with",
       "severity": "error",
       "message": "An Outbrain S2S click identifier needs its configured event name.",
-      "doc": "https://www.outbrain.com/help/advertisers/dynamic-values/",
+      "doc": "https://www.outbrain.com/help/advertisers/server2server-integrations/",
       "when": "ob_click_id",
       "requires": [
         "name"
       ],
       "source_level": "official_vendor"
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "query.ob_click_id",
+        "description": "Outbrain S2S postbacks carry the captured click ID.",
+        "doc": "https://www.outbrain.com/help/advertisers/server2server-integrations/"
+      },
+      {
+        "name": "method",
+        "description": "Outbrain requires GET for its S2S unifiedPixel postback.",
+        "doc": "https://www.outbrain.com/help/advertisers/server2server-integrations/",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "condition": {
+          "kind": "present",
+          "param": "query.ob_click_id"
+        }
+      }
+    ],
+    "rules": []
+  }
 }

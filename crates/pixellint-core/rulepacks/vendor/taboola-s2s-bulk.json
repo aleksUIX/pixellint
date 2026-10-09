@@ -150,5 +150,80 @@
       ],
       "rules": []
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The published endpoint accepts an HTTP POST request.",
+        "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "The request Content-Type is application/json; MIME parameters do not change its media type.",
+        "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "body_encoding",
+        "description": "The published request carries a JSON entity. Once application/json is known, an absent body is invalid. Opaque compressed captures and unresolved MIME macros are left unverified.",
+        "doc": "https://developers.taboola.com/pixel/docs/bulk-submit-s2s-conversions",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "json"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "value_in",
+                "param": "body_encoding",
+                "values": [
+                  "unsupported"
+                ]
+              }
+            },
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "body_encoding",
+                  "values": [
+                    "none"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "content_type",
+                  "values": [
+                    "application/json"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "rules": []
+  }
 }

@@ -88,6 +88,13 @@
       "message": "The request sends both `measurement_id` and `firebase_app_id`. One request targets one stream type.",
       "fix_hint": "Keep the identifier that matches the stream this event belongs to and drop the other.",
       "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events"
+    },
+    {
+      "code": "vendor.google-analytics.https_required",
+      "kind": "require_https",
+      "severity": "error",
+      "message": "Google requires HTTPS for Measurement Protocol requests.",
+      "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference"
     }
   ],
   "body": [
@@ -1725,5 +1732,102 @@
       ],
       "rules": []
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "This published ingestion operation uses HTTP POST.",
+        "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "Use a published request media type.",
+        "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "severity": "warning",
+        "format_severity": "warning",
+        "requirement": "recommended"
+      },
+      {
+        "name": "body",
+        "description": "The request body is a JSON object.",
+        "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+        "requirement": "required",
+        "json_type": "object"
+      },
+      {
+        "name": "path",
+        "description": "Measurement Protocol collects at the published collect or debug collect routes.",
+        "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^/(?:debug/)?mp/collect$"
+        }
+      },
+      {
+        "name": "query.firebase_app_id",
+        "description": "Firebase app-stream identifier in the request URL.",
+        "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "query.measurement_id",
+        "description": "Web measurement-stream identifier in the request URL.",
+        "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "body.client_id",
+        "description": "Web streams require their client ID.",
+        "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "present",
+          "param": "query.measurement_id"
+        }
+      },
+      {
+        "name": "body.app_instance_id",
+        "description": "Firebase app streams require their installation ID.",
+        "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "present",
+          "param": "query.firebase_app_id"
+        }
+      }
+    ],
+    "rules": []
+  }
 }

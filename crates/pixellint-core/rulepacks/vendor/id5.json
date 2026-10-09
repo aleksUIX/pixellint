@@ -9,9 +9,6 @@
     "hosts": [
       "api.id5-sync.com"
     ],
-    "path_prefixes": [
-      "/ga/v1"
-    ],
     "json_paths": [
       "ip",
       "ua",
@@ -27,6 +24,9 @@
         "path": "appid",
         "excludes": ".+"
       }
+    ],
+    "paths": [
+      "/ga/v1"
     ]
   },
   "body": [
@@ -432,5 +432,80 @@
       ],
       "rules": []
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The published endpoint accepts an HTTP POST request.",
+        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "The request Content-Type is application/json; MIME parameters do not change its media type.",
+        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "body_encoding",
+        "description": "The published request carries a JSON entity. Once application/json is known, an absent body is invalid. Opaque compressed captures and unresolved MIME macros are left unverified.",
+        "doc": "https://wiki.id5.io/docs/mobile-in-app-integration",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "json"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "value_in",
+                "param": "body_encoding",
+                "values": [
+                  "unsupported"
+                ]
+              }
+            },
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "body_encoding",
+                  "values": [
+                    "none"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "content_type",
+                  "values": [
+                    "application/json"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "rules": []
+  }
 }

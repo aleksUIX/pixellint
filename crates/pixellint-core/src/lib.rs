@@ -17,6 +17,7 @@ pub mod directory;
 pub mod document;
 mod google_additional_consent;
 mod gpp_structure;
+pub mod http;
 mod javascript_date;
 mod json;
 pub mod manifest;
@@ -33,10 +34,11 @@ pub use document::{
     DocumentExtractor, DocumentReport, DocumentRequest, FindingCounts, document_request_from_json,
     document_request_from_value,
 };
+pub use http::{HttpHeader, HttpHeaders, HttpRequest};
 pub use manifest::{
     Assertion, IpVersion, JsonType, JsonTypes, ManifestError, ManifestRulePack, MatchSpec,
-    PackRule, ParamContract, ParamStyle, Requirement, RuleCondition, RulePackManifest,
-    StringNormalization, ValueFormat,
+    PackRule, ParamContract, ParamStyle, RequestQuerySpec, Requirement, RuleCondition,
+    RulePackManifest, StringNormalization, ValueFormat,
 };
 pub use prepare::PreparedArtifact;
 pub use timestamp::TimestampUnit;
@@ -570,6 +572,94 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/zendesk",
         include_str!("../rulepacks/vendor/zendesk.json"),
     ),
+    (
+        "vendor/appsflyer-impression",
+        include_str!("../rulepacks/vendor/appsflyer-impression.json"),
+    ),
+    (
+        "vendor/google-ima-telemetry",
+        include_str!("../rulepacks/vendor/google-ima-telemetry.json"),
+    ),
+    (
+        "vendor/ias-display-pixel",
+        include_str!("../rulepacks/vendor/ias-display-pixel.json"),
+    ),
+    (
+        "vendor/ias-video-pixel",
+        include_str!("../rulepacks/vendor/ias-video-pixel.json"),
+    ),
+    (
+        "vendor/adnami-tracker",
+        include_str!("../rulepacks/vendor/adnami-tracker.json"),
+    ),
+    (
+        "vendor/the-trade-desk-match",
+        include_str!("../rulepacks/vendor/the-trade-desk-match.json"),
+    ),
+    (
+        "vendor/the-trade-desk-realtime-id",
+        include_str!("../rulepacks/vendor/the-trade-desk-realtime-id.json"),
+    ),
+    (
+        "vendor/google-ima-interaction",
+        include_str!("../rulepacks/vendor/google-ima-interaction.json"),
+    ),
+    (
+        "vendor/google-ima-pcs",
+        include_str!("../rulepacks/vendor/google-ima-pcs.json"),
+    ),
+    (
+        "vendor/google-activeview",
+        include_str!("../rulepacks/vendor/google-activeview.json"),
+    ),
+    (
+        "vendor/flashtalking-impression",
+        include_str!("../rulepacks/vendor/flashtalking-impression.json"),
+    ),
+    (
+        "vendor/adcanvas-csc",
+        include_str!("../rulepacks/vendor/adcanvas-csc.json"),
+    ),
+    (
+        "vendor/xpln-video",
+        include_str!("../rulepacks/vendor/xpln-video.json"),
+    ),
+    (
+        "vendor/triplelift-tracking",
+        include_str!("../rulepacks/vendor/triplelift-tracking.json"),
+    ),
+    (
+        "vendor/triplelift-sync",
+        include_str!("../rulepacks/vendor/triplelift-sync.json"),
+    ),
+    (
+        "vendor/the-trade-desk-conversions",
+        include_str!("../rulepacks/vendor/the-trade-desk-conversions.json"),
+    ),
+    (
+        "vendor/amplified",
+        include_str!("../rulepacks/vendor/amplified.json"),
+    ),
+    (
+        "vendor/flashtalking-state",
+        include_str!("../rulepacks/vendor/flashtalking-state.json"),
+    ),
+    (
+        "vendor/nielsen-dar-pixel",
+        include_str!("../rulepacks/vendor/nielsen-dar-pixel.json"),
+    ),
+    (
+        "vendor/liveramp-ctvid",
+        include_str!("../rulepacks/vendor/liveramp-ctvid.json"),
+    ),
+    (
+        "vendor/innovid-legacy-impression",
+        include_str!("../rulepacks/vendor/innovid-legacy-impression.json"),
+    ),
+    (
+        "vendor/innovid-legacy-state",
+        include_str!("../rulepacks/vendor/innovid-legacy-state.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -758,6 +848,25 @@ pub trait ValidatorPlugin: Send + Sync {
         self.supports(prepared.request())
     }
 
+    /// Endpoint routing for a complete HTTP request. Implementations with
+    /// body contracts bind those contracts to this endpoint rather than shape.
+    #[doc(hidden)]
+    fn supports_http(&self, prepared: &PreparedArtifact<'_>) -> bool {
+        self.supports_prepared(prepared)
+    }
+
+    #[doc(hidden)]
+    fn validate_http(
+        &self,
+        prepared: &PreparedArtifact<'_>,
+        _body: Option<&PreparedArtifact<'_>>,
+        _raw_body_len: usize,
+        _normalized: &str,
+        _run_core_url_rules: bool,
+    ) -> ValidationReport {
+        self.validate_prepared(prepared)
+    }
+
     #[doc(hidden)]
     fn validate_prepared(&self, prepared: &PreparedArtifact<'_>) -> ValidationReport {
         self.validate(prepared.request())
@@ -930,6 +1039,11 @@ impl Engine {
         options: &ValidationOptions,
         reference_time_unix_seconds: i64,
     ) -> Result<ValidationSummary, EngineError> {
+        if request.artifact_kind == ArtifactKind::NetworkRequest
+            && request.artifact.trim_start().starts_with(['{', '['])
+        {
+            return self.validate_http_json_at(request, options, reference_time_unix_seconds);
+        }
         let mut prepared = PreparedArtifact::from_request_at(request, reference_time_unix_seconds);
         let plugins = self.select_plugins(&prepared, options)?;
         for plugin in &plugins {

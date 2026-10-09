@@ -11,6 +11,14 @@ export type ArtifactKind =
 
 export type ExpansionState = "unknown" | "template" | "fired";
 
+/** Serialize this capture with JSON.stringify and validate with kind: request. */
+export interface HttpRequest {
+  url: string;
+  method: string;
+  headers: Record<string, string> | Array<{ name: string; value: string }>;
+  body?: string;
+}
+
 export type Severity = "error" | "warning" | "info";
 
 export type EvidenceLevel =

@@ -45,7 +45,15 @@
       "doc": "https://docs.mixpanel.com/reference/import-events"
     }
   ],
-  "rules": [],
+  "rules": [
+    {
+      "code": "vendor.mixpanel-import.https_required",
+      "kind": "require_https",
+      "severity": "error",
+      "message": "Mixpanel explicitly rejects non-HTTPS API requests.",
+      "doc": "https://docs.mixpanel.com/reference/authentication"
+    }
+  ],
   "body": [
     {
       "params": [
@@ -372,5 +380,98 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The Import API uses POST.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "Import supports JSON arrays or newline-delimited JSON.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json",
+            "application/x-ndjson"
+          ]
+        }
+      },
+      {
+        "name": "body",
+        "description": "JSON and NDJSON normalize to the same event array.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "requirement": "required",
+        "json_type": "array",
+        "min_items": 1
+      },
+      {
+        "name": "headers.authorization",
+        "description": "Import requires its published Basic authentication header.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "(?i)^Basic[ \\t]+\\S+[ \\t]*$"
+        }
+      },
+      {
+        "name": "basic_auth",
+        "description": "Basic credentials must decode.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "requirement": "required",
+        "json_type": "object"
+      },
+      {
+        "name": "basic_auth.username",
+        "description": "Service-account username, project token or legacy secret.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "basic_auth.password",
+        "description": "Empty for the project-token branch; populated for service accounts.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "allow_empty": true
+      },
+      {
+        "name": "query.project_id",
+        "description": "Project ID is required when a service-account password is supplied.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "value_pattern",
+          "param": "basic_auth.password",
+          "pattern": ".+"
+        }
+      }
+    ],
+    "rules": []
+  }
 }

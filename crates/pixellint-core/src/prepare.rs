@@ -45,6 +45,9 @@ pub struct PreparedArtifact<'a> {
     reference_time_unix_seconds: i64,
     client_fragment_configuration: bool,
     gdpr_non_applicable_values: Vec<String>,
+    gdpr_consent_aliases: Vec<String>,
+    form_body: Option<&'a str>,
+    unavailable_form_body: bool,
 }
 
 impl<'a> PreparedArtifact<'a> {
@@ -67,11 +70,30 @@ impl<'a> PreparedArtifact<'a> {
             reference_time_unix_seconds,
             client_fragment_configuration: false,
             gdpr_non_applicable_values: Vec::new(),
+            gdpr_consent_aliases: Vec::new(),
+            form_body: None,
+            unavailable_form_body: false,
         }
     }
 
     pub fn request(&self) -> &ValidationRequest {
         self.request
+    }
+
+    pub(crate) fn set_form_body(&mut self, body: &'a str) {
+        self.form_body = Some(body);
+    }
+
+    pub(crate) fn has_form_body(&self) -> bool {
+        self.form_body.is_some()
+    }
+
+    pub(crate) fn mark_unavailable_form_body(&mut self) {
+        self.unavailable_form_body = true;
+    }
+
+    pub(crate) fn has_unavailable_form_body(&self) -> bool {
+        self.unavailable_form_body
     }
 
     /// Clock shared by every rulepack evaluating this artifact.
@@ -101,6 +123,16 @@ impl<'a> PreparedArtifact<'a> {
         self.gdpr_non_applicable_values
             .iter()
             .any(|candidate| candidate == value)
+    }
+
+    pub(crate) fn allow_gdpr_consent_alias(&mut self, name: &str) {
+        if !self.gdpr_consent_aliases.iter().any(|alias| alias == name) {
+            self.gdpr_consent_aliases.push(name.to_string());
+        }
+    }
+
+    pub(crate) fn gdpr_consent_aliases(&self) -> &[String] {
+        &self.gdpr_consent_aliases
     }
 
     pub(crate) fn trimmed(&self) -> &str {
@@ -137,7 +169,24 @@ impl<'a> PreparedArtifact<'a> {
 
     pub(crate) fn params(&self, style: ParamStyle) -> &[RawParam<'_>] {
         self.params[style.cache_index()]
-            .get_or_init(|| extract_params(self.trimmed, style))
+            .get_or_init(|| {
+                let mut params = extract_params(self.trimmed, style);
+                if matches!(style, ParamStyle::Query | ParamStyle::QuerySemicolon)
+                    && let Some(body) = self.form_body
+                {
+                    let names: std::collections::BTreeSet<_> =
+                        params.iter().map(|p| p.name.to_string()).collect();
+                    for (name, value) in url::form_urlencoded::parse(body.as_bytes()) {
+                        if !names.contains(name.as_ref()) {
+                            let mut field =
+                                RawParam::query(name.into_owned(), value.into_owned(), 0, 0);
+                            field.component = crate::ViolationTargetComponent::BodyField;
+                            params.push(field);
+                        }
+                    }
+                }
+                params
+            })
             .as_slice()
     }
 }

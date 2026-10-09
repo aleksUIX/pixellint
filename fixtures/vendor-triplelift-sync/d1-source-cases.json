@@ -1,0 +1,275 @@
+[
+  {
+    "id": "buyer-mapping",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=123&xuid=synthetic_buyer&dongle=synthetic_dongle&gdpr=0",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The published mapping table defines a positive member ID and opaque buyer ID and partner dongle.",
+    "clean": true
+  },
+  {
+    "id": "redirect-url-with-uid-macro",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync%3Fuid%3D%24UID&gdpr=0",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The documented encoded redirect retains the literal $UID placeholder.",
+    "clean": true
+  },
+  {
+    "id": "iframe-sync",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://eb2.3lift.com/sync?redir=https%3A%2F%2Fpublisher.example%2Fsync%3Fuid%3D%24UID\",\"method\":\"GET\",\"headers\":{}}",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The published iframe sync performs a browser GET.",
+    "clean": true
+  },
+  {
+    "id": "member-1",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=1&xuid=synthetic_buyer&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.param.mid.invalid",
+    "expect_violation": false,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The member ID must be a positive integer; the example placeholder tl_value_sample123 conflicts with that normative table."
+  },
+  {
+    "id": "member-0001",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=0001&xuid=synthetic_buyer&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.param.mid.invalid",
+    "expect_violation": false,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The member ID must be a positive integer; the example placeholder tl_value_sample123 conflicts with that normative table."
+  },
+  {
+    "id": "member-0",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=0&xuid=synthetic_buyer&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.param.mid.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The member ID must be a positive integer; the example placeholder tl_value_sample123 conflicts with that normative table."
+  },
+  {
+    "id": "member-0000",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=0000&xuid=synthetic_buyer&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.param.mid.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The member ID must be a positive integer; the example placeholder tl_value_sample123 conflicts with that normative table."
+  },
+  {
+    "id": "member--1",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=-1&xuid=synthetic_buyer&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.param.mid.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The member ID must be a positive integer; the example placeholder tl_value_sample123 conflicts with that normative table."
+  },
+  {
+    "id": "member-1_5",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=1.5&xuid=synthetic_buyer&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.param.mid.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The member ID must be a positive integer; the example placeholder tl_value_sample123 conflicts with that normative table."
+  },
+  {
+    "id": "member-member",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=member&xuid=synthetic_buyer&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.param.mid.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The member ID must be a positive integer; the example placeholder tl_value_sample123 conflicts with that normative table."
+  },
+  {
+    "id": "mapping-missing-mid",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?xuid=synthetic_buyer&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.mapping_fields_missing",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The mapping flow names these fields; missingness is advisory because the published table does not explicitly enumerate rejection cases."
+  },
+  {
+    "id": "mapping-missing-xuid",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=123&dongle=synthetic_dongle",
+    "code": "vendor.triplelift-sync.mapping_fields_missing",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The mapping flow names these fields; missingness is advisory because the published table does not explicitly enumerate rejection cases."
+  },
+  {
+    "id": "mapping-missing-dongle",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/xuid?mid=123&xuid=synthetic_buyer",
+    "code": "vendor.triplelift-sync.mapping_fields_missing",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The mapping flow names these fields; missingness is advisory because the published table does not explicitly enumerate rejection cases."
+  },
+  {
+    "id": "redirect-missing-getuid",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid",
+    "code": "vendor.triplelift-sync.redirect_missing",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The documented flow redirects to the URL supplied in redir."
+  },
+  {
+    "id": "redirect-missing-sync",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/sync",
+    "code": "vendor.triplelift-sync.redirect_missing",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The documented flow redirects to the URL supplied in redir."
+  },
+  {
+    "id": "relative-redirect-invalid",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=%2Fsync",
+    "code": "vendor.triplelift-sync.param.redir.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The redirect table describes a URL and publishes absolute URL examples."
+  },
+  {
+    "id": "gdpr-invalid-flag",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gdpr=2",
+    "code": "vendor.triplelift-sync.param.gdpr.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The documented GDPR flag is 1 or the demonstrated non-applicable 0."
+  },
+  {
+    "id": "gdpr-without-consent-is-no-sync-advisory",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gdpr=1",
+    "code": "vendor.triplelift-sync.gdpr_sync_without_consent",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "Privacy fields are optional, but no valid consent means no GDPR sync."
+  },
+  {
+    "id": "invalid-consent-alias",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gdpr=1&cmp_cs=invalid",
+    "code": "vendor.triplelift-sync.param.gdpr_consent.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "cmp_cs is explicitly an accepted consent-string spelling."
+  },
+  {
+    "id": "invalid-us-privacy",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&us_privacy=1XXXX",
+    "code": "vendor.triplelift-sync.param.us_privacy.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "US privacy uses the published four-character IAB encoding."
+  },
+  {
+    "id": "invalid-gpp",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gpp=broken&gpp_sid=7",
+    "code": "vendor.triplelift-sync.param.gpp.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "gpp is an encoded IAB Global Privacy Platform string."
+  },
+  {
+    "id": "sections-without-string",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gpp_sid=7",
+    "code": "vendor.triplelift-sync.sections_without_gpp",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "Applicable section IDs refer to an encoded GPP string."
+  },
+  {
+    "id": "invalid-section-list",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gpp_sid=7;8",
+    "code": "vendor.triplelift-sync.param.gpp_sid.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The applicable section IDs are serialized as comma-separated IDs in IAB URL signals."
+  },
+  {
+    "id": "redirect-post-advisory",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync\",\"method\":\"POST\",\"headers\":{}}",
+    "code": "vendor.triplelift-sync.http.method.invalid",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The documented browser redirect flow uses GET."
+  },
+  {
+    "id": "valid-consent-alias-no-false-missing",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gdpr=1&cmp_cs=CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA",
+    "code": "core.privacy.gdpr_consent_missing",
+    "expect_violation": false,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "TripleLift explicitly accepts cmp_cs for a valid TCF consent string. The historical primary IAB sample is used without claiming current policy compliance."
+  },
+  {
+    "id": "gpp-applicable-7",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gpp=DBABLA~CVQqAAAAAACA.QA&gpp_sid=7",
+    "code": "vendor.triplelift-sync.gpp_sections_missing_from_header",
+    "expect_violation": false,
+    "source_url": "https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md",
+    "source_statement": "Applicable IDs must occur in the GPP encoded header. The independently encoded US National source fixture contains section 7."
+  },
+  {
+    "id": "gpp-applicable-8",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gpp=DBABLA~CVQqAAAAAACA.QA&gpp_sid=8",
+    "code": "vendor.triplelift-sync.gpp_sections_missing_from_header",
+    "expect_violation": true,
+    "source_url": "https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md",
+    "source_statement": "Applicable IDs must occur in the GPP encoded header. The independently encoded US National source fixture contains section 7."
+  },
+  {
+    "id": "gpp-string-without-applicable-id",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gpp=DBABLA~CVQqAAAAAACA.QA",
+    "code": "vendor.triplelift-sync.gpp_without_sections",
+    "expect_violation": true,
+    "source_url": "https://docs.triplelift.com/docs/user-sync",
+    "source_statement": "The documented URL GPP signal includes string plus applicable section IDs."
+  },
+  {
+    "id": "gpp-url-cardinality-7,8",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gpp_sid=7,8",
+    "code": "vendor.triplelift-sync.param.gpp_sid.invalid",
+    "expect_violation": false,
+    "source_url": "https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md",
+    "source_statement": "The IAB URL macro specification permits at most two comma-separated applicable sections."
+  },
+  {
+    "id": "gpp-url-cardinality-7,8,9",
+    "kind": "url",
+    "artifact": "https://eb2.3lift.com/getuid?redir=https%3A%2F%2Fpublisher.example%2Fsync&gpp_sid=7,8,9",
+    "code": "vendor.triplelift-sync.param.gpp_sid.invalid",
+    "expect_violation": true,
+    "source_url": "https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md",
+    "source_statement": "The IAB URL macro specification permits at most two comma-separated applicable sections."
+  }
+]

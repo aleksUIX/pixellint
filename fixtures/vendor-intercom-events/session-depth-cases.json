@@ -1,0 +1,82 @@
+[
+  {
+    "id": "published_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.intercom.io/events\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer TEST_ONLY_TOKEN\"},\"body\":\"{\\\"event_name\\\":\\\"placed-order\\\",\\\"created_at\\\":1671028894,\\\"user_id\\\":\\\"314159\\\",\\\"metadata\\\":{\\\"source\\\":\\\"desktop\\\"}}\"}",
+    "code": "vendor.intercom-events.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "wrong_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.intercom.io/events\",\"method\":\"GET\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer TEST_ONLY_TOKEN\"},\"body\":\"{\\\"event_name\\\":\\\"placed-order\\\",\\\"created_at\\\":1671028894,\\\"user_id\\\":\\\"314159\\\",\\\"metadata\\\":{\\\"source\\\":\\\"desktop\\\"}}\"}",
+    "code": "vendor.intercom-events.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "authentication_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.intercom.io/events\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"event_name\\\":\\\"placed-order\\\",\\\"created_at\\\":1671028894,\\\"user_id\\\":\\\"314159\\\",\\\"metadata\\\":{\\\"source\\\":\\\"desktop\\\"}}\"}",
+    "code": "vendor.intercom-events.http.headers.authorization.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "authentication_wrong_scheme",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.intercom.io/events\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic TEST_ONLY_NOT_BEARER\"},\"body\":\"{\\\"event_name\\\":\\\"placed-order\\\",\\\"created_at\\\":1671028894,\\\"user_id\\\":\\\"314159\\\",\\\"metadata\\\":{\\\"source\\\":\\\"desktop\\\"}}\"}",
+    "code": "vendor.intercom-events.http.headers.authorization.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "unpublished_mime_advisory",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.intercom.io/events\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/xml\",\"Authorization\":\"Bearer TEST_ONLY_TOKEN\"},\"body\":\"{\\\"event_name\\\":\\\"placed-order\\\",\\\"created_at\\\":1671028894,\\\"user_id\\\":\\\"314159\\\",\\\"metadata\\\":{\\\"source\\\":\\\"desktop\\\"}}\"}",
+    "code": "vendor.intercom-events.http.content_type.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "regional_api.eu.intercom.io",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.eu.intercom.io/events\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer TEST_ONLY_TOKEN\"},\"body\":\"{\\\"event_name\\\":\\\"placed-order\\\",\\\"created_at\\\":1671028894,\\\"user_id\\\":\\\"314159\\\",\\\"metadata\\\":{\\\"source\\\":\\\"desktop\\\"}}\"}",
+    "code": "vendor.intercom-events.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://developers.intercom.com/docs/references/2.14/rest-api/api.intercom.io/data-events/createdataevent",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "regional_api.au.intercom.io",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.au.intercom.io/events\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer TEST_ONLY_TOKEN\"},\"body\":\"{\\\"event_name\\\":\\\"placed-order\\\",\\\"created_at\\\":1671028894,\\\"user_id\\\":\\\"314159\\\",\\\"metadata\\\":{\\\"source\\\":\\\"desktop\\\"}}\"}",
+    "code": "vendor.intercom-events.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://developers.intercom.com/docs/references/2.14/rest-api/api.intercom.io/data-events/createdataevent",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "future_published_version_not_frozen",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.intercom.io/events\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer TEST_ONLY_TOKEN\",\"Intercom-Version\":\"2.16\"},\"body\":\"{\\\"event_name\\\":\\\"placed-order\\\",\\\"created_at\\\":1671028894,\\\"user_id\\\":\\\"314159\\\",\\\"metadata\\\":{\\\"source\\\":\\\"desktop\\\"}}\"}",
+    "code": "vendor.intercom-events.http.headers.intercom-version.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://developers.intercom.com/docs/references/2.14/rest-api/api.intercom.io/data-events/createdataevent",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

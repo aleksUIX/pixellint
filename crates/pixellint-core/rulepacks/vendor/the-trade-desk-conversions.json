@@ -1,0 +1,719 @@
+{
+  "id": "vendor/the-trade-desk-conversions",
+  "display_name": "The Trade Desk realtime conversions",
+  "description": "Real-time JSON conversion batches, identity alternatives, commerce items, privacy records and data processing options. Account mapping and regional policy applicability remain external.",
+  "vendor": "thetradedesk",
+  "source_level": "official_vendor",
+  "docs": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+  "match": {
+    "hosts": [
+      "insight.adsrvr.org"
+    ],
+    "paths": [
+      "/track/realtimeconversion"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "data[].adv",
+          "data[].merchant_id"
+        ]
+      },
+      {
+        "any_of": [
+          "data[].pixel_id",
+          "data[].pixel_ids",
+          "data[].tracker_id",
+          "data[].upixel_id"
+        ]
+      }
+    ]
+  },
+  "rules": [
+    {
+      "kind": "require_https",
+      "code": "vendor.the-trade-desk-conversions.https_required",
+      "severity": "error",
+      "message": "The Real-Time Conversion Events API requires HTTPS.",
+      "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+    }
+  ],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required"
+        },
+        {
+          "name": "data",
+          "json_type": "array",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required"
+        }
+      ],
+      "rules": [
+        {
+          "kind": "max_body_bytes",
+          "max_bytes": 29989274,
+          "code": "vendor.the-trade-desk-conversions.body_size_advisory",
+          "severity": "warning",
+          "source_level": "heuristic",
+          "message": "Request exceeds a conservative binary interpretation of the published 28.6 MB size ceiling.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        }
+      ]
+    },
+    {
+      "scope": "data[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required"
+        },
+        {
+          "name": "adv",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "merchant_id",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "pixel_id",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "pixel_ids",
+          "json_type": "array",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "min_items": 1
+        },
+        {
+          "name": "pixel_ids[]",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "tracker_id",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "deprecated"
+        },
+        {
+          "name": "upixel_id",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "deprecated"
+        },
+        {
+          "name": "value",
+          "json_type": "number",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format_severity": "warning"
+        },
+        {
+          "name": "currency",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "currency"
+          }
+        },
+        {
+          "name": "event_name",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "client_ip",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "ip"
+          }
+        },
+        {
+          "name": "referrer_url",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "allow_empty": true
+        },
+        {
+          "name": "adid",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "allow_empty": true
+        },
+        {
+          "name": "adid_type",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "allow_empty": true,
+          "format": {
+            "kind": "enum",
+            "values": [
+              "TDID",
+              "IDFA",
+              "AAID",
+              "DAID",
+              "NAID",
+              "IDL",
+              "EUID",
+              "UID2"
+            ]
+          }
+        },
+        {
+          "name": "uid2_token",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "euid_token",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "idl",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:.{49}|.{70})$"
+          }
+        },
+        {
+          "name": "imp",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "min_length": 36,
+          "max_length": 36,
+          "format_severity": "warning"
+        },
+        {
+          "name": "country",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "region",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "NielsenDMA",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "integer"
+          },
+          "format_severity": "warning"
+        },
+        {
+          "name": "city",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "zip",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "order_id",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "items",
+          "json_type": "array",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "min_items": 1
+        },
+        {
+          "name": "privacy_settings",
+          "json_type": "array",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "data_processing_option",
+          "json_type": "object",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "tdid",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          }
+        },
+        {
+          "name": "daid",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          }
+        },
+        {
+          "name": "idfa",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          }
+        },
+        {
+          "name": "aaid",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          }
+        },
+        {
+          "name": "naid",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          }
+        },
+        {
+          "name": "td_values",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "name_pattern_parent": "",
+          "name_pattern": "^td(?:[1-9]|10)$",
+          "max_length": 150,
+          "allow_empty": true
+        }
+      ],
+      "rules": [
+        {
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "adv"
+            ],
+            [
+              "merchant_id"
+            ]
+          ],
+          "code": "vendor.the-trade-desk-conversions.owner_missing",
+          "severity": "error",
+          "message": "Provide the advertiser or merchant identifier.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "pixel_id"
+            ],
+            [
+              "pixel_ids"
+            ],
+            [
+              "tracker_id"
+            ],
+            [
+              "upixel_id"
+            ]
+          ],
+          "code": "vendor.the-trade-desk-conversions.pixel_missing",
+          "severity": "error",
+          "message": "Provide a current pixel identifier or a documented deprecated identifier.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          }
+        },
+        {
+          "kind": "required_when_value",
+          "when": "event_name",
+          "equals": [
+            "purchase"
+          ],
+          "requires": [
+            "value"
+          ],
+          "code": "vendor.the-trade-desk-conversions.purchase_value_missing",
+          "severity": "error",
+          "message": "Purchase events require a revenue value.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "required_with",
+          "when": "adid",
+          "requires": [
+            "adid_type"
+          ],
+          "code": "vendor.the-trade-desk-conversions.adid_type_missing",
+          "severity": "error",
+          "message": "Provided advertising IDs require an ID type.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "required_when_value",
+          "when": "country",
+          "equals": [
+            "United States"
+          ],
+          "requires": [
+            "region"
+          ],
+          "code": "vendor.the-trade-desk-conversions.us_region_missing",
+          "severity": "error",
+          "message": "Events in United States require a region.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "format_when",
+          "when": "adid_type",
+          "equals": [
+            "TDID"
+          ],
+          "param": "adid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          },
+          "code": "vendor.the-trade-desk-conversions.adid_tdid_invalid",
+          "severity": "warning",
+          "message": "The documented device ID family uses a 36-character GUID.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "format_when",
+          "when": "adid_type",
+          "equals": [
+            "IDFA"
+          ],
+          "param": "adid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          },
+          "code": "vendor.the-trade-desk-conversions.adid_idfa_invalid",
+          "severity": "warning",
+          "message": "The documented device ID family uses a 36-character GUID.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "format_when",
+          "when": "adid_type",
+          "equals": [
+            "AAID"
+          ],
+          "param": "adid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          },
+          "code": "vendor.the-trade-desk-conversions.adid_aaid_invalid",
+          "severity": "warning",
+          "message": "The documented device ID family uses a 36-character GUID.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "format_when",
+          "when": "adid_type",
+          "equals": [
+            "DAID"
+          ],
+          "param": "adid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          },
+          "code": "vendor.the-trade-desk-conversions.adid_daid_invalid",
+          "severity": "warning",
+          "message": "The documented device ID family uses a 36-character GUID.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "format_when",
+          "when": "adid_type",
+          "equals": [
+            "NAID"
+          ],
+          "param": "adid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+          },
+          "code": "vendor.the-trade-desk-conversions.adid_naid_invalid",
+          "severity": "warning",
+          "message": "The documented device ID family uses a 36-character GUID.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "format_when",
+          "when": "adid_type",
+          "equals": [
+            "IDL"
+          ],
+          "param": "adid",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:.{49}|.{70})$"
+          },
+          "code": "vendor.the-trade-desk-conversions.adid_idl_invalid",
+          "severity": "warning",
+          "message": "The documented RampID lengths are 49 and 70 characters.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "unique_array_by",
+          "param": "privacy_settings",
+          "field": "privacy_type",
+          "code": "vendor.the-trade-desk-conversions.privacy_type_duplicate",
+          "severity": "error",
+          "message": "Only one privacy record per regulation type is permitted in an event.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        }
+      ]
+    },
+    {
+      "scope": "data[].items[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required"
+        },
+        {
+          "name": "item_code",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required"
+        },
+        {
+          "name": "name",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "max_length": 150
+        },
+        {
+          "name": "qty",
+          "json_type": "integer",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format_severity": "warning"
+        },
+        {
+          "name": "price",
+          "json_type": "number",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format_severity": "warning"
+        },
+        {
+          "name": "cat",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "name": "item_brand",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        }
+      ]
+    },
+    {
+      "scope": "data[].privacy_settings[]",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required"
+        },
+        {
+          "name": "privacy_type",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "GDPR",
+              "GPP"
+            ]
+          }
+        },
+        {
+          "name": "is_applicable",
+          "json_type": [
+            "boolean",
+            "integer"
+          ],
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "name": "consent_string",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required",
+          "allow_empty": true
+        }
+      ],
+      "rules": [
+        {
+          "kind": "format_when",
+          "when": "privacy_type",
+          "equals": [
+            "GDPR"
+          ],
+          "param": "consent_string",
+          "format": {
+            "kind": "tcf"
+          },
+          "condition": {
+            "kind": "value_in",
+            "param": "is_applicable",
+            "values": [
+              "true",
+              "1"
+            ]
+          },
+          "code": "vendor.the-trade-desk-conversions.privacy_gdpr_invalid",
+          "severity": "error",
+          "message": "Applicable privacy settings require a structurally valid consent string.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        },
+        {
+          "kind": "format_when",
+          "when": "privacy_type",
+          "equals": [
+            "GPP"
+          ],
+          "param": "consent_string",
+          "format": {
+            "kind": "gpp"
+          },
+          "condition": {
+            "kind": "value_in",
+            "param": "is_applicable",
+            "values": [
+              "true",
+              "1"
+            ]
+          },
+          "code": "vendor.the-trade-desk-conversions.privacy_gpp_invalid",
+          "severity": "error",
+          "message": "Applicable privacy settings require a structurally valid consent string.",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+        }
+      ]
+    },
+    {
+      "scope": "data[].data_processing_option",
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required"
+        },
+        {
+          "name": "policies",
+          "json_type": "array",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required"
+        },
+        {
+          "name": "policies[]",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "LDU"
+            ]
+          }
+        },
+        {
+          "name": "region",
+          "json_type": "string",
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "requirement": "required",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^US-[A-Z]{2}$"
+          }
+        }
+      ]
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        },
+        "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+      },
+      {
+        "name": "content_type",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+      },
+      {
+        "name": "body",
+        "json_type": "object",
+        "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+        "condition": {
+          "kind": "value_in",
+          "param": "body_encoding",
+          "values": [
+            "none"
+          ]
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+      }
+    ]
+  }
+}

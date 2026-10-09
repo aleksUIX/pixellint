@@ -47,7 +47,7 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 - URL conformance, transport, credentials, fragments, and ad-tech macro handling
 - IAB consent signals: TCF `gdpr` and `gdpr_consent`, the deprecated US Privacy
   string, and GPP `gpp` and `gpp_sid`
-- 137 vendor rulepacks across 79 vendors, including Meta
+- 159 vendor rulepacks across 85 vendors, including Meta
   Conversions API, TikTok Events API, Reddit CAPI, and the browser pixels
 - Endpoint attribution for 120 vendor rows, so an unrecognized pixel still gets a name.
 
@@ -67,6 +67,12 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 `unknown`), `state` (`unknown`, `template`, `fired`), and
 `vendor` for a caller's claimed vendor. `html`, `js`, and `gtm` throw: extract
 URLs first.
+
+Use `{ kind: "request" }` with a serialized complete capture containing string
+`url`, string `method`, `headers` as an object or name/value list, and optional
+raw string `body`. It binds payload checks to the destination and adds method
+and header contracts. See [the HTTP capture schema](https://github.com/aleksUIX/pixellint/blob/main/docs/HTTP_REQUEST_SCHEMA.md)
+for representation limits and repeated fields.
 
 `vast` takes a tracking URL extracted from VAST and enables the IAB VAST
 macro-name checks. It does not accept a VAST XML document.

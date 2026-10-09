@@ -1,0 +1,127 @@
+{
+  "id": "vendor/ias-video-pixel",
+  "display_name": "IAS Unified Video Pixel",
+  "vendor": "ias",
+  "source_level": "official_vendor",
+  "docs": "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf",
+  "description": "IAS UVP event pixels. The published guide requires a populated external session ID and shows event and generated numeric tag identifiers in the path. Cross-pixel session identity requires surrounding ad-session input.",
+  "match": {
+    "hosts": [
+      "unified.adsafeprotected.com"
+    ],
+    "path_prefixes": [
+      "/vevent/"
+    ]
+  },
+  "path_pattern": "^/vevent/(?<event_name>[^/]*)(?:/(?<advertiser_id>[^/]*))?(?:/(?<publisher_id>[^/]*))?/?$",
+  "params": [
+    {
+      "name": "event_name",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "source_level": "official_template",
+      "description": "Published UVP paths identify their event here. The guide shows seven events but does not declare a closed event enumeration."
+    },
+    {
+      "name": "advertiser_id",
+      "requirement": "required",
+      "format": {
+        "kind": "integer"
+      },
+      "source_level": "official_template",
+      "description": "Numeric generated IAS tag identifier, preserved from the published UVP template."
+    },
+    {
+      "name": "publisher_id",
+      "requirement": "required",
+      "format": {
+        "kind": "integer"
+      },
+      "source_level": "official_template",
+      "description": "Numeric generated IAS tag identifier, preserved from the published UVP template."
+    },
+    {
+      "name": "xsId",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "IAS explicitly requires the external ad-session identifier for UVP/CTV impression registration. UUIDv4 is recommended, so an opaque nonempty ID is accepted."
+    },
+    {
+      "name": "gdpr",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "gdpr_consent",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "gdpr_pd",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "ias_xmtp",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "ias_xmapp",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "ias_xappb",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "omidPartner",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "bundleId",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "ias_xerr",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Optional published UVP template field. The guide gives no closed grammar or unconditional presence requirement."
+    },
+    {
+      "name": "xdebug",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Documented reporting or debugging input. Platform prerequisites and cross-session uniqueness are external."
+    },
+    {
+      "name": "campaign_id",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Documented reporting or debugging input. Platform prerequisites and cross-session uniqueness are external."
+    },
+    {
+      "name": "placement_id",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Documented reporting or debugging input. Platform prerequisites and cross-session uniqueness are external."
+    }
+  ],
+  "rules": []
+}

@@ -1,0 +1,95 @@
+{
+  "id": "vendor/the-trade-desk-realtime-id",
+  "display_name": "The Trade Desk realtime ID service",
+  "description": "Published JSON and JSONP realtime ID lookup contracts. Response ID formats remain opaque strings.",
+  "vendor": "thetradedesk",
+  "source_level": "official_vendor",
+  "docs": "https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf",
+  "match": {
+    "hosts": [
+      "match.adsrvr.org"
+    ],
+    "paths": [
+      "/track/rid"
+    ]
+  },
+  "params": [
+    {
+      "name": "ttd_pid",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Configured cookie mapping partner identifier.",
+      "doc": "https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf"
+    },
+    {
+      "name": "v",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "JSONP response version. The documentation does not close future version values.",
+      "doc": "https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf"
+    },
+    {
+      "name": "fmt",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "json"
+        ]
+      },
+      "description": "The published JSON alternative selects fmt=json.",
+      "doc": "https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.the-trade-desk-realtime-id.response_format_missing",
+      "kind": "require_any_of",
+      "groups": [
+        [
+          "v"
+        ],
+        [
+          "fmt"
+        ]
+      ],
+      "severity": "error",
+      "message": "Select a versioned JSONP response or fmt=json.",
+      "doc": "https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-id.json_version_unsupported",
+      "kind": "forbidden_when_value",
+      "when": "fmt",
+      "equals": [
+        "json"
+      ],
+      "params": [
+        "v"
+      ],
+      "severity": "warning",
+      "message": "The documented JSON alternative does not support versioning.",
+      "doc": "https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "description": "Published script and XHR lookup.",
+        "doc": "https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf",
+        "severity": "warning",
+        "source_level": "official_template"
+      }
+    ]
+  }
+}

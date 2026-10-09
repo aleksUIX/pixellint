@@ -1562,6 +1562,143 @@ fn base64_json_supports_both_alphabets_and_optional_padding() {
 }
 
 #[test]
+fn browser_btoa_json_preserves_latin1_text_without_changing_utf8_encoding() {
+    let latin1 = encoded_pack("base64_latin1_json");
+    let utf8 = encoded_pack("base64_json");
+    let encoded = "eyJkYXRhIjoiY2Fm6SJ9";
+    assert!(
+        latin1
+            .validate(&encoded_request(encoded))
+            .violations
+            .is_empty()
+    );
+    assert_eq!(utf8.validate(&encoded_request(encoded)).violations.len(), 1);
+
+    let exact = ManifestRulePack::from_json(
+        &json!({
+        "id":"custom/latin1", "display_name":"Browser btoa payload",
+        "source_level":"heuristic",
+            "description":"Latin-1 JSON fields and original decoded wire bytes.",
+            "match":{"hosts":["example.test"]}, "params":[{"name":"payload"}],
+            "body":{"source_param":"payload","encoding":"base64_latin1_json",
+                "params":[{"name":"data","format":{"kind":"regex","pattern":"^café$"}}],
+                "rules":[{"code":"custom.latin1.bytes","kind":"max_body_bytes","max_bytes":15,
+                    "severity":"error","message":"The decoded Latin-1 entity exceeds 15 bytes."}]}
+        })
+        .to_string(),
+    )
+    .unwrap();
+    assert!(
+        exact
+            .validate(&encoded_request(encoded))
+            .violations
+            .is_empty()
+    );
+    // These are UTF-8 bytes. The Latin-1 codec must preserve both bytes separately.
+    let report = exact.validate(&encoded_request("eyJkYXRhIjoiY2Fmw6kifQ=="));
+    assert_eq!(report.violations.len(), 2);
+    assert!(
+        report
+            .violations
+            .iter()
+            .any(|finding| finding.code == "custom.latin1.bytes")
+    );
+    assert!(
+        report
+            .violations
+            .iter()
+            .any(|finding| finding.code == "custom.latin1.body.data.invalid")
+    );
+    let report = exact.validate(&encoded_request("eyJkYXRhIjo0Mn0="));
+    assert_eq!(report.violations.len(), 1);
+    assert_eq!(
+        report.violations[0].targets[0].name.as_deref(),
+        Some("payload")
+    );
+}
+
+#[test]
+fn latin1_base64_embedded_fields_support_json_escapes_and_share_syntax_checks() {
+    let pack = ManifestRulePack::from_json(
+        &json!({
+        "id":"custom/latin1", "display_name":"Browser btoa field",
+        "source_level":"heuristic",
+            "description":"An embedded Latin-1 JSON string.",
+            "match":{"hosts":["example.test"],"json_paths":["payload"]},
+            "body":{"source_field":"payload","encoding":"base64_latin1_json",
+                "params":[{"name":"data","requirement":"required","json_type":"string"}]}
+        })
+        .to_string(),
+    )
+    .unwrap();
+    for encoded in ["eyJkYXRhIjoiY2Fm6SJ9", "eyJkYXRhIjoiXHUwMTAwIn0="] {
+        assert!(
+            pack.validate(&request(&json!({"payload":encoded}).to_string()))
+                .violations
+                .is_empty()
+        );
+    }
+    for encoded in [
+        "A",
+        "***",
+        "eyJkYXRhIjoib2sifQ=",
+        "eyJkYXRhIjoib2sifR==",
+        "////",
+        "e2Jyb2tlbg==",
+    ] {
+        assert_eq!(
+            pack.validate(&request(&json!({"payload":encoded}).to_string()))
+                .violations
+                .len(),
+            1,
+            "{encoded}"
+        );
+    }
+    assert!(
+        pack.validate(&request(&json!({"payload":"[CUSTOM_DATA]"}).to_string()))
+            .violations
+            .is_empty()
+    );
+    let report = pack.validate(&request(&json!({"payload":"eyJkYXRhIjo0Mn0="}).to_string()));
+    assert_eq!(
+        report.violations[0].field.as_deref(),
+        Some("body.payload.data")
+    );
+    assert_eq!(
+        report.violations[0].targets[0].name.as_deref(),
+        Some("payload")
+    );
+}
+
+#[test]
+fn latin1_base64_can_be_nested_in_json_from_a_url_parameter() {
+    let pack = ManifestRulePack::from_json(
+        &json!({
+        "id":"custom/latin1", "display_name":"Nested browser payload",
+        "source_level":"heuristic",
+            "description":"Outer JSON and inner browser btoa data use separate codecs.",
+            "match":{"hosts":["example.test"]}, "params":[{"name":"payload"}],
+            "body":{"source_param":"payload","encoding":"json","source_field":"inner",
+                "field_encoding":"base64_latin1_json",
+                "params":[{"name":"data","format":{"kind":"regex","pattern":"^café$"}}]}
+        })
+        .to_string(),
+    )
+    .unwrap();
+    assert!(
+        pack.validate(&encoded_request(r#"{"inner":"eyJkYXRhIjoiY2Fm6SJ9"}"#))
+            .violations
+            .is_empty()
+    );
+    let report = pack.validate(&encoded_request(r#"{"inner":"eyJkYXRhIjo0Mn0="}"#));
+    assert_eq!(report.violations.len(), 1);
+    assert_eq!(
+        report.violations[0].targets[0].name.as_deref(),
+        Some("payload")
+    );
+}
+
+#[test]
 fn root_array_scopes_check_element_fields_and_do_not_fall_back_on_empty_arrays() {
     let manifest = json!({
         "id":"custom/root", "display_name":"Root alternatives", "description":"Root object or array.","source_level":"heuristic",

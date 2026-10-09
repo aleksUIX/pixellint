@@ -65,7 +65,21 @@ assert.deepEqual(
   ["core.json.parse_error"],
 );
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 137, "every shipped vendor pack should be listed");
+const captured = {
+  url: "https://plausible.io/api/event",
+  method: "POST",
+  headers: { "Content-Type": "application/json; charset=UTF-8", "User-Agent": "Mozilla/5.0" },
+  body: JSON.stringify({ name: "pageview", url: "https://example.org/", domain: "example.org" }),
+};
+const capturedResult = validate(JSON.stringify(captured), { kind: "request" });
+assert.equal(isOk(capturedResult), true, "complete HTTP requests run on WASM's supplied clock");
+assert.deepEqual(capturedResult.reports.map(report => report.plugin_id), ["core", "vendor/plausible"]);
+const invalidMethod = validate(JSON.stringify({ ...captured, method: "GET" }), { kind: "request" });
+assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(finding => finding.code === "vendor.plausible.http.method.invalid"));
+const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
+assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
+
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 159, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);

@@ -1,0 +1,110 @@
+{
+  "id": "vendor/innovid-legacy-impression",
+  "display_name": "Innovid legacy impression tracker",
+  "vendor": "innovid",
+  "source_level": "official_template",
+  "docs": "https://help.innovid.com/hc/en-us/articles/28042598512284-Innovid-Tag-Assistant-User-Guide",
+  "description": "Innovid servedby legacy impression transport recognized by official Tag Assistant 1.1.5. Shared legacy tuple syntax is validated as template completeness advice. Opaque tokens, account state, unlisted variants and ad-events transport are outside this pack.",
+  "match": {
+    "hosts": [
+      "servedby.innovid.com"
+    ],
+    "path_prefixes": [
+      "/imp/"
+    ]
+  },
+  "path_pattern": "^/imp/(?:[0-9]+/)?(?<tag_id>[^;/]*);(?<placement_id>[^;/]*);(?<creative_code>[^;/]*);(?<event_name>[^;/]*);(?<site_name>[^;/]*);(?<placement_name>[^/]*)/?$",
+  "params": [
+    {
+      "name": "tag_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "description": "Numeric position in vendor-generated tag. Primary SDK and publisher guide disagree about business labels, so this preserves the positional contract only."
+    },
+    {
+      "name": "placement_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "description": "Numeric position in vendor-generated tag. Primary SDK and publisher guide disagree about business labels, so this preserves the positional contract only."
+    },
+    {
+      "name": "creative_code",
+      "requirement": "recommended",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "description": "Numeric position in vendor-generated tag. Primary SDK and publisher guide disagree about business labels, so this preserves the positional contract only."
+    },
+    {
+      "name": "event_name",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "SDK fallback uses guid and publisher impression template uses pixel. No closed accepted enumeration is published."
+    },
+    {
+      "name": "site_name",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "SDK emits siteName here. It may be unfilled outside the publisher-specific integration."
+    },
+    {
+      "name": "placement_name",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "SDK emits placementDescription here; no numeric or length requirement is inferred."
+    },
+    {
+      "name": "ft_guid",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published generated tag parameter. The supplied guide does not establish a universal value grammar."
+    },
+    {
+      "name": "cachebuster",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published generated tag parameter. The supplied guide does not establish a universal value grammar."
+    },
+    {
+      "name": "ft_custom",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published generated tag parameter. The supplied guide does not establish a universal value grammar."
+    },
+    {
+      "name": "ft_section",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published generated tag parameter. The supplied guide does not establish a universal value grammar."
+    },
+    {
+      "name": "gdpr",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published generated tag parameter. The supplied guide does not establish a universal value grammar."
+    },
+    {
+      "name": "gdpr_consent",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published generated tag parameter. The supplied guide does not establish a universal value grammar."
+    },
+    {
+      "name": "us_privacy",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published generated tag parameter. The supplied guide does not establish a universal value grammar."
+    }
+  ],
+  "rules": []
+}

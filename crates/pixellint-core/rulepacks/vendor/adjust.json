@@ -389,5 +389,94 @@
       ],
       "rules": []
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://dev.adjust.com/en/api/s2s-api/events/",
+        "description": "Adjust supports GET or POST for this endpoint.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "path",
+        "doc": "https://dev.adjust.com/en/api/s2s-api/events/",
+        "description": "Use the /event endpoint.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^/event/?$"
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://dev.adjust.com/en/api/s2s-api/events/",
+        "description": "Event parameters are in the query or a URL-encoded form body.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "none",
+            "form"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://dev.adjust.com/en/api/s2s-api/events/",
+        "description": "A submitted form body requires application/x-www-form-urlencoded.",
+        "json_type": "string",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/x-www-form-urlencoded"
+          ]
+        },
+        "condition": {
+          "kind": "value_in",
+          "param": "body_encoding",
+          "values": [
+            "form"
+          ]
+        }
+      },
+      {
+        "name": "url",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "url",
+          "require_https": true
+        },
+        "description": "The published request endpoint uses HTTPS.",
+        "doc": "https://dev.adjust.com/en/api/s2s-api/events/"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.adjust.http.form_requires_post",
+        "kind": "value_when",
+        "severity": "error",
+        "message": "URL-encoded request bodies use POST; GET events send query parameters.",
+        "doc": "https://dev.adjust.com/en/api/s2s-api/events/",
+        "when": "body_encoding",
+        "equals": [
+          "form"
+        ],
+        "param": "method",
+        "value": "POST"
+      }
+    ]
+  }
 }

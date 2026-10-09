@@ -1,0 +1,62 @@
+[
+  {
+    "id": "native_json_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/groups\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"[{\\\"$token\\\":\\\"TEST_ONLY_PROJECT_TOKEN\\\",\\\"$group_key\\\":\\\"company\\\",\\\"$group_id\\\":\\\"Acme\\\",\\\"$set\\\":{}}]\"}",
+    "code": "vendor.mixpanel-groups.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/group-set-property",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "official_sdk_base64_form",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/groups\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/x-www-form-urlencoded\"},\"body\":\"data=eyIkdG9rZW4iOiJURVNUX09OTFlfUFJPSkVDVF9UT0tFTiIsIiRncm91cF9rZXkiOiJjb21wYW55IiwiJGdyb3VwX2lkIjoiQWNtZSIsIiRzZXQiOnt9fQ%3D%3D\"}",
+    "code": "vendor.mixpanel-groups.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "official_sdk_base64_get",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/groups?data=eyIkdG9rZW4iOiJURVNUX09OTFlfUFJPSkVDVF9UT0tFTiIsIiRncm91cF9rZXkiOiJjb21wYW55IiwiJGdyb3VwX2lkIjoiQWNtZSIsIiRzZXQiOnt9fQ%3D%3D\",\"method\":\"GET\",\"headers\":{}}",
+    "code": "vendor.mixpanel-groups.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "unsupported_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/groups\",\"method\":\"DELETE\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"[{\\\"$token\\\":\\\"TEST_ONLY_PROJECT_TOKEN\\\",\\\"$group_key\\\":\\\"company\\\",\\\"$group_id\\\":\\\"Acme\\\",\\\"$set\\\":{}}]\"}",
+    "code": "vendor.mixpanel-groups.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "http_rejected",
+    "kind": "request",
+    "artifact": "{\"url\":\"http://api.mixpanel.com/groups\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"[{\\\"$token\\\":\\\"TEST_ONLY_PROJECT_TOKEN\\\",\\\"$group_key\\\":\\\"company\\\",\\\"$group_id\\\":\\\"Acme\\\",\\\"$set\\\":{}}]\"}",
+    "code": "vendor.mixpanel-groups.https_required",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/authentication",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "profile_gzip_rejected",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/groups\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Content-Encoding\":\"gzip\"},\"body\":\"[{\\\"$token\\\":\\\"TEST_ONLY_PROJECT_TOKEN\\\",\\\"$group_key\\\":\\\"company\\\",\\\"$group_id\\\":\\\"Acme\\\",\\\"$set\\\":{}}]\"}",
+    "code": "vendor.mixpanel-groups.http.gzip_unsupported",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/group-set-property",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

@@ -81,6 +81,9 @@ def generate():
         if pack.get("gdpr_non_applicable_values"):
             lines += [f"Documented non-applicable GDPR values: `{cell(pack['gdpr_non_applicable_values'])}`. "
                       "Core accepts these only for a matching selected endpoint.", ""]
+        if pack.get("gdpr_consent_aliases"):
+            lines += [f"Documented TC String aliases: `{cell(pack['gdpr_consent_aliases'])}`. "
+                      "Core recognizes these only for a matching selected endpoint and validates every literal carrier.", ""]
         if pack.get("params") or pack.get("rules"):
             lines += ["### URL parameters", ""]
             lines += contract_table(pack.get("params", []), source, doc)
@@ -98,6 +101,16 @@ def generate():
             lines += [f"### JSON contract {index}", "", f"Context: `{cell(context)}`.", ""]
             lines += contract_table(body.get("params", []), source, doc)
             lines += rule_table(body.get("rules", []), source, doc)
+        requests = pack.get("http", [])
+        if pack.get("http_queries"):
+            lines += [f"Bulk query sources: `{cell(pack['http_queries'])}`.", ""]
+        if isinstance(requests, dict):
+            requests = [requests]
+        for index, request in enumerate(requests, 1):
+            context = {key: value for key, value in request.items() if key not in {"params", "rules"}}
+            lines += [f"### Complete HTTP contract {index}", "", f"Context: `{cell(context)}`.", ""]
+            lines += contract_table(request.get("params", []), source, doc)
+            lines += rule_table(request.get("rules", []), source, doc)
     return "\n".join(lines + [END, ""])
 
 

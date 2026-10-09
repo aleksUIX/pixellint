@@ -1,0 +1,69 @@
+{
+  "id": "vendor/innovid-legacy-state",
+  "display_name": "Innovid legacy state tracker",
+  "vendor": "innovid",
+  "source_level": "official_template",
+  "docs": "https://help.innovid.com/hc/en-us/articles/28042598512284-Innovid-Tag-Assistant-User-Guide",
+  "description": "Innovid servedby legacy state transport recognized by official Tag Assistant 1.1.5. Shared legacy tuple syntax is validated as template completeness advice. Opaque tokens, account state, unlisted variants and ad-events transport are outside this pack.",
+  "match": {
+    "hosts": [
+      "servedby.innovid.com"
+    ],
+    "path_prefixes": [
+      "/state/"
+    ]
+  },
+  "path_pattern": "^/state/(?<placement_id>[^;/?]*);(?<creative_id>[^;/?]*);(?<version_id>[^;/?]*);(?<event_id>[^;/?]*);(?<impression_id>[^/?]*)/?$",
+  "params": [
+    {
+      "name": "placement_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "description": "Official diagnostic recognizer uses a decimal-digit group for this tuple position. Completeness advice only."
+    },
+    {
+      "name": "creative_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "description": "Official diagnostic recognizer uses a decimal-digit group for this tuple position. Completeness advice only."
+    },
+    {
+      "name": "version_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "description": "Official diagnostic recognizer uses a decimal-digit group for this tuple position. Completeness advice only."
+    },
+    {
+      "name": "event_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "description": "Official diagnostic recognizer uses a decimal-digit group for this tuple position. Completeness advice only."
+    },
+    {
+      "name": "impression_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Official recognizer retains the fifth tuple member as an opaque impression ID."
+    }
+  ],
+  "rules": []
+}

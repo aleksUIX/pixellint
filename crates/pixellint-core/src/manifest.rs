@@ -344,6 +344,9 @@ pub struct ParamContract {
     pub min_length: Option<usize>,
     #[serde(default)]
     pub max_length: Option<usize>,
+    /// Decoded UTF-16 code units, matching JavaScript String.length.
+    #[serde(default)]
+    pub max_utf16_length: Option<usize>,
     /// String length in decoded UTF-8 bytes, distinct from character count.
     #[serde(default)]
     pub min_byte_length: Option<usize>,
@@ -495,6 +498,10 @@ pub enum Assertion {
         #[serde(default)]
         unit: Option<TimestampUnit>,
     },
+    /// Both populated literal scalar fields must carry the same value.
+    EqualValues { left: String, right: String },
+    /// Limit a URL field's path, excluding its origin, query and fragment.
+    UrlPathLength { param: String, max_length: usize },
     /// Present delimited lists must describe the same number of records.
     EqualSplitLengths {
         params: Vec<String>,
@@ -529,6 +536,8 @@ pub enum Assertion {
     },
     /// Present native JSON arrays must describe the same number of records.
     EqualArrayLengths { params: Vec<String> },
+    /// Literal scalar values of this object member must be unique in an array.
+    UniqueArrayBy { param: String, field: String },
     /// Repeated parameter families must have the same occurrence count.
     EqualOccurrences { params: Vec<String> },
     /// A timestamp must fall within the permitted window around validation time.
@@ -645,7 +654,12 @@ impl RuleCondition {
                 {
                     if contains_macro(field.value.as_ref()) {
                         unknown = true;
-                    } else if values.iter().any(|value| value == field.value.as_ref()) {
+                    } else if values.iter().any(|value| {
+                        value == field.value.as_ref()
+                            || field.json_kind == Some(JsonValueKind::Number)
+                                && compare_numeric_text(value, field.value.as_ref())
+                                    == Some(std::cmp::Ordering::Equal)
+                    }) {
                         return Some(true);
                     }
                 }
@@ -770,6 +784,9 @@ pub struct RulePackManifest {
     /// Destination-documented alternate values meaning GDPR does not apply.
     #[serde(default)]
     pub gdpr_non_applicable_values: Vec<String>,
+    /// Destination-documented alternative query names carrying a TC String.
+    #[serde(default)]
+    pub gdpr_consent_aliases: Vec<String>,
     /// Pack id such as `vendor/meta`. Becomes the code prefix `vendor.meta`.
     pub id: String,
     pub display_name: String,
@@ -811,6 +828,34 @@ pub struct RulePackManifest {
     /// inside it.
     #[serde(default)]
     pub body: Option<BodySpecs>,
+    /// Complete-request contracts. The namespace includes method, headers,
+    /// URL query fields, and a decoded body. Bare artifacts do not run these.
+    #[serde(default)]
+    pub http: Option<BodySpecs>,
+    /// Query-only event strings inside a captured bulk request. Each item uses
+    /// this pack's existing URL contracts, bound to the captured endpoint.
+    #[serde(default)]
+    pub http_queries: Vec<RequestQuerySpec>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RequestQuerySpec {
+    pub source_field: String,
+    #[serde(default)]
+    pub encoding: RequestQueryEncoding,
+    #[serde(default)]
+    pub inherited_params: std::collections::BTreeMap<String, String>,
+    #[serde(default)]
+    pub inherited_overrides: bool,
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RequestQueryEncoding {
+    #[default]
+    Query,
+    UrlQuery,
 }
 
 /// A namespace evaluated once per selected semicolon-separated query group.
@@ -941,6 +986,9 @@ pub struct BodySpec {
     pub condition: Option<RuleCondition>,
     #[serde(default)]
     pub encoding: ParamEncoding,
+    /// Severity of encoded-source syntax failures. Omission preserves errors.
+    #[serde(default)]
+    pub encoding_severity: Option<Severity>,
     /// Inner field encoding when source_param and source_field are combined.
     #[serde(default)]
     pub field_encoding: ParamEncoding,
@@ -961,6 +1009,32 @@ pub enum ParamEncoding {
     #[default]
     Json,
     Base64Json,
+    /// Browser btoa JSON, with every decoded byte mapped to its Latin-1 code point.
+    Base64Latin1Json,
+    /// Pipe-separated tuple components, preserved as JSON strings.
+    PipeDelimitedJson,
+}
+
+impl ParamEncoding {
+    fn decoded_byte_length(self, source: &str, text: &str) -> usize {
+        match self {
+            Self::Base64Latin1Json => text.chars().count(),
+            Self::PipeDelimitedJson => source.len(),
+            Self::Json | Self::Base64Json => text.len(),
+        }
+    }
+
+    fn decode(self, source: &str) -> Result<String, String> {
+        match self {
+            Self::Json => Ok(source.to_string()),
+            Self::Base64Json => decode_base64_json(source),
+            Self::Base64Latin1Json => decode_base64_latin1_json(source),
+            Self::PipeDelimitedJson => {
+                serde_json::to_string(&source.split('|').collect::<Vec<_>>())
+                    .map_err(|error| error.to_string())
+            }
+        }
+    }
 }
 
 fn default_source_level() -> RuleSourceLevel {
@@ -1185,8 +1259,8 @@ impl Scope<'_> {
         }
         match &self.body {
             None => format!("param.{name}"),
-            Some(body) if body.path.is_empty() => format!("body.{name}"),
-            Some(body) => format!("body.{}.{name}", body.path),
+            Some(body) if body.path.is_empty() => format!("{}.{name}", self.code_segment),
+            Some(body) => format!("{}.{}.{name}", self.code_segment, body.path),
         }
     }
 
@@ -1277,6 +1351,7 @@ impl CompiledShape {
 
 #[derive(Debug)]
 struct CompiledBody {
+    code_segment: &'static str,
     source_param: Option<String>,
     source_field: Option<String>,
     decoded_source_field: Option<String>,
@@ -1285,6 +1360,7 @@ struct CompiledBody {
     source_max_length_when: Option<CompiledShape>,
     condition: Option<RuleCondition>,
     encoding: ParamEncoding,
+    encoding_severity: Severity,
     field_encoding: ParamEncoding,
     scope: Option<ScopeSpec>,
     scope_exclusions: Vec<String>,
@@ -1301,11 +1377,23 @@ struct CompiledQuery {
     exact_names: BTreeSet<String>,
 }
 
+fn strongest_encoding_severity<'a>(bodies: impl Iterator<Item = &'a CompiledBody>) -> Severity {
+    bodies
+        .map(|body| body.encoding_severity)
+        .max_by_key(|severity| match severity {
+            Severity::Info => 0,
+            Severity::Warning => 1,
+            Severity::Error => 2,
+        })
+        .unwrap_or(Severity::Error)
+}
+
 /// A rulepack compiled from a [`RulePackManifest`].
 #[derive(Debug)]
 pub struct ManifestRulePack {
     metadata: RulePackMetadata,
     gdpr_non_applicable_values: Vec<String>,
+    gdpr_consent_aliases: Vec<String>,
     code_prefix: String,
     vendor: Option<String>,
     docs: Option<String>,
@@ -1319,6 +1407,8 @@ pub struct ManifestRulePack {
     bodies: Vec<CompiledBody>,
     queries: Vec<CompiledQuery>,
     shapes: Vec<CompiledShape>,
+    http: Option<Box<ManifestRulePack>>,
+    http_queries: Vec<RequestQuerySpec>,
 }
 
 impl RulePackManifest {
@@ -1525,6 +1615,7 @@ fn validate_constraints(
             (
                 contract.min_length.is_some()
                     || contract.max_length.is_some()
+                    || contract.max_utf16_length.is_some()
                     || contract.min_byte_length.is_some()
                     || contract.max_byte_length.is_some(),
                 vec![JsonType::String],
@@ -1668,6 +1759,15 @@ fn compile_rules(
             normalize_condition_aliases(condition, contracts);
         }
         let rule = &normalized_rule;
+        if let Assertion::UniqueArrayBy { field, .. } = &rule.assertion
+            && field.is_empty()
+        {
+            return Err(ManifestError::InvalidConstraint {
+                pack_id: pack_id.to_string(),
+                name: rule.code.clone(),
+                reason: "unique_array_by requires a nonempty literal object member name".into(),
+            });
+        }
         if let Assertion::GppFieldValues { field, values, .. } = &rule.assertion
             && (!crate::gpp_structure::us_field_supported(field) || values.is_empty())
         {
@@ -1807,9 +1907,90 @@ fn compile_rules(
 impl ManifestRulePack {
     /// Compiles a manifest, validating everything that can be checked without
     /// an artifact: ids, citations, regexes, and cross-references.
-    pub fn compile(manifest: RulePackManifest) -> Result<Self, ManifestError> {
+    pub fn compile(mut manifest: RulePackManifest) -> Result<Self, ManifestError> {
+        let http = if let Some(specs) = manifest.http.take() {
+            let mut transport = manifest.clone();
+            transport.params.clear();
+            transport.rules.clear();
+            transport.query_scopes.clear();
+            transport.http_queries.clear();
+            transport.path_pattern = None;
+            transport.client_fragment_params.clear();
+            transport.gdpr_non_applicable_values.clear();
+            transport.gdpr_consent_aliases.clear();
+            transport.matcher.json_paths = vec![ShapeMatch::Present("method".into())];
+            let mut bodies = specs.specs().to_vec();
+            for spec in &mut bodies {
+                if spec.source_param.is_some()
+                    || spec.source_field.is_some()
+                    || spec.decoded_source_field.is_some()
+                    || spec.source_max_length.is_some()
+                    || spec
+                        .rules
+                        .iter()
+                        .any(|rule| matches!(rule.assertion, Assertion::MaxBodyBytes { .. }))
+                {
+                    return Err(ManifestError::Parse("http contracts use normalized request fields; decoding and raw body byte limits belong in body contracts".into()));
+                }
+                spec.condition = None;
+            }
+            transport.body = Some(BodySpecs::Many(bodies));
+            let mut compiled = Self::compile(transport)?;
+            for (body, original) in compiled.bodies.iter_mut().zip(specs.specs()) {
+                body.code_segment = "http";
+                if let Some(condition) = &original.condition {
+                    validate_condition(&manifest.id, "http.condition", condition)?;
+                    for name in condition.params() {
+                        if !body.params.iter().any(|p| p.names.contains(name)) {
+                            return Err(ManifestError::UnknownParam {
+                                pack_id: manifest.id.clone(),
+                                code: "http.condition".into(),
+                                name: name.clone(),
+                            });
+                        }
+                    }
+                    let mut guard = condition.clone();
+                    normalize_condition_aliases(&mut guard, &original.params);
+                    body.condition = Some(guard);
+                }
+            }
+            Some(Box::new(compiled))
+        } else {
+            None
+        };
         let pack_id = manifest.id.clone();
         validate_pack_id(&pack_id)?;
+        for spec in &manifest.http_queries {
+            if !spec.source_field.starts_with("body.")
+                || !spec.source_field.ends_with("[]")
+                || !json::is_valid_pattern(&spec.source_field)
+                || spec
+                    .inherited_params
+                    .values()
+                    .any(|path| !path.starts_with("body.") || !json::is_valid_pattern(path))
+            {
+                return Err(ManifestError::InvalidConstraint {
+                    pack_id: pack_id.clone(),
+                    name: "http_queries".into(),
+                    reason:
+                        "HTTP query sources need a body array path and valid body fallback paths"
+                            .into(),
+                });
+            }
+            for name in spec.inherited_params.keys() {
+                if !manifest
+                    .params
+                    .iter()
+                    .any(|param| &param.name == name || param.aliases.contains(name))
+                {
+                    return Err(ManifestError::UnknownParam {
+                        pack_id: pack_id.clone(),
+                        code: "http_queries.inherited_params".into(),
+                        name: name.clone(),
+                    });
+                }
+            }
+        }
 
         for (field, value) in [
             ("display_name", &manifest.display_name),
@@ -2018,6 +2199,14 @@ impl ManifestRulePack {
                 }
 
                 for spec in specs.specs() {
+                    if spec.encoding_severity.is_some()
+                        && spec.source_param.is_none()
+                        && spec.source_field.is_none()
+                    {
+                        return Err(ManifestError::Parse(
+                            "body encoding_severity requires source_param or source_field".into(),
+                        ));
+                    }
                     if spec.rules.iter().any(|rule| {
                         matches!(
                             rule.assertion,
@@ -2153,6 +2342,7 @@ impl ManifestRulePack {
                         normalize_condition_aliases(guard, &manifest.params);
                     }
                     bodies.push(CompiledBody {
+                        code_segment: "body",
                         source_param,
                         source_field: spec.source_field.clone(),
                         decoded_source_field: spec.decoded_source_field.clone(),
@@ -2169,6 +2359,7 @@ impl ManifestRulePack {
                             .transpose()?,
                         condition,
                         encoding: spec.encoding,
+                        encoding_severity: spec.encoding_severity.unwrap_or(Severity::Error),
                         field_encoding: spec.field_encoding,
                         scope: spec.scope.clone(),
                         scope_exclusions: spec.scope_exclusions.clone(),
@@ -2201,9 +2392,26 @@ impl ManifestRulePack {
                 return Err(ManifestError::InvalidConstraint { pack_id, name: "gdpr_non_applicable_values".to_string(), reason: "alternate GDPR values require a host-bound destination and a documented gdpr enum containing each non-applicable value".to_string() });
             }
         }
+        for alias in &manifest.gdpr_consent_aliases {
+            if alias.is_empty()
+                || alias == "gdpr_consent"
+                || matcher.any_host
+                || (matcher.hosts.is_empty() && matcher.host_suffixes.is_empty())
+                || !manifest.params.iter().any(|contract| {
+                    contract.name == "gdpr_consent" && contract.aliases.contains(alias)
+                })
+            {
+                return Err(ManifestError::InvalidConstraint {
+                    pack_id,
+                    name: "gdpr_consent_aliases".to_string(),
+                    reason: "consent aliases require a host-bound destination and a declared alias of gdpr_consent".to_string(),
+                });
+            }
+        }
 
         Ok(Self {
             gdpr_non_applicable_values: manifest.gdpr_non_applicable_values,
+            gdpr_consent_aliases: manifest.gdpr_consent_aliases,
             metadata: RulePackMetadata {
                 id: manifest.id.clone(),
                 display_name: manifest.display_name.clone(),
@@ -2228,6 +2436,8 @@ impl ManifestRulePack {
             bodies,
             queries,
             shapes,
+            http,
+            http_queries: manifest.http_queries,
         })
     }
 
@@ -2292,7 +2502,11 @@ impl ManifestRulePack {
             return false;
         }
         if !self.matcher.query_params_any.is_empty() || !self.matcher.query_params_none.is_empty() {
-            let query_names: BTreeSet<_> = params.iter().map(|param| param.name.as_ref()).collect();
+            let query_names: BTreeSet<_> = params
+                .iter()
+                .filter(|param| param.component == ViolationTargetComponent::QueryParam)
+                .map(|param| param.name.as_ref())
+                .collect();
             if !self.matcher.query_params_any.is_empty()
                 && !self
                     .matcher
@@ -2356,6 +2570,209 @@ impl ManifestRulePack {
 }
 
 impl ValidatorPlugin for ManifestRulePack {
+    fn supports_http(&self, prepared: &PreparedArtifact<'_>) -> bool {
+        self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query))
+    }
+
+    fn validate_http(
+        &self,
+        prepared: &PreparedArtifact<'_>,
+        body: Option<&PreparedArtifact<'_>>,
+        raw_body_len: usize,
+        normalized: &str,
+        run_core_url_rules: bool,
+    ) -> ValidationReport {
+        let matches_endpoint = self.supports_http(prepared);
+        let document = JsonDocument::parse_http(normalized).ok();
+        let bulk = matches_endpoint
+            && document.as_ref().is_some_and(|document| {
+                self.http_queries.iter().any(|spec| {
+                    document.contains(
+                        spec.source_field
+                            .strip_suffix("[]")
+                            .unwrap_or(&spec.source_field),
+                    )
+                })
+            });
+        let mut report = if bulk {
+            ValidationReport {
+                plugin_id: self.metadata.id.clone(),
+                detected_vendor: self.vendor.clone(),
+                violations: Vec::new(),
+            }
+        } else {
+            self.validate_prepared(prepared)
+        };
+        if !matches_endpoint {
+            return report;
+        }
+        report.detected_vendor = self.vendor.clone();
+        if bulk && let Some(document) = &document {
+            let endpoint = prepared
+                .trimmed()
+                .split(['?', '#'])
+                .next()
+                .unwrap_or_default();
+            for spec in &self.http_queries {
+                for path in document.expand(&spec.source_field) {
+                    let Some(field) = document.get(&path) else {
+                        continue;
+                    };
+                    if field.kind == JsonValueKind::Object {
+                        report.violations.push(Violation {
+                            code:format!("{}.http.query_source.unvalidated", self.code_prefix),
+                            message:"Native parameter maps need destination-specific coercion contracts; this item's event fields were not validated.".into(),
+                            severity:Severity::Info, field:Some(format!("http.{path}")), fix_hint:None,
+                            source:self.source_for(RuleSourceLevel::OfficialVendor,self.docs.as_deref()), targets:Vec::new(),
+                        });
+                        continue;
+                    }
+                    if field.kind != JsonValueKind::String {
+                        continue;
+                    }
+                    let query = match spec.encoding {
+                        RequestQueryEncoding::Query => {
+                            field.text.strip_prefix('?').unwrap_or(&field.text)
+                        }
+                        RequestQueryEncoding::UrlQuery => field
+                            .text
+                            .split('#')
+                            .next()
+                            .unwrap_or_default()
+                            .split_once('?')
+                            .map(|(_, query)| query)
+                            .unwrap_or_default(),
+                    };
+                    if query.is_empty() {
+                        continue;
+                    }
+                    let mut pairs: Vec<(String, String)> =
+                        url::form_urlencoded::parse(query.as_bytes())
+                            .map(|(name, value)| (name.into_owned(), value.into_owned()))
+                            .collect();
+                    let mut inherited = Vec::new();
+                    for (name, fallback_path) in &spec.inherited_params {
+                        let contract = self.params.iter().find(|param| param.names.contains(name));
+                        let supplied = pairs.iter().any(|(submitted, _)| {
+                            contract.is_some_and(|param| param.names.contains(submitted))
+                        });
+                        if (spec.inherited_overrides || !supplied)
+                            && let Some(fallback) = document.get(fallback_path)
+                            && fallback.kind == JsonValueKind::String
+                            && !fallback.text.is_empty()
+                        {
+                            if spec.inherited_overrides {
+                                pairs.retain(|(submitted, _)| {
+                                    !contract.is_some_and(|param| param.names.contains(submitted))
+                                });
+                            }
+                            inherited.push((name.clone(), fallback.text.to_string()));
+                        }
+                    }
+                    let mut wire_query = if spec.inherited_overrides && !inherited.is_empty() {
+                        // Only remove overridden keys. Preserve every other
+                        // original field's encoding, order and macro spans.
+                        query
+                            .split('&')
+                            .filter(|part| {
+                                let name = url::form_urlencoded::parse(part.as_bytes())
+                                    .next()
+                                    .map(|(name, _)| name.into_owned());
+                                !inherited.iter().any(|(inherited_name, _)| {
+                                    self.params
+                                        .iter()
+                                        .find(|param| param.names.contains(inherited_name))
+                                        .is_some_and(|param| {
+                                            name.as_ref()
+                                                .is_some_and(|name| param.names.contains(name))
+                                        })
+                                })
+                            })
+                            .collect::<Vec<_>>()
+                            .join("&")
+                    } else {
+                        query.to_string()
+                    };
+                    if !inherited.is_empty() {
+                        if !wire_query.is_empty() {
+                            wire_query.push('&');
+                        }
+                        wire_query.push_str(
+                            &url::form_urlencoded::Serializer::new(String::new())
+                                .extend_pairs(inherited.iter().map(|(name, value)| (name, value)))
+                                .finish(),
+                        );
+                    }
+                    let inner_request = ValidationRequest {
+                        artifact_kind: ArtifactKind::Url,
+                        artifact: format!("{endpoint}?{wire_query}"),
+                        claimed_vendor: prepared.request().claimed_vendor.clone(),
+                        expansion_state: prepared.request().expansion_state,
+                    };
+                    let mut inner = PreparedArtifact::from_request_at(
+                        &inner_request,
+                        prepared.reference_time_unix_seconds(),
+                    );
+                    self.prepare_vendor_context(&mut inner);
+                    let mut violations = self.validate_prepared(&inner).violations;
+                    if run_core_url_rules {
+                        violations.extend(
+                            crate::CoreRulePack::default()
+                                .validate_prepared(&inner)
+                                .violations,
+                        );
+                    }
+                    for mut violation in violations {
+                        violation.field = Some(match violation.field {
+                            Some(field) => format!("http.{path}.{field}"),
+                            None => format!("http.{path}"),
+                        });
+                        report.violations.push(violation);
+                    }
+                }
+            }
+        }
+        if let Some(body) = body
+            && let Some(Ok(document)) = body.json()
+        {
+            for spec in self
+                .bodies
+                .iter()
+                .filter(|spec| spec.source_param.is_none() && spec.source_field.is_none())
+            {
+                self.check_body_spec(
+                    spec,
+                    document,
+                    body.trimmed(),
+                    raw_body_len,
+                    body.reference_time_unix_seconds(),
+                    &mut report.violations,
+                );
+            }
+            self.check_embedded_bodies(
+                document,
+                None,
+                &[],
+                body.reference_time_unix_seconds(),
+                &mut report.violations,
+            );
+        }
+        if let Some(http) = &self.http
+            && let Some(document) = &document
+        {
+            for spec in &http.bodies {
+                http.check_body_spec(
+                    spec,
+                    document,
+                    normalized,
+                    normalized.len(),
+                    prepared.reference_time_unix_seconds(),
+                    &mut report.violations,
+                );
+            }
+        }
+        report
+    }
     fn prepare_vendor_context(&self, prepared: &mut PreparedArtifact<'_>) {
         if self.accepts_client_fragment(prepared) {
             prepared.mark_client_fragment_configuration();
@@ -2363,6 +2780,9 @@ impl ValidatorPlugin for ManifestRulePack {
         if self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query)) {
             for value in &self.gdpr_non_applicable_values {
                 prepared.allow_non_applicable_gdpr(value);
+            }
+            for alias in &self.gdpr_consent_aliases {
+                prepared.allow_gdpr_consent_alias(alias);
             }
         }
     }
@@ -2468,7 +2888,9 @@ impl ValidatorPlugin for ManifestRulePack {
         };
         let path_params = self.extract_path_params(artifact);
         let owned;
-        let params: &[RawParam] = if path_params.is_empty()
+        let params: &[RawParam] = if !prepared.has_form_body()
+            && self.path_pattern.is_none()
+            && path_params.is_empty()
             && basket_ranges.is_empty()
             && !extracted.iter().any(|param| {
                 self.params.iter().any(|contract| {
@@ -2486,6 +2908,43 @@ impl ValidatorPlugin for ManifestRulePack {
                 // physically carried in the endpoint path.
                 let mut merged: Vec<_> = extracted
                     .iter()
+                    .filter(|param| {
+                        let supplies_path_capture =
+                            self.path_pattern.as_ref().is_some_and(|pattern| {
+                                pattern.capture_names().flatten().any(|capture| {
+                                    param.name.as_ref() == capture
+                                        || self.params.iter().any(|contract| {
+                                            contract.names.iter().any(|name| name == capture)
+                                                && contract
+                                                    .names
+                                                    .iter()
+                                                    .any(|name| name == param.name.as_ref())
+                                        })
+                                })
+                            });
+                        if supplies_path_capture {
+                            return false;
+                        }
+                        param.component != ViolationTargetComponent::BodyField
+                            || (!self.path_pattern.as_ref().is_some_and(|pattern| {
+                                pattern
+                                    .capture_names()
+                                    .flatten()
+                                    .any(|name| name == param.name)
+                            }) && !self.params.iter().any(|contract| {
+                                contract
+                                    .names
+                                    .iter()
+                                    .any(|name| name == param.name.as_ref())
+                                    && extracted.iter().any(|url_field| {
+                                        url_field.component == ViolationTargetComponent::QueryParam
+                                            && contract
+                                                .names
+                                                .iter()
+                                                .any(|name| name == url_field.name.as_ref())
+                                    })
+                            }))
+                    })
                     .filter(|param| !path_params.iter().any(|path| path.name == param.name))
                     .filter(|param| {
                         !basket_ranges
@@ -2513,10 +2972,34 @@ impl ValidatorPlugin for ManifestRulePack {
 
         let exact_names = &self.exact_param_names;
         for compiled in &self.params {
+            // A multipart/compressed form may contain these query-style keys.
+            // Path captures remain observable and cannot be supplied by a form.
+            if prepared.has_unavailable_form_body()
+                && !self.path_pattern.as_ref().is_some_and(|pattern| {
+                    pattern
+                        .capture_names()
+                        .flatten()
+                        .any(|name| compiled.names.iter().any(|candidate| candidate == name))
+                })
+                && !params.iter().any(|field| {
+                    !field.missing
+                        && compiled
+                            .names
+                            .iter()
+                            .any(|name| name == field.name.as_ref())
+                })
+            {
+                continue;
+            }
             self.check_param(&scope, compiled, params, exact_names, &mut violations);
         }
 
         for compiled in &self.rules {
+            if prepared.has_unavailable_form_body()
+                && assertion_requires_presence(&compiled.rule.assertion)
+            {
+                continue;
+            }
             self.check_rule(&scope, compiled, params, &mut violations);
         }
         self.check_query_scopes(prepared, &mut violations);
@@ -2921,6 +3404,32 @@ impl ManifestRulePack {
         violations: &mut Vec<Violation>,
     ) {
         for scope_path in body_scopes(document, body.scope.as_ref()) {
+            let unavailable_body = body.code_segment == "http"
+                && document
+                    .get("body_encoding")
+                    .is_some_and(|field| field.text == "unsupported");
+            if unavailable_body
+                && (scope_path == "body"
+                    || scope_path.starts_with("body.")
+                    || scope_path.starts_with("body["))
+            {
+                continue;
+            }
+            let condition_reads_unavailable_body = |condition: &RuleCondition| {
+                unavailable_body
+                    && condition.params().iter().any(|name| {
+                        body.params
+                            .iter()
+                            .any(|param| param.names.contains(name) && http_param_reads_body(param))
+                    })
+            };
+            if body
+                .condition
+                .as_ref()
+                .is_some_and(&condition_reads_unavailable_body)
+            {
+                continue;
+            }
             if document.get(&scope_path).is_some_and(|selected| {
                 body.scope_exclusions
                     .iter()
@@ -2933,8 +3442,16 @@ impl ManifestRulePack {
                 continue;
             }
             let params = collect_body_params(document, &scope_path, &body.params);
+            if body.code_segment == "http"
+                && body
+                    .condition
+                    .as_ref()
+                    .is_some_and(|guard| guard.evaluate(&params) != Some(true))
+            {
+                continue;
+            }
             let scope = Scope {
-                code_segment: "body",
+                code_segment: body.code_segment,
                 artifact,
                 raw_artifact_len,
                 reference_time_unix_seconds,
@@ -2945,9 +3462,35 @@ impl ManifestRulePack {
                 query: None,
             };
             for compiled in &body.params {
+                if unavailable_body
+                    && (http_param_reads_body(compiled)
+                        || compiled
+                            .contract
+                            .condition
+                            .as_ref()
+                            .is_some_and(&condition_reads_unavailable_body))
+                {
+                    continue;
+                }
                 self.check_param(&scope, compiled, &params, &body.exact_names, violations);
             }
             for compiled in &body.rules {
+                if unavailable_body
+                    && (assertion_params(&compiled.rule.assertion)
+                        .iter()
+                        .any(|name| {
+                            body.params.iter().any(|param| {
+                                param.names.contains(name) && http_param_reads_body(param)
+                            })
+                        })
+                        || compiled
+                            .rule
+                            .condition
+                            .as_ref()
+                            .is_some_and(&condition_reads_unavailable_body))
+                {
+                    continue;
+                }
                 self.check_rule(&scope, compiled, &params, violations);
             }
         }
@@ -2965,28 +3508,37 @@ impl ManifestRulePack {
             .filter_map(|body| body.source_param.as_ref().map(|name| (name, body.encoding)))
             .collect();
         for (source, encoding) in sources {
-            if !self.bodies.iter().any(|body| {
-                body.source_param.as_ref() == Some(source)
-                    && body.encoding == encoding
-                    && body
-                        .condition
-                        .as_ref()
-                        .is_none_or(|guard| guard.evaluate(params) == Some(true))
-            }) {
+            let active: Vec<_> = self
+                .bodies
+                .iter()
+                .filter(|body| {
+                    body.source_param.as_ref() == Some(source)
+                        && body.encoding == encoding
+                        && body
+                            .condition
+                            .as_ref()
+                            .is_none_or(|guard| guard.evaluate(params) == Some(true))
+                })
+                .collect();
+            if active.is_empty() {
                 continue;
             }
+            let encoding_severity = strongest_encoding_severity(active.iter().copied());
             for param in params.iter().filter(|param| {
                 param.name.as_ref() == source && !param.missing && !param.value.is_empty()
             }) {
-                let decoded = match encoding {
-                    ParamEncoding::Json => Ok(param.value.to_string()),
-                    ParamEncoding::Base64Json => decode_base64_json(param.value.as_ref()),
-                };
+                let decoded = encoding.decode(param.value.as_ref());
                 let decoded = match decoded {
                     Ok(decoded) => decoded,
                     Err(reason) => {
                         if !contains_macro(param.value.as_ref()) {
-                            self.encoded_body_error(source, param, &reason, violations);
+                            self.encoded_body_error(
+                                source,
+                                param,
+                                &reason,
+                                encoding_severity,
+                                violations,
+                            );
                         }
                         continue;
                     }
@@ -2995,7 +3547,13 @@ impl ManifestRulePack {
                     Ok(document) => document,
                     Err(error) => {
                         if !contains_macro(param.value.as_ref()) {
-                            self.encoded_body_error(source, param, &error.to_string(), violations);
+                            self.encoded_body_error(
+                                source,
+                                param,
+                                &error.to_string(),
+                                encoding_severity,
+                                violations,
+                            );
                         }
                         continue;
                     }
@@ -3014,7 +3572,7 @@ impl ManifestRulePack {
                         body,
                         &document,
                         &decoded,
-                        decoded.len(),
+                        encoding.decoded_byte_length(param.value.as_ref(), &decoded),
                         reference_time_unix_seconds,
                         &mut decoded_violations,
                     );
@@ -3078,6 +3636,26 @@ impl ManifestRulePack {
             })
             .collect();
         for (source, encoding) in sources {
+            let active: Vec<_> = self
+                .bodies
+                .iter()
+                .filter(|body| {
+                    body.source_field.as_ref() == Some(source)
+                        && match parent_source {
+                            None => body.source_param.is_none() && body.encoding == encoding,
+                            Some((name, outer_encoding)) => {
+                                body.source_param.as_deref() == Some(name)
+                                    && body.encoding == outer_encoding
+                                    && body.field_encoding == encoding
+                            }
+                        }
+                        && body
+                            .condition
+                            .as_ref()
+                            .is_none_or(|guard| guard.evaluate(params) == Some(true))
+                })
+                .collect();
+            let encoding_severity = strongest_encoding_severity(active.iter().copied());
             for path in outer.expand(source) {
                 let Some(field) = outer.get(&path) else {
                     continue;
@@ -3092,15 +3670,19 @@ impl ManifestRulePack {
                     field.start,
                     field.end,
                 );
-                let decoded = match encoding {
-                    ParamEncoding::Json => Ok(field.text.to_string()),
-                    ParamEncoding::Base64Json => decode_base64_json(field.text.as_ref()),
-                };
+                let decoded = encoding.decode(field.text.as_ref());
                 let decoded = match decoded {
                     Ok(decoded) => decoded,
                     Err(reason) => {
                         if !contains_macro(field.text.as_ref()) {
-                            self.embedded_body_error(source, &path, &param, &reason, violations);
+                            self.embedded_body_error(
+                                source,
+                                &path,
+                                &param,
+                                &reason,
+                                encoding_severity,
+                                violations,
+                            );
                         }
                         continue;
                     }
@@ -3114,6 +3696,7 @@ impl ManifestRulePack {
                                 &path,
                                 &param,
                                 &error.to_string(),
+                                encoding_severity,
                                 violations,
                             );
                         }
@@ -3201,11 +3784,26 @@ impl ManifestRulePack {
                                 }
                                 Err(error) => {
                                     if nested_errors.insert(nested_path.clone()) {
+                                        let severity = strongest_encoding_severity(
+                                            active.iter().copied().filter(|candidate| {
+                                                candidate.decoded_source_field.as_ref().is_some_and(
+                                                    |pattern| {
+                                                        document
+                                                            .expand(pattern)
+                                                            .contains(&nested_path)
+                                                    },
+                                                ) && candidate
+                                                    .decoded_source_condition
+                                                    .as_ref()
+                                                    .is_none_or(|guard| guard.holds(&document))
+                                            }),
+                                        );
                                         self.embedded_body_error(
                                             nested_source,
                                             &nested_path,
                                             &param,
                                             &error.to_string(),
+                                            severity,
                                             &mut decoded_violations,
                                         );
                                     }
@@ -3217,7 +3815,7 @@ impl ManifestRulePack {
                             body,
                             &document,
                             &decoded,
-                            decoded.len(),
+                            encoding.decoded_byte_length(field.text.as_ref(), &decoded),
                             reference_time_unix_seconds,
                             &mut decoded_violations,
                         );
@@ -3249,9 +3847,10 @@ impl ManifestRulePack {
         path: &str,
         param: &RawParam<'_>,
         reason: &str,
+        severity: Severity,
         violations: &mut Vec<Violation>,
     ) {
-        self.encoded_body_error(source, param, reason, violations);
+        self.encoded_body_error(source, param, reason, severity, violations);
         let violation = violations
             .last_mut()
             .expect("encoded_body_error adds a finding");
@@ -3265,12 +3864,13 @@ impl ManifestRulePack {
         source: &str,
         param: &RawParam<'_>,
         reason: &str,
+        severity: Severity,
         violations: &mut Vec<Violation>,
     ) {
         violations.push(Violation {
             code: format!("{}.body.{source}.invalid", self.code_prefix),
             message: format!("`{source}` must encode valid JSON: {reason}."),
-            severity: Severity::Error,
+            severity,
             field: Some(format!("param.{source}")),
             fix_hint: Some("Encode a JSON value in the documented parameter format.".to_string()),
             source: self.source_for(self.metadata.source_level, self.docs.as_deref()),
@@ -3960,6 +4560,36 @@ impl ManifestRulePack {
                     },
                 )
             }
+            Assertion::EqualValues { left, right } => match (named(left), named(right)) {
+                (Some(left), Some(right))
+                    if !left.container
+                        && !right.container
+                        && !left.value.is_empty()
+                        && !right.value.is_empty()
+                        && !contains_macro(&left.value)
+                        && !contains_macro(&right.value)
+                        && left.value != right.value =>
+                {
+                    (true, vec![left.target(), right.target()])
+                }
+                _ => (false, Vec::new()),
+            },
+            Assertion::UrlPathLength { param, max_length } => {
+                let hits: Vec<_> = params
+                    .iter()
+                    .filter(|field| {
+                        live(field)
+                            && field.name.as_ref() == param
+                            && !field.container
+                            && !contains_macro(&field.value)
+                            && url_path_character_count(&field.value) > *max_length
+                    })
+                    .collect();
+                (
+                    !hits.is_empty(),
+                    hits.iter().map(|field| field.target()).collect(),
+                )
+            }
             Assertion::ValueWith { when, param, value } => match named(param) {
                 Some(field)
                     if present(when)
@@ -4270,6 +4900,50 @@ impl ManifestRulePack {
                     .collect();
                 (!targets.is_empty(), targets)
             }
+            Assertion::UniqueArrayBy { param, field } => {
+                let mut duplicates = Vec::new();
+                if let Some(body) = &scope.body {
+                    for array in hits_named(std::slice::from_ref(param)) {
+                        let Some(path) = &array.location else {
+                            continue;
+                        };
+                        let mut groups: BTreeMap<(u8, String), Vec<ViolationTarget>> =
+                            BTreeMap::new();
+                        for item in body.document.expand(&format!("{path}[]")) {
+                            let member = json::member_path(&item, field);
+                            let Some(value) = body.document.get(&member) else {
+                                continue;
+                            };
+                            if contains_macro(value.text.as_ref()) {
+                                continue;
+                            }
+                            let key = match value.kind {
+                                JsonValueKind::String => (0, value.text.to_string()),
+                                JsonValueKind::Bool => (1, value.text.to_string()),
+                                JsonValueKind::Number => {
+                                    decimal_parts(value.text.as_ref()).map_or_else(
+                                        // Exponents beyond the exact normalizer's range still
+                                        // identify repeated identical JSON number spellings.
+                                        || (3, value.text.to_string()),
+                                        |(negative, digits, exponent)| {
+                                            (2, format!("{negative}:{digits}:{exponent}"))
+                                        },
+                                    )
+                                }
+                                _ => continue,
+                            };
+                            groups.entry(key).or_default().push(body_target(
+                                body.document,
+                                &member,
+                                scope.artifact,
+                            ));
+                        }
+                        duplicates
+                            .extend(groups.into_values().filter(|hits| hits.len() > 1).flatten());
+                    }
+                }
+                (!duplicates.is_empty(), duplicates)
+            }
             Assertion::EqualArrayLengths { params: names } => {
                 let arrays: Vec<_> = hits_named(names)
                     .into_iter()
@@ -4454,6 +5128,25 @@ fn describe(message: String, description: Option<&str>) -> String {
     }
 }
 
+fn http_param_reads_body(param: &CompiledParam) -> bool {
+    param.contract.root_path.as_ref().is_some_and(|path| {
+        path == "body" || path.starts_with("body.") || path.starts_with("body[")
+    }) || param
+        .names
+        .iter()
+        .any(|name| name == "body" || name.starts_with("body.") || name.starts_with("body["))
+}
+
+fn assertion_requires_presence(assertion: &Assertion) -> bool {
+    matches!(
+        assertion,
+        Assertion::RequireOneOf { .. }
+            | Assertion::RequireAnyOf { .. }
+            | Assertion::RequiredWith { .. }
+            | Assertion::RequiredWhenValue { .. }
+    )
+}
+
 fn assertion_params(assertion: &Assertion) -> Vec<&String> {
     match assertion {
         Assertion::RequireOneOf { params } | Assertion::MutuallyExclusive { params } => {
@@ -4476,7 +5169,10 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
         | Assertion::RequireHttps
         | Assertion::MaxUrlLength { .. } => Vec::new(),
         Assertion::ValueWith { when, param, .. } => vec![when, param],
-        Assertion::LessEqual { left, right, .. } => vec![left, right],
+        Assertion::LessEqual { left, right, .. } | Assertion::EqualValues { left, right } => {
+            vec![left, right]
+        }
+        Assertion::UrlPathLength { param, .. } => vec![param],
         Assertion::EqualSplitLengths { params, .. } => params.iter().collect(),
         Assertion::DelimitedSum { param, total, .. } => vec![param, total],
         Assertion::AwinBasket { parts, .. } => vec![parts],
@@ -4488,6 +5184,7 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
             ..
         } => vec![param, section_param],
         Assertion::EqualArrayLengths { params } => params.iter().collect(),
+        Assertion::UniqueArrayBy { param, .. } => vec![param],
         Assertion::EqualOccurrences { params } => params.iter().collect(),
         Assertion::TimeWindow {
             param,
@@ -4531,7 +5228,10 @@ fn assertion_params_mut(assertion: &mut Assertion) -> Vec<&mut String> {
         | Assertion::RequireHttps
         | Assertion::MaxUrlLength { .. } => Vec::new(),
         Assertion::ValueWith { when, param, .. } => vec![when, param],
-        Assertion::LessEqual { left, right, .. } => vec![left, right],
+        Assertion::LessEqual { left, right, .. } | Assertion::EqualValues { left, right } => {
+            vec![left, right]
+        }
+        Assertion::UrlPathLength { param, .. } => vec![param],
         Assertion::EqualSplitLengths { params, .. } => params.iter_mut().collect(),
         Assertion::DelimitedSum { param, total, .. } => vec![param, total],
         Assertion::AwinBasket { parts, .. } => vec![parts],
@@ -4543,6 +5243,7 @@ fn assertion_params_mut(assertion: &mut Assertion) -> Vec<&mut String> {
             ..
         } => vec![param, section_param],
         Assertion::EqualArrayLengths { params } => params.iter_mut().collect(),
+        Assertion::UniqueArrayBy { param, .. } => vec![param],
         Assertion::EqualOccurrences { params } => params.iter_mut().collect(),
         Assertion::TimeWindow {
             param,
@@ -4732,7 +5433,33 @@ fn compare_ordered_values(
     }
 }
 
-fn decode_base64_json(value: &str) -> Result<String, String> {
+fn url_path_character_count(value: &str) -> usize {
+    // Count the submitted path rather than URL::path(), which percent-encodes
+    // Unicode and can change the number of characters on the wire.
+    let without_suffix = value.split(['?', '#']).next().unwrap_or(value);
+    let path = if let Some((_, authority)) = without_suffix.split_once("://") {
+        authority.find('/').map_or("/", |start| &authority[start..])
+    } else if let Some(authority) = without_suffix.strip_prefix("//") {
+        authority.find('/').map_or("/", |start| &authority[start..])
+    } else {
+        without_suffix
+    };
+    path.chars().count()
+}
+
+pub(crate) fn decode_base64_json(value: &str) -> Result<String, String> {
+    String::from_utf8(decode_base64_bytes(value)?)
+        .map_err(|_| "decoded base64 is not UTF-8 JSON".to_string())
+}
+
+fn decode_base64_latin1_json(value: &str) -> Result<String, String> {
+    Ok(decode_base64_bytes(value)?
+        .into_iter()
+        .map(char::from)
+        .collect())
+}
+
+fn decode_base64_bytes(value: &str) -> Result<Vec<u8>, String> {
     let data = value.trim_end_matches('=');
     let padding = value.len() - data.len();
     if padding > 2
@@ -4764,7 +5491,7 @@ fn decode_base64_json(value: &str) -> Result<String, String> {
     if buffer != 0 {
         return Err("nonzero base64 padding bits".to_string());
     }
-    String::from_utf8(output).map_err(|_| "decoded base64 is not UTF-8 JSON".to_string())
+    Ok(output)
 }
 
 fn exact_multiple(value: &str, step: &serde_json::Number) -> Option<bool> {
@@ -5000,6 +5727,22 @@ fn constraint_violation(
     }
     if !param.container && contains_macro(param.value.as_ref()) {
         return None;
+    }
+    if let Some(maximum) = contract.max_utf16_length {
+        let applies = field.is_none_or(|field| field.kind == JsonValueKind::String);
+        if !applies && contract.json_type.is_none() {
+            return Some("must be a string to check its length.".to_string());
+        }
+        if applies {
+            let length = normalize_string(param.value.as_ref(), contract.normalization)
+                .encode_utf16()
+                .count();
+            if length > maximum {
+                return Some(format!(
+                    "must contain at most {maximum} UTF-16 code units, but contains {length}."
+                ));
+            }
+        }
     }
     if let (Some(document), Some(path), Some(field)) = (document, param.location.as_deref(), field)
     {

@@ -98,6 +98,19 @@ of URL strings. Pixellint does not parse VAST, HTML, or GTM.
 `vast` means one tracking URL extracted from VAST, not a VAST XML document.
 It enables the IAB VAST macro-name checks on that URL.
 
+Use `request` for a complete HTTP capture. It links endpoint, method, headers,
+query fields and body so the destination's transport and payload rules run
+together:
+
+```bash
+pixellint validate request @captured-request.json --json
+```
+
+The capture has string `url` and `method`, a `headers` object or list of
+`{ "name": "...", "value": "..." }` entries, and an optional raw string `body`.
+See [docs/HTTP_REQUEST_SCHEMA.md](docs/HTTP_REQUEST_SCHEMA.md) for examples and
+validation limits. A bare URL passed as `request` keeps its existing behavior.
+
 If the artifact is still a template with unexpanded macros, say so, and macro
 rules adjust:
 
@@ -281,7 +294,7 @@ for the complete inventory in your installed build.
 
 ### Vendor directory
 
-There are 137 vendor rulepacks across 79 vendors. The vendor directory
+There are 159 vendor rulepacks across 85 vendors. The vendor directory
 covers additional hosts by attribution: 121 vendor rows and 302 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 

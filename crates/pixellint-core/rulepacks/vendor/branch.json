@@ -7,7 +7,8 @@
   "docs": "https://help.branch.io/developers-hub/reference/events-api",
   "match": {
     "hosts": [
-      "api2.branch.io"
+      "api2.branch.io",
+      "api.branch.io"
     ],
     "path_contains": [
       "/v2/event/standard",
@@ -162,7 +163,8 @@
           },
           "description": "It is the OAID inside `advertising_ids`. Branch documents a UUID for non-standard IDs such as Huawei OAID.",
           "fix_hint": "Send `user_data.advertising_ids.oaid` as a UUID.",
-          "doc": "https://help.branch.io/developers-hub/reference/events-api"
+          "doc": "https://help.branch.io/developers-hub/reference/events-api",
+          "json_type": "string"
         },
         {
           "name": "user_data.dma_eea",
@@ -676,6 +678,12 @@
           "description": "The current official vendor reference documents this field.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api",
           "json_type": "string"
+        },
+        {
+          "name": "meta_data",
+          "json_type": "object",
+          "doc": "https://help.branch.io/apidocs/events",
+          "description": "The published current endpoint schema declares an optional metadata object. Its custom member values may be any JSON type."
         }
       ],
       "rules": [
@@ -838,5 +846,197 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://help.branch.io/apidocs/events",
+        "description": "The event endpoints document POST.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "path",
+        "doc": "https://help.branch.io/apidocs/events",
+        "description": "Use a Branch standard or custom event endpoint.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^/v2/event/(?:standard|custom)/?$"
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://help.branch.io/apidocs/events",
+        "description": "Branch events are JSON encoded.",
+        "requirement": "required",
+        "json_type": "string"
+      },
+      {
+        "name": "content_type",
+        "doc": "https://help.branch.io/apidocs/events",
+        "description": "Branch recommends application/json for this header.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "severity": "warning",
+        "format_severity": "warning",
+        "json_type": "string"
+      },
+      {
+        "name": "headers.accept",
+        "doc": "https://help.branch.io/apidocs/events",
+        "description": "Branch recommends application/json for this header.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "severity": "warning",
+        "format_severity": "warning",
+        "json_type": "string"
+      },
+      {
+        "name": "headers.x-ip-override",
+        "doc": "https://help.branch.io/apidocs/events/overview",
+        "description": "The override header accepts IPv4 and requires the same user_data.ip.",
+        "json_type": "string",
+        "format": {
+          "kind": "ip",
+          "version": "v4"
+        }
+      },
+      {
+        "name": "body.user_data.ip",
+        "doc": "https://help.branch.io/apidocs/events",
+        "description": "The user_data IP must repeat a submitted X-IP-Override.",
+        "json_type": "string"
+      },
+      {
+        "name": "body.name",
+        "doc": "https://help.branch.io/apidocs/events",
+        "description": "The standard endpoint accepts only the published standard event names; custom endpoint names remain open.",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "ADD_TO_CART",
+            "ADD_TO_WISHLIST",
+            "VIEW_CART",
+            "INITIATE_PURCHASE",
+            "ADD_PAYMENT_INFO",
+            "CLICK_AD",
+            "PURCHASE",
+            "SPEND_CREDITS",
+            "VIEW_AD",
+            "SEARCH",
+            "VIEW_ITEM",
+            "VIEW_ITEMS",
+            "RATE",
+            "SHARE",
+            "INITIATE_STREAM",
+            "COMPLETE_STREAM",
+            "COMPLETE_REGISTRATION",
+            "COMPLETE_TUTORIAL",
+            "ACHIEVE_LEVEL",
+            "UNLOCK_ACHIEVEMENT",
+            "INVITE",
+            "LOGIN",
+            "START_TRIAL",
+            "SUBSCRIBE"
+          ]
+        },
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "^/v2/event/standard/?$"
+        }
+      },
+      {
+        "name": "body.content_items",
+        "description": "Content items belong to Commerce and Content standard events.",
+        "doc": "https://help.branch.io/apidocs/events/overview"
+      },
+      {
+        "name": "url",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "url",
+          "require_https": true
+        },
+        "description": "The published request endpoint uses HTTPS.",
+        "doc": "https://help.branch.io/apidocs/events"
+      },
+      {
+        "name": "body",
+        "requirement": "required",
+        "json_type": "object",
+        "description": "Branch event requests carry a JSON object, including when JSON headers are omitted.",
+        "doc": "https://help.branch.io/apidocs/events"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.branch.http.ip_override_requires_body_ip",
+        "kind": "required_with",
+        "severity": "error",
+        "message": "X-IP-Override requires the same IP in user_data.ip.",
+        "doc": "https://help.branch.io/apidocs/events",
+        "when": "headers.x-ip-override",
+        "requires": [
+          "body.user_data.ip"
+        ]
+      },
+      {
+        "code": "vendor.branch.http.ip_override_matches_body",
+        "kind": "equal_values",
+        "left": "headers.x-ip-override",
+        "right": "body.user_data.ip",
+        "severity": "error",
+        "message": "X-IP-Override and user_data.ip must carry the same IP.",
+        "doc": "https://help.branch.io/apidocs/events"
+      },
+      {
+        "code": "vendor.branch.http.lifecycle_content_items",
+        "kind": "forbidden_when_value",
+        "when": "body.name",
+        "equals": [
+          "COMPLETE_REGISTRATION",
+          "COMPLETE_TUTORIAL",
+          "ACHIEVE_LEVEL",
+          "UNLOCK_ACHIEVEMENT",
+          "INVITE",
+          "LOGIN",
+          "START_TRIAL",
+          "SUBSCRIBE"
+        ],
+        "params": [
+          "body.content_items"
+        ],
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "^/v2/event/standard/?$"
+        },
+        "severity": "warning",
+        "message": "content_items is documented for Commerce and Content events; this is a Lifecycle event.",
+        "doc": "https://help.branch.io/apidocs/events/overview"
+      }
+    ]
+  }
 }

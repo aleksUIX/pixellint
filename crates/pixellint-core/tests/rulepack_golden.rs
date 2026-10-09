@@ -182,6 +182,59 @@ fn auto_mode_matches_independent_plugin_supports_and_reports() {
                     .unwrap()
                     .as_secs() as i64
             });
+            if request.artifact_kind == ArtifactKind::NetworkRequest
+                && request.artifact.trim_start().starts_with('{')
+            {
+                // Complete captures route by their URL. Inspect every pack
+                // independently, bypassing the engine's shortlist. Exact
+                // transport/body findings have separate golden/source oracles.
+                let options = ValidationOptions {
+                    only_rulepacks: Vec::new(),
+                    except_rulepacks: case.except_rulepacks.clone(),
+                };
+                let summary = engine
+                    .validate_at(&request, &options, reference_time)
+                    .unwrap();
+                let actual: Vec<_> = summary
+                    .reports
+                    .iter()
+                    .filter(|report| report.plugin_id != pixellint_core::DIRECTORY_ID)
+                    .map(|report| report.plugin_id.as_str())
+                    .collect();
+                if let Ok(capture) =
+                    serde_json::from_str::<pixellint_core::HttpRequest>(&request.artifact)
+                {
+                    let url_request = ValidationRequest {
+                        artifact_kind: ArtifactKind::Url,
+                        artifact: capture.url,
+                        claimed_vendor: request.claimed_vendor.clone(),
+                        expansion_state: request.expansion_state,
+                    };
+                    let url = PreparedArtifact::from_request_at(&url_request, reference_time);
+                    let mut expected = Vec::new();
+                    if !excluded.contains("core") {
+                        expected.push("core");
+                    }
+                    expected.extend(
+                        packs
+                            .iter()
+                            .filter(|(id, pack)| !excluded.contains(id) && pack.supports_http(&url))
+                            .map(|(id, _)| *id),
+                    );
+                    assert_eq!(
+                        actual, expected,
+                        "fixture {label} complete-request selection"
+                    );
+                } else {
+                    assert_eq!(
+                        actual,
+                        ["core"],
+                        "fixture {label} malformed capture input invariant"
+                    );
+                }
+                checked += 1;
+                continue;
+            }
             let mut prepared = PreparedArtifact::from_request_at(&request, reference_time);
             for (id, pack) in &packs {
                 if !excluded.contains(id) && pack.supports_prepared(&prepared) {

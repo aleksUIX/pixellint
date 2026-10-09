@@ -1,0 +1,67 @@
+{
+  "id": "vendor/google-activeview",
+  "display_name": "Google Active View pingback",
+  "vendor": "google",
+  "source_level": "official_vendor",
+  "docs": "https://support.google.com/admanager/answer/6123557?hl=en",
+  "description": "Published Active View measurement fields on pagead2 /pcs/activeview. Negative sizes and positions can report a nonmeasurable impression. Timing, viewability thresholds and correlations require browser/session context.",
+  "match": {
+    "hosts": [
+      "pagead2.googlesyndication.com"
+    ],
+    "paths": [
+      "/pcs/activeview"
+    ]
+  },
+  "params": [
+    {
+      "name": "id",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Measurement ID. The source shows osdim, lidar and lidarv without an exhaustive accepted set."
+    },
+    {
+      "name": "adk",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Opaque slot identifier used to correlate with the ad request. Numeric spelling is an example, not an explicit accepted grammar."
+    },
+    {
+      "name": "bs",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?,-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "severity": "warning",
+      "description": "Browser viewport width,height. Negative dimensions are explicitly valid diagnostics."
+    },
+    {
+      "name": "mtos",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:,-?[0-9]+(?:\\.[0-9]+)?){4}$"
+      },
+      "severity": "warning",
+      "description": "The published list has five coverage buckets, in order100%,75to99%,50to74%,25to49%,1to24%. Do not infer positivity or monotonicity from examples."
+    },
+    {
+      "name": "p",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:,-?[0-9]+(?:\\.[0-9]+)?){3}$"
+      },
+      "severity": "warning",
+      "description": "Four creative coordinates, top,left,bottom,right. Negative and zero-size rectangles are diagnostics, not malformed input."
+    }
+  ],
+  "rules": []
+}

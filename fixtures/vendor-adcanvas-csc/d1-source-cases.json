@@ -1,0 +1,364 @@
+[
+  {
+    "id": "sdk-query-with-custom-event-and-opaque-data",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%28sname%21Custom%21svalue%211%21%29",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The SDK preserves arbitrary event names and opaque identifiers and serializes fractional numbers in base36.",
+    "clean": true
+  },
+  {
+    "id": "sdk-image-request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%28sname%21Custom%21svalue%211%21%29\",\"method\":\"GET\",\"headers\":{}}",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Image assignment uses GET without requiring a Content-Type header.",
+    "clean": true
+  },
+  {
+    "id": "missing-p",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.p.missing",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Producer identity and event fields are always included by this SDK. Missing producer fields are advisory."
+  },
+  {
+    "id": "empty-p",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.p.empty",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Empty identity and event fields lose the data named by the producer."
+  },
+  {
+    "id": "missing-s",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.s.missing",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Producer identity and event fields are always included by this SDK. Missing producer fields are advisory."
+  },
+  {
+    "id": "empty-s",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.s.empty",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Empty identity and event fields lose the data named by the producer."
+  },
+  {
+    "id": "missing-v",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.v.missing",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Producer identity and event fields are always included by this SDK. Missing producer fields are advisory."
+  },
+  {
+    "id": "empty-v",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.v.empty",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Empty identity and event fields lose the data named by the producer."
+  },
+  {
+    "id": "missing-t",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.t.missing",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Producer identity and event fields are always included by this SDK. Missing producer fields are advisory."
+  },
+  {
+    "id": "empty-t",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.t.empty",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Empty identity and event fields lose the data named by the producer."
+  },
+  {
+    "id": "missing-a",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.a.missing",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Producer identity and event fields are always included by this SDK. Missing producer fields are advisory."
+  },
+  {
+    "id": "empty-a",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.a.empty",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Empty identity and event fields lose the data named by the producer."
+  },
+  {
+    "id": "missing-e",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.e.missing",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Producer identity and event fields are always included by this SDK. Missing producer fields are advisory."
+  },
+  {
+    "id": "empty-e",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.e.empty",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Empty identity and event fields lose the data named by the producer."
+  },
+  {
+    "id": "base36-uppercase-c",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=2.G&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.c.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Finite Number.toString(36) emits lowercase digits, including fractional digits."
+  },
+  {
+    "id": "base36-uppercase-i",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=2.G&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.i.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Finite Number.toString(36) emits lowercase digits, including fractional digits."
+  },
+  {
+    "id": "base36-uppercase-j",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=2.G&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.j.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Finite Number.toString(36) emits lowercase digits, including fractional digits."
+  },
+  {
+    "id": "base36-uppercase-k",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=2.G&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.k.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Finite Number.toString(36) emits lowercase digits, including fractional digits."
+  },
+  {
+    "id": "base36-uppercase-w",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=2.G&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.w.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Finite Number.toString(36) emits lowercase digits, including fractional digits."
+  },
+  {
+    "id": "base36-uppercase-h",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=2.G&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.h.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Finite Number.toString(36) emits lowercase digits, including fractional digits."
+  },
+  {
+    "id": "n-t",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.n.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Newness flags use exactly t and f in the public producer."
+  },
+  {
+    "id": "n-f",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=f&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.n.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Newness flags use exactly t and f in the public producer."
+  },
+  {
+    "id": "n-1",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=1&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.n.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Newness flags use exactly t and f in the public producer."
+  },
+  {
+    "id": "f-t",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=t&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.f.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Newness flags use exactly t and f in the public producer."
+  },
+  {
+    "id": "f-f",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.f.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Newness flags use exactly t and f in the public producer."
+  },
+  {
+    "id": "f-1",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=1&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example",
+    "code": "vendor.adcanvas-csc.param.f.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "Newness flags use exactly t and f in the public producer."
+  },
+  {
+    "id": "location-999",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&u=%21example",
+    "code": "vendor.adcanvas-csc.param.l.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "JavaScript substring(0,1000) implies an ASCII limit of 1000 for this producer."
+  },
+  {
+    "id": "location-1000",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&u=%21example",
+    "code": "vendor.adcanvas-csc.param.l.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "JavaScript substring(0,1000) implies an ASCII limit of 1000 for this producer."
+  },
+  {
+    "id": "location-1001",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&u=%21example",
+    "code": "vendor.adcanvas-csc.param.l.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "JavaScript substring(0,1000) implies an ASCII limit of 1000 for this producer."
+  },
+  {
+    "id": "checksum-abc",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example&x=abc",
+    "code": "vendor.adcanvas-csc.param.x.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The optional checksum is signed lowercase base36, without validating its hash."
+  },
+  {
+    "id": "checksum--abc",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example&x=-abc",
+    "code": "vendor.adcanvas-csc.param.x.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The optional checksum is signed lowercase base36, without validating its hash."
+  },
+  {
+    "id": "checksum-Abang",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example&x=A%21",
+    "code": "vendor.adcanvas-csc.param.x.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The optional checksum is signed lowercase base36, without validating its hash."
+  },
+  {
+    "id": "image-post-advisory",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%21example\",\"method\":\"POST\",\"headers\":{}}",
+    "code": "vendor.adcanvas-csc.http.method.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "This SDK sends image GET requests. A POST is outside that producer contract."
+  },
+  {
+    "id": "vast-source-routing",
+    "kind": "vast",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=https%3A%2F%2Fpublisher.example%2Fpage&u=%28sname%21Custom%21svalue%211%21%29",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The SDK preserves arbitrary event names and opaque identifiers and serializes fractional numbers in base36.",
+    "clean": true
+  },
+  {
+    "id": "location-utf16-astral-499",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80&u=%28sname%21Custom%21svalue%211%21%29",
+    "code": "vendor.adcanvas-csc.param.l.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The SDK applies JavaScript substring(0,1000) to location.href. Each astral character counts as two UTF-16 code units.",
+    "expected_code_count": 0,
+    "clean": true
+  },
+  {
+    "id": "location-utf16-astral-500",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80&u=%28sname%21Custom%21svalue%211%21%29",
+    "code": "vendor.adcanvas-csc.param.l.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The SDK applies JavaScript substring(0,1000) to location.href. Each astral character counts as two UTF-16 code units.",
+    "expected_code_count": 0,
+    "clean": true
+  },
+  {
+    "id": "location-utf16-astral-501",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80%F0%9F%98%80&u=%28sname%21Custom%21svalue%211%21%29",
+    "code": "vendor.adcanvas-csc.param.l.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The SDK applies JavaScript substring(0,1000) to location.href. Each astral character counts as two UTF-16 code units.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "location-utf16-mixed-1000",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%F0%9F%98%80&u=%28sname%21Custom%21svalue%211%21%29",
+    "code": "vendor.adcanvas-csc.param.l.invalid",
+    "expect_violation": false,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The SDK applies JavaScript substring(0,1000) to location.href. Each astral character counts as two UTF-16 code units.",
+    "expected_code_count": 0,
+    "clean": true
+  },
+  {
+    "id": "location-utf16-mixed-1001",
+    "kind": "url",
+    "artifact": "https://analytics.adcanvas.com/csc-event?p=party_example&s=session_example&v=page_example&t=custom+event+name&a=ad_example&e=page_example0&c=m0abc123&n=t&f=f&i=1hc&j=u0&k=1.i&w=qo&h=go&l=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%F0%9F%98%80&u=%28sname%21Custom%21svalue%211%21%29",
+    "code": "vendor.adcanvas-csc.param.l.invalid",
+    "expect_violation": true,
+    "source_url": "https://media.adcanvas.com/tracking.js",
+    "source_statement": "The SDK applies JavaScript substring(0,1000) to location.href. Each astral character counts as two UTF-16 code units.",
+    "expected_code_count": 1
+  }
+]

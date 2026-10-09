@@ -1,0 +1,52 @@
+[
+  {
+    "id": "published_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://rest.iad-01.braze.com/users/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"bEaReR TEST_ONLY_TOKEN\"},\"body\":\"{\\\"attributes\\\":[{\\\"external_id\\\":\\\"user123\\\",\\\"gender\\\":null,\\\"first_name\\\":null}]}\"}",
+    "code": "vendor.braze.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "wrong_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://rest.iad-01.braze.com/users/track\",\"method\":\"GET\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"bEaReR TEST_ONLY_TOKEN\"},\"body\":\"{\\\"attributes\\\":[{\\\"external_id\\\":\\\"user123\\\",\\\"gender\\\":null,\\\"first_name\\\":null}]}\"}",
+    "code": "vendor.braze.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "authentication_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://rest.iad-01.braze.com/users/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"attributes\\\":[{\\\"external_id\\\":\\\"user123\\\",\\\"gender\\\":null,\\\"first_name\\\":null}]}\"}",
+    "code": "vendor.braze.http.headers.authorization.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "authentication_wrong_scheme",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://rest.iad-01.braze.com/users/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic TEST_ONLY_NOT_BEARER\"},\"body\":\"{\\\"attributes\\\":[{\\\"external_id\\\":\\\"user123\\\",\\\"gender\\\":null,\\\"first_name\\\":null}]}\"}",
+    "code": "vendor.braze.http.headers.authorization.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "unpublished_mime_advisory",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://rest.iad-01.braze.com/users/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/xml\",\"Authorization\":\"bEaReR TEST_ONLY_TOKEN\"},\"body\":\"{\\\"attributes\\\":[{\\\"external_id\\\":\\\"user123\\\",\\\"gender\\\":null,\\\"first_name\\\":null}]}\"}",
+    "code": "vendor.braze.http.content_type.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

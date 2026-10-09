@@ -381,5 +381,71 @@
       "message": "LiveRamp requires PersonalDataConsents values 0, 2 in the active GPP section.",
       "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/2-provide-a-valid-consent-string"
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The ATS envelope endpoint is published as GET.",
+        "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        }
+      },
+      {
+        "name": "headers.origin",
+        "description": "LiveRamp requires the origin domain submitted for the Placement privacy review. Presence and serialized-origin syntax are local; placement approval requires account state.",
+        "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
+        "requirement": "required",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[\\t ]*(?:null|[A-Za-z][A-Za-z0-9+.-]*://[^/?#@\\s]+)[\\t ]*$"
+        },
+        "format_severity": "warning"
+      },
+      {
+        "name": "query.atype",
+        "description": "The API query atype identifies the integration method; value 3 means server-to-server.",
+        "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+      },
+      {
+        "name": "query.atype[]",
+        "description": "Repeated atype values remain observable for the server-to-server header dependency.",
+        "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api"
+      },
+      {
+        "name": "headers.x-forwarded-for",
+        "description": "LiveRamp mandates X-Forwarded-For when retrieving or refreshing ATS envelopes server-to-server. The header must carry the client-side IP, whose truth and approved country need external context.",
+        "doc": "https://developers.liveramp.com/authenticatedtraffic-api/docs/7-implement-the-ats-refresh-envelope-api",
+        "requirement": "required",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "any",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "query.atype",
+              "values": [
+                "3"
+              ]
+            },
+            {
+              "kind": "value_in",
+              "param": "query.atype[]",
+              "values": [
+                "3"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "rules": []
+  }
 }

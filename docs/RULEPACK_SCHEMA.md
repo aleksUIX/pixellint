@@ -27,6 +27,7 @@ engine.register_manifest_path("acme.json")?;
 | `version` | no | Defaults to the `pixellint-core` version. |
 | `vendor` | no | Vendor slug reported as `detected_vendor` when the pack matches. |
 | `gdpr_non_applicable_values` | no | Documented destination-specific false values, accepted by core only for a matching selected endpoint. Requires an exact `gdpr` enum containing each value and forbids `any_host`. |
+| `gdpr_consent_aliases` | no | Documented alternative TC String query names, recognized by core only for a matching selected host-bound endpoint. Each must also be an alias of the declared `gdpr_consent` contract. Every literal carrier is validated, and ambiguous simultaneous carriers get a duplicate-signal warning. |
 | `source_level` | no | Evidence level for every rule in the pack. Defaults to `official_vendor`. |
 | `docs` | no | Pack-wide documentation URL. Rules inherit it when they omit their own. |
 | `param_style` | no | `query` (default), `query_semicolon`, `matrix`, or `colon_path`. |
@@ -35,6 +36,8 @@ engine.register_manifest_path("acme.json")?;
 | `params` | no | Parameter contracts. |
 | `rules` | no | Rules that span more than one parameter. |
 | `body` | no | Contracts on the JSON request body. |
+| `http` | no | Complete-request contracts over URL, method, headers, query and decoded body. See [HTTP_REQUEST_SCHEMA.md](HTTP_REQUEST_SCHEMA.md). |
+| `http_queries` | no | Query strings in captured bulk bodies, each evaluated with this pack's URL contracts. |
 
 `source_level` is one of `normative`, `official_vendor`, `official_template`,
 `ecosystem_reference`, `heuristic`. A rule at `official_vendor` must resolve to
@@ -141,6 +144,8 @@ template slot. Format checks still run when the value is populated.
 
 `min_length` and `max_length` limit decoded strings in Unicode characters.
 `min_byte_length` and `max_byte_length` instead count decoded UTF-8 bytes.
+`max_utf16_length` counts decoded UTF-16 code units, matching JavaScript
+`String.length`; supplementary Unicode characters count as two units.
 `normalization` can be `trim` or `trim_lowercase` when the vendor documents
 normalization before validation. It applies to string emptiness, length and
 scalar formats, while native JSON type checks and evidence retain the original
@@ -283,12 +288,15 @@ rule names must also appear in `params`.
 | `max_query_length` | `max_length` | the raw query text after `?` exceeds the limit, excluding any fragment |
 | `max_body_bytes` | `max_bytes` | the complete JSON request exceeds the UTF-8 byte limit, including whitespace |
 | `less_equal` | `left`, `right`, optional `strict`, `unit` | the left exceeds the right; `strict` also rejects equality; `unit: datetime` compares normalized calendar timestamps and their full fractions |
+| `equal_values` | `left`, `right` | populated literal scalar values differ; missing, container and macro values are left to their field contracts |
+| `url_path_length` | `param`, `max_length` | submitted URL path exceeds the Unicode character bound, excluding origin, query and fragment; relative and custom scheme URLs are supported |
 | `delimited_sum` | `param`, `total`, `separator`, `value_separator` | a delimited amount list does not sum exactly to its total; decimal arithmetic has no binary-float tolerance |
 | `awin_basket` | `parts`, `check` | `index_sequence` checks sequential `bd[n]` entries from zero; `group_membership` checks each product's commission group against `parts` |
 | `gpp_sections` | `param`, `sections` | a supplied applicable ID is absent from the encoded GPP header; native integer arrays and comma-separated strings are supported |
 | `tcf_consent` | `param`, `vendor_id`, `purpose_ids` | a structurally valid TCF string lacks the declared destination vendor or purpose consent |
 | `gpp_field_values` | `param`, `section_param`, `field`, `values` | an applicable decoded US state field contains a choice outside the destination's permitted values; absent state fields and opaque layouts are skipped |
 | `equal_array_lengths` | `params` | present native JSON arrays contain different numbers of records; missing fields and wrong native types are left to their field contracts |
+| `unique_array_by` | `param`, `field` | objects in one native JSON array repeat a literal scalar member value; `field` is an exact member name, including punctuation; missing members, containers and macros are skipped; strings, numbers and Booleans remain distinct; numeric spellings normalize exactly within signed 64-bit exponent arithmetic, and identical numeric spellings outside that range still count as duplicates |
 | `equal_split_lengths` | `params`, `separator` | populated delimited lists contain different numbers of records; missing optional lists and macros are skipped |
 | `equal_occurrences` | `params` | repeated field families have different occurrence counts, including empty and macro positions |
 | `time_window` | `param`, `unit`, optional `fallback_param`, `max_age_seconds`, `max_future_seconds` | the effective timestamp falls outside inclusive age or future bounds relative to the shared validation clock |
@@ -317,6 +325,10 @@ containers. It retains key presence when explicit `null_as_missing` treats the
 value as unset for other rules.
 Every referenced field must be contracted in the same scope. Unknown macro
 values never satisfy a value predicate, including under negation.
+`value_in` compares native JSON numbers by exact numeric value when their
+decimal exponents can be normalized. Thus `-1`, `-1.0`, and `-1e0` select the
+same numeric condition. Strings and URL values keep exact textual matching.
+For exponents outside normalization range, identical numeric spellings match.
 
 `format_when` with `pair_occurrences: true` pairs the nth discriminator with the
 nth value. Empty and macro positions retain their indices. It does not require
@@ -396,8 +408,9 @@ its own bytes.
 | `decoded_source_condition` | no | A JSON shape selecting that second representation in the first decoded document. Requires `decoded_source_field`. |
 | `source_max_length` | no | Unicode character limit on the original `source_field` string, including its embedded JSON whitespace. |
 | `source_max_length_when` | no | A first-decoded-document JSON shape controlling `source_max_length`. Requires the limit. |
-| `field_encoding` | no | Inner field encoding when both sources are declared. Defaults to `json`; `base64_json` is opt-in. |
-| `encoding` | no | `json` by default, or `base64_json` with standard or URL-safe base64 and optional padding. |
+| `field_encoding` | no | Inner field encoding when both sources are declared. Defaults to `json`; `base64_json`, `base64_latin1_json` and `pipe_delimited_json` are opt-in. |
+| `encoding` | no | `json` by default; `base64_json` decodes UTF-8 JSON and `base64_latin1_json` decodes browser `btoa` JSON. Both accept standard or URL-safe base64 and optional padding. `pipe_delimited_json` represents a pipe-separated tuple as a JSON array of strings. |
+| `encoding_severity` | no | `error` by default, or `warning` or `info`, for encoded-source decoding and JSON syntax failures. Requires `source_param` or `source_field`. Applies to outer, inner and `decoded_source_field` decoding; field contracts and source-length limits retain their own severities. |
 | `condition` | no | An outer URL parameter condition for a `source_param` spec. |
 | `params` | no | Parameter contracts, named by path relative to the scope. |
 | `rules` | no | Cross-field rules, using the same names. |
@@ -405,6 +418,20 @@ its own bytes.
 `body` may also be a list of specs. That is how a pack contracts more than one
 level of the same payload: one spec with no scope for the envelope, another
 scoped to the batch array for the events inside it.
+
+`base64_latin1_json` maps each decoded byte to the Unicode code point with the
+same numeric value, matching browser `btoa(JSON.stringify(...))` producers.
+The JSON parser then handles ordinary JSON escapes. Decoded body byte limits
+count the original Latin-1 bytes. Existing `base64_json` keeps strict UTF-8
+decoding, and source targets still point to the original encoded parameter or
+string field.
+
+`pipe_delimited_json` preserves component order, empty components and trailing
+empty components without numeric coercion. Tuple positions use paths such as
+`[0]` and `[1]`. Repeated source parameters are evaluated independently. Body
+byte limits count the decoded original tuple's UTF-8 bytes, before its synthetic
+JSON representation adds quoting and escapes. Macro components remain unknown,
+and findings point to the original parameter or string field.
 
 Declaring both `source_param` and `source_field` decodes the URL parameter first,
 then reads the inner string field from that document. `encoding` applies to the
@@ -421,6 +448,15 @@ matcher. Declare the outer field's native string type and the decoded root's
 type explicitly. Invalid encoding gets a finding unless it contains a template
 macro. Findings from decoded fields point to the original URL parameter or JSON
 string span, since decoded offsets do not identify the original bytes.
+
+Specs sharing a source and encoding produce one syntax finding at the strongest
+applicable severity: `error`, then `warning`, then `info`. URL conditions select
+active specs before decoding. A `decoded_source_condition` selects nested
+decoding after its containing JSON parses, so inactive nested specs cannot raise
+that stage's severity. A malformed containing source cannot evaluate that
+nested guard and uses all specs whose outer conditions apply. Different
+encodings remain independent representations. Existing manifests keep error
+severity unless they explicitly opt into advisory syntax checks.
 
 Body contracts get their own name space and their own code segment, `body`
 rather than `param`, because an endpoint may accept the same field in the query

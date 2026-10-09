@@ -1,0 +1,846 @@
+{
+  "id": "vendor/appsflyer-impression",
+  "display_name": "AppsFlyer single-platform impression link",
+  "description": "Single-platform impression links on impression.appsflyer.com/{app_id}, with the shared published attribution parameter table, GET request method and S2S user-agent agreement. Account state, platform attribution and historical engagement correlation require additional context.",
+  "vendor": "appsflyer",
+  "source_level": "official_vendor",
+  "docs": "https://support.appsflyer.com/hc/en-us/articles/210084473-Measure-view-through-engagements",
+  "path_pattern": "^/(?<app_id>[^/?]*)/?$",
+  "match": {
+    "hosts": [
+      "impression.appsflyer.com"
+    ]
+  },
+  "params": [
+    {
+      "name": "app_id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/210084473-Measure-view-through-engagements",
+      "description": "The published single-platform impression URL carries app-id. Android package name versus iOS store ownership needs account/platform context."
+    },
+    {
+      "name": "pid",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Required media-source identifier. The published link table limits its decoded value to150 characters. Reserved partner agreement requires account context.",
+      "fix_hint": "Set pid to the media source name from the OneLink.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 150
+    },
+    {
+      "name": "c",
+      "description": "Optional campaign name. AppsFlyer replaces names longer than100 characters with c_name_exceeded_max_length; the limit is a warning because this is accepted input with altered reporting.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "non_empty"
+      },
+      "max_length": 100,
+      "format_severity": "warning"
+    },
+    {
+      "name": "af_viewthrough_lookback",
+      "description": "View-through ID matching uses 1 to 24 hours. OneLink also documents the equivalent 1d form.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/210084473-Measure-view-through-engagements",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:1d|(?:[1-9]|1[0-9]|2[0-4])h)$"
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "af_prt",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 50,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_siteid",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 24,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_c_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 24,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_adset",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_adset_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 24,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_ad",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_ad_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 24,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_ad_type",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 24,
+      "description": "Published naming conventions and24-character maximum. The raw-data dictionary also uses footer, so unlisted conventions are warnings.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "native",
+          "banner",
+          "interstitial",
+          "rewarded_video",
+          "audio",
+          "offerwall"
+        ]
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "af_channel",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 20,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_engagement_destination",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 50,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_keywords",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_cost_model",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 20,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_partner_account_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_og_title",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 40,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "af_og_description",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 300,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "advertising_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 40,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "android_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 20,
+      "description": "The published attribution link parameter table specifies this decoded character limit."
+    },
+    {
+      "name": "idfa",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 40,
+      "description": "The link specification requires an uppercase IDFA and a40-character maximum. Device ownership and platform selection require context.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^a-z]+$"
+      }
+    },
+    {
+      "name": "af_sub1",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "Optional subscriber parameter with the published100-character limit."
+    },
+    {
+      "name": "af_sub2",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "Optional subscriber parameter with the published100-character limit."
+    },
+    {
+      "name": "af_sub3",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "Optional subscriber parameter with the published100-character limit."
+    },
+    {
+      "name": "af_sub4",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "Optional subscriber parameter with the published100-character limit."
+    },
+    {
+      "name": "af_sub5",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "max_length": 100,
+      "description": "Optional subscriber parameter with the published100-character limit."
+    },
+    {
+      "name": "af_mp",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "clickid",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "af_sub_siteid",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "af_ua",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "af_os_version",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "af_model",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "deep_link_value",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "imei",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "oaid",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "fire_advertising_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "af_android_store_csl",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "af_ios_store_cpp",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "af_ref",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional published attribution field. No closed value catalog or additional length is invented."
+    },
+    {
+      "name": "deep_link_sub1",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub2",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub3",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub4",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub5",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub6",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub7",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub8",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub9",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "deep_link_sub10",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Optional app-defined deep-link metadata. The app selects the business semantics."
+    },
+    {
+      "name": "af_force_deeplink",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "description": "The documented URL flag uses literal true/false. Retargeting and redirect behavior depend on engagement context."
+    },
+    {
+      "name": "is_incentivized",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "description": "The documented URL flag uses literal true/false. Retargeting and redirect behavior depend on engagement context."
+    },
+    {
+      "name": "af_param_forwarding",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "description": "The documented URL flag uses literal true/false. Retargeting and redirect behavior depend on engagement context."
+    },
+    {
+      "name": "af_base_params_forward",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "description": "The documented URL flag uses literal true/false. Retargeting and redirect behavior depend on engagement context."
+    },
+    {
+      "name": "redirect",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "description": "The documented URL flag uses literal true/false. Retargeting and redirect behavior depend on engagement context."
+    },
+    {
+      "name": "is_retargeting",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "description": "The documented URL flag uses literal true/false. Retargeting and redirect behavior depend on engagement context."
+    },
+    {
+      "name": "af_cost_currency",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "currency"
+      },
+      "description": "Optional current ISO4217 currency. USD is the vendor default, so cost values do not require an explicit currency."
+    },
+    {
+      "name": "af_cost_value",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]{1,4})?$"
+      },
+      "description": "Only numerical digits and an optional decimal point are allowed; at most four fractional digits."
+    },
+    {
+      "name": "af_media_type",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "app",
+          "web"
+        ]
+      },
+      "description": "The published placement category is app or web."
+    },
+    {
+      "name": "af_ad_format",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "text",
+          "image",
+          "video",
+          "playable",
+          "interactive",
+          "dynamic_product",
+          "carousel"
+        ]
+      },
+      "format_severity": "warning",
+      "description": "Published naming conventions are checked as a reporting advisory, without claiming this is a closed ingestion enum."
+    },
+    {
+      "name": "af_click_lookback",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:(?:[1-9]|[12][0-9]|30)d|(?:[1-9]|1[0-9]|2[0-3])h)$"
+      },
+      "format_severity": "warning",
+      "description": "Published click window syntax. The vendor explicitly ignores this setting for impression URLs."
+    },
+    {
+      "name": "af_reengagement_window",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:(?:[1-9]|[1-8][0-9]|90)d|(?:[1-9]|[12][0-9]|3[0-6])h|lifetime)$"
+      },
+      "format_severity": "warning",
+      "description": "The full parameter table permits1..90days,1..36hours or lifetime. Another OneLink page says hours up to23; preserve the broader documented branch and report the conflict."
+    },
+    {
+      "name": "af_ip",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "ip"
+      },
+      "description": "Optional device IP for S2S impressions. C2S applicability, X-Forwarded-For fallback and matching header require HTTP context."
+    },
+    {
+      "name": "af_video_total_length",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "Published numeric viewability field, in seconds or percentage. No source-unspecified duration equality or business floor is inferred."
+    },
+    {
+      "name": "af_video_played_length",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "Published numeric viewability field, in seconds or percentage. No source-unspecified duration equality or business floor is inferred."
+    },
+    {
+      "name": "af_playable_played_length",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "Published numeric viewability field, in seconds or percentage. No source-unspecified duration equality or business floor is inferred."
+    },
+    {
+      "name": "af_ad_time_viewed",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "Published numeric viewability field, in seconds or percentage. No source-unspecified duration equality or business floor is inferred."
+    },
+    {
+      "name": "af_ad_displayed_percent",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "Published numeric viewability field, in seconds or percentage. No source-unspecified duration equality or business floor is inferred."
+    },
+    {
+      "name": "af_audio_total_length",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "Published numeric viewability field, in seconds or percentage. No source-unspecified duration equality or business floor is inferred."
+    },
+    {
+      "name": "af_audio_played_length",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "description": "Published numeric viewability field, in seconds or percentage. No source-unspecified duration equality or business floor is inferred."
+    },
+    {
+      "name": "af_r",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "url",
+        "require_https": true
+      },
+      "description": "Redirect targets must be full publicly accessible HTTPS URLs. Fragment identifiers are unsupported; public reachability and account allowlisting require external context."
+    },
+    {
+      "name": "af_web_dp",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "url",
+        "require_https": true
+      },
+      "description": "Redirect targets must be full publicly accessible HTTPS URLs. Fragment identifiers are unsupported; public reachability and account allowlisting require external context."
+    },
+    {
+      "name": "af_android_url",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "url",
+        "require_https": true
+      },
+      "description": "Redirect targets must be full publicly accessible HTTPS URLs. Fragment identifiers are unsupported; public reachability and account allowlisting require external context."
+    },
+    {
+      "name": "af_ios_url",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "url",
+        "require_https": true
+      },
+      "description": "Redirect targets must be full publicly accessible HTTPS URLs. Fragment identifiers are unsupported; public reachability and account allowlisting require external context."
+    },
+    {
+      "name": "af_og_image",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "url"
+      },
+      "description": "Optional Open Graph preview image URL."
+    },
+    {
+      "name": "af_dp",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:.+$"
+      },
+      "format_severity": "warning",
+      "description": "A valid URI scheme is recommended. The application determines its default activity/base path, so custom schemes remain supported."
+    },
+    {
+      "name": "idfv",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^a-z]+$"
+      },
+      "description": "The link specification requires uppercase IDFV; no undocumented length bound is added."
+    },
+    {
+      "name": "sha1_advertising_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "sha1_android_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "sha1_imei",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "sha1_oaid",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "sha1_idfa",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "sha1_idfv",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "sha1_mac",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "md5_advertising_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{32}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "md5_android_id",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{32}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "md5_imei",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{32}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "md5_oaid",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{32}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "md5_idfa",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{32}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "md5_idfv",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{32}$"
+      },
+      "description": "Published hashed identifier. The digest must contain the exact hexadecimal width of its named algorithm. Original source normalization and network support are external."
+    },
+    {
+      "name": "sha1_el",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "description": "Published SHA1 email identifier for desktop-to-mobile attribution."
+    },
+    {
+      "name": "mac",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "description": "Published device MAC field. Source gives no normalization spelling, so no guessed separator format is enforced."
+    },
+    {
+      "name": "af_os",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "requirement": "deprecated",
+      "description": "Deprecated but still supported, so presence is an advisory rather than a rejection."
+    },
+    {
+      "name": "af_ios_fallback",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+      "requirement": "deprecated",
+      "description": "Deprecated but still supported, so presence is an advisory rather than a rejection."
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.appsflyer-impression.https_required",
+      "kind": "require_https",
+      "severity": "error",
+      "message": "AppsFlyer accepts only HTTPS incoming engagement traffic.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+    },
+    {
+      "code": "vendor.appsflyer-impression.url_length",
+      "kind": "max_url_length",
+      "max_length": 2000,
+      "severity": "error",
+      "message": "The complete attribution URL must not exceed2000 characters.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+    },
+    {
+      "code": "vendor.appsflyer-impression.pid_legal_characters",
+      "kind": "forbid_value_pattern",
+      "params": [
+        "pid"
+      ],
+      "pattern": "[/<>*&?\\\\]",
+      "severity": "error",
+      "message": "These PID characters prevent attribution and deep linking.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+    },
+    {
+      "code": "vendor.appsflyer-impression.campaign_edge_whitespace",
+      "kind": "forbid_value_pattern",
+      "params": [
+        "c"
+      ],
+      "pattern": "^\\s|\\s$",
+      "severity": "warning",
+      "message": "Campaign names should not begin or end with whitespace because reporting may disagree.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+    },
+    {
+      "code": "vendor.appsflyer-impression.partner_site_id",
+      "kind": "required_with",
+      "when": "pid",
+      "requires": [
+        "af_siteid"
+      ],
+      "condition": {
+        "kind": "value_pattern",
+        "param": "pid",
+        "pattern": "_int$"
+      },
+      "severity": "warning",
+      "message": "Ad-network links should carry the publisher site ID. Custom owned-media impression examples omit it.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "json_type": "string",
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/210084473-Measure-view-through-engagements"
+      },
+      {
+        "name": "query.af_ua",
+        "requirement": "optional",
+        "json_type": "string",
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+      },
+      {
+        "name": "headers.user-agent",
+        "requirement": "optional",
+        "json_type": "string",
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.appsflyer-impression.http.user_agent_header",
+        "kind": "required_with",
+        "when": "query.af_ua",
+        "requires": [
+          "headers.user-agent"
+        ],
+        "severity": "error",
+        "message": "S2S af_ua is sent both as URL parameter and HTTP User-Agent header.",
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+      },
+      {
+        "code": "vendor.appsflyer-impression.http.user_agent_agreement",
+        "kind": "equal_values",
+        "left": "query.af_ua",
+        "right": "headers.user-agent",
+        "severity": "error",
+        "message": "AppsFlyer requires identical user-agent values in the S2S URL and header.",
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+      }
+    ]
+  }
+}

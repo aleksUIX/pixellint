@@ -2,7 +2,7 @@
   "id": "vendor/kevel",
   "display_name": "Kevel tracking pixel",
   "vendor": "adzerk",
-  "description": "Kevel impression and custom-event pixels on e-{networkId}.adzerk.net/i.gif and /e.gif. Kevel documents e as the encoded shim and s as the signature. Click redirects on /r are not contracted.",
+  "description": "Kevel impression, custom-event and click tracking URLs on e-{networkId}.adzerk.net/i.gif, /e.gif and /r. Published shim/signature and optional revenue or merchandising metadata are checked; response redirects, impression expiry and click deduplication need runtime context.",
   "source_level": "official_vendor",
   "docs": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server",
   "match": {
@@ -11,7 +11,8 @@
     ],
     "paths": [
       "/i.gif",
-      "/e.gif"
+      "/e.gif",
+      "/r"
     ]
   },
   "params": [
@@ -88,6 +89,11 @@
         "pattern": "^[^,]+(?:,[^,]+){0,9}$"
       },
       "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "name": "tracking_route",
+      "description": "The concrete URL path distinguishes click redirects from impression and custom-event pixels.",
+      "doc": "https://dev.kevel.com/hc/docs/tracking-overview"
     }
   ],
   "rules": [
@@ -98,6 +104,103 @@
       "severity": "error",
       "message": "Kevel limits the complete event URL query string to 1024 characters.",
       "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "code": "vendor.kevel.click.productId.single",
+      "kind": "format",
+      "param": "productId",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^,]+$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "tracking_route",
+        "values": [
+          "r"
+        ]
+      },
+      "severity": "error",
+      "message": "Kevel click URLs accept only one productId value.",
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "code": "vendor.kevel.click.component.single",
+      "kind": "format",
+      "param": "component",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^,]+$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "tracking_route",
+        "values": [
+          "r"
+        ]
+      },
+      "severity": "error",
+      "message": "Kevel click URLs accept only one component value.",
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+    },
+    {
+      "code": "vendor.kevel.click.position.single",
+      "kind": "format",
+      "param": "position",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^,]+$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "tracking_route",
+        "values": [
+          "r"
+        ]
+      },
+      "severity": "error",
+      "message": "Kevel click URLs accept only one position value.",
+      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
     }
-  ]
+  ],
+  "path_pattern": "^/(?<tracking_route>i\\.gif|e\\.gif|r)$",
+  "http": {
+    "params": [
+      {
+        "name": "path",
+        "description": "The published /i.gif impression and /r click endpoints support GET or POST.",
+        "doc": "https://dev.kevel.com/hc/docs/tracking-overview"
+      },
+      {
+        "name": "method",
+        "description": "Kevel documents GET or POST for impression and click tracking URLs.",
+        "doc": "https://dev.kevel.com/hc/docs/tracking-overview",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "condition": {
+          "kind": "value_in",
+          "param": "path",
+          "values": [
+            "/i.gif",
+            "/r"
+          ]
+        }
+      },
+      {
+        "name": "headers.user-agent",
+        "description": "For server-to-server event forwarding, Kevel instructs publishers to send the end-user User-Agent for bot filtering. Browser/server integration context is not inferred from method alone.",
+        "doc": "https://dev.kevel.com/hc/docs/tracking-overview",
+        "format": {
+          "kind": "non_empty"
+        }
+      }
+    ],
+    "rules": []
+  }
 }

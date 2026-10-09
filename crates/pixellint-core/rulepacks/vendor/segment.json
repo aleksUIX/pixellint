@@ -1075,5 +1075,264 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "This published ingestion operation uses HTTP POST.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "Use a published request media type.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "body",
+        "description": "The request body is a JSON object.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "object"
+      },
+      {
+        "name": "path",
+        "description": "Endpoint identifies the single-event method or batch operation.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^/v1/(?:identify|track|page|screen|group|alias|batch)/?$"
+        }
+      },
+      {
+        "name": "authorization_scheme",
+        "description": "Published alternatives are Basic or OAuth Bearer, or writeKey in the body.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "basic",
+            "bearer"
+          ]
+        }
+      },
+      {
+        "name": "headers.authorization",
+        "description": "OAuth uses a Bearer header.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "(?i)^Bearer[ \\t]+\\S+[ \\t]*$"
+        },
+        "condition": {
+          "kind": "value_in",
+          "param": "authorization_scheme",
+          "values": [
+            "bearer"
+          ]
+        }
+      },
+      {
+        "name": "body.writeKey",
+        "description": "Body writeKey is an authentication alternative and is required for OAuth.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "allow_empty": true
+      },
+      {
+        "name": "basic_auth.username",
+        "description": "The Basic username is the source write key.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "value_in",
+          "param": "authorization_scheme",
+          "values": [
+            "basic"
+          ]
+        }
+      },
+      {
+        "name": "basic_auth.password",
+        "description": "The documented Basic password is empty.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^$"
+        },
+        "severity": "warning",
+        "format_severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "authorization_scheme",
+          "values": [
+            "basic"
+          ]
+        },
+        "allow_empty": true
+      },
+      {
+        "name": "basic_auth.has_colon",
+        "description": "Legacy Basic without a colon remains backward compatible but is discouraged.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "json_type": "boolean"
+      },
+      {
+        "name": "body.event",
+        "description": "Track event is required even when type is inferred from the endpoint.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "^/v1/track/?$"
+        }
+      },
+      {
+        "name": "body.groupId",
+        "description": "Group ID is required on the group route.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "^/v1/group/?$"
+        }
+      },
+      {
+        "name": "body.previousId",
+        "description": "Previous ID is required on the alias route.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "^/v1/alias/?$"
+        }
+      },
+      {
+        "name": "body.batch",
+        "description": "Batch endpoint requires its event array.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "requirement": "required",
+        "json_type": "array",
+        "condition": {
+          "kind": "value_pattern",
+          "param": "path",
+          "pattern": "^/v1/batch/?$"
+        },
+        "min_items": 1
+      },
+      {
+        "name": "basic_auth",
+        "json_type": "object",
+        "requirement": "required",
+        "condition": {
+          "kind": "value_in",
+          "param": "authorization_scheme",
+          "values": [
+            "basic"
+          ]
+        },
+        "description": "Basic credentials must decode to the published write-key username representation.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.segment.http.authentication_required",
+        "kind": "require_any_of",
+        "severity": "error",
+        "message": "Authenticate with body writeKey or the Basic write-key username.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "groups": [
+          [
+            "body.writeKey"
+          ],
+          [
+            "basic_auth.username"
+          ]
+        ]
+      },
+      {
+        "code": "vendor.segment.http.oauth_write_key_required",
+        "kind": "required_with",
+        "severity": "error",
+        "message": "OAuth requests also require the source writeKey in the JSON body.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "condition": {
+          "kind": "value_in",
+          "param": "authorization_scheme",
+          "values": [
+            "bearer"
+          ]
+        },
+        "requires": [
+          "body.writeKey"
+        ],
+        "when": "headers.authorization"
+      },
+      {
+        "code": "vendor.segment.http.basic_colon_recommended",
+        "kind": "format",
+        "severity": "warning",
+        "message": "Append a colon to the Basic write key before Base64 encoding. The legacy form remains compatible.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "condition": {
+          "kind": "value_in",
+          "param": "authorization_scheme",
+          "values": [
+            "basic"
+          ]
+        },
+        "param": "basic_auth.has_colon",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "true"
+          ]
+        }
+      }
+    ]
+  }
 }

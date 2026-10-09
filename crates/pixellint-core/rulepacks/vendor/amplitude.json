@@ -533,13 +533,13 @@
         {
           "code": "vendor.amplitude.body.reserved_event_type",
           "kind": "forbid_value_pattern",
-          "pattern": "^\\[Amplitude\\]",
+          "pattern": "^\\[Amplitude\\] (?:Start Session|End Session|Revenue(?: \\((?:Verified|Unverified)\\))?|Merged User)$",
           "params": [
             "event_type"
           ],
           "severity": "error",
-          "message": "`event_type` uses a name Amplitude reserves for internal use, such as `[Amplitude] Start Session`.",
-          "fix_hint": "Use your own event name. Amplitude reserves names that start with `[Amplitude]`.",
+          "message": "The event type is one of the six event names that Amplitude reserves for internal use.",
+          "fix_hint": "Use an event name outside the six published reserved names.",
           "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
         },
         {
@@ -547,12 +547,11 @@
           "kind": "forbid_value_pattern",
           "pattern": "^[A-Fa-f0-9]{64}$",
           "params": [
-            "ip",
-            "user_agent"
+            "ip"
           ],
           "severity": "error",
-          "message": "This field looks like a SHA-256 digest, but Amplitude documents `ip` and `user_agent` as unhashed. Use `$remote` when the IP should come from the request.",
-          "fix_hint": "Send the raw IP or user agent, or `$remote` for IP.",
+          "message": "This IP value looks like a SHA-256 digest. Amplitude accepts a raw IP address or $remote.",
+          "fix_hint": "Send the raw IP address, or $remote to use the upload request address.",
           "doc": "https://amplitude.com/docs/apis/analytics/http-v2"
         },
         {
@@ -662,5 +661,43 @@
       ],
       "rules": []
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "This published ingestion operation uses HTTP POST.",
+        "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "Use a published request media type.",
+        "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "body",
+        "description": "The request body is a JSON object.",
+        "doc": "https://amplitude.com/docs/apis/analytics/http-v2",
+        "requirement": "required",
+        "json_type": "object"
+      }
+    ],
+    "rules": []
+  }
 }

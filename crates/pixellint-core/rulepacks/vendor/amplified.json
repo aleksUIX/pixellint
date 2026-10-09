@@ -1,0 +1,4854 @@
+{
+  "id": "vendor/amplified",
+  "display_name": "Amplified PROVE telemetry",
+  "description": "Published VAST and complete inspected SDK tuple columns. Producer advisories preserve opaque metadata, open future telemetry labels, and the explicit ignore batching marker.",
+  "vendor": "amplified",
+  "source_level": "official_template",
+  "docs": "https://developers.amplified.co/redocusaurus/plugin-redoc-1.yaml",
+  "match": {
+    "hosts": [
+      "pixel.amplified.co"
+    ],
+    "path_prefixes": [
+      "/v1/vast/launch/",
+      "/v1/vast/event/",
+      "/v1/js/launch/",
+      "/v1/js/event/"
+    ]
+  },
+  "path_pattern": "^/v1/(?P<transport>vast|js)/(?P<action>launch|event)/(?P<organization>[^/]+)/(?P<campaign>[^/]+)/prove/(?P<insertion_order>[^/]+)/(?P<line_item>[^/]+)/(?P<session_id>[^/]+)/?$",
+  "params": [
+    {
+      "name": "organization",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Opaque context in the published generated telemetry path.",
+      "doc": "https://developers.amplified.co/redocusaurus/plugin-redoc-1.yaml"
+    },
+    {
+      "name": "session_id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Opaque context in the published generated telemetry path.",
+      "doc": "https://developers.amplified.co/redocusaurus/plugin-redoc-1.yaml"
+    },
+    {
+      "name": "campaign",
+      "requirement": "required",
+      "max_length": 100,
+      "format": {
+        "kind": "regex",
+        "pattern": "^[\\w-]*$"
+      },
+      "severity": "warning",
+      "description": "Generated path context follows its tag-generation string schema.",
+      "doc": "https://developers.amplified.co/redocusaurus/plugin-redoc-1.yaml"
+    },
+    {
+      "name": "insertion_order",
+      "requirement": "required",
+      "max_length": 100,
+      "format": {
+        "kind": "regex",
+        "pattern": "^[\\w-]*$"
+      },
+      "severity": "warning",
+      "description": "Generated path context follows its tag-generation string schema.",
+      "doc": "https://developers.amplified.co/redocusaurus/plugin-redoc-1.yaml"
+    },
+    {
+      "name": "line_item",
+      "requirement": "required",
+      "max_length": 100,
+      "format": {
+        "kind": "regex",
+        "pattern": "^[\\w-]*$"
+      },
+      "severity": "warning",
+      "description": "Generated path context follows its tag-generation string schema.",
+      "doc": "https://developers.amplified.co/redocusaurus/plugin-redoc-1.yaml"
+    },
+    {
+      "name": "transport",
+      "doc": "https://developers.amplified.co/redocusaurus/plugin-redoc-1.yaml"
+    },
+    {
+      "name": "action",
+      "doc": "https://developers.amplified.co/redocusaurus/plugin-redoc-1.yaml"
+    },
+    {
+      "name": "sdi",
+      "requirement": "required",
+      "severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Repeated telemetry items, including the documented SDK ignore filler.",
+      "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1"
+    },
+    {
+      "name": "mip",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "severity": "warning",
+      "description": "SDK launch flag. No private semantic meaning is inferred.",
+      "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "description": "Published VAST and SDK image telemetry use GET.",
+        "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1"
+      }
+    ]
+  },
+  "body": [
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 2,
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "[0]",
+              "values": [
+                "aa",
+                "ao",
+                "dv",
+                "da",
+                "dac",
+                "io",
+                "mcp",
+                "mdp",
+                "me",
+                "mec",
+                "mh",
+                "mpt",
+                "mr",
+                "mss",
+                "mv",
+                "mvc",
+                "ogc",
+                "oi",
+                "osf",
+                "oss",
+                "ov",
+                "sp",
+                "wsc",
+                "ws",
+                "wun",
+                "wu",
+                "tcf",
+                "cfg",
+                "jcv",
+                "err",
+                "lvc",
+                "mt",
+                "vv",
+                "imp",
+                "ota",
+                "ignore",
+                "lte"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string"
+        },
+        {
+          "name": "[1]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+          },
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "[0]",
+              "values": [
+                "aa",
+                "ao",
+                "dv",
+                "da",
+                "dac",
+                "io",
+                "mcp",
+                "mdp",
+                "me",
+                "mec",
+                "mh",
+                "mpt",
+                "mr",
+                "mss",
+                "mv",
+                "mvc",
+                "ogc",
+                "oi",
+                "osf",
+                "oss",
+                "ov",
+                "sp",
+                "wsc",
+                "ws",
+                "wun",
+                "wu",
+                "tcf",
+                "cfg",
+                "jcv",
+                "ignore"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 3,
+          "max_items": 3,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "err"
+            ]
+          }
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]{3}$"
+          },
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "err"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 4,
+          "max_items": 4,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "lvc"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 3,
+          "max_items": 3,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mt"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 3,
+          "max_items": 3,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "vv"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 2,
+          "max_items": 2,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "imp"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 6,
+          "max_items": 6,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ota"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 3,
+          "max_items": 3,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "jcv"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 10,
+          "max_items": 10,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "min_items": 1,
+          "max_items": 1,
+          "json_type": "array",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ignore"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 5,
+          "max_items": 6,
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "lte"
+            ]
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "requirement": "required",
+          "minimum": 0,
+          "maximum": 100,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "lte"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "progress"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 3,
+          "description": "Published supported environment codes tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "aa"
+            ]
+          },
+          "max_items": 5
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "supported environments",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "aa"
+            ]
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "o",
+              "m",
+              "w"
+            ]
+          },
+          "description": "Supported SDK environment in o, m, w resolution order.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "aa"
+            ]
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "o",
+              "m",
+              "w"
+            ]
+          },
+          "description": "Supported SDK environment in o, m, w resolution order.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "aa"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 3,
+          "description": "Published D.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ao"
+            ]
+          }
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "encodeURIComponent ancestor origins",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ao"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 3,
+          "description": "Published ab.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dv"
+            ]
+          },
+          "max_items": 3
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "document visibility state",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dv"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 5,
+          "description": "Published bb.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "da"
+            ]
+          },
+          "max_items": 5
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "inside iframe",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "da"
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "top document accessible",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "da"
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "frame element accessible",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "da"
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 10,
+          "description": "Published G.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          },
+          "max_items": 10
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "element tag",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "element ID",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "client width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "client height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rect x",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[7]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rect y",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[8]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rect width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[9]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rect height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "dac"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 7,
+          "description": "Published H.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "io"
+            ]
+          },
+          "max_items": 7
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rounded visible percentage",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "io"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*))$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rounded rect x",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "io"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*))$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rounded rect y",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "io"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*))$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rounded rect width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "io"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*))$"
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "rounded rect height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "io"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*))$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 6,
+          "description": "Published I.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mcp"
+            ]
+          },
+          "max_items": 6
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "current x",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mcp"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "current y",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mcp"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "current width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mcp"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "current height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mcp"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 6,
+          "description": "Published J.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mdp"
+            ]
+          },
+          "max_items": 6
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "default x",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mdp"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "default y",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mdp"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "default width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mdp"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "default height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mdp"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 6,
+          "description": "Published K.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "me"
+            ]
+          },
+          "max_items": 6
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "MRAID environment version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "me"
+            ]
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "SDK name",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "me"
+            ]
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "SDK version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "me"
+            ]
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "app ID",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "me"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 9,
+          "description": "Published L.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mec"
+            ]
+          },
+          "max_items": 9
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "exposed percentage",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mec"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "visible width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mec"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "visible height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mec"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "occlusion x",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mec"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "occlusion y",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mec"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[7]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "occlusion width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mec"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[8]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "occlusion height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mec"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 2,
+          "description": "Published eb inherits B.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mh"
+            ]
+          },
+          "max_items": 2
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 3,
+          "description": "Published M.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mpt"
+            ]
+          },
+          "max_items": 3
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.iab.com/wp-content/uploads/2017/07/MRAID_3.0_FINAL.pdf",
+          "json_type": "string",
+          "description": "placement type",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mpt"
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "inline",
+              "interstitial",
+              "na"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 2,
+          "description": "Published N inherits B.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mr"
+            ]
+          },
+          "max_items": 2
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 4,
+          "description": "Published O.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mss"
+            ]
+          },
+          "max_items": 4
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "screen width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mss"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "screen height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mss"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 3,
+          "description": "Published P.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mv"
+            ]
+          },
+          "max_items": 3
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "MRAID version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mv"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 3,
+          "description": "Published Q.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mvc"
+            ]
+          },
+          "max_items": 3
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.iab.com/wp-content/uploads/2017/07/MRAID_3.0_FINAL.pdf",
+          "json_type": "string",
+          "description": "viewable flag",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "mvc"
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false",
+              "na"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 10,
+          "description": "Published R.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          },
+          "max_items": 10
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "viewport width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "viewport height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "percentage in view",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "ad x",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "ad y",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[7]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "ad width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[8]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "ad height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[9]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "obstruction reasons",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ogc"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 11,
+          "description": "Published S.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          },
+          "max_items": 11
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "media type",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "viewport width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "viewport height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "percentage in view",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "ad x",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[7]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "ad y",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[8]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "ad width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[9]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "ad height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[10]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "obstruction reasons",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oi"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 2,
+          "description": "Published T inherits B.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "osf"
+            ]
+          },
+          "max_items": 2
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 18,
+          "description": "Published U.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          },
+          "max_items": 18
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "API version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "environment",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "access mode",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "session type",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "transaction ID",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[7]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "native partner name",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[8]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "native partner version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[9]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "JS implementer",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[10]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "JS service version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[11]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "JS partner name",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[12]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "JS partner version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[13]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "app library version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[14]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "app ID",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[15]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "device type",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[16]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "OS",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        },
+        {
+          "name": "[17]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "OS version",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "oss"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 3,
+          "description": "Published V.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ov"
+            ]
+          }
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "OMID video event type; five event-specific extensions",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ov"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 3,
+          "description": "Published W.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "sp"
+            ]
+          },
+          "max_items": 3
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "sampling interval milliseconds",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "sp"
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "1000",
+              "2000",
+              "5000",
+              "10000"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 8,
+          "description": "Published X.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wsc"
+            ]
+          },
+          "max_items": 8
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "screen width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wsc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "screen height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wsc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "available width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wsc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "available height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wsc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "screen x",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wsc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[7]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "screen y",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wsc"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 6,
+          "description": "Published fb.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ws"
+            ]
+          },
+          "max_items": 6
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "inner width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ws"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "inner height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ws"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "top inner width",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ws"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "top inner height",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "ws"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 2,
+          "description": "Published Y inherits B.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wun"
+            ]
+          },
+          "max_items": 2
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 4,
+          "description": "Published gb.prototype.c tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wu"
+            ]
+          },
+          "max_items": 4
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "encodeURIComponent page URL",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wu"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[A-Za-z0-9_.!~*'()-]|%[0-9A-Fa-f]{2})+$"
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "encodeURIComponent top URL or na",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "wu"
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[A-Za-z0-9_.!~*'()-]|%[0-9A-Fa-f]{2})+$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 4,
+          "description": "Published config.lup tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "tcf"
+            ]
+          },
+          "max_items": 4
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "description": "applicability macro or na",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "tcf"
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "0",
+              "1",
+              "na"
+            ]
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "consent macro or na",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "tcf"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "scope": "[]",
+      "scope_exclusions": [
+        "[0]",
+        "[1]"
+      ],
+      "params": [
+        {
+          "name": "tuple_type",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "root_path": "[0]",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[A-Za-z0-9_.!~*'()-]|%[0-9A-Fa-f]{2})+$"
+          },
+          "description": "Ancestor origins are separately encodeURIComponent encoded before outer SDI encoding.",
+          "condition": {
+            "kind": "value_in",
+            "param": "tuple_type",
+            "values": [
+              "ao"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 4,
+          "description": "Published V.prototype.c adUserInteraction tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "adUserInteraction"
+                ]
+              }
+            ]
+          },
+          "max_items": 4
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/common/constants.js",
+          "json_type": "string",
+          "description": "interaction type",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "adUserInteraction"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "click",
+              "invitationAccept",
+              "na"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 7,
+          "description": "Published V.prototype.c loaded tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "loaded"
+                ]
+              }
+            ]
+          },
+          "max_items": 7
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/common/constants.js",
+          "json_type": "string",
+          "description": "skippable",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "loaded"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false",
+              "na"
+            ]
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/common/constants.js",
+          "json_type": "string",
+          "description": "skip offset",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "loaded"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/common/constants.js",
+          "json_type": "string",
+          "description": "autoplay",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "loaded"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false",
+              "na"
+            ]
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/common/constants.js",
+          "json_type": "string",
+          "description": "position",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "loaded"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "preroll",
+              "midroll",
+              "postroll",
+              "standalone",
+              "na"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 4,
+          "description": "Published V.prototype.c playerStateChange tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "playerStateChange"
+                ]
+              }
+            ]
+          },
+          "max_items": 4
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/common/constants.js",
+          "json_type": "string",
+          "description": "player state",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "playerStateChange"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "enum",
+            "values": [
+              "minimized",
+              "collapsed",
+              "normal",
+              "expanded",
+              "fullscreen",
+              "na"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 6,
+          "description": "Published V.prototype.c start tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "start"
+                ]
+              }
+            ]
+          },
+          "max_items": 6
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "json_type": "string",
+          "description": "duration",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "start"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "json_type": "string",
+          "description": "video player volume",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "start"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "json_type": "string",
+          "description": "device volume",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "start"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "array",
+          "min_items": 5,
+          "description": "Published V.prototype.c volumeChange tuple width. Producer advisory; this is not a service rejection guarantee.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "volumeChange"
+                ]
+              }
+            ]
+          },
+          "max_items": 5
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "json_type": "string",
+          "description": "video player volume",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "volumeChange"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "json_type": "string",
+          "description": "device volume",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "volumeChange"
+                ]
+              }
+            ]
+          },
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:na|-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[1]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:0|[1-9][0-9]*)$"
+          },
+          "description": "SDK duration is a nonnegative integer from performance.now().toFixed(0) or Date.now().",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "aa",
+              "ao",
+              "dv",
+              "da",
+              "dac",
+              "io",
+              "mcp",
+              "mdp",
+              "me",
+              "mec",
+              "mh",
+              "mpt",
+              "mr",
+              "mss",
+              "mv",
+              "mvc",
+              "ogc",
+              "oi",
+              "osf",
+              "oss",
+              "ov",
+              "sp",
+              "wsc",
+              "ws",
+              "wun",
+              "wu",
+              "tcf",
+              "cfg",
+              "jcv"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "description": "1-second sampling count",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "description": "2-second sampling count",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "description": "5-second sampling count",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "description": "10-second sampling count",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        },
+        {
+          "name": "[6]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "description": "session idle timeout",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        },
+        {
+          "name": "[7]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "description": "batch timeout",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        },
+        {
+          "name": "[8]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "description": "batch data length",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        },
+        {
+          "name": "[9]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "description": "maximum item count",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "cfg"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "max_items": 3,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "aa"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "w"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "o",
+              "m",
+              "w"
+            ]
+          },
+          "description": "Supported SDK environment in o, m, w resolution order.",
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "aa"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.w3.org/TR/intersection-observer/",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage range supplied by the native measurement API. Missing metadata remains na.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "io"
+                ]
+              },
+              {
+                "kind": "value_pattern",
+                "param": "[2]",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.iab.com/wp-content/uploads/2017/07/MRAID_3.0_FINAL.pdf",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.iab.com/wp-content/uploads/2017/07/MRAID_3.0_FINAL.pdf",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage range supplied by the native measurement API. Missing metadata remains na.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "mec"
+                ]
+              },
+              {
+                "kind": "value_pattern",
+                "param": "[2]",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage range supplied by the native measurement API. Missing metadata remains na.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ogc"
+                ]
+              },
+              {
+                "kind": "value_pattern",
+                "param": "[4]",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage range supplied by the native measurement API. Missing metadata remains na.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "oi"
+                ]
+              },
+              {
+                "kind": "value_pattern",
+                "param": "[5]",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "video event type",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "adUserInteraction"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "video event type",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "loaded"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "video event type",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "playerStateChange"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "video event type",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "start"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "video event type",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "volumeChange"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "max_items": 4,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "aa"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "m"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "w"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "aa"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "m"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[2]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "m",
+              "w"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "aa"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "o"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "max_items": 4,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "aa"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[3]",
+                "values": [
+                  "w"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "allow_empty": true
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://pixel.amplified.co/v1/js/display/org1/cmp1/prove/io1/line-item-1",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "w"
+            ]
+          },
+          "condition": {
+            "kind": "value_in",
+            "param": "[0]",
+            "values": [
+              "aa"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js"
+        },
+        {
+          "name": "[2]",
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js"
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "minimum": 0,
+          "maximum": 1,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "start"
+                ]
+              },
+              {
+                "kind": "value_pattern",
+                "param": "[4]",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+              }
+            ]
+          },
+          "description": "Native OMID media/device volume. Missing metadata na remains unknown."
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js"
+        },
+        {
+          "name": "[2]",
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js"
+        },
+        {
+          "name": "[5]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "minimum": 0,
+          "maximum": 1,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "start"
+                ]
+              },
+              {
+                "kind": "value_pattern",
+                "param": "[5]",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+              }
+            ]
+          },
+          "description": "Native OMID media/device volume. Missing metadata na remains unknown."
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js"
+        },
+        {
+          "name": "[2]",
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js"
+        },
+        {
+          "name": "[3]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "minimum": 0,
+          "maximum": 1,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "volumeChange"
+                ]
+              },
+              {
+                "kind": "value_pattern",
+                "param": "[3]",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+              }
+            ]
+          },
+          "description": "Native OMID media/device volume. Missing metadata na remains unknown."
+        }
+      ]
+    },
+    {
+      "source_param": "sdi",
+      "encoding": "pipe_delimited_json",
+      "params": [
+        {
+          "name": "[0]",
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js"
+        },
+        {
+          "name": "[2]",
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js"
+        },
+        {
+          "name": "[4]",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://github.com/InteractiveAdvertisingBureau/Open-Measurement-JSClients/blob/master/src/session-client/media-events.js",
+          "minimum": 0,
+          "maximum": 1,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "[0]",
+                "values": [
+                  "ov"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "[2]",
+                "values": [
+                  "volumeChange"
+                ]
+              },
+              {
+                "kind": "value_pattern",
+                "param": "[4]",
+                "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+              }
+            ]
+          },
+          "description": "Native OMID media/device volume. Missing metadata na remains unknown."
+        }
+      ]
+    }
+  ]
+}

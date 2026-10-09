@@ -99,11 +99,21 @@ impl<'a> JsonDocument<'a> {
         self.input
     }
     pub(crate) fn parse(input: &'a str) -> Result<Self, JsonError> {
+        Self::parse_with_limit(input, MAX_DEPTH)
+    }
+
+    /// A normalized request adds one object level above the original entity.
+    pub(crate) fn parse_http(input: &'a str) -> Result<Self, JsonError> {
+        Self::parse_with_limit(input, MAX_DEPTH + 1)
+    }
+
+    fn parse_with_limit(input: &'a str, max_depth: usize) -> Result<Self, JsonError> {
         let mut reader = Reader {
             bytes: input.as_bytes(),
             input,
             pos: 0,
             fields: BTreeMap::new(),
+            max_depth,
         };
 
         reader.skip_whitespace();
@@ -479,6 +489,7 @@ struct Reader<'a> {
     input: &'a str,
     pos: usize,
     fields: BTreeMap<String, JsonField<'a>>,
+    max_depth: usize,
 }
 
 impl<'a> Reader<'a> {
@@ -537,7 +548,7 @@ impl<'a> Reader<'a> {
     }
 
     fn read_value(&mut self, path: String, depth: usize) -> Result<(), JsonError> {
-        if depth > MAX_DEPTH {
+        if depth > self.max_depth {
             return Err(self.error("nesting is too deep"));
         }
 

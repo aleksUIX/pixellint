@@ -1,0 +1,92 @@
+[
+  {
+    "id": "published_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic VEVTVF9PTkxZX1BST0pFQ1RfVE9LRU46\"},\"body\":\"[{\\\"event\\\":\\\"Signup\\\",\\\"properties\\\":{\\\"time\\\":1770000000,\\\"distinct_id\\\":\\\"user123\\\",\\\"$insert_id\\\":\\\"source-case-123\\\"}}]\"}",
+    "code": "vendor.mixpanel-import.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "wrong_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1\",\"method\":\"GET\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic VEVTVF9PTkxZX1BST0pFQ1RfVE9LRU46\"},\"body\":\"[{\\\"event\\\":\\\"Signup\\\",\\\"properties\\\":{\\\"time\\\":1770000000,\\\"distinct_id\\\":\\\"user123\\\",\\\"$insert_id\\\":\\\"source-case-123\\\"}}]\"}",
+    "code": "vendor.mixpanel-import.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "content_type_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1\",\"method\":\"POST\",\"headers\":{\"Authorization\":\"Basic VEVTVF9PTkxZX1BST0pFQ1RfVE9LRU46\"},\"body\":\"[{\\\"event\\\":\\\"Signup\\\",\\\"properties\\\":{\\\"time\\\":1770000000,\\\"distinct_id\\\":\\\"user123\\\",\\\"$insert_id\\\":\\\"source-case-123\\\"}}]\"}",
+    "code": "vendor.mixpanel-import.http.content_type.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "content_type_unsupported",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/xml\",\"Authorization\":\"Basic VEVTVF9PTkxZX1BST0pFQ1RfVE9LRU46\"},\"body\":\"[{\\\"event\\\":\\\"Signup\\\",\\\"properties\\\":{\\\"time\\\":1770000000,\\\"distinct_id\\\":\\\"user123\\\",\\\"$insert_id\\\":\\\"source-case-123\\\"}}]\"}",
+    "code": "vendor.mixpanel-import.http.content_type.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "authentication_missing",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"[{\\\"event\\\":\\\"Signup\\\",\\\"properties\\\":{\\\"time\\\":1770000000,\\\"distinct_id\\\":\\\"user123\\\",\\\"$insert_id\\\":\\\"source-case-123\\\"}}]\"}",
+    "code": "vendor.mixpanel-import.http.headers.authorization.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "ndjson_same_source_schema",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/x-ndjson\",\"Authorization\":\"Basic VEVTVF9PTkxZX1BST0pFQ1RfVE9LRU46\"},\"body\":\"{\\\"event\\\": \\\"Signup\\\", \\\"properties\\\": {\\\"time\\\": 1770000000, \\\"distinct_id\\\": \\\"user123\\\", \\\"$insert_id\\\": \\\"source-case-123\\\"}}\\n\"}",
+    "code": "vendor.mixpanel-import.http.content_type.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "service_account_missing_project_id",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic VEVTVF9PTkxZX1VTRVJOQU1FOlRFU1RfT05MWV9QQVNTV09SRA==\"},\"body\":\"[{\\\"event\\\":\\\"Signup\\\",\\\"properties\\\":{\\\"time\\\":1770000000,\\\"distinct_id\\\":\\\"user123\\\",\\\"$insert_id\\\":\\\"source-case-123\\\"}}]\"}",
+    "code": "vendor.mixpanel-import.http.query.project_id.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "service_account_with_project_id",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1&project_id=123\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic VEVTVF9PTkxZX1VTRVJOQU1FOlRFU1RfT05MWV9QQVNTV09SRA==\"},\"body\":\"[{\\\"event\\\":\\\"Signup\\\",\\\"properties\\\":{\\\"time\\\":1770000000,\\\"distinct_id\\\":\\\"user123\\\",\\\"$insert_id\\\":\\\"source-case-123\\\"}}]\"}",
+    "code": "vendor.mixpanel-import.http.query.project_id.missing",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "malformed_basic",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/import?strict=1\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\",\"Authorization\":\"Basic INVALID_BASE64\"},\"body\":\"[{\\\"event\\\":\\\"Signup\\\",\\\"properties\\\":{\\\"time\\\":1770000000,\\\"distinct_id\\\":\\\"user123\\\",\\\"$insert_id\\\":\\\"source-case-123\\\"}}]\"}",
+    "code": "vendor.mixpanel-import.http.basic_auth.missing",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/import-events",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

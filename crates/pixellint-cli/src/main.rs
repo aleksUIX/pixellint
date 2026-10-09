@@ -544,6 +544,7 @@ KINDS
 
 ARTIFACT
   inline value, @path to read a file, or - to read stdin
+  request captures: JSON with url, method, headers, and optional raw string body
 
 DOCUMENT
   JSON object from MULTI_ARTIFACT_SCHEMA.md, or a JSON array of URL strings.

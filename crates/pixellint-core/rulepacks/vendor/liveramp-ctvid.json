@@ -1,0 +1,36 @@
+{
+  "id": "vendor/liveramp-ctvid",
+  "display_name": "LiveRamp CTV event pixel",
+  "vendor": "liveramp",
+  "source_level": "official_vendor",
+  "docs": "https://docs.liveramp.com/connect/en/enable-ctv-targeting-by-sending-ctv-events-via-pixel.html",
+  "description": "LiveRamp CTV event pixel requires its assigned PID. Optional CTVID must be omitted when absent. IPv6 is supported. Header requirements depend on VAST-wrapper context not conveyed by a standalone request.",
+  "match": {
+    "hosts": [
+      "tv.rlcdn.com"
+    ],
+    "paths": [
+      "/api/ctvid"
+    ]
+  },
+  "params": [
+    {
+      "name": "pid",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Account Manager supplies the pixel ID used by this endpoint."
+    },
+    {
+      "name": "ctvid",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "When the device ID is unavailable, LiveRamp explicitly says to omit the parameter. No UUID grammar is published.",
+      "severity": "error"
+    }
+  ],
+  "rules": []
+}

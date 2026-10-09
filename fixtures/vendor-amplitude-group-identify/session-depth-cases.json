@@ -1,0 +1,42 @@
+[
+  {
+    "id": "post_urlencoded_identification",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api2.amplitude.com/groupidentify\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/x-www-form-urlencoded\"},\"body\":\"api_key=TEST_ONLY_KEY&identification=%7B%22group_type%22%3A%22org%22%2C%22group_value%22%3A%22Acme%22%2C%22group_properties%22%3A%7B%22%24set%22%3A%7B%22plan%22%3A%22Pro%22%7D%7D%7D\"}",
+    "code": "vendor.amplitude-group-identify.http.content_type.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://amplitude.com/docs/apis/analytics/group-identify",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "unsupported_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api2.amplitude.com/groupidentify\",\"method\":\"PUT\",\"headers\":{\"Content-Type\":\"application/x-www-form-urlencoded\"},\"body\":\"api_key=TEST_ONLY_KEY&identification=%7B%22group_type%22%3A%22org%22%2C%22group_value%22%3A%22Acme%22%2C%22group_properties%22%3A%7B%22%24set%22%3A%7B%22plan%22%3A%22Pro%22%7D%7D%7D\"}",
+    "code": "vendor.amplitude-group-identify.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://amplitude.com/docs/apis/analytics/group-identify",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "native_json_is_not_form_transport",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api2.amplitude.com/groupidentify\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"api_key\\\": \\\"TEST_ONLY_KEY\\\", \\\"identification\\\": {\\\"group_type\\\": \\\"org\\\", \\\"group_value\\\": \\\"Acme\\\", \\\"group_properties\\\": {\\\"$set\\\": {\\\"plan\\\": \\\"Pro\\\"}}}}\"}",
+    "code": "vendor.amplitude-group-identify.http.content_type.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://amplitude.com/docs/apis/analytics/group-identify",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "form_identification_json_invalid",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api2.amplitude.com/groupidentify\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/x-www-form-urlencoded\"},\"body\":\"api_key=TEST_ONLY_KEY&identification=%7Bbroken\"}",
+    "code": "vendor.amplitude-group-identify.body.identification.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://amplitude.com/docs/apis/analytics/group-identify",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

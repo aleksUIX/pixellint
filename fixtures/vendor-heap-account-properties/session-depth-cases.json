@@ -1,0 +1,32 @@
+[
+  {
+    "id": "published_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://heapanalytics.com/api/add_account_properties\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"app_id\\\":123,\\\"account_id\\\":\\\"customer\\\",\\\"properties\\\":{\\\"plan\\\":\\\"Pro\\\"}}\"}",
+    "code": "vendor.heap-account-properties.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://developers.heap.io/reference/add-account-properties",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "wrong_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://heapanalytics.com/api/add_account_properties\",\"method\":\"GET\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"app_id\\\":123,\\\"account_id\\\":\\\"customer\\\",\\\"properties\\\":{\\\"plan\\\":\\\"Pro\\\"}}\"}",
+    "code": "vendor.heap-account-properties.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.heap.io/reference/add-account-properties",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "unpublished_mime_advisory",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://heapanalytics.com/api/add_account_properties\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/xml\"},\"body\":\"{\\\"app_id\\\":123,\\\"account_id\\\":\\\"customer\\\",\\\"properties\\\":{\\\"plan\\\":\\\"Pro\\\"}}\"}",
+    "code": "vendor.heap-account-properties.http.content_type.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://developers.heap.io/reference/add-account-properties",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

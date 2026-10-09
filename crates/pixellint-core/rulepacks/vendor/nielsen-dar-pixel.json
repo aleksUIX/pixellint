@@ -1,0 +1,422 @@
+{
+  "id": "vendor/nielsen-dar-pixel",
+  "display_name": "Nielsen DAR main impression pixel",
+  "vendor": "nielsen",
+  "source_level": "official_vendor",
+  "docs": "https://engineeringportal.nielsen.com/wiki/DAR_Tag_Implementation_Guide",
+  "description": "Current Nielsen DAR /cgi-bin/m contract: campaign identifiers, fixed pixel literals, cachebuster and documented passthrough attributes. Mobile-app requirements, SSAI header provenance, TLS version and cookie history need input context. Source conflicts preserve published cy0, STV and both UID token spellings.",
+  "match": {
+    "host_suffixes": [
+      "imrworldwide.com"
+    ],
+    "paths": [
+      "/cgi-bin/m"
+    ]
+  },
+  "params": [
+    {
+      "name": "ca",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Current Nielsen main-pixel contract requires this campaign mapping identifier. Account ownership is external."
+    },
+    {
+      "name": "ci",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Current Nielsen main-pixel contract requires this campaign mapping identifier. Account ownership is external."
+    },
+    {
+      "name": "ce",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Current Nielsen main-pixel contract requires this campaign mapping identifier. Account ownership is external."
+    },
+    {
+      "name": "cr",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Current Nielsen main-pixel contract requires this campaign mapping identifier. Account ownership is external."
+    },
+    {
+      "name": "pc",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Current Nielsen main-pixel contract requires this campaign mapping identifier. Account ownership is external."
+    },
+    {
+      "name": "am",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Current Nielsen main-pixel contract requires this campaign mapping identifier. Account ownership is external."
+    },
+    {
+      "name": "at",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "view"
+        ]
+      },
+      "description": "Current DAR Pixel contract fixes this literal."
+    },
+    {
+      "name": "rt",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "banner"
+        ]
+      },
+      "description": "Current DAR Pixel contract fixes this literal."
+    },
+    {
+      "name": "st",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "image"
+        ]
+      },
+      "description": "Current DAR Pixel contract fixes this literal."
+    },
+    {
+      "name": "r",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Current DAR appendix requires a hardcoded cachebuster/timestamp value or macro."
+    },
+    {
+      "name": "cy",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Current appendix lists1display/2video; its published pixel example also emits0. Preserve all three. Missing/empty creative type is explicitly supported without breakout."
+    },
+    {
+      "name": "autof",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "description": "Auto refresh uses1, otherwise empty."
+    },
+    {
+      "name": "autop",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1",
+          "2"
+        ]
+      },
+      "allow_empty": true,
+      "description": "Autoplay uses1,click-to-play2,otherwise empty."
+    },
+    {
+      "name": "c7",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "osgrp,IOS",
+          "osgrp,DROID",
+          "osgrp,ANDROID"
+        ]
+      },
+      "doc": "https://engineeringportal.nielsen.com/wiki/DAR_Mobile_Attributes_Requirements",
+      "description": "Published mobile guide explicitly lists accepted literal values. Presence depends on native-app context, not mobile browser alone."
+    },
+    {
+      "name": "c8",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "devgrp,DSK",
+          "devgrp,PHN",
+          "devgrp,TAB",
+          "devgrp,PMP",
+          "devgrp,UNWN",
+          "devgrp,STV"
+        ]
+      },
+      "doc": "https://engineeringportal.nielsen.com/wiki/DAR_Mobile_Attributes_Requirements",
+      "description": "Published mobile guide explicitly lists accepted literal values. Presence depends on native-app context, not mobile browser alone."
+    },
+    {
+      "name": "c10",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "plt,DSK",
+          "plt,MBL",
+          "plt,OTT"
+        ]
+      },
+      "doc": "https://engineeringportal.nielsen.com/wiki/DAR_Mobile_Attributes_Requirements",
+      "description": "Published mobile guide explicitly lists accepted literal values. Presence depends on native-app context, not mobile browser alone."
+    },
+    {
+      "name": "c9",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^devid,.+$"
+      },
+      "allow_empty": true,
+      "description": "Documented prefixed attribute with opaque suffix. c9 empty fallback is explicitly accepted. No invented UUID or platform-specific grammar."
+    },
+    {
+      "name": "c12",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^apv,.+$"
+      },
+      "allow_empty": false,
+      "description": "Documented prefixed attribute with opaque suffix. c9 empty fallback is explicitly accepted. No invented UUID or platform-specific grammar."
+    },
+    {
+      "name": "c13",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^asid,.+$"
+      },
+      "allow_empty": false,
+      "description": "Documented prefixed attribute with opaque suffix. c9 empty fallback is explicitly accepted. No invented UUID or platform-specific grammar."
+    },
+    {
+      "name": "c14",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^osver,.+$"
+      },
+      "allow_empty": false,
+      "description": "Documented prefixed attribute with opaque suffix. c9 empty fallback is explicitly accepted. No invented UUID or platform-specific grammar."
+    },
+    {
+      "name": "c68",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^bndlid,.+$"
+      },
+      "allow_empty": false,
+      "description": "Documented prefixed attribute with opaque suffix. c9 empty fallback is explicitly accepted. No invented UUID or platform-specific grammar."
+    },
+    {
+      "name": "uoo",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false",
+          "1",
+          "0",
+          "yes",
+          "no"
+        ]
+      },
+      "doc": "https://engineeringportal.nielsen.com/wiki/DAR_Mobile_Attributes_Requirements",
+      "description": "All three supported opt-out/opt-in pairs are valid. Absence is documented implicit opt-in."
+    },
+    {
+      "name": "gdpr",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "description": "Published GDPR applicable flag. Privacy-state consistency is handled by core."
+    },
+    {
+      "name": "gdpr_consent",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "TC string. Core validates this standard URL privacy field."
+    },
+    {
+      "name": "hem_sha256",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{64}$"
+      },
+      "description": "Current DAR guide specifies a SHA256 hexadecimal digest. Uppercase hex is not prohibited."
+    },
+    {
+      "name": "si",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "description": "Canonical content URL. Decoded URL syntax is checkable; exact encodeURIComponent wire conformance remains a documented limit."
+    },
+    {
+      "name": "C78",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "forceid",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "impid",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "ptraf",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "contplay",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "hem_unknown",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "fp_id",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "onload",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "pub",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "pubid",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "uid2",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "uid2_token",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "uid_token",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "src",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "tpv",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Published optional or generated DAR main-ping field. The guide does not provide a closed value grammar. UID token names differ across sections and both forms remain accepted."
+    },
+    {
+      "name": "darsup",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "description": "The current guide says either populated value suppresses JS main ping."
+    },
+    {
+      "name": "frcf",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "yes",
+          "no",
+          "null"
+        ]
+      },
+      "allow_empty": true,
+      "description": "Published forced-ad flag literal values."
+    },
+    {
+      "name": "frcd",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:null|[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?)$"
+      },
+      "allow_empty": true,
+      "description": "Published forced duration is numeric seconds or literal null. No positive lower bound is published."
+    }
+  ],
+  "rules": []
+}

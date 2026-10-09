@@ -1,0 +1,52 @@
+[
+  {
+    "id": "native_json_complete_request",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"[{\\\"event\\\":\\\"Signed Up\\\",\\\"properties\\\":{\\\"token\\\":\\\"TEST_ONLY_PROJECT_TOKEN\\\",\\\"distinct_id\\\":\\\"user123\\\"}}]\"}",
+    "code": "vendor.mixpanel.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://docs.mixpanel.com/reference/track-event",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "official_sdk_base64_form",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/x-www-form-urlencoded\"},\"body\":\"data=eyJldmVudCI6IlNpZ25lZCBVcCIsInByb3BlcnRpZXMiOnsidG9rZW4iOiJURVNUX09OTFlfUFJPSkVDVF9UT0tFTiIsImRpc3RpbmN0X2lkIjoidXNlcjEyMyJ9fQ%3D%3D\"}",
+    "code": "vendor.mixpanel.body.root.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "official_sdk_base64_get",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/track?data=eyJldmVudCI6IlNpZ25lZCBVcCIsInByb3BlcnRpZXMiOnsidG9rZW4iOiJURVNUX09OTFlfUFJPSkVDVF9UT0tFTiIsImRpc3RpbmN0X2lkIjoidXNlcjEyMyJ9fQ%3D%3D\",\"method\":\"GET\",\"headers\":{}}",
+    "code": "vendor.mixpanel.http.method.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "unsupported_method",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://api.mixpanel.com/track\",\"method\":\"DELETE\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"[{\\\"event\\\":\\\"Signed Up\\\",\\\"properties\\\":{\\\"token\\\":\\\"TEST_ONLY_PROJECT_TOKEN\\\",\\\"distinct_id\\\":\\\"user123\\\"}}]\"}",
+    "code": "vendor.mixpanel.http.method.invalid",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  },
+  {
+    "id": "http_rejected",
+    "kind": "request",
+    "artifact": "{\"url\":\"http://api.mixpanel.com/track\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"[{\\\"event\\\":\\\"Signed Up\\\",\\\"properties\\\":{\\\"token\\\":\\\"TEST_ONLY_PROJECT_TOKEN\\\",\\\"distinct_id\\\":\\\"user123\\\"}}]\"}",
+    "code": "vendor.mixpanel.https_required",
+    "expect_violation": true,
+    "expect_no_errors": false,
+    "source_url": "https://docs.mixpanel.com/reference/authentication",
+    "evidence_kind": "independent_published_HTTP_transport_branch"
+  }
+]

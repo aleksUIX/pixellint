@@ -62,7 +62,15 @@
       }
     }
   ],
-  "rules": [],
+  "rules": [
+    {
+      "code": "vendor.mixpanel.https_required",
+      "kind": "require_https",
+      "severity": "error",
+      "message": "Mixpanel explicitly rejects non-HTTPS API requests.",
+      "doc": "https://docs.mixpanel.com/reference/authentication"
+    }
+  ],
   "body": [
     {
       "params": [
@@ -1075,5 +1083,57 @@
         "pattern": "^\\s*[\\[{]"
       }
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The official SDK uses POST or GET fallback for this operation.",
+        "doc": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST",
+            "GET"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "Published native JSON, XHR form and sendBeacon text representations are retained.",
+        "doc": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json",
+            "application/x-www-form-urlencoded",
+            "text/plain"
+          ]
+        },
+        "severity": "warning",
+        "format_severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "headers.content-encoding",
+        "description": "HTTP content encoding, when supplied. This endpoint documents its own gzip policy.",
+        "doc": "https://docs.mixpanel.com/reference/track-event",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        },
+        "allow_empty": true
+      }
+    ],
+    "rules": []
+  }
 }

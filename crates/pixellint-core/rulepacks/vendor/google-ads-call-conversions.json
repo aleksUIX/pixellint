@@ -342,5 +342,97 @@
       ],
       "rules": []
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "This published ingestion operation uses HTTP POST.",
+        "doc": "https://developers.google.com/google-ads/api/rest/auth",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "Use a published request media type.",
+        "doc": "https://developers.google.com/google-ads/api/rest/auth",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "severity": "warning",
+        "format_severity": "warning",
+        "requirement": "recommended"
+      },
+      {
+        "name": "body",
+        "description": "The request body is a JSON object.",
+        "doc": "https://developers.google.com/google-ads/api/rest/auth",
+        "requirement": "required",
+        "json_type": "object"
+      },
+      {
+        "name": "path",
+        "description": "REST conversion upload requires a versioned customer RPC path.",
+        "doc": "https://developers.google.com/google-ads/api/rest/auth",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^/v[0-9]+/customers/[0-9]+:uploadCallConversions$"
+        }
+      },
+      {
+        "name": "headers.authorization",
+        "description": "Every Google Ads API request requires an OAuth Bearer token.",
+        "doc": "https://developers.google.com/google-ads/api/rest/auth",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "(?i)^Bearer[ \\t]+\\S+[ \\t]*$"
+        }
+      },
+      {
+        "name": "headers.developer-token",
+        "description": "Every Google Ads API request requires a developer token.",
+        "doc": "https://developers.google.com/google-ads/api/rest/auth",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "headers.login-customer-id",
+        "description": "Manager customer ID, when supplied, omits hyphens.",
+        "doc": "https://developers.google.com/google-ads/api/rest/auth",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+$"
+        }
+      },
+      {
+        "name": "headers.linked-customer-id",
+        "description": "Linked account customer ID, when supplied, omits hyphens.",
+        "doc": "https://developers.google.com/google-ads/api/rest/auth",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[0-9]+$"
+        }
+      }
+    ],
+    "rules": []
+  }
 }

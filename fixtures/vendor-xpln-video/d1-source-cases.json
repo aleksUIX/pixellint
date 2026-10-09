@@ -1,0 +1,1167 @@
+[
+  {
+    "id": "vpaid-beacon-payload",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "VPAID events preserve skippability overrides and non-URL media sentinels; all unknown video measurements can be -1.",
+    "clean": true
+  },
+  {
+    "id": "vpaid-text-post",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://log.xpln.tech/video?xid=publisher_example&yid=supply_example&zid=campaign_example\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"text/plain;charset=UTF-8\"},\"body\":\"{\\\"tg\\\":\\\"AdImpression\\\",\\\"src\\\":\\\"vpaid\\\",\\\"uid\\\":\\\"synthetic-session\\\",\\\"url\\\":\\\"https://publisher.example/article\\\",\\\"vurl\\\":\\\"srcObject\\\",\\\"xid\\\":\\\"publisher_example\\\",\\\"yid\\\":\\\"supply_example\\\",\\\"zid\\\":\\\"campaign_example\\\",\\\"mac\\\":\\\"sdk_example\\\",\\\"v\\\":20261006,\\\"mt\\\":\\\"b\\\",\\\"ts\\\":1770000060000,\\\"aw\\\":640,\\\"ah\\\":360,\\\"vol\\\":0.5,\\\"vdur\\\":30,\\\"skp\\\":2,\\\"vec\\\":-1,\\\"vev\\\":-1,\\\"vew\\\":-1,\\\"veh\\\":-1,\\\"ved\\\":-1}\"}",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The public SDK sends POST JSON text via fetch or sendBeacon.",
+    "clean": true
+  },
+  {
+    "id": "legacy-url-scope",
+    "kind": "url",
+    "artifact": "https://log.xpln.tech/video?xid=publisher_example&yid=supply_example&zid=campaign_example",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Legacy query transport is not subjected to current native-body requiredness.",
+    "clean": true
+  },
+  {
+    "id": "omid-limited-sentinels",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "OMID initial unknown measurements use -1 and optional error strings need not be JSON.",
+    "clean": true
+  },
+  {
+    "id": "missing-tg",
+    "kind": "json",
+    "artifact": "{\"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.tg.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "This video producer declares the field in every event object. Missing fields are advisory.",
+    "force": true
+  },
+  {
+    "id": "missing-uid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.uid.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "This video producer declares the field in every event object. Missing fields are advisory.",
+    "force": true
+  },
+  {
+    "id": "missing-url",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.url.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "This video producer declares the field in every event object. Missing fields are advisory.",
+    "force": true
+  },
+  {
+    "id": "missing-vurl",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vurl.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "This video producer declares the field in every event object. Missing fields are advisory.",
+    "force": true
+  },
+  {
+    "id": "missing-src",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.src.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "This video producer declares the field in every event object. Missing fields are advisory.",
+    "force": true
+  },
+  {
+    "id": "normalized-xid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"Upper Case!\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.xid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The copied identifier is normalized with lowercase ASCII character filtering."
+  },
+  {
+    "id": "normalized-yid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"Upper Case!\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.yid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The copied identifier is normalized with lowercase ASCII character filtering."
+  },
+  {
+    "id": "normalized-zid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"Upper Case!\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.zid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The copied identifier is normalized with lowercase ASCII character filtering."
+  },
+  {
+    "id": "normalized-mac",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"Upper Case!\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.mac.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The copied identifier is normalized with lowercase ASCII character filtering."
+  },
+  {
+    "id": "native-string-aid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"aid\": {}}",
+    "code": "vendor.xpln-video.body.aid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-oid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oid\": {}}",
+    "code": "vendor.xpln-video.body.oid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-lid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"lid\": {}}",
+    "code": "vendor.xpln-video.body.lid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-cid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"cid\": {}}",
+    "code": "vendor.xpln-video.body.cid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-mid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"mid\": {}}",
+    "code": "vendor.xpln-video.body.mid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-slr",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"slr\": {}}",
+    "code": "vendor.xpln-video.body.slr.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-pid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"pid\": {}}",
+    "code": "vendor.xpln-video.body.pid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-tid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"tid\": {}}",
+    "code": "vendor.xpln-video.body.tid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-did",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"did\": {}}",
+    "code": "vendor.xpln-video.body.did.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-bid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"bid\": {}}",
+    "code": "vendor.xpln-video.body.bid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-sid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"sid\": {}}",
+    "code": "vendor.xpln-video.body.sid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-apb",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"apb\": {}}",
+    "code": "vendor.xpln-video.body.apb.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-asm",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"asm\": {}}",
+    "code": "vendor.xpln-video.body.asm.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-afw",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"afw\": {}}",
+    "code": "vendor.xpln-video.body.afw.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-tv",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"tv\": {}}",
+    "code": "vendor.xpln-video.body.tv.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-slj",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"slj\": {}}",
+    "code": "vendor.xpln-video.body.slj.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-omp",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"omp\": {}}",
+    "code": "vendor.xpln-video.body.omp.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-gpid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"gpid\": {}}",
+    "code": "vendor.xpln-video.body.gpid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-didu",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"didu\": {}}",
+    "code": "vendor.xpln-video.body.didu.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-dida",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"dida\": {}}",
+    "code": "vendor.xpln-video.body.dida.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-didi",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"didi\": {}}",
+    "code": "vendor.xpln-video.body.didi.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-vidp",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"vidp\": {}}",
+    "code": "vendor.xpln-video.body.vidp.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-oam",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": {}}",
+    "code": "vendor.xpln-video.body.oam.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-mdt",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"mdt\": {}}",
+    "code": "vendor.xpln-video.body.mdt.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-err",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"err\": {}}",
+    "code": "vendor.xpln-video.body.err.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-afi",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"afi\": {}}",
+    "code": "vendor.xpln-video.body.afi.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-ves",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"ves\": {}}",
+    "code": "vendor.xpln-video.body.ves.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-acvw",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"acvw\": {}}",
+    "code": "vendor.xpln-video.body.acvw.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-tg",
+    "kind": "json",
+    "artifact": "{\"tg\": {}, \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.tg.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": true
+  },
+  {
+    "id": "native-string-uid",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": {}, \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.uid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-url",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": {}, \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.url.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-vurl",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": {}, \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vurl.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": false
+  },
+  {
+    "id": "native-string-src",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": {}, \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.src.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer emits this field as a string, not a native object.",
+    "force": true
+  },
+  {
+    "id": "native-integer-v",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 1.5, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.v.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current SDK emits an integer for this field."
+  },
+  {
+    "id": "native-integer-skp",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 1.5, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.skp.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current SDK emits an integer for this field."
+  },
+  {
+    "id": "native-integer-vec",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": 1.5, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vec.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current SDK emits an integer for this field."
+  },
+  {
+    "id": "native-integer-vew",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": 1.5, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vew.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current SDK emits an integer for this field."
+  },
+  {
+    "id": "native-integer-veh",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": 1.5, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.veh.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current SDK emits an integer for this field."
+  },
+  {
+    "id": "native-integer-imr",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"imr\": 1.5}",
+    "code": "vendor.xpln-video.body.imr.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current SDK emits an integer for this field."
+  },
+  {
+    "id": "native-integer-vtx",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"vtx\": 1.5}",
+    "code": "vendor.xpln-video.body.vtx.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current SDK emits an integer for this field."
+  },
+  {
+    "id": "native-number-ts",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": \"0.5\", \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.ts.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Numeric measurements are native JSON numbers, not numeric strings.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "native-number-aw",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": \"0.5\", \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.aw.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Numeric measurements are native JSON numbers, not numeric strings.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "native-number-ah",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": \"0.5\", \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.ah.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Numeric measurements are native JSON numbers, not numeric strings.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "native-number-vol",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": \"0.5\", \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vol.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Numeric measurements are native JSON numbers, not numeric strings.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "native-number-dvol",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"dvol\": \"0.5\"}",
+    "code": "vendor.xpln-video.body.dvol.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Numeric measurements are native JSON numbers, not numeric strings.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "native-number-vev",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": \"0.5\", \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vev.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Numeric measurements are native JSON numbers, not numeric strings.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "native-number-smp",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"smp\": \"0.5\"}",
+    "code": "vendor.xpln-video.body.smp.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Numeric measurements are native JSON numbers, not numeric strings.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "vol-boundary--1",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vol.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vol-boundary--0.5",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vol.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vol-boundary-0",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vol.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vol-boundary-1",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 1, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vol.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vol-boundary-1.0001",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 1.0001, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vol.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "dvol-boundary--1",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.dvol.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "dvol-boundary--0.5",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"dvol\": -0.5}",
+    "code": "vendor.xpln-video.body.dvol.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "dvol-boundary-0",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"dvol\": 0}",
+    "code": "vendor.xpln-video.body.dvol.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "dvol-boundary-1",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"dvol\": 1}",
+    "code": "vendor.xpln-video.body.dvol.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "dvol-boundary-1.0001",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"dvol\": 1.0001}",
+    "code": "vendor.xpln-video.body.dvol.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vev-boundary--1",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vev.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vev-boundary--0.5",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -0.5, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vev.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vev-boundary-0",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": 0, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vev.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vev-boundary-1",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": 1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vev.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vev-boundary-1.0001",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": 1.0001, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vev.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Unknown volume sentinel is -1, otherwise finite volume is inclusive 0 through 1."
+  },
+  {
+    "id": "vdur-boundary--1",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vdur.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "vdur-boundary-2",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 2, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vdur.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "vdur-boundary-3",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 3, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vdur.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "vdur-boundary-300",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 300, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vdur.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "vdur-boundary-301",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 301, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vdur.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "vdur-boundary-3.5",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 3.5, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vdur.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "ved-boundary--1",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.ved.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "ved-boundary-2",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": 2}",
+    "code": "vendor.xpln-video.body.ved.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "ved-boundary-3",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": 3}",
+    "code": "vendor.xpln-video.body.ved.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "ved-boundary-300",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": 300}",
+    "code": "vendor.xpln-video.body.ved.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "ved-boundary-301",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": 301}",
+    "code": "vendor.xpln-video.body.ved.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input."
+  },
+  {
+    "id": "ved-boundary-3.5",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": 3.5}",
+    "code": "vendor.xpln-video.body.ved.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Duration is rounded into 3 through 300 seconds or -1 for invalid input.",
+    "expected_code_count": 1
+  },
+  {
+    "id": "transport-marker-b",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.mt.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer sets b for beacon and f for fetch."
+  },
+  {
+    "id": "transport-marker-f",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"f\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.mt.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer sets b for beacon and f for fetch."
+  },
+  {
+    "id": "transport-marker-unknown",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"unknown\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.mt.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The current producer sets b for beacon and f for fetch."
+  },
+  {
+    "id": "native-container-array",
+    "kind": "json",
+    "artifact": "[]",
+    "code": "vendor.xpln-video.body.root.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "A current SDK video event is an object, not an array.",
+    "force": true
+  },
+  {
+    "id": "post-method-advisory",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://log.xpln.tech/video\",\"method\":\"PUT\",\"headers\":{\"Content-Type\":\"text/plain\"},\"body\":\"{\\\"tg\\\":\\\"AdImpression\\\",\\\"src\\\":\\\"vpaid\\\",\\\"uid\\\":\\\"synthetic-session\\\",\\\"url\\\":\\\"https://publisher.example/article\\\",\\\"vurl\\\":\\\"srcObject\\\",\\\"xid\\\":\\\"publisher_example\\\",\\\"yid\\\":\\\"supply_example\\\",\\\"zid\\\":\\\"campaign_example\\\",\\\"mac\\\":\\\"sdk_example\\\",\\\"v\\\":20261006,\\\"mt\\\":\\\"b\\\",\\\"ts\\\":1770000060000,\\\"aw\\\":640,\\\"ah\\\":360,\\\"vol\\\":0.5,\\\"vdur\\\":30,\\\"skp\\\":2,\\\"vec\\\":-1,\\\"vev\\\":-1,\\\"vew\\\":-1,\\\"veh\\\":-1,\\\"ved\\\":-1}\"}",
+    "code": "vendor.xpln-video.http.method.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Native SDK video payload transport uses POST."
+  },
+  {
+    "id": "post-content-type-advisory",
+    "kind": "request",
+    "artifact": "{\"url\":\"https://log.xpln.tech/video\",\"method\":\"POST\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":\"{\\\"tg\\\":\\\"AdImpression\\\",\\\"src\\\":\\\"vpaid\\\",\\\"uid\\\":\\\"synthetic-session\\\",\\\"url\\\":\\\"https://publisher.example/article\\\",\\\"vurl\\\":\\\"srcObject\\\",\\\"xid\\\":\\\"publisher_example\\\",\\\"yid\\\":\\\"supply_example\\\",\\\"zid\\\":\\\"campaign_example\\\",\\\"mac\\\":\\\"sdk_example\\\",\\\"v\\\":20261006,\\\"mt\\\":\\\"b\\\",\\\"ts\\\":1770000060000,\\\"aw\\\":640,\\\"ah\\\":360,\\\"vol\\\":0.5,\\\"vdur\\\":30,\\\"skp\\\":2,\\\"vec\\\":-1,\\\"vev\\\":-1,\\\"vew\\\":-1,\\\"veh\\\":-1,\\\"ved\\\":-1}\"}",
+    "code": "vendor.xpln-video.http.content_type.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The documented producer sends text/plain; other MIME types are outside the observed producer contract."
+  },
+  {
+    "id": "legacy-query-id-advisory",
+    "kind": "url",
+    "artifact": "https://log.xpln.tech/video?xid=Upper%20Case",
+    "code": "vendor.xpln-video.param.xid.invalid",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Current SDK routing identifiers are lowercase ASCII; historical server acceptance is not inferred."
+  },
+  {
+    "id": "nonfinite-producer-smp",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"smp\": null}",
+    "code": "vendor.xpln-video.body.smp.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "JSON.stringify maps a non-finite parsed SDK value to null. The producer preserves this representation.",
+    "clean": true
+  },
+  {
+    "id": "nonfinite-producer-imr",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"imr\": null}",
+    "code": "vendor.xpln-video.body.imr.invalid",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "JSON.stringify maps a non-finite parsed SDK value to null. The producer preserves this representation.",
+    "clean": true
+  },
+  {
+    "id": "producer-missing-ah",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.ah.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-aw",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.aw.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-mt",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.mt.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-skp",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.skp.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-ts",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.ts.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-v",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.v.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-vdur",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vdur.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-vec",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vec.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-ved",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1}",
+    "code": "vendor.xpln-video.body.ved.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-veh",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.veh.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-vev",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vev.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-vew",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": 0.5, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vew.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "producer-missing-vol",
+    "kind": "json",
+    "artifact": "{\"tg\": \"AdImpression\", \"src\": \"vpaid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vdur\": 30, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1}",
+    "code": "vendor.xpln-video.body.vol.missing",
+    "expect_violation": true,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK event object and send routine populate this field. Missing producer data is advisory, not a server rejection claim."
+  },
+  {
+    "id": "vast-legacy-scope",
+    "kind": "vast",
+    "artifact": "https://log.xpln.tech/video?xid=publisher_example&yid=supply_example&zid=campaign_example",
+    "code": "",
+    "expect_violation": false,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "Legacy query transport is not subjected to current native-body requiredness.",
+    "clean": true
+  },
+  {
+    "id": "vol-sentinel-decimal",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1.0, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.vol.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "vol-sentinel-exponent",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1e0, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.vol.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "dvol-sentinel-decimal",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1.0}",
+    "code": "vendor.xpln-video.body.dvol.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "dvol-sentinel-exponent",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1e0}",
+    "code": "vendor.xpln-video.body.dvol.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "vev-sentinel-decimal",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1.0, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.vev.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "vev-sentinel-exponent",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1e0, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.vev.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "vdur-sentinel-decimal",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1.0, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.vdur.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "vdur-sentinel-exponent",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1e0, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.vdur.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "ved-sentinel-decimal",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1.0, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.ved.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  },
+  {
+    "id": "ved-sentinel-exponent",
+    "kind": "json",
+    "artifact": "{\"tg\": \"geometryChange\", \"src\": \"omid\", \"uid\": \"synthetic-session\", \"url\": \"https://publisher.example/article\", \"vurl\": \"srcObject\", \"xid\": \"publisher_example\", \"yid\": \"supply_example\", \"zid\": \"campaign_example\", \"mac\": \"sdk_example\", \"v\": 20261006, \"mt\": \"b\", \"ts\": 1770000060000, \"aw\": 640, \"ah\": 360, \"vol\": -1, \"vdur\": -1, \"skp\": 2, \"vec\": -1, \"vev\": -1, \"vew\": -1, \"veh\": -1, \"ved\": -1e0, \"oam\": \"limited\", \"mdt\": \"video\", \"acvw\": \"{\\\"type\\\":\\\"geometryChange\\\"}\", \"vidp\": \"\", \"err\": \"geometry unavailable\", \"dvol\": -1}",
+    "code": "vendor.xpln-video.body.ved.invalid",
+    "expect_violation": false,
+    "clean": true,
+    "expected_code_count": 0,
+    "source_url": "https://cdn.xpln.tech/a.js",
+    "source_statement": "The SDK uses numeric -1 for unavailable measurements. Decimal and exponent spellings of the same native JSON number preserve that sentinel.",
+    "additional_source_url": "https://www.rfc-editor.org/rfc/rfc8259#section-6"
+  }
+]

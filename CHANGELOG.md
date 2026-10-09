@@ -4,7 +4,65 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.33.0 - 2026-10-09
+
+### Added
+
+- Added complete HTTP captures linking URL,
+  method, headers and raw body. Vendor transport contracts run with endpoint
+  binding, normalized MIME, repeated values and decoded Basic metadata.
+- Added form fallback and JSON/NDJSON entity checks, preserving original body
+  byte limits. Matomo bulk queries reuse per-event rules with envelope token
+  precedence and explicit limits for native parameter maps.
+- Added cross-field scalar equality and URL path character bounds.
+- Deepened 39 existing vendor packs with 406 new source-backed fixture cases.
+- Added 22 destination packs found through D1 endpoint review: Adnami,
+  Amplified, AdCanvas, XPLN, TripleLift tracking and sync, IAS video and display
+  pixels, AppsFlyer impressions, four Google measurement surfaces, Flashtalking
+  impression and state collectors, LiveRamp CTvid, Nielsen DAR, two Innovid
+  legacy collectors, and three Trade Desk identity and conversion surfaces.
+- Deepened Trade Desk browser conversions and covered every statically defined
+  Amplified tuple column in the inspected SDK. Producer-only assumptions remain
+  warnings, with server, session and version requirements recorded as gaps.
+- Added browser Latin-1 Base64 JSON and pipe-delimited JSON decoding, exact
+  per-array scalar uniqueness, UTF-16 string bounds, endpoint-bound consent
+  aliases, and explicit decoder severity for producer advisories.
+- Added 709 independently authored expansion golden cases, including eight
+  forced-selection discriminator boundaries. The inventory now contains 159
+  vendor packs across 85 vendors, 5,147 field contracts and 526 assertions.
+
+### Fixed
+
+- Preserve opaque Amplitude user agents, exact reserved event names, and
+  backwards-compatible AppsFlyer events without an Android OS version.
+- Prevent query/form aliases from replacing path identifiers, fragment text
+  from supplying query selectors, and Basic-auth spacing from leaking decoded
+  credentials in findings.
+- Compare native JSON numeric sentinels exactly while preserving literal URL
+  values. Validate every canonical or aliased consent carrier, preserving its
+  original field and preventing malformed carriers from hiding behind aliases.
+
+Compressed/multipart bodies, native bulk parameter coercions, parser depth,
+account state and unavailable source material remain explicit coverage limits.
+
+Local verification passes 442 workspace tests, Clippy with warnings denied,
+and npm smoke tests. All 28,104 native/WASM report comparisons pass across the
+released, pre-expansion and expanded engines: 27,615 full-corpus comparisons
+plus 489 single-entry controls. The 701 automatically selected expansion cases
+all satisfy their authored oracles, with 103 gaining error detection, one clearing a prior
+error and zero oracle regressions. The eight forced-selection cases pass in the
+workspace golden suite. Earlier HTTP-depth fixture results remain recorded in
+the audit baseline.
+
+A fresh full D1 replay of 8,504 unchanged stored artifacts increases vendor-pack
+selection from 3,055 to 4,365, with no selection losses or engine exceptions.
+Released 0.32.0 and pre-expansion 0.33.0 have identical D1 finding and selection
+profiles. The candidate adds 25 raw error findings: 24 source-supported empty
+IAS session identifiers and one Nielsen finding caused by ingestion redaction.
+The redacted case contributes no supported customer-error gain. This snapshot
+contains no complete HTTP captures or remote acceptance labels. All 239 initially
+uncovered host profiles and one JSON bucket have explicit dispositions; host
+triage alone does not establish a completed source review.
 
 ## 0.32.0 - 2026-10-08
 

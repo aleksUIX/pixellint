@@ -65,6 +65,8 @@ struct SourceTarget {
     required_code: Option<String>,
     forbidden_code: Option<String>,
     expect_no_errors_or_warnings: bool,
+    #[serde(default)]
+    expect_ok: Option<bool>,
     case_origin: String,
     source_url: String,
     source_access: String,
@@ -149,6 +151,7 @@ fn conversion_primary_source_targets_hold_at_declared_clocks() {
                 artifact_kind: match case.kind.as_str() {
                     "url" => ArtifactKind::Url,
                     "json" => ArtifactKind::JsonPayload,
+                    "request" => ArtifactKind::NetworkRequest,
                     other => panic!("{label}: unsupported artifact kind {other}"),
                 },
                 artifact: fs::read_to_string(dir.join(&case.fixture))
@@ -176,6 +179,13 @@ fn conversion_primary_source_targets_hold_at_declared_clocks() {
                 && codes.contains(&code.as_str())
             {
                 failures.push(format!("{label}: forbidden {code}; observed {codes:?}"));
+            }
+            if let Some(expected) = case.expect_ok
+                && summary.is_ok() != expected
+            {
+                failures.push(format!(
+                    "{label}: expected ok={expected}; observed {codes:?}"
+                ));
             }
             if case.expect_no_errors_or_warnings
                 && findings

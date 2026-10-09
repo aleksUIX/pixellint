@@ -1704,5 +1704,69 @@
       "message": "The optional Note field requires MediaPartnerId. MediaId is its documented alias.",
       "doc": "https://integrations.impact.com/integration-guides/for-brands/action-and-conversion-field-references/conversion-submission-field-references"
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation",
+        "description": "The conversion creation endpoint uses POST.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "path",
+        "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation",
+        "description": "Use the advertiser conversion creation route.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^/Advertisers/[^/]+/Conversions/?$"
+        }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation",
+        "description": "The online-sale guide demonstrates application/x-www-form-urlencoded.",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/x-www-form-urlencoded"
+          ]
+        },
+        "format_severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "body_encoding",
+          "values": [
+            "form"
+          ]
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation",
+        "description": "Body representation is retained to select the guide MIME advisory."
+      },
+      {
+        "name": "url",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "url",
+          "require_https": true
+        },
+        "description": "The published request endpoint uses HTTPS.",
+        "doc": "https://integrations.impact.com/integration-guides/for-brands/tracking-integrations/api-online-sale/implementation"
+      }
+    ]
+  }
 }
