@@ -111,6 +111,13 @@ pub enum ValueFormat {
         #[serde(default)]
         exclude_ranges: Vec<String>,
     },
+    /// Comma-separated literal IP addresses, with unresolved entries preserved.
+    IpChain,
+    /// Calendar-valid date/time representations selected by a destination.
+    #[serde(rename = "datetime_formats")]
+    DateTimeFormats {
+        formats: Vec<DateTimeRepresentation>,
+    },
     /// A calendar-valid RFC 3339 timestamp, optionally allowing local time.
     #[serde(rename = "datetime")]
     DateTime {
@@ -159,6 +166,18 @@ pub enum ValueFormat {
 pub enum IpVersion {
     V4,
     V6,
+}
+
+/// Supported second-resolution date/time representations. Named zones remain
+/// opaque text: validating their date does not resolve the zone or an instant.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DateTimeRepresentation {
+    Us12Hour,
+    Us24Hour,
+    IsoLocal,
+    IsoOffset,
+    IsoNamedTimezone,
 }
 
 /// Which artifacts a pack claims.
@@ -540,6 +559,14 @@ pub enum Assertion {
     UniqueArrayBy { param: String, field: String },
     /// Repeated parameter families must have the same occurrence count.
     EqualOccurrences { params: Vec<String> },
+    /// Limit submitted occurrences, including empty and unresolved values.
+    MaxOccurrences {
+        param: String,
+        max_occurrences: usize,
+        /// Run only on URL scopes without a complete HTTP capture.
+        #[serde(default)]
+        bare_url_only: bool,
+    },
     /// A timestamp must fall within the permitted window around validation time.
     TimeWindow {
         param: String,
@@ -736,6 +763,14 @@ fn validate_condition(
 }
 
 fn validate_format(pack_id: &str, name: &str, format: &ValueFormat) -> Result<(), ManifestError> {
+    if let ValueFormat::DateTimeFormats { formats } = format
+        && formats.is_empty()
+    {
+        return Err(ManifestError::EmptyFormatValues {
+            pack_id: pack_id.to_string(),
+            name: name.to_string(),
+        });
+    }
     if let ValueFormat::Enum { values, .. } = format
         && values.is_empty()
     {
@@ -1255,6 +1290,7 @@ struct Scope<'a> {
     artifact: &'a str,
     raw_artifact_len: usize,
     reference_time_unix_seconds: i64,
+    complete_http_request: bool,
     /// The payload being read, when this scope is a body rather than a URL.
     body: Option<BodyScope<'a>>,
     query: Option<QuerySpan>,
@@ -3166,6 +3202,7 @@ impl ValidatorPlugin for ManifestRulePack {
             artifact,
             raw_artifact_len: request.artifact.len(),
             reference_time_unix_seconds: prepared.reference_time_unix_seconds(),
+            complete_http_request: prepared.is_complete_http_request(),
             body: None,
             query: None,
         };
@@ -3397,6 +3434,7 @@ impl ManifestRulePack {
                     artifact: prepared.trimmed(),
                     raw_artifact_len: prepared.request().artifact.len(),
                     reference_time_unix_seconds: prepared.reference_time_unix_seconds(),
+                    complete_http_request: prepared.is_complete_http_request(),
                     body: None,
                     query: Some(QuerySpan {
                         index: segment.index,
@@ -3684,6 +3722,7 @@ impl ManifestRulePack {
                 artifact,
                 raw_artifact_len,
                 reference_time_unix_seconds,
+                complete_http_request: false,
                 body: Some(BodyScope {
                     document,
                     path: &scope_path,
@@ -4382,7 +4421,9 @@ impl ManifestRulePack {
             // Unexpanded macros are the core pack's business. Checking the
             // literal macro text against a value format would double-report the
             // same defect with a worse message.
-            if contains_macro(param.value.as_ref()) {
+            if contains_macro(param.value.as_ref())
+                && !matches!(contract.format, Some(ValueFormat::IpChain))
+            {
                 continue;
             }
 
@@ -4687,7 +4728,7 @@ impl ManifestRulePack {
                     if applies
                         && paired_applies
                         && !candidate.container
-                        && !contains_macro(candidate.value.as_ref())
+                        && !format_has_unresolved_macro(format, candidate.value.as_ref())
                     {
                         self.check_format_warnings(
                             &rule.code,
@@ -4712,7 +4753,7 @@ impl ManifestRulePack {
                             && live(candidate)
                             && candidate.name.as_ref() == param
                             && !candidate.container
-                            && !contains_macro(candidate.value.as_ref())
+                            && !format_has_unresolved_macro(format, candidate.value.as_ref())
                             && format_violation(
                                 format,
                                 compiled.regex.as_ref(),
@@ -4844,7 +4885,7 @@ impl ManifestRulePack {
                     live(field)
                         && field.name.as_ref() == param
                         && !field.container
-                        && !contains_macro(field.value.as_ref())
+                        && !format_has_unresolved_macro(format, field.value.as_ref())
                 }) {
                     self.check_format_warnings(
                         &rule.code,
@@ -4860,7 +4901,7 @@ impl ManifestRulePack {
                         live(field)
                             && field.name.as_ref() == param
                             && !field.container
-                            && !contains_macro(field.value.as_ref())
+                            && !format_has_unresolved_macro(format, field.value.as_ref())
                             && format_violation(
                                 format,
                                 compiled.regex.as_ref(),
@@ -4953,6 +4994,43 @@ impl ManifestRulePack {
                     Vec::new()
                 };
                 (triggered, targets)
+            }
+            Assertion::MaxOccurrences {
+                param,
+                max_occurrences,
+                bare_url_only,
+            } => {
+                if *bare_url_only && (scope.complete_http_request || scope.body.is_some()) {
+                    return;
+                }
+                let mut targets: Vec<_> = params
+                    .iter()
+                    .filter(|field| !field.missing && field.name.as_ref() == param)
+                    .map(RawParam::target)
+                    .collect();
+                // URL parameter contracts normally read key=value pairs. A
+                // cardinality bound also counts a submitted key without '='.
+                if scope.body.is_none()
+                    && scope.query.is_none()
+                    && matches!(
+                        self.param_style,
+                        ParamStyle::Query | ParamStyle::QuerySemicolon
+                    )
+                {
+                    let names = self
+                        .params
+                        .iter()
+                        .find(|compiled| compiled.contract.name == *param)
+                        .map(|compiled| compiled.names.as_slice());
+                    targets.extend(bare_query_targets(
+                        scope.artifact,
+                        self.param_style,
+                        param,
+                        names,
+                    ));
+                }
+                let triggered = targets.len() > *max_occurrences;
+                (triggered, if triggered { targets } else { Vec::new() })
             }
             Assertion::DelimitedSum {
                 param,
@@ -5425,6 +5503,7 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
         Assertion::EqualArrayLengths { params } => params.iter().collect(),
         Assertion::UniqueArrayBy { param, .. } => vec![param],
         Assertion::EqualOccurrences { params } => params.iter().collect(),
+        Assertion::MaxOccurrences { param, .. } => vec![param],
         Assertion::TimeWindow {
             param,
             fallback_param,
@@ -5484,6 +5563,7 @@ fn assertion_params_mut(assertion: &mut Assertion) -> Vec<&mut String> {
         Assertion::EqualArrayLengths { params } => params.iter_mut().collect(),
         Assertion::UniqueArrayBy { param, .. } => vec![param],
         Assertion::EqualOccurrences { params } => params.iter_mut().collect(),
+        Assertion::MaxOccurrences { param, .. } => vec![param],
         Assertion::TimeWindow {
             param,
             fallback_param,
@@ -6202,6 +6282,10 @@ fn in_cidr(address: std::net::IpAddr, network: std::net::IpAddr, prefix: u8) -> 
     }
 }
 
+fn format_has_unresolved_macro(format: &ValueFormat, value: &str) -> bool {
+    !matches!(format, ValueFormat::IpChain) && contains_macro(value)
+}
+
 fn format_violation(format: &ValueFormat, regex: Option<&Regex>, value: &str) -> Option<String> {
     match format {
         ValueFormat::NonEmpty => None,
@@ -6310,6 +6394,25 @@ fn format_violation(format: &ValueFormat, regex: Option<&Regex>, value: &str) ->
                     "must be an IP address literal of the documented family outside excluded ranges, but is `{value}`."
                 ))
             }
+        }
+        ValueFormat::IpChain => {
+            let valid = value.split(',').all(|entry| {
+                let entry = entry.trim_matches([' ', '\t']);
+                entry.parse::<std::net::IpAddr>().is_ok() || {
+                    let macros = detect_macro_spans(entry);
+                    macros.len() == 1 && macros[0].start == 0 && macros[0].end == entry.len()
+                }
+            });
+            (!valid).then(|| format!(
+                "must contain a comma-separated chain of IPv4 or IPv6 literals; `{value}` contains an invalid entry."
+            ))
+        }
+        ValueFormat::DateTimeFormats { formats } => {
+            (!formats.iter().any(|representation|
+                crate::datetime_formats::valid_representation(value, *representation)
+            )).then(|| format!(
+                "must use a selected second-resolution date/time representation with a valid calendar, clock and numeric offset; `{value}` is invalid. Named timezone text is not resolved."
+            ))
         }
         ValueFormat::DateTime {
             require_timezone,
@@ -6812,6 +6915,41 @@ fn body_target(document: &JsonDocument<'_>, scope: &str, artifact: &str) -> Viol
             end: artifact.len(),
         },
     }
+}
+
+fn bare_query_targets(
+    artifact: &str,
+    style: ParamStyle,
+    param: &str,
+    aliases: Option<&[String]>,
+) -> Vec<ViolationTarget> {
+    let fragment_start = artifact.find('#').unwrap_or(artifact.len());
+    let Some(query_start) = artifact[..fragment_start].find('?') else {
+        return Vec::new();
+    };
+    let mut cursor = query_start + 1;
+    let mut targets = Vec::new();
+    for segment in artifact[cursor..fragment_start]
+        .split(|c| c == '&' || (style == ParamStyle::QuerySemicolon && c == ';'))
+    {
+        let name = percent_decode(segment);
+        if !segment.is_empty()
+            && !segment.contains('=')
+            && (name == param
+                || aliases
+                    .is_some_and(|aliases| aliases.iter().any(|alias| alias == name.as_ref())))
+        {
+            targets.push(ViolationTarget {
+                component: ViolationTargetComponent::QueryParam,
+                name: Some(name.into_owned()),
+                value: Some(String::new()),
+                start: cursor,
+                end: cursor + segment.len(),
+            });
+        }
+        cursor += segment.len() + 1;
+    }
+    targets
 }
 
 fn whole_url_target(artifact: &str) -> ViolationTarget {
