@@ -6999,6 +6999,9 @@ pub(crate) struct RawParam<'a> {
     family_parent: Option<String>,
     member_name: Option<String>,
     json_kind: Option<JsonValueKind>,
+    /// New private SDK captures discard targets after HTTP validation. Avoid
+    /// copying the entire data envelope once per intermediate body finding.
+    omit_target_value: bool,
 }
 
 impl<'a> RawParam<'a> {
@@ -7021,7 +7024,12 @@ impl<'a> RawParam<'a> {
             family_parent: None,
             member_name: None,
             json_kind: None,
+            omit_target_value: false,
         }
+    }
+
+    pub(crate) fn omit_capture_target_value(&mut self) {
+        self.omit_target_value = true;
     }
 
     pub(crate) fn target(&self) -> ViolationTarget {
@@ -7033,7 +7041,7 @@ impl<'a> RawParam<'a> {
                     .unwrap_or(self.name.as_ref())
                     .to_string(),
             ),
-            value: Some(self.value.as_ref().to_string()),
+            value: (!self.omit_target_value).then(|| self.value.as_ref().to_string()),
             start: self.start,
             end: self.end,
         }
@@ -7218,6 +7226,7 @@ fn collect_body_params<'a>(
                     family_parent,
                     member_name,
                     json_kind: None,
+                    omit_target_value: false,
                 });
                 continue;
             };
@@ -7245,6 +7254,7 @@ fn collect_body_params<'a>(
                 family_parent,
                 member_name,
                 json_kind: Some(field.kind),
+                omit_target_value: false,
             });
         }
     }

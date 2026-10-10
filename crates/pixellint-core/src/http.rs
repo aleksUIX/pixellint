@@ -2,7 +2,6 @@
 //! Raw text and explicit binary wire bytes preserve capture evidence.
 
 use std::collections::{BTreeMap, BTreeSet};
-use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
@@ -159,6 +158,7 @@ struct DecodedRequest {
     unavailable_form: bool,
     entity_text: Option<String>,
     entity_bytes: usize,
+    unsupported: bool,
     violations: Vec<Violation>,
 }
 
@@ -261,12 +261,12 @@ impl Engine {
             .map(String::as_str)
             .collect();
         let explicit = !options.only_rulepacks.is_empty();
-        let plugins: Vec<Arc<dyn ValidatorPlugin>> = if explicit {
+        let plugins: Vec<&crate::PluginEntry> = if explicit {
             options
                 .only_rulepacks
                 .iter()
                 .filter(|id| id.as_str() != DIRECTORY_ID && !excluded.contains(id.as_str()))
-                .filter_map(|id| self.plugins.get(id).map(|entry| Arc::clone(&entry.plugin)))
+                .filter_map(|id| self.plugins.get(id))
                 .collect()
         } else {
             self.candidate_ids(&prepared)
@@ -274,7 +274,6 @@ impl Engine {
                 .filter(|id| !excluded.contains(id))
                 .filter_map(|id| self.plugins.get(id))
                 .filter(|entry| entry.plugin.supports_http(&prepared))
-                .map(|entry| Arc::clone(&entry.plugin))
                 .collect()
         };
         if plugins.is_empty()
@@ -286,22 +285,102 @@ impl Engine {
                 EngineError::NoRulepacksSelected
             });
         }
-        for plugin in &plugins {
-            plugin.prepare_vendor_context(&mut prepared);
+        for entry in &plugins {
+            entry.plugin.prepare_vendor_context(&mut prepared);
         }
+        let mut sdk_violations = Vec::new();
+        let content_types: Vec<_> = header_lines(&capture.headers)
+            .into_iter()
+            .filter(|(name, _)| name.eq_ignore_ascii_case("content-type"))
+            .map(|(_, value)| value)
+            .collect();
+        let sdk_text = content_types.first().filter(|mime| {
+            mime.split(';')
+                .next()
+                .is_some_and(|essence| essence.trim().eq_ignore_ascii_case("text/plain"))
+        });
+        let core_selected = plugins
+            .iter()
+            .any(|entry| entry.plugin.metadata().id == "core");
         let mut reports: Vec<_> = plugins
             .iter()
-            .map(|plugin| {
-                plugin.validate_http(
-                    &prepared,
-                    body.as_ref(),
-                    decoded.entity_bytes,
-                    &decoded.normalized,
-                    plugins.iter().any(|plugin| plugin.metadata().id == "core"),
-                )
+            .map(|entry| {
+                let preparation = entry
+                    .sdk_body_profile
+                    .as_ref()
+                    .filter(|profile| {
+                        entry.plugin.supports_http(&endpoint)
+                            && profile.endpoint(&capture.method, &endpoint)
+                            && !decoded.unsupported
+                            && decoded.json_body.is_none()
+                            && sdk_text.is_some()
+                            && !context.body_unavailable()
+                            && !context.header_unknown("content-type", true)
+                    })
+                    .and_then(|profile| {
+                        decoded
+                            .entity_text
+                            .as_deref()
+                            .filter(|text| text.contains('='))
+                            .map(|text| {
+                                profile.prepare(
+                                    text,
+                                    sdk_text.expect("checked"),
+                                    endpoint
+                                        .params(crate::manifest::ParamStyle::Query)
+                                        .iter()
+                                        .any(|field| field.name == "data"),
+                                )
+                            })
+                    });
+                if let Some(preparation) = preparation {
+                    let mut owner = PreparedArtifact::from_request_at(&url_request, clock);
+                    owner.mark_complete_http_request();
+                    let mut sdk_secrets = Vec::new();
+                    match preparation {
+                        crate::sdk_body::Preparation::Data(data) => {
+                            sdk_secrets = data.secrets;
+                            owner.set_form_fields(vec![crate::sdk_body::field(data.data)]);
+                        }
+                        crate::sdk_body::Preparation::Deferred(problem) => {
+                            owner.mark_unavailable_form_body();
+                            sdk_violations.push(problem.finding());
+                        }
+                    }
+                    entry.plugin.prepare_vendor_context(&mut owner);
+                    let mut report = entry.plugin.validate_http(
+                        &owner,
+                        body.as_ref(),
+                        decoded.entity_bytes,
+                        &decoded.normalized,
+                        core_selected,
+                    );
+                    let secrets = sdk_secrets;
+                    let prefix = format!("{}.body.", entry.plugin.metadata().id.replace('/', "."));
+                    for violation in report
+                        .violations
+                        .iter_mut()
+                        .filter(|finding| finding.code.starts_with(&prefix))
+                    {
+                        violation.message = sdk_redact(&violation.message, &secrets);
+                        if let Some(hint) = &mut violation.fix_hint {
+                            *hint = sdk_redact(hint, &secrets);
+                        }
+                    }
+                    report
+                } else {
+                    entry.plugin.validate_http(
+                        &prepared,
+                        body.as_ref(),
+                        decoded.entity_bytes,
+                        &decoded.normalized,
+                        core_selected,
+                    )
+                }
             })
             .collect();
         let mut input_violations = decoded.violations;
+        input_violations.extend(sdk_violations);
         if let Some(body) = &body {
             input_violations.extend(CoreRulePack::default().validate_prepared(body).violations);
         }
@@ -805,6 +884,7 @@ fn decode_request_with_form_hint(
         multipart_fields,
         unavailable_form,
         entity_bytes: wire.map_or(0, str::len),
+        unsupported,
         entity_text,
         violations,
     }
@@ -893,5 +973,40 @@ fn collect_entity_secrets(value: &Value, secret: bool, values: &mut Vec<String>)
         Value::String(value) if secret => values.push(value.clone()),
         _ if secret && !value.is_null() => values.push(value.to_string()),
         _ => {}
+    }
+}
+
+/// Match only original text. Inserted placeholders are never redacted again.
+fn sdk_redact(text: &str, secrets: &[String]) -> String {
+    if secrets.is_empty() {
+        return text.into();
+    }
+    let mut output = String::new();
+    let mut index = 0;
+    while index < text.len() {
+        let tail = &text[index..];
+        if let Some(secret) = secrets
+            .iter()
+            .find(|secret| tail.starts_with(secret.as_str()))
+        {
+            output.push_str("[redacted]");
+            index += secret.len();
+        } else {
+            let character = tail.chars().next().expect("remaining text");
+            output.push(character);
+            index += character.len_utf8();
+        }
+    }
+    output
+}
+
+#[cfg(test)]
+mod sdk_sanitizer_tests {
+    use super::sdk_redact;
+    #[test]
+    fn replacement_text_is_not_rescanned_for_short_or_overlapping_secrets() {
+        let secrets = vec!["redacted".into(), "a".into()];
+        assert_eq!(sdk_redact("a redacted", &secrets), "[redacted] [redacted]");
+        assert_eq!(sdk_redact("雪a😀", &secrets), "雪[redacted]😀");
     }
 }

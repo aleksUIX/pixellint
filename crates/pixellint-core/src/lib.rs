@@ -37,6 +37,7 @@ mod php_query;
 mod prepare;
 mod privacy;
 mod query_segments;
+mod sdk_body;
 mod tcf_sections;
 mod timestamp;
 
@@ -971,6 +972,7 @@ impl Error for EngineError {}
 
 struct PluginEntry {
     plugin: Arc<dyn ValidatorPlugin>,
+    sdk_body_profile: Option<sdk_body::Profile>,
 }
 
 #[derive(Default)]
@@ -1005,6 +1007,11 @@ impl Default for Engine {
                 panic!("built-in rulepack `{id}` failed to compile: {error}")
             });
             engine.insert_plugin(pack);
+            engine
+                .plugins
+                .get_mut(*id)
+                .expect("inserted builtin")
+                .sdk_body_profile = sdk_body::Profile::builtin(id, json);
         }
 
         engine.rebuild_index();
@@ -1061,6 +1068,7 @@ impl Engine {
             plugin.metadata().id.clone(),
             PluginEntry {
                 plugin: Arc::new(plugin),
+                sdk_body_profile: None,
             },
         );
     }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.44.0 (2026-10-10)
+
+- Apply existing Mixpanel Track, Engage and Groups contracts to official SDK plain-text data-form beacon bodies under private built-in owner and endpoint selection.
+- Bound the newly supported profile's parsing, path expansion, finding allocation and evaluation work. Ambiguous representations and SDK CESU-8 strings receive local information deferrals.
+- Preserve public APIs and custom-plugin authority, and narrow internal JSON descendant traversal while retaining existing path and duplicate-container semantics.
+
 ## 0.43.0 (2026-10-10)
 
 - Add separate AppsFlyer web S2S event and visit packs for the documented `events.appsflyer.com` HTTP routes.

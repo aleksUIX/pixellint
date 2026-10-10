@@ -57,6 +57,48 @@ entity text, including NDJSON whitespace and newlines. For raw `body`, this is
 the submitted wire string. For gzip it is the complete uncompressed entity,
 before NDJSON normalization, rather than compressed bytes or Base64 characters.
 
+## Selected Mixpanel SDK plain-text captures reach existing payload rules.
+
+The builtin Mixpanel Track, Engage and Groups packs inspect the official SDK's
+`data=` string body under one observed `text/plain` Content-Type. The existing
+host matcher and caller selection must pass. This private profile narrows to
+POST on the owning `/track`, `/engage` or `/groups` path, optionally followed by
+one slash. It does not expand the host or path authority of another pack.
+
+The original headers and normalized text representation remain unchanged.
+Exactly one strictly decoded `data` form member may contain raw JSON or
+strict UTF-8 Base64 JSON. The outer form is decoded once. An absent charset or
+case-insensitive `utf8` or `utf-8` is supported. Literal JSON, empty text and
+unrelated non-form text keep their generic behavior. Existing explicit binary
+identity/gzip decoding may supply the entity, with endpoint compression rules
+still applied to the observed headers.
+
+Ambiguous form structure, a query/body `data` conflict, unsupported charset
+and recognized paired-CESU-8 SDK output leave the body unvalidated.
+`core.request.sdk_body_unvalidated` reports that local scope at information
+severity. Unavailable bodies or uncertain MIME and compression evidence retain
+existing generic capture and encoding information deferrals. Demonstrably
+malformed supported JSON or Base64 still receives existing vendor diagnostics.
+Observed query and HTTP checks continue.
+
+`core.request.sdk_body_limit` reports a local inspection bound at information
+severity. This profile bounds source entity, decoded data and JSON to 16 MiB,
+source JSON values including duplicates to 100,000, depth to 64, root records
+to 2,500 and aggregate generated path bytes to 16 MiB. It also preflights up to
+16 MiB of projected generated text and 128,000,000 work units, including
+finding text and owner-specific secret comparison and replacement growth.
+These are local evaluator policies, not vendor rejection quotas. Ordinary
+2,000-record and 2,001-record Track batches remain inspectable within those
+bounds and reach the documented 2,000-record rule.
+
+The capability belongs only to the three compiled builtin entries. Custom
+registration, replacement plugins and `Engine::new` do not receive it.
+Co-selected custom owners retain their ordinary request and secret handling.
+No public request, manifest, plugin or report type changes. The bounds apply
+to this profile and do not claim a general resource guarantee for every legacy
+input path. See the [source review](reviews/mixpanel-sdk-beacon.json) for the
+pinned producer, exact ownership and remaining requirements.
+
 ## Explicit binary captures preserve their original bytes.
 
 ```json

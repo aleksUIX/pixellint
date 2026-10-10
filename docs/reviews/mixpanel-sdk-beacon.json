@@ -1,0 +1,129 @@
+{
+  "version": "0.44.0",
+  "owner_plugin_ids": [
+    "vendor/mixpanel",
+    "vendor/mixpanel-engage",
+    "vendor/mixpanel-groups"
+  ],
+  "status": "source_scoped_implementation",
+  "spec_complete": false,
+  "source_access": "2026-10-10",
+  "sdk_commit": "d6bdc7f80230a54f8ec470d344058d0a36a81aa2",
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/d6bdc7f80230a54f8ec470d344058d0a36a81aa2/src/mixpanel-core.js",
+      "sha256": "d3bb768c4b4649ef578edb1ba4fe9431d6f21b27cd0559809d52a07c3e2696ba",
+      "bytes": 104091
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/d6bdc7f80230a54f8ec470d344058d0a36a81aa2/src/utils.js",
+      "sha256": "3c1a719b187f0fefffc8c3fdbd7e0dfd0aa6361f61b9c9325b8260f11339ef1a",
+      "bytes": 59255
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/d6bdc7f80230a54f8ec470d344058d0a36a81aa2/src/mixpanel-group.js",
+      "sha256": "cdab7cd0bab60974f8eb7d5ea8cffab55e01ed8df86d20ac00c5630a6a4ec23c",
+      "bytes": 6329
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mixpanel/mixpanel-js/d6bdc7f80230a54f8ec470d344058d0a36a81aa2/src/mixpanel-people.js",
+      "sha256": "ab0b5e0cf33f02c8924ef6b3bb0c28ed6a8d7f59e544e96a0e661aadb845394f",
+      "bytes": 17462
+    },
+    {
+      "url": "https://w3c.github.io/beacon/",
+      "source_requirement": "Beacon extracts a BodyInit and installs its resulting Content-Type. Editor draft inspected on 2026-10-10."
+    },
+    {
+      "url": "https://fetch.spec.whatwg.org/#concept-bodyinit-extract",
+      "source_requirement": "String BodyInit extraction assigns text/plain;charset=UTF-8."
+    }
+  ],
+  "producer_contract": [
+    "The pinned SDK serializes data as raw JSON or Base64, percent-encodes it as the sole data form member and sends a string with sendBeacon.",
+    "The standard Mixpanel hosts default to raw JSON after initialization. Caller-selected Base64 remains supported.",
+    "Track, People and Groups use the same producer. Source execution uses the pinned functions and synthetic environment stubs without network requests."
+  ],
+  "endpoint_scope": [
+    {
+      "owner_plugin_id": "vendor/mixpanel",
+      "method": "POST",
+      "host_authority": "Existing builtin supports_http host matcher must pass.",
+      "paths": [
+        "/track",
+        "/track/"
+      ]
+    },
+    {
+      "owner_plugin_id": "vendor/mixpanel-engage",
+      "method": "POST",
+      "host_authority": "Existing builtin supports_http host matcher must pass.",
+      "paths": [
+        "/engage",
+        "/engage/"
+      ]
+    },
+    {
+      "owner_plugin_id": "vendor/mixpanel-groups",
+      "method": "POST",
+      "host_authority": "Existing builtin supports_http host matcher must pass.",
+      "paths": [
+        "/groups",
+        "/groups/"
+      ]
+    }
+  ],
+  "entity_contract": {
+    "content_type": "One observed text/plain Content-Type with absent charset or utf8/utf-8, matched case-insensitively.",
+    "body": "Observable form assignment with exactly one once-decoded data member. Raw JSON and supported strict UTF-8 Base64 reach existing body contracts.",
+    "binary": "Existing explicit binary identity/gzip decoder may supply the entity. Existing endpoint gzip policy findings remain unchanged.",
+    "ambiguity": "Repeated or extra members, query/body data ambiguity, malformed form decoding, unsupported charset, uncertain capture metadata and recognized paired-CESU-8 SDK payloads are explicitly unvalidated.",
+    "legacy": "Empty text, non-form text and literal JSON preserve generic handling."
+  },
+  "owner_contract": {
+    "assignment": "Private capability attached only while compiling the three builtin entries.",
+    "selection": "Both owner selection/exclusion and exact endpoint path apply before body preparation.",
+    "custom_plugins": "Engine::new and generic register or manifest replacement receive no builtin capability. Co-selected custom owners retain legacy input and secret handling.",
+    "public_api": "No new or modified public struct, enum or trait declaration bodies. No manifest schema capability was added."
+  },
+  "local_inspection_limits": {
+    "entity_bytes": 16777216,
+    "decoded_data_bytes": 16777216,
+    "decoded_json_bytes": 16777216,
+    "json_source_nodes_including_duplicate_keys": 100000,
+    "json_depth": 64,
+    "root_records": 2500,
+    "aggregate_generated_path_bytes": 16777216,
+    "projected_generated_text_bytes": 16777216,
+    "work_units": 128000000,
+    "scope": "Private SDK body inspection policy, not vendor acceptance quotas. Ordinary 2001-record Track inputs remain inspectable and reach the documented 2000-record rule."
+  },
+  "diagnostic_contract": {
+    "unvalidated": "core.request.sdk_body_unvalidated",
+    "limit": "core.request.sdk_body_limit",
+    "severity": "info",
+    "query": "Observed query checks continue when SDK body validation is deferred.",
+    "malformed_supported_payload": "Existing vendor encoded-data errors remain applicable to demonstrably malformed supported JSON or Base64."
+  },
+  "implementation_safeguards": [
+    "Bound source parse and projection work before invoking existing vendor scopes.",
+    "Bound descendant lookup using ordered concrete path prefixes while retaining depth, spans, duplicate-key and punctuated-key behavior.",
+    "Suppress the builtin prepared data target value before findings clone a whole encoded capture.",
+    "Collect and deduplicate lexical secrets for that owner, then redact original positions in one pass. Bound secret comparisons and replacement growth before accepting the body."
+  ],
+  "authored_control_provenance": {
+    "cases": 144,
+    "input_sha256": "fecf9a4be926e389a2d13e1d82cd3ed79860bc987674525718014c8d2859d69e",
+    "scope": "Independent static source and boundary controls with original explicit selection and capture clocks. Separate from historical D1.",
+    "producer_controls": 28,
+    "default_configuration_controls": 4,
+    "prototype_corrections": "An empty non-form text expectation was corrected to preserve generic handling. Unicode fixture spelling corrections and rejected resource implementations are retained in private review checkpoints; no production corpus inputs were changed."
+  },
+  "remaining_requirements": [
+    "External token/project/history and account acceptance cannot be established from one captured request.",
+    "Per-event and serialized property vendor byte limits retain unresolved unit and source-accounting gaps.",
+    "Existing profile operation precedence and Group REST versus SDK source conflicts remain inventoried.",
+    "Unknown coding chains, unavailable metadata, unrelated text and paired-CESU-8 interpretation remain outside this inspected subset.",
+    "Local bounds do not claim a general resource guarantee for every legacy input path or custom plugin."
+  ]
+}

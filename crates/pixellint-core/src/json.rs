@@ -114,6 +114,8 @@ impl<'a> JsonDocument<'a> {
             pos: 0,
             fields: BTreeMap::new(),
             max_depth,
+            budget: None,
+            limit_hit: false,
         };
 
         reader.skip_whitespace();
@@ -130,6 +132,67 @@ impl<'a> JsonDocument<'a> {
         })
     }
 
+    /// Local SDK preparation is bounded before the flattened map is allocated.
+    pub(crate) fn parse_bounded(
+        input: &'a str,
+        limits: JsonLimits,
+    ) -> Result<Self, BoundedJsonError> {
+        let mut reader = Reader {
+            bytes: input.as_bytes(),
+            input,
+            pos: 0,
+            fields: BTreeMap::new(),
+            max_depth: limits.depth,
+            budget: Some(JsonBudget {
+                limits,
+                nodes: 0,
+                paths: 0,
+            }),
+            limit_hit: false,
+        };
+        reader.skip_whitespace();
+        let result = reader.read_value(String::new(), 0).and_then(|()| {
+            reader.skip_whitespace();
+            if reader.pos < reader.bytes.len() {
+                Err(reader.error("unexpected trailing content"))
+            } else {
+                Ok(())
+            }
+        });
+        if result.is_err() {
+            return Err(if reader.limit_hit {
+                BoundedJsonError::Limit
+            } else {
+                BoundedJsonError::Invalid
+            });
+        }
+        Ok(Self {
+            input,
+            fields: reader.fields,
+        })
+    }
+
+    /// Prefix ranges avoid rescanning unrelated records for subtree contracts.
+    fn descendants<'d>(
+        &'d self,
+        parent: &str,
+    ) -> Box<dyn Iterator<Item = (&'d String, &'d JsonField<'a>)> + 'd> {
+        if parent.is_empty() {
+            return Box::new(self.fields.iter());
+        }
+        let dotted = format!("{parent}.");
+        let bracketed = format!("{parent}[");
+        let first = self
+            .fields
+            .range(dotted.clone()..)
+            .take_while(move |(path, _)| path.starts_with(&dotted));
+        let second = self
+            .fields
+            .range(bracketed.clone()..)
+            .take_while(move |(path, _)| path.starts_with(&bracketed));
+        Box::new(first.chain(second))
+    }
+
     /// Whether the text looks like it is meant to be a JSON document. Used to
     /// route an artifact whose kind the caller did not state.
     pub(crate) fn looks_like_json(input: &str) -> bool {
@@ -139,6 +202,10 @@ impl<'a> JsonDocument<'a> {
 
     pub(crate) fn get(&self, path: &str) -> Option<&JsonField<'a>> {
         self.fields.get(path)
+    }
+
+    pub(crate) fn fields(&self) -> impl Iterator<Item = (&String, &JsonField<'a>)> {
+        self.fields.iter()
     }
 
     pub(crate) fn contains(&self, path: &str) -> bool {
@@ -169,6 +236,10 @@ impl<'a> JsonDocument<'a> {
             .map(String::as_str)
     }
 
+    pub(crate) fn subtree_candidate_count(&self, path: &str) -> usize {
+        self.descendants(path).count()
+    }
+
     /// Maximum container depth below a value. The selected container counts
     /// as one level; a scalar has depth zero.
     pub(crate) fn subtree_depth(&self, path: &str) -> Option<usize> {
@@ -177,8 +248,8 @@ impl<'a> JsonDocument<'a> {
             return Some(0);
         }
         Some(
-            self.fields
-                .values()
+            std::iter::once(root)
+                .chain(self.descendants(path).map(|(_, field)| field))
                 .filter(|field| {
                     field.start >= root.start
                         && field.end <= root.end
@@ -198,8 +269,8 @@ impl<'a> JsonDocument<'a> {
             return None;
         }
         Some(
-            self.fields
-                .values()
+            self.descendants(path)
+                .map(|(_, field)| field)
                 .filter(|field| {
                     field.depth == root.depth + 1
                         && field.start >= root.start
@@ -249,12 +320,17 @@ impl<'a> JsonDocument<'a> {
     /// underneath it. Only the last step is allowed to be absent, because that
     /// absence is exactly what a presence contract is there to report.
     pub(crate) fn expand(&self, pattern: &str) -> Vec<String> {
+        self.expand_with_work(pattern).0
+    }
+
+    pub(crate) fn expand_with_work(&self, pattern: &str) -> (Vec<String>, usize) {
+        let mut work = pattern.len();
         if pattern.is_empty() {
-            return vec![String::new()];
+            return (vec![String::new()], 1);
         }
         let steps = parse_pattern(pattern);
         if steps.is_empty() {
-            return Vec::new();
+            return (Vec::new(), work);
         }
 
         let last = steps.len() - 1;
@@ -263,6 +339,7 @@ impl<'a> JsonDocument<'a> {
         for (index, step) in steps.iter().enumerate() {
             let mut next = Vec::new();
             for prefix in &prefixes {
+                work = work.saturating_add(prefix.len() + 1);
                 match step {
                     PatternStep::Member(key) => {
                         if self
@@ -278,13 +355,15 @@ impl<'a> JsonDocument<'a> {
                         }
                     }
                     PatternStep::EveryMember => {
-                        next.extend(self.members(prefix).into_iter().map(|(_, path)| path));
+                        let members = self.members(prefix);
+                        work = work.saturating_add(members.len());
+                        next.extend(members.into_iter().map(|(_, path)| path));
                     }
                     PatternStep::EveryDescendant => {
                         if let Some(root) = self.get(prefix) {
                             next.extend(
-                                self.fields
-                                    .iter()
+                                self.descendants(prefix)
+                                    .inspect(|_| work = work.saturating_add(1))
                                     .filter(|(_, field)| {
                                         field.depth > root.depth
                                             && field.start >= root.start
@@ -296,6 +375,7 @@ impl<'a> JsonDocument<'a> {
                     }
                     PatternStep::EveryElement => {
                         if let Some(len) = self.array_len(prefix) {
+                            work = work.saturating_add(len);
                             next.extend((0..len).map(|element| format!("{prefix}[{element}]")));
                         }
                     }
@@ -311,11 +391,11 @@ impl<'a> JsonDocument<'a> {
 
             prefixes = next;
             if prefixes.is_empty() {
-                return Vec::new();
+                return (Vec::new(), work);
             }
         }
 
-        prefixes
+        (prefixes, work)
     }
 
     /// Whether at least one concrete path under this pattern is present. This is
@@ -484,12 +564,32 @@ pub(crate) fn parent_path(path: &str) -> Option<&str> {
     Some(last.map_or("", |index| &path[..index]))
 }
 
+#[derive(Clone, Copy)]
+pub(crate) struct JsonLimits {
+    pub nodes: usize,
+    pub paths: usize,
+    pub depth: usize,
+    pub root_records: usize,
+}
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) enum BoundedJsonError {
+    Invalid,
+    Limit,
+}
+struct JsonBudget {
+    limits: JsonLimits,
+    nodes: usize,
+    paths: usize,
+}
+
 struct Reader<'a> {
     bytes: &'a [u8],
     input: &'a str,
     pos: usize,
     fields: BTreeMap<String, JsonField<'a>>,
     max_depth: usize,
+    budget: Option<JsonBudget>,
+    limit_hit: bool,
 }
 
 impl<'a> Reader<'a> {
@@ -547,7 +647,54 @@ impl<'a> Reader<'a> {
         );
     }
 
+    fn limit_error(&mut self) -> JsonError {
+        self.limit_hit = true;
+        self.error("local JSON preparation limit")
+    }
+
+    fn checked_child_path(
+        &mut self,
+        parent: &str,
+        key: &str,
+        array: bool,
+    ) -> Result<String, JsonError> {
+        let suffix = if array {
+            format!("[{key}]")
+        } else if key.is_empty() || key.contains(['.', '[', ']', '*', '"', '\\']) {
+            format!(
+                "[{}]",
+                serde_json::to_string(key).expect("string serializes")
+            )
+        } else if parent.is_empty() {
+            key.to_owned()
+        } else {
+            format!(".{key}")
+        };
+        if let Some(budget) = &self.budget
+            && parent
+                .len()
+                .checked_add(suffix.len())
+                .and_then(|length| budget.paths.checked_add(length))
+                .is_none_or(|total| total > budget.limits.paths)
+        {
+            return Err(self.limit_error());
+        }
+        Ok(format!("{parent}{suffix}"))
+    }
+
     fn read_value(&mut self, path: String, depth: usize) -> Result<(), JsonError> {
+        if let Some(budget) = &mut self.budget {
+            let nodes = budget.nodes.checked_add(1);
+            let paths = budget.paths.checked_add(path.len());
+            if nodes.is_none_or(|n| n > budget.limits.nodes)
+                || paths.is_none_or(|n| n > budget.limits.paths)
+                || depth > budget.limits.depth
+            {
+                return Err(self.limit_error());
+            }
+            budget.nodes = nodes.expect("checked");
+            budget.paths = paths.expect("checked");
+        }
         if depth > self.max_depth {
             return Err(self.error("nesting is too deep"));
         }
@@ -620,7 +767,12 @@ impl<'a> Reader<'a> {
             self.skip_whitespace();
             self.expect(b':')?;
             self.skip_whitespace();
-            self.read_value(member_path(&path, key.as_ref()), depth + 1)?;
+            let child = if self.budget.is_some() {
+                self.checked_child_path(&path, key.as_ref(), false)?
+            } else {
+                member_path(&path, key.as_ref())
+            };
+            self.read_value(child, depth + 1)?;
             members += 1;
             self.skip_whitespace();
 
@@ -670,7 +822,20 @@ impl<'a> Reader<'a> {
 
         loop {
             self.skip_whitespace();
-            self.read_value(format!("{path}[{elements}]"), depth + 1)?;
+            if path.is_empty()
+                && self
+                    .budget
+                    .as_ref()
+                    .is_some_and(|b| elements >= b.limits.root_records)
+            {
+                return Err(self.limit_error());
+            }
+            let child = if self.budget.is_some() {
+                self.checked_child_path(&path, &elements.to_string(), true)?
+            } else {
+                format!("{path}[{elements}]")
+            };
+            self.read_value(child, depth + 1)?;
             elements += 1;
             self.skip_whitespace();
 
@@ -1285,5 +1450,110 @@ mod tests {
         assert!(JsonDocument::looks_like_json("  {\"a\":1}"));
         assert!(JsonDocument::looks_like_json("[1]"));
         assert!(!JsonDocument::looks_like_json("https://example.com/?a=1"));
+    }
+    #[test]
+    fn prefix_ranges_preserve_full_scan_subtrees() {
+        for input in [
+            r#"{"a":{"x":1,"array":[{"z":2},3]},"ab":{"x":4},"a.b":{"x":5},"a[":{"x":6},"":{"x":7},"雪":{"😀":[1,2]},"*":{"\\":{"\"":3}}}"#,
+            r#"{"duplicate":{"old":{"deep":[1]}},"duplicate":{"new":2},"a":[0,{"value":[1]},2,3,4,5,6,7,8,9,{"value":[10]}]}"#,
+        ] {
+            let document = JsonDocument::parse(input).unwrap();
+            for (path, root) in &document.fields {
+                let expected: Vec<_> = document
+                    .fields
+                    .iter()
+                    .filter(|(_, field)| {
+                        field.depth > root.depth
+                            && field.start >= root.start
+                            && field.end <= root.end
+                    })
+                    .map(|(path, _)| path.clone())
+                    .collect();
+                let actual: Vec<_> = document
+                    .descendants(path)
+                    .filter(|(_, field)| {
+                        field.depth > root.depth
+                            && field.start >= root.start
+                            && field.end <= root.end
+                    })
+                    .map(|(path, _)| path.clone())
+                    .collect();
+                assert_eq!(actual, expected, "descendants {path}");
+                if matches!(root.kind, JsonValueKind::Object | JsonValueKind::Array) {
+                    let expected = document
+                        .fields
+                        .values()
+                        .filter(|field| {
+                            field.start >= root.start
+                                && field.end <= root.end
+                                && matches!(
+                                    field.kind,
+                                    JsonValueKind::Object | JsonValueKind::Array
+                                )
+                        })
+                        .map(|field| field.depth - root.depth + 1)
+                        .max()
+                        .unwrap_or(1);
+                    assert_eq!(document.subtree_depth(path), Some(expected), "depth {path}");
+                }
+                if root.kind == JsonValueKind::Object {
+                    let expected: usize = document
+                        .fields
+                        .values()
+                        .filter(|field| {
+                            field.depth == root.depth + 1
+                                && field.start >= root.start
+                                && field.end <= root.end
+                        })
+                        .map(|field| {
+                            if field.kind == JsonValueKind::Array {
+                                field.len.unwrap_or(0)
+                            } else {
+                                1
+                            }
+                        })
+                        .sum();
+                    assert_eq!(
+                        document.member_value_count(path),
+                        Some(expected),
+                        "members {path}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn bounded_reader_counts_duplicate_values_and_checks_paths_before_allocation() {
+        let limits = JsonLimits {
+            nodes: 4,
+            paths: 100,
+            depth: 3,
+            root_records: 2,
+        };
+        assert!(JsonDocument::parse_bounded(r#"{"x":0,"x":1,"x":2}"#, limits).is_ok());
+        assert!(matches!(
+            JsonDocument::parse_bounded(r#"{"x":0,"x":1,"x":2,"x":3}"#, limits),
+            Err(BoundedJsonError::Limit)
+        ));
+        assert!(matches!(
+            JsonDocument::parse_bounded("[0,1,2]", limits),
+            Err(BoundedJsonError::Limit)
+        ));
+        assert!(matches!(
+            JsonDocument::parse_bounded("[[[[0]]]]", limits),
+            Err(BoundedJsonError::Limit)
+        ));
+        let limits = JsonLimits {
+            nodes: 100,
+            paths: 4,
+            depth: 64,
+            root_records: 2500,
+        };
+        assert!(JsonDocument::parse_bounded(r#"{"aa":{"b":0}}"#, limits).is_err());
+        assert!(matches!(
+            JsonDocument::parse_bounded(r#"{"aa":{"b":0}}"#, limits),
+            Err(BoundedJsonError::Limit)
+        ));
     }
 }
