@@ -105,7 +105,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 161 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 164 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -147,6 +147,20 @@ Context: `{}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `method` | optional | `{"severity":"warning","format_severity":"warning","json_type":"string","format":{"kind":"enum","values":["GET"]}}` | [official_template](https://media.adcanvas.com/tracking.js) |
+
+## `vendor/adctv-tracker`
+
+Root tracking endpoint emitted by ADCTV's public generated tag script. Both sendBeacon and POST fetch producers append an event query field. Missing or empty event is a producer completeness advisory; extra metadata and event names remain open. The source does not establish a complete server acceptance contract or an expansion service for third-party macros.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/adctv-tracker.json).
+
+Matcher: `{"hosts":["track.adctv.com"],"paths":["/"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `event` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://ads.adctv.com/scripts/src/tag.ins/tag.ins.js) |
 
 ## `vendor/adform`
 
@@ -1400,6 +1414,27 @@ Context: `{}`.
 | `body.event` | required | `{"json_type":"object","condition":{"kind":"value_pattern","param":"path","pattern":"/v2/interact$"}}` | [official_vendor](https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/) |
 | `body.events` | required | `{"json_type":"array","condition":{"kind":"value_pattern","param":"path","pattern":"/(?:v[12]/collect\|v1/interact)$"},"min_items":1}` | [official_vendor](https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/) |
 | `body.consent` | required | `{"json_type":"array","min_items":1,"condition":{"kind":"value_pattern","param":"path","pattern":"/v1/privacy/set-consent$"}}` | [official_vendor](https://github.com/adobe/alloy/blob/87b5173f53398a4ad0294fe93cd9fdd6b0643fbd/packages/core/src/components/Consent/validateSetConsentOptions.js) |
+
+## `vendor/adxspace-pixel`
+
+Advisory completeness checks for the published 00px /pixel/{token}/e.gif installation template. The opaque token has no inferred encoding or length requirement, and the optional cachebuster is checked only for the exact installation stub. The reported /tracking/ and /vast/pixel/ video trackers remain outside this pack.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/adxspace-pixel.json).
+
+Matcher: `{"hosts":["00px.net"],"path_patterns":["^/pixel/[^/]*/e\\.gif$"]}`.
+
+Path captures: `^/pixel/(?<creative_token>[^/]*)/e\.gif$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `creative_token` | required | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://wiki.00px.com.br/en/technologies/pixel) |
+| `t` | optional | `{"allow_empty":true}` | [official_template](https://wiki.00px.com.br/en/technologies/pixel) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.adxspace-pixel.cachebuster.installation_stub` | `{"kind":"forbid_value_pattern","params":["t"],"pattern":"^INSERIR(?: \|\\+)CACHEBUSTER$"}` | warning | [official_template](https://wiki.00px.com.br/en/technologies/pixel) |
 
 ## `vendor/amazon-ads`
 
@@ -5032,6 +5067,22 @@ Context: `{}`.
 | `body.client_id` | required | `{"json_type":"string","format":{"kind":"non_empty"},"condition":{"kind":"present","param":"query.measurement_id"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?client_type=gtag) |
 | `body.app_instance_id` | required | `{"json_type":"string","format":{"kind":"non_empty"},"condition":{"kind":"present","param":"query.firebase_app_id"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 
+## `vendor/google-cm360-pcs-view`
+
+PCS view URLs on googleads4.g.doubleclick.net shown in Google's CM360 automated-verification blockedAdTracking template. Checks advise when an opaque generated field is missing or empty. They do not verify signatures, impression acceptance or unpublished tracker variants. Other Google hosts and PCS click routes retain their separate scope.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/google-cm360-pcs-view.json).
+
+Matcher: `{"hosts":["googleads4.g.doubleclick.net"],"paths":["/pcs/view"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `xai` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://support.google.com/campaignmanager/answer/9858133?hl=en) |
+| `sai` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://support.google.com/campaignmanager/answer/9858133?hl=en) |
+| `sig` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://support.google.com/campaignmanager/answer/9858133?hl=en) |
+
 ## `vendor/google-ima-interaction`
 
 Interaction URLs returned by the official Google IMA single-inline sample tag. Missing generated ai, sigh or event label is a template completeness advisory. Opaque signatures, additional server variants and session correctness are outside these locally observable checks.
@@ -5535,6 +5586,7 @@ Path captures: `^/vevent/(?<event_name>[^/]*)(?:/(?<advertiser_id>[^/]*))?(?:/(?
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.ias-video-pixel.xsid.placeholder` | `{"kind":"forbid_value_pattern","params":["xsId"],"pattern":"^\\[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE\\]$"}` | error | [official_vendor](https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf) |
+| `vendor.ias-video-pixel.xsid.unstable_macro` | `{"kind":"forbid_value_pattern","params":["xsId"],"pattern":"^(?:\\[(?:CACHEBUSTING\|TIMESTAMP)\\]\|\\$\\{CACHEBUSTER\\})$"}` | warning | [official_vendor](https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf) |
 
 ## `vendor/ias-video`
 

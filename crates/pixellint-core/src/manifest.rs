@@ -206,6 +206,10 @@ pub struct MatchSpec {
     /// Path substring matches.
     #[serde(default)]
     pub path_contains: Vec<String>,
+    /// Full-path regular expression alternatives on a host-bound endpoint.
+    /// These select endpoint scope; `path_pattern` separately extracts fields.
+    #[serde(default)]
+    pub path_patterns: Vec<String>,
     /// At least one named query key must be submitted, including an empty value.
     #[serde(default)]
     pub query_params_any: Vec<String>,
@@ -1515,6 +1519,7 @@ pub struct ManifestRulePack {
     docs: Option<String>,
     param_style: ParamStyle,
     path_pattern: Option<Regex>,
+    matching_path_patterns: Vec<Regex>,
     client_fragment_params: BTreeSet<String>,
     matcher: MatchSpec,
     params: Vec<CompiledParam>,
@@ -2155,6 +2160,14 @@ impl ManifestRulePack {
                     .to_string(),
             });
         }
+        if manifest.matcher.any_host && !manifest.matcher.path_patterns.is_empty() {
+            return Err(ManifestError::InvalidConstraint {
+                pack_id,
+                name: "match.path_patterns".to_string(),
+                reason: "path expression selectors require an explicit host or host suffix"
+                    .to_string(),
+            });
+        }
         if manifest.matcher.any_host
             && ((manifest.matcher.paths.is_empty() && manifest.matcher.path_prefixes.is_empty())
                 || manifest
@@ -2195,6 +2208,24 @@ impl ManifestRulePack {
         }
 
         let code_prefix = pack_id.replace('/', ".");
+
+        let matching_path_patterns = manifest
+            .matcher
+            .path_patterns
+            .iter()
+            .map(|pattern| {
+                if pattern.is_empty() {
+                    return Err(ManifestError::EmptyField {
+                        pack_id: pack_id.clone(),
+                        field: "match.path_patterns",
+                    });
+                }
+                // Validate the standalone expression before adding scope anchors.
+                // An unmatched group must not escape the enclosing expression.
+                compile_regex(&pack_id, pattern)?;
+                compile_regex(&pack_id, &format!(r"\A(?:{pattern})\z"))
+            })
+            .collect::<Result<Vec<_>, _>>()?;
 
         let path_pattern = match &manifest.path_pattern {
             Some(pattern) => {
@@ -2592,6 +2623,7 @@ impl ManifestRulePack {
             docs: manifest.docs.clone(),
             param_style: manifest.param_style,
             path_pattern,
+            matching_path_patterns,
             client_fragment_params: manifest.client_fragment_params.into_iter().collect(),
             matcher,
             params,
@@ -2714,7 +2746,8 @@ impl ManifestRulePack {
         let path = parsed.path.as_ref();
         let path_constrained = !self.matcher.paths.is_empty()
             || !self.matcher.path_prefixes.is_empty()
-            || !self.matcher.path_contains.is_empty();
+            || !self.matcher.path_contains.is_empty()
+            || !self.matching_path_patterns.is_empty();
 
         if !path_constrained {
             return true;
@@ -2731,6 +2764,10 @@ impl ManifestRulePack {
                 .path_contains
                 .iter()
                 .any(|needle| path.contains(needle))
+            || self
+                .matching_path_patterns
+                .iter()
+                .any(|pattern| pattern.is_match(path))
     }
 }
 

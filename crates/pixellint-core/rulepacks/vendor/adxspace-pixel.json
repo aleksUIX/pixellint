@@ -1,0 +1,50 @@
+{
+  "id": "vendor/adxspace-pixel",
+  "display_name": "00px counting pixel",
+  "description": "Advisory completeness checks for the published 00px /pixel/{token}/e.gif installation template. The opaque token has no inferred encoding or length requirement, and the optional cachebuster is checked only for the exact installation stub. The reported /tracking/ and /vast/pixel/ video trackers remain outside this pack.",
+  "vendor": "adxspace",
+  "source_level": "official_template",
+  "docs": "https://wiki.00px.com.br/en/technologies/pixel",
+  "match": {
+    "hosts": [
+      "00px.net"
+    ],
+    "path_patterns": [
+      "^/pixel/[^/]*/e\\.gif$"
+    ]
+  },
+  "path_pattern": "^/pixel/(?<creative_token>[^/]*)/e\\.gif$",
+  "params": [
+    {
+      "name": "creative_token",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The published counting-pixel template carries an opaque generated token in this path segment. This warning identifies an empty template slot and does not assert an undocumented collector API requirement.",
+      "fix_hint": "Keep the token from the generated 00px counting-pixel tag."
+    },
+    {
+      "name": "t",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "The published example uses this query field for a cachebuster. Its presence, emptiness, encoding and numeric format are not declared mandatory by the guide."
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.adxspace-pixel.cachebuster.installation_stub",
+      "kind": "forbid_value_pattern",
+      "params": [
+        "t"
+      ],
+      "pattern": "^INSERIR(?: |\\+)CACHEBUSTER$",
+      "severity": "warning",
+      "message": "The 00px counting pixel still contains the cachebuster installation stub from the published example.",
+      "fix_hint": "Replace INSERIR+CACHEBUSTER with a cachebuster value or a macro expanded by the serving platform.",
+      "doc": "https://wiki.00px.com.br/en/technologies/pixel",
+      "source_level": "official_template"
+    }
+  ]
+}

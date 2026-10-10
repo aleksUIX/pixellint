@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 161, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 164, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -88,6 +88,19 @@ assert.equal(vendorForHost("nobody.example"), null);
 // Both npm entry points must use the refreshed engine for live VAST findings.
 const cjs = createRequire(import.meta.url)("./index.cjs");
 for (const entry of [{ validate, vendorForHost }, cjs]) {
+  for (const [artifact, pack, code] of [
+    ["https://googleads4.g.doubleclick.net/pcs/view?xai=x&sai=y", "vendor/google-cm360-pcs-view", "vendor.google-cm360-pcs-view.param.sig.missing"],
+    ["https://track.adctv.com/", "vendor/adctv-tracker", "vendor.adctv-tracker.param.event.missing"],
+    ["https://00px.net/pixel/token/e.gif?t=INSERIR+CACHEBUSTER", "vendor/adxspace-pixel", "vendor.adxspace-pixel.cachebuster.installation_stub"],
+    ["https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[TIMESTAMP]", "vendor/ias-video-pixel", "vendor.ias-video-pixel.xsid.unstable_macro"],
+  ]) {
+    const report = entry.validate(artifact, { kind: "vast", state: "template" }).reports.find(report => report.plugin_id === pack);
+    assert.ok(report?.violations.some(finding => finding.code === code && finding.severity === "warning"));
+  }
+  for (const artifact of ["https://00px.net/tracking/token/starts", "https://00px.net/vast/pixel/token", "https://pagead2.googlesyndication.com/pcs/view"]) {
+    assert.ok(entry.validate(artifact, { kind: "vast" }).reports.every(report => !report.plugin_id.startsWith("vendor/")), "undocumented siblings stay outside pack scope");
+  }
+  assert.equal(entry.vendorForHost("track.activemetering.com")?.vendor, "disqo");
   const uvp = entry.validate("https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE]", { kind: "vast", state: "template" });
   assert.ok(uvp.reports.flatMap((report) => report.violations).some((finding) => finding.code === "vendor.ias-video-pixel.xsid.placeholder" && finding.severity === "error"));
   assert.equal(entry.vendorForHost("00px.net")?.vendor, "adxspace");

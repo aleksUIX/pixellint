@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.38.0 (2026-10-10)
+
+- Add source-template packs for Google CM360 `googleads4` PCS view trackers,
+  ADCTV root event trackers and 00px counting pixels. Findings remain advisory
+  where the sources do not publish a required server contract.
+- Warn when IAS UVP external session IDs use the documented cachebuster or
+  timestamp macros. Preserve the existing installation-stub error.
+- Add host-bound full-path expression selectors, keeping path extraction
+  separate from endpoint selection and preserving existing selector behavior.
+- Attribute the exact ActiveMetering tracker host to DISQO using official
+  partner lists. Keep undocumented video routes and unconfirmed hosts explicit.
+- Add source and scope controls for all new packs, preserve core privacy
+  checks, and record the documented gaps for every reported tracker family.
+
 All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).

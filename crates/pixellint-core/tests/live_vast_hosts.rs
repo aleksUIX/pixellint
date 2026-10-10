@@ -83,7 +83,11 @@ fn observed_hosts_get_attribution_and_core_checks_without_invented_contracts() {
     ] {
         let entry = engine.directory().lookup_host(host).unwrap();
         assert_eq!(entry.vendor, vendor);
-        assert!(entry.rulepack.is_none());
+        if vendor == "adxspace" {
+            assert_eq!(entry.rulepack.as_deref(), Some("vendor/adxspace-pixel"));
+        } else {
+            assert!(entry.rulepack.is_none());
+        }
         assert!(
             engine
                 .directory()

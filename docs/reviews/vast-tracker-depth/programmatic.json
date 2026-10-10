@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "fetched_at_utc": "2026-10-10T04:11:56.023541+00:00",
+  "baseline_version": "0.37.0",
+  "review_kind": "Public primary-source endpoint contract audit",
+  "vendor_rulepacks_added": 0,
+  "vendor_field_contracts_added": 0,
+  "vendor_assertions_added": 0,
+  "decision": "No new validation pack is justified by the reviewed sources for the supplied five endpoint families.",
+  "limits": [
+    "The supplied inventory establishes observed hosts and path families, not required fields or allowed values.",
+    "No production tracker endpoints were requested or modified.",
+    "No private sample query values, customer identifiers, consent strings or raw payloads are included.",
+    "Checks for timing, successful firing, auction participation and billing require evidence beyond a standalone URL.",
+    "Published source-body hashes describe the reviewed snapshots and are not immutable versions of dynamic documentation.",
+    "No outbound vendor contact was made."
+  ],
+  "destinations": [
+    {
+      "vendor": "adtelligent",
+      "observed_hosts": [
+        "ads228.adtelligent.com",
+        "ads283.adtelligent.com"
+      ],
+      "observed_path_families": [
+        "/t/e/",
+        "/tre/imp/"
+      ],
+      "released_coverage": "directory_only",
+      "spec_complete": false,
+      "source_ids": [
+        "adtelligent-third-party-tracking",
+        "adtelligent-client-flow",
+        "adtelligent-notification-billing",
+        "adtelligent-request-video-example",
+        "adtelligent-required-params",
+        "adtelligent-macros",
+        "adtelligent-android-repository",
+        "adtelligent-swift-readme",
+        "adtelligent-swift-package"
+      ],
+      "supported_conclusions": [
+        "Directory attribution is already present for the exact observed hosts.",
+        "Incoming ad-request validation occurs before wrapper delivery and does not establish the emitted tracking URL contract.",
+        "Third-party tracking configuration events are not an accepted event parameter enumeration for Adtelligent-owned trackers.",
+        "The Swift integration uses a binary SDK; callback names are not a pixel request schema."
+      ],
+      "open_contract_questions": [
+        "Supported /t/e/ and /tre/imp/ route versions and path components",
+        "Generated-token semantics, serialization and replaceable fields",
+        "Required versus optional query keys and duplicate-query behavior",
+        "Expiry and signature rules, if any",
+        "Event and privacy field requirements on these tracker routes"
+      ],
+      "rejected_assumptions": [
+        "Require device IP, user agent, dimensions, app bundle or source ID based on incoming request docs.",
+        "Restrict pixel event values to the third-party configuration UI list."
+      ]
+    },
+    {
+      "vendor": "beeswax",
+      "observed_hosts": [
+        "us-east-1.event.prod.bidr.io"
+      ],
+      "observed_path_families": [
+        "/log/act/svr",
+        "/log/imp/svr"
+      ],
+      "released_coverage": "directory_only",
+      "spec_complete": false,
+      "source_ids": [
+        "beeswax-cookie-sync",
+        "beeswax-life-of-bid",
+        "beeswax-macros",
+        "beeswax-ad-log",
+        "beeswax-eventid",
+        "beeswax-bid-response",
+        "beeswax-hexbid-tree"
+      ],
+      "supported_conclusions": [
+        "Directory attribution is already present for the exact observed host.",
+        "Official docs identify generated event URLs and provide macros which expand to complete tracking URLs.",
+        "Streaming log schemas describe downstream records rather than the URL token wire schema.",
+        "Published auction identifier strings are explicitly opaque."
+      ],
+      "open_contract_questions": [
+        "Meaning and permitted alternatives for /svr",
+        "Exact URL query and generated-token wire schema",
+        "Token encoding, versioning, signatures and expiry",
+        "Required and optional URL keys",
+        "Event representation and tracker-specific privacy rules"
+      ],
+      "rejected_assumptions": [
+        "Require cookie-sync buyer_user_id on video impression or activity trackers.",
+        "Decode arbitrary tracker tokens as the streaming log protobuf.",
+        "Require a UUID, fixed token length or particular auction identifier layout.",
+        "Apply downstream ActivityLogMessage enum values to an undocumented URL field."
+      ]
+    },
+    {
+      "vendor": "aarki",
+      "observed_hosts": [
+        "rm.aarki.net"
+      ],
+      "observed_path_families": [
+        "/v1/api/{id}/track.gif"
+      ],
+      "released_coverage": "directory_only",
+      "spec_complete": false,
+      "source_ids": [
+        "aarki-index",
+        "aarki-ctv-guide",
+        "aarki-ctv-appsflyer",
+        "aarki-ctv-creative",
+        "aarki-video",
+        "aarki-repositories"
+      ],
+      "supported_conclusions": [
+        "Directory attribution is already present for the exact observed host.",
+        "Aarki help URLs redirect to the RZR documentation host.",
+        "The official RZR CTV AppsFlyer example uses pid=aarki_int on impressions.onelink.me, a separate endpoint."
+      ],
+      "open_contract_questions": [
+        "The /v1/api/{id}/track.gif identifier semantics and supported route syntax",
+        "Required versus optional query fields",
+        "Event representation and mutable macros",
+        "HTTP method constraints, signing, expiry and privacy requirements",
+        "Operator-confirmed relationship between the older Aarki tracker and newer RZR infrastructure"
+      ],
+      "rejected_assumptions": [
+        "Apply AppsFlyer OneLink or Beeswax creative template requirements to Aarki tracking URLs.",
+        "Infer pixel.rzrglobal.com ownership solely from the Aarki help redirect.",
+        "Declare arbitrary path IDs invalid using one observed ID shape."
+      ]
+    },
+    {
+      "vendor": "sovrn",
+      "observed_hosts": [
+        "n.adv.lijit.com"
+      ],
+      "observed_path_families": [
+        "/a/{id}"
+      ],
+      "released_coverage": "directory_only",
+      "spec_complete": false,
+      "source_ids": [
+        "sovrn-lijit-domain",
+        "sovrn-impression-methods",
+        "sovrn-impression-update",
+        "sovrn-bad-ad",
+        "sovrn-index"
+      ],
+      "supported_conclusions": [
+        "Directory attribution is already present for the exact observed host.",
+        "Official docs require VAST impression placement for Sovrn video bids, which needs surrounding markup to assess.",
+        "Display bill-on-render rollout explicitly excludes video and CTV.",
+        "A Sovrn-related domain alone does not establish that Sovrn served an impression."
+      ],
+      "open_contract_questions": [
+        "Supported /a/{id} route versions and token meaning",
+        "Required versus optional query keys and duplicate-query behavior",
+        "Allowed replaceable macros, signing and expiry",
+        "Distinct video versus display contracts, if any"
+      ],
+      "rejected_assumptions": [
+        "Apply cookie-sync or commerce API query requirements to this impression route.",
+        "Require display bill-on-render conditions on a VAST video tracker.",
+        "Treat directory attribution as proof of delivery, auction participation or billing."
+      ]
+    },
+    {
+      "vendor": null,
+      "supplied_vendor_label": "Index / rtactivate",
+      "observed_hosts": [
+        "idxgm.rtactivate.com"
+      ],
+      "observed_path_families": [
+        "/tagid/{id}/"
+      ],
+      "released_coverage": "unattributed_core_only",
+      "spec_complete": false,
+      "source_ids": [
+        "index-supported-request-fields",
+        "scoota-privacy-current"
+      ],
+      "supported_conclusions": [
+        "No vendor-controlled source reviewed confirms Index Exchange or Scoota ownership of this exact host.",
+        "The public Index OpenRTB guide does not establish rtactivate domain ownership or its pixel URL schema."
+      ],
+      "non_authoritative_lead": "A publisher consent notice associated the exact host with Scoota; that conflicts with the supplied Index label and is not sufficient to add either vendor attribution.",
+      "open_contract_questions": [
+        "Independent operator-controlled declaration of exact-host ownership",
+        "Meaning and supported syntax of /tagid/{id}/",
+        "Required and optional query keys",
+        "Supported macros, duplicate keys, signing, expiry and privacy requirements"
+      ],
+      "rejected_assumptions": [
+        "Attribute the endpoint to Index Exchange based on its idxgm prefix.",
+        "Attribute the endpoint to Scoota based only on a customer consent inventory.",
+        "Require decimal numeric IDs based on one supplied sample path."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "adtelligent-third-party-tracking",
+      "url": "https://support.adtelligent.com/850849-3rd-Party-Tracking",
+      "resolved_url": "https://support.adtelligent.com/850849-3rd-Party-Tracking",
+      "http_status": 200,
+      "sha256": "83ba87b2f52049eb5d9c764e0b5e5738434469d8e1fe553bd6c5478bc512a2d1",
+      "bytes": 47446
+    },
+    {
+      "id": "adtelligent-client-flow",
+      "url": "https://support.adtelligent.com/481859-Client-side-Tag-to-Tag-Flow--Metrics",
+      "resolved_url": "https://support.adtelligent.com/481859-Client-side-Tag-to-Tag-Flow--Metrics",
+      "http_status": 200,
+      "sha256": "298eef3785ba702c5a49dad0e1b1395f7d861adaa8cdfea9a6343ccddbf0a33d",
+      "bytes": 50497
+    },
+    {
+      "id": "adtelligent-notification-billing",
+      "url": "https://support.adtelligent.com/536457-nURL-and-bURL-support",
+      "resolved_url": "https://support.adtelligent.com/536457-nURL-and-bURL-support",
+      "http_status": 200,
+      "sha256": "64a256bddd26eda8ceb1c8d29e71754cc5a27d3e2c4dcc81203941f01afde6fb",
+      "bytes": 47725
+    },
+    {
+      "id": "adtelligent-request-video-example",
+      "url": "https://support.adtelligent.com/517612-RequestResponse-samples-video",
+      "resolved_url": "https://support.adtelligent.com/517612-RequestResponse-samples-video",
+      "http_status": 200,
+      "sha256": "f5a8ec36426fa3ee3c3ab99f93a6512c016cb89ff1b4da209d2eee388f0cdeee",
+      "bytes": 49761
+    },
+    {
+      "id": "adtelligent-required-params",
+      "url": "https://support.adtelligent.com/347898-Required-Parameters-for-different-traffic-types",
+      "resolved_url": "https://support.adtelligent.com/347898-Required-Parameters-for-different-traffic-types",
+      "http_status": 200,
+      "sha256": "8be496fe90999cd734ecf9ac3af01d76bfdda21b8a934e0cbe3cd4561affdc56",
+      "bytes": 50184
+    },
+    {
+      "id": "adtelligent-macros",
+      "url": "https://tools.adtelligent.com/ssp/",
+      "resolved_url": "https://tools.adtelligent.com/ssp/",
+      "http_status": 200,
+      "sha256": "f2b0728ac15a87753d7ef7e7f4a913fe313425e1ebca4d44268f82f13d46cec8",
+      "bytes": 136347
+    },
+    {
+      "id": "beeswax-cookie-sync",
+      "url": "https://api-docs.freewheel.tv/advertiser/docs/cookie-syncing",
+      "resolved_url": "https://api-docs.freewheel.tv/advertiser/docs/cookie-syncing",
+      "http_status": 200,
+      "sha256": "682837de8be5310f23402fe1d3a8ae70b2b0ea4d4846e1e501fbe384c9d3739d",
+      "bytes": 1222349
+    },
+    {
+      "id": "beeswax-macros",
+      "url": "https://api-docs.freewheel.tv/advertiser/docs/macros",
+      "resolved_url": "https://api-docs.freewheel.tv/advertiser/docs/macros",
+      "http_status": 200,
+      "sha256": "b1f2e6b64d63fcb0775dae7df9f18971e608011b7a43fb07ef512a8a169e2faf",
+      "bytes": 1290871
+    },
+    {
+      "id": "beeswax-life-of-bid",
+      "url": "https://api-docs.freewheel.tv/advertiser/v0.5/docs/beeswax-architecture-life-of-a-bid",
+      "resolved_url": "https://api-docs.freewheel.tv/advertiser/v0.5/docs/beeswax-architecture-life-of-a-bid",
+      "http_status": 200,
+      "sha256": "0816c03470827e0a39ec71b0ba34b71b0dbe01ab93da2592758f6479b28844e7",
+      "bytes": 1227296
+    },
+    {
+      "id": "sovrn-impression-methods",
+      "url": "https://knowledge.sovrn.com/kb/what-impression-tracking-methods-does-sovrn-support",
+      "resolved_url": "https://knowledge.sovrn.com/kb/what-impression-tracking-methods-does-sovrn-support",
+      "http_status": 200,
+      "sha256": "770c3879c24fc239a6d932f349e1db5e711ead32ec449c932e5ecbed73542527",
+      "bytes": 33295
+    },
+    {
+      "id": "sovrn-impression-update",
+      "url": "https://knowledge.sovrn.com/kb/ad-exchange-fall-2025-impression-tracking-update",
+      "resolved_url": "https://knowledge.sovrn.com/kb/ad-exchange-fall-2025-impression-tracking-update",
+      "http_status": 200,
+      "sha256": "888d0b53d78665e492041a363984930a78223f43ae031c2afe7a6b2e9fbda75a",
+      "bytes": 33642
+    },
+    {
+      "id": "sovrn-lijit-domain",
+      "url": "https://knowledge.sovrn.com/kb/can-i-remove-the-lijit-com-lines-from-my-ads-txt-file",
+      "resolved_url": "https://knowledge.sovrn.com/kb/can-i-remove-the-lijit-com-lines-from-my-ads-txt-file",
+      "http_status": 200,
+      "sha256": "ce878fcd4646b5156ff9832ce62df17c84ad7b8bb7dadbc8ce9bec34a4606ea2",
+      "bytes": 33616
+    },
+    {
+      "id": "sovrn-bad-ad",
+      "url": "https://knowledge.sovrn.com/kb/how-do-i-report-a-bad-ad",
+      "resolved_url": "https://knowledge.sovrn.com/kb/how-do-i-report-a-bad-ad",
+      "http_status": 200,
+      "sha256": "8fb5c2e200e7f96cff29d168035d48db310d8ffd2c61e2874724ef4b230d75ec",
+      "bytes": 34335
+    },
+    {
+      "id": "index-supported-request-fields",
+      "url": "https://kb.indexexchange.com/dsps/open-rtb/list_of_supported_openrtb_bid_request_fields_dsp.htm",
+      "resolved_url": "https://kb.indexexchange.com/dsps/open-rtb/list_of_supported_openrtb_bid_request_fields_dsp.htm",
+      "http_status": 200,
+      "sha256": "ce2d01f2a7de98279e70c6bae64382d25fc6c1b7996578fe500f5a8fac32addf",
+      "bytes": 167797
+    },
+    {
+      "id": "scoota-privacy-current",
+      "url": "https://www.scoota.com/privacy",
+      "error": "HTTP Error 403: Forbidden",
+      "alternate_access": "Web tool indexed page text was readable; direct HTTP fetch returned 403."
+    },
+    {
+      "id": "adtelligent-swift-readme",
+      "url": "https://raw.githubusercontent.com/Adtelligent/AdtelligentSwiftSDK/da796524b5b8dcb8442c80d7a8eefa79e7dc57b4/README.MD",
+      "http_status": 200,
+      "sha256": "8279e6bb22265b75d566182cbd0559e3f124d84a89318bfb602462425f64dba4",
+      "bytes": 23723,
+      "commit": "da796524b5b8dcb8442c80d7a8eefa79e7dc57b4"
+    },
+    {
+      "id": "adtelligent-swift-package",
+      "url": "https://raw.githubusercontent.com/Adtelligent/AdtelligentSwiftSDK/da796524b5b8dcb8442c80d7a8eefa79e7dc57b4/Package.swift",
+      "http_status": 200,
+      "sha256": "07328968b7b4b9ca96012743c95a65c57f8e4dd80e20c7eb3fafe17e62085e53",
+      "bytes": 666,
+      "commit": "da796524b5b8dcb8442c80d7a8eefa79e7dc57b4"
+    },
+    {
+      "id": "beeswax-ad-log",
+      "url": "https://raw.githubusercontent.com/BeeswaxIO/beeswax-api/06122d3c95adb16082a860f24785bc260439920f/beeswax/logs/streaming/ad_log.proto",
+      "http_status": 200,
+      "sha256": "a3a1c742de19131779337ce7e599f3c444778d9c2438f91d7429a43458bda6ce",
+      "bytes": 10866,
+      "commit": "06122d3c95adb16082a860f24785bc260439920f"
+    },
+    {
+      "id": "beeswax-eventid",
+      "url": "https://raw.githubusercontent.com/BeeswaxIO/beeswax-api/06122d3c95adb16082a860f24785bc260439920f/beeswax/base/eventid.proto",
+      "http_status": 200,
+      "sha256": "5146707cb4f61cb13bc38607a043787efcc52f866f7b0fcace33fd0d966b8692",
+      "bytes": 567,
+      "commit": "06122d3c95adb16082a860f24785bc260439920f"
+    },
+    {
+      "id": "beeswax-bid-response",
+      "url": "https://raw.githubusercontent.com/BeeswaxIO/beeswax-api/06122d3c95adb16082a860f24785bc260439920f/beeswax/bid/request.proto",
+      "http_status": 200,
+      "sha256": "9db2877c478ac7ef496c5b34ad792862ba6f3ea86450c7db5a11f6ea6f3e4cd8",
+      "bytes": 7023,
+      "commit": "06122d3c95adb16082a860f24785bc260439920f"
+    },
+    {
+      "id": "aarki-ctv-guide",
+      "url": "https://help.rzr.com/readme/ctv-integration-guide.md",
+      "http_status": 200,
+      "sha256": "92e37b21a2c5d190f9a69016af07e48576a8bad67a51d4618fed0a5ecc2401c8",
+      "bytes": 1469,
+      "redirected_from": "https://help.aarki.com/readme/ctv-integration-guide.md"
+    },
+    {
+      "id": "aarki-ctv-appsflyer",
+      "url": "https://help.rzr.com/readme/ctv-integration-guide/appsflyer-integration.md",
+      "http_status": 200,
+      "sha256": "b47b73a4476c6f187faaec2c4510abf23edb0fa09f5a46627294d62931edf1bb",
+      "bytes": 5713,
+      "redirected_from": "https://help.aarki.com/readme/ctv-integration-guide/appsflyer-integration.md"
+    },
+    {
+      "id": "aarki-ctv-creative",
+      "url": "https://help.rzr.com/readme/creative-resources/ad-format-overview/ctv-video-creative-requirements.md",
+      "http_status": 200,
+      "sha256": "1882de7e471c645d4d38ff2845b8d641b0bed5978173b19bdfa571fc3992dcf8",
+      "bytes": 3237,
+      "redirected_from": "https://help.aarki.com/readme/creative-resources/ad-format-overview/ctv-video-creative-requirements.md"
+    },
+    {
+      "id": "aarki-video",
+      "url": "https://help.rzr.com/readme/creative-resources/ad-format-overview/video-ads.md",
+      "http_status": 200,
+      "sha256": "fe1737a25387cdb77dc1b2ce3ea2993907828a1d5c2a35c4b342cc7719794b03",
+      "bytes": 3177,
+      "redirected_from": "https://help.aarki.com/readme/creative-resources/ad-format-overview/video-ads.md"
+    },
+    {
+      "id": "aarki-index",
+      "url": "https://help.rzr.com/llms.txt",
+      "http_status": 200,
+      "sha256": "c9b2ccc780b3940677ac94f98f3ea9a516fd1a742146271b79c2abb46d80a760",
+      "bytes": 3723,
+      "redirected_from": "https://help.aarki.com/llms.txt"
+    },
+    {
+      "id": "sovrn-index",
+      "url": "https://developer.sovrn.com/llms.txt",
+      "http_status": 200,
+      "sha256": "e0afef94e8790b677ea2aca46564435d1bcfa5a046f6eeecb137dff408b4e1bb",
+      "bytes": 7986
+    },
+    {
+      "id": "adtelligent-android-repository",
+      "url": "https://github.com/Adtelligent/In_App_Ads_SDK_Android_Public",
+      "access": "Public GitHub page and repository inventory",
+      "result": "Repository is empty. No published implementation to inspect."
+    },
+    {
+      "id": "beeswax-hexbid-tree",
+      "url": "https://github.com/BeeswaxIO/hexbid/tree/79398b896e1f9cb4bc6bb70de61d77cf78f7490a",
+      "commit": "79398b896e1f9cb4bc6bb70de61d77cf78f7490a",
+      "result": "Reference bidders, not the generated event URL contract."
+    },
+    {
+      "id": "aarki-repositories",
+      "url": "https://api.github.com/orgs/aarki/repos?per_page=100",
+      "http_status": 200,
+      "sha256": "9338130f04565ce98e120a284483c2b3748112c5591bde0f53d6eb15cdd872af",
+      "result": "13 public infrastructure/library repositories; no published tracker implementation identified."
+    }
+  ]
+}

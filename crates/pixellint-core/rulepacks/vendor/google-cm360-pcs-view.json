@@ -1,0 +1,49 @@
+{
+  "id": "vendor/google-cm360-pcs-view",
+  "display_name": "Google CM360 generated PCS view tracker",
+  "vendor": "google",
+  "source_level": "official_template",
+  "docs": "https://support.google.com/campaignmanager/answer/9858133?hl=en",
+  "description": "PCS view URLs on googleads4.g.doubleclick.net shown in Google's CM360 automated-verification blockedAdTracking template. Checks advise when an opaque generated field is missing or empty. They do not verify signatures, impression acceptance or unpublished tracker variants. Other Google hosts and PCS click routes retain their separate scope.",
+  "match": {
+    "hosts": [
+      "googleads4.g.doubleclick.net"
+    ],
+    "paths": [
+      "/pcs/view"
+    ]
+  },
+  "params": [
+    {
+      "name": "xai",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The official CM360 verification example preserves a populated opaque xai field. Missingness is a template completeness advisory, not a published server rejection rule.",
+      "fix_hint": "Preserve the complete generated tracker URL rather than rebuilding its signed fields."
+    },
+    {
+      "name": "sai",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The official CM360 verification example preserves a populated opaque sai field. Additional server variants may omit it; no universal requiredness or token grammar is claimed.",
+      "fix_hint": "Compare the URL with the original generated CM360 tracker and preserve fields emitted by that template."
+    },
+    {
+      "name": "sig",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The official CM360 verification example preserves a populated opaque sig field. Local nonempty checking cannot establish whether a signature is valid.",
+      "fix_hint": "Keep the generated signature intact. Pixellint cannot recreate or authenticate it."
+    }
+  ],
+  "rules": []
+}

@@ -294,8 +294,8 @@ for the complete inventory in your installed build.
 
 ### Vendor directory
 
-There are 159 vendor rulepacks across 85 vendors. The vendor directory
-covers additional hosts by attribution: 121 vendor rows and 302 hosts, so an unrecognized
+There are 164 vendor rulepacks across 87 vendors. The vendor directory
+covers additional hosts by attribution: 134 vendor rows and 326 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 
 The [per-pack depth audit](docs/RULEPACK_DEPTH_AUDIT.json) records reviewed

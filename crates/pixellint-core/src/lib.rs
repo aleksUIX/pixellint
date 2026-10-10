@@ -680,6 +680,18 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/flashtalking-ftrack",
         include_str!("../rulepacks/vendor/flashtalking-ftrack.json"),
     ),
+    (
+        "vendor/google-cm360-pcs-view",
+        include_str!("../rulepacks/vendor/google-cm360-pcs-view.json"),
+    ),
+    (
+        "vendor/adxspace-pixel",
+        include_str!("../rulepacks/vendor/adxspace-pixel.json"),
+    ),
+    (
+        "vendor/adctv-tracker",
+        include_str!("../rulepacks/vendor/adctv-tracker.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

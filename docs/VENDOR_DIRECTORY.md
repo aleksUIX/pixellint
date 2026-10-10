@@ -121,7 +121,7 @@ The tester findings supplied for this review attribute these exact endpoints:
 - AdWrap: `track.adwrap.io`.
 - Krush Media: `ads106.krushmedia.com` and `ads133.krushmedia.com`.
 
-These are directory entries with no vendor rulepack. Their ownership evidence
+These observed video tracking routes remain outside vendor rulepacks. Their ownership evidence
 comes from the supplied live-tag inventory, rather than a published parameter
 contract. Generic URL, macro and privacy checks still run. No vendor parameters
 are inferred from frequency, paths or VAST event names. FreeWheel's
@@ -168,7 +168,34 @@ inferred from a sampled path or a corporate privacy policy.
 
 The directory includes only these observed hosts, not entire corporate domains
 or guessed regional siblings. Core URL, macro and privacy checks continue to
-run, including rejection of populated `gdpr=NaN` values. RZR Global,
-rtactivate and ActiveMetering remain deferred because independent attribution
+run, including rejection of populated `gdpr=NaN` values. At version 0.37.0, RZR Global,
+rtactivate and ActiveMetering remained deferred because independent attribution
 for their exact tracking hosts was not established. Talpa's private mock host
 does not establish a public vendor contract.
+
+## The October 10 review adds bounded tracker coverage.
+
+The `00px.net` directory entry now points to `vendor/adxspace-pixel` for the
+published `/pixel/{token}/e.gif` counting-pixel template. Its observed
+`/tracking/` and `/vast/pixel/` video routes remain outside that pack. The
+[00px installation guide](https://wiki.00px.com.br/en/technologies/pixel)
+independently corroborates this host and the narrower counting-pixel route.
+
+`track.adctv.com` is attributed to ADCTV and points to `vendor/adctv-tracker`.
+The [official website](https://www.adctv.com/) links its studio, whose generated
+embed code loads the [public tag producer](https://ads.adctv.com/scripts/src/tag.ins/tag.ins.js).
+That source names the exact tracker host and appends an event query field to
+the root URL in both sendBeacon and POST fetch branches. The pack provides
+template completeness advisories; it does not define a closed event list or
+certify the server accepts a request.
+
+`track.activemetering.com` is attributed to DISQO, without a vendor rulepack.
+Both [Roku's approved-partner list](https://help.ads.roku.com/en/articles/10386309-measuring-campaigns-with-third-party-solutions)
+and [Edmunds' accepted-vendor list](https://www.edmunds.com/media-kit/ad-specs/third-party.html)
+explicitly map this exact host to DISQO. Neither source documents the observed
+`/pixel/v1/all/pixel.gif` parameter contract.
+
+The RZR Global and rtactivate endpoints remain unattributed. The supplied
+Index attribution for `idxgm.rtactivate.com` is unconfirmed. The reviewed
+sources and remaining endpoint schemas are recorded in
+[the tracker review](reviews/vast-tracker-depth/programmatic.json).

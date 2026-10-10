@@ -72,6 +72,10 @@ findings point at the matched span of the path. A pattern with no named capture
 group is rejected at load time. When the pattern does not match, the captured
 parameters are simply absent, so a `required` contract reports `.missing`.
 
+`path_pattern` extracts values after a pack has been selected. It does not limit
+endpoint selection. Use `match.path_patterns` when a variable path segment must
+be constrained to one route family.
+
 ## `match`
 
 At least one of `hosts` or `host_suffixes` is required unless `any_host: true`
@@ -86,6 +90,7 @@ declares a self-hosted endpoint. That opt-in requires a specific non-root
 | `paths` | Exact path matches. |
 | `path_prefixes` | Path prefix matches. |
 | `path_contains` | Path substring matches. |
+| `path_patterns` | Regular expression alternatives matching the complete path. Requires an explicit host or host suffix and cannot combine with `any_host`. |
 | `query_params_any` | At least one exact decoded query key must be submitted, including an empty value. |
 | `query_params_none` | None of the exact decoded query keys may be submitted. |
 | `json_paths` | Shapes that identify a JSON body as this pack's. Required when the pack declares a `body`, and rejected without one. |
@@ -96,6 +101,13 @@ still resolves to its endpoint. If any path field is present, at least one path
 condition must hit. Query key selectors then apply independently. They do not
 read fragments or query values. Contradictory or empty query key declarations
 are rejected. Explicit pack selection still validates an unrecognized branch.
+
+Path expressions use Rust regex syntax and are compiled once with full-path
+anchors. Invalid or empty expressions are rejected. For example,
+`"path_patterns": ["/pixel/[^/]*/e\\.gif"]` selects the pixel image route while
+leaving `/tracking/` routes and extra trailing path segments unclaimed. Exact
+paths, prefixes, substrings and expressions remain alternatives, so a pack that
+needs this narrow scope should omit broader path selectors.
 
 ## `params`
 

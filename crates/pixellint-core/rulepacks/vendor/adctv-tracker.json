@@ -1,0 +1,29 @@
+{
+  "id": "vendor/adctv-tracker",
+  "display_name": "ADCTV generated tag tracker",
+  "vendor": "adctv",
+  "source_level": "official_template",
+  "docs": "https://ads.adctv.com/scripts/src/tag.ins/tag.ins.js",
+  "description": "Root tracking endpoint emitted by ADCTV's public generated tag script. Both sendBeacon and POST fetch producers append an event query field. Missing or empty event is a producer completeness advisory; extra metadata and event names remain open. The source does not establish a complete server acceptance contract or an expansion service for third-party macros.",
+  "match": {
+    "hosts": [
+      "track.adctv.com"
+    ],
+    "paths": [
+      "/"
+    ]
+  },
+  "params": [
+    {
+      "name": "event",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The pinned official tag producer appends the caller's event in both transport branches. Known calls use populated names, while arbitrary custom events are passed through. This is a source-template advisory, not an exhaustive event enum or a published server rejection rule.",
+      "fix_hint": "Preserve the event emitted by the generated ADCTV tag. Check the originating integration before choosing an event name."
+    }
+  ],
+  "rules": []
+}

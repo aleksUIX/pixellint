@@ -1,0 +1,159 @@
+{
+  "reviewed_at": "2026-10-10T04:14:53Z",
+  "baseline_version": "0.37.0",
+  "scope": [
+    "googleads4.g.doubleclick.net/pcs/view",
+    "pagead2.googlesyndication.com",
+    "unified.adsafeprotected.com/vevent/",
+    "track.adctv.com"
+  ],
+  "privacy": "Only public documentation and synthetic fixtures were used. No captured customer identifiers or payload values are in this note.",
+  "google_cm360_pcs_view": {
+    "baseline_status": "directory_only",
+    "candidate_pack": "vendor/google-cm360-pcs-view",
+    "host": "googleads4.g.doubleclick.net",
+    "paths": [
+      "/pcs/view"
+    ],
+    "source_level": "official_template",
+    "spec_complete": false,
+    "source": {
+      "url": "https://support.google.com/campaignmanager/answer/9858133?hl=en",
+      "retrieval_sha256": "ebb0b63e985ef924fb6a4d3cdc9059fa25b291fa6b0edbb4a25073338d782912",
+      "section": "QA pre-fetch tags, Video tags, both blockedAdTracking examples"
+    },
+    "contracts": {
+      "xai": "recommended nonempty opaque field, warning",
+      "sai": "recommended nonempty opaque field, warning",
+      "sig": "recommended nonempty opaque field, warning"
+    },
+    "accepted_controls": [
+      "empty or omitted adurl",
+      "opaque signed field spelling",
+      "unpublished urlfix/vt values",
+      "no inferred format or length requirements"
+    ],
+    "open_gaps": [
+      "Google has not published a complete PCS request contract in the reviewed source.",
+      "Cryptographic validity, token expiry, account configuration and accepted impression state are external.",
+      "Template completeness does not establish universal requiredness or rejection policy.",
+      "The new pack does not claim googleads4 /pcs/click or other Google PCS hosts."
+    ],
+    "fixtures": "fixtures/vendor-google-cm360-pcs-view/source-cases.json",
+    "golden_case_count": 14
+  },
+  "google_existing_and_deferred": {
+    "already_covered": {
+      "pagead2.googlesyndication.com/pagead/gen_204": "vendor/google-ima-telemetry",
+      "pagead2.googlesyndication.com/pcs/activeview": "vendor/google-activeview",
+      "securepubads.g.doubleclick.net/pcs/view": "vendor/google-ima-pcs",
+      "pubads.g.doubleclick.net/pcs/click": "vendor/google-ima-pcs"
+    },
+    "directory_only": [
+      "pagead2.googlesyndication.com/pcs/view",
+      "pagead2.googlesyndication.com/pcs/click",
+      "googleads4.g.doubleclick.net/pcs/click"
+    ],
+    "reviewed_sources": [
+      {
+        "url": "https://imasdk.googleapis.com/js/sdkloader/ima3.js",
+        "sha256": "c71a2ccb6f4e205c4bcb887ee73dda21c8a4970e7629c5a1d9985a688fbf0bb9",
+        "observation": "No literal PCS view constructor."
+      },
+      {
+        "url": "https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags",
+        "observation": "Current documented Single Inline Linear and Single Skippable Inline test responses generate securepubads PCS view and pubads PCS click; neither supplies a pagead2 PCS template."
+      }
+    ],
+    "decision": "No primary pagead2 PCS endpoint contract found in reviewed sources. Matching by parent-domain ownership would overstate scope."
+  },
+  "ias_video_pixel": {
+    "baseline_status": "vendor/ias-video-pixel already matches /vevent/ and rejects the exact installation stub with an error",
+    "source": {
+      "url": "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf",
+      "sha256": "06cf53e6f6f3e1b09bd8746b7872a378dee731a03dfecbd62e7f835092142355",
+      "page": 5
+    },
+    "new_rule": "vendor.ias-video-pixel.xsid.unstable_macro",
+    "severity": "warning",
+    "source_level": "official_vendor",
+    "exact_values": [
+      "[CACHEBUSTING]",
+      "[TIMESTAMP]",
+      "${CACHEBUSTER}"
+    ],
+    "requirement": "IAS no longer recommends cachebuster or timestamp macros for external session IDs because event consistency and session uniqueness are not guaranteed.",
+    "boundary": "Only xsId is checked. Opaque and resolved numeric IDs, genuine session macros, nested URLs, other fields and differently cased parameter names remain unchanged.",
+    "spec_complete": false,
+    "open_gaps": [
+      "Cross-pixel equality and uniqueness require session input, not a single URL.",
+      "UUIDv4 is recommended, not required.",
+      "Extra macro spellings are not guessed from a prefix."
+    ],
+    "new_golden_case_count": 10,
+    "expansion_states_verified": [
+      "unknown",
+      "template",
+      "fired"
+    ]
+  },
+  "adctv": {
+    "baseline_status": "No pack or directory row; VAST AV bracket tokens receive contextual core.macro.vast_unknown warnings.",
+    "official_attribution_chain": [
+      {
+        "url": "https://www.adctv.com/",
+        "observation": "Links official studio.adctv.com and Airtory privacy policy."
+      },
+      {
+        "url": "https://studio.adctv.com/",
+        "observation": "Loads build/assets/main-B0oKamuK.js."
+      },
+      {
+        "url": "https://studio.adctv.com/build/assets/main-B0oKamuK.js",
+        "sha256": "e746a7438978a7a3af578ead1f3c8be38f39e8189e48e916cc09363a2ef2cc33",
+        "observation": "Public VITE_APP_CDN_URL is https://ads.adctv.com/ and generated embed code loads scripts/src/tag.ins/tag.ins.js."
+      },
+      {
+        "url": "https://ads.adctv.com/scripts/src/tag.ins/tag.ins.js",
+        "sha256": "489fe1b7119c7d4af2dc4c8c4dae918b9617f777e16876c68ca5a7931b099476",
+        "producer_build_stamp": "2024/12/19 10:54:50",
+        "observation": "Sets tracker base https://track.adctv.com. Both sendBeacon and POST fetch producers append event as a query parameter to the root endpoint."
+      }
+    ],
+    "directory_addition_supported": {
+      "host": "track.adctv.com",
+      "vendor": "adctv",
+      "display_name": "ADCTV",
+      "category": "video",
+      "docs": "https://www.adctv.com/technology"
+    },
+    "source_scope_limit": "The inspected official script is an embed producer, not a complete tracker endpoint specification. This does not establish a VAST-specific route or mandatory privacy fields.",
+    "macro_source": {
+      "url": "https://aniviewwiki.atlassian.net/wiki/spaces/documentation/pages/152993816",
+      "retrieval_sha256": "f2afbafac778c491f81b22671b7e81306daa31b72287da099e72cb94db5882e3",
+      "documented_examples": [
+        "[AV_TIMESTAMP]",
+        "[AV_GDPR]",
+        "[AV_CONSENT]"
+      ],
+      "observation": "Aniview documents vendor expansion for these names. That does not identify the owner of an arbitrary tracker using them."
+    },
+    "macro_decision": "Keep the existing contextual non-IAB macro warning. Expansion capability depends on the producing ad server/player, not solely on the tracker host.",
+    "spec_complete": false,
+    "candidate_pack": "vendor/adctv-tracker",
+    "paths": [
+      "/"
+    ],
+    "contracts": {
+      "event": "Recommended nonempty opaque event; warning only. Custom event names and extra metadata remain open."
+    },
+    "fixtures": "fixtures/vendor-adctv-tracker/source-cases.json",
+    "golden_case_count": 13
+  },
+  "validation": {
+    "new_test_file": "crates/pixellint-core/tests/google_ias_vast_tracker_depth.rs",
+    "focused_new_tests_passed": 4,
+    "existing_source_and_live_vast_tests_passed": 4,
+    "global_registration_and_release": "Root integration pending."
+  }
+}

@@ -44,7 +44,7 @@ VENDORS = {
     "naver": ("Naver", "search", ["wcs.naver.net", "wcs.naver.com"], None),
 
     # Exact pixel hosts attributed in the 2026-10-09 tester findings.
-    "adxspace": ("Adxspace", "video", ["00px.net"], None),
+    "adxspace": ("Adxspace", "video", ["00px.net"], "vendor/adxspace-pixel"),
     "stredeo": ("Stredeo", "video", ["t.stredeo.com"], None),
     "beeswax": ("Beeswax", "programmatic", ["segment.prod.bidr.io", "us-east-1.event.prod.bidr.io"], None),
     "aarki": ("Aarki", "mobile", ["rm.aarki.net"], None),
@@ -53,6 +53,9 @@ VENDORS = {
     "adtelligent": ("Adtelligent", "programmatic", ["ads55.adtelligent.com", "ads228.adtelligent.com", "ads283.adtelligent.com"], None),
     "smadex": ("Smadex", "mobile", ["br-trk.smadex.com", "cr-err.smadex.com", "ec-ed.smadex.com", "geo-tracker.smadex.com", "pixel-ed.smadex.com", "va-trk.smadex.com"], None),
     "sovrn": ("Sovrn", "programmatic", ["n.adv.lijit.com"], None),
+    # Exact DISQO tracker attribution in official Roku and Edmunds partner lists.
+    "disqo": ("DISQO", "measurement", ["track.activemetering.com"], None),
+    "adctv": ("ADCTV", "video", ["track.adctv.com"], "vendor/adctv-tracker"),
 
     # Demand and supply side platforms
     "thetradedesk": ("The Trade Desk", "programmatic", ["insight.adsrvr.org", "js.adsrvr.org", "match.adsrvr.org"], "vendor/the-trade-desk"),
