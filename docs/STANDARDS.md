@@ -9212,7 +9212,7 @@ Context: `{}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `(current scope)` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `(current scope)` | optional | `{"json_type":"array","min_items":1,"max_items":2000}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 
 ### JSON contract 2
 
@@ -9247,7 +9247,7 @@ Context: `{"source_param":"data","encoding":"base64_json","condition":{"kind":"n
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `(current scope)` | optional | `{"json_type":["object","array"],"min_items":1}` | [official_vendor](https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js) |
+| `(current scope)` | optional | `{"json_type":["object","array"],"min_items":1,"max_items":2000}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 
 ### JSON contract 4
 
@@ -9346,7 +9346,7 @@ Context: `{"source_param":"data","encoding":"json","condition":{"kind":"value_pa
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `(current scope)` | optional | `{"json_type":["object","array"],"min_items":1}` | [official_vendor](https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js) |
+| `(current scope)` | optional | `{"json_type":["object","array"],"min_items":1,"max_items":2000}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 
 ### JSON contract 14
 
@@ -11193,7 +11193,7 @@ Context: `{}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `writeKey` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/) |
-| `batch` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/) |
+| `batch` | optional | `{"json_type":"array","min_items":1,"max_items":2500}` | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
 | `batch[]` | optional | `{"json_type":"object"}` | [official_vendor](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/) |
 

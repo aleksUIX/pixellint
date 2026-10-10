@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.42.0 (2026-10-10)
+
+- Check the documented maximum of 2000 event records per Mixpanel Track request.
+- Check the documented maximum of 2500 event records per Segment batch request.
+  Segment can return HTTP 200 while rejecting an oversized batch.
+- Apply the request-level limits across supported decoded representations,
+  while retaining individual event checks and existing transport diagnostics.
+- Record exact count boundaries separately from unresolved vendor byte quotas,
+  destination acceptance and the unchanged private D1 corpus replay.
+
 ## 0.41.0 (2026-10-10)
 
 - Add explicit caller-declared ad-session groups over original artifact rows.

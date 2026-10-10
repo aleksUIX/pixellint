@@ -1,0 +1,59 @@
+{
+  "version": "0.42.0",
+  "review_date": "2026-10-10",
+  "baseline": "0.41.0",
+  "scope": "Exact request record counts for existing Mixpanel Track and Segment batch contracts. Record checks continue after a request-level failure.",
+  "primary_sources": [
+    {
+      "path": "mixpanel-track.html",
+      "url": "https://docs.mixpanel.com/reference/track-event",
+      "final_url": "https://docs.mixpanel.com/reference/track-event",
+      "bytes": 484806,
+      "sha256": "3cbf1029670903a1c217fe8516f35bb38b1fe93a2630baa51701f5055d6a5bc2",
+      "fetched_at": "2026-10-10T21:50:16.676930+00:00"
+    },
+    {
+      "path": "segment-http.html",
+      "url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+      "final_url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+      "bytes": 702248,
+      "sha256": "e4389720b5244bc1de35fefae493e344ad3b3edd257bb4fe956322ba3f09ccb8",
+      "fetched_at": "2026-10-10T21:50:16.857725+00:00"
+    }
+  ],
+  "contracts": [
+    {
+      "pack_id": "vendor/mixpanel",
+      "path": "Ordinary body root plus both existing source_param=data roots (JSON and Base64 JSON).",
+      "maximum_inclusive": 2000,
+      "source_basis": "The Track and Import comparison table specifies 2000 events per request.",
+      "finding_code": "vendor.mixpanel.body.root.invalid"
+    },
+    {
+      "pack_id": "vendor/segment",
+      "path": "body[0].params[name=batch].max_items",
+      "maximum_inclusive": 2500,
+      "source_basis": "The official HTTP API Errors section specifies up to 2500 events in a batch, with possible HTTP 200 on rejected oversized batches.",
+      "finding_code": "vendor.segment.body.batch.invalid"
+    }
+  ],
+  "observed_corpus_context": {
+    "samples": 8836,
+    "json_samples": 50,
+    "mixpanel_track_json_reports": 3,
+    "segment_json_reports": 4,
+    "claim": "Observed vendor use prioritizes these checks. The corpus contains no identified oversized request proving the new limits."
+  },
+  "verification_scope": [
+    "Inclusive boundary controls in bare JSON and complete JSON HTTP captures.",
+    "Single request-level diagnostic, retained member checks and nested arrays outside the batch.",
+    "Independent source-authored transport and binary controls recorded separately from D1 failures.",
+    "Every existing Mixpanel source_param=data root receives the same array count limit while keeping single-event object support."
+  ],
+  "remaining_limits": [
+    "Byte quotas and child event serialized accounting retain their documented source ambiguity.",
+    "Credential acceptance, workspace configuration and delivery history require external state.",
+    "No new decoding representation is added in this round.",
+    "A batch below its count cap can fail other contracts or be rejected by its destination."
+  ]
+}
