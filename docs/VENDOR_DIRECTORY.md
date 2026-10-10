@@ -129,7 +129,46 @@ are inferred from frequency, paths or VAST event names. FreeWheel's
 independently identifies Beeswax's `prod.bidr.io` infrastructure, but does not
 define contracts for the reported `/log/act/svr` and `/log/imp/svr` endpoints.
 
-The report did not provide complete hostnames for Adtelligent, Smadex,
-ActiveMetering, RZR Global, Sovrn Lijit or rtactivate. Those entries remain
-deferred until exact host attribution is available. Talpa's private mock host
+### Additional hosts confirmed in the Pixellint corpus
+
+A subsequent private corpus review supplied complete hostnames for three more
+vendors and additional endpoints for two existing entries:
+
+- Adtelligent: `ads55.adtelligent.com`, `ads228.adtelligent.com` and
+  `ads283.adtelligent.com`.
+- Smadex: `br-trk.smadex.com`, `cr-err.smadex.com`, `ec-ed.smadex.com`,
+  `geo-tracker.smadex.com`, `pixel-ed.smadex.com` and `va-trk.smadex.com`.
+- Sovrn: `n.adv.lijit.com`.
+- Krush Media: `ads161.krushmedia.com`.
+- Beeswax: `segment.prod.bidr.io`.
+
+The corpus establishes which exact hosts occurred. Primary vendor sources
+corroborate attribution: Adtelligent's
+[official AdPush examples](https://support.adtelligent.com/838838-AdPush-requestresponse-format-and-examples)
+use its `adtelligent.com` infrastructure; Smadex's
+[official website](https://smadex.com/)
+identifies its advertising platform on `smadex.com`;
+Sovrn's
+[Lijit documentation](https://knowledge.sovrn.com/kb/can-i-remove-the-lijit-com-lines-from-my-ads-txt-file)
+explicitly identifies `lijit.com` as Sovrn's operational ad-serving domain;
+Krush Media's [privacy policy](https://krushmedia.com/privacy-policy/)
+identifies its advertising services on `krushmedia.com`; and the Beeswax
+cookie-sync documentation linked above identifies its `prod.bidr.io`
+infrastructure. These sources support host attribution, without documenting
+the contracts of these observed tracking endpoints.
+
+All additions remain directory-only. Adtelligent's
+[required-parameter guide](https://support.adtelligent.com/347898-Required-Parameters-for-different-traffic-types)
+governs incoming ad requests, so its required dimensions, user agent and IP
+fields are not imposed on `/t/e/` or `/tre/imp/` tracking pixels. Smadex's
+[public documentation index](https://docs.smadex.com/llms.txt)
+covers MMP integrations rather than the observed video tracking routes.
+No complete event enumeration, required identifier or privacy requirement is
+inferred from a sampled path or a corporate privacy policy.
+
+The directory includes only these observed hosts, not entire corporate domains
+or guessed regional siblings. Core URL, macro and privacy checks continue to
+run, including rejection of populated `gdpr=NaN` values. RZR Global,
+rtactivate and ActiveMetering remain deferred because independent attribution
+for their exact tracking hosts was not established. Talpa's private mock host
 does not establish a public vendor contract.

@@ -10360,12 +10360,12 @@ Context: `{"scope":["batch[]",""]}`.
 | `distinct_id` | optional | `{"severity":"error","format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
 | `properties.distinct_id` | optional | `{"severity":"error","format":{"kind":"non_empty"},"json_type":"string","condition":{"kind":"not","condition":{"kind":"present","param":"distinct_id"}}}` | [official_vendor](https://posthog.com/docs/api/capture) |
 | `timestamp` | optional | `{"format":{"kind":"datetime","allow_space_separator":true},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
-| `properties.$ip` | optional | `{"format":{"kind":"ip"},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
+| `properties.$ip` | optional | `{"format":{"kind":"ip"},"json_type":["string","null"]}` | [official_vendor](https://github.com/PostHog/posthog/blob/d0c3c16556500062c29489d312e97862d240bc70/rust/common/types/src/event.rs) |
 | `properties.$process_person_profile` | optional | `{"format":{"kind":"enum","values":["true","false"]},"json_type":"boolean"}` | [official_vendor](https://posthog.com/docs/api/capture) |
 | `properties.alias` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
 | `properties.$group_type` | optional | `{"format":{"kind":"regex","pattern":"^.{1,400}$"},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
 | `properties.$group_key` | optional | `{"format":{"kind":"regex","pattern":"^.{1,400}$"},"json_type":["string","number"]}` | [official_vendor](https://posthog.com/docs/api/capture) |
-| `properties.$current_url` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
+| `properties.$current_url` | optional | `{"format":{"kind":"non_empty"},"json_type":["string","null"]}` | [official_vendor](https://posthog.com/docs/privacy/data-collection) |
 | `properties.$session_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
 | `properties.$screen_name` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
 | `properties.$survey_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://posthog.com/docs/api/capture) |
@@ -11125,6 +11125,10 @@ Context: `{}`.
 | `batch[]` | optional | `{"json_type":"object"}` | [official_vendor](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/) |
 
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.segment.body.write_key_placeholder` | `{"kind":"forbid_value_pattern","pattern":"^(?:YOUR_WRITE_KEY\|YOUR_WRITEKEY)$","params":["writeKey"]}` | warning | [heuristic](https://www.twilio.com/docs/segment/connections/find-writekey) |
+
 ### JSON contract 2
 
 Context: `{"scope":"batch[]"}`.
@@ -11314,6 +11318,7 @@ Context: `{}`.
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
+| `vendor.segment.http.basic_write_key_placeholder` | `{"kind":"forbid_value_pattern","pattern":"^(?:YOUR_WRITE_KEY\|YOUR_WRITEKEY)$","params":["basic_auth.username"]}` | warning | [heuristic](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
 | `vendor.segment.http.authentication_required` | `{"kind":"require_any_of","groups":[["body.writeKey"],["basic_auth.username"]]}` | error | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
 | `vendor.segment.http.oauth_write_key_required` | `{"kind":"required_with","condition":{"kind":"value_in","param":"authorization_scheme","values":["bearer"]},"requires":["body.writeKey"],"when":"headers.authorization"}` | error | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
 | `vendor.segment.http.basic_colon_recommended` | `{"kind":"format","condition":{"kind":"value_in","param":"authorization_scheme","values":["basic"]},"param":"basic_auth.has_colon","format":{"kind":"enum","values":["true"]}}` | warning | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |

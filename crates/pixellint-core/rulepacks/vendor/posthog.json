@@ -194,9 +194,12 @@
           "format": {
             "kind": "ip"
           },
-          "description": "It is the visitor IP, sent unhashed.",
-          "doc": "https://posthog.com/docs/api/capture",
-          "json_type": "string"
+          "description": "A populated value is the visitor IP, sent unhashed. PostHog accepts null as an optional property value. To disable IP capture, use the project's Discard client IP data setting; a null property does not certify that setting is enabled.",
+          "doc": "https://github.com/PostHog/posthog/blob/d0c3c16556500062c29489d312e97862d240bc70/rust/common/types/src/event.rs",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
         {
           "name": "properties.$process_person_profile",
@@ -249,10 +252,13 @@
           "format": {
             "kind": "non_empty"
           },
-          "description": "It is the page URL or path on `$pageview`. PostHog documents it on the capture pageview example, including a path-only value.",
-          "fix_hint": "Send `properties.$current_url` as the page path or full URL, or drop the empty pair.",
-          "doc": "https://posthog.com/docs/api/capture",
-          "json_type": "string"
+          "description": "It is the page URL or path on `$pageview`. PostHog also documents assigning null to redact this property before capture.",
+          "fix_hint": "Send the page path or full URL, omit the property, or use null for deliberate redaction.",
+          "doc": "https://posthog.com/docs/privacy/data-collection",
+          "json_type": [
+            "string",
+            "null"
+          ]
         },
         {
           "name": "properties.$session_id",

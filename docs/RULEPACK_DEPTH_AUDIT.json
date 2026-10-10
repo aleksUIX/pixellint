@@ -39,23 +39,23 @@
     "release_url": "https://github.com/aleksUIX/pixellint/releases/tag/v0.34.0"
   },
   "current": {
-    "version": "0.35.0",
+    "version": "0.37.0",
     "candidate_status": "release_prepared",
     "packs": 161,
     "vendors": 85,
     "field_contracts": 5746,
-    "cross_field_assertions": 557,
+    "cross_field_assertions": 560,
     "body_contract_scopes": 475,
     "http_contract_scopes": 62,
     "query_contract_scopes": 6,
     "bulk_query_sources": 1,
     "http_contract_packs": 55,
-    "changed_packs_this_round": 6,
+    "changed_packs_this_round": 2,
     "new_packs_this_round": 0,
-    "deepened_existing_packs_this_round": 6,
-    "source_reviewed_packs_this_round": 6,
-    "manifest_changes_this_round": 6,
-    "new_source_cases": 320,
+    "deepened_existing_packs_this_round": 2,
+    "source_reviewed_packs_this_round": 2,
+    "manifest_changes_this_round": 2,
+    "new_source_cases": 16,
     "remaining_requirement_entries": 497,
     "remaining_requirements_note": "Overlapping open requirements and source-case counts do not establish a percentage of vendor specification coverage."
   },
@@ -36009,7 +36009,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -227322,6 +227322,30 @@
           "method": "browser or authorized public curl",
           "read_on": "2026-10-07",
           "evidence_level": "official_source_code"
+        },
+        {
+          "url": "https://posthog.com/docs/privacy/data-collection",
+          "read_on": "2026-10-09",
+          "access": "reviewed_primary_source",
+          "evidence_level": "official_vendor_documentation"
+        },
+        {
+          "url": "https://posthog.com/tutorials/web-redact-properties",
+          "read_on": "2026-10-09",
+          "access": "reviewed_primary_source",
+          "evidence_level": "official_vendor_documentation"
+        },
+        {
+          "url": "https://github.com/PostHog/posthog/blob/d0c3c16556500062c29489d312e97862d240bc70/rust/common/types/src/event.rs",
+          "read_on": "2026-10-09",
+          "access": "reviewed_primary_source",
+          "evidence_level": "official_source_code"
+        },
+        {
+          "url": "https://github.com/PostHog/posthog/blob/d0c3c16556500062c29489d312e97862d240bc70/nodejs/src/ingestion/common/steps/event-preprocessing/validate-event-properties.ts",
+          "read_on": "2026-10-09",
+          "access": "reviewed_primary_source",
+          "evidence_level": "official_source_code"
         }
       ],
       "contracts_mapped": [
@@ -227472,12 +227496,15 @@
             ]
           },
           "field": "properties.$ip",
-          "source": "https://posthog.com/docs/api/capture",
+          "source": "https://github.com/PostHog/posthog/blob/d0c3c16556500062c29489d312e97862d240bc70/rust/common/types/src/event.rs",
           "checks": {
             "format": {
               "kind": "ip"
             },
-            "json_type": "string"
+            "json_type": [
+              "string",
+              "null"
+            ]
           }
         },
         {
@@ -227566,12 +227593,15 @@
             ]
           },
           "field": "properties.$current_url",
-          "source": "https://posthog.com/docs/api/capture",
+          "source": "https://posthog.com/docs/privacy/data-collection",
           "checks": {
             "format": {
               "kind": "non_empty"
             },
-            "json_type": "string"
+            "json_type": [
+              "string",
+              "null"
+            ]
           }
         },
         {
@@ -244816,7 +244846,7 @@
         ]
       },
       "supplemental_audit": "analytics-conversion-followups.json",
-      "manifest_sha256": "d19e547902e17b0e3a846d862177de4f20d060ff9f5291b43e1f41fbdbb4f88b",
+      "manifest_sha256": "d871c137a071a20423c62f4541b99c0200cb8c590e37babba0cbfd47f64c74b9",
       "fixture_sha256": {
         "fixtures/vendor-posthog/alias-missing-alias.txt": "8db953bd78ab8032f28457d98cfca7e57480ff81dd0c3a328069adb62e50772b",
         "fixtures/vendor-posthog/batch-reports-every-event.txt": "197cc98fd8e491d8107210e3c050b8b2c62cc5c3360d2857f686067cf0968d33",
@@ -244830,11 +244860,11 @@
         "fixtures/vendor-posthog/epoch-timestamp.txt": "24aea2e4334b547a8297b180fc6897ada1ceb4294659c26cecc45a34b23c4747",
         "fixtures/vendor-posthog/groupidentify-missing-key.txt": "c376e6ee1a04506a9b0764cfb5ac5fc17922296271269ca97746508d824775c4",
         "fixtures/vendor-posthog/hashed-ip.txt": "34a36432175bf8fa9ed28387f9823498373eb7327fea9fe53d77ad8e087d282c",
-        "fixtures/vendor-posthog/manifest.json": "9368e8939139faef7616af9d8d55123573a293eb3245811d05623b2fa0f0b2e5",
+        "fixtures/vendor-posthog/manifest.json": "3b14a28e947b660889175df216a56051a29d8fed2461cf576e02154c7e0ff06c",
         "fixtures/vendor-posthog/missing-api-key.txt": "67216482649551ad0406d13ec1e65487aba3100ce8be92cad7f27002031d9459",
         "fixtures/vendor-posthog/missing-distinct-id.txt": "41c2a09d9e69d5400ce8dcd789f9594beda26a73e3cbb59f90a246f3f6d164b9",
         "fixtures/vendor-posthog/properties-distinct-id.txt": "c407e1277a5481f694cd3f03bcb0fd99cd1d97924658d8536e3bd2815cb030ec",
-        "fixtures/vendor-posthog/spec-cases.json": "9be93cc83f1075c8fb6322ac2af5500e73b40973474991e79c97fdd68123fd8c",
+        "fixtures/vendor-posthog/spec-cases.json": "ab440f0b01a06df0e0113990263e6e858d9c2490245661bb44883631fcdf80a8",
         "fixtures/vendor-posthog/survey-missing-id.txt": "e701fc1c1202699e62c9b852aafe67391416417e402f85e80a238f1ffa99a3ae"
       },
       "selection_contract": {
@@ -244943,10 +244973,11 @@
         "source_cases": 327,
         "derived_boundaries": 528,
         "session_source_cases": 0,
-        "automatic_http_routing_examples": 0
+        "automatic_http_routing_examples": 0,
+        "tester_followup_goldens": 4
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/posthog.json": "d19e547902e17b0e3a846d862177de4f20d060ff9f5291b43e1f41fbdbb4f88b",
+        "crates/pixellint-core/rulepacks/vendor/posthog.json": "d871c137a071a20423c62f4541b99c0200cb8c590e37babba0cbfd47f64c74b9",
         "fixtures/vendor-posthog/alias-missing-alias.txt": "8db953bd78ab8032f28457d98cfca7e57480ff81dd0c3a328069adb62e50772b",
         "fixtures/vendor-posthog/batch-reports-every-event.txt": "197cc98fd8e491d8107210e3c050b8b2c62cc5c3360d2857f686067cf0968d33",
         "fixtures/vendor-posthog/clean-batch.txt": "3febc519cbb64f301232f77e938066c7062cdf53597fb55cf300aa4d5028c43b",
@@ -244959,12 +244990,17 @@
         "fixtures/vendor-posthog/epoch-timestamp.txt": "24aea2e4334b547a8297b180fc6897ada1ceb4294659c26cecc45a34b23c4747",
         "fixtures/vendor-posthog/groupidentify-missing-key.txt": "c376e6ee1a04506a9b0764cfb5ac5fc17922296271269ca97746508d824775c4",
         "fixtures/vendor-posthog/hashed-ip.txt": "34a36432175bf8fa9ed28387f9823498373eb7327fea9fe53d77ad8e087d282c",
-        "fixtures/vendor-posthog/manifest.json": "9368e8939139faef7616af9d8d55123573a293eb3245811d05623b2fa0f0b2e5",
+        "fixtures/vendor-posthog/manifest.json": "3b14a28e947b660889175df216a56051a29d8fed2461cf576e02154c7e0ff06c",
         "fixtures/vendor-posthog/missing-api-key.txt": "67216482649551ad0406d13ec1e65487aba3100ce8be92cad7f27002031d9459",
         "fixtures/vendor-posthog/missing-distinct-id.txt": "41c2a09d9e69d5400ce8dcd789f9594beda26a73e3cbb59f90a246f3f6d164b9",
         "fixtures/vendor-posthog/properties-distinct-id.txt": "c407e1277a5481f694cd3f03bcb0fd99cd1d97924658d8536e3bd2815cb030ec",
-        "fixtures/vendor-posthog/spec-cases.json": "9be93cc83f1075c8fb6322ac2af5500e73b40973474991e79c97fdd68123fd8c",
-        "fixtures/vendor-posthog/survey-missing-id.txt": "e701fc1c1202699e62c9b852aafe67391416417e402f85e80a238f1ffa99a3ae"
+        "fixtures/vendor-posthog/spec-cases.json": "ab440f0b01a06df0e0113990263e6e858d9c2490245661bb44883631fcdf80a8",
+        "fixtures/vendor-posthog/survey-missing-id.txt": "e701fc1c1202699e62c9b852aafe67391416417e402f85e80a238f1ffa99a3ae",
+        "fixtures/vendor-posthog/tester-batch-redaction-with-hashed-ip.txt": "64a5855b4a90306bf4c9933fca757d82a2e69da97b66d73be8970051f050105c",
+        "fixtures/vendor-posthog/tester-hash-identifiers-custom-properties.txt": "c913b119291b4bb5123aae0a7037c948996c74f5a0db7b7abae08d40747899e6",
+        "fixtures/vendor-posthog/tester-null-ip-property.txt": "842bf34a969ca720f5a4fb237b070a9777a689f992c860240a9d1b364e409262",
+        "fixtures/vendor-posthog/tester-redacted-current-url.txt": "ebe0c6a3768add932b07214c4be34adc5a3bddaeda91adc79c3bc307e85602d1",
+        "crates/pixellint-core/tests/tester_conversion_followup.rs": "109baa713a282ac1fe48ee154d498af462091dab8da8b78296f30716200051c3"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -244977,11 +245013,11 @@
       "improvements_this_session": [],
       "http_contracts": {},
       "manifest_changed_this_session": false,
-      "session_review_date": "2026-10-08",
-      "session_reviewed": false,
-      "implementation_changed_this_round": false,
+      "session_review_date": "2026-10-09",
+      "session_reviewed": true,
+      "implementation_changed_this_round": true,
       "manifest_path": "crates/pixellint-core/rulepacks/vendor/posthog.json",
-      "manifest_changed_this_round": false,
+      "manifest_changed_this_round": true,
       "round_metadata_history": [
         {
           "version": "0.34.0",
@@ -244989,7 +245025,34 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "reviewed_artifact_transitions": [
+        {
+          "path": "crates/pixellint-core/rulepacks/vendor/posthog.json",
+          "previous_sha256": "d19e547902e17b0e3a846d862177de4f20d060ff9f5291b43e1f41fbdbb4f88b",
+          "sha256": "d871c137a071a20423c62f4541b99c0200cb8c590e37babba0cbfd47f64c74b9",
+          "round": "0.37.0"
+        },
+        {
+          "path": "fixtures/vendor-posthog/manifest.json",
+          "previous_sha256": "9368e8939139faef7616af9d8d55123573a293eb3245811d05623b2fa0f0b2e5",
+          "sha256": "3b14a28e947b660889175df216a56051a29d8fed2461cf576e02154c7e0ff06c",
+          "round": "0.37.0"
+        },
+        {
+          "path": "fixtures/vendor-posthog/spec-cases.json",
+          "previous_sha256": "9be93cc83f1075c8fb6322ac2af5500e73b40973474991e79c97fdd68123fd8c",
+          "sha256": "ab440f0b01a06df0e0113990263e6e858d9c2490245661bb44883631fcdf80a8",
+          "round": "0.37.0"
+        }
+      ],
+      "tester_followup_review": {
+        "version": "0.37.0",
+        "previous_manifest_sha256": "d19e547902e17b0e3a846d862177de4f20d060ff9f5291b43e1f41fbdbb4f88b",
+        "changed_manifest_sha256": "d871c137a071a20423c62f4541b99c0200cb8c590e37babba0cbfd47f64c74b9",
+        "scope": "Only optional current URL and IP properties gain null acceptance. Hashed-IP checks remain. Null does not certify IP capture is disabled.",
+        "coverage_claim": "Bounded correction, not a complete vendor specification review."
+      }
     },
     {
       "id": "vendor/quantcast",
@@ -253144,6 +253207,18 @@
           "access": "opened_current_primary_vendor_page",
           "evidence_level": "official_vendor_documentation",
           "current_network_access": "read"
+        },
+        {
+          "url": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+          "read_on": "2026-10-09",
+          "access": "reviewed_primary_source",
+          "evidence_level": "official_vendor_documentation"
+        },
+        {
+          "url": "https://www.twilio.com/docs/segment/connections/find-writekey",
+          "read_on": "2026-10-09",
+          "access": "reviewed_primary_source",
+          "evidence_level": "official_vendor_documentation"
         }
       ],
       "contracts_mapped": [
@@ -257208,6 +257283,38 @@
               ]
             }
           }
+        },
+        {
+          "transport_scope": "body[0]",
+          "assertion": {
+            "code": "vendor.segment.body.write_key_placeholder",
+            "kind": "forbid_value_pattern",
+            "pattern": "^(?:YOUR_WRITE_KEY|YOUR_WRITEKEY)$",
+            "params": [
+              "writeKey"
+            ],
+            "severity": "warning",
+            "message": "`writeKey` contains a recognized installation placeholder instead of a configured source key.",
+            "fix_hint": "Copy the source write key from Settings > API Keys. Offline validation cannot verify whether other keys are active.",
+            "doc": "https://www.twilio.com/docs/segment/connections/find-writekey",
+            "source_level": "heuristic"
+          }
+        },
+        {
+          "transport_scope": "http",
+          "assertion": {
+            "code": "vendor.segment.http.basic_write_key_placeholder",
+            "kind": "forbid_value_pattern",
+            "pattern": "^(?:YOUR_WRITE_KEY|YOUR_WRITEKEY)$",
+            "params": [
+              "basic_auth.username"
+            ],
+            "severity": "warning",
+            "message": "The Basic authentication username contains a recognized write-key installation placeholder.",
+            "fix_hint": "Use the source write key as the Basic username, then append a colon before Base64 encoding.",
+            "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+            "source_level": "heuristic"
+          }
         }
       ],
       "gap_groups": {
@@ -257328,7 +257435,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "1711a8589a6304a47bf93538540136ca4e34191f9d0098c4e99a4cbdfbe11430",
+      "manifest_sha256": "55b805bf11672c08606b3d84c6ddacb39118ce58f7ce330a78ddc0a001e33c3d",
       "fixture_sha256": {
         "fixtures/vendor-segment/batch-alias-without-previous-id.txt": "c40d12f0627884d1443102b50657e2fb51957004330898502616d8ef64a1be82",
         "fixtures/vendor-segment/batch-group-without-group-id.txt": "8827af77d3dc3a7838d3986f43e394aea035098321fc04676e6789d8ca456a2f",
@@ -257352,7 +257459,7 @@
         "fixtures/vendor-segment/invalid-revenue.txt": "a07129e67402fe3c739558ca164a956986e9289d0ee0816bee357e74441f024d",
         "fixtures/vendor-segment/invalid-value.txt": "10574e1baba855054dddd4227306f73c98e634e2a3b16a1259ddbd1b85480e1d",
         "fixtures/vendor-segment/long-message-id.txt": "2393cfda0b199249dd464813fd8143106cae2f2d22810f9a7240ac7aa231e854",
-        "fixtures/vendor-segment/manifest.json": "f4e48219040945ce0be094b27f432bc5e2873784229f2dbc0c4baeacbcc9f72a",
+        "fixtures/vendor-segment/manifest.json": "61dace563a86b50334ba9f02ec7d780eae9abfc20670c1cfd0ea14c3c8fd48ab",
         "fixtures/vendor-segment/no-identifier.txt": "0462104b047edf468dfeab4023fb7f9cf01b9fd885ee03815d0d9c7ae873c77f",
         "fixtures/vendor-segment/session-depth-cases.json": "07941b2e6d3d9f0bc768cac4fd259bb3c81555e56cb9b9b6b6c7084b89715a37",
         "fixtures/vendor-segment/spec-cases.json": "2e6c1e938ff8335f641bc9dacbe802cae1b462f2c2e3f2f99e5a7b4d38a099af"
@@ -257411,7 +257518,7 @@
       "vendor": "segment",
       "implemented_counts": {
         "field_contracts": 131,
-        "cross_field_assertions": 12,
+        "cross_field_assertions": 14,
         "body_contract_scopes": 6,
         "http_contract_scopes": 1,
         "query_contract_scopes": 0,
@@ -257422,10 +257529,11 @@
         "source_cases": 20,
         "derived_boundaries": 226,
         "session_source_cases": 16,
-        "automatic_http_routing_examples": 7
+        "automatic_http_routing_examples": 7,
+        "tester_followup_goldens": 13
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/segment.json": "1711a8589a6304a47bf93538540136ca4e34191f9d0098c4e99a4cbdfbe11430",
+        "crates/pixellint-core/rulepacks/vendor/segment.json": "55b805bf11672c08606b3d84c6ddacb39118ce58f7ce330a78ddc0a001e33c3d",
         "fixtures/vendor-segment/batch-alias-without-previous-id.txt": "c40d12f0627884d1443102b50657e2fb51957004330898502616d8ef64a1be82",
         "fixtures/vendor-segment/batch-group-without-group-id.txt": "8827af77d3dc3a7838d3986f43e394aea035098321fc04676e6789d8ca456a2f",
         "fixtures/vendor-segment/batch-invalid-type.txt": "49c7732b44705f5003732f4bd89242b77b1b21f3970bfbf1823be08e7742bc63",
@@ -257448,10 +257556,25 @@
         "fixtures/vendor-segment/invalid-revenue.txt": "a07129e67402fe3c739558ca164a956986e9289d0ee0816bee357e74441f024d",
         "fixtures/vendor-segment/invalid-value.txt": "10574e1baba855054dddd4227306f73c98e634e2a3b16a1259ddbd1b85480e1d",
         "fixtures/vendor-segment/long-message-id.txt": "2393cfda0b199249dd464813fd8143106cae2f2d22810f9a7240ac7aa231e854",
-        "fixtures/vendor-segment/manifest.json": "f4e48219040945ce0be094b27f432bc5e2873784229f2dbc0c4baeacbcc9f72a",
+        "fixtures/vendor-segment/manifest.json": "61dace563a86b50334ba9f02ec7d780eae9abfc20670c1cfd0ea14c3c8fd48ab",
         "fixtures/vendor-segment/no-identifier.txt": "0462104b047edf468dfeab4023fb7f9cf01b9fd885ee03815d0d9c7ae873c77f",
         "fixtures/vendor-segment/session-depth-cases.json": "07941b2e6d3d9f0bc768cac4fd259bb3c81555e56cb9b9b6b6c7084b89715a37",
-        "fixtures/vendor-segment/spec-cases.json": "2e6c1e938ff8335f641bc9dacbe802cae1b462f2c2e3f2f99e5a7b4d38a099af"
+        "fixtures/vendor-segment/spec-cases.json": "2e6c1e938ff8335f641bc9dacbe802cae1b462f2c2e3f2f99e5a7b4d38a099af",
+        "fixtures/vendor-segment/clean-basic-opaque-key.txt": "921bcbdacb78d8b8391517e359103f6e1f6a9568758fc41ea30cc9af185f2ccb",
+        "fixtures/vendor-segment/clean-batch-item-noncredential-key.txt": "bcde065f8923bd34b0f6ee4062e992ea7c127f6f88cced742254a598279c5fd1",
+        "fixtures/vendor-segment/clean-body-key-omitted.txt": "b699a11098434eb79e126eef5de932e7390197f1c94a4175f681c31d54941a5a",
+        "fixtures/vendor-segment/clean-key-placeholder-case.txt": "c53d1481906f8a6b6b67041a0780d5d6c59dbda0d18d7bb707066798a39fedc3",
+        "fixtures/vendor-segment/clean-key-placeholder-substring.txt": "cf23a73c0ebca17015889120cd6effaaa122b5330ce2e71fd54b166de2e950fa",
+        "fixtures/vendor-segment/clean-opaque-short-key.txt": "bd70f36f48cac1337d22fb95ca133b12718bf31600aeb823ed0e64e7e983051c",
+        "fixtures/vendor-segment/clean-placeholder-noncredential-field.txt": "b13a4acf1e02f226a18ec5c64be6e255e1e762d62a2cd3251e96cff16ca0cf63",
+        "fixtures/vendor-segment/placeholder-basic-compact-key.txt": "beac851a0810c0ba4dc0f3ca01a289b728a998d7ee47a0362a89e7a85eaab4ae",
+        "fixtures/vendor-segment/placeholder-basic-key.txt": "e1c6450c90550e36a96a8314a5d4b2ed27a4fc76322902259e423b4144d1171d",
+        "fixtures/vendor-segment/placeholder-batch-key.txt": "69e43167ce8992960219473328eacbb915735746869f9e9ca82500ed74e8b56e",
+        "fixtures/vendor-segment/placeholder-compact-key.txt": "ed8783aacaedb6af8520af252bcaf799cadd596d8df015d7d1208b89532b4862",
+        "fixtures/vendor-segment/placeholder-documented-key.txt": "1ed83ecb909938f57ae1c93904460b883b9f2885b67c0284239539e28f80a97d",
+        "fixtures/vendor-segment/placeholder-http-body-key.txt": "0b39f59efa86c1060c7acc2cc73ec2f0d62fb8518a6492298e0986207027d6c0",
+        "fixtures/vendor-segment/tester-followup-cases.json": "4e7a45911fe92d26d5db1f8f59bf7c53f9ef5bbbbc40ab29db29a8a4fbc364c7",
+        "crates/pixellint-core/tests/segment_installation_placeholders.rs": "89e327afc941e82c83b06acd2a17ac1235446e6f54e6042921476b121e3452de"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -257738,11 +257861,11 @@
         }
       },
       "manifest_changed_this_session": true,
-      "session_review_date": "2026-10-08",
-      "session_reviewed": false,
-      "implementation_changed_this_round": false,
+      "session_review_date": "2026-10-09",
+      "session_reviewed": true,
+      "implementation_changed_this_round": true,
       "manifest_path": "crates/pixellint-core/rulepacks/vendor/segment.json",
-      "manifest_changed_this_round": false,
+      "manifest_changed_this_round": true,
       "round_metadata_history": [
         {
           "version": "0.34.0",
@@ -257750,7 +257873,28 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "reviewed_artifact_transitions": [
+        {
+          "path": "crates/pixellint-core/rulepacks/vendor/segment.json",
+          "previous_sha256": "1711a8589a6304a47bf93538540136ca4e34191f9d0098c4e99a4cbdfbe11430",
+          "sha256": "55b805bf11672c08606b3d84c6ddacb39118ce58f7ce330a78ddc0a001e33c3d",
+          "round": "0.37.0"
+        },
+        {
+          "path": "fixtures/vendor-segment/manifest.json",
+          "previous_sha256": "f4e48219040945ce0be094b27f432bc5e2873784229f2dbc0c4baeacbcc9f72a",
+          "sha256": "61dace563a86b50334ba9f02ec7d780eae9abfc20670c1cfd0ea14c3c8fd48ab",
+          "round": "0.37.0"
+        }
+      ],
+      "tester_followup_review": {
+        "version": "0.37.0",
+        "previous_manifest_sha256": "1711a8589a6304a47bf93538540136ca4e34191f9d0098c4e99a4cbdfbe11430",
+        "changed_manifest_sha256": "55b805bf11672c08606b3d84c6ddacb39118ce58f7ce330a78ddc0a001e33c3d",
+        "scope": "Exact heuristic installation tokens only; no remote key verification.",
+        "coverage_claim": "Bounded correction, not a complete vendor specification review."
+      }
     },
     {
       "id": "vendor/singular",
@@ -285022,6 +285166,32 @@
         "endpoints": 53
       },
       "audit_sha256": "16ee2df3cf268534e24d408ebd948e3307cd50c6df646cede1f2197f1e818246"
+    },
+    {
+      "version": "0.36.0",
+      "source_commit": "15c09a326e4b8563ce58e7ce0662e6a99a4f6f75",
+      "audit_sha256": "03282a681d5d761d49ea74dd16be431f3b10fda0dfde11e597bc73324e43a718",
+      "current": {
+        "version": "0.35.0",
+        "candidate_status": "release_prepared",
+        "packs": 161,
+        "vendors": 85,
+        "field_contracts": 5746,
+        "cross_field_assertions": 557,
+        "body_contract_scopes": 475,
+        "http_contract_scopes": 62,
+        "query_contract_scopes": 6,
+        "bulk_query_sources": 1,
+        "http_contract_packs": 55,
+        "changed_packs_this_round": 6,
+        "new_packs_this_round": 0,
+        "deepened_existing_packs_this_round": 6,
+        "source_reviewed_packs_this_round": 6,
+        "manifest_changes_this_round": 6,
+        "new_source_cases": 320,
+        "remaining_requirement_entries": 497,
+        "remaining_requirements_note": "Overlapping open requirements and source-case counts do not establish a percentage of vendor specification coverage."
+      }
     }
   ],
   "shared_review_0_35": {
@@ -285290,6 +285460,83 @@
       },
       "exact_hash_parity_vectors": 32808,
       "lint_settings_changed": false
+    }
+  },
+  "tester_followup_0_37": {
+    "source_policy": "Primary vendor documentation and pinned source for nullable properties; Segment placeholder checks remain warning-level heuristics. Directory attribution does not establish destination validation.",
+    "changed_packs": [
+      "vendor/posthog",
+      "vendor/segment"
+    ],
+    "corpus_validation": {
+      "previous": "0.36.0",
+      "candidate": "0.37.0",
+      "artifacts": 8798,
+      "changed_artifacts": 56,
+      "metadata_only_changes": 1,
+      "changed_finding_artifacts": 55,
+      "exceptions": 0,
+      "old_errors": 317,
+      "new_errors": 317,
+      "old_warnings": 741,
+      "new_warnings": 742,
+      "old_error_artifacts": 247,
+      "new_error_artifacts": 247,
+      "added_findings": [
+        {
+          "severity": "info",
+          "code": "directory.no_rulepack_coverage",
+          "count": 54
+        },
+        {
+          "severity": "warning",
+          "code": "vendor.segment.body.write_key_placeholder",
+          "count": 1
+        }
+      ],
+      "removed_findings": [],
+      "new_vendor_labels": {
+        "beeswax": 2,
+        "smadex": 20,
+        "krushmedia": 6,
+        "adtelligent": 24,
+        "sovrn": 2
+      },
+      "new_vendor_label_samples": 54,
+      "clock_policy": "Both versions replay identical artifacts at their original capture clocks; prior reference clocks preserved.",
+      "limitations": "Stored artifacts lack destination acceptance labels. Directory info is attribution, not vendor contract coverage. Null corrections are verified by authored fixtures, absent from this frozen corpus.",
+      "input_sha256": "6a889ed383cb8f555a70f11b148e9d72da359602f650109967abd4f9faeef3d2",
+      "runner_dependency_locks": "Both replayers use their corresponding exact workspace dependency sets."
+    },
+    "scope": "Tester paste correctness and evidence-backed host attribution; full tracking contracts remain unavailable for reported VAST long-tail endpoints.",
+    "directory": {
+      "new_vendors": 3,
+      "expanded_vendors": 2,
+      "new_hosts": 12,
+      "directory_entries": 132,
+      "no_tracking_contracts_added": true
+    },
+    "verification": {
+      "rust_workspace_tests": {
+        "status": "passed",
+        "passed": 532
+      },
+      "clippy": "passed",
+      "rustfmt": "passed",
+      "npm_cjs_and_esm": "passed",
+      "har_public_api": "passed",
+      "synthetic_followup_oracles": {
+        "status": "passed",
+        "cases": 17
+      },
+      "source_review_freshness": "passed",
+      "native_wasm_affected_report_parity": {
+        "status": "passed",
+        "comparisons": 146,
+        "changed_corpus_artifacts": 56,
+        "authored_controls": 17,
+        "scope": "Complete old/new report parity for every changed D1 artifact and every new authored fixture; explicit fixture selection filters the same packs."
+      }
     }
   }
 }

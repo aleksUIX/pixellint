@@ -73,7 +73,21 @@
           "json_type": "object"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.segment.body.write_key_placeholder",
+          "kind": "forbid_value_pattern",
+          "pattern": "^(?:YOUR_WRITE_KEY|YOUR_WRITEKEY)$",
+          "params": [
+            "writeKey"
+          ],
+          "severity": "warning",
+          "message": "`writeKey` contains a recognized installation placeholder instead of a configured source key.",
+          "fix_hint": "Copy the source write key from Settings > API Keys. Offline validation cannot verify whether other keys are active.",
+          "doc": "https://www.twilio.com/docs/segment/connections/find-writekey",
+          "source_level": "heuristic"
+        }
+      ]
     },
     {
       "scope": "batch[]",
@@ -1279,6 +1293,19 @@
       }
     ],
     "rules": [
+      {
+        "code": "vendor.segment.http.basic_write_key_placeholder",
+        "kind": "forbid_value_pattern",
+        "pattern": "^(?:YOUR_WRITE_KEY|YOUR_WRITEKEY)$",
+        "params": [
+          "basic_auth.username"
+        ],
+        "severity": "warning",
+        "message": "The Basic authentication username contains a recognized write-key installation placeholder.",
+        "fix_hint": "Use the source write key as the Basic username, then append a colon before Base64 encoding.",
+        "doc": "https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api",
+        "source_level": "heuristic"
+      },
       {
         "code": "vendor.segment.http.authentication_required",
         "kind": "require_any_of",

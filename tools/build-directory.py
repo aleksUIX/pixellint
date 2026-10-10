@@ -46,10 +46,13 @@ VENDORS = {
     # Exact pixel hosts attributed in the 2026-10-09 tester findings.
     "adxspace": ("Adxspace", "video", ["00px.net"], None),
     "stredeo": ("Stredeo", "video", ["t.stredeo.com"], None),
-    "beeswax": ("Beeswax", "programmatic", ["us-east-1.event.prod.bidr.io"], None),
+    "beeswax": ("Beeswax", "programmatic", ["segment.prod.bidr.io", "us-east-1.event.prod.bidr.io"], None),
     "aarki": ("Aarki", "mobile", ["rm.aarki.net"], None),
     "adwrap": ("AdWrap", "video", ["track.adwrap.io"], None),
-    "krushmedia": ("Krush Media", "video", ["ads106.krushmedia.com", "ads133.krushmedia.com"], None),
+    "krushmedia": ("Krush Media", "video", ["ads106.krushmedia.com", "ads133.krushmedia.com", "ads161.krushmedia.com"], None),
+    "adtelligent": ("Adtelligent", "programmatic", ["ads55.adtelligent.com", "ads228.adtelligent.com", "ads283.adtelligent.com"], None),
+    "smadex": ("Smadex", "mobile", ["br-trk.smadex.com", "cr-err.smadex.com", "ec-ed.smadex.com", "geo-tracker.smadex.com", "pixel-ed.smadex.com", "va-trk.smadex.com"], None),
+    "sovrn": ("Sovrn", "programmatic", ["n.adv.lijit.com"], None),
 
     # Demand and supply side platforms
     "thetradedesk": ("The Trade Desk", "programmatic", ["insight.adsrvr.org", "js.adsrvr.org", "match.adsrvr.org"], "vendor/the-trade-desk"),

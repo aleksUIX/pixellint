@@ -3268,5 +3268,35 @@
     "expect_violation": true,
     "expect_no_errors": false,
     "evidence_kind": "independent_legacy_normalization_boundary"
+  },
+  {
+    "id": "tester-redacted-current-url",
+    "kind": "json",
+    "artifact": "{\"api_key\":\"phc_fixture\",\"event\":\"$pageview\",\"distinct_id\":\"person\",\"properties\":{\"$current_url\":null}}",
+    "code": "vendor.posthog.body.properties.$current_url.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://posthog.com/docs/privacy/data-collection",
+    "reference_time": 1770000000
+  },
+  {
+    "id": "tester-null-ip-property",
+    "kind": "json",
+    "artifact": "{\"api_key\":\"phc_fixture\",\"event\":\"user signed up\",\"distinct_id\":\"person\",\"properties\":{\"$ip\":null}}",
+    "code": "vendor.posthog.body.properties.$ip.invalid",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://github.com/PostHog/posthog/blob/d0c3c16556500062c29489d312e97862d240bc70/rust/common/types/src/event.rs",
+    "reference_time": 1770000000
+  },
+  {
+    "id": "tester-hash-identifiers-custom-properties",
+    "kind": "json",
+    "artifact": "{\"api_key\":\"phc_fixture\",\"event\":\"user signed up\",\"distinct_id\":\"a85e9ca18f34935ab9b0381b25bfad2455444112b0149270fd88e3da172fe196\",\"properties\":{\"email_hash\":\"a85e9ca18f34935ab9b0381b25bfad2455444112b0149270fd88e3da172fe196\",\"custom_digest\":\"a85e9ca18f34935ab9b0381b25bfad2455444112b0149270fd88e3da172fe196\",\"$ip\":\"2001:db8::1\"}}",
+    "code": "vendor.posthog.body.hashed_plaintext_field",
+    "expect_violation": false,
+    "expect_no_errors": true,
+    "source_url": "https://posthog.com/docs/api/capture",
+    "reference_time": 1770000000
   }
 ]

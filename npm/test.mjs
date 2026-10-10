@@ -92,6 +92,16 @@ for (const entry of [{ validate, vendorForHost }, cjs]) {
   assert.ok(uvp.reports.flatMap((report) => report.violations).some((finding) => finding.code === "vendor.ias-video-pixel.xsid.placeholder" && finding.severity === "error"));
   assert.equal(entry.vendorForHost("00px.net")?.vendor, "adxspace");
   assert.equal(entry.vendorForHost("t.stredeo.com")?.vendor, "stredeo");
+  assert.equal(entry.vendorForHost("ads283.adtelligent.com")?.vendor, "adtelligent");
+  assert.equal(entry.vendorForHost("va-trk.smadex.com")?.vendor, "smadex");
+  assert.equal(entry.vendorForHost("n.adv.lijit.com")?.vendor, "sovrn");
+  const segment = entry.validate(JSON.stringify({ writeKey: "YOUR_WRITEKEY", type: "track", event: "Order Completed", userId: "synthetic-user" }), { kind: "json" });
+  assert.ok(segment.reports.flatMap(report => report.violations).some(finding => finding.code === "vendor.segment.body.write_key_placeholder" && finding.severity === "warning" && finding.source.level === "heuristic"));
+  const redacted = entry.validate(JSON.stringify({ api_key: "synthetic-project", event: "$pageview", distinct_id: "a".repeat(64), properties: { $current_url: null, $ip: null } }), { kind: "json" });
+  assert.ok(redacted.reports.some(report => report.plugin_id === "vendor/posthog"));
+  assert.ok(redacted.reports.every(report => report.violations.every(finding => finding.severity !== "error")));
+  const hashedIp = entry.validate(JSON.stringify({ api_key: "synthetic-project", event: "$pageview", distinct_id: "synthetic-user", properties: { $ip: "a".repeat(64) } }), { kind: "json" });
+  assert.ok(hashedIp.reports.flatMap(report => report.violations).some(finding => finding.severity === "error" && finding.code === "vendor.posthog.body.hashed_plaintext_field"));
 }
 assert.match(version(), /^\d+\.\d+\.\d+$/);
 assert.equal(version(), JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version, "the bundled engine must match the package version");

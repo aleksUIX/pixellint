@@ -4,6 +4,25 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.37.0 - 2026-10-09
+
+### Added
+
+- Warn on the exact Segment installation tokens `YOUR_WRITE_KEY` and
+  `YOUR_WRITEKEY` in body credentials and decoded Basic authentication
+  usernames. These are bounded heuristics, with no inferred key length or
+  online authentication claims.
+- Attribute 12 more observed hosts across Adtelligent, Smadex, Sovrn, Krush
+  Media and Beeswax. Three new directory vendors bring the inventory to 132
+  entries. These additions retain core checks and establish no tracking
+  parameter contracts.
+
+### Fixed
+
+- Accept PostHog's documented null URL redaction and optional null IP property
+  values in single and batch events. Populated IP addresses retain format and
+  hash checks. Null IP values do not establish that IP collection is disabled.
+
 ## 0.36.0 - 2026-10-09
 
 ### Added
