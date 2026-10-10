@@ -108,3 +108,28 @@ severity above `info`.
 
 Some entries name a parent company rather than the product brand when the
 domain is shared across a portfolio.
+
+## Live VAST hosts reviewed on October 9, 2026
+
+The tester findings supplied for this review attribute these exact endpoints:
+
+- Adxspace: `00px.net`. The reported tag identifies SPACE ADSERVER and an
+  `adxspace` ad ID.
+- Stredeo: `t.stredeo.com`. The reported tag identifies Stredeo.
+- Beeswax: `us-east-1.event.prod.bidr.io`.
+- Aarki: `rm.aarki.net`.
+- AdWrap: `track.adwrap.io`.
+- Krush Media: `ads106.krushmedia.com` and `ads133.krushmedia.com`.
+
+These are directory entries with no vendor rulepack. Their ownership evidence
+comes from the supplied live-tag inventory, rather than a published parameter
+contract. Generic URL, macro and privacy checks still run. No vendor parameters
+are inferred from frequency, paths or VAST event names. FreeWheel's
+[Beeswax cookie-sync documentation](https://api-docs.freewheel.tv/advertiser/docs/cookie-syncing)
+independently identifies Beeswax's `prod.bidr.io` infrastructure, but does not
+define contracts for the reported `/log/act/svr` and `/log/imp/svr` endpoints.
+
+The report did not provide complete hostnames for Adtelligent, Smadex,
+ActiveMetering, RZR Global, Sovrn Lijit or rtactivate. Those entries remain
+deferred until exact host attribution is available. Talpa's private mock host
+does not establish a public vendor contract.

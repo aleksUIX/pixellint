@@ -36009,7 +36009,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -102601,16 +102601,33 @@
             "allow_empty": true,
             "description": "Documented reporting or debugging input. Platform prerequisites and cross-session uniqueness are external."
           }
+        },
+        {
+          "scope": "rules",
+          "code": "vendor.ias-video-pixel.xsid.placeholder",
+          "contract": {
+            "code": "vendor.ias-video-pixel.xsid.placeholder",
+            "kind": "forbid_value_pattern",
+            "severity": "error",
+            "params": [
+              "xsId"
+            ],
+            "pattern": "^\\[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE\\]$",
+            "message": "The IAS external session ID still contains the installation placeholder. IAS requires an ad-session ID to register UVP and CTV impressions.",
+            "fix_hint": "Replace this stub with an ad-server session ID or a macro your ad server expands to that ID. Reuse the same ID across the session's UVP events.",
+            "doc": "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf",
+            "source_level": "official_vendor"
+          }
         }
       ],
       "source_urls": [
         "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf"
       ],
       "source_artifacts": [],
-      "independent_source_cases": 14,
-      "original_oracle_cases": 14,
+      "independent_source_cases": 15,
+      "original_oracle_cases": 15,
       "engine_derived_oracle_cases": 0,
-      "negative_cases": 4,
+      "negative_cases": 5,
       "request_cases": 0,
       "test": {
         "harness": "pixellint/crates/pixellint-core/tests/d1_existing_vendor_coverage.rs",
@@ -102619,9 +102636,9 @@
         "expected_results": "Static independent primary-source expectations, never generated from engine output."
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/ias-video-pixel.json": "47baba0df7386a3746b62fbd9147bac8eba2cee8d10df265d30a9bd49e4edcab",
-        "fixtures/vendor-ias-video-pixel/manifest.json": "b5bb309ea6e5f8fa657e36132abd2672670a4f0439e667f70416d3f2041b41af",
-        "fixtures/vendor-ias-video-pixel/d1-source-cases.json": "5dc6f13d1593bb9402c2220cb33d486dc8b36f1404aed5a832d48687d34413d7",
+        "crates/pixellint-core/rulepacks/vendor/ias-video-pixel.json": "c61f57fd5290f0164176e23eff50c180fbc71c364499f8ab3ca34d9ce5fd5243",
+        "fixtures/vendor-ias-video-pixel/manifest.json": "2a672a469bf7e15f2192810d327394b1374cc52858b2bc6ed793cb9e576cce3c",
+        "fixtures/vendor-ias-video-pixel/d1-source-cases.json": "a5ccafb18de9dc40c65ee3d8b118170368bea9f168d84735cdd0565b6a346f23",
         "fixtures/vendor-ias-video-pixel/clean-impression.txt": "bf41b138bb9c779dbf184632a7b65423f3d45ee36e9fa96def2b049a6b6797c2",
         "fixtures/vendor-ias-video-pixel/clean-start.txt": "e72586fcf2bffc53a568ef395ba8e70a3ec88fde65748ad7ce33af22d067d565",
         "fixtures/vendor-ias-video-pixel/clean-firstQuartile.txt": "31fe3f06d5034008dd6d4193e0135e3a651aadacaed31250c705a0522233d99c",
@@ -102636,23 +102653,26 @@
         "fixtures/vendor-ias-video-pixel/invalid-advertiser.txt": "2082a1413feea572ab79fc022e09e3fe2744939cb3cb6bdea78205110964e550",
         "fixtures/vendor-ias-video-pixel/missing-publisher.txt": "748fa75b68dc8898153b1eddef5b249e3262cfd046a1b909adf9434bc18c3d7d",
         "fixtures/vendor-ias-video-pixel/route-mmt-remains-separate.txt": "720938dc58617eec96f67be7f483ec4ad0a732df2af186d4984ed21f66ae88fa",
-        "crates/pixellint-core/tests/d1_existing_vendor_coverage.rs": "04034c073d781e0c03ff3a1f0c9ab25ad6599edcbcc720c0ea1dbb2b808f2567"
+        "crates/pixellint-core/tests/d1_existing_vendor_coverage.rs": "04034c073d781e0c03ff3a1f0c9ab25ad6599edcbcc720c0ea1dbb2b808f2567",
+        "fixtures/vendor-ias-video-pixel/installation-stub.txt": "0c4b9864828f5ccd5b5d14d4d138b1b38fe8bae4e948c125df9d065f54984a24",
+        "fixtures/vendor-ias-video-pixel/encoded-installation-stub.txt": "cd1bbc08b393f3028429b51bfd014e039c9d0cc7c2f35e1114064c511285d4e8",
+        "crates/pixellint-core/tests/live_vast_hosts.rs": "4b7e297378dc24519c53d19bbe8590d50b0c1e7e1f62a0f40bae42c9f1367af0"
       },
       "artifact_metadata": [
         {
           "path": "pixellint/crates/pixellint-core/rulepacks/vendor/ias-video-pixel.json",
-          "sha256": "47baba0df7386a3746b62fbd9147bac8eba2cee8d10df265d30a9bd49e4edcab",
-          "bytes": 4762
+          "sha256": "c61f57fd5290f0164176e23eff50c180fbc71c364499f8ab3ca34d9ce5fd5243",
+          "bytes": 5531
         },
         {
           "path": "pixellint/fixtures/vendor-ias-video-pixel/manifest.json",
-          "sha256": "b5bb309ea6e5f8fa657e36132abd2672670a4f0439e667f70416d3f2041b41af",
-          "bytes": 4944
+          "sha256": "2a672a469bf7e15f2192810d327394b1374cc52858b2bc6ed793cb9e576cce3c",
+          "bytes": 5852
         },
         {
           "path": "pixellint/fixtures/vendor-ias-video-pixel/d1-source-cases.json",
-          "sha256": "5dc6f13d1593bb9402c2220cb33d486dc8b36f1404aed5a832d48687d34413d7",
-          "bytes": 9853
+          "sha256": "a5ccafb18de9dc40c65ee3d8b118170368bea9f168d84735cdd0565b6a346f23",
+          "bytes": 10685
         },
         {
           "path": "pixellint/fixtures/vendor-ias-video-pixel/clean-impression.txt",
@@ -102723,9 +102743,24 @@
           "path": "pixellint/fixtures/vendor-ias-video-pixel/route-mmt-remains-separate.txt",
           "sha256": "720938dc58617eec96f67be7f483ec4ad0a732df2af186d4984ed21f66ae88fa",
           "bytes": 56
+        },
+        {
+          "path": "pixellint/fixtures/vendor-ias-video-pixel/installation-stub.txt",
+          "sha256": "0c4b9864828f5ccd5b5d14d4d138b1b38fe8bae4e948c125df9d065f54984a24",
+          "bytes": 125
+        },
+        {
+          "path": "pixellint/fixtures/vendor-ias-video-pixel/encoded-installation-stub.txt",
+          "sha256": "cd1bbc08b393f3028429b51bfd014e039c9d0cc7c2f35e1114064c511285d4e8",
+          "bytes": 129
+        },
+        {
+          "path": "pixellint/crates/pixellint-core/tests/live_vast_hosts.rs",
+          "sha256": "4b7e297378dc24519c53d19bbe8590d50b0c1e7e1f62a0f40bae42c9f1367af0",
+          "bytes": 3698
         }
       ],
-      "manifest_sha256": "47baba0df7386a3746b62fbd9147bac8eba2cee8d10df265d30a9bd49e4edcab",
+      "manifest_sha256": "c61f57fd5290f0164176e23eff50c180fbc71c364499f8ab3ca34d9ce5fd5243",
       "sources_read": [
         {
           "url": "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf",
@@ -102752,7 +102787,7 @@
       ],
       "implemented_counts": {
         "field_contracts": 16,
-        "cross_field_assertions": 0,
+        "cross_field_assertions": 1,
         "body_contract_scopes": 0,
         "http_contract_scopes": 0,
         "query_contract_scopes": 0,
@@ -102771,7 +102806,11 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "live_tester_review": {
+        "source_access": "2026-10-09",
+        "requirement": "Reject the exact published installation placeholder as an unpopulated external session ID. Keep real session macros and opaque IDs eligible for validation."
+      }
     },
     {
       "id": "vendor/id5",

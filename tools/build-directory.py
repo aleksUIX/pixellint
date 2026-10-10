@@ -43,6 +43,14 @@ VENDORS = {
     "baidu": ("Baidu", "search", ["hm.baidu.com", "cpro.baidustatic.com"], "vendor/baidu"),
     "naver": ("Naver", "search", ["wcs.naver.net", "wcs.naver.com"], None),
 
+    # Exact pixel hosts attributed in the 2026-10-09 tester findings.
+    "adxspace": ("Adxspace", "video", ["00px.net"], None),
+    "stredeo": ("Stredeo", "video", ["t.stredeo.com"], None),
+    "beeswax": ("Beeswax", "programmatic", ["us-east-1.event.prod.bidr.io"], None),
+    "aarki": ("Aarki", "mobile", ["rm.aarki.net"], None),
+    "adwrap": ("AdWrap", "video", ["track.adwrap.io"], None),
+    "krushmedia": ("Krush Media", "video", ["ads106.krushmedia.com", "ads133.krushmedia.com"], None),
+
     # Demand and supply side platforms
     "thetradedesk": ("The Trade Desk", "programmatic", ["insight.adsrvr.org", "js.adsrvr.org", "match.adsrvr.org"], "vendor/the-trade-desk"),
     "amazon": ("Amazon Ads", "programmatic", ["s.amazon-adsystem.com", "aax.amazon-adsystem.com", "c.amazon-adsystem.com", "fls-na.amazon-adsystem.com"], "vendor/amazon-ads"),
@@ -74,7 +82,7 @@ VENDORS = {
 
     # Verification and measurement
     "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "rtb0.doubleverify.com"], "vendor/doubleverify"),
-    "ias": ("Integral Ad Science", "verification", ["pixel.adsafeprotected.com", "static.adsafeprotected.com", "dt.adsafeprotected.com"], "vendor/ias"),
+    "ias": ("Integral Ad Science", "verification", ["pixel.adsafeprotected.com", "static.adsafeprotected.com", "dt.adsafeprotected.com", "unified.adsafeprotected.com"], "vendor/ias"),
     "moat": ("Oracle Moat", "verification", ["px.moatads.com", "z.moatads.com", "js.moatads.com"], None),
     "nielsen": ("Nielsen", "measurement", ["audit.imrworldwide.com", "secure-dcr.imrworldwide.com", "secure-gl.imrworldwide.com"], "vendor/nielsen"),
     "kantar": ("Kantar", "measurement", ["secure.insightexpressai.com"], "vendor/kantar"),

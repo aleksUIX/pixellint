@@ -5,6 +5,7 @@
 
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 
 import { isOk, rulepacks, validate, validateMany, vendorForHost, vendors, version } from "./index.mjs";
 
@@ -83,6 +84,15 @@ assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length,
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
+
+// Both npm entry points must use the refreshed engine for live VAST findings.
+const cjs = createRequire(import.meta.url)("./index.cjs");
+for (const entry of [{ validate, vendorForHost }, cjs]) {
+  const uvp = entry.validate("https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE]", { kind: "vast", state: "template" });
+  assert.ok(uvp.reports.flatMap((report) => report.violations).some((finding) => finding.code === "vendor.ias-video-pixel.xsid.placeholder" && finding.severity === "error"));
+  assert.equal(entry.vendorForHost("00px.net")?.vendor, "adxspace");
+  assert.equal(entry.vendorForHost("t.stredeo.com")?.vendor, "stredeo");
+}
 assert.match(version(), /^\d+\.\d+\.\d+$/);
 assert.equal(version(), JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version, "the bundled engine must match the package version");
 
