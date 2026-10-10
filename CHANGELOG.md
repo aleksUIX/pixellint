@@ -4,6 +4,20 @@ All notable changes to Pixellint are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.36.0 - 2026-10-09
+
+### Added
+
+- Attribute seven observed tracking hosts to Aarki, AdWrap, Adxspace, Beeswax,
+  Krush Media and Stredeo. These directory entries retain core checks and
+  carry no vendor contract or rulepack claims.
+
+### Fixed
+
+- Reject the literal IAS video installation stub in `xsId`, including its
+  percent-encoded form. Real opaque session IDs and supported template macros
+  remain accepted by the IAS pack.
+
 ## 0.35.0 - 2026-10-09
 
 ### Added
