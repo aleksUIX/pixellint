@@ -43,6 +43,22 @@ fn check_cases(pack: &str, cases: &str) {
                 case.reference_time,
             )
             .unwrap();
+        if pack.contains("\"id\": \"vendor/matomo\"") {
+            let updates: std::collections::BTreeMap<String, Vec<Finding>> =
+                serde_json::from_str(include_str!(
+                    "../../../fixtures/vendor-matomo-php-tree-depth/previous-case-updates.json"
+                ))
+                .unwrap();
+            if let Some(findings) = updates.get(&case.id) {
+                case.expected_findings = findings
+                    .iter()
+                    .map(|finding| Finding {
+                        code: finding.code.clone(),
+                        severity: finding.severity.clone(),
+                    })
+                    .collect();
+            }
+        }
         let mut actual: Vec<_> = summary
             .reports
             .iter()
@@ -142,5 +158,13 @@ fn ftrack_headerless_hint_stays_bound_to_endpoint_and_pack_selection() {
             .iter()
             .flat_map(|r| &r.violations)
             .any(|v| v.code.starts_with("vendor.flashtalking-ftrack"))
+    );
+}
+
+#[test]
+fn matomo_php_bracket_trees_sanitizer_and_core_plugin_readers() {
+    check_cases(
+        include_str!("../rulepacks/vendor/matomo.json"),
+        include_str!("../../../fixtures/vendor-matomo-php-tree-depth/source-cases.json"),
     );
 }

@@ -1,7 +1,7 @@
 {
   "id": "vendor/matomo",
   "display_name": "Matomo HTTP Tracking API",
-  "description": "Matomo single and bulk HTTP Tracking API requests to matomo.php or piwik.php, including self-hosted endpoints. The pinned PHP8 bulk profile models scalar parse_str key normalization, last-value shadowing and mapped field readers. Bracket trees, sanitizer-sensitive values and runtime-dependent query forms remain explicitly unvalidated.",
+  "description": "Matomo single and bulk HTTP Tracking API requests to matomo.php or piwik.php, including self-hosted endpoints. The pinned PHP8 bulk profile models bounded bracket trees, ordered last-assignment shadowing, mapped HTML4 sanitization and core plugin readers. Malformed, configuration-sensitive and nonportable PHP forms remain explicitly unvalidated.",
   "vendor": "matomo",
   "source_level": "official_vendor",
   "docs": "https://developer.matomo.org/api-reference/tracking-api",
@@ -234,12 +234,13 @@
       "format": {
         "kind": "enum",
         "values": [
+          "0",
           "1"
         ]
       },
-      "description": "When set to `1`, the visitor's client is known to support cookies.",
-      "fix_hint": "Send `cookie=1` when the client supports cookies, or omit the pair.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "description": "The pinned JavaScript tracker sends `1` when cookies are supported and `0` when they are unavailable. The server reads the flag as an integer with default zero.",
+      "fix_hint": "Send `cookie=1` for cookie support, `cookie=0` for no support, or omit the optional flag.",
+      "doc": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/js/piwik.js"
     },
     {
       "name": "new_visit",
@@ -295,16 +296,17 @@
     },
     {
       "name": "pdf",
-      "name_pattern": "^(fla|java|dir|qt|realp|pdf|wma|gears|ag)$",
+      "name_pattern": "^(fla|java|qt|realp|pdf|wma|ag)$",
       "format": {
         "kind": "enum",
         "values": [
+          "0",
           "1"
         ]
       },
-      "description": "It is a visitor plugin flag. Matomo documents `fla`, `java`, `dir`, `qt`, `realp`, `pdf`, `wma`, `gears`, and `ag` as `1` when that plugin is present.",
-      "fix_hint": "Send `1` for a present plugin, or omit the pair.",
-      "doc": "https://developer.matomo.org/api-reference/tracking-api"
+      "description": "The pinned JavaScript tracker sends `1` for a present browser plugin and `0` for an absent plugin. The core server reads these supported plugin flags as integers with default zero.",
+      "fix_hint": "Send `1` for a present plugin, `0` for an absent plugin, or omit the optional flag.",
+      "doc": "https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/js/piwik.js"
     },
     {
       "name": "c_n",
@@ -735,7 +737,6 @@
       "format": {
         "kind": "enum",
         "values": [
-          "0",
           "1"
         ]
       }
@@ -807,7 +808,6 @@
       "format": {
         "kind": "enum",
         "values": [
-          "0",
           "1"
         ]
       }

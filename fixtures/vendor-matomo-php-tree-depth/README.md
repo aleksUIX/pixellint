@@ -1,0 +1,9 @@
+# These fixtures deepen the pinned Matomo bulk profile.
+
+`producer-proof.json` contains PHP 8.3.35 `parse_str` results and field-reader outputs from the pinned Matomo `Common.php`. The same execution exports the HTML4 translation table and numeric entity boundaries. `producer-oracle.php` is the independently executed oracle. It loads the verified source at `/source/Common.php` in a container with networking disabled.
+
+`generated-parser-proof.json` records 256 deterministic generated bracket queries, seed 20261010, executed by PHP. These expected parsed values are independent of Pixellint. `extended-sanitizer-proof.json` checks long numeric entities and the PHP PCRE final-line-feed behavior. Native core browser plugin readers come from `Request::getPlugins`; the pinned JavaScript producer confirms that unsupported cookie and plugin capabilities are sent as zero.
+
+`source-cases.json` contains 75 independently authored integration cases with explicit finding codes and severities. `previous-case-updates.json` supersedes only historical expectations for gaps closed by this release. The original historical producer-proof and source-case captures remain unchanged. The executable golden manifest receives only the explicitly superseded outcomes. Malformed submitted JSON still reaches the existing wire-format rule, which reports malformed input without claiming server rejection.
+
+The model stays bounded at 1000 query variables and 64 bracket levels. Literal control bytes requiring parse_url normalization, invalid UTF8, malformed bracket syntax, literal semicolon separator ambiguity, nonportable numeric keys, negative-only append semantics, sanitizer key collisions and unmapped plugin readers remain explicit information findings. The source profile does not imply arbitrary PHP configuration support.
