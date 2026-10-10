@@ -126,6 +126,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/appsflyer-onelink-impression",
         include_str!("../rulepacks/vendor/appsflyer-onelink-impression.json"),
     ),
+    (
+        "vendor/appsflyer-web-event",
+        include_str!("../rulepacks/vendor/appsflyer-web-event.json"),
+    ),
+    (
+        "vendor/appsflyer-web-visit",
+        include_str!("../rulepacks/vendor/appsflyer-web-visit.json"),
+    ),
     ("vendor/awin", include_str!("../rulepacks/vendor/awin.json")),
     (
         "vendor/awin-basket",

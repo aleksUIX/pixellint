@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 164 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 166 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -2745,6 +2745,143 @@ Path captures: `^/(?<template_id>[^/?]+)$`. Captured values take precedence over
 | `vendor.appsflyer-onelink-impression.af_og_title_preview_fields` | `{"kind":"required_with","when":"af_og_title","requires":["af_og_description","af_og_image"]}` | warning | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/208874366) |
 | `vendor.appsflyer-onelink-impression.af_og_description_preview_fields` | `{"kind":"required_with","when":"af_og_description","requires":["af_og_title","af_og_image"]}` | warning | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/208874366) |
 | `vendor.appsflyer-onelink-impression.af_og_image_preview_fields` | `{"kind":"required_with","when":"af_og_image","requires":["af_og_title","af_og_description"]}` | warning | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/208874366) |
+
+## `vendor/appsflyer-web-event`
+
+Exact AppsFlyer web event route with endpoint-bound HTTP and native JSON contracts. Bare JSON is not auto-attributed.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/appsflyer-web-event.json).
+
+Matcher: `{"hosts":["events.appsflyer.com"],"path_patterns":["^/v2\\.0/s2s/inapps/app/web/[^/]*$"]}`.
+
+Path captures: `^/v2\.0/s2s/inapps/app/web/(?P<app_id>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `app_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `content_type` | required | `{"json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `body_encoding` | required | `{"json_type":"string","format":{"kind":"enum","values":["json"]},"condition":{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["unsupported"]}}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `headers.authorization` | required | `{"json_type":"string","format":{"kind":"regex","pattern":"(?i)^Bearer[ \\t]+\\S+[ \\t]*$"}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `url` | required | `{"json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `body` | required | `{"json_type":"object"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+### Complete HTTP contract 2
+
+Context: `{"scope":"body"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `user_id` | required | `{"json_type":"object"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_url` | optional | `{"json_type":"string","max_length":4096,"format":{"kind":"url"},"severity":"error"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_value` | optional | `{"json_type":"object"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_value.custom_parameters` | optional | `{"json_type":"object"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `timestamp` | optional | `{"json_type":"integer","minimum":-9223372036854775808,"maximum":9223372036854775807}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `ip` | optional | `{"json_type":"string","max_length":46,"format":{"kind":"ip"},"severity":"error"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `user_agent` | optional | `{"json_type":"string","max_length":1024,"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `http_referrer` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `email_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `phone_number_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `phone_number_e164_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `first_name_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `last_name_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_name` | required | `{"json_type":"string","min_length":1,"max_length":64,"allow_empty":true,"format":{"kind":"regex","pattern":"^[^@=+\\-]*$"}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_revenue` | optional | `{"json_type":"number"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_revenue_currency` | optional | `{"json_type":"string","format":{"kind":"currency","case_insensitive":true,"allow_historical":true},"severity":"error"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `af_customer_event_id` | optional | `{"json_type":"string","max_length":256,"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.appsflyer-web-event.http.event_url_http` | `{"kind":"format","param":"event_url","format":{"kind":"regex","pattern":"(?i)^https?://"},"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"event_url","json_type":"string"},{"kind":"present","param":"event_url"}]}}` | error | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+### Complete HTTP contract 3
+
+Context: `{"scope":"body.user_id"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `customer_user_id` | optional | `{"json_type":"string","min_length":1,"max_length":64,"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `appsflyer_id` | optional | `{"json_type":"string","min_length":1,"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.appsflyer-web-event.http.user_id.identifier_required` | `{"kind":"require_any_of","groups":[["customer_user_id"],["appsflyer_id"]],"allow_empty":true}` | error | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+## `vendor/appsflyer-web-visit`
+
+Exact AppsFlyer web visit route with endpoint-bound HTTP and native JSON contracts. Bare JSON is not auto-attributed.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/appsflyer-web-visit.json).
+
+Matcher: `{"hosts":["events.appsflyer.com"],"path_patterns":["^/v2\\.0/s2s/visits/app/web/[^/]*$"]}`.
+
+Path captures: `^/v2\.0/s2s/visits/app/web/(?P<app_id>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `app_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `content_type` | required | `{"json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `body_encoding` | required | `{"json_type":"string","format":{"kind":"enum","values":["json"]},"condition":{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["unsupported"]}}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `headers.authorization` | required | `{"json_type":"string","format":{"kind":"regex","pattern":"(?i)^Bearer[ \\t]+\\S+[ \\t]*$"}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `url` | required | `{"json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `body` | required | `{"json_type":"object"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+### Complete HTTP contract 2
+
+Context: `{"scope":"body"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `user_id` | required | `{"json_type":"object"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_url` | required | `{"json_type":"string","max_length":4096,"format":{"kind":"url"},"severity":"error"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_value` | optional | `{"json_type":"object"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `event_value.custom_parameters` | optional | `{"json_type":"object"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `timestamp` | optional | `{"json_type":"integer","minimum":-9223372036854775808,"maximum":9223372036854775807}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `ip` | optional | `{"json_type":"string","max_length":46,"format":{"kind":"ip"},"severity":"error"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `user_agent` | optional | `{"json_type":"string","max_length":1024,"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `http_referrer` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `email_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `phone_number_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `phone_number_e164_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `first_name_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `last_name_hashed` | optional | `{"json_type":"string","min_length":64,"max_length":64,"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `customer_dedup_id` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.appsflyer-web-visit.http.event_url_http` | `{"kind":"format","param":"event_url","format":{"kind":"regex","pattern":"(?i)^https?://"},"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"event_url","json_type":"string"},{"kind":"present","param":"event_url"}]}}` | error | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+### Complete HTTP contract 3
+
+Context: `{"scope":"body.user_id"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `customer_user_id` | optional | `{"json_type":"string","min_length":1,"max_length":64,"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+| `appsflyer_id` | optional | `{"json_type":"string","min_length":1,"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.appsflyer-web-visit.http.user_id.identifier_required` | `{"kind":"require_any_of","groups":[["customer_user_id"],["appsflyer_id"]],"allow_empty":true}` | error | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement) |
 
 ## `vendor/appsflyer`
 

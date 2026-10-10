@@ -1,0 +1,354 @@
+{
+  "id": "vendor/appsflyer-web-event",
+  "display_name": "AppsFlyer web S2S events",
+  "description": "Exact AppsFlyer web event route with endpoint-bound HTTP and native JSON contracts. Bare JSON is not auto-attributed.",
+  "vendor": "appsflyer",
+  "source_level": "official_vendor",
+  "docs": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+  "path_pattern": "^/v2\\.0/s2s/inapps/app/web/(?P<app_id>[^/]*)$",
+  "match": {
+    "hosts": [
+      "events.appsflyer.com"
+    ],
+    "path_patterns": [
+      "^/v2\\.0/s2s/inapps/app/web/[^/]*$"
+    ]
+  },
+  "params": [
+    {
+      "name": "app_id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Required dashboard unified_app_id. Website prefixes and registration truth are not inferred from examples.",
+      "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement"
+    }
+  ],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "method",
+          "json_type": "string",
+          "description": "The published operation uses POST.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST"
+            ]
+          }
+        },
+        {
+          "name": "content_type",
+          "json_type": "string",
+          "description": "All requests require application/json.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "application/json"
+            ]
+          }
+        },
+        {
+          "name": "body_encoding",
+          "json_type": "string",
+          "description": "This operation carries a JSON entity. A locally unsupported decoder representation remains unvalidated.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "json"
+            ]
+          },
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "body_encoding",
+              "values": [
+                "unsupported"
+              ]
+            }
+          }
+        },
+        {
+          "name": "headers.authorization",
+          "json_type": "string",
+          "description": "The published API requires an Authorization Bearer S2S token. Token validity and ownership remain external.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "requirement": "required",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?i)^Bearer[ \\t]+\\S+[ \\t]*$"
+          }
+        },
+        {
+          "name": "url",
+          "json_type": "string",
+          "description": "The published endpoint uses HTTPS.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "requirement": "required",
+          "format": {
+            "kind": "url",
+            "require_https": true
+          }
+        },
+        {
+          "name": "body",
+          "json_type": "object",
+          "description": "The endpoint body is a JSON object.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "scope": "body",
+      "params": [
+        {
+          "name": "user_id",
+          "json_type": "object",
+          "description": "The published web table requires a top-level user_id object with at least one documented identifier.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "requirement": "required"
+        },
+        {
+          "name": "event_url",
+          "json_type": "string",
+          "description": "The documented page URL uses HTTP or HTTPS and is at most 4096 characters.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "max_length": 4096,
+          "format": {
+            "kind": "url"
+          },
+          "severity": "error"
+        },
+        {
+          "name": "event_value",
+          "json_type": "object",
+          "description": "Optional free-form event parameters remain an open object.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement"
+        },
+        {
+          "name": "event_value.custom_parameters",
+          "json_type": "object",
+          "description": "The documented custom_parameters representation is a sub-object.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement"
+        },
+        {
+          "name": "timestamp",
+          "json_type": "integer",
+          "description": "Optional Unix milliseconds use the published int64 type. App timezone and receipt time are external.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "minimum": -9223372036854775808,
+          "maximum": 9223372036854775807
+        },
+        {
+          "name": "ip",
+          "json_type": "string",
+          "description": "Optional device IP accepts IPv4 or IPv6, up to 46 characters.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "max_length": 46,
+          "format": {
+            "kind": "ip"
+          },
+          "severity": "error"
+        },
+        {
+          "name": "user_agent",
+          "json_type": "string",
+          "description": "Optional browser user agent is at most 1024 characters.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "max_length": 1024,
+          "allow_empty": true
+        },
+        {
+          "name": "http_referrer",
+          "json_type": "string",
+          "description": "The optional referrer is documented as a string. No extra length or scheme restriction is invented.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "allow_empty": true
+        },
+        {
+          "name": "email_hashed",
+          "json_type": "string",
+          "description": "The optional SHA256 representation must be exactly 64 hexadecimal characters. The preimage cannot be verified locally.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "min_length": 64,
+          "max_length": 64,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "phone_number_hashed",
+          "json_type": "string",
+          "description": "The optional SHA256 representation must be exactly 64 hexadecimal characters. The preimage cannot be verified locally.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "min_length": 64,
+          "max_length": 64,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "phone_number_e164_hashed",
+          "json_type": "string",
+          "description": "The optional SHA256 representation must be exactly 64 hexadecimal characters. The preimage cannot be verified locally.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "min_length": 64,
+          "max_length": 64,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "first_name_hashed",
+          "json_type": "string",
+          "description": "The optional SHA256 representation must be exactly 64 hexadecimal characters. The preimage cannot be verified locally.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "min_length": 64,
+          "max_length": 64,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "last_name_hashed",
+          "json_type": "string",
+          "description": "The optional SHA256 representation must be exactly 64 hexadecimal characters. The preimage cannot be verified locally.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "min_length": 64,
+          "max_length": 64,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "event_name",
+          "json_type": "string",
+          "description": "The web event name is 1 to 64 characters and cannot contain @, =, + or -. Spaces and leading quotation marks are not prohibited by this table.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "requirement": "required",
+          "min_length": 1,
+          "max_length": 64,
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[^@=+\\-]*$"
+          }
+        },
+        {
+          "name": "event_revenue",
+          "json_type": "number",
+          "description": "The optional revenue amount is a JSON number. No unpublished nonnegative or dependency condition is added.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement"
+        },
+        {
+          "name": "event_revenue_currency",
+          "json_type": "string",
+          "description": "Optional revenue currency is an ISO 4217 code.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true,
+            "allow_historical": true
+          },
+          "severity": "error"
+        },
+        {
+          "name": "af_customer_event_id",
+          "json_type": "string",
+          "description": "Optional network deduplication ID is at most 256 characters. Matching across external network pixels is outside this single-capture contract.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "max_length": 256,
+          "allow_empty": true
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.appsflyer-web-event.http.event_url_http",
+          "kind": "format",
+          "param": "event_url",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?i)^https?://"
+          },
+          "severity": "error",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "event_url",
+                "json_type": "string"
+              },
+              {
+                "kind": "present",
+                "param": "event_url"
+              }
+            ]
+          },
+          "message": "The documented page URL uses HTTP or HTTPS.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement"
+        }
+      ]
+    },
+    {
+      "scope": "body.user_id",
+      "params": [
+        {
+          "name": "customer_user_id",
+          "json_type": "string",
+          "description": "Customer identifier is 1 to 64 characters.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "min_length": 1,
+          "max_length": 64,
+          "allow_empty": true
+        },
+        {
+          "name": "appsflyer_id",
+          "json_type": "string",
+          "description": "AppsFlyer web identifier has at least one character. No upper limit is published.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement",
+          "min_length": 1,
+          "allow_empty": true
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.appsflyer-web-event.http.user_id.identifier_required",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "customer_user_id"
+            ],
+            [
+              "appsflyer_id"
+            ]
+          ],
+          "allow_empty": true,
+          "severity": "error",
+          "message": "Provide at least one identifier in the top-level user_id object.",
+          "doc": "https://support.appsflyer.com/hc/en-us/articles/45670116601617-Server-to-Server-S2S-API-for-Web-Performance-Measurement"
+        }
+      ]
+    }
+  ]
+}

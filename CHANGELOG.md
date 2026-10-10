@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.43.0 (2026-10-10)
+
+- Add separate AppsFlyer web S2S event and visit packs for the documented `events.appsflyer.com` HTTP routes.
+- Check every published locally observable request field, including identity alternatives, endpoint-specific required fields, native types, exact int64 bounds, URL/IP formats, hash syntax and length limits.
+- Preserve open custom data and capture deferrals. Mobile contracts and external attribution, token validity, app-timezone deadlines and deduplication history remain separate.
+- Add 488 source-authored native fixture cases and ten endpoint/capture integration tests.
+
 ## 0.42.0 (2026-10-10)
 
 - Check the documented maximum of 2000 event records per Mixpanel Track request.
