@@ -107,7 +107,9 @@ pixellint validate request @captured-request.json --json
 ```
 
 The capture has string `url` and `method`, a `headers` object or list of
-`{ "name": "...", "value": "..." }` entries, and an optional raw string `body`.
+`{ "name": "...", "value": "..." }` entries. Use an optional raw string `body`
+for text, or `body_base64` for captured binary bytes. The shared engine decodes
+identity and gzip entities within explicit local limits.
 See [docs/HTTP_REQUEST_SCHEMA.md](docs/HTTP_REQUEST_SCHEMA.md) for examples and
 validation limits. A bare URL passed as `request` keeps its existing behavior.
 

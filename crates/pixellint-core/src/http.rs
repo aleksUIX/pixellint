@@ -1,5 +1,5 @@
 //! Complete HTTP captures keep endpoint, transport and body contracts together.
-//! The body is a raw string so byte limits use the submitted wire representation.
+//! Raw text and explicit binary wire bytes preserve capture evidence.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
@@ -36,6 +36,19 @@ pub struct HttpRequest {
     pub headers: HttpHeaders,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub body: Option<String>,
+}
+
+/// Explicit captured binary wire bytes. Serialize this envelope with artifact
+/// kind `request`; [`HttpRequest`] retains its existing source compatibility.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BinaryHttpRequest {
+    pub url: String,
+    pub method: String,
+    pub headers: HttpHeaders,
+    pub body_base64: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub capture: Option<HttpCaptureContext>,
 }
 
 /// Availability declarations describe omitted capture data, not vendor waivers.
@@ -95,7 +108,13 @@ impl HttpCaptureContext {
     }
 }
 
-fn parse_capture(value: Value) -> Option<(HttpRequest, HttpCaptureContext)> {
+struct ParsedCapture {
+    request: HttpRequest,
+    context: HttpCaptureContext,
+    binary_body: Option<String>,
+}
+
+fn parse_capture(value: Value) -> Option<ParsedCapture> {
     let Value::Object(mut object) = value else {
         return None;
     };
@@ -103,9 +122,15 @@ fn parse_capture(value: Value) -> Option<(HttpRequest, HttpCaptureContext)> {
         Some(value) => serde_json::from_value::<HttpCaptureContext>(value).ok()?,
         None => HttpCaptureContext::default(),
     };
+    let binary_body = match object.remove("body_base64") {
+        Some(Value::String(value)) if !object.contains_key("body") => Some(value),
+        Some(_) => return None,
+        None => None,
+    };
     let request = serde_json::from_value::<HttpRequest>(Value::Object(object)).ok()?;
-    if matches!(context.body, Some(HttpBodyAvailability::Available)) && request.body.is_none()
-        || matches!(context.body, Some(HttpBodyAvailability::Absent)) && request.body.is_some()
+    let has_body = request.body.is_some() || binary_body.is_some();
+    if matches!(context.body, Some(HttpBodyAvailability::Available)) && !has_body
+        || matches!(context.body, Some(HttpBodyAvailability::Absent)) && has_body
     {
         return None;
     }
@@ -119,7 +144,11 @@ fn parse_capture(value: Value) -> Option<(HttpRequest, HttpCaptureContext)> {
             return None;
         }
     }
-    Some((request, context))
+    Some(ParsedCapture {
+        request,
+        context,
+        binary_body,
+    })
 }
 
 struct DecodedRequest {
@@ -128,6 +157,8 @@ struct DecodedRequest {
     form: bool,
     multipart_fields: Option<Vec<crate::manifest::RawParam<'static>>>,
     unavailable_form: bool,
+    entity_text: Option<String>,
+    entity_bytes: usize,
     violations: Vec<Violation>,
 }
 
@@ -160,12 +191,17 @@ impl Engine {
             })
             .and_then(|_| serde_json::from_str::<Value>(&request.artifact).ok())
             .and_then(parse_capture);
-        let Some((capture, context)) = capture else {
+        let Some(ParsedCapture {
+            request: capture,
+            context,
+            binary_body,
+        }) = capture
+        else {
             return Ok(ValidationSummary {
                 reports: vec![core_report(vec![request_violation(
                     "invalid_envelope",
                     None,
-                    "A request capture needs string url and method, headers as an object or name/value list, and an optional raw string body.",
+                    "A request capture needs string url and method, headers as an object or name/value list, and at most one raw string body or string body_base64. Availability declarations must agree with body presence.",
                     Severity::Error,
                 )])],
             });
@@ -192,11 +228,17 @@ impl Engine {
                         .get(id)
                         .is_some_and(|entry| entry.plugin.uses_headerless_form_body(&endpoint))
             });
-        let decoded = decode_request_with_form_hint(&capture, &context, clock, headerless_form);
+        let decoded = decode_request_with_form_hint(
+            &capture,
+            &context,
+            binary_body.as_deref(),
+            clock,
+            headerless_form,
+        );
         let mut prepared = PreparedArtifact::from_request_at(&url_request, clock);
         prepared.mark_complete_http_request();
         if decoded.form {
-            prepared.set_form_body(capture.body.as_deref().unwrap_or_default());
+            prepared.set_form_body(decoded.entity_text.as_deref().unwrap_or_default());
         }
         if let Some(fields) = &decoded.multipart_fields {
             prepared.set_form_fields(fields.clone());
@@ -253,7 +295,7 @@ impl Engine {
                 plugin.validate_http(
                     &prepared,
                     body.as_ref(),
-                    capture.body.as_ref().map_or(0, String::len),
+                    decoded.entity_bytes,
                     &decoded.normalized,
                     plugins.iter().any(|plugin| plugin.metadata().id == "core"),
                 )
@@ -276,6 +318,12 @@ impl Engine {
         // Normalized JSON and decoded-body byte ranges are not capture ranges.
         // Keep field names and source citations, never fabricate input offsets.
         let mut secrets = secret_values(&capture);
+        if binary_body.is_some()
+            && let Some(json) = decoded.json_body.as_deref()
+            && let Ok(value) = serde_json::from_str::<Value>(json)
+        {
+            collect_entity_secrets(&value, false, &mut secrets);
+        }
         for field in prepared.params(crate::manifest::ParamStyle::Query) {
             let name = field.name.to_ascii_lowercase();
             if name.contains("key")
@@ -382,6 +430,7 @@ fn capture_allows_headerless_form(request: &HttpRequest, context: &HttpCaptureCo
 fn decode_request_with_form_hint(
     request: &HttpRequest,
     context: &HttpCaptureContext,
+    binary_body: Option<&str>,
     clock: i64,
     headerless_form: bool,
 ) -> DecodedRequest {
@@ -439,7 +488,8 @@ fn decode_request_with_form_hint(
                 .trim()
                 .to_ascii_lowercase()
         });
-    let encoding = match (request.body.is_some(), content_type.as_deref()) {
+    let has_body = request.body.is_some() || binary_body.is_some();
+    let encoding = match (has_body, content_type.as_deref()) {
         (false, _) => "none",
         (true, Some("application/x-www-form-urlencoded")) => "form",
         (true, None) if headerless_form && !headers.contains_key("content-type") => "form",
@@ -448,7 +498,8 @@ fn decode_request_with_form_hint(
         (true, Some(mime)) if mime == "application/json" || mime.ends_with("+json") => "json",
         _ => "text",
     };
-    let wire = request.body.as_deref();
+    let mut entity_text = request.body.clone();
+    let mut wire_bytes = request.body.as_ref().map_or(0, String::len);
     let capture_body_unavailable = context.body_unavailable();
     let mut unavailable_paths = Vec::new();
     if context.headers_unavailable {
@@ -478,7 +529,7 @@ fn decode_request_with_form_hint(
         unavailable_paths.extend(["body".into(), "body_encoding".into()]);
     }
     let decoder_context_unavailable =
-        wire.is_some() && (unavailable_content_type || unavailable_content_encoding);
+        has_body && (unavailable_content_type || unavailable_content_encoding);
     if decoder_context_unavailable {
         unavailable_paths.extend(["body".into(), "body_encoding".into()]);
     }
@@ -500,17 +551,81 @@ fn decode_request_with_form_hint(
             .as_str()
             .is_none_or(|value| !value.eq_ignore_ascii_case("identity"))
     });
+    let gzip = headers
+        .get("content-encoding")
+        .and_then(Value::as_str)
+        .is_some_and(|value| value.eq_ignore_ascii_case("gzip"));
     let mut unsupported = capture_body_unavailable
         || decoder_context_unavailable
-        || (wire.is_some()
-            && (compressed
+        || (has_body
+            && ((compressed && !(binary_body.is_some() && gzip))
                 || ambiguous_content_type
                 || content_type.as_deref().is_some_and(|mime| {
                     mime.starts_with("multipart/") && mime != "multipart/form-data"
                 })));
     if unsupported && !capture_body_unavailable && !decoder_context_unavailable {
-        violations.push(request_violation("unsupported_body_encoding", Some("body"), "This capture contains compressed data, repeated Content-Type headers or an unsupported multipart media type. Provide an unambiguous decoded capture for local body checks.", Severity::Info));
+        violations.push(request_violation("unsupported_body_encoding", Some("body"), "This capture has unsupported or ambiguous entity encoding. Provide raw decoded text with matching headers, or explicit body_base64 wire bytes with a supported Content-Encoding, for local body checks.", Severity::Info));
     }
+    if !unsupported && let Some(encoded) = binary_body {
+        match crate::binary_body::decode(encoded, gzip) {
+            Ok(decoded) => {
+                wire_bytes = decoded.wire_bytes;
+                entity_text = Some(decoded.text);
+            }
+            Err(problem) => {
+                let (code, severity, message, reference) = match problem {
+                    crate::binary_body::BinaryBodyError::Base64 => (
+                        "invalid_base64_body",
+                        Severity::Error,
+                        "body_base64 must contain canonical standard Base64 with required padding and no whitespace.",
+                        "https://www.rfc-editor.org/rfc/rfc4648",
+                    ),
+                    crate::binary_body::BinaryBodyError::Gzip => (
+                        "invalid_gzip_body",
+                        Severity::Error,
+                        "The captured gzip entity has invalid framing, compressed data, checksum, size, truncation or trailing bytes.",
+                        "https://www.rfc-editor.org/rfc/rfc1952",
+                    ),
+                    crate::binary_body::BinaryBodyError::Utf8
+                        if matches!(encoding, "json" | "ndjson") =>
+                    {
+                        (
+                            "invalid_body_utf8",
+                            Severity::Error,
+                            "The captured JSON entity is not UTF-8 encoded.",
+                            "https://www.rfc-editor.org/rfc/rfc8259#section-8.1",
+                        )
+                    }
+                    crate::binary_body::BinaryBodyError::Utf8 => (
+                        "unsupported_body_encoding",
+                        Severity::Info,
+                        "The captured binary entity is outside local UTF-8 text inspection. Payload checks remain unvalidated; no vendor rejection is inferred.",
+                        "https://github.com/aleksUIX/pixellint/blob/main/docs/HTTP_REQUEST_SCHEMA.md",
+                    ),
+                    crate::binary_body::BinaryBodyError::Limit => (
+                        "body_decode_limit",
+                        Severity::Info,
+                        "Binary entity inspection exceeded a local resource bound: 16 MiB wire bytes, 16 MiB decoded bytes, 1024 gzip members or 64 KiB header per member. Payload checks remain unvalidated; no vendor rejection is inferred.",
+                        "https://github.com/aleksUIX/pixellint/blob/main/docs/HTTP_REQUEST_SCHEMA.md",
+                    ),
+                };
+                let mut finding = request_violation(code, Some("body_base64"), message, severity);
+                finding.source = if severity == Severity::Info {
+                    RuleSource {
+                        level: crate::RuleSourceLevel::Heuristic,
+                        name: "Pixellint local binary inspection scope".into(),
+                        reference: Some(reference.into()),
+                    }
+                } else {
+                    RuleSource::normative("Captured binary entity decoding", reference)
+                };
+                violations.push(finding);
+                entity_text = None;
+                unsupported = true;
+            }
+        }
+    }
+    let wire = entity_text.as_deref();
     let mut decoded_body = Value::Null;
     let mut json_body = None;
     let mut multipart_fields = None;
@@ -653,6 +768,9 @@ fn decode_request_with_form_hint(
     if ambiguous_content_type || unavailable_content_type {
         normalized.insert("content_type_unavailable".into(), Value::Bool(true));
     }
+    if binary_body.is_some() && unsupported {
+        unavailable_paths.extend(["wire_body_bytes".into(), "entity_body_bytes".into()]);
+    }
     if !unavailable_paths.is_empty() {
         normalized.insert(
             "capture_unavailable_paths".into(),
@@ -660,6 +778,13 @@ fn decode_request_with_form_hint(
         );
     }
     normalized.insert("headers".into(), Value::Object(headers));
+    if binary_body.is_some() && !unsupported {
+        normalized.insert("wire_body_bytes".into(), serde_json::json!(wire_bytes));
+        normalized.insert(
+            "entity_body_bytes".into(),
+            serde_json::json!(wire.map_or(0, str::len)),
+        );
+    }
     normalized.insert("body".into(), decoded_body);
     normalized.insert(
         "body_encoding".into(),
@@ -679,6 +804,8 @@ fn decode_request_with_form_hint(
         form,
         multipart_fields,
         unavailable_form,
+        entity_bytes: wire.map_or(0, str::len),
+        entity_text,
         violations,
     }
 }
@@ -737,4 +864,34 @@ fn secret_values(request: &HttpRequest) -> Vec<String> {
     values.sort_by_key(|value| std::cmp::Reverse(value.len()));
     values.dedup();
     values
+}
+
+fn collect_entity_secrets(value: &Value, secret: bool, values: &mut Vec<String>) {
+    match value {
+        Value::Object(object) => {
+            for (name, value) in object {
+                let name = name.to_ascii_lowercase();
+                let sensitive = secret
+                    || [
+                        "authorization",
+                        "cookie",
+                        "key",
+                        "token",
+                        "secret",
+                        "password",
+                    ]
+                    .iter()
+                    .any(|part| name.contains(part));
+                collect_entity_secrets(value, sensitive, values);
+            }
+        }
+        Value::Array(array) => {
+            for value in array {
+                collect_entity_secrets(value, secret, values);
+            }
+        }
+        Value::String(value) if secret => values.push(value.clone()),
+        _ if secret && !value.is_null() => values.push(value.to_string()),
+        _ => {}
+    }
 }

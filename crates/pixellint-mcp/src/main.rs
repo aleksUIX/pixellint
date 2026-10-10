@@ -202,7 +202,7 @@ fn tools_list_result(engine: &Engine) -> Value {
                         "artifact_kind": {
                             "type": "string",
                             "enum": ["url", "request", "vast", "postback", "json", "unknown"],
-                            "description": "Artifact type to validate. Use vast for VAST tracking URLs, postback for server-side conversion or attribution endpoints, json for a standalone conversion API body, and request for a serialized capture with string url and method, headers object or name/value list, and optional raw string body."
+                            "description": "Artifact type to validate. Use vast for VAST tracking URLs, postback for server-side conversion or attribution endpoints, json for a standalone conversion API body, and request for a serialized capture with string url and method, headers object or name/value list, and optional raw string body or body_base64 captured wire bytes. Raw and Base64 bodies are mutually exclusive. Supported explicit gzip bytes decode locally within resource bounds."
                         },
                         "artifact": {
                             "type": "string",

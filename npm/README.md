@@ -70,8 +70,10 @@ URLs first.
 
 Use `{ kind: "request" }` with a serialized complete capture containing string
 `url`, string `method`, `headers` as an object or name/value list, and optional
-raw string `body`. It binds payload checks to the destination and adds method
-and header contracts. See [the HTTP capture schema](https://github.com/aleksUIX/pixellint/blob/main/docs/HTTP_REQUEST_SCHEMA.md)
+raw string `body` or `body_base64` containing captured binary bytes. Identity
+and gzip decoding share the native engine's bounded inspection profile.
+The capture binds payload checks to the destination and adds method and header
+contracts. See [the HTTP capture schema](https://github.com/aleksUIX/pixellint/blob/main/docs/HTTP_REQUEST_SCHEMA.md)
 for representation limits and repeated fields.
 
 `vast` takes a tracking URL extracted from VAST and enables the IAB VAST

@@ -45,6 +45,17 @@ fired-URL check and for the privacy-signal skip. A VAST tracker may carry
 `[CACHEBUSTING]` beside `${AUCTION_PRICE}` without a mixed-syntax warning.
 `!!GDPR!` (one bang short) and a bare `FT_GDPR` value are `core.macro.broken_delimiter`.
 
+### Binary HTTP entities preserve decoding evidence.
+
+An explicit `body_base64` capture supports bounded identity or gzip decoding.
+`core.request.invalid_base64_body` cites RFC 4648;
+`core.request.invalid_gzip_body` cites RFC 1952. JSON and NDJSON entities with
+invalid UTF-8 produce `core.request.invalid_body_utf8` under RFC 8259.
+Every supported gzip member and trailer is verified before payload checks run.
+Local resource limits and unsupported entity representations produce
+informational coverage findings. They establish no destination byte allowance
+or server rejection. See [HTTP_REQUEST_SCHEMA.md](HTTP_REQUEST_SCHEMA.md).
+
 ### Consent and privacy signals
 
 IAB Tech Lab specifies these parameters, every party in the chain is expected to
@@ -9086,7 +9097,7 @@ Context: `{}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `(current scope)` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
+| `(current scope)` | optional | `{"json_type":"array","min_items":1,"max_items":2000}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 
 ### JSON contract 2
 

@@ -142,8 +142,11 @@ The additive HTTP envelope's optional `capture` object supports:
 `headers_unavailable` marks incomplete header coverage. `unavailable_headers`
 marks names whose absent values are unknown. `redacted_headers` explicitly
 marks names whose values cannot be inspected. `body` accepts `available`,
-`absent`, `unavailable` or `redacted`. Available requires raw body text; absent
-requires no raw body field. Unavailable/redacted text may remain in the raw
+`absent`, `unavailable` or `redacted`. Available requires raw body text or the
+explicit `body_base64` representation documented in
+[HTTP request captures](HTTP_REQUEST_SCHEMA.md); absent requires neither body
+field. The HAR adapter still produces raw text or unavailable metadata rather
+than guessing binary request extensions. Unavailable/redacted text may remain in the raw
 capture for provenance but is not decoded. Header names are case insensitive;
 duplicate or contradictory availability declarations are rejected. Rust's
 `CapturedHttpRequest` serializes this envelope without changing `HttpRequest`.

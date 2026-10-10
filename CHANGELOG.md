@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.40.0 (2026-10-10)
+
+- Add explicit binary HTTP captures using `body_base64`, preserving the
+  existing raw-text request format and public Rust `HttpRequest` literals.
+- Decode identity and gzip entities in the shared Rust and WASM engine.
+  Verify every gzip member, header and trailer before running payload rules.
+- Bound local decoding resources and report incomplete coverage when a
+  capture exceeds those limits or lacks decoding context. Observed endpoint,
+  method, authentication and query checks remain active.
+- Apply existing Mixpanel Import JSON and NDJSON contracts to decoded
+  entities and check the documented 2000-event batch limit.
+
 ## 0.39.0 (2026-10-10)
 
 - Deepen Matomo bulk tracking with a bounded PHP 8 bracket-tree query model,

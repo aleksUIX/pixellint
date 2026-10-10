@@ -17,9 +17,18 @@ export interface HttpRequest {
   method: string;
   headers: Record<string, string> | Array<{ name: string; value: string }>;
   body?: string;
+  body_base64?: never;
   /** Omitted capture fields remain unvalidated. Absent metadata retains complete-capture semantics. */
   capture?: HttpCaptureContext;
 }
+
+/** Original binary wire bytes in canonical padded standard Base64. */
+export interface BinaryHttpRequest extends Omit<HttpRequest, "body" | "body_base64"> {
+  body_base64: string;
+  body?: never;
+}
+
+export type HttpCapture = HttpRequest | BinaryHttpRequest;
 
 export type Severity = "error" | "warning" | "info";
 

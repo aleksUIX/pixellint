@@ -10,6 +10,7 @@ use url::Url;
 mod adobe_events;
 mod adobe_products;
 mod awin_basket;
+mod binary_body;
 mod braze_time;
 mod currency;
 mod datetime_formats;
@@ -44,8 +45,8 @@ pub use har::{
     import_har,
 };
 pub use http::{
-    CapturedHttpRequest, HttpBodyAvailability, HttpCaptureContext, HttpHeader, HttpHeaders,
-    HttpRequest,
+    BinaryHttpRequest, CapturedHttpRequest, HttpBodyAvailability, HttpCaptureContext, HttpHeader,
+    HttpHeaders, HttpRequest,
 };
 pub use manifest::{
     Assertion, DateTimeRepresentation, IpVersion, JsonType, JsonTypes, ManifestError,
