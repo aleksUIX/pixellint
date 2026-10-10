@@ -91,6 +91,19 @@ as a document. Identical values validate once:
 pixellint validate-many @extracted.json --json
 ```
 
+Callers that know which artifacts belong to each ad session can supply explicit
+groups with original zero-based row indexes:
+
+```bash
+pixellint validate-sessions @sessions.json --json
+```
+
+The initial IAS UVP profile checks external-ID consistency within each group
+and uniqueness across groups. Its report preserves ordinary document findings
+and adds relationship coverage, original spans and provenance. See
+[docs/SESSION_SCHEMA.md](docs/SESSION_SCHEMA.md) for grouping, typed skips and
+local resource limits.
+
 `extracted.json` is the wrapper in
 [docs/MULTI_ARTIFACT_SCHEMA.md](docs/MULTI_ARTIFACT_SCHEMA.md), or a JSON array
 of URL strings. Pixellint does not parse VAST, HTML, or GTM.
@@ -426,6 +439,7 @@ See [bench/README.md](bench/README.md).
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](ROADMAP.md)
 - [Multi-artifact output model](docs/MULTI_ARTIFACT_SCHEMA.md)
+- [Explicit ad-session input and output](docs/SESSION_SCHEMA.md)
 
 ## License
 

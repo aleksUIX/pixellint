@@ -1,0 +1,2855 @@
+{
+  "status": "authored_design_controls_not_executed",
+  "authorship": "Expected relationships follow explicit values and caller groups, without running Pixellint or recording its output.",
+  "source": {
+    "url": "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf",
+    "page": 5
+  },
+  "cases": [
+    {
+      "id": "all-seven-events-one-opaque-id",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/impression/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/firstQuartile/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/midpoint/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/thirdQuartile/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/error/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "Same literal identity throughout one explicitly declared group."
+      }
+    },
+    {
+      "id": "partial-event-observation-valid",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "No completeness or event-order assertion is justified."
+      }
+    },
+    {
+      "id": "one-observation-is-insufficient",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "A single row cannot establish a within-group relationship."
+      },
+      "expected_check_reasons": [
+        "insufficient_observations"
+      ]
+    },
+    {
+      "id": "empty-group-is-insufficient",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": []
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": []
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "Empty groups are represented as not evaluated."
+      },
+      "expected_check_reasons": [
+        "insufficient_observations"
+      ]
+    },
+    {
+      "id": "no-groups-no-inference",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": []
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "Rows remain ordinary document inputs and are listed as ungrouped."
+      },
+      "expected_ungrouped_artifact_indexes": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "retry-rows-in-same-session-allowed",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=ad-opaque-1",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "Duplicate firing is not a session-identity violation."
+      },
+      "expected_unique_artifacts": 2
+    },
+    {
+      "id": "numeric-id-remains-opaque",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=1700000000000",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=1700000000000",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "A literal numeric ID is neither a timestamp nor an invalid UUID."
+      }
+    },
+    {
+      "id": "uuid-v4-is-not-mandatory",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=customer-ad-session",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=customer-ad-session",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "IAS recommends UUIDv4 without making it a required grammar."
+      }
+    },
+    {
+      "id": "timestamp-word-is-not-macro",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=literal-TIMESTAMP-123",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=literal-TIMESTAMP-123",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "Literal text is not interpreted as a macro."
+      }
+    },
+    {
+      "id": "within-session-two-ids",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "Two known, unequal IDs prove a within-group mismatch."
+      }
+    },
+    {
+      "id": "within-session-three-ids-one-finding",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/midpoint/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=c",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "One finding per relationship rule and group, with all observed targets."
+      }
+    },
+    {
+      "id": "case-sensitive-id-mismatch",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=Session-A",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=session-a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "IDs are case-sensitive opaque strings."
+      }
+    },
+    {
+      "id": "one-pass-percent-decoded-equality",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ad%2D1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=ad-1",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "A single percent-decoding pass gives the same identity."
+      }
+    },
+    {
+      "id": "unicode-id-equality",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=caf%C3%A9",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=café",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "UTF-8 decoded once; valid Unicode is opaque."
+      }
+    },
+    {
+      "id": "plus-and-space-equivalent",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ad+1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=ad%201",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "Query form semantics decode plus to space."
+      }
+    },
+    {
+      "id": "encoded-plus-is-distinct",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ad%2B1",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=ad+1",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "A percent-encoded plus remains plus while a literal plus becomes space."
+      }
+    },
+    {
+      "id": "double-encoded-brackets-are-literal",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%255BSESSION_ID%255D",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=%255BSESSION_ID%255D",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "One pass yields literal %5B and %5D, without recursive macro decoding."
+      }
+    },
+    {
+      "id": "encoded-parameter-name-recognized",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?%78sId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "A once-decoded exact parameter name matches xsId."
+      }
+    },
+    {
+      "id": "ids-not-trimmed-after-decoding",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%20a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "Identity values are not trimmed or normalized after decoding."
+      }
+    },
+    {
+      "id": "empty-value-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "empty_parameter"
+        ],
+        "basis": "Existing ordinary parameter checks remain in the nested document."
+      }
+    },
+    {
+      "id": "missing-value-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "missing_parameter"
+        ],
+        "basis": "Missing xsId does not supply an identity."
+      }
+    },
+    {
+      "id": "bare-parameter-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "missing_parameter"
+        ],
+        "basis": "A bare query key does not provide a value."
+      }
+    },
+    {
+      "id": "parameter-case-is-exact",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsid=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "missing_parameter"
+        ],
+        "basis": "xsid is not xsId."
+      }
+    },
+    {
+      "id": "identical-repeated-key-one-identity",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "Identical repetitions retain both spans without duplicate findings."
+      },
+      "expected_target_occurrences_per_first_row": 2
+    },
+    {
+      "id": "conflicting-repeated-key-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&xsId=b",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "conflicting_values"
+        ],
+        "basis": "Do not choose one repeated value arbitrarily."
+      }
+    },
+    {
+      "id": "repeated-known-and-macro-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&xsId=[SESSION_ID]",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A partly unresolved repeated field cannot prove one identity."
+      }
+    },
+    {
+      "id": "repeated-known-and-empty-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&xsId=",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "empty_parameter"
+        ],
+        "basis": "An empty repeated assignment leaves the identity ambiguous."
+      }
+    },
+    {
+      "id": "invalid-decoded-utf8-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%FF",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=%FE",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "invalid_utf8"
+        ],
+        "basis": "Distinct invalid byte values must never collapse into the same replacement character."
+      }
+    },
+    {
+      "id": "malformed-percent-escape-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%ZZ",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "invalid_percent_encoding"
+        ],
+        "basis": "Malformed captured encoding is not used as an identity."
+      }
+    },
+    {
+      "id": "macro-syntax-1-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A recognized macro has no observed expanded identity."
+      }
+    },
+    {
+      "id": "macro-syntax-2-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=${SESSION_ID}",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A recognized macro has no observed expanded identity."
+      }
+    },
+    {
+      "id": "macro-syntax-3-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId={{SESSION_ID}}",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A recognized macro has no observed expanded identity."
+      }
+    },
+    {
+      "id": "macro-syntax-4-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId={SESSION_ID}",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A recognized macro has no observed expanded identity."
+      }
+    },
+    {
+      "id": "macro-syntax-5-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[%SESSION_ID%]",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A recognized macro has no observed expanded identity."
+      }
+    },
+    {
+      "id": "macro-syntax-6-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=!!SESSION_ID!!",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A recognized macro has no observed expanded identity."
+      }
+    },
+    {
+      "id": "macro-syntax-7-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%%SESSION_ID%%",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A recognized macro has no observed expanded identity."
+      }
+    },
+    {
+      "id": "macro-state-unknown-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "Relationship deferral is independent of ordinary macro severity for this expansion state."
+      }
+    },
+    {
+      "id": "macro-state-template-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "template"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "template"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "Relationship deferral is independent of ordinary macro severity for this expansion state."
+      }
+    },
+    {
+      "id": "macro-state-fired-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "fired"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "fired"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "Relationship deferral is independent of ordinary macro severity for this expansion state."
+      }
+    },
+    {
+      "id": "different-macros-do-not-prove-mismatch",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[SESSION_A]",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=[SESSION_B]",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "Different macro text does not establish different runtime values."
+      }
+    },
+    {
+      "id": "encoded-macro-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%5BSESSION_ID%5D",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A macro revealed by exactly one percent-decoding pass remains unresolved."
+      }
+    },
+    {
+      "id": "installation-stub-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE]",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "installation_placeholder"
+        ],
+        "basis": "Existing ordinary IAS installation-stub error is preserved."
+      }
+    },
+    {
+      "id": "known-conflict-survives-partial-input",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/midpoint/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "A proven mismatch still fires, with partially evaluated coverage."
+      }
+    },
+    {
+      "id": "known-and-missing-do-not-prove-mismatch",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "missing_parameter"
+        ],
+        "basis": "One usable observation is insufficient."
+      }
+    },
+    {
+      "id": "across-sessions-distinct-ids",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [],
+        "basis": "Two explicitly distinct sessions use distinct known IDs."
+      }
+    },
+    {
+      "id": "across-sessions-reuse",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "One known identity appears in two declared sessions."
+      }
+    },
+    {
+      "id": "across-three-sessions-one-finding",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/midpoint/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              1
+            ]
+          },
+          {
+            "session_id": "ad-3",
+            "artifact_indexes": [
+              2
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "One finding per reused identity, with three session labels, without pairwise expansion."
+      }
+    },
+    {
+      "id": "across-sessions-two-reused-ids",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent",
+          "vendor.ias-video-pixel.session.xsid.inconsistent",
+          "vendor.ias-video-pixel.session.xsid.reused",
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 4,
+        "skip_reasons_present": [],
+        "basis": "Each group has a mismatch and both known identities are reused."
+      }
+    },
+    {
+      "id": "global-dedupe-does-not-erase-membership",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "Ordinary document output dedupes to one artifact; relationship targets preserve both original rows."
+      },
+      "expected_unique_artifacts": 1,
+      "expected_target_artifact_indexes": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "cross-reuse-within-conflicted-session",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/midpoint/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              2
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent",
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 2,
+        "skip_reasons_present": [],
+        "basis": "A within-session inconsistency does not erase a separately observed cross-session reuse."
+      }
+    },
+    {
+      "id": "same-macro-across-sessions-not-reuse",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "Equal macro strings are not observed runtime identity reuse."
+      }
+    },
+    {
+      "id": "cross-reuse-with-partial-third-session",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/midpoint/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              1
+            ]
+          },
+          {
+            "session_id": "ad-3",
+            "artifact_indexes": [
+              2
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "Known reuse survives partial coverage and carries only proven target IDs."
+      }
+    },
+    {
+      "id": "neighbor-host-is-not-owner",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com.example/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "endpoint_mismatch"
+        ],
+        "basis": "Directory suffix attribution does not replace the owner matcher."
+      }
+    },
+    {
+      "id": "ias-v2-is-outside-profile",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/v2/111111/44444444?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "endpoint_mismatch"
+        ],
+        "basis": "The IAS MMT route is not the UVP relationship profile."
+      }
+    },
+    {
+      "id": "other-path-is-outside-profile",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/another?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "endpoint_mismatch"
+        ],
+        "basis": "A matching vendor host alone is insufficient."
+      }
+    },
+    {
+      "id": "nested-redirect-is-not-participant",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://example.com/redirect?url=https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "endpoint_mismatch"
+        ],
+        "basis": "Do not scan nested redirect values for an owner endpoint."
+      }
+    },
+    {
+      "id": "fragment-xsid-is-not-query-identity",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666#xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "missing_parameter"
+        ],
+        "basis": "Server-bound query identity excludes fragments."
+      }
+    },
+    {
+      "id": "invalid-url-is-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "not a URL?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "invalid_url"
+        ],
+        "basis": "Do not infer identity from a string that has no valid URL route."
+      }
+    },
+    {
+      "id": "request-url-is-supported",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "request",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "request",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "The existing request kind supports plain URL input."
+      }
+    },
+    {
+      "id": "vast-url-is-supported",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "vast",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "vast",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "VAST tracking URL inputs preserve direct query coordinates."
+      }
+    },
+    {
+      "id": "postback-url-is-supported",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "postback",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "postback",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "Postback URL inputs preserve direct query coordinates."
+      }
+    },
+    {
+      "id": "unknown-url-is-supported",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "unknown",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "unknown",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "A raw URL remains supported under unknown kind."
+      }
+    },
+    {
+      "id": "serialized-http-wrapper-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "request",
+              "artifact": "{\"url\":\"https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a\",\"method\":\"GET\",\"headers\":{},\"body\":\"\"}",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unsupported_artifact"
+        ],
+        "basis": "Ordinary HTTP validation remains active but relationship coordinates are not invented."
+      }
+    },
+    {
+      "id": "json-wrapper-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "json",
+              "artifact": "{\"xsId\": \"a\"}",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unsupported_artifact"
+        ],
+        "basis": "Only URL-like source rows participate in the first release."
+      }
+    },
+    {
+      "id": "unknown-json-wrapper-deferred",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "unknown",
+              "artifact": "{\"url\":\"https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a\",\"method\":\"GET\",\"headers\":{},\"body\":\"\"}",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unsupported_artifact"
+        ],
+        "basis": "JSON-shaped unknown inputs are not treated as raw URLs."
+      }
+    },
+    {
+      "id": "only-core-disables-owner-relationship",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "pack_not_selected"
+        ],
+        "basis": "The explicit owner pack toggle applies to relationship checks."
+      },
+      "options": {
+        "rulepacks": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "excluding-owner-disables-relationship",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "pack_not_selected"
+        ],
+        "basis": "The deny toggle applies to relationship checks."
+      },
+      "options": {
+        "exceptRulepacks": [
+          "vendor/ias-video-pixel"
+        ]
+      }
+    },
+    {
+      "id": "explicit-owner-does-not-bypass-matcher",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://example.com/path?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "endpoint_mismatch"
+        ],
+        "basis": "Explicit pack selection cannot turn another endpoint into a participant."
+      },
+      "options": {
+        "rulepacks": [
+          "vendor/ias-video-pixel"
+        ]
+      }
+    },
+    {
+      "id": "directory-only-disables-relationship",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "pack_not_selected"
+        ],
+        "basis": "Directory attribution is not a validator profile."
+      },
+      "options": {
+        "rulepacks": [
+          "directory"
+        ]
+      }
+    },
+    {
+      "id": "original-occurrence-metadata-retained",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown",
+              "occurrences": [
+                {
+                  "occurrence_id": "caller-occurrence",
+                  "source_kind": "vast",
+                  "path": "/VAST/Ad[1]/Tracking[1]",
+                  "line": 5,
+                  "column": 7,
+                  "context_label": "start"
+                }
+              ]
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown",
+              "occurrences": [
+                {
+                  "occurrence_id": "caller-second",
+                  "path": "/VAST/Ad[1]/Tracking[2]"
+                }
+              ]
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "Relationship targets preserve caller occurrence IDs rather than rewritten aggregate IDs."
+      },
+      "expected_original_occurrence_ids": [
+        "caller-occurrence",
+        "caller-second"
+      ]
+    },
+    {
+      "id": "no-invented-occurrence-metadata",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+              "expansion_state": "unknown",
+              "occurrences": []
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown",
+              "occurrences": []
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "Relationship provenance remains an empty array when none was supplied."
+      }
+    },
+    {
+      "id": "original-utf8-byte-coordinate",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": " \thttps://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=é \n",
+              "expansion_state": "unknown"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_present": [],
+        "basis": "Target offsets count original input UTF-8 bytes, including leading whitespace."
+      },
+      "expected_first_target_span": {
+        "start": 73,
+        "end": 75
+      }
+    },
+    {
+      "id": "different-row-states-survive-dedupe",
+      "request": {
+        "document": {
+          "document_kind": "extracted_session_urls",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "template"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[SESSION_ID]",
+              "expansion_state": "fired"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_present": [
+          "unresolved_macro"
+        ],
+        "basis": "Grouping uses original rows, even where document validation preserves its historical first-row dedupe state."
+      }
+    }
+  ]
+}

@@ -1,0 +1,1778 @@
+{
+  "status": "independently_authored_before_implementation",
+  "source": {
+    "url": "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf",
+    "page": 5,
+    "sha256": "06cf53e6f6f3e1b09bd8746b7872a378dee731a03dfecbd62e7f835092142355",
+    "reviewed": "2026-10-10"
+  },
+  "cases": [
+    {
+      "id": "unicode-normalization-must-not-collapse",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=caf%C3%A9"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=cafe%CC%81"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "NFC and NFD strings differ as opaque decoded identities."
+      }
+    },
+    {
+      "id": "supplementary-unicode-one-pass-equal",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=rocket-🚀"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=rocket-%F0%9F%9A%80"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "A valid four-byte Unicode scalar compares by its decoded text."
+      }
+    },
+    {
+      "id": "nul-does-not-truncate-opaque-id",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a%00b"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "A decoded NUL is an opaque character, not a C-string terminator."
+      }
+    },
+    {
+      "id": "encoded-ampersand-does-not-create-key",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a%26xsId%3Db"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Segment first, then decode; an encoded ampersand belongs to the identity."
+      }
+    },
+    {
+      "id": "encoded-query-and-fragment-separators-stay-value",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a%3Fb%23c"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a?b%23c"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "A second question mark is query value text and an encoded hash is not a fragment."
+      }
+    },
+    {
+      "id": "fragment-cannot-overwrite-observed-id",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a#xsId=b"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "Only the server-bound query contributes identity."
+      }
+    },
+    {
+      "id": "semicolon-is-not-query-separator",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a;xsId=b"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Only literal ampersands segment the query."
+      }
+    },
+    {
+      "id": "extra-equals-is-value-text",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a=b"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a%3Db"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "Only the first literal equals sign separates a key and value."
+      }
+    },
+    {
+      "id": "encoded-key-alias-retains-two-spans",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&%78sId=%61"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Once-decoded matching keys share one identity but retain original value spans.",
+        "target_indexes": {
+          "vendor.ias-video-pixel.session.xsid.inconsistent": [
+            0,
+            1
+          ]
+        },
+        "span_counts": {
+          "0": 2,
+          "1": 1
+        }
+      }
+    },
+    {
+      "id": "encoded-key-alias-conflict-is-uncertain",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=A&%78sId=%42"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=C"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "conflicting_values"
+        ],
+        "basis": "Encoded aliases cannot evade conflicting repeated-value deferral."
+      }
+    },
+    {
+      "id": "unrelated-malformed-key-does-not-suppress-id",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&%ZZ=ignored"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "A nonmatching malformed query name is not identity evidence."
+      }
+    },
+    {
+      "id": "unrelated-invalid-utf8-value-does-not-suppress-id",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&other=%FF"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "Strict identity decoding applies to xsId, not unrelated opaque query fields."
+      }
+    },
+    {
+      "id": "unrelated-invalid-utf8-name-does-not-suppress-id",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a&%FF=ignored"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "An invalid nonmatching name cannot supply or erase a known xsId."
+      }
+    },
+    {
+      "id": "blank-plus-identity-is-unavailable",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=+"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "empty_parameter"
+        ],
+        "basis": "A literal plus decodes to a blank value before the empty-value test."
+      }
+    },
+    {
+      "id": "nonbreaking-space-only-is-blank",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%C2%A0"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "empty_parameter"
+        ],
+        "basis": "A whitespace-only field supplies no populated identity."
+      }
+    },
+    {
+      "id": "zero-width-character-is-not-trimmed",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a%E2%80%8Bb"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ab"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "An invisible non-whitespace scalar is still part of an opaque ID."
+      }
+    },
+    {
+      "id": "double-encoded-macro-remains-literal",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%255BSESSION%255D"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ordinary"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "One decoding pass leaves literal percent escapes, without recursive macro recognition."
+      }
+    },
+    {
+      "id": "raw-percent-macro-defers-before-percent-decoder",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%%SESSION%%"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "unresolved_macro"
+        ],
+        "basis": "Recognized raw percent macros are unresolved, rather than malformed percent encodings."
+      }
+    },
+    {
+      "id": "encoded-installation-stub-is-unavailable",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%5BPLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE%5D"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "installation_placeholder"
+        ],
+        "basis": "The exact installation placeholder stays unavailable after one decoding pass."
+      }
+    },
+    {
+      "id": "overlong-utf8-is-unavailable",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%C0%AF"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "invalid_utf8"
+        ],
+        "basis": "An overlong UTF-8 sequence is not a known identity."
+      }
+    },
+    {
+      "id": "truncated-percent-byte-is-unavailable",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a%"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "invalid_percent_encoding"
+        ],
+        "basis": "A trailing percent sign cannot be treated as literal identity text."
+      }
+    },
+    {
+      "id": "one-hex-digit-percent-is-unavailable",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a%2"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "invalid_percent_encoding"
+        ],
+        "basis": "Percent decoding requires exactly two hexadecimal digits."
+      }
+    },
+    {
+      "id": "valid-escape-next-to-malformed-escape-is-unavailable",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%61%GG"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "invalid_percent_encoding"
+        ],
+        "basis": "Partial decoding must not silently retain a malformed suffix."
+      }
+    },
+    {
+      "id": "mixed-invalid-values-use-stable-percent-priority",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%FF&xsId=%GG&xsId=[SESSION]"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "invalid_percent_encoding"
+        ],
+        "basis": "Malformed percent escapes precede invalid UTF-8 and unresolved macros in mixed repetitions."
+      }
+    },
+    {
+      "id": "mixed-invalid-values-use-stable-utf8-priority",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%FF&xsId=[SESSION]&xsId="
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "invalid_utf8"
+        ],
+        "basis": "Invalid UTF-8 precedes macro and empty-value deferrals."
+      }
+    },
+    {
+      "id": "equal-url-whitespace-retains-two-original-rows",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": " \nhttps://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same\t"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "first",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "second",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Global trimmed URL dedupe does not erase separate caller memberships.",
+        "target_indexes": {
+          "vendor.ias-video-pixel.session.xsid.reused": [
+            0,
+            1
+          ]
+        },
+        "unique_artifacts": 1,
+        "finding_session_ids": {
+          "vendor.ias-video-pixel.session.xsid.reused": [
+            "first",
+            "second"
+          ]
+        }
+      }
+    },
+    {
+      "id": "caller-session-order-and-original-row-order-differ",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "late",
+            "artifact_indexes": [
+              3,
+              2
+            ]
+          },
+          {
+            "session_id": "early",
+            "artifact_indexes": [
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Session labels follow caller group order, while target rows follow original artifact order.",
+        "target_indexes": {
+          "vendor.ias-video-pixel.session.xsid.reused": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "finding_session_ids": {
+          "vendor.ias-video-pixel.session.xsid.reused": [
+            "late",
+            "early"
+          ]
+        },
+        "check_statuses": [
+          "evaluated",
+          "evaluated",
+          "evaluated"
+        ],
+        "coverage_status": "evaluated"
+      }
+    },
+    {
+      "id": "prototype-shaped-labels-remain-provenance",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "__proto__",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "constructor",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Caller labels remain string values, without object-key semantics.",
+        "finding_session_ids": {
+          "vendor.ias-video-pixel.session.xsid.reused": [
+            "__proto__",
+            "constructor"
+          ]
+        }
+      }
+    },
+    {
+      "id": "different-route-identifiers-do-not-split-declared-session",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1/2?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/3/4?xsId=same"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "Grouping comes from the caller, not campaign or placement identifiers."
+      }
+    },
+    {
+      "id": "reuse-across-different-route-identifiers-is-still-reuse",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1/2?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/3/4?xsId=same"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "one",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "two",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "A unique ad-session identifier is not made unique by a different route identifier."
+      }
+    },
+    {
+      "id": "unknown-event-name-does-not-impose-completeness",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/vendorExtension/1111111/66666666?xsId=a"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/vendorExtension/1111111/66666666?xsId=b"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "The owner matcher accepts the UVP route family and does not declare a closed event vocabulary."
+      }
+    },
+    {
+      "id": "host-case-does-not-disable-owner-match",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://UNIFIED.ADSAFEPROTECTED.COM/vevent/start/1111111/66666666?xsId=a"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Host names are case-insensitive while opaque xsId values remain case-sensitive."
+      }
+    },
+    {
+      "id": "suffix-spoof-host-is-not-owner",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com.attacker.test/vevent/start/1111111/66666666?xsId=a"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "endpoint_mismatch"
+        ],
+        "basis": "A trusted-looking hostname prefix cannot establish the exact owner matcher."
+      }
+    },
+    {
+      "id": "userinfo-owner-string-is-not-owner",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com@attacker.test/vevent/start/1111111/66666666?xsId=a"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "endpoint_mismatch"
+        ],
+        "basis": "Userinfo text does not establish the endpoint host."
+      }
+    },
+    {
+      "id": "query-name-double-encoding-does-not-match",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xs%2549d=a"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "missing_parameter"
+        ],
+        "basis": "Parameter names are decoded only once, just like identity values."
+      }
+    },
+    {
+      "id": "query-name-case-remains-exact-after-decoding",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?%58sId=a"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "missing_parameter"
+        ],
+        "basis": "The once-decoded uppercase X key is not lowercase xsId."
+      }
+    },
+    {
+      "id": "kind-sensitive-document-dedupe-does-not-split-session-identity",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "vast",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "one",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "two",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Distinct ordinary artifact kinds still provide equal observed session IDs.",
+        "unique_artifacts": 2,
+        "target_indexes": {
+          "vendor.ias-video-pixel.session.xsid.reused": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "ungrouped-row-cannot-prove-reuse",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "one",
+            "artifact_indexes": [
+              0
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "An ungrouped neighboring row cannot become an inferred second session.",
+        "ungrouped_artifact_indexes": [
+          1
+        ],
+        "coverage_status": "not_evaluated"
+      }
+    },
+    {
+      "id": "ungrouped-conflict-cannot-prove-inconsistency",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=other"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "one",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "Only explicit membership contributes within-session evidence.",
+        "ungrouped_artifact_indexes": [
+          2
+        ],
+        "check_statuses": [
+          "evaluated",
+          "not_evaluated"
+        ],
+        "coverage_status": "partially_evaluated"
+      }
+    },
+    {
+      "id": "literal-cachebuster-word-is-not-expanded-macro",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=CACHEBUSTER-20261010"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=CACHEBUSTER-20261010"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [],
+        "basis": "A literal value is not a cachebuster macro merely because it contains the word."
+      }
+    },
+    {
+      "id": "source-encoded-case-does-not-normalize-identity",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%61"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=%41"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Hexadecimal escape case is irrelevant; decoded identity letter case is significant."
+      }
+    },
+    {
+      "id": "empty-third-session-keeps-known-reuse-with-partial-coverage",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "one",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "two",
+            "artifact_indexes": [
+              1
+            ]
+          },
+          {
+            "session_id": "empty",
+            "artifact_indexes": []
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Known reuse survives an empty declared group, whose consistency check remains not evaluated.",
+        "coverage_status": "partially_evaluated",
+        "finding_session_ids": {
+          "vendor.ias-video-pixel.session.xsid.reused": [
+            "one",
+            "two"
+          ]
+        }
+      }
+    },
+    {
+      "id": "original-byte-span-includes-leading-unicode-whitespace",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": " https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=rocket-%F0%9F%9A%80"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=ordinary"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.inconsistent"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "The target span indexes original UTF-8 bytes before trimming or decoding.",
+        "raw_spans": [
+          {
+            "artifact_index": 0,
+            "span_index": 0,
+            "raw": "rocket-%F0%9F%9A%80",
+            "start": 74,
+            "end": 93
+          }
+        ]
+      }
+    },
+    {
+      "id": "separate-occurrences-survive-global-dedupe",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same",
+              "occurrences": [
+                {
+                  "occurrence_id": "original-A",
+                  "source_kind": "vast",
+                  "path": "/Ad[1]/Impression[1]",
+                  "line": 10
+                }
+              ]
+            },
+            {
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=same",
+              "occurrences": [
+                {
+                  "occurrence_id": "original-B",
+                  "context_label": "retry in a second ad"
+                }
+              ]
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "one",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "two",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [
+          "vendor.ias-video-pixel.session.xsid.reused"
+        ],
+        "relationship_errors": 1,
+        "skip_reasons_exact": [],
+        "basis": "Relationship targets carry each original row's metadata without aggregate occurrence rewriting.",
+        "target_occurrences": {
+          "0": [
+            {
+              "occurrence_id": "original-A",
+              "source_kind": "vast",
+              "path": "/Ad[1]/Impression[1]",
+              "line": 10
+            }
+          ],
+          "1": [
+            {
+              "occurrence_id": "original-B",
+              "context_label": "retry in a second ad"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "all-selected-owner-checks-still-use-exact-host",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://attacker.test/vevent/start/1111111/66666666?xsId=a"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://attacker.test/vevent/start/1111111/66666666?xsId=b"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "endpoint_mismatch"
+        ],
+        "basis": "An explicit owner selection cannot force nonmatching endpoints to become participants."
+      },
+      "options": {
+        "rulepacks": [
+          "vendor/ias-video-pixel"
+        ]
+      }
+    },
+    {
+      "id": "owner-selected-and-excluded-stays-disabled",
+      "request": {
+        "document": {
+          "document_kind": "independent_review",
+          "artifacts": [
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"
+            },
+            {
+              "artifact_kind": "url",
+              "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "session-1",
+            "artifact_indexes": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "relationship_codes": [],
+        "relationship_errors": 0,
+        "skip_reasons_exact": [
+          "pack_not_selected"
+        ],
+        "basis": "An exclusion continues to override an explicit allow selection, with core retained for ordinary document validation.",
+        "coverage_status": "not_evaluated"
+      },
+      "options": {
+        "rulepacks": [
+          "core",
+          "vendor/ias-video-pixel"
+        ],
+        "exceptRulepacks": [
+          "vendor/ias-video-pixel"
+        ]
+      }
+    }
+  ]
+}

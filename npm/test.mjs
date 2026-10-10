@@ -181,3 +181,5 @@ try {
 console.log(`pixellint ${version()}: npm smoke tests passed`);
 
 await import("./test-har.mjs");
+
+await import("./sessions.test.mjs");

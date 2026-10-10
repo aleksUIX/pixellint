@@ -90,6 +90,21 @@ struct ValidateHarArgs {
     except_rulepacks: Vec<String>,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ValidateSessionsArgs {
+    request: pixellint_core::SessionRequest,
+    #[serde(
+        default,
+        deserialize_with = "pixellint_core::deserialize_session_clock"
+    )]
+    at: Option<i64>,
+    #[serde(default)]
+    rulepacks: Vec<String>,
+    #[serde(default)]
+    except_rulepacks: Vec<String>,
+}
+
 fn handle_message(raw_message: &str, engine: &Engine) -> Action {
     let request = match serde_json::from_str::<RpcRequest>(raw_message) {
         Ok(request) => request,
@@ -164,6 +179,8 @@ fn tools_list_result(engine: &Engine) -> Value {
         .map(|rulepack| rulepack.id)
         .collect();
 
+    let mut session_rulepack_ids = rulepack_ids.clone();
+    session_rulepack_ids.push(pixellint_core::DIRECTORY_ID.to_string());
     json!({
         "tools": [
             {
@@ -249,6 +266,22 @@ fn tools_list_result(engine: &Engine) -> Value {
                     "required": ["har"],
                     "additionalProperties": false
                 }
+            },
+            {
+                "name": "validate_sessions",
+                "description": "Validate explicit caller-declared ad sessions. Membership indexes refer to original document rows. No grouping, event completeness or destination acceptance is inferred. URL-like rows support IAS identity relationships; inspect coverage for skipped observations.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "request": { "type": "object", "properties": {
+                            "document": { "type": "object", "properties": { "document_kind": {"type":"string"}, "extractor": {"type":"object"}, "artifacts": {"type":"array", "items":{"type":"object", "properties":{"artifact":{"type":"string"},"artifact_kind":{"type":"string","enum":["url","request","vast","postback","json","unknown"]},"expansion_state":{"type":"string","enum":["unknown","template","fired"]},"claimed_vendor":{"type":["string","null"]},"occurrences":{"type":"array","items":{"type":"object"}}},"required":["artifact"]}}} },
+                            "sessions": { "type": "array", "items": { "type": "object", "properties": { "session_id": {"type":"string"}, "artifact_indexes": {"type":"array","items":{"type":"integer","minimum":0}} }, "required":["session_id","artifact_indexes"], "additionalProperties":false } }
+                        }, "required":["document","sessions"], "additionalProperties":false },
+                        "at": {"type":"integer","minimum":-9007199254740991_i64,"maximum":9007199254740991_i64},
+                        "rulepacks": {"type":"array","items":{"type":"string","enum":session_rulepack_ids}},
+                        "except_rulepacks": {"type":"array","items":{"type":"string","enum":session_rulepack_ids}}
+                    }, "required":["request"], "additionalProperties":false
+                }
             }
         ]
     })
@@ -290,6 +323,7 @@ fn handle_tool_call(id: Value, params: Option<Value>, engine: &Engine) -> Value 
         "list_vendors" => handle_list_vendors(id, tool_call.arguments, engine),
         "validate_artifact" => handle_validate_artifact(id, tool_call.arguments, engine),
         "validate_har" => handle_validate_har(id, tool_call.arguments, engine),
+        "validate_sessions" => handle_validate_sessions(id, tool_call.arguments, engine),
         other => error_response(id, -32602, &format!("unknown tool: {other}")),
     }
 }
@@ -618,4 +652,30 @@ fn error_response(id: Value, code: i64, message: &str) -> Value {
 
 fn to_io_error(error: serde_json::Error) -> io::Error {
     io::Error::new(io::ErrorKind::InvalidData, error)
+}
+
+fn handle_validate_sessions(id: Value, arguments: Value, engine: &Engine) -> Value {
+    let result = serde_json::from_value::<ValidateSessionsArgs>(arguments)
+        .map_err(|e| e.to_string())
+        .and_then(|a| {
+            let options = ValidationOptions {
+                only_rulepacks: a.rulepacks,
+                except_rulepacks: a.except_rulepacks,
+            };
+            match a.at {
+                Some(at) => engine.validate_sessions_at(&a.request, &options, at),
+                None => engine.validate_sessions(&a.request, &options),
+            }
+            .map_err(|e| e.to_string())
+        });
+    match result {
+        Ok(report) => success_response(
+            id,
+            json!({"content":[{"type":"text","text":serde_json::to_string(&report).expect("session report serialization")}],"structuredContent":report}),
+        ),
+        Err(error) => success_response(
+            id,
+            json!({"content":[{"type":"text","text":error}],"structuredContent":{"error":error},"isError":true}),
+        ),
+    }
 }

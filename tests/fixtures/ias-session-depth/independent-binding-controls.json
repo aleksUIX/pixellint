@@ -1,0 +1,27 @@
+{
+  "status": "independently_authored_before_implementation",
+  "controls": [
+    {
+      "id": "raw-wasm-clock-fraction-does-not-round-to-safe-integer",
+      "options_json": "{\"at\":9007199254740991.1}",
+      "expected": "Reject the fractional JSON number before binary floating-point rounding.",
+      "basis": "The decimal token is not an integer even where f64 rounds it to MAX_SAFE_INTEGER."
+    },
+    {
+      "id": "raw-wasm-clock-negative-fraction-does-not-round-to-safe-integer",
+      "options_json": "{\"at\":-9007199254740991.1}",
+      "expected": "Reject the fractional JSON number before binary floating-point rounding.",
+      "basis": "The negative boundary must obey the same integer-value rule."
+    },
+    {
+      "id": "raw-wasm-options-duplicate-clock-rejected",
+      "options_json": "{\"at\":1791590400,\"at\":1791590401}",
+      "expected": "Reject duplicate typed options fields, rather than silently choosing the second clock."
+    },
+    {
+      "id": "raw-wasm-options-explicit-null-clock-rejected",
+      "options_json": "{\"at\":null}",
+      "expected": "Reject explicit null rather than treating it as omitted and using platform time."
+    }
+  ]
+}

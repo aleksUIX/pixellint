@@ -57,6 +57,7 @@ finding.targets[0];       // { component: "whole_url", start: 0, end: 46, ... }
 | --- | --- |
 | `validate(artifact, options?)` | The full validation summary |
 | `validateMany(document)` | Document report for extracted artifacts |
+| `validateSessions(request, options?)` | Explicit ad-session findings, document report and relationship coverage |
 | `isOk(summary)` | `false` when any error-severity finding is present |
 | `rulepacks()` | Every rulepack with its evidence level |
 | `vendors()` | The vendor endpoint directory |
@@ -75,6 +76,14 @@ and gzip decoding share the native engine's bounded inspection profile.
 The capture binds payload checks to the destination and adds method and header
 contracts. See [the HTTP capture schema](https://github.com/aleksUIX/pixellint/blob/main/docs/HTTP_REQUEST_SCHEMA.md)
 for representation limits and repeated fields.
+
+`validateSessions` accepts the [session schema](https://github.com/aleksUIX/pixellint/blob/main/docs/SESSION_SCHEMA.md)
+as an object or raw JSON string. The caller supplies actual session membership
+using original zero-based artifact indexes. Options include `at` as a safe
+integer Unix clock, `rulepacks` and `exceptRulepacks`. The initial IAS UVP
+profile checks external-ID consistency and uniqueness. Inspect both
+`report.summary.errors` and `report.coverage` when deciding whether the observed
+relationships were fully evaluated.
 
 `vast` takes a tracking URL extracted from VAST and enables the IAB VAST
 macro-name checks. It does not accept a VAST XML document.

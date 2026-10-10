@@ -29,6 +29,11 @@ export function validate_har(har_json: string, header_policy: string, reference_
 export function validate_many(document_json: string): any;
 
 /**
+ * Validate explicitly grouped URL rows with optional clock and pack selection.
+ */
+export function validate_sessions(session_json: string, options_json?: string | null): any;
+
+/**
  * Validates a URL artifact with default options, the common case.
  */
 export function validate_url(artifact: string): any;

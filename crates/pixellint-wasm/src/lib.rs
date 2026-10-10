@@ -189,3 +189,27 @@ pub fn vendor_for_host(host: &str) -> Result<JsValue, JsValue> {
 pub fn version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
+
+/// Validate explicitly grouped URL rows with optional clock and pack selection.
+#[wasm_bindgen]
+pub fn validate_sessions(
+    session_json: &str,
+    options_json: Option<String>,
+) -> Result<JsValue, JsValue> {
+    let request = pixellint_core::session_request_from_json(session_json)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let opts = pixellint_core::session_options_from_json(options_json.as_deref().unwrap_or("{}"))
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let options = ValidationOptions {
+        only_rulepacks: opts.rulepacks,
+        except_rulepacks: opts.except_rulepacks,
+    };
+    let report = Engine::default()
+        .validate_sessions_at(
+            &request,
+            &options,
+            opts.at.unwrap_or_else(current_unix_seconds),
+        )
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    to_js_object(&report)
+}

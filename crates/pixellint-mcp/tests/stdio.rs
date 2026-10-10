@@ -39,6 +39,31 @@ fn exchange(requests: &[Value]) -> Vec<Value> {
 }
 
 #[test]
+fn explicit_sessions_structured_report_and_input_errors() {
+    let request = json!({"document":{"artifacts":[{"artifact":"https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a"},{"artifact":"https://unified.adsafeprotected.com/vevent/complete/1111111/66666666?xsId=b"}]},"sessions":[{"session_id":"ad-1","artifact_indexes":[0,1]}]});
+    let mut invalid = request.clone();
+    invalid["sessions"][0]["artifact_indexes"] = json!([2]);
+    let responses = exchange(&[
+        json!({"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"validate_sessions","arguments":{"request":request,"at":1791590400}}}),
+        json!({"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"validate_sessions","arguments":{"request":invalid}}}),
+        json!({"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"validate_sessions","arguments":{"request":{"document":{"artifacts":[]},"sessions":[]},"at":null}}}),
+    ]);
+    assert_eq!(
+        responses[0]["result"]["structuredContent"]["relationship_summary"]["errors"],
+        1
+    );
+    let text: Value = serde_json::from_str(
+        responses[0]["result"]["content"][0]["text"]
+            .as_str()
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(text, responses[0]["result"]["structuredContent"]);
+    assert_eq!(responses[1]["result"]["isError"], true);
+    assert_eq!(responses[2]["result"]["isError"], true);
+}
+
+#[test]
 fn initialize_reports_tools_capability_and_server_identity() {
     let responses = exchange(&[json!({
         "jsonrpc": "2.0",
@@ -85,7 +110,8 @@ fn tools_list_advertises_every_tool_with_live_rulepack_ids() {
             "list_rulepacks",
             "list_vendors",
             "validate_artifact",
-            "validate_har"
+            "validate_har",
+            "validate_sessions"
         ]
     );
 

@@ -17,6 +17,12 @@ mod datetime_formats;
 mod decimal_sum;
 pub mod directory;
 pub mod document;
+pub mod session;
+pub mod session_manifest;
+pub use session::*;
+pub use session_manifest::{
+    SessionManifestError, SessionRule, SessionRuleKind, SessionRulesManifest,
+};
 mod ftrack_fingerprint;
 mod google_additional_consent;
 mod gpp_structure;
@@ -971,6 +977,7 @@ struct HostIndex {
 }
 
 pub struct Engine {
+    session_profiles: BTreeMap<String, session_manifest::CompiledSessionProfile>,
     plugins: BTreeMap<String, PluginEntry>,
     directory: VendorDirectory,
     index: HostIndex,
@@ -994,6 +1001,11 @@ impl Default for Engine {
 
         engine.rebuild_index();
         engine
+            .register_session_manifest_json(include_str!(
+                "../rulepacks/session/ias-video-pixel.json"
+            ))
+            .expect("built-in IAS session profile");
+        engine
     }
 }
 
@@ -1001,6 +1013,7 @@ impl Engine {
     pub fn new() -> Self {
         Self {
             plugins: BTreeMap::new(),
+            session_profiles: BTreeMap::new(),
             directory: VendorDirectory::default(),
             index: HostIndex::default(),
         }
@@ -1035,6 +1048,7 @@ impl Engine {
     where
         P: ValidatorPlugin + 'static,
     {
+        self.session_profiles.remove(&plugin.metadata().id);
         self.plugins.insert(
             plugin.metadata().id.clone(),
             PluginEntry {

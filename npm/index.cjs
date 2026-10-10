@@ -35,6 +35,7 @@ function isOk(summary) {
 module.exports = {
   validate,
   validateMany,
+  validateSessions,
   importHar,
   validateHar,
   isOk,
@@ -43,3 +44,17 @@ module.exports = {
   vendorForHost: (host) => wasm.vendor_for_host(host),
   version: () => wasm.version(),
 };
+
+/** Validate caller-declared ad sessions. Grouping is never inferred. */
+function validateSessions(request, options = {}) {
+  if (!options || typeof options !== "object" || Array.isArray(options)) throw new TypeError("Session options must be an object");
+  for (const key of Object.keys(options)) {
+    if (!["at", "rulepacks", "exceptRulepacks"].includes(key)) throw new TypeError(`Unknown session option: ${key}`);
+  }
+  if (Object.hasOwn(options, "at") && !Number.isSafeInteger(options.at)) throw new TypeError("Session clock must be safe integer Unix seconds");
+  const wire = {};
+  if (Object.hasOwn(options, "at")) wire.at = options.at;
+  if (Object.hasOwn(options, "rulepacks")) wire.rulepacks = options.rulepacks;
+  if (Object.hasOwn(options, "exceptRulepacks")) wire.except_rulepacks = options.exceptRulepacks;
+  return wasm.validate_sessions(typeof request === "string" ? request : JSON.stringify(request), JSON.stringify(wire));
+}

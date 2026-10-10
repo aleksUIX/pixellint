@@ -1,0 +1,515 @@
+{
+  "status": "authored_design_controls_not_executed",
+  "grouping_base_request": {
+    "document": {
+      "document_kind": "extracted_session_urls",
+      "artifacts": [
+        {
+          "artifact_kind": "url",
+          "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=a",
+          "expansion_state": "unknown"
+        },
+        {
+          "artifact_kind": "url",
+          "artifact": "https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=b",
+          "expansion_state": "unknown"
+        }
+      ]
+    },
+    "sessions": [
+      {
+        "session_id": "ad-1",
+        "artifact_indexes": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  "input_errors": [
+    {
+      "id": "duplicate-session-id",
+      "request_mutation": {
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              1
+            ]
+          }
+        ]
+      },
+      "expected_error": "duplicate_session_id",
+      "basis": "Caller labels must identify distinct groups."
+    },
+    {
+      "id": "blank-session-id",
+      "request_mutation": {
+        "sessions": [
+          {
+            "session_id": "  ",
+            "artifact_indexes": [
+              0
+            ]
+          }
+        ]
+      },
+      "expected_error": "invalid_session_id",
+      "basis": "Blank labels cannot carry provenance."
+    },
+    {
+      "id": "duplicate-index-in-group",
+      "request_mutation": {
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "expected_error": "duplicate_artifact_index",
+      "basis": "Retries are distinct input rows, not repeated membership of one row."
+    },
+    {
+      "id": "overlapping-group-membership",
+      "request_mutation": {
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          },
+          {
+            "session_id": "ad-2",
+            "artifact_indexes": [
+              0
+            ]
+          }
+        ]
+      },
+      "expected_error": "overlapping_artifact_index",
+      "basis": "One original row cannot be declared to belong to two ad sessions."
+    },
+    {
+      "id": "index-out-of-range",
+      "request_mutation": {
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              2
+            ]
+          }
+        ]
+      },
+      "expected_error": "artifact_index_out_of_range",
+      "basis": "Input fixture has two rows numbered 0 and 1."
+    },
+    {
+      "id": "negative-index",
+      "request_mutation": {
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              -1
+            ]
+          }
+        ]
+      },
+      "expected_error": "invalid_json",
+      "basis": "Unsigned index parser rejects a negative number."
+    },
+    {
+      "id": "fractional-index",
+      "request_mutation": {
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0.5
+            ]
+          }
+        ]
+      },
+      "expected_error": "invalid_json",
+      "basis": "Unsigned index parser rejects a fractional number."
+    },
+    {
+      "id": "unknown-session-field",
+      "request_mutation": {
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ],
+            "inferred": true
+          }
+        ]
+      },
+      "expected_error": "invalid_json",
+      "basis": "The new session wrapper denies unknown fields."
+    },
+    {
+      "id": "unknown-root-field",
+      "request_mutation": {
+        "inferred_sessions": true
+      },
+      "expected_error": "invalid_json",
+      "basis": "Only document and sessions exist in the root wrapper."
+    },
+    {
+      "id": "wrong-session-type",
+      "request_mutation": {
+        "sessions": "ad-1"
+      },
+      "expected_error": "invalid_json",
+      "basis": "Grouping remains structured explicit input."
+    },
+    {
+      "id": "duplicate-json-wrapper-field",
+      "request_mutation": {
+        "raw_json": "{\"document\":{\"artifacts\":[]},\"sessions\":[],\"sessions\":[]}"
+      },
+      "expected_error": "invalid_json",
+      "basis": "Direct typed deserialization detects duplicate wrapper keys."
+    },
+    {
+      "id": "unsupported-html-kind",
+      "request_mutation": {
+        "document": {
+          "artifacts": [
+            {
+              "artifact_kind": "html",
+              "artifact": "<img src=\"x\">",
+              "expansion_state": "unknown"
+            }
+          ]
+        },
+        "sessions": [
+          {
+            "session_id": "ad-1",
+            "artifact_indexes": [
+              0
+            ]
+          }
+        ]
+      },
+      "expected_error": "document_error",
+      "basis": "The existing document API rejects snippet validation kinds."
+    },
+    {
+      "id": "unknown-only-rulepack-empty-document",
+      "request_mutation": {
+        "document": {
+          "artifacts": []
+        },
+        "sessions": [],
+        "options": {
+          "rulepacks": [
+            "vendor/no-such-pack"
+          ]
+        }
+      },
+      "expected_error": "engine_error",
+      "basis": "Selection IDs are checked even when there are no artifacts."
+    },
+    {
+      "id": "unknown-excluded-rulepack-empty-document",
+      "request_mutation": {
+        "document": {
+          "artifacts": []
+        },
+        "sessions": [],
+        "options": {
+          "exceptRulepacks": [
+            "vendor/no-such-pack"
+          ]
+        }
+      },
+      "expected_error": "engine_error",
+      "basis": "Deny selection IDs are checked even when there are no artifacts."
+    }
+  ],
+  "registry": [
+    {
+      "id": "custom-engine-no-implicit-profile",
+      "setup": "Engine::new then register a matching owner plugin, with no session profile",
+      "expected": "No relationship checks or findings; profile coverage totals are zero."
+    },
+    {
+      "id": "owner-must-exist",
+      "setup": "Register a valid profile before its owner",
+      "expected": "Registration error owner_not_found."
+    },
+    {
+      "id": "custom-profile-positive",
+      "setup": "Register vendor/test with exact custom.test /event/ matcher, then consistent_parameter profile for sessionToken",
+      "expected": "Known unequal sessionToken values produce the authored custom rule code."
+    },
+    {
+      "id": "custom-profile-cross-session-positive",
+      "setup": "Register vendor/test with unique_parameter_across_sessions for sessionToken",
+      "expected": "Known same value across explicitly different sessions produces one authored custom rule code."
+    },
+    {
+      "id": "owner-replacement-clears-profile",
+      "setup": "Register IAS owner and profile, then replace owner with unrelated custom plugin sharing the ID",
+      "expected": "Old profile is removed; no implicit attachment to replacement."
+    },
+    {
+      "id": "replacement-explicit-opt-in",
+      "setup": "Replace owner then explicitly register a deliberate matching session profile",
+      "expected": "Only the newly opted-in profile runs against replacement matcher."
+    },
+    {
+      "id": "invalid-rule-kind",
+      "mutation": {
+        "kind": "complete_all_events"
+      },
+      "expected": "Invalid profile with unknown session rule kind."
+    },
+    {
+      "id": "invalid-rule-code-owner-prefix",
+      "mutation": {
+        "code": "vendor.some-other-pack.session.id"
+      },
+      "expected": "Invalid profile with code outside owner namespace."
+    },
+    {
+      "id": "duplicate-profile-rule-code",
+      "mutation": "Repeat one rule code",
+      "expected": "Invalid profile with duplicate codes."
+    },
+    {
+      "id": "empty-parameter-name",
+      "mutation": {
+        "param": ""
+      },
+      "expected": "Invalid profile with empty parameter name."
+    },
+    {
+      "id": "empty-rule-message",
+      "mutation": {
+        "message": ""
+      },
+      "expected": "Invalid profile with empty message."
+    },
+    {
+      "id": "unknown-profile-fields",
+      "mutation": {
+        "inferred": true
+      },
+      "expected": "Typed manifest deserialization rejects unknown fields."
+    },
+    {
+      "id": "invalid-evidence-level",
+      "mutation": {
+        "source_level": "guessed"
+      },
+      "expected": "SourceLevel deserialization rejects unknown enum values."
+    },
+    {
+      "id": "empty-source-doc",
+      "mutation": {
+        "docs": ""
+      },
+      "expected": "Invalid profile with empty source link."
+    },
+    {
+      "id": "no-profile-rules",
+      "mutation": {
+        "rules": []
+      },
+      "expected": "Invalid profile with no checks."
+    }
+  ],
+  "bindings": [
+    {
+      "id": "explicit-clock-parity",
+      "expected": "Native, CLI, browser WASM, Node ESM and CJS return the same full SessionReport at the same clock and options."
+    },
+    {
+      "id": "cli-relationship-error-exit",
+      "expected": "CLI exits 1 on a report containing a relationship error."
+    },
+    {
+      "id": "cli-input-error-exit",
+      "expected": "CLI exits 2 on invalid grouping input."
+    },
+    {
+      "id": "mcp-structured-report",
+      "expected": "New tool returns SessionReport in structuredContent and stable text serialization."
+    },
+    {
+      "id": "mcp-grouping-error",
+      "expected": "New tool returns isError for malformed grouping, without a clean report."
+    },
+    {
+      "id": "js-clock-fraction",
+      "value": 1.5,
+      "expected": "Invalid safe integer Unix clock."
+    },
+    {
+      "id": "js-clock-out-of-range",
+      "value": 9007199254740992,
+      "expected": "Invalid safe integer Unix clock."
+    },
+    {
+      "id": "js-clock-negative-out-of-range",
+      "value": -9007199254740992,
+      "expected": "Invalid safe integer Unix clock."
+    },
+    {
+      "id": "js-clock-nan",
+      "value_descriptor": "NaN",
+      "expected": "Rejected before JSON.stringify can silently turn it into null."
+    },
+    {
+      "id": "js-clock-infinity",
+      "value_descriptor": "Infinity",
+      "expected": "Rejected before JSON.stringify can silently turn it into null."
+    },
+    {
+      "id": "js-clock-null",
+      "value": null,
+      "expected": "Explicit null is invalid in the new options schema; omission uses platform clock."
+    },
+    {
+      "id": "wasm-raw-clock-fraction-rounding",
+      "raw_options_json": "{\"at\":9007199254740991.1}",
+      "expected": "Reject fractional numeric token before f64 rounding could make it an accepted safe integer."
+    },
+    {
+      "id": "js-options-unknown-field",
+      "value": {
+        "inferSessions": true
+      },
+      "expected": "New options schema rejects unknown fields."
+    },
+    {
+      "id": "javascript-prototype-shaped-session-label",
+      "value": "__proto__",
+      "expected": "Labels stay strings in arrays and safe text; no object-key mutation."
+    }
+  ],
+  "resource": [
+    {
+      "id": "rows-bound",
+      "limit": 50000,
+      "expected_at_limit": "Accept grouping bounds; ordinary validation may still report artifact issues.",
+      "expected_above_limit": "Local resource-limit input error."
+    },
+    {
+      "id": "groups-bound",
+      "limit": 10000,
+      "expected_at_limit": "Accept grouping bounds.",
+      "expected_above_limit": "Local resource-limit input error."
+    },
+    {
+      "id": "memberships-bound",
+      "limit": 50000,
+      "expected_at_limit": "Accept grouping bounds.",
+      "expected_above_limit": "Local resource-limit input error."
+    },
+    {
+      "id": "occurrences-bound",
+      "limit": 100000,
+      "expected_at_limit": "Accept grouping bounds.",
+      "expected_above_limit": "Local resource-limit input error."
+    },
+    {
+      "id": "serialized-bytes-bound",
+      "limit": 67108864,
+      "expected_at_limit": "Accept parse preflight bound.",
+      "expected_above_limit": "Local resource-limit input error before parsing."
+    },
+    {
+      "id": "aggregate-text-bytes-bound",
+      "limit": 67108864,
+      "expected_at_limit": "Accept typed-input bound.",
+      "expected_above_limit": "Local resource-limit input error."
+    },
+    {
+      "id": "session-id-bytes-bound",
+      "limit": 4096,
+      "expected_at_limit": "Accept nonblank opaque label.",
+      "expected_above_limit": "Local resource-limit input error."
+    },
+    {
+      "id": "query-spans-bound",
+      "limit": 100000,
+      "expected_at_limit": "Accept collected repeated-key span bound.",
+      "expected_above_limit": "Local resource-limit input error without multiplying occurrence metadata."
+    },
+    {
+      "id": "profile-rule-member-work-bound",
+      "limit": 2000000,
+      "expected_at_limit": "Accept preflight rule/member work bound.",
+      "expected_above_limit": "Local resource-limit input error before relationship evaluation."
+    },
+    {
+      "id": "projected-output-items-bound",
+      "limit": 1000000,
+      "expected_at_limit": "Accept item projection using an injected projection counter.",
+      "expected_above_limit": "Local projected_output_items resource error before document validation."
+    },
+    {
+      "id": "projected-output-text-bound",
+      "limit": 67108864,
+      "expected_at_limit": "Accept retained UTF-8 string-value projection using an injected counter.",
+      "expected_above_limit": "Local projected_output_text resource error before document validation."
+    },
+    {
+      "id": "rules-times-occurrences-real-policy-limit",
+      "generator": "1,000 unique reuse rule codes, two grouped rows, 50,000 empty occurrences per row, same known identity",
+      "expected": "Reject projected output items, although rule/member work is 4,000 and supplied occurrence count is 100,000."
+    },
+    {
+      "id": "rules-times-large-provenance-real-policy-limit",
+      "generator": "1,000 unique reuse rule codes, two grouped rows, one 1 MiB context_label occurrence per row",
+      "expected": "Reject projected retained text, although source input is approximately 2 MiB."
+    },
+    {
+      "id": "disabled-rules-still-project-skip-output",
+      "generator": "Same 1,000-rule occurrence control with its owner explicitly excluded",
+      "expected": "Reject projected output before constructing pack_not_selected skips."
+    },
+    {
+      "id": "large-message-times-groups-real-policy-limit",
+      "generator": "One consistency rule with a 1 MiB message, 1,000 groups with two differing known IDs each",
+      "expected": "Reject projected retained text before cloning the message into findings."
+    },
+    {
+      "id": "output-projection-checked-arithmetic",
+      "generator": "Inject counters near usize::MAX or u64::MAX into internal budget test helper",
+      "expected": "Resource error on checked addition/multiplication overflow, never wrapping into an accepted projection."
+    },
+    {
+      "id": "linear-cross-session-distinct-ids",
+      "generator": "10,000 groups with one unique known ID each",
+      "expected": "No findings; work measured at 1,000 and 10,000 without fragile wall-time thresholds."
+    },
+    {
+      "id": "linear-cross-session-reused-id",
+      "generator": "10,000 groups with one reused known ID each",
+      "expected": "One reuse finding with 10,000 participants; no pairwise report expansion."
+    },
+    {
+      "id": "linear-within-session-retries",
+      "generator": "One group of 10,000 repeated URL rows with the same known ID",
+      "expected": "No relationship errors; original row memberships remain accounted for after document dedupe."
+    }
+  ]
+}

@@ -96,6 +96,25 @@ function validate_many(document_json) {
 exports.validate_many = validate_many;
 
 /**
+ * Validate explicitly grouped URL rows with optional clock and pack selection.
+ * @param {string} session_json
+ * @param {string | null} [options_json]
+ * @returns {any}
+ */
+function validate_sessions(session_json, options_json) {
+    const ptr0 = passStringToWasm0(session_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    var ptr1 = isLikeNone(options_json) ? 0 : passStringToWasm0(options_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len1 = WASM_VECTOR_LEN;
+    const ret = wasm.validate_sessions(ptr0, len0, ptr1, len1);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return takeFromExternrefTable0(ret[0]);
+}
+exports.validate_sessions = validate_sessions;
+
+/**
  * Validates a URL artifact with default options, the common case.
  * @param {string} artifact
  * @returns {any}
@@ -190,7 +209,7 @@ function __wbg_get_imports() {
             const ret = new Object();
             return ret;
         },
-        __wbg_now_5e729ff042c6a974: function() {
+        __wbg_now_708c0e8e20793496: function() {
             const ret = Date.now();
             return ret;
         },

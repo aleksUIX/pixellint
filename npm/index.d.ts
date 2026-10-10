@@ -221,3 +221,19 @@ export function importHar(har: string | object, options?: HarOptions): HarImport
 
 /** Validate local HAR requests at their recorded clocks. Missing clocks require an explicit at override. */
 export function validateHar(har: string | object, options?: HarValidateOptions): HarReport;
+
+export interface SessionGroup { session_id: string; artifact_indexes: number[]; }
+export interface SessionRequest { document: DocumentRequest; sessions: SessionGroup[]; }
+export type SessionRuleKind = "consistent_parameter" | "unique_parameter_across_sessions";
+export type SessionEvaluationStatus = "evaluated" | "partially_evaluated" | "not_evaluated";
+export type SessionSkipReason = "pack_not_selected" | "unsupported_artifact" | "invalid_url" | "endpoint_mismatch" | "missing_parameter" | "empty_parameter" | "installation_placeholder" | "unresolved_macro" | "conflicting_values" | "invalid_percent_encoding" | "invalid_utf8";
+export interface SessionQuerySpan { component: "query_param"; name: string; value: string; start: number; end: number; }
+export interface SessionArtifactTarget { artifact_index: number; artifact_id: string; session_id: string; query_spans: SessionQuerySpan[]; occurrences: ArtifactOccurrence[]; }
+export interface SessionFinding extends Omit<Violation, "targets"> { plugin_id: string; detected_vendor: string | null; session_ids: string[]; targets: SessionArtifactTarget[]; }
+export interface SessionSkippedArtifact { artifact_index: number; artifact_id: string; session_id: string; reason: SessionSkipReason; occurrences: ArtifactOccurrence[]; }
+export interface SessionCheckCoverage { plugin_id: string; code: string; kind: SessionRuleKind; session_ids: string[]; status: SessionEvaluationStatus; participants_total: number; compared_total: number; reason?: "insufficient_observations"; skipped: SessionSkippedArtifact[]; }
+export interface SessionCoverage { status: SessionEvaluationStatus; sessions_total: number; grouped_artifacts: number; ungrouped_artifact_indexes: number[]; profiles_total: number; checks_evaluated: number; checks_partially_evaluated: number; checks_not_evaluated: number; }
+export interface SessionReport { document: DocumentReport; summary: FindingCounts; relationship_summary: FindingCounts; findings: SessionFinding[]; checks: SessionCheckCoverage[]; coverage: SessionCoverage; }
+export interface SessionValidateOptions { at?: number; rulepacks?: string[]; exceptRulepacks?: string[]; }
+/** Explicit grouping only. Show coverage with combined finding counts. */
+export function validateSessions(request: SessionRequest | string, options?: SessionValidateOptions): SessionReport;

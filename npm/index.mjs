@@ -72,3 +72,17 @@ export function isOk(summary) {
     report.violations.every((violation) => violation.severity !== "error"),
   );
 }
+
+/** Validate caller-declared ad sessions. Grouping is never inferred. */
+export function validateSessions(request, options = {}) {
+  if (!options || typeof options !== "object" || Array.isArray(options)) throw new TypeError("Session options must be an object");
+  for (const key of Object.keys(options)) {
+    if (!["at", "rulepacks", "exceptRulepacks"].includes(key)) throw new TypeError(`Unknown session option: ${key}`);
+  }
+  if (Object.hasOwn(options, "at") && !Number.isSafeInteger(options.at)) throw new TypeError("Session clock must be safe integer Unix seconds");
+  const wire = {};
+  if (Object.hasOwn(options, "at")) wire.at = options.at;
+  if (Object.hasOwn(options, "rulepacks")) wire.rulepacks = options.rulepacks;
+  if (Object.hasOwn(options, "exceptRulepacks")) wire.except_rulepacks = options.exceptRulepacks;
+  return wasm.validate_sessions(typeof request === "string" ? request : JSON.stringify(request), JSON.stringify(wire));
+}

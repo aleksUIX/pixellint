@@ -5599,6 +5599,15 @@ Path captures: `^/vevent/(?<event_name>[^/]*)(?:/(?<advertiser_id>[^/]*))?(?:/(?
 | `vendor.ias-video-pixel.xsid.placeholder` | `{"kind":"forbid_value_pattern","params":["xsId"],"pattern":"^\\[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE\\]$"}` | error | [official_vendor](https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf) |
 | `vendor.ias-video-pixel.xsid.unstable_macro` | `{"kind":"forbid_value_pattern","params":["xsId"],"pattern":"^(?:\\[(?:CACHEBUSTING\|TIMESTAMP)\\]\|\\$\\{CACHEBUSTER\\})$"}` | warning | [official_vendor](https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf) |
 
+### Declared sessions carry relationship rules.
+
+Session profile: [source](../crates/pixellint-core/rulepacks/session/ias-video-pixel.json). These checks use caller-declared original artifact memberships. Typed coverage records skipped or insufficient observations; local collection, work and output bounds can stop evaluation.
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.ias-video-pixel.session.xsid.inconsistent` | `{"kind":"consistent_parameter","param":"xsId","placeholder_values":["[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE]"]}` | error | [official_vendor](https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf) |
+| `vendor.ias-video-pixel.session.xsid.reused` | `{"kind":"unique_parameter_across_sessions","param":"xsId","placeholder_values":["[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE]"]}` | error | [official_vendor](https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf) |
+
 ## `vendor/ias-video`
 
 IAS Signal video tag on unified.adsafeprotected.com/v2/{advertiserId}/{publisherId}. Both IDs ride in the path. Display tags on pixel.adsafeprotected.com are vendor/ias.

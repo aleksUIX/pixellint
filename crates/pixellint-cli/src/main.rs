@@ -54,6 +54,7 @@ fn main() -> ExitCode {
         [command, rest @ ..] if command == "list-vendors" => run_list_vendors(rest),
         [command, rest @ ..] if command == "validate" => run_validate(rest),
         [command, rest @ ..] if command == "validate-many" => run_validate_many(rest),
+        [command, rest @ ..] if command == "validate-sessions" => run_validate_sessions(rest),
         [command, rest @ ..] if command == "import-har" => run_har(rest, false),
         [command, rest @ ..] if command == "validate-har" => run_har(rest, true),
         [command, ..] => {
@@ -238,6 +239,77 @@ fn run_validate_many(args: &[String]) -> ExitCode {
             }
         }
         Err(error) => usage_error(&error.to_string()),
+    }
+}
+
+fn run_validate_sessions(args: &[String]) -> ExitCode {
+    let [input, rest @ ..] = args else {
+        return usage_error("validate-sessions requires explicit grouped input");
+    };
+    let raw = match read_artifact(input) {
+        Ok(v) => v,
+        Err(e) => return usage_error(&e),
+    };
+    let request = match pixellint_core::session_request_from_json(&raw) {
+        Ok(v) => v,
+        Err(e) => return usage_error(&e.to_string()),
+    };
+    let options = match parse_cli_options(rest) {
+        Ok(v) => v,
+        Err(e) => return usage_error(&e),
+    };
+    let engine = match build_engine(&options) {
+        Ok(v) => v,
+        Err(e) => return usage_error(&e),
+    };
+    let result = match options.reference_time {
+        Some(at) => engine.validate_sessions_at(&request, &options.validation, at),
+        None => engine.validate_sessions(&request, &options.validation),
+    };
+    match result {
+        Err(e) => usage_error(&e.to_string()),
+        Ok(report) => {
+            if options.output_format == OutputFormat::Json {
+                match serde_json::to_string_pretty(&report) {
+                    Ok(s) => println!("{s}"),
+                    Err(e) => return usage_error(&e.to_string()),
+                }
+            } else {
+                print_document(&report.document);
+                for f in &report.findings {
+                    println!(
+                        "{}\t{}\t{}\tsessions: {}",
+                        severity_label(f.severity),
+                        f.code,
+                        f.message,
+                        f.session_ids.join(", ")
+                    );
+                    for t in &f.targets {
+                        println!("  original row {} ({})", t.artifact_index, t.artifact_id);
+                    }
+                }
+                println!(
+                    "Session checks: {} evaluated, {} partial, {} not evaluated; {} ungrouped rows",
+                    report.coverage.checks_evaluated,
+                    report.coverage.checks_partially_evaluated,
+                    report.coverage.checks_not_evaluated,
+                    report.coverage.ungrouped_artifact_indexes.len()
+                );
+                for c in &report.checks {
+                    for skip in &c.skipped {
+                        println!(
+                            "  {} row {} skipped: {:?}",
+                            c.code, skip.artifact_index, skip.reason
+                        );
+                    }
+                }
+            }
+            if report.is_ok() {
+                ExitCode::SUCCESS
+            } else {
+                ExitCode::FAILURE
+            }
+        }
     }
 }
 
@@ -618,6 +690,7 @@ Spec-first validator for pixels, postbacks, and other measurement artifacts.
 USAGE
   pixellint validate <kind> <artifact> [options]
   pixellint validate-many <document> [options]
+  pixellint validate-sessions <session-request> [options]
   pixellint import-har <har> [--har-headers <policy>]
   pixellint validate-har <har> [options] [--har-headers <policy>]
   pixellint list-rulepacks [--json] [--rulepack-file <path>]...

@@ -60,6 +60,13 @@ def generate():
     packs = [json.loads(path.read_text()) for path in sorted(
         (ROOT / "crates/pixellint-core/rulepacks/vendor").glob("*.json")
     )]
+    profiles = [(path, json.loads(path.read_text())) for path in sorted(
+        (ROOT / "crates/pixellint-core/rulepacks/session").glob("*.json")
+    )]
+    pack_ids = {pack['id'] for pack in packs}
+    for _, profile in profiles:
+        if profile['owner_plugin_id'] not in pack_ids:
+            raise SystemExit('Session profile owner is absent from the vendor inventory.')
     lines = [START, "", "## The vendor inventory records implemented contracts.", "",
              f"This generated inventory covers {len(packs)} shipped vendor packs. "
              "It does not certify complete vendor specification coverage. "
@@ -111,6 +118,16 @@ def generate():
             lines += [f"### Complete HTTP contract {index}", "", f"Context: `{cell(context)}`.", ""]
             lines += contract_table(request.get("params", []), source, doc)
             lines += rule_table(request.get("rules", []), source, doc)
+        for profile_path, profile in profiles:
+            if profile['owner_plugin_id'] != pack['id']:
+                continue
+            relative = profile_path.relative_to(ROOT).as_posix()
+            lines += ["### Declared sessions carry relationship rules.", "",
+                      f"Session profile: [source](../{relative}). "
+                      "These checks use caller-declared original artifact memberships. "
+                      "Typed coverage records skipped or insufficient observations; "
+                      "local collection, work and output bounds can stop evaluation.", ""]
+            lines += rule_table(profile['rules'], profile['source_level'], profile['docs'])
     return "\n".join(lines + [END, ""])
 
 

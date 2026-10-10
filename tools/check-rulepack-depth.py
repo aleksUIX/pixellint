@@ -35,6 +35,19 @@ def main():
     if set(entries) != set(shipped):
         raise SystemExit(f"Review inventory differs: {sorted(set(entries) ^ set(shipped))}")
     failures = []
+    for path in sorted((ROOT / "crates/pixellint-core/rulepacks/session").glob("*.json")):
+        profile = json.loads(path.read_text())
+        owner = profile["owner_plugin_id"]
+        entry = entries.get(owner)
+        if entry is None:
+            failures.append(f"{owner}: session profile has no reviewed owner")
+            continue
+        relative = path.relative_to(ROOT).as_posix()
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if entry.get("reviewed_artifacts", {}).get(relative) != digest:
+            failures.append(f"{owner}: session profile changed after source review")
+        if profile not in entry.get("session_contracts", []):
+            failures.append(f"{owner}: session contracts differ from the shipped profile")
     for pack_id, path in shipped.items():
         entry = entries[pack_id]
         digest = hashlib.sha256(path.read_bytes()).hexdigest()

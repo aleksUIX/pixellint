@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.41.0 (2026-10-10)
+
+- Add explicit caller-declared ad-session groups over original artifact rows.
+  Preserve the existing document report and its ordinary artifact deduplication.
+- Add a separate IAS UVP session profile for stable external IDs within an
+  ad session and distinct IDs across declared sessions.
+- Report relationship findings with original query spans and occurrence
+  metadata. Keep unresolved, unavailable and insufficient observations visible
+  through typed coverage results.
+- Bound input collections, evaluation work and projected session output before
+  ordinary validation. Local resource limits remain typed evaluation errors.
+- Expose the additive session API through Rust, CLI, WASM, npm and MCP.
+
 ## 0.40.0 (2026-10-10)
 
 - Add explicit binary HTTP captures using `body_base64`, preserving the
