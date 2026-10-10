@@ -6774,7 +6774,7 @@ Path captures: `/mcjs-connected/js/users/(?<user_id>[^/]+)/(?<site_id>[^/]*)\.js
 
 ## `vendor/matomo`
 
-Matomo single and bulk HTTP Tracking API requests to matomo.php or piwik.php, including self-hosted endpoints. The pinned PHP8 bulk profile models scalar parse_str key normalization, last-value shadowing and mapped field readers. Bracket trees, sanitizer-sensitive values and runtime-dependent query forms remain explicitly unvalidated.
+Matomo single and bulk HTTP Tracking API requests to matomo.php or piwik.php, including self-hosted endpoints. The pinned PHP8 bulk profile models bounded bracket trees, ordered last-assignment shadowing, mapped HTML4 sanitization and core plugin readers. Malformed, configuration-sensitive and nonportable PHP forms remain explicitly unvalidated.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/matomo.json).
 
@@ -6805,13 +6805,13 @@ Matcher: `{"host_suffixes":["matomo.cloud"],"any_host":true,"paths":["/matomo.ph
 | `h` | optional | `{"format":{"kind":"integer"},"minimum":0,"maximum":23}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `m` | optional | `{"format":{"kind":"integer"},"minimum":0,"maximum":59}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `s` | optional | `{"format":{"kind":"integer"},"minimum":0,"maximum":59}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `cookie` | optional | `{"format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `cookie` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/js/piwik.js) |
 | `new_visit` | optional | `{"format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `ping` | optional | `{"format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `pv_id` | optional | `{"format":{"kind":"regex","pattern":"^[0-9A-Za-z]{6}$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `search` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `search_count` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `pdf` | optional | `{"name_pattern":"^(fla\|java\|dir\|qt\|realp\|pdf\|wma\|gears\|ag)$","format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `pdf` | optional | `{"name_pattern":"^(fla\|java\|qt\|realp\|pdf\|wma\|ag)$","format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/matomo/1e9169ddd9eba7c982dc67b8bd3f9310a7a312c6/js/piwik.js) |
 | `c_n` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `c_p` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `c_t` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
@@ -6858,13 +6858,13 @@ Matcher: `{"host_suffixes":["matomo.cloud"],"any_host":true,"paths":["/matomo.ph
 | `bw_bytes` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `cra_rc` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `ag` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `gears` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `gears` | optional | `{"format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `java` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `fla` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `qt` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `realp` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `wma` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `dir` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `dir` | optional | `{"format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `send_image` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `queuedtracking` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
 | `country` | optional | `{"format":{"kind":"regex","pattern":"^[a-z]{2}$"}}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |

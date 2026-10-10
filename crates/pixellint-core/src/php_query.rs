@@ -553,7 +553,7 @@ mod tests {
         .unwrap();
         for (index, row) in oracle["rows"].as_array().unwrap().iter().enumerate() {
             let actual = parse_query(row["query"].as_str().unwrap());
-            if matches!(index, 18 | 19 | 20 | 21) {
+            if matches!(index, 18..=21) {
                 assert!(actual.is_err(), "explicit portable boundary: {row}");
             } else {
                 assert_eq!(actual.unwrap(), row["parsed"], "query {index}: {row}");

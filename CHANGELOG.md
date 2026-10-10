@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.39.0 (2026-10-10)
+
+- Deepen Matomo bulk tracking with a bounded PHP 8 bracket-tree query model,
+  including append indexes, nested fields and scalar/array shadowing.
+- Apply the pinned Matomo HTML4 sanitizer to supported field readers and bulk
+  credentials. Decode entities once, remove null bytes and preserve deferred
+  template macros.
+- Map the pinned native browser-plugin and cookie integer readers. Keep
+  deployment-dependent, malformed and unsupported plugin forms explicit.
+- Verify parsing, sanitization and field defaults against an independent PHP
+  runtime executing the pinned upstream Matomo source.
+
 ## 0.38.0 (2026-10-10)
 
 - Add source-template packs for Google CM360 `googleads4` PCS view trackers,

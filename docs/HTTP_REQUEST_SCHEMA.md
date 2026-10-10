@@ -169,6 +169,22 @@ plugin fields and platform-sensitive numeric conversions produce per-item
 information findings instead of invented missing values. Other packs retain
 an explicit native-map information finding.
 
+String bulk entries in that profile use a bounded PHP query model: one URL
+decode, PHP root-name normalization, bracket trees, ordered append indexes,
+and scalar/array shadowing. Supported readers apply the pinned Matomo HTML4
+sanitizer before their field conversion. Entity decoding runs once, literal
+null bytes are removed, and quotes and HTML delimiters are escaped. Supported
+JSON reader values are sanitized recursively. Template macros retain their
+unresolved expansion state.
+
+The profile models the default `&` separator, at most 1,000 nonempty input
+variables and 64 bracket levels. Alternate separator candidates, malformed
+brackets, raw control characters, invalid UTF-8, nonportable indexes, negative-only append behavior,
+sanitized JSON-key collisions and unmapped plugin readers remain observable
+coverage gaps. These bounds do not certify arbitrary PHP configurations or
+historical Matomo deployments. The independent oracle records PHP 8.3.35 and
+the exact upstream source checksum beside its parsing and reader outputs.
+
 `check_chronological_order: true` requires that Matomo profile. It compares
 only explicit parseable `cdt` timestamps across supported bulk entries and
 warns on a backward step under the documented oldest-first recommendation.
