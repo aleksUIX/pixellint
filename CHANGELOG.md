@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.44.1 - 2026-10-13
+
+- **`base64` 0.22.1 → 0.23.1**: dependency update.
+
 ## 0.44.0 (2026-10-10)
 
 - Apply existing Mixpanel Track, Engage and Groups contracts to official SDK plain-text data-form beacon bodies under private built-in owner and endpoint selection.
