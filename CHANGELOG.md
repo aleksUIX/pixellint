@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.44.2 - 2026-10-20
+
+- **`serde_json` 1.0.151 → 1.0.154**: dependency update.
+
 ## 0.44.1 - 2026-10-13
 
 - **`base64` 0.22.1 → 0.23.1**: dependency update.
