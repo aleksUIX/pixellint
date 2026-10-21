@@ -1,7 +1,7 @@
 {
   "id": "vendor/the-trade-desk-conversions",
   "display_name": "The Trade Desk realtime conversions",
-  "description": "Real-time JSON conversion batches, identity alternatives, commerce items, privacy records and data processing options. Account mapping and regional policy applicability remain external.",
+  "description": "Real-time JSON conversion batches, identity alternatives, commerce items, privacy records and data processing options. Account mapping and regional policy applicability remain external. The pinned browser SDK emits null for an unset data_processing_option; null remains valid without weakening object member checks.",
   "vendor": "thetradedesk",
   "source_level": "official_vendor",
   "docs": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
@@ -248,8 +248,12 @@
         },
         {
           "name": "data_processing_option",
-          "json_type": "object",
-          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion"
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
+          "description": "The browser producer emits null when no processing option is configured; configured objects retain the published member requirements."
         },
         {
           "name": "tdid",
@@ -639,9 +643,13 @@
       "params": [
         {
           "name": "",
-          "json_type": "object",
+          "json_type": [
+            "object",
+            "null"
+          ],
           "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion",
-          "requirement": "required"
+          "requirement": "required",
+          "description": "The browser producer emits null when no processing option is configured; configured objects retain the published member requirements."
         },
         {
           "name": "policies",

@@ -1,7 +1,7 @@
 {
   "id": "vendor/quantcast",
   "display_name": "Quantcast Measure pixel",
-  "description": "Quantcast Measure matrix beacons on the exact /pixel route, including semicolon parameters. Account identity is carried in a. Image GIF paths and the Conversions API use separate contracts.",
+  "description": "Quantcast matrix /pixel collectors, including the pinned SDK measurement, denied-consent and Apple-vendor alias hosts. Checks source flags, clock spelling, hashing sentinels and GET/POST beacons. Signed revenue, empty identities and arbitrary event properties remain valid. New producer checks are advisory.",
   "vendor": "quantcast",
   "source_level": "official_vendor",
   "docs": "https://help.quantcast.com/docs/inspect-your-tag",
@@ -9,7 +9,9 @@
   "match": {
     "hosts": [
       "pixel.quantserve.com",
-      "secure.quantserve.com"
+      "secure.quantserve.com",
+      "pixel.quantcount.com",
+      "prreqcroab.icu"
     ],
     "paths": [
       "/pixel"
@@ -52,7 +54,7 @@
       "name": "revenue",
       "format": {
         "kind": "regex",
-        "pattern": "^[0-9]+(\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
       "description": "It is the order value. Quantcast documents revenue as a number on the Measure tag call.",
       "fix_hint": "Set revenue to a number such as 100, with no currency symbol.",
@@ -76,7 +78,270 @@
         "kind": "url"
       },
       "doc": "https://help.quantcast.com/docs/inspect-your-tag"
+    },
+    {
+      "name": "r",
+      "description": "Producer random integer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 0,
+      "maximum": 2147483647,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "et",
+      "description": "Producer Unix milliseconds, without a freshness window.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "tzo",
+      "description": "Signed timezone offset in minutes.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "ourl",
+      "description": "Original page URL when a URL override is present.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "uh",
+      "description": "SHA-256 identity or the producer denied-consent sentinel u.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:[a-fA-F0-9]{64}|u)$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "rf",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "6"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "ns",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "ce",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "qjs",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "dst",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "uht",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2",
+          "u"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "fpan",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "u"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "_seg",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "_ss",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "_sd",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "_ret",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
+    },
+    {
+      "name": "_gam",
+      "description": "Pinned producer state or flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "a",
+          "c"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://secure.quantserve.com/quant.js"
     }
   ],
-  "rules": []
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Pinned producer transport.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://secure.quantserve.com/quant.js"
+      }
+    ],
+    "rules": []
+  }
 }

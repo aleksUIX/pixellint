@@ -2,15 +2,15 @@
   "id": "vendor/taboola-unip",
   "display_name": "Taboola unip event pixel",
   "vendor": "taboola",
-  "description": "Taboola browser event pixels on /log/3/unip. Taboola documents the en event name on the query. Generated pixels send revenue, currency, quantity, and orderid under those same names. The tfa.js loader is vendor/taboola. S2S postbacks are vendor/taboola-s2s.",
+  "description": "Taboola account-scoped /log/3/unip requests, including SDK events, subscription markers and the public SDK logger form/beacon transport. Checks generated clocks, engagement metrics and flags. Custom event names and properties, opaque session data and the literal null referrer remain valid. New producer checks are advisory.",
   "source_level": "official_vendor",
   "docs": "https://developers.taboola.com/pixel/docs/verification-network-traffic",
   "match": {
     "host_suffixes": [
       "taboola.com"
     ],
-    "path_contains": [
-      "/log/3/unip"
+    "path_patterns": [
+      "^/[^/]+/log/3/unip/?$"
     ]
   },
   "params": [
@@ -28,7 +28,7 @@
       "name": "revenue",
       "format": {
         "kind": "regex",
-        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
       },
       "description": "It is the conversion value. Taboola documents an integer or decimal number, with no commas. Page views omit it.",
       "fix_hint": "Send a number, such as `9.99`, or drop the pair on a page view.",
@@ -82,7 +82,208 @@
       "description": "It is an order ID from the advertiser CRM. Taboola documents it as optional. Purchase fires often send it.",
       "fix_hint": "Set orderid to the CRM order ID, or drop the pair.",
       "doc": "https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values"
+    },
+    {
+      "name": "publisher_id",
+      "description": "The SDK routes events through a numeric account path.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "tim",
+      "description": "Generated event time in Unix milliseconds. No freshness window is inferred.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "tos",
+      "description": "Generated visible time on site in milliseconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "ssd",
+      "description": "Observed site-depth counter.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "scd",
+      "description": "Maximum scroll percentage; no unstated 100 percent ceiling is imposed.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "est",
+      "description": "Generated session-start milliseconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "msa",
+      "description": "Generated maximum scrollable amount.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "ce",
+      "description": "Pinned producer marker.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "subscr"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "psb",
+      "description": "Pinned producer marker.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "cis",
+      "description": "Pinned producer marker.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "q",
+          "h",
+          "cq",
+          "ls"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "ga",
+      "description": "Pinned producer marker.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false",
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "isls",
+      "description": "Pinned producer marker.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "item-url",
+      "description": "Optional page-location override.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+    },
+    {
+      "name": "surl",
+      "description": "Optional page-location override.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
     }
   ],
-  "rules": []
+  "rules": [],
+  "path_pattern": "^/(?<publisher_id>[^/]+)/log/3/unip/?$",
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Pinned producer transport.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://cdn.taboola.com/libtrc/unip/1234567/tfa.js"
+      }
+    ],
+    "rules": []
+  }
 }

@@ -1,0 +1,441 @@
+{
+  "id": "vendor/the-trade-desk-realtime-fallback",
+  "display_name": "The Trade Desk browser conversion fallback",
+  "vendor": "thetradedesk",
+  "description": "Pinned browser SDK GET fallback on exact /track/rt. Checks scalar conversion fields, ownership, pixel context and fallback markers. The SDK omits object, item and privacy-record containers from this representation; their JSON contracts are not claimed. Source-profile checks are advisory.",
+  "docs": "https://js.adsrvr.org/up_loader.1.1.0.js",
+  "source_level": "official_template",
+  "match": {
+    "hosts": [
+      "insight.adsrvr.org"
+    ],
+    "paths": [
+      "/track/rt"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "adv",
+      "description": "Advertiser identity.",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "merchant_id",
+      "description": "Merchant identity.",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "pixel_ids",
+      "description": "The producer joins configured opaque pixel IDs with commas.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "event_name",
+      "description": "Optional mapped event name.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "value",
+      "description": "Scalar decimal conversion value.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "currency",
+      "description": "Currency inherited from the event.",
+      "requirement": "optional",
+      "format": {
+        "kind": "currency"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "client_ip",
+      "description": "Forwarded client IP.",
+      "requirement": "optional",
+      "format": {
+        "kind": "ip"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "adid_type",
+      "description": "Forwarded advertising ID family.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "TDID",
+          "IDFA",
+          "AAID",
+          "DAID",
+          "NAID",
+          "IDL",
+          "EUID",
+          "UID2"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "adid",
+      "description": "Advertising identity, interpreted with adid_type.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "country",
+      "description": "Country context for the region requirement.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "region",
+      "description": "Caller geographic region, separate from processing-option regions.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "NielsenDMA",
+      "description": "Forwarded numeric DMA code.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "rt_fallback",
+      "description": "The SDK marks the fallback with 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "eds",
+      "description": "Source identifiers emitted by this pinned browser producer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "JsSdkGet",
+          "JsSdkGtmGet"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "tdid",
+      "description": "Forwarded GUID identity.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "daid",
+      "description": "Forwarded GUID identity.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "idfa",
+      "description": "Forwarded GUID identity.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "aaid",
+      "description": "Forwarded GUID identity.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "naid",
+      "description": "Forwarded GUID identity.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "idl",
+      "description": "Forwarded 49 or 70 character RampID.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:.{49}|.{70})$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "td_values",
+      "description": "Custom dynamic scalar fields retain the published 150 character limit.",
+      "requirement": "optional",
+      "name_pattern": "^td(?:[1-9]|10)$",
+      "max_length": 150,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.owner_missing",
+      "kind": "require_one_of",
+      "params": [
+        "adv",
+        "merchant_id"
+      ],
+      "message": "Supply the configured advertiser or merchant identity.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.purchase_value_missing",
+      "kind": "required_when_value",
+      "when": "event_name",
+      "equals": [
+        "purchase"
+      ],
+      "requires": [
+        "value"
+      ],
+      "message": "Purchase events carry a revenue value.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.adid_type_missing",
+      "kind": "required_with",
+      "when": "adid",
+      "requires": [
+        "adid_type"
+      ],
+      "message": "Advertising identities carry their ID family.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.us_region_missing",
+      "kind": "required_when_value",
+      "when": "country",
+      "equals": [
+        "United States"
+      ],
+      "requires": [
+        "region"
+      ],
+      "message": "United States events carry geographic region context.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.adid_tdid_invalid",
+      "kind": "format_when",
+      "when": "adid_type",
+      "equals": [
+        "TDID"
+      ],
+      "param": "adid",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "message": "The corresponding ID family uses GUID spelling.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.adid_idfa_invalid",
+      "kind": "format_when",
+      "when": "adid_type",
+      "equals": [
+        "IDFA"
+      ],
+      "param": "adid",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "message": "The corresponding ID family uses GUID spelling.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.adid_aaid_invalid",
+      "kind": "format_when",
+      "when": "adid_type",
+      "equals": [
+        "AAID"
+      ],
+      "param": "adid",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "message": "The corresponding ID family uses GUID spelling.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.adid_daid_invalid",
+      "kind": "format_when",
+      "when": "adid_type",
+      "equals": [
+        "DAID"
+      ],
+      "param": "adid",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "message": "The corresponding ID family uses GUID spelling.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "code": "vendor.the-trade-desk-realtime-fallback.adid_naid_invalid",
+      "kind": "format_when",
+      "when": "adid_type",
+      "equals": [
+        "NAID"
+      ],
+      "param": "adid",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+      },
+      "message": "The corresponding ID family uses GUID spelling.",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Pinned producer transport.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+      }
+    ],
+    "rules": []
+  }
+}

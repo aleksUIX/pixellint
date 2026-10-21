@@ -1,7 +1,7 @@
 {
   "id": "vendor/the-trade-desk",
   "display_name": "The Trade Desk universal pixel",
-  "description": "Universal pixel iframe fires to insight.adsrvr.org/track/up, whose query carries advertiser ID, referrer, pixel ID, and pixel version.",
+  "description": "The Trade Desk legacy /track/up iframe pixels plus current SDK /track/cei initialization requests. Legacy required fields apply to /up. Initialization permits advertiser or merchant ownership and checks generated flags without claiming conversion delivery. Realtime JSON and scalar fallback events use separate packs.",
   "vendor": "thetradedesk",
   "source_level": "official_vendor",
   "docs": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938",
@@ -11,10 +11,19 @@
     ],
     "paths": [
       "/track/up",
-      "/track/up/"
+      "/track/up/",
+      "/track/cei",
+      "/track/cei/"
     ]
   },
   "params": [
+    {
+      "name": "operation",
+      "description": "Collector operation extracted from the endpoint path.",
+      "requirement": "optional",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
     {
       "name": "adv",
       "requirement": "required",
@@ -23,7 +32,14 @@
       },
       "description": "It is the platform advertiser ID that owns the tracking tag. The Trade Desk documents it as required on the iframe src.",
       "fix_hint": "Set `adv` to the advertiser ID from the generated universal pixel code.",
-      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up"
+        ]
+      }
     },
     {
       "name": "upid",
@@ -33,7 +49,14 @@
       },
       "description": "It is the universal pixel ID from the inline script. The Trade Desk documents it as required on the iframe src.",
       "fix_hint": "Set `upid` to the universal pixel ID from the generated tag.",
-      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up"
+        ]
+      }
     },
     {
       "name": "ref",
@@ -43,7 +66,14 @@
       },
       "description": "It is the page URL the tag fired on. The Trade Desk documents it as required, and mappings match against it.",
       "fix_hint": "Set `ref` to the absolute URL of the page that fired the pixel.",
-      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up"
+        ]
+      }
     },
     {
       "name": "upv",
@@ -53,7 +83,14 @@
       },
       "description": "It is The Trade Desk version number of the universal pixel. The iframe src documents it as required.",
       "fix_hint": "Set `upv` to the version from the generated universal pixel code, such as `3.3.0`.",
-      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up"
+        ]
+      }
     },
     {
       "name": "order_id",
@@ -62,7 +99,14 @@
       ],
       "allow_empty": true,
       "description": "Optional dynamic parameter; current and documented previous names are accepted.",
-      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up"
+        ]
+      }
     },
     {
       "name": "value",
@@ -76,7 +120,14 @@
         "kind": "regex",
         "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
       },
-      "format_severity": "warning"
+      "format_severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up"
+        ]
+      }
     },
     {
       "name": "currency",
@@ -85,7 +136,14 @@
       ],
       "allow_empty": true,
       "description": "Optional dynamic parameter; current and documented previous names are accepted.",
-      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up"
+        ]
+      }
     },
     {
       "name": "policies",
@@ -99,7 +157,15 @@
         "kind": "regex",
         "pattern": "^LDU(?:,LDU)*$"
       },
-      "format_severity": "warning"
+      "format_severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up",
+          "cei"
+        ]
+      }
     },
     {
       "name": "region",
@@ -113,7 +179,15 @@
         "kind": "regex",
         "pattern": "^US-[A-Z]{2}$"
       },
-      "format_severity": "warning"
+      "format_severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up",
+          "cei"
+        ]
+      }
     },
     {
       "name": "td_values",
@@ -122,10 +196,148 @@
       "max_length": 64,
       "format_severity": "warning",
       "description": "Values beyond 64 characters are logged but truncated in reports.",
-      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938"
+      "doc": "https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "up"
+        ]
+      }
+    },
+    {
+      "name": "advertiser_id",
+      "description": "Configured advertiser ownership on initialization.",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "cei"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "merchant_id",
+      "description": "Configured merchant ownership on initialization.",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "cei"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "cookie_sync",
+      "description": "The SDK serializes this switch as 0 or 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "cei"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
+    },
+    {
+      "name": "uidc_present",
+      "description": "The SDK emits 1 when UID configuration is supplied.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "cei"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js"
     }
   ],
-  "rules": [],
+  "rules": [
+    {
+      "code": "vendor.the-trade-desk.initialization_owner_missing",
+      "kind": "require_one_of",
+      "params": [
+        "advertiser_id",
+        "merchant_id"
+      ],
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "cei"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js",
+      "message": "SDK initialization supplies advertiser_id or merchant_id."
+    },
+    {
+      "code": "vendor.the-trade-desk.initialization_context_missing",
+      "kind": "required_when_value",
+      "when": "operation",
+      "equals": [
+        "cei"
+      ],
+      "requires": [
+        "ref",
+        "upv"
+      ],
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js",
+      "message": "The pinned initialization producer sends page context and a pixel version."
+    },
+    {
+      "code": "vendor.the-trade-desk.initialization_ref_invalid",
+      "kind": "format_when",
+      "when": "operation",
+      "equals": [
+        "cei"
+      ],
+      "param": "ref",
+      "format": {
+        "kind": "url"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://js.adsrvr.org/up_loader.1.1.0.js",
+      "message": "The pinned initialization producer supplies an absolute page location unless overridden by the caller."
+    }
+  ],
   "http": {
     "params": [
       {
@@ -143,5 +355,6 @@
         "source_level": "official_template"
       }
     ]
-  }
+  },
+  "path_pattern": "^/track/(?<operation>up|cei)/?$"
 }

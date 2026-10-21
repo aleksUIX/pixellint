@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.52.0 (2026-10-21)
+
+Deepen Quantcast, Taboola and The Trade Desk, adding 60 field contracts and 12 cross-field assertions. The inventory reaches 189 vendor packs across 96 vendors.
+
+- Quantcast covers the denied-consent and Apple-vendor alias hosts, matrix beacon flags, hash sentinels, clocks and GET/POST transport. Signed and exponent revenue values remain valid.
+- Taboola checks account paths, event clocks, engagement metrics, subscription markers and SDK logger POST forms and beacons. Custom event names, opaque sessions and literal null referrers remain valid.
+- The Trade Desk initialization accepts advertiser or merchant ownership without inheriting legacy pixel requirements. The JSON conversion pack accepts the SDK's unset processing-option null while retaining configured object requirements.
+- Add a separate Trade Desk GET fallback pack for scalar conversion fields, identifiers and transport markers. JSON-only containers are outside this fallback contract.
+- Add 158 golden fixtures, including 22 intercepted requests from 14 offline SDK executions, plus seven integration tests and CommonJS/ESM checks. New producer checks remain advisory.
+
 ## 0.51.0 (2026-10-21)
 
 Deepen four existing browser collectors, with 110 additional field contracts and one activity-state assertion. The inventory remains 188 vendor packs across 96 vendors.

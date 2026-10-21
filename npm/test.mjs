@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 188, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 189, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -88,6 +88,21 @@ assert.equal(vendorForHost("nobody.example"), null);
 // Both npm entry points must use the refreshed engine for live VAST findings.
 const cjs = createRequire(import.meta.url)("./index.cjs");
 for (const entry of [{ validate, validateMany, vendorForHost }, cjs]) {
+  // SDK aliases, initialization and fallback retain separate transport contracts.
+  for (const [artifact, pack, code] of [
+    ["https://prreqcroab.icu/pixel;a=p-synthetic;r=-1", "vendor/quantcast", "vendor.quantcast.param.r.invalid"],
+    ["https://trc.taboola.com/1234567/log/3/unip?en=Custom&tim=clock", "vendor/taboola-unip", "vendor.taboola-unip.param.tim.invalid"],
+    ["https://insight.adsrvr.org/track/cei?merchant_id=synthetic&ref=https%3A%2F%2Fexample.test&upv=3.0.0&cookie_sync=2", "vendor/the-trade-desk", "vendor.the-trade-desk.param.cookie_sync.invalid"],
+    ["https://insight.adsrvr.org/track/rt?adv=synthetic&pixel_ids=opaque&value=money", "vendor/the-trade-desk-realtime-fallback", "vendor.the-trade-desk-realtime-fallback.param.value.invalid"],
+  ]) {
+    const result = entry.validate(artifact);
+    assert.deepEqual(result.coverage.vendor_rulepacks, [pack]);
+    assert.deepEqual(result.reports.flatMap(report => report.violations.map(finding => finding.code)), [code]);
+  }
+  assert.equal(entry.vendorForHost("pixel.quantcount.com")?.vendor, "quantcast");
+  const nullableTtd = entry.validate(JSON.stringify({url:"https://insight.adsrvr.org/track/realtimeconversion",method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:[{adv:"synthetic",pixel_ids:["opaque"],data_processing_option:null}]})}), {kind:"request"});
+  assert.deepEqual(nullableTtd.reports.flatMap(report => report.violations), []);
+
   for (const [artifact, pack, code] of [
     ["https://googleads4.g.doubleclick.net/pcs/view?xai=x&sai=y", "vendor/google-cm360-pcs-view", "vendor.google-cm360-pcs-view.param.sig.missing"],
     ["https://track.adctv.com/", "vendor/adctv-tracker", "vendor.adctv-tracker.param.event.missing"],

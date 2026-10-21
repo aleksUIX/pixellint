@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 188 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 189 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -11978,11 +11978,11 @@ Path captures: `^/pixel/(?<pcode>[^/]*)\.gif$`. Captured values take precedence 
 
 ## `vendor/quantcast`
 
-Quantcast Measure matrix beacons on the exact /pixel route, including semicolon parameters. Account identity is carried in a. Image GIF paths and the Conversions API use separate contracts.
+Quantcast matrix /pixel collectors, including the pinned SDK measurement, denied-consent and Apple-vendor alias hosts. Checks source flags, clock spelling, hashing sentinels and GET/POST beacons. Signed revenue, empty identities and arbitrary event properties remain valid. New producer checks are advisory.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/quantcast.json).
 
-Matcher: `{"hosts":["pixel.quantserve.com","secure.quantserve.com"],"paths":["/pixel"],"path_prefixes":["/pixel;"]}`.
+Matcher: `{"hosts":["pixel.quantserve.com","secure.quantserve.com","pixel.quantcount.com","prreqcroab.icu"],"paths":["/pixel"],"path_prefixes":["/pixel;"]}`.
 
 ### URL parameters
 
@@ -11991,9 +11991,34 @@ Matcher: `{"hosts":["pixel.quantserve.com","secure.quantserve.com"],"paths":["/p
 | `a` | required | `{"format":{"kind":"regex","pattern":"^p-.+$"}}` | [official_vendor](https://help.quantcast.com/docs/inspect-your-tag) |
 | `labels` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.quantcast.com/docs/inspect-your-tag) |
 | `orderid` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.quantcast.com/docs/inspect-your-tag) |
-| `revenue` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(\\.[0-9]+)?$"}}` | [official_vendor](https://help.quantcast.com/docs/inspect-your-tag) |
+| `revenue` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://help.quantcast.com/docs/inspect-your-tag) |
 | `url` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://help.quantcast.com/docs/inspect-your-tag) |
 | `ref` | optional | `{"allow_empty":true,"format":{"kind":"url"}}` | [official_template](https://help.quantcast.com/docs/inspect-your-tag) |
+| `r` | optional | `{"format":{"kind":"integer"},"minimum":0,"maximum":2147483647,"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `et` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `tzo` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `ourl` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `uh` | optional | `{"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{64}\|u)$"},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `rf` | optional | `{"format":{"kind":"enum","values":["0","1","2","3","4","6"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `ns` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `ce` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `qjs` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `dst` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `uht` | optional | `{"format":{"kind":"enum","values":["0","1","2","u"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `fpan` | optional | `{"format":{"kind":"enum","values":["0","1","u"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `_seg` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `_ss` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `_sd` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `_ret` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+| `_gam` | optional | `{"format":{"kind":"enum","values":["a","c"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://secure.quantserve.com/quant.js) |
 
 ## `vendor/quora-conversions-api`
 
@@ -13203,21 +13228,45 @@ Context: `{}`.
 
 ## `vendor/taboola-unip`
 
-Taboola browser event pixels on /log/3/unip. Taboola documents the en event name on the query. Generated pixels send revenue, currency, quantity, and orderid under those same names. The tfa.js loader is vendor/taboola. S2S postbacks are vendor/taboola-s2s.
+Taboola account-scoped /log/3/unip requests, including SDK events, subscription markers and the public SDK logger form/beacon transport. Checks generated clocks, engagement metrics and flags. Custom event names and properties, opaque session data and the literal null referrer remain valid. New producer checks are advisory.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/taboola-unip.json).
 
-Matcher: `{"host_suffixes":["taboola.com"],"path_contains":["/log/3/unip"]}`.
+Matcher: `{"host_suffixes":["taboola.com"],"path_patterns":["^/[^/]+/log/3/unip/?$"]}`.
+
+Path captures: `^/(?<publisher_id>[^/]+)/log/3/unip/?$`. Captured values take precedence over query keys with the same name.
 
 ### URL parameters
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `en` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.taboola.com/pixel/docs/verification-network-traffic) |
-| `revenue` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values) |
+| `revenue` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values) |
 | `currency` | optional | `{"format":{"kind":"enum","values":["AUD","BRL","CAD","CNY","EUR","GBP","HKD","ILS","INR","JPY","KRW","MXN","NZD","RUB","SGD","THB","TRY","USD","ZAR"]}}` | [official_vendor](https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values) |
 | `quantity` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"}}` | [official_vendor](https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values) |
 | `orderid` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.taboola.com/pixel/docs/track-dynamic-conversion-values) |
+| `publisher_id` | recommended | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `tim` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `tos` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `ssd` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `scd` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `est` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `msa` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `ce` | optional | `{"format":{"kind":"enum","values":["subscr"]},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `psb` | optional | `{"format":{"kind":"enum","values":["true"]},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `cis` | optional | `{"format":{"kind":"enum","values":["q","h","cq","ls"]},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `ga` | optional | `{"format":{"kind":"enum","values":["true","false","0","1"]},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `isls` | optional | `{"format":{"kind":"enum","values":["true","false"]},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `item-url` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+| `surl` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://cdn.taboola.com/libtrc/unip/1234567/tfa.js) |
 
 ## `vendor/taboola`
 
@@ -13237,7 +13286,7 @@ Path captures: `/libtrc/unip/(?<account_id>[0-9]+)/tfa\.js`. Captured values tak
 
 ## `vendor/the-trade-desk-conversions`
 
-Real-time JSON conversion batches, identity alternatives, commerce items, privacy records and data processing options. Account mapping and regional policy applicability remain external.
+Real-time JSON conversion batches, identity alternatives, commerce items, privacy records and data processing options. Account mapping and regional policy applicability remain external. The pinned browser SDK emits null for an unset data_processing_option; null remains valid without weakening object member checks.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/the-trade-desk-conversions.json).
 
@@ -13295,7 +13344,7 @@ Context: `{"scope":"data[]"}`.
 | `order_id` | optional | `{"json_type":"string"}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
 | `items` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
 | `privacy_settings` | optional | `{"json_type":"array"}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
-| `data_processing_option` | optional | `{"json_type":"object"}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
+| `data_processing_option` | optional | `{"json_type":["object","null"]}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
 | `tdid` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"}}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
 | `daid` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"}}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
 | `idfa` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"}}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
@@ -13354,7 +13403,7 @@ Context: `{"scope":"data[].data_processing_option"}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `(current scope)` | required | `{"json_type":"object"}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
+| `(current scope)` | required | `{"json_type":["object","null"]}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
 | `policies` | required | `{"json_type":"array"}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
 | `policies[]` | optional | `{"json_type":"string","format":{"kind":"enum","values":["LDU"]}}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
 | `region` | required | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^US-[A-Z]{2}$"}}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/post-track-realtimeconversion) |
@@ -13393,6 +13442,60 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf) |
 
+## `vendor/the-trade-desk-realtime-fallback`
+
+Pinned browser SDK GET fallback on exact /track/rt. Checks scalar conversion fields, ownership, pixel context and fallback markers. The SDK omits object, item and privacy-record containers from this representation; their JSON contracts are not claimed. Source-profile checks are advisory.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/the-trade-desk-realtime-fallback.json).
+
+Matcher: `{"hosts":["insight.adsrvr.org"],"paths":["/track/rt"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `adv` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `merchant_id` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `pixel_ids` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `event_name` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `value` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `currency` | optional | `{"format":{"kind":"currency"},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `client_ip` | optional | `{"format":{"kind":"ip"},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `adid_type` | optional | `{"format":{"kind":"enum","values":["TDID","IDFA","AAID","DAID","NAID","IDL","EUID","UID2"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `adid` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `country` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `region` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `NielsenDMA` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `rt_fallback` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `eds` | optional | `{"format":{"kind":"enum","values":["JsSdkGet","JsSdkGtmGet"]},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `tdid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `daid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `idfa` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `aaid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `naid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `idl` | optional | `{"format":{"kind":"regex","pattern":"^(?:.{49}\|.{70})$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `td_values` | optional | `{"name_pattern":"^td(?:[1-9]\|10)$","max_length":150,"allow_empty":true,"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.the-trade-desk-realtime-fallback.owner_missing` | `{"kind":"require_one_of","params":["adv","merchant_id"]}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk-realtime-fallback.purchase_value_missing` | `{"kind":"required_when_value","when":"event_name","equals":["purchase"],"requires":["value"]}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk-realtime-fallback.adid_type_missing` | `{"kind":"required_with","when":"adid","requires":["adid_type"]}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk-realtime-fallback.us_region_missing` | `{"kind":"required_when_value","when":"country","equals":["United States"],"requires":["region"]}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk-realtime-fallback.adid_tdid_invalid` | `{"kind":"format_when","when":"adid_type","equals":["TDID"],"param":"adid","format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"}}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk-realtime-fallback.adid_idfa_invalid` | `{"kind":"format_when","when":"adid_type","equals":["IDFA"],"param":"adid","format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"}}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk-realtime-fallback.adid_aaid_invalid` | `{"kind":"format_when","when":"adid_type","equals":["AAID"],"param":"adid","format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"}}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk-realtime-fallback.adid_daid_invalid` | `{"kind":"format_when","when":"adid_type","equals":["DAID"],"param":"adid","format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"}}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk-realtime-fallback.adid_naid_invalid` | `{"kind":"format_when","when":"adid_type","equals":["NAID"],"param":"adid","format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"}}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+
 ## `vendor/the-trade-desk-realtime-id`
 
 Published JSON and JSONP realtime ID lookup contracts. Response ID formats remain opaque strings.
@@ -13424,26 +13527,39 @@ Context: `{}`.
 
 ## `vendor/the-trade-desk`
 
-Universal pixel iframe fires to insight.adsrvr.org/track/up, whose query carries advertiser ID, referrer, pixel ID, and pixel version.
+The Trade Desk legacy /track/up iframe pixels plus current SDK /track/cei initialization requests. Legacy required fields apply to /up. Initialization permits advertiser or merchant ownership and checks generated flags without claiming conversion delivery. Realtime JSON and scalar fallback events use separate packs.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/the-trade-desk.json).
 
-Matcher: `{"hosts":["insight.adsrvr.org"],"paths":["/track/up","/track/up/"]}`.
+Matcher: `{"hosts":["insight.adsrvr.org"],"paths":["/track/up","/track/up/","/track/cei","/track/cei/"]}`.
+
+Path captures: `^/track/(?<operation>up\|cei)/?$`. Captured values take precedence over query keys with the same name.
 
 ### URL parameters
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `adv` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `upid` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `ref` | required | `{"format":{"kind":"url"}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `upv` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `order_id` | optional | `{"aliases":["orderid"],"allow_empty":true}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `value` | optional | `{"aliases":["v"],"allow_empty":true,"format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"format_severity":"warning"}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `currency` | optional | `{"aliases":["vf"],"allow_empty":true}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `policies` | optional | `{"aliases":["dpop"],"allow_empty":true,"format":{"kind":"regex","pattern":"^LDU(?:,LDU)*$"},"format_severity":"warning"}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `region` | optional | `{"aliases":["dpor"],"allow_empty":true,"format":{"kind":"regex","pattern":"^US-[A-Z]{2}$"},"format_severity":"warning"}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
-| `td_values` | optional | `{"name_pattern":"^td(?:[1-9]\|10)$","allow_empty":true,"max_length":64,"format_severity":"warning"}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `operation` | optional | `{}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `adv` | required | `{"format":{"kind":"non_empty"},"condition":{"kind":"value_in","param":"operation","values":["up"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `upid` | required | `{"format":{"kind":"non_empty"},"condition":{"kind":"value_in","param":"operation","values":["up"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `ref` | required | `{"format":{"kind":"url"},"condition":{"kind":"value_in","param":"operation","values":["up"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `upv` | required | `{"format":{"kind":"non_empty"},"condition":{"kind":"value_in","param":"operation","values":["up"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `order_id` | optional | `{"aliases":["orderid"],"allow_empty":true,"condition":{"kind":"value_in","param":"operation","values":["up"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `value` | optional | `{"aliases":["v"],"allow_empty":true,"format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"format_severity":"warning","condition":{"kind":"value_in","param":"operation","values":["up"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `currency` | optional | `{"aliases":["vf"],"allow_empty":true,"condition":{"kind":"value_in","param":"operation","values":["up"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `policies` | optional | `{"aliases":["dpop"],"allow_empty":true,"format":{"kind":"regex","pattern":"^LDU(?:,LDU)*$"},"format_severity":"warning","condition":{"kind":"value_in","param":"operation","values":["up","cei"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `region` | optional | `{"aliases":["dpor"],"allow_empty":true,"format":{"kind":"regex","pattern":"^US-[A-Z]{2}$"},"format_severity":"warning","condition":{"kind":"value_in","param":"operation","values":["up","cei"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `td_values` | optional | `{"name_pattern":"^td(?:[1-9]\|10)$","allow_empty":true,"max_length":64,"format_severity":"warning","condition":{"kind":"value_in","param":"operation","values":["up"]}}` | [official_vendor](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+| `advertiser_id` | optional | `{"format":{"kind":"non_empty"},"condition":{"kind":"value_in","param":"operation","values":["cei"]},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `merchant_id` | optional | `{"format":{"kind":"non_empty"},"condition":{"kind":"value_in","param":"operation","values":["cei"]},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `cookie_sync` | optional | `{"format":{"kind":"enum","values":["0","1"]},"condition":{"kind":"value_in","param":"operation","values":["cei"]},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `uidc_present` | optional | `{"format":{"kind":"enum","values":["1"]},"condition":{"kind":"value_in","param":"operation","values":["cei"]},"severity":"warning"}` | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.the-trade-desk.initialization_owner_missing` | `{"kind":"require_one_of","params":["advertiser_id","merchant_id"],"condition":{"kind":"value_in","param":"operation","values":["cei"]}}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk.initialization_context_missing` | `{"kind":"required_when_value","when":"operation","equals":["cei"],"requires":["ref","upv"]}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
+| `vendor.the-trade-desk.initialization_ref_invalid` | `{"kind":"format_when","when":"operation","equals":["cei"],"param":"ref","format":{"kind":"url"}}` | warning | [official_template](https://js.adsrvr.org/up_loader.1.1.0.js) |
 
 ### Complete HTTP contract 1
 
