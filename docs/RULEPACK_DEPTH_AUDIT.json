@@ -2,7 +2,7 @@
   "schema_version": 1,
   "review_date": "2026-10-10",
   "status": "validated_release_prepared",
-  "coverage_claim": "Source-scoped collectors with explicit remaining requirements. This release deepens CJ, Rakuten and MNTN. Source-profile checks remain advisory and vendor completeness is not claimed.",
+  "coverage_claim": "Source-scoped collectors with explicit remaining requirements. This release deepens iSpot conversion and impression pixels. New checks are advisory; vendor completeness is not claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
     "version": "0.34.0",
@@ -39,33 +39,33 @@
     "release_url": "https://github.com/aleksUIX/pixellint/releases/tag/v0.34.0"
   },
   "current": {
-    "version": "0.53.0",
+    "version": "0.54.0",
     "candidate_status": "release_prepared",
     "packs": 189,
     "vendors": 96,
-    "field_contracts": 6674,
+    "field_contracts": 6696,
     "cross_field_assertions": 597,
     "body_contract_scopes": 525,
-    "http_contract_scopes": 99,
+    "http_contract_scopes": 101,
     "query_contract_scopes": 6,
     "bulk_query_sources": 2,
-    "http_contract_packs": 85,
-    "changed_packs_this_round": 3,
+    "http_contract_packs": 87,
+    "changed_packs_this_round": 2,
     "new_packs_this_round": 0,
-    "deepened_existing_packs_this_round": 3,
-    "source_reviewed_packs_this_round": 3,
-    "manifest_changes_this_round": 3,
-    "new_source_cases": 130,
-    "remaining_requirement_entries": 634,
+    "deepened_existing_packs_this_round": 2,
+    "source_reviewed_packs_this_round": 2,
+    "manifest_changes_this_round": 2,
+    "new_source_cases": 111,
+    "remaining_requirement_entries": 640,
     "remaining_requirements_note": "Overlapping open requirements and source-case counts do not establish a percentage of vendor specification coverage.",
     "session_assertions": 2,
     "session_profile_changes_this_round": 0,
     "session_profiles": 1,
     "review_date": "2026-10-21",
-    "new_golden_cases": 130,
-    "new_source_executed_requests": 15,
-    "new_field_contracts": 51,
-    "new_cross_field_assertions": 5
+    "new_golden_cases": 111,
+    "new_source_executed_requests": 7,
+    "new_field_contracts": 22,
+    "new_cross_field_assertions": 0
   },
   "review_assignments": {
     "google_ias_adctv": "Official templates and IAS guidance",
@@ -35837,7 +35837,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -119427,14 +119427,12 @@
       "sources_read": [
         {
           "url": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "access": "read",
-          "evidence_level": "official_vendor",
-          "notes": "Pack-cited source was opened or attempted during this audit."
-        },
-        {
-          "url": "https://developer.ispot.tv/documentation/unified-measurement",
-          "access": "read",
-          "notes": "Links the complete primary impression implementation PDF."
+          "access": "read_primary_pdf_text_through_web_extraction",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "bd87be6a027aa54a578b4138eb66078425a440d010a36040092cbdc672f40ecd",
+          "snapshot_kind": "web text extraction, not original PDF bytes",
+          "binary_download": "HTTP 502; screenshot retrieval unavailable",
+          "pages_read": "full extracted document"
         }
       ],
       "source_access_attempts": [],
@@ -119443,174 +119441,179 @@
         "placementid/platform/publisher reporting requirements warn because the same guide allows a bare base pixel; platform enum remains case-sensitive.",
         "Official staging host is recognized."
       ],
-      "contracts_mapped": [
-        {
-          "name": "tracking_code",
-          "requirement": "required",
-          "format": {
-            "kind": "regex",
-            "pattern": "^TC-[0-9]+-[0-9]+$"
+      "contracts_mapped": {
+        "params": [
+          {
+            "name": "tracking_code",
+            "requirement": "required",
+            "format": {
+              "kind": "regex",
+              "pattern": "^TC-[0-9]+-[0-9]+$"
+            },
+            "description": "It is the client-specific tracking code. iSpot documents the impression pixel path as /v2/TC-####-#.gif.",
+            "fix_hint": "Put the tracking code from iSpot in the path so it reads /v2/TC-{account}-{pixel}.gif.",
+            "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Pixel_Technical_Documentation_1.pdf"
           },
-          "description": "It is the client-specific tracking code. iSpot documents the impression pixel path as /v2/TC-####-#.gif.",
-          "fix_hint": "Put the tracking code from iSpot in the path so it reads /v2/TC-{account}-{pixel}.gif.",
-          "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Pixel_Technical_Documentation_1.pdf",
-          "surface": "params"
+          {
+            "name": "campaignid",
+            "description": "iSpot documents campaignid as a string with at most 64 characters.",
+            "max_length": 64,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "channel",
+            "description": "iSpot documents channel as a string with at most 16 characters.",
+            "max_length": 16,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "cid",
+            "description": "iSpot documents cid as a string with at most 128 characters.",
+            "max_length": 128,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "creativeid",
+            "description": "iSpot documents creativeid as a string with at most 64 characters.",
+            "max_length": 64,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "creativename",
+            "description": "iSpot documents creativename as a string with at most 64 characters.",
+            "max_length": 64,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "customdata",
+            "description": "iSpot documents customdata as a string with at most 256 characters.",
+            "max_length": 256,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "devicetype",
+            "description": "iSpot documents devicetype as a string with at most 16 characters.",
+            "max_length": 16,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "placementid",
+            "description": "iSpot documents placementid as a string with at most 64 characters. Required for the documented reporting contract; the guide also permits a bare base pixel.",
+            "max_length": 64,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
+            "requirement": "required",
+            "severity": "warning"
+          },
+          {
+            "name": "placementtype",
+            "description": "iSpot documents placementtype as a string with at most 32 characters.",
+            "max_length": 32,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "platform",
+            "description": "iSpot documents platform as a string with at most 7 characters. Required for the documented reporting contract; the guide also permits a bare base pixel.",
+            "max_length": 7,
+            "format": {
+              "kind": "enum",
+              "values": [
+                "ott",
+                "digital"
+              ]
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
+            "requirement": "required",
+            "severity": "warning"
+          },
+          {
+            "name": "publisher",
+            "description": "iSpot documents publisher as a string with at most 64 characters. Required for the documented reporting contract; the guide also permits a bare base pixel.",
+            "max_length": 64,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
+            "requirement": "required",
+            "severity": "warning"
+          },
+          {
+            "name": "segment",
+            "description": "iSpot documents segment as a string with at most 128 characters.",
+            "max_length": 128,
+            "format": {
+              "kind": "non_empty"
+            },
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+          },
+          {
+            "name": "ip",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The impression guide allows an IP query override when the original client address is obscured. It explicitly accepts IPv4 and IPv6 impressions. Address ownership and household matching require external evidence.",
+            "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
+            "format": {
+              "kind": "ip"
+            }
+          }
+        ],
+        "rules": [],
+        "body": [],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "requirement": "optional",
+              "severity": "warning",
+              "allow_empty": true,
+              "description": "The published impression template loads an image using GET.",
+              "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET"
+                ]
+              }
+            }
+          ],
+          "rules": []
         },
-        {
-          "name": "campaignid",
-          "description": "iSpot documents campaignid as a string with at most 64 characters.",
-          "max_length": 64,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        },
-        {
-          "name": "channel",
-          "description": "iSpot documents channel as a string with at most 16 characters.",
-          "max_length": 16,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        },
-        {
-          "name": "cid",
-          "description": "iSpot documents cid as a string with at most 128 characters.",
-          "max_length": 128,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        },
-        {
-          "name": "creativeid",
-          "description": "iSpot documents creativeid as a string with at most 64 characters.",
-          "max_length": 64,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        },
-        {
-          "name": "creativename",
-          "description": "iSpot documents creativename as a string with at most 64 characters.",
-          "max_length": 64,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        },
-        {
-          "name": "customdata",
-          "description": "iSpot documents customdata as a string with at most 256 characters.",
-          "max_length": 256,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        },
-        {
-          "name": "devicetype",
-          "description": "iSpot documents devicetype as a string with at most 16 characters.",
-          "max_length": 16,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        },
-        {
-          "name": "placementid",
-          "description": "iSpot documents placementid as a string with at most 64 characters. Required for the documented reporting contract; the guide also permits a bare base pixel.",
-          "max_length": 64,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "requirement": "required",
-          "severity": "warning",
-          "surface": "params"
-        },
-        {
-          "name": "placementtype",
-          "description": "iSpot documents placementtype as a string with at most 32 characters.",
-          "max_length": 32,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        },
-        {
-          "name": "platform",
-          "description": "iSpot documents platform as a string with at most 7 characters. Required for the documented reporting contract; the guide also permits a bare base pixel.",
-          "max_length": 7,
-          "format": {
-            "kind": "enum",
-            "values": [
-              "ott",
-              "digital"
-            ]
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "requirement": "required",
-          "severity": "warning",
-          "surface": "params"
-        },
-        {
-          "name": "publisher",
-          "description": "iSpot documents publisher as a string with at most 64 characters. Required for the documented reporting contract; the guide also permits a bare base pixel.",
-          "max_length": 64,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "requirement": "required",
-          "severity": "warning",
-          "surface": "params"
-        },
-        {
-          "name": "segment",
-          "description": "iSpot documents segment as a string with at most 128 characters.",
-          "max_length": 128,
-          "format": {
-            "kind": "non_empty"
-          },
-          "doc": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
-          "surface": "params"
-        }
-      ],
+        "http_queries": []
+      },
       "assertions_mapped": [],
       "added_checks": [],
       "missing_requirements": [
-        {
-          "requirement": "Special-character restrictions",
-          "category": "ambiguous_spec",
-          "locally_checkable": true,
-          "reason": "The prose forbids selected characters while examples use separators such as slash; no strict rejection was invented.",
-          "next_action": "Resolve the published ambiguity before hard rejection."
-        },
-        {
-          "requirement": "Traffic-handling identifiers, client IP and campaign/reporting setup",
-          "category": "external_state",
-          "locally_checkable": false,
-          "reason": "Requires response/header and account context.",
-          "next_action": "Validate with the required runtime/account/HTML context."
-        },
-        {
-          "requirement": "Conversion pixel family",
-          "category": "different_surface",
-          "locally_checkable": false,
-          "reason": "pt.ispot.tv has a separate pack and lacks an equivalent complete conversion table.",
-          "next_action": "Add a separate source-backed surface contract when artifact support exists."
-        }
+        "Only production/staging /v2/{site}.gif routes are selected. Other /v2/ assets receive explicit directory coverage diagnostics.",
+        "Optional original-client IP syntax accepts IPv4 and IPv6. New IP and GET checks are advisory. Header presence is not required, and the original device and trusted proxy cannot be proven.",
+        "The existing source-specific impression field limits and reporting advice remain. No conversion-only field limits or defaults are imposed on impression pixels.",
+        "Configured reporting fields, OEM methodology, household matching, playback timing, macro generation, account ownership and delivery require external context."
       ],
       "tests": {
         "manifest": "pixellint/fixtures/vendor-ispot/manifest.json",
@@ -119833,7 +119836,7 @@
         ]
       },
       "review_assignment": "endpoints",
-      "manifest_sha256": "d36bb80a3cab6468ad650866f4aeea924c630a12a2e0db4909fd8def20a83aab",
+      "manifest_sha256": "055e01f9d78582074dc215c99d642279897ce0f68305c38443d291d97d1e7a4e",
       "implemented_counts": {
         "field_contracts": 13,
         "cross_field_assertions": 0,
@@ -119846,8 +119849,8 @@
         "transport_goldens": 29
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/ispot.json": "d36bb80a3cab6468ad650866f4aeea924c630a12a2e0db4909fd8def20a83aab",
-        "fixtures/vendor-ispot/manifest.json": "1262eee05734ea3d009bac7038685360a9629b64b49ea5135bade5d28faa7b6e",
+        "crates/pixellint-core/rulepacks/vendor/ispot.json": "055e01f9d78582074dc215c99d642279897ce0f68305c38443d291d97d1e7a4e",
+        "fixtures/vendor-ispot/manifest.json": "bea87e18b69bdf0a65725e91aebf3f45b1a68a044992e3dcce910de2b17b0492",
         "fixtures/vendor-ispot/clean-pixel.txt": "eb26528622e512b5c730ae5a9502c90c785aacd922e7c34dfc56e4acff99b8a2",
         "fixtures/vendor-ispot/clean-ott-params.txt": "b13dbf32742154a660fee9bf4c23562a012fc4af2f9aca9cc51094f1fc676d81",
         "fixtures/vendor-ispot/missing-code.txt": "bb1e787b1d6ef6c26fd3b52572a0b3c1d11f3e38023db3d52f1c230cd6f307d3",
@@ -119876,10 +119879,28 @@
         "fixtures/vendor-ispot/depth-publisher-too-long.txt": "aee7d95612691e163c330949ead25c580be00f52af130ec2a4127374b55bd6d8",
         "fixtures/vendor-ispot/depth-segment-limit.txt": "480939a998da5928af33b6fdb57411cc751bfa3199b162b91a97218bbb153180",
         "fixtures/vendor-ispot/depth-segment-too-long.txt": "c70bb7b5831c871e8d686e254f1242d0429fc95e9206da77e9f1d2fe88837bee",
-        "fixtures/vendor-ispot/depth-platform-case.txt": "08919e784bd0225a7e4473a6d169da7fc0b4f56fb7f9e17213b88c58dd18a07b"
+        "fixtures/vendor-ispot/depth-platform-case.txt": "08919e784bd0225a7e4473a6d169da7fc0b4f56fb7f9e17213b88c58dd18a07b",
+        "fixtures/vendor-ispot/depth054-000-producer-impression-ott.txt": "e63f614dc25323d0d5523421fc92793059485afbe0787bfb36e9a5a193448977",
+        "fixtures/vendor-ispot/depth054-001-producer-impression-digital.txt": "c4f47c12cac505f57bbce7501374e0b720b00cc53cc78531710ea0197c75dddc",
+        "fixtures/vendor-ispot/depth054-002-producer-impression-staging.txt": "6f7dcb7fee3cb37817cbcf9aa68634799364fe6e6a44a4559b7b5e82cd822b31",
+        "fixtures/vendor-ispot/depth054-003-v4.txt": "31a44701bbba917205b4a36cffa26af0f54b86c2d320e1022f3382f3f3a28004",
+        "fixtures/vendor-ispot/depth054-004-v6.txt": "17417ab6498bf44e0f833390df572e30aec5e396e37144c688c2136be430aa9f",
+        "fixtures/vendor-ispot/depth054-005-empty.txt": "5c0c7120c33b98a48e9f0c871e1411d1f15d76e60ac590f3b9ea84aa18bbb465",
+        "fixtures/vendor-ispot/depth054-006-macro.txt": "c4fd02d4a4ae88250911e9c1f0677c34bae0e563014fe114426733111db3c7f3",
+        "fixtures/vendor-ispot/depth054-007-bad-ip-7.txt": "11a80da0fd3ddfe4245e53cf6d43e678e8e236b509d455d59746e1424d7e3401",
+        "fixtures/vendor-ispot/depth054-008-bad-ip-8.txt": "53c282b9629a480fd91359d6824599c4e1ddf8d926366882f3b44e3a0cb123ce",
+        "fixtures/vendor-ispot/depth054-009-bad-ip-9.txt": "b698b4124bf181fbfe1ea16e776f9a7584e4a2a3fb08d39700cae174c7e76150",
+        "fixtures/vendor-ispot/depth054-010-get-method.txt": "69431e21131a6a253243c02ce33cf9460ccec5c423b332df00772fe69127a977",
+        "fixtures/vendor-ispot/depth054-011-post-method.txt": "35c5bc5deb668974d7c89ee8ea8cd52e32cfcf267263353d5ff17dfbd89bd9ee",
+        "fixtures/vendor-ispot/depth054-012-existing-placement-advice.txt": "cb843d2b62d2d85339458558a7b39a9a3af4a8350dbf6c6963d4af24e6981fd7",
+        "fixtures/vendor-ispot/depth054-013-neighbor-13.txt": "54edcbc38812c51bdcad483d8869517bf3360987884b7ea9ae3801dd045edd18",
+        "fixtures/vendor-ispot/depth054-014-neighbor-14.txt": "46eb8f84cf0a220ba0aee8ace59492314efe1a2dca72968cc76151aafd17c4b2",
+        "fixtures/vendor-ispot/depth054-015-neighbor-15.txt": "a6ae11584db8b1a891ed1bc31b5edb6dc48ed79c6c6cf379437ba42438f51b1d",
+        "docs/reviews/pixel-collectors-054.json": "54e9bca87e430d34d48b98927a5b96dacc48ae1d6a8deaf864145b764e5786a0",
+        "crates/pixellint-core/tests/pixel_collectors_054.rs": "bdc14e20a7608209d94d39a840b571fe442e1e83fa0762292ec7277ea4a4de03"
       },
       "prior_status": "deepened_with_documented_gaps",
-      "disposition": "Retained existing contracts after reopening the canonical source. Detailed baseline inventory is carried forward; no new hard transport restriction was supported for the current matched surface in this bounded pass.",
+      "disposition": "implemented_source_scoped_partial",
       "baseline_review_date": "2026-10-07",
       "baseline_added_checks": [
         "Contract every impression-table parameter and its character limit.",
@@ -119920,7 +119941,21 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "match": {
+        "hosts": [
+          "pi.ispot.tv",
+          "staging-pi.ispot.tv"
+        ],
+        "path_patterns": [
+          "^/v2/[^/]*\\.gif$"
+        ]
+      },
+      "source_urls": [
+        "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf"
+      ],
+      "golden_cases": 45,
+      "collector_followup": "docs/reviews/pixel-collectors-054.json"
     },
     {
       "id": "vendor/ispot-conversion",
@@ -119938,10 +119973,22 @@
       ],
       "sources_read": [
         {
-          "url": "https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type",
-          "access": "read",
-          "evidence_level": "official_vendor",
-          "notes": "Pack-cited source was opened or attempted during this audit."
+          "url": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+          "access": "read_primary_pdf_text_through_web_extraction",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "27f565ca8b56e7f9e163252d0cb50903c90f0dfed8ac950e9e53a97f99ddf30a",
+          "snapshot_kind": "web text extraction, not original PDF bytes",
+          "binary_download": "HTTP 502; screenshot retrieval unavailable",
+          "pages_read": "full extracted document"
+        },
+        {
+          "url": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+          "access": "read_primary_pdf_text_through_web_extraction",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "3b3f171443bbaf528567ed4460c4d9d2b9eb3988493de1c4fb0d55aefb7808c7",
+          "snapshot_kind": "web text extraction, not original PDF bytes",
+          "binary_download": "HTTP 502; screenshot retrieval unavailable",
+          "pages_read": "full extracted document"
         }
       ],
       "source_access_attempts": [],
@@ -119949,48 +119996,260 @@
         "TC tracking-code path and optional type event label follow the public use-case page.",
         "The page mentions customdata metadata but has no complete pixel parameter table."
       ],
-      "contracts_mapped": [
-        {
-          "name": "tracking_code",
-          "requirement": "required",
-          "format": {
-            "kind": "regex",
-            "pattern": "^TC-[0-9]+-[0-9]+$"
+      "contracts_mapped": {
+        "params": [
+          {
+            "name": "tracking_code",
+            "requirement": "required",
+            "format": {
+              "kind": "regex",
+              "pattern": "^TC-[0-9]+-[0-9]+$"
+            },
+            "description": "It is the Site ID on the TV conversion pixel. iSpot documents it as TC-XXXX-X.",
+            "fix_hint": "Put the Site ID from iSpot in the path so it reads /v2/TC-{account}-{site}.gif.",
+            "doc": "https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type"
           },
-          "description": "It is the Site ID on the TV conversion pixel. iSpot documents it as TC-XXXX-X.",
-          "fix_hint": "Put the Site ID from iSpot in the path so it reads /v2/TC-{account}-{site}.gif.",
-          "doc": "https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type",
-          "surface": "params"
+          {
+            "name": "type",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": false,
+            "description": "The conversion guide defaults an omitted type to visit. Supplied event names have a 32-character limit and use underscores in place of whitespace. Event names are configured, not a closed enum.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 32,
+            "format": {
+              "kind": "regex",
+              "pattern": "^\\S+$"
+            }
+          },
+          {
+            "name": "app",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": false,
+            "description": "The conversion guide defaults an omitted app to web. Use app only for a dedicated mobile app.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 4,
+            "format": {
+              "kind": "enum",
+              "values": [
+                "web",
+                "app"
+              ]
+            }
+          },
+          {
+            "name": "cid",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional cid to 128 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 128
+          },
+          {
+            "name": "campaignid",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional campaignid to 64 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 64
+          },
+          {
+            "name": "channel",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional channel to 64 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 64
+          },
+          {
+            "name": "customdata",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits customdata to 256 characters and up to five comma-separated dashboard values. Structured legacy server custom data remains opaque; high-cardinality correctness needs surrounding context.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 256,
+            "format": {
+              "kind": "regex",
+              "pattern": "(?s)^(?:\\s*[\\{\\[].*|[^,]*(?:,[^,]*){0,4})$"
+            }
+          },
+          {
+            "name": "customertype",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional customertype to 32 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 32
+          },
+          {
+            "name": "refid",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional refid to 128 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 128
+          },
+          {
+            "name": "uid",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional uid to 128 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 128
+          },
+          {
+            "name": "orderid",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional orderid to 64 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 64
+          },
+          {
+            "name": "sku",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional sku to 256 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 256
+          },
+          {
+            "name": "make",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional make to 32 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 32
+          },
+          {
+            "name": "model",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional model to 64 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 64
+          },
+          {
+            "name": "tier",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional tier to 32 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 32
+          },
+          {
+            "name": "trim",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional trim to 64 characters. Values are configured by the integration and remain open.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 64
+          },
+          {
+            "name": "year",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The conversion guide limits optional year to 16 characters. Values are configured by the integration and remain open. The source declares a string, so four-digit numeric years are not imposed.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "max_length": 16
+          },
+          {
+            "name": "amount",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The retail table declares decimal(7,2). The advisory accepts signed values with up to five significant integer digits and two fractional digits, preserving zero and leading zero padding.",
+            "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?0*[0-9]{1,5}(?:\\.[0-9]{1,2})?$"
+            }
+          },
+          {
+            "name": "ip",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "An optional original-client IP override. Current iSpot matching guidance also allows IPv6 with an identity partner, so this syntax check accepts both IP families. Omission does not imply missing forwarding.",
+            "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+            "format": {
+              "kind": "ip"
+            }
+          },
+          {
+            "name": "datetime",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The server guide describes the original client visit time in UTC, YYYY-MM-DD HH:MM:SS. This advisory checks calendar validity at second resolution. Omission retains immediate browser and header-based integrations; no event-age window is invented.",
+            "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+            "format": {
+              "kind": "datetime_formats",
+              "formats": [
+                "iso_local"
+              ]
+            }
+          }
+        ],
+        "rules": [],
+        "body": [],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "requirement": "optional",
+              "severity": "warning",
+              "allow_empty": true,
+              "description": "The documented conversion image and server-side endpoint use GET.",
+              "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET"
+                ]
+              }
+            },
+            {
+              "name": "headers.x-forwarded-for",
+              "requirement": "optional",
+              "severity": "warning",
+              "allow_empty": true,
+              "description": "The server guide permits a forwarded chain with the original client address first. Validate supplied IP-chain syntax without requiring the header on browser or query-IP requests. Address provenance is external.",
+              "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+              "format": {
+                "kind": "ip_chain"
+              }
+            }
+          ],
+          "rules": []
         },
-        {
-          "name": "type",
-          "requirement": "recommended",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It names the conversion event. iSpot documents that conversion pixels are differentiated by the type field.",
-          "fix_hint": "Send type as the conversion event name iSpot configured for this pixel.",
-          "doc": "https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type",
-          "surface": "params"
-        }
-      ],
+        "http_queries": []
+      },
       "assertions_mapped": [],
       "added_checks": [],
       "missing_requirements": [
-        {
-          "requirement": "Full conversion pixel field table and customdata limits",
-          "category": "unpublished_transport",
-          "locally_checkable": false,
-          "reason": "The conversion-type use case is not an implementation specification.",
-          "next_action": "Obtain or publish the primary complete transport contract."
-        },
-        {
-          "requirement": "Configured conversion type and linked site ID",
-          "category": "external_state",
-          "locally_checkable": false,
-          "reason": "Requires iSpot account configuration.",
-          "next_action": "Validate with the required runtime/account/HTML context."
-        }
+        "Only the documented production and staging /v2/{site}.gif routes are selected. Cookie bootstrap ps.ispot.tv and conversion CSV/API uploads remain outside this pack.",
+        "All new field, amount, forwarding and method checks are advisory. The guides describe multiple profiles and are not a complete current acceptance specification. Empty optional strings remain accepted.",
+        "Omitted app and type default to web and visit. No unconditional server IP, user-agent, cookie or datetime requirement is imposed on browser calls or a query-IP alternative. No arbitrary timestamp age window is imposed.",
+        "The conversion guide gives cid 128 characters and channel 64; the older impression table gives channel 16. Each owner retains its source-specific limits.",
+        "The five-value customdata dashboard advisory skips structured legacy object/array forms from the server guide. Their inner syntax is not parsed. High-cardinality correctness and exact escaping cannot be proven from one decoded URL.",
+        "IP syntax accepts IPv4 and IPv6 in line with later matching guidance. Original-client provenance, trusted proxies, household matching, identity partner eligibility, account ownership, configuration and delivery are external.",
+        "Amount precision follows the published decimal(7,2) table as advice, preserving signed values and leading zeros. The exact receiver numeric parser and alternative numeric spellings are unpublished."
       ],
       "tests": {
         "manifest": "pixellint/fixtures/vendor-ispot-conversion/manifest.json",
@@ -120038,7 +120297,7 @@
         ]
       },
       "review_assignment": "endpoints",
-      "manifest_sha256": "23daf9697408d29cf80796f64b9faec81b5d414256f065b9dea7840c5a1634fe",
+      "manifest_sha256": "38749bf5da881258842883ad815f98d3e35ec5c2292be71743862ff2eaf1c618",
       "implemented_counts": {
         "field_contracts": 2,
         "cross_field_assertions": 0,
@@ -120051,15 +120310,112 @@
         "transport_goldens": 4
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/ispot-conversion.json": "23daf9697408d29cf80796f64b9faec81b5d414256f065b9dea7840c5a1634fe",
-        "fixtures/vendor-ispot-conversion/manifest.json": "3e113fb13eef6e0edea10a5cb7002b5434f2a4e6a13d350fbdf19e8c430c50a2",
+        "crates/pixellint-core/rulepacks/vendor/ispot-conversion.json": "38749bf5da881258842883ad815f98d3e35ec5c2292be71743862ff2eaf1c618",
+        "fixtures/vendor-ispot-conversion/manifest.json": "3e074bd3a6be157715981685108fce19409e79cc91a9d464143313d42b698730",
         "fixtures/vendor-ispot-conversion/clean-pixel.txt": "ca0807f5a69860fa54cf9f8bcf831b06d5fb84638b8ef68692a68cc045ff9932",
         "fixtures/vendor-ispot-conversion/clean-code-only.txt": "c866c3ff2adbca9dad09b3be2996721a04ebfa9ed064c1a0be62b032ca360c3f",
         "fixtures/vendor-ispot-conversion/missing-code.txt": "d8e42ea05cd3d5ee30d42ae47561a2caa988a3efd3465de5f9080ce1d0d8a101",
-        "fixtures/vendor-ispot-conversion/invalid-code.txt": "37b1a93c94cd44a77b100863a88520ecd42f1750eaa4ee0bc4b8dc2bbe6507f8"
+        "fixtures/vendor-ispot-conversion/invalid-code.txt": "37b1a93c94cd44a77b100863a88520ecd42f1750eaa4ee0bc4b8dc2bbe6507f8",
+        "fixtures/vendor-ispot-conversion/depth054-000-producer-conversion-default.txt": "866907028fd108c2088e53f1e00ce4df0e0f17459863cc82353c69dc132e93a8",
+        "fixtures/vendor-ispot-conversion/depth054-001-producer-conversion-purchase.txt": "1c0715303492344f9ab5f86d2693512dcff0b835d252d93a2d1e8bc4aae5e7ef",
+        "fixtures/vendor-ispot-conversion/depth054-002-producer-conversion-staging.txt": "5bde9049323168338fe92e846730f7e06b5f95af48c852e9b4946a59714b4167",
+        "fixtures/vendor-ispot-conversion/depth054-003-producer-conversion-auto.txt": "8e0635307ed68dbc6bb50256443e11d573b777db860e13c381f5a2fed7138d1e",
+        "fixtures/vendor-ispot-conversion/depth054-004-visit-default.txt": "c866c3ff2adbca9dad09b3be2996721a04ebfa9ed064c1a0be62b032ca360c3f",
+        "fixtures/vendor-ispot-conversion/depth054-005-web-visit-default.txt": "4406092296be6991c18395ba18ba06fa5e08eafa73e5e5ae1140631bd21866d5",
+        "fixtures/vendor-ispot-conversion/depth054-006-app-custom-event.txt": "83440792985afa9493ba31fa7e45a9791e75b512711b1310088bb801e25b38ee",
+        "fixtures/vendor-ispot-conversion/depth054-007-custom-event-numeric.txt": "da94265a7f59818e7cc4f2cce1df9c1aac0f0632360ed144f3abc3d5431c518d",
+        "fixtures/vendor-ispot-conversion/depth054-008-custom-event-unicode.txt": "6f03036b8d0ca57d4fde4cb9b9efa6bf856c9c1ecc8d676ed81103fd12127d35",
+        "fixtures/vendor-ispot-conversion/depth054-009-limit-cid.txt": "36b6743e4a9a305d4f6187bce17b97aac2e1fb756461aaf2c3524083bddd3ed5",
+        "fixtures/vendor-ispot-conversion/depth054-010-over-cid.txt": "74167b06d34619a02de3737ea8313168c127c38c30fa87b6255689816421e0df",
+        "fixtures/vendor-ispot-conversion/depth054-011-limit-campaignid.txt": "7bfd718b85dc06d4e103f4ea77a138e9b6f80377fc93884a809398e78e0bad36",
+        "fixtures/vendor-ispot-conversion/depth054-012-over-campaignid.txt": "3d5c20d785221edf7b6f7c350214b562707d37cabd5eac64879876cdc2c53190",
+        "fixtures/vendor-ispot-conversion/depth054-013-limit-channel.txt": "8cf550132a6dffff84a6ac1860479bea4458e7e301b0725ba59eff3dcd57d9f6",
+        "fixtures/vendor-ispot-conversion/depth054-014-over-channel.txt": "1cc89eb288f6cbbc30c06b56c06f2de8b627a7fc9a0d8a430d3824cb0b978f77",
+        "fixtures/vendor-ispot-conversion/depth054-015-limit-customdata.txt": "0090512d291f9042d363345efccf171fee2b6acdc6f61ac9bd5d2873011573f2",
+        "fixtures/vendor-ispot-conversion/depth054-016-over-customdata.txt": "d6c4c5dad575deaa354d45282b3cad9d0fbf1a19ead2d671e687e666cd129f68",
+        "fixtures/vendor-ispot-conversion/depth054-017-limit-customertype.txt": "a2a1052c0c20841c41be7858a8ec78779f98700e7b4988d771ceb06b63ca0f53",
+        "fixtures/vendor-ispot-conversion/depth054-018-over-customertype.txt": "4bf74394b5fa046823bfaf7a8db61f46e99ea5b14ed442efa89eb20d09a2c9ea",
+        "fixtures/vendor-ispot-conversion/depth054-019-limit-refid.txt": "bd5efc1f23b356e70360e71d51a6f419daf23c19e6da62d448287d9187c448d1",
+        "fixtures/vendor-ispot-conversion/depth054-020-over-refid.txt": "7b06cd664a694d60e09c1dc888355740651b9fe7469372d51a8bcc1d7ebb5d8f",
+        "fixtures/vendor-ispot-conversion/depth054-021-limit-uid.txt": "103de46453374e41b09c150d092694ab675be947fa814e934436f8598248eb14",
+        "fixtures/vendor-ispot-conversion/depth054-022-over-uid.txt": "409b68b4f4fe4702f6cd977425152d01ab423f8a870cca01f33b2d579d308647",
+        "fixtures/vendor-ispot-conversion/depth054-023-limit-orderid.txt": "f694247155546b0a862377478ffd60840b94c5fd6b953932c37d26db68d4678b",
+        "fixtures/vendor-ispot-conversion/depth054-024-over-orderid.txt": "d1a3d110a52580776b5aa60efe8bdb6ea3dd468e7d040a37bc4dd360e309e620",
+        "fixtures/vendor-ispot-conversion/depth054-025-limit-sku.txt": "062ea7f325b5119456096e96edcc6c53a8916907cd36bc10a47af6fe45e3c719",
+        "fixtures/vendor-ispot-conversion/depth054-026-over-sku.txt": "e6ef18ac2e12055da5c43a15f966cef077d56fe644ca57305b6f91ca07efdd1d",
+        "fixtures/vendor-ispot-conversion/depth054-027-limit-make.txt": "4ba7f8bf1f41df88e7761b330c9ac43bc147db6f644328262536101d870eca7f",
+        "fixtures/vendor-ispot-conversion/depth054-028-over-make.txt": "cd6e0fe5c2c690e260143b595b04f5583e314d4143b62c9dee2f55d25acb81d0",
+        "fixtures/vendor-ispot-conversion/depth054-029-limit-model.txt": "84726528e86e70bb73f52152aac8bf15abe7c843a262d35df8c443c0dfff8408",
+        "fixtures/vendor-ispot-conversion/depth054-030-over-model.txt": "66890ebd33de30e524ceff33dd24532e41e163908f7bcf18611cf300fcfb6587",
+        "fixtures/vendor-ispot-conversion/depth054-031-limit-tier.txt": "8f721c76cf02642cd9655a38b9137289d091e7c76e8e5ab6afbe96e875fc7784",
+        "fixtures/vendor-ispot-conversion/depth054-032-over-tier.txt": "b1a27bbda1facbfff6967a03c92637fe878c773dd3d2fb0d28c94cd6943f7e50",
+        "fixtures/vendor-ispot-conversion/depth054-033-limit-trim.txt": "73ce73fa079b2da0e09dcb313e0d398c5b2a75599f7eb381fcac34a591dec245",
+        "fixtures/vendor-ispot-conversion/depth054-034-over-trim.txt": "d5bff29287f3f7ff9212ff614381c4cb61aa93129ac641253d98bbc8f16b1009",
+        "fixtures/vendor-ispot-conversion/depth054-035-limit-year.txt": "5519433355f38d6850c8b8210271571be076789db488b228362f082d150e50fa",
+        "fixtures/vendor-ispot-conversion/depth054-036-over-year.txt": "97153a4db0f11eda7b799ca66be428a58a578405b893b48ae2f5143148c8c453",
+        "fixtures/vendor-ispot-conversion/depth054-037-limit-type.txt": "b39d1793a56f13e4e3b649d05b27eddbb78f3b1a3971a1fb1e6204081970f12f",
+        "fixtures/vendor-ispot-conversion/depth054-038-over-type.txt": "fca7f68de5656c23c499a3d56939c5c1e50dabedd42bc308c9d8903c7007d312",
+        "fixtures/vendor-ispot-conversion/depth054-039-open-auto-values.txt": "b3af3457bac70943509c74b17fb8d9ac5fc7256c880d232d03a32032a499d1b7",
+        "fixtures/vendor-ispot-conversion/depth054-040-empty-optional-strings.txt": "64c5c289386c9f65271f287f9cd7e0771f597e86b5d0348043c83f716f1459ee",
+        "fixtures/vendor-ispot-conversion/depth054-041-bad-app41.txt": "e94f00c0f1395d11cdcb4b118e8bd9a508da60a16d567812b6041a76889ba305",
+        "fixtures/vendor-ispot-conversion/depth054-042-bad-app42.txt": "a3167325f4e3a4e1d63cd1192db5ab2bafa5b6b0140405944782790a4f444f55",
+        "fixtures/vendor-ispot-conversion/depth054-043-bad-type43.txt": "fba7f2d1282fa52df9eb256220149fd1e7aaf23909292ceb4b74cf710726bef8",
+        "fixtures/vendor-ispot-conversion/depth054-044-bad-type44.txt": "6a277691e3dcc0fd3f1a119fc19a1efebb5527439e85802fdf58383f28d080e1",
+        "fixtures/vendor-ispot-conversion/depth054-045-bad-type45.txt": "a9c96bd606c0c6d011615fbfac156cd96f779e12e345d29a25e2be281fca91a7",
+        "fixtures/vendor-ispot-conversion/depth054-046-amount-46.txt": "d7e8ffcd0fb429fc7355218d89b6b412c67cc0fea31d61467cdcc054d6c567dc",
+        "fixtures/vendor-ispot-conversion/depth054-047-amount-47.txt": "fdcb35cd47811d3a614a6dbbabed2d171b4533c79b63ef6758f449fe5382d052",
+        "fixtures/vendor-ispot-conversion/depth054-048-amount-48.txt": "3f552855e9243904d66e6c62f2abe411efd8061940da4ecd8a5ce94d92e6f549",
+        "fixtures/vendor-ispot-conversion/depth054-049-amount-49.txt": "c02067ae9b9612588c02696d3cd792bbf171c131c4fd2b7894ccff80c27e55ad",
+        "fixtures/vendor-ispot-conversion/depth054-050-amount-50.txt": "363599e81bfc3551575dd1c64a4b3d3175a9e094937a3e0c026f911f1d5f45ec",
+        "fixtures/vendor-ispot-conversion/depth054-051-amount-51.txt": "d85fa4ecd5b1fa26aba4c11ed528897161ccdd1e18475ef77a8c6c04da0b0e92",
+        "fixtures/vendor-ispot-conversion/depth054-052-amount-52.txt": "2ab22cf01c6bb53e9a5a43af432a1d41637fcb8a7f20ba3c27ccbd7e80289947",
+        "fixtures/vendor-ispot-conversion/depth054-053-bad-amount-53.txt": "98978012c618f1fca257c102302f19301f54220d1d9ea54cf3b4a45ae02b0a60",
+        "fixtures/vendor-ispot-conversion/depth054-054-bad-amount-54.txt": "231cee46231d461af5be7ff07e9712fb695dee3561e62d5b3b797b8dec7068d5",
+        "fixtures/vendor-ispot-conversion/depth054-055-bad-amount-55.txt": "b1120b7047cf4d3c50e1d04ea5c46e75c90c68c27ac71d909a139ce025105b8d",
+        "fixtures/vendor-ispot-conversion/depth054-056-bad-amount-56.txt": "e60c422e13c75c8d3b21ee1e05d23763e43d00dd6fd249658c6e0ac27ec2df53",
+        "fixtures/vendor-ispot-conversion/depth054-057-bad-amount-57.txt": "82c8fc78313613d82364de3b774c84923ffbbb626d121e1fdaa71b7d40da9642",
+        "fixtures/vendor-ispot-conversion/depth054-058-bad-amount-58.txt": "3e37b068f5844caef9449c51f00fe00c6b2803477b12c979c6c75529751bc1da",
+        "fixtures/vendor-ispot-conversion/depth054-059-bad-amount-59.txt": "e5af77d81218252dc77f8e084c3125dddf226521d03ec9d1f1f97e18279fca80",
+        "fixtures/vendor-ispot-conversion/depth054-060-bad-amount-60.txt": "248b16c8bcacf165698ac088c6735ae1a900a0c48c3b60d19134bd6dfe34073b",
+        "fixtures/vendor-ispot-conversion/depth054-061-amount-empty.txt": "34629da96a98ff449999a1f88060a5a7ae0b6d24c68f5d37c8d6707278471fca",
+        "fixtures/vendor-ispot-conversion/depth054-062-five-custom-values.txt": "267375313e081e8a80fe7c8d2c0098fff1b82e1a4053db7e5b8dec7aac850ca5",
+        "fixtures/vendor-ispot-conversion/depth054-063-six-custom-values.txt": "d261f9dd23239448c323d90741409014e7780a75dc34ffcffd49c36c60569e7b",
+        "fixtures/vendor-ispot-conversion/depth054-064-legacy-server-customdata.txt": "29d97b5e52b344b27aeb7a9a9022a108a06a688a6988d033fc7894c23d70ec85",
+        "fixtures/vendor-ispot-conversion/depth054-065-legacy-array-customdata.txt": "0dd44334e803291ff43be69211a465f2cc67f85034610dc4693284142f28b763",
+        "fixtures/vendor-ispot-conversion/depth054-066-opaque-custom-keys.txt": "b93a8f34862e191e977b9f14a5668e0bbfdd040b17c8b0f670bb70a977354428",
+        "fixtures/vendor-ispot-conversion/depth054-067-ip-67.txt": "4f3fe6e54bed318ead7ebe82b68add031cf8c2f6a4956936bffb32b3d75c736f",
+        "fixtures/vendor-ispot-conversion/depth054-068-ip-68.txt": "72f11f579ac5b61d8ec1b9d41a6db9370f88a63c356cc27d108daac2d1b590a7",
+        "fixtures/vendor-ispot-conversion/depth054-069-bad-ip-69.txt": "c872803df037aaa63f3708f0cedee19aa20cdb5726e3c5f6e92b8eadd9a8b5b3",
+        "fixtures/vendor-ispot-conversion/depth054-070-bad-ip-70.txt": "9eaa7b319a1fcc8fb06481dcb64b09d729dacd5876cd6dee8aa1569b4844590c",
+        "fixtures/vendor-ispot-conversion/depth054-071-bad-ip-71.txt": "9125960be147a1f5efc16a6fc8e3e37a6cbe96aae72832698d31fe4adfe87e0c",
+        "fixtures/vendor-ispot-conversion/depth054-072-bad-ip-72.txt": "35f1c3ff4c59f803aeb6b86b809103e5b318bf62ac4d093eef5802779fa6c6b4",
+        "fixtures/vendor-ispot-conversion/depth054-073-datetime-73.txt": "c1962c149d6a651def9d13d008a86366af06a6f896797ceaf9535fee654b4288",
+        "fixtures/vendor-ispot-conversion/depth054-074-datetime-74.txt": "0543544c29587cfd68c4862b1a0d479c76b4439f63c2c19c236c60e4fb4a3510",
+        "fixtures/vendor-ispot-conversion/depth054-075-datetime-75.txt": "9c8e0e230cb25ab662d1ffe3fc40306609f57965da603df04dc418843a919bb1",
+        "fixtures/vendor-ispot-conversion/depth054-076-bad-datetime-76.txt": "3ad0d7c147b02069f3256b0ff3369e439a0e2a01650e6e8bfd9ef73b64b5d6f9",
+        "fixtures/vendor-ispot-conversion/depth054-077-bad-datetime-77.txt": "0487ad1ca0a8445394353e775dc01de88d34d4a72d9a3fac707c0f8d50762e37",
+        "fixtures/vendor-ispot-conversion/depth054-078-bad-datetime-78.txt": "34c90077fd7b227e8f491698e993752f39f0fdbd7ce0c2de3af85c09708e24b8",
+        "fixtures/vendor-ispot-conversion/depth054-079-bad-datetime-79.txt": "e9e70636bba10f208d83181f0caf1c91794b97d9a635907a1d85ce01770576c6",
+        "fixtures/vendor-ispot-conversion/depth054-080-bad-datetime-80.txt": "74c5b921a69cf7ad96c823c53fd5d27084632273f152e5a5e2af2fa6a2b1cff4",
+        "fixtures/vendor-ispot-conversion/depth054-081-empty-forwarding.txt": "d8dc9e2725962142f4829149ea308f5378c0d13214b2c108341a008b3d65fd2b",
+        "fixtures/vendor-ispot-conversion/depth054-082-template.txt": "def96955a96d24a632df2b191e1db027b63bb0be37eb74c832cee0e35bec3f01",
+        "fixtures/vendor-ispot-conversion/depth054-083-browser-without-forwarding.txt": "d7a99a43130f8b61d4dd90c0c057f03efb89908e6c59423efb246823bf161b3d",
+        "fixtures/vendor-ispot-conversion/depth054-084-server-chain.txt": "52b462a6f3bfc0c59477c8c459163837cf39097b5f085c79c704fb5c33c381ea",
+        "fixtures/vendor-ispot-conversion/depth054-085-v6-chain.txt": "f9cea5d778f4a7e716732dd4e398a9d03764208d29e2122042d0fd0bd1e357c9",
+        "fixtures/vendor-ispot-conversion/depth054-086-invalid-chain.txt": "2fea89976b50eace164410c91225b6958aa6e8e3f1c15b9d66ae1501aab01a43",
+        "fixtures/vendor-ispot-conversion/depth054-087-port-in-chain.txt": "f7b6849f0a237517d3af46a558bf448fef4598e163ba5dd85f203fb4da12d83f",
+        "fixtures/vendor-ispot-conversion/depth054-088-post-method.txt": "8e114dc45c8d8e023cf3379e21e8f1e27eec9f983d542766782d38219b0a5f31",
+        "fixtures/vendor-ispot-conversion/depth054-089-vast-invalid-ip.txt": "f3e61880804a7246f7b19cfd323e0627dfa44437708aa14cce11f6a9f5ebbfb4",
+        "fixtures/vendor-ispot-conversion/depth054-090-postback-invalid-amount.txt": "680ad849ad5d58960d0d4a55ae964ed6a58c54051336ffd5d5ad7e847384a6bc",
+        "fixtures/vendor-ispot-conversion/depth054-091-invalid-id-not-hidden.txt": "3bafd171ef5879d621998987a2c3e78f4070b910764c34cddfd0787a48afaf06",
+        "fixtures/vendor-ispot-conversion/depth054-092-neighbor-92.txt": "3ae896304045d587ef1ba4ee147a416c4d4baad5251f62487ecb3516cd6a2a78",
+        "fixtures/vendor-ispot-conversion/depth054-093-neighbor-93.txt": "362925ecfe4d2e3fd3c0c7ad7705602e04db8bf38edee22368f14a6dd72e4c9e",
+        "fixtures/vendor-ispot-conversion/depth054-094-neighbor-94.txt": "68c4b69dc8aa7f5919e2cc9e8572dacb7313e8a9f13f1c92254699cce86809f3",
+        "docs/reviews/pixel-collectors-054.json": "54e9bca87e430d34d48b98927a5b96dacc48ae1d6a8deaf864145b764e5786a0",
+        "crates/pixellint-core/tests/pixel_collectors_054.rs": "bdc14e20a7608209d94d39a840b571fe442e1e83fa0762292ec7277ea4a4de03"
       },
       "prior_status": "reviewed_with_documented_gaps",
-      "disposition": "Retained existing contracts after reopening the canonical source. Detailed baseline inventory is carried forward; no new hard transport restriction was supported for the current matched surface in this bounded pass.",
+      "disposition": "implemented_source_scoped_partial",
       "baseline_review_date": "2026-10-07",
       "baseline_added_checks": [],
       "current_match": {
@@ -120095,7 +120451,22 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "match": {
+        "hosts": [
+          "pt.ispot.tv",
+          "staging-pt.ispot.tv"
+        ],
+        "path_patterns": [
+          "^/v2/[^/]*\\.gif$"
+        ]
+      },
+      "source_urls": [
+        "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+        "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf"
+      ],
+      "golden_cases": 99,
+      "collector_followup": "docs/reviews/pixel-collectors-054.json"
     },
     {
       "id": "vendor/kantar",
@@ -303752,5 +304123,10 @@
     "golden_cases": 130,
     "source_executions": 15,
     "source_executed_requests": 15
+  },
+  "pixel_collectors_054_followup": {
+    "review": "docs/reviews/pixel-collectors-054.json",
+    "golden_cases": 111,
+    "documentation_image_controls": 7
   }
 }

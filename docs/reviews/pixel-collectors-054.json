@@ -1,0 +1,189 @@
+{
+  "review_date": "2026-10-21",
+  "version": "0.54.0",
+  "new_rulepacks": [],
+  "deepened_rulepacks": [
+    "vendor/ispot-conversion",
+    "vendor/ispot"
+  ],
+  "sources": {
+    "ispot-browser": {
+      "url": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "access": "read_primary_pdf_text_through_web_extraction",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "27f565ca8b56e7f9e163252d0cb50903c90f0dfed8ac950e9e53a97f99ddf30a",
+      "snapshot_kind": "web text extraction, not original PDF bytes",
+      "binary_download": "HTTP 502; screenshot retrieval unavailable",
+      "pages_read": "full extracted document"
+    },
+    "ispot-server": {
+      "url": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+      "access": "read_primary_pdf_text_through_web_extraction",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "3b3f171443bbaf528567ed4460c4d9d2b9eb3988493de1c4fb0d55aefb7808c7",
+      "snapshot_kind": "web text extraction, not original PDF bytes",
+      "binary_download": "HTTP 502; screenshot retrieval unavailable",
+      "pages_read": "full extracted document"
+    },
+    "ispot-impression": {
+      "url": "https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf",
+      "access": "read_primary_pdf_text_through_web_extraction",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "bd87be6a027aa54a578b4138eb66078425a440d010a36040092cbdc672f40ecd",
+      "snapshot_kind": "web text extraction, not original PDF bytes",
+      "binary_download": "HTTP 502; screenshot retrieval unavailable",
+      "pages_read": "full extracted document"
+    }
+  },
+  "scope_limits": {
+    "ispot-conversion": [
+      "Only the documented production and staging /v2/{site}.gif routes are selected. Cookie bootstrap ps.ispot.tv and conversion CSV/API uploads remain outside this pack.",
+      "All new field, amount, forwarding and method checks are advisory. The guides describe multiple profiles and are not a complete current acceptance specification. Empty optional strings remain accepted.",
+      "Omitted app and type default to web and visit. No unconditional server IP, user-agent, cookie or datetime requirement is imposed on browser calls or a query-IP alternative. No arbitrary timestamp age window is imposed.",
+      "The conversion guide gives cid 128 characters and channel 64; the older impression table gives channel 16. Each owner retains its source-specific limits.",
+      "The five-value customdata dashboard advisory skips structured legacy object/array forms from the server guide. Their inner syntax is not parsed. High-cardinality correctness and exact escaping cannot be proven from one decoded URL.",
+      "IP syntax accepts IPv4 and IPv6 in line with later matching guidance. Original-client provenance, trusted proxies, household matching, identity partner eligibility, account ownership, configuration and delivery are external.",
+      "Amount precision follows the published decimal(7,2) table as advice, preserving signed values and leading zeros. The exact receiver numeric parser and alternative numeric spellings are unpublished."
+    ],
+    "ispot": [
+      "Only production/staging /v2/{site}.gif routes are selected. Other /v2/ assets receive explicit directory coverage diagnostics.",
+      "Optional original-client IP syntax accepts IPv4 and IPv6. New IP and GET checks are advisory. Header presence is not required, and the original device and trusted proxy cannot be proven.",
+      "The existing source-specific impression field limits and reporting advice remain. No conversion-only field limits or defaults are imposed on impression pixels.",
+      "Configured reporting fields, OEM methodology, household matching, playback timing, macro generation, account ownership and delivery require external context."
+    ]
+  },
+  "golden_cases": 111,
+  "producer_controls": {
+    "synthetic_only": true,
+    "external_network_requests_performed": 0,
+    "executions": 7,
+    "requests": 7,
+    "cases": [
+      {
+        "scenario": "conversion-default",
+        "producer": "published documentation image template instantiated with synthetic site IDs and values",
+        "requests": [
+          {
+            "url": "https://pt.ispot.tv/v2/TC-1234-1.gif",
+            "method": "GET",
+            "headers": {
+              "accept": "image/jxl,image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+              "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+              "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"HeadlessChrome\";v=\"156\"",
+              "sec-ch-ua-mobile": "?0",
+              "sec-ch-ua-platform": "\"macOS\""
+            }
+          }
+        ]
+      },
+      {
+        "scenario": "conversion-purchase",
+        "producer": "published documentation image template instantiated with synthetic site IDs and values",
+        "requests": [
+          {
+            "url": "https://pt.ispot.tv/v2/TC-1234-1.gif?app=web&type=purchase&amount=1200.72&orderid=1744666313&sku=6688944,6688976",
+            "method": "GET",
+            "headers": {
+              "accept": "image/jxl,image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+              "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+              "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"HeadlessChrome\";v=\"156\"",
+              "sec-ch-ua-mobile": "?0",
+              "sec-ch-ua-platform": "\"macOS\""
+            }
+          }
+        ]
+      },
+      {
+        "scenario": "conversion-staging",
+        "producer": "published documentation image template instantiated with synthetic site IDs and values",
+        "requests": [
+          {
+            "url": "https://staging-pt.ispot.tv/v2/TC-1234-1.gif?app=web&type=coupon_complete&customdata=mens_shoes",
+            "method": "GET",
+            "headers": {
+              "accept": "image/jxl,image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+              "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+              "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"HeadlessChrome\";v=\"156\"",
+              "sec-ch-ua-mobile": "?0",
+              "sec-ch-ua-platform": "\"macOS\""
+            }
+          }
+        ]
+      },
+      {
+        "scenario": "conversion-auto",
+        "producer": "published documentation image template instantiated with synthetic site IDs and values",
+        "requests": [
+          {
+            "url": "https://pt.ispot.tv/v2/TC-1234-1.gif?app=app&type=add_to_cart&make=ram&model=se_models_2015_black_express&tier=TIER_1&year=2018",
+            "method": "GET",
+            "headers": {
+              "accept": "image/jxl,image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+              "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+              "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"HeadlessChrome\";v=\"156\"",
+              "sec-ch-ua-mobile": "?0",
+              "sec-ch-ua-platform": "\"macOS\""
+            }
+          }
+        ]
+      },
+      {
+        "scenario": "impression-ott",
+        "producer": "published documentation image template instantiated with synthetic site IDs and values",
+        "requests": [
+          {
+            "url": "https://pi.ispot.tv/v2/TC-1234-1.gif?platform=ott&devicetype=Roku&publisher=Google&placementid=123456789&placementtype=FEP&creativeid=987654321&creativename=penguin_slide",
+            "method": "GET",
+            "headers": {
+              "accept": "image/jxl,image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+              "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+              "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"HeadlessChrome\";v=\"156\"",
+              "sec-ch-ua-mobile": "?0",
+              "sec-ch-ua-platform": "\"macOS\""
+            }
+          }
+        ]
+      },
+      {
+        "scenario": "impression-digital",
+        "producer": "published documentation image template instantiated with synthetic site IDs and values",
+        "requests": [
+          {
+            "url": "https://pi.ispot.tv/v2/TC-1234-1.gif?platform=digital&devicetype=Desktop&publisher=ESPN&placementid=123456789&placementtype=30s_video_skippable&creativeid=987654321&creativename=penguin_slide_vid1",
+            "method": "GET",
+            "headers": {
+              "accept": "image/jxl,image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+              "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+              "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"HeadlessChrome\";v=\"156\"",
+              "sec-ch-ua-mobile": "?0",
+              "sec-ch-ua-platform": "\"macOS\""
+            }
+          }
+        ]
+      },
+      {
+        "scenario": "impression-staging",
+        "producer": "published documentation image template instantiated with synthetic site IDs and values",
+        "requests": [
+          {
+            "url": "https://staging-pi.ispot.tv/v2/TC-1234-1.gif?platform=ott&publisher=google&placementid=123456789&channel=ott&uid=auserid",
+            "method": "GET",
+            "headers": {
+              "accept": "image/jxl,image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+              "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+              "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\", \"HeadlessChrome\";v=\"156\"",
+              "sec-ch-ua-mobile": "?0",
+              "sec-ch-ua-platform": "\"macOS\""
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "review_notes": [
+    "Primary PDF text was read through web extraction. Direct downloads returned HTTP 502 and PDF screenshots were unavailable. No visual table review or binary PDF hash is claimed.",
+    "Seven synthetic HTML image controls instantiate published templates; they are not SDK executions and prove no collector acceptance. Every browser request was intercepted.",
+    "Source snapshots remain local and are not distributed. Product provenance contains URLs, snapshot hashes, scope limits and synthetic fixtures.",
+    "Other candidates lacked new transport proof. Script loader field count alone was not treated as a defect."
+  ]
+}

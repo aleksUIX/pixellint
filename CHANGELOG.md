@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.54.0 (2026-10-21)
+
+- Deepen iSpot conversion pixels with documented general, retail and automotive field limits, amount precision, five-value dashboard custom data and optional IP/time forwarding syntax.
+- Preserve the documented web and visit defaults when app or type is omitted. Legacy structured custom data stays opaque. Optional query IPs accept IPv4 and IPv6.
+- Validate supplied forwarded IP chains and image GET as advisory contracts. Browser requests do not require server forwarding headers. Add the documented staging conversion host and constrain both iSpot owners to GIF routes.
+- Add source-scoped regression fixtures and offline documentation image controls. Configured account mappings, household matching, attribution and delivery remain outside local validation.
+
 ## 0.53.0 (2026-10-21)
 
 Deepen CJ, Rakuten and MNTN with 51 additional field contracts and five cross-field assertions. The inventory remains 189 vendor packs across 96 vendors.

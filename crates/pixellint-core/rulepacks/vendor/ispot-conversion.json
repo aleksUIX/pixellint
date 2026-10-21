@@ -2,13 +2,18 @@
   "id": "vendor/ispot-conversion",
   "display_name": "iSpot.tv TV conversion pixel",
   "vendor": "ispot",
-  "description": "iSpot TV conversion GIFs on pt.ispot.tv/v2, whose site ID rides in the path as TC-####-#. Impression GIFs on pi.ispot.tv stay vendor/ispot. The type query names the conversion event.",
+  "description": "iSpot TV conversion GIFs on the documented production and staging /v2/{site}.gif routes. Checks general, retail and automotive fields, custom-data limits and optional forwarding syntax. Omitted app and type retain web and visit defaults. New source-scoped checks are advisory; account mappings and attribution remain external.",
   "source_level": "official_vendor",
-  "docs": "https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type",
+  "docs": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
   "path_pattern": "^/v2/(?<tracking_code>[^/]*?)\\.gif$",
   "match": {
-    "hosts": ["pt.ispot.tv"],
-    "path_prefixes": ["/v2/"]
+    "hosts": [
+      "pt.ispot.tv",
+      "staging-pt.ispot.tv"
+    ],
+    "path_patterns": [
+      "^/v2/[^/]*\\.gif$"
+    ]
   },
   "params": [
     {
@@ -24,12 +29,230 @@
     },
     {
       "name": "type",
-      "requirement": "recommended",
-      "format": { "kind": "non_empty" },
-      "description": "It names the conversion event. iSpot documents that conversion pixels are differentiated by the type field.",
-      "fix_hint": "Send type as the conversion event name iSpot configured for this pixel.",
-      "doc": "https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type"
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": false,
+      "description": "The conversion guide defaults an omitted type to visit. Supplied event names have a 32-character limit and use underscores in place of whitespace. Event names are configured, not a closed enum.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 32,
+      "format": {
+        "kind": "regex",
+        "pattern": "^\\S+$"
+      }
+    },
+    {
+      "name": "app",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": false,
+      "description": "The conversion guide defaults an omitted app to web. Use app only for a dedicated mobile app.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 4,
+      "format": {
+        "kind": "enum",
+        "values": [
+          "web",
+          "app"
+        ]
+      }
+    },
+    {
+      "name": "cid",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional cid to 128 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 128
+    },
+    {
+      "name": "campaignid",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional campaignid to 64 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 64
+    },
+    {
+      "name": "channel",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional channel to 64 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 64
+    },
+    {
+      "name": "customdata",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits customdata to 256 characters and up to five comma-separated dashboard values. Structured legacy server custom data remains opaque; high-cardinality correctness needs surrounding context.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 256,
+      "format": {
+        "kind": "regex",
+        "pattern": "(?s)^(?:\\s*[\\{\\[].*|[^,]*(?:,[^,]*){0,4})$"
+      }
+    },
+    {
+      "name": "customertype",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional customertype to 32 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 32
+    },
+    {
+      "name": "refid",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional refid to 128 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 128
+    },
+    {
+      "name": "uid",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional uid to 128 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 128
+    },
+    {
+      "name": "orderid",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional orderid to 64 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 64
+    },
+    {
+      "name": "sku",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional sku to 256 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 256
+    },
+    {
+      "name": "make",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional make to 32 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 32
+    },
+    {
+      "name": "model",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional model to 64 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 64
+    },
+    {
+      "name": "tier",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional tier to 32 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 32
+    },
+    {
+      "name": "trim",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional trim to 64 characters. Values are configured by the integration and remain open.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 64
+    },
+    {
+      "name": "year",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The conversion guide limits optional year to 16 characters. Values are configured by the integration and remain open. The source declares a string, so four-digit numeric years are not imposed.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "max_length": 16
+    },
+    {
+      "name": "amount",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The retail table declares decimal(7,2). The advisory accepts signed values with up to five significant integer digits and two fractional digits, preserving zero and leading zero padding.",
+      "doc": "https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?0*[0-9]{1,5}(?:\\.[0-9]{1,2})?$"
+      }
+    },
+    {
+      "name": "ip",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "An optional original-client IP override. Current iSpot matching guidance also allows IPv6 with an identity partner, so this syntax check accepts both IP families. Omission does not imply missing forwarding.",
+      "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+      "format": {
+        "kind": "ip"
+      }
+    },
+    {
+      "name": "datetime",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The server guide describes the original client visit time in UTC, YYYY-MM-DD HH:MM:SS. This advisory checks calendar validity at second resolution. Omission retains immediate browser and header-based integrations; no event-age window is invented.",
+      "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+      "format": {
+        "kind": "datetime_formats",
+        "formats": [
+          "iso_local"
+        ]
+      }
     }
   ],
-  "rules": []
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "severity": "warning",
+        "allow_empty": true,
+        "description": "The documented conversion image and server-side endpoint use GET.",
+        "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        }
+      },
+      {
+        "name": "headers.x-forwarded-for",
+        "requirement": "optional",
+        "severity": "warning",
+        "allow_empty": true,
+        "description": "The server guide permits a forwarded chain with the original client address first. Validate supplied IP-chain syntax without requiring the header on browser or query-IP requests. Address provenance is external.",
+        "doc": "https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf",
+        "format": {
+          "kind": "ip_chain"
+        }
+      }
+    ],
+    "rules": []
+  }
 }

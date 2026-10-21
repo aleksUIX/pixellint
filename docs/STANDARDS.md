@@ -6660,11 +6660,11 @@ Path captures: `/i/pixel/(?<conversion_id>[^/]*)`. Captured values take preceden
 
 ## `vendor/ispot-conversion`
 
-iSpot TV conversion GIFs on pt.ispot.tv/v2, whose site ID rides in the path as TC-####-#. Impression GIFs on pi.ispot.tv stay vendor/ispot. The type query names the conversion event.
+iSpot TV conversion GIFs on the documented production and staging /v2/{site}.gif routes. Checks general, retail and automotive fields, custom-data limits and optional forwarding syntax. Omitted app and type retain web and visit defaults. New source-scoped checks are advisory; account mappings and attribution remain external.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/ispot-conversion.json).
 
-Matcher: `{"hosts":["pt.ispot.tv"],"path_prefixes":["/v2/"]}`.
+Matcher: `{"hosts":["pt.ispot.tv","staging-pt.ispot.tv"],"path_patterns":["^/v2/[^/]*\\.gif$"]}`.
 
 Path captures: `^/v2/(?<tracking_code>[^/]*?)\.gif$`. Captured values take precedence over query keys with the same name.
 
@@ -6673,15 +6673,42 @@ Path captures: `^/v2/(?<tracking_code>[^/]*?)\.gif$`. Captured values take prece
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `tracking_code` | required | `{"format":{"kind":"regex","pattern":"^TC-[0-9]+-[0-9]+$"}}` | [official_vendor](https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type) |
-| `type` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.ispot.tv/documentation/api/product-use-cases/tv_conversions/conversion_type) |
+| `type` | optional | `{"severity":"warning","allow_empty":false,"max_length":32,"format":{"kind":"regex","pattern":"^\\S+$"}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `app` | optional | `{"severity":"warning","allow_empty":false,"max_length":4,"format":{"kind":"enum","values":["web","app"]}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `cid` | optional | `{"severity":"warning","allow_empty":true,"max_length":128}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `campaignid` | optional | `{"severity":"warning","allow_empty":true,"max_length":64}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `channel` | optional | `{"severity":"warning","allow_empty":true,"max_length":64}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `customdata` | optional | `{"severity":"warning","allow_empty":true,"max_length":256,"format":{"kind":"regex","pattern":"(?s)^(?:\\s*[\\{\\[].*\|[^,]*(?:,[^,]*){0,4})$"}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `customertype` | optional | `{"severity":"warning","allow_empty":true,"max_length":32}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `refid` | optional | `{"severity":"warning","allow_empty":true,"max_length":128}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `uid` | optional | `{"severity":"warning","allow_empty":true,"max_length":128}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `orderid` | optional | `{"severity":"warning","allow_empty":true,"max_length":64}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `sku` | optional | `{"severity":"warning","allow_empty":true,"max_length":256}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `make` | optional | `{"severity":"warning","allow_empty":true,"max_length":32}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `model` | optional | `{"severity":"warning","allow_empty":true,"max_length":64}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `tier` | optional | `{"severity":"warning","allow_empty":true,"max_length":32}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `trim` | optional | `{"severity":"warning","allow_empty":true,"max_length":64}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `year` | optional | `{"severity":"warning","allow_empty":true,"max_length":16}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `amount` | optional | `{"severity":"warning","allow_empty":true,"format":{"kind":"regex","pattern":"^-?0*[0-9]{1,5}(?:\\.[0-9]{1,2})?$"}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/TV%20Conversion%20Integration%20Guide_2023.pdf) |
+| `ip` | optional | `{"severity":"warning","allow_empty":true,"format":{"kind":"ip"}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf) |
+| `datetime` | optional | `{"severity":"warning","allow_empty":true,"format":{"kind":"datetime_formats","formats":["iso_local"]}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"severity":"warning","allow_empty":true,"format":{"kind":"enum","values":["GET"]}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf) |
+| `headers.x-forwarded-for` | optional | `{"severity":"warning","allow_empty":true,"format":{"kind":"ip_chain"}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/iSpot_Server-side_TVC_Integration_Guide_1.pdf) |
 
 ## `vendor/ispot`
 
-iSpot Unified Measurement impression GIFs on pi.ispot.tv/v2, whose client tracking code rides in the path as TC-####-#. TV conversion GIFs on pt.ispot.tv are vendor/ispot-conversion.
+iSpot Unified Measurement impression GIFs on pi.ispot.tv/v2, whose client tracking code rides in the path as TC-####-#. TV conversion GIFs on pt.ispot.tv are vendor/ispot-conversion. Optional original-client IP syntax and image GET are advisory. IPv4 and IPv6 remain valid, with no universal forwarding-header requirement.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/ispot.json).
 
-Matcher: `{"hosts":["pi.ispot.tv","staging-pi.ispot.tv"],"path_prefixes":["/v2/"]}`.
+Matcher: `{"hosts":["pi.ispot.tv","staging-pi.ispot.tv"],"path_patterns":["^/v2/[^/]*\\.gif$"]}`.
 
 Path captures: `^/v2/(?<tracking_code>[^/]+?)\.gif$`. Captured values take precedence over query keys with the same name.
 
@@ -6702,6 +6729,15 @@ Path captures: `^/v2/(?<tracking_code>[^/]+?)\.gif$`. Captured values take prece
 | `platform` | required | `{"max_length":7,"format":{"kind":"enum","values":["ott","digital"]},"severity":"warning"}` | [official_vendor](https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf) |
 | `publisher` | required | `{"max_length":64,"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf) |
 | `segment` | optional | `{"max_length":128,"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf) |
+| `ip` | optional | `{"severity":"warning","allow_empty":true,"format":{"kind":"ip"}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"severity":"warning","allow_empty":true,"format":{"kind":"enum","values":["GET"]}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf) |
 
 ## `vendor/kantar`
 
