@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.58.0
+
+- Deepen Plausible with source-scoped advice for native property aliases, UTF-8 property value bounds, engagement metrics, revenue objects and JSON-encoded long revenue. Preserve alias precedence, signed and scientific amounts, empty referrers and clamped scroll depth.
+- Replace three-letter currency shape checks with advisory current ISO 4217 assignment checks. Keep revenue loss distinct from event acceptance.
+- Bound each Amplitude Group Identify operation map at the documented 1,024-property request budget. Aggregate counting across operations and rows remains unverified.
+- Limit both packs to their published endpoint scope, add 101 source-reviewed fixtures and preserve existing revenue pair finding codes. No receiver completeness is claimed.
+
 ## 0.57.0
 
 - Deepen Heap user-property updates with advice for reserved id keys in every letter case, across single and bulk requests. Keep unrelated custom keys open.

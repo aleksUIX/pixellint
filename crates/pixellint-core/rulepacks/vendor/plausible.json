@@ -1,16 +1,13 @@
 {
   "id": "vendor/plausible",
   "display_name": "Plausible Events API",
-  "description": "Plausible Events API posts to plausible.io/api/event. Self-hosted endpoints on other hosts are not contracted.",
+  "description": "Plausible Events API on exact /api/event. Published API contracts are supplemented by advisory checks from a pinned public parser. Account eligibility and receiver acceptance remain external.",
   "vendor": "plausible",
   "source_level": "official_vendor",
   "docs": "https://plausible.io/docs/events-api",
   "match": {
     "hosts": [
       "plausible.io"
-    ],
-    "path_prefixes": [
-      "/api/event"
     ],
     "json_paths": [
       {
@@ -31,6 +28,9 @@
           "d"
         ]
       }
+    ],
+    "paths": [
+      "/api/event"
     ]
   },
   "body": [
@@ -115,37 +115,51 @@
           "format": {
             "kind": "non_empty"
           },
-          "description": "It is the referrer for this event. Plausible documents it as optional; the tracker sends `document.referrer`.",
+          "description": "Referrers may be empty. The pinned parser truncates long values to 2,000 characters.",
           "fix_hint": "Send the referring URL or host in `referrer`, or drop the empty pair.",
           "doc": "https://plausible.io/docs/events-api",
-          "json_type": "string"
+          "json_type": "string",
+          "allow_empty": true,
+          "max_length": 2000,
+          "format_severity": "warning"
         },
         {
           "name": "revenue.currency",
           "format": {
-            "kind": "regex",
-            "pattern": "^[A-Za-z]{3}$"
+            "kind": "currency"
           },
           "format_severity": "warning",
-          "description": "It is the ISO 4217 currency of `revenue.amount`. Plausible discards revenue data when the currency is invalid, and still records the event.",
+          "description": "Revenue uses an assigned current ISO 4217 code. This advice does not establish the deployment CLDR version or account eligibility.",
           "fix_hint": "Send a three-letter currency code in `revenue.currency`, such as `USD`.",
           "doc": "https://plausible.io/docs/events-api",
-          "json_type": "string"
+          "json_type": "string",
+          "severity": "warning",
+          "condition": {
+            "kind": "json_type",
+            "param": "revenue",
+            "json_type": "object"
+          }
         },
         {
           "name": "revenue.amount",
           "format": {
             "kind": "regex",
-            "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+            "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
           },
           "format_severity": "warning",
-          "description": "It is the revenue amount. Plausible documents a float or numeric string, and discards revenue data when the amount is invalid.",
+          "description": "Signed decimal and exponent forms remain valid numeric amounts. Invalid revenue data does not establish rejection of the event.",
           "fix_hint": "Send `revenue.amount` as a number or numeric string, such as `1322.22`, without a currency symbol.",
           "doc": "https://plausible.io/docs/events-api",
           "json_type": [
             "number",
             "string"
-          ]
+          ],
+          "severity": "warning",
+          "condition": {
+            "kind": "json_type",
+            "param": "revenue",
+            "json_type": "object"
+          }
         },
         {
           "name": "interactive",
@@ -165,15 +179,208 @@
           "name": "props",
           "description": "Plausible retains at most 30 custom property entries and discards additional entries.",
           "doc": "https://plausible.io/docs/events-api",
-          "json_type": "object",
+          "json_type": [
+            "object",
+            "string"
+          ],
           "max_properties": 30,
-          "format_severity": "warning"
+          "format_severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "m"
+                    }
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "m",
+                    "json_type": "null"
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "boolean"
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "m",
+                        "values": [
+                          "false"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "meta"
+                    }
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "meta",
+                    "json_type": "null"
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "json_type",
+                        "param": "meta",
+                        "json_type": "boolean"
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "meta",
+                        "values": [
+                          "false"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "p"
+                    }
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "p",
+                    "json_type": "null"
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "json_type",
+                        "param": "p",
+                        "json_type": "boolean"
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "p",
+                        "values": [
+                          "false"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "props"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "props",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "props",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "props",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         },
         {
           "name": "revenue",
           "description": "The vendor documents `revenue` in the request contract.",
           "doc": "https://plausible.io/docs/events-api",
-          "json_type": "object"
+          "json_type": [
+            "object",
+            "string"
+          ],
+          "severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "revenue"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "revenue",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "revenue",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "revenue",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         },
         {
           "name": "",
@@ -192,8 +399,164 @@
           "max_length": 2000,
           "format_severity": "warning",
           "allow_empty": true,
-          "description": "Custom properties accept scalar values. Arrays and objects are discarded; null is displayed as (none).",
-          "doc": "https://plausible.io/docs/custom-props/introduction"
+          "description": "The pinned parser retains scalar property values and applies a 2,000-byte UTF-8 value bound. This advice does not certify all filtering behavior.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "m"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "m",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "m",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "meta"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "meta",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "meta",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "meta",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "p"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "p",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "p",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "p",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "props"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "props",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "props",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "props",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "props",
+                "json_type": "object"
+              }
+            ]
+          },
+          "max_byte_length": 2000,
+          "source_level": "official_template"
         },
         {
           "name": "overlong_property_name",
@@ -202,7 +565,1680 @@
           "requirement": "forbidden",
           "severity": "warning",
           "description": "Custom property names are limited to 300 characters.",
-          "doc": "https://plausible.io/docs/custom-props/introduction"
+          "doc": "https://plausible.io/docs/custom-props/introduction",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "m"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "m",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "m",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "meta"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "meta",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "meta",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "meta",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "p"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "p",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "p",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "p",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "props"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "props",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "props",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "props",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "props",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "m",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "object",
+            "string"
+          ],
+          "max_properties": 30,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "m"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "m",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "m",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "m",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "m.*",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_length": 2000,
+          "max_byte_length": 2000,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "m"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "m",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "m",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "m",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "m",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "overlong_m_property_name",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "name_pattern": "(?s)^.{301,}$",
+          "name_pattern_parent": "m",
+          "requirement": "forbidden",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "m"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "m",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "m",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "m",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "m",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "meta",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "object",
+            "string"
+          ],
+          "max_properties": 30,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "m"
+                    }
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "m",
+                    "json_type": "null"
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "boolean"
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "m",
+                        "values": [
+                          "false"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "meta"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "meta",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "meta",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "meta",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "meta.*",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_length": 2000,
+          "max_byte_length": 2000,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "m"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "m",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "m",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "meta"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "meta",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "meta",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "meta",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "meta",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "overlong_meta_property_name",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "name_pattern": "(?s)^.{301,}$",
+          "name_pattern_parent": "meta",
+          "requirement": "forbidden",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "m"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "m",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "m",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "meta"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "meta",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "meta",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "meta",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "meta",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "p",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "object",
+            "string"
+          ],
+          "max_properties": 30,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "m"
+                    }
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "m",
+                    "json_type": "null"
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "boolean"
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "m",
+                        "values": [
+                          "false"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "meta"
+                    }
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "meta",
+                    "json_type": "null"
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "json_type",
+                        "param": "meta",
+                        "json_type": "boolean"
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "meta",
+                        "values": [
+                          "false"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "p"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "p",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "p",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "p",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "p.*",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ],
+          "allow_empty": true,
+          "max_length": 2000,
+          "max_byte_length": 2000,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "m"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "m",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "m",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "meta"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "meta",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "meta",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "meta",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "p"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "p",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "p",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "p",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "p",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "overlong_p_property_name",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "name_pattern": "(?s)^.{301,}$",
+          "name_pattern_parent": "p",
+          "requirement": "forbidden",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "m"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "m",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "m",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "m",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "meta"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "meta",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "meta",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "meta",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "p"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "p",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "p",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "p",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "p",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "r",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": "string",
+          "allow_empty": true,
+          "max_length": 2000,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "r"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "r",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "r",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "r",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "i",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": "boolean",
+          "allow_empty": true
+        },
+        {
+          "name": "h",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?[0-9]+$"
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "h"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "h",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "h",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "h",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "hashMode",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?[0-9]+$"
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "h"
+                    }
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "h",
+                    "json_type": "null"
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "json_type",
+                        "param": "h",
+                        "json_type": "boolean"
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "h",
+                        "values": [
+                          "false"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "hashMode"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "hashMode",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "hashMode",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "hashMode",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "v",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": "integer"
+        },
+        {
+          "name": "sd",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "The parser accepts nonnegative scroll depth and clamps values above 100. No upper-bound rejection is invented.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?[0-9]+$"
+          },
+          "minimum": 0,
+          "numeric_strings": true,
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "n",
+                "values": [
+                  "engagement"
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "n"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "n",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "n",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "n",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "name",
+                    "values": [
+                      "engagement"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "e",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": [
+            "integer",
+            "string"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?[0-9]+$"
+          },
+          "minimum": 0,
+          "numeric_strings": true,
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "n",
+                "values": [
+                  "engagement"
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "n"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "n",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "n",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "n",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "name",
+                    "values": [
+                      "engagement"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "maximum": 2591999999
+        },
+        {
+          "name": "$",
+          "json_type": [
+            "object",
+            "string"
+          ],
+          "severity": "warning",
+          "source_level": "official_template",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "revenue"
+                    }
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "revenue",
+                    "json_type": "null"
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "json_type",
+                        "param": "revenue",
+                        "json_type": "boolean"
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "revenue",
+                        "values": [
+                          "false"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "$"
+                      }
+                    },
+                    {
+                      "kind": "json_type",
+                      "param": "$",
+                      "json_type": "null"
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "json_type",
+                          "param": "$",
+                          "json_type": "boolean"
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "$",
+                          "values": [
+                            "false"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "allow_empty": true,
+          "description": "Short revenue representation. The long revenue key has precedence.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/extra/lib/plausible/ingestion/request/revenue.ex"
+        },
+        {
+          "name": "$.currency",
+          "format": {
+            "kind": "currency"
+          },
+          "format_severity": "warning",
+          "description": "Revenue uses an assigned current ISO 4217 code. This advice does not establish the deployment CLDR version or account eligibility.",
+          "fix_hint": "Send a three-letter currency code in `revenue.currency`, such as `USD`.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/extra/lib/plausible/ingestion/request/revenue.ex",
+          "json_type": "string",
+          "severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "revenue"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "revenue",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "revenue",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "revenue",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "$"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "$",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "$",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "$",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "$",
+                "json_type": "object"
+              }
+            ]
+          },
+          "source_level": "official_template"
+        },
+        {
+          "name": "$.amount",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+          },
+          "format_severity": "warning",
+          "description": "Signed decimal and exponent forms remain valid numeric amounts. Invalid revenue data does not establish rejection of the event.",
+          "fix_hint": "Send `revenue.amount` as a number or numeric string, such as `1322.22`, without a currency symbol.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/extra/lib/plausible/ingestion/request/revenue.ex",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "revenue"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "revenue",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "revenue",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "revenue",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "$"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "$",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "$",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "$",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "$",
+                "json_type": "object"
+              }
+            ]
+          },
+          "source_level": "official_template"
         }
       ],
       "rules": [
@@ -256,30 +2292,6 @@
           "doc": "https://plausible.io/docs/events-api"
         },
         {
-          "code": "vendor.plausible.body.amount_requires_currency",
-          "kind": "required_with",
-          "when": "revenue.amount",
-          "requires": [
-            "revenue.currency"
-          ],
-          "severity": "warning",
-          "message": "The event sends `revenue.amount` without `revenue.currency`. Plausible documents both on the revenue object.",
-          "fix_hint": "Add `revenue.currency` as an ISO 4217 code, such as `USD`.",
-          "doc": "https://plausible.io/docs/events-api"
-        },
-        {
-          "code": "vendor.plausible.body.currency_requires_amount",
-          "kind": "required_with",
-          "when": "revenue.currency",
-          "requires": [
-            "revenue.amount"
-          ],
-          "severity": "warning",
-          "message": "The event sends `revenue.currency` without `revenue.amount`. Plausible documents both on the revenue object.",
-          "fix_hint": "Add `revenue.amount` as a number or numeric string, such as `1322.22`.",
-          "doc": "https://plausible.io/docs/events-api"
-        },
-        {
           "code": "vendor.plausible.url_path_limit",
           "kind": "url_path_length",
           "param": "url",
@@ -296,8 +2308,424 @@
           "severity": "error",
           "message": "The page URL path exceeds Plausible's published 2000-character limit.",
           "doc": "https://plausible.io/docs/events-api"
+        },
+        {
+          "code": "vendor.plausible.revenue_fields_required",
+          "kind": "required_with",
+          "when": "revenue",
+          "requires": [
+            "revenue.currency",
+            "revenue.amount"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "revenue"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "revenue",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "revenue",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "revenue",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "revenue",
+                "json_type": "object"
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "exists",
+                  "param": "revenue.currency"
+                }
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "exists",
+                  "param": "revenue.amount"
+                }
+              }
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "message": "The revenue object needs both currency and amount. The event may still be accepted without revenue.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/extra/lib/plausible/ingestion/request/revenue.ex"
+        },
+        {
+          "code": "vendor.plausible.short_revenue_fields_required",
+          "kind": "required_with",
+          "when": "$",
+          "requires": [
+            "$.currency",
+            "$.amount"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "revenue"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "revenue",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "revenue",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "revenue",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "any",
+                      "conditions": [
+                        {
+                          "kind": "not",
+                          "condition": {
+                            "kind": "exists",
+                            "param": "$"
+                          }
+                        },
+                        {
+                          "kind": "json_type",
+                          "param": "$",
+                          "json_type": "null"
+                        },
+                        {
+                          "kind": "all",
+                          "conditions": [
+                            {
+                              "kind": "json_type",
+                              "param": "$",
+                              "json_type": "boolean"
+                            },
+                            {
+                              "kind": "value_in",
+                              "param": "$",
+                              "values": [
+                                "false"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "$",
+                "json_type": "object"
+              }
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "message": "The revenue object needs both currency and amount. The event may still be accepted without revenue.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/extra/lib/plausible/ingestion/request/revenue.ex"
+        },
+        {
+          "code": "vendor.plausible.engagement_metrics_required",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "sd"
+            ],
+            [
+              "e"
+            ]
+          ],
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "n",
+                "values": [
+                  "engagement"
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "n"
+                        }
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "n",
+                        "json_type": "null"
+                      },
+                      {
+                        "kind": "all",
+                        "conditions": [
+                          {
+                            "kind": "json_type",
+                            "param": "n",
+                            "json_type": "boolean"
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "n",
+                            "values": [
+                              "false"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "name",
+                    "values": [
+                      "engagement"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "message": "The engagement event has no populated scroll-depth or time metric.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex"
+        },
+        {
+          "code": "vendor.plausible.engagement_zero_time",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "e"
+          ],
+          "pattern": "^[+-]?0+$",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "n",
+                    "values": [
+                      "engagement"
+                    ]
+                  },
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "any",
+                        "conditions": [
+                          {
+                            "kind": "not",
+                            "condition": {
+                              "kind": "exists",
+                              "param": "n"
+                            }
+                          },
+                          {
+                            "kind": "json_type",
+                            "param": "n",
+                            "json_type": "null"
+                          },
+                          {
+                            "kind": "all",
+                            "conditions": [
+                              {
+                                "kind": "json_type",
+                                "param": "n",
+                                "json_type": "boolean"
+                              },
+                              {
+                                "kind": "value_in",
+                                "param": "n",
+                                "values": [
+                                  "false"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "name",
+                        "values": [
+                          "engagement"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "present",
+                  "param": "sd"
+                }
+              }
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "message": "Zero engagement time without scroll depth leaves no usable engagement metric.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex"
+        },
+        {
+          "code": "vendor.plausible.body.amount_requires_currency",
+          "kind": "required_with",
+          "when": "revenue.amount",
+          "requires": [
+            "revenue.currency"
+          ],
+          "severity": "warning",
+          "message": "The event sends `revenue.amount` without `revenue.currency`. Plausible documents both on the revenue object.",
+          "fix_hint": "Add `revenue.currency` as an ISO 4217 code, such as `USD`.",
+          "doc": "https://plausible.io/docs/events-api",
+          "condition": {
+            "kind": "json_type",
+            "param": "revenue",
+            "json_type": "object"
+          }
+        },
+        {
+          "code": "vendor.plausible.body.currency_requires_amount",
+          "kind": "required_with",
+          "when": "revenue.currency",
+          "requires": [
+            "revenue.amount"
+          ],
+          "severity": "warning",
+          "message": "The event sends `revenue.currency` without `revenue.amount`. Plausible documents both on the revenue object.",
+          "fix_hint": "Add `revenue.amount` as a number or numeric string, such as `1322.22`.",
+          "doc": "https://plausible.io/docs/events-api",
+          "condition": {
+            "kind": "json_type",
+            "param": "revenue",
+            "json_type": "object"
+          }
         }
       ]
+    },
+    {
+      "source_field": "revenue",
+      "encoding": "json",
+      "encoding_severity": "warning",
+      "params": [
+        {
+          "name": "currency",
+          "format": {
+            "kind": "currency"
+          },
+          "format_severity": "warning",
+          "description": "Revenue uses an assigned current ISO 4217 code. This advice does not establish the deployment CLDR version or account eligibility.",
+          "fix_hint": "Send a three-letter currency code in `revenue.currency`, such as `USD`.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/extra/lib/plausible/ingestion/request/revenue.ex",
+          "json_type": "string",
+          "severity": "warning",
+          "requirement": "required",
+          "source_level": "official_template"
+        },
+        {
+          "name": "amount",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+          },
+          "format_severity": "warning",
+          "description": "Signed decimal and exponent forms remain valid numeric amounts. Invalid revenue data does not establish rejection of the event.",
+          "fix_hint": "Send `revenue.amount` as a number or numeric string, such as `1322.22`, without a currency symbol.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/extra/lib/plausible/ingestion/request/revenue.ex",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "requirement": "required",
+          "source_level": "official_template"
+        },
+        {
+          "name": "",
+          "severity": "warning",
+          "source_level": "official_template",
+          "description": "This advisory check follows the pinned Plausible parser profile.",
+          "doc": "https://github.com/plausible/analytics/blob/be3bc8ac721cc6a9721316ff3c8d23addce0ab8a/lib/plausible/ingestion/request.ex",
+          "json_type": "object"
+        }
+      ],
+      "rules": []
     }
   ],
   "http": {
