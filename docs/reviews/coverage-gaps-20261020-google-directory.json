@@ -1,0 +1,92 @@
+{
+  "reviewed_at": "2026-10-20",
+  "privacy": "Source evidence is public vendor documentation or public sample producer output. Authored fixtures use synthetic opaque values. No captured customer payloads are included.",
+  "google_live_interaction": {
+    "decision": "Extend vendor/google-ima-interaction to the exact /pagead/live/interaction and /pagead/live/interaction/ paths on pubads.g.doubleclick.net.",
+    "documentation": "https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags",
+    "producer": {
+      "url": "https://pubads.g.doubleclick.net/gampad/live/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&correlator=1792512345680",
+      "sha256": "cb20aeeab54fe49d0cf9faf171b1aed496790093628d5b16a5d26e2c0587ad2e",
+      "method": "Fetch the documented Google Single Inline Linear sample ad unit through Google's live ad producer. Inspect the resulting interaction callbacks without firing them.",
+      "observation": "Generated callbacks use pubads.g.doubleclick.net/pagead/live/interaction/ and retain populated ai, sigh and label fields. The standard sample producer emits the existing /pagead/interaction/ spelling with the same field set."
+    },
+    "contracts": {
+      "ai": "recommended nonempty opaque field, warning",
+      "sigh": "recommended nonempty opaque field, warning",
+      "label": "recommended nonempty event label, warning; no closed enumeration"
+    },
+    "limits": [
+      "Producer-template completeness does not establish server rejection policy.",
+      "Opaque signed fields are not authenticated or decoded.",
+      "No prefix, parent-domain or arbitrary Google-host match is added.",
+      "The response also contains live PCS paths outside this change's requested endpoint scope."
+    ],
+    "fixtures": "fixtures/vendor-google-ima-interaction/d1-source-cases.json",
+    "tests": "crates/pixellint-core/tests/google_live_route_coverage.rs"
+  },
+  "google_pagead2_pcs_view": {
+    "decision": "Retain recognized-vendor core-only coverage for pagead2.googlesyndication.com/pcs/view. Do not borrow the CM360 or IMA sai advisory.",
+    "reason": "No independent primary producer template or documented wire contract for this host and route was found in the reviewed sources. The observed absence of sai in private corpus rows is a scope warning, not a published requiredness contract.",
+    "reviewed_sources": [
+      {
+        "url": "https://imasdk.googleapis.com/js/sdkloader/ima3.js",
+        "sha256": "0fa75a89a60891c4ab1f60c1ae6f266d6a9603513f7636f25eacc136a61e665c",
+        "observation": "No literal PCS view constructor found."
+      },
+      {
+        "url": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
+        "sha256": "99810e74c8a6dfd34eb5838efa181744abf17e09b4f36f070a992773c3adcde6",
+        "observation": "Reviewed the public AdSense loader and its implementation script without finding a literal pagead2 PCS view template."
+      },
+      {
+        "url": "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&correlator=1792512345678",
+        "sha256": "4617ecbe76a932180deead24647c019ac65e46f821e5700602ed66b4f2b453d3",
+        "observation": "Current standard IMA sample generated securepubads PCS view with xai, sai and sig."
+      },
+      {
+        "url": "https://developers.google.com/publisher-tag/guides/get-started",
+        "observation": "Its documented /6355419/Travel/Europe/France/Paris display sample ad unit produced securepubads PCS view with xai, sai and sig. It did not provide the pagead2 contract."
+      }
+    ],
+    "regression": "Synthetic pagead2 URLs remain outside vendor/google-cm360-pcs-view and vendor/google-ima-pcs even when sai is absent."
+  },
+  "directory_attribution": [
+    {
+      "host": "ams.creativecdn.com",
+      "vendor": "RTB House",
+      "source": "https://www.rtbhouse.com/privacy-center",
+      "section": "Services Privacy Policy, section 2, How do we collect data",
+      "evidence": "The first-party services policy explicitly identifies creativecdn.com as the domain RTB House operates under.",
+      "scope": "Attribute the exact observed ams host. No endpoint field contract is inferred."
+    },
+    {
+      "host": "kimberlite.io",
+      "vendor": "Kimberlite",
+      "source": "https://kimberlite.io/",
+      "linked_source": "https://kimberlite.io/upload/land/page31723074.html",
+      "linked_source_sha256": "104028cea056f0021a3de20ae19aa4c39652c966825fdb41ab2ad5601f93268f",
+      "evidence": "The first-party homepage links its own Kimberlite-branded landing page describing an advertising traffic buying and optimization platform.",
+      "scope": "Attribute the exact host. Its private tracker fields and path payloads receive no invented rules."
+    },
+    {
+      "host": "yandex.ru",
+      "path_prefix": "/adfox/",
+      "vendor": "Yandex Adfox",
+      "sources": [
+        "https://yandex.com/support/adfox/en/ad-inventory/video",
+        "https://yandex.com/support/adfox/en/ad-inventory/codes/code-loader",
+        "https://yandex.com/support/adfox/en/banners/events"
+      ],
+      "evidence": "First-party Yandex documentation establishes Adfox ownership, video event tracking, and the neighboring /ads/adfox/ ad request prefix. The supplied inventory identifies /adfox/ event and goLink routes on Yandex's own host.",
+      "scope": "Use path-restricted directory attribution only. The reviewed public examples do not establish the exact /adfox/ event wire contract. Bare yandex.ru and unrelated paths must remain unmatched by this entry."
+    }
+  ],
+  "unresolved_attribution": [
+    {
+      "host": "im1.ufouxbwn.com",
+      "decision": "Retain unknown-vendor coverage instead of assigning an unverified owner.",
+      "reviewed_evidence": "https://cdn7.ufouxbwn.com/ redirects to https://playmatic.video/, whose first-party page identifies Playmatic. Requests to the im1 root returned HTTP 503; the bare root domain did not resolve during review.",
+      "reason": "A sibling CDN redirect supports a Playmatic family inference but does not independently establish ownership of the im1 tracker host or any tracker field contract."
+    }
+  ]
+}

@@ -12,7 +12,7 @@ $ pixellint validate url 'https://trc.taboola.com/actions?a=1'
 rulepack: core
   ok
 rulepack: directory (vendor: taboola)
-  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No Pixellint rulepack covers it, so only the core checks ran. The `vendor/taboola` rulepack covers other Taboola endpoints, not this one.
+  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No selected endpoint rulepack checked this request. Core checks ran. The directory lists `vendor/taboola` for Taboola. It was not evaluated for this request.
     fix: Write a custom rulepack for this endpoint, or ask for first-party coverage.
 ```
 
@@ -28,13 +28,40 @@ identification everywhere else, and no pretending the second is the first.
 
 ## Behavior
 
-- The directory runs after rulepacks and only when **no rulepack detected a
-  vendor**. A matching vendor pack is strictly better information.
+- The directory runs after rulepacks and only when **no selected endpoint
+  contract was evaluated**. This includes custom packs without vendor metadata.
 - A vendor with a rulepack still gets attributed on endpoints that pack does not
   cover. The finding names the pack so you know coverage exists elsewhere.
 - Findings are always `info` severity. Attribution never changes an exit code.
 - Toggle it like a rulepack: `--rulepack directory` runs only attribution,
   `--except directory` turns it off.
+
+## Coverage is separate from findings.
+
+Single-artifact results include `coverage`. Document, session and HAR results
+include it on each unique artifact. CLI text and MCP structured output expose
+the same information:
+
+```json
+{
+  "status": "recognized_uncontracted",
+  "core_checks_ran": true,
+  "vendor_rulepacks": []
+}
+```
+
+`vendor_checked` means a matching endpoint-specific pack ran. This includes
+custom packs without optional vendor metadata. `vendor_rulepacks` lists the
+evaluated pack IDs. `recognized_uncontracted` means directory attribution ran
+without an evaluated endpoint contract. `unrecognized` means neither an
+endpoint contract nor directory attribution ran. These describe the selected
+checks: exclusions or `--rulepack core` can reduce coverage even for a known
+host. Directory-only selection has `core_checks_ran: false`.
+
+`is_ok()` and exit codes still measure error findings. A clean result with only
+core checks does not establish vendor validation, while a covered endpoint can
+fail its contract. Coverage does not certify delivery, signature validity or
+complete vendor specification conformance.
 
 ## Inspecting it
 
@@ -63,6 +90,20 @@ also cover subdomains, so `sc-static.net` covers `cdn.sc-static.net`.
 `rulepack` is present only when a first-party pack covers some of that vendor's
 endpoints. One vendor slug can have several rows (Google Tag Manager vs Google
 Ad Manager) so the pointer names the pack that actually covers sibling hosts.
+
+An optional `path_prefixes` array restricts attribution on a shared host. For
+example, the Yandex Adfox entry lists `yandex.ru` with `["/adfox/"]`. It does
+not claim the bare host, search pages or paths that only mention Adfox in a
+query string. Prefixes are case-sensitive and match the normalized URL path,
+including dot-segment normalization. `lookup_endpoint(host, path)` applies
+these restrictions. `lookup_host(host)` excludes path-restricted entries
+because a host alone cannot establish a product attribution.
+
+The new JSON result fields are additive. Rust callers constructing
+`ValidationSummary`, `AggregatedArtifact` or `VendorEntry` with struct literals
+must supply the new `coverage` or `path_prefixes` fields. Directory JSON files
+without `path_prefixes` retain their previous behavior. These Rust source API
+additions ship in 0.45.0.
 
 Categories in use: `social`, `search`, `programmatic`, `native`, `identity`,
 `verification`, `measurement`, `video`, `analytics`, `martech`, `commerce`,

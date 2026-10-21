@@ -34,6 +34,10 @@ pub struct VendorEntry {
     pub category: String,
     /// Hosts the vendor serves. A host also matches its subdomains.
     pub hosts: Vec<String>,
+    /// Optional path restrictions for services on a shared host. Host-only
+    /// lookup never attributes an entry restricted to these prefixes.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub path_prefixes: Vec<String>,
     /// First-party rulepack that covers some of this vendor's endpoints, if one
     /// exists.
     #[serde(default)]
@@ -70,6 +74,10 @@ pub enum DirectoryError {
         host: String,
         vendors: (String, String),
     },
+    InvalidPathPrefix {
+        vendor: String,
+        prefix: String,
+    },
 }
 
 impl fmt::Display for DirectoryError {
@@ -89,6 +97,10 @@ impl fmt::Display for DirectoryError {
             } => write!(
                 f,
                 "host `{host}` is claimed by both `{first}` and `{second}` in the vendor directory"
+            ),
+            Self::InvalidPathPrefix { vendor, prefix } => write!(
+                f,
+                "vendor directory entry `{vendor}` has an invalid path prefix `{prefix}`"
             ),
         }
     }
@@ -143,6 +155,15 @@ impl VendorDirectory {
                     vendor: entry.vendor.clone(),
                     field: "hosts",
                 });
+            }
+
+            for prefix in &entry.path_prefixes {
+                if !prefix.starts_with('/') || prefix.contains(['?', '#']) {
+                    return Err(DirectoryError::InvalidPathPrefix {
+                        vendor: entry.vendor.clone(),
+                        prefix: prefix.clone(),
+                    });
+                }
             }
 
             for host in &entry.hosts {
@@ -200,22 +221,48 @@ impl VendorDirectory {
     /// Prepared hosts are already lowercased. This path skips a second copy in
     /// that case.
     pub fn lookup_host(&self, host: &str) -> Option<&VendorEntry> {
+        self.lookup(host, None)
+    }
+
+    /// Attributes a parsed host and path. Prefixes are case-sensitive and
+    /// inspect the path only, never a query string or fragment.
+    pub fn lookup_endpoint(&self, host: &str, path: &str) -> Option<&VendorEntry> {
+        // PreparedArtifact preserves raw paths to retain source spans. Match
+        // attribution on the path a browser requests after URL normalization.
+        let canonical = path
+            .starts_with('/')
+            .then(|| url::Url::parse(&format!("https://directory.invalid{path}")))
+            .and_then(Result::ok);
+        self.lookup(host, canonical.as_ref().map(url::Url::path))
+    }
+
+    fn lookup(&self, host: &str, path: Option<&str>) -> Option<&VendorEntry> {
         if host.bytes().any(|byte| byte.is_ascii_uppercase()) {
-            self.lookup_lowered(&host.to_ascii_lowercase())
+            self.lookup_lowered(&host.to_ascii_lowercase(), path)
         } else {
-            self.lookup_lowered(host)
+            self.lookup_lowered(host, path)
         }
     }
 
-    fn lookup_lowered(&self, host: &str) -> Option<&VendorEntry> {
+    fn lookup_lowered(&self, host: &str, path: Option<&str>) -> Option<&VendorEntry> {
         let mut best: Option<usize> = None;
         let mut label = host;
         loop {
             if let Some(&index) = self.by_host.get(label) {
-                if index == 0 {
-                    return Some(&self.entries[0]);
+                let entry = &self.entries[index];
+                let matches_path = entry.path_prefixes.is_empty()
+                    || path.is_some_and(|path| {
+                        entry
+                            .path_prefixes
+                            .iter()
+                            .any(|prefix| path.starts_with(prefix))
+                    });
+                if matches_path {
+                    if index == 0 {
+                        return Some(entry);
+                    }
+                    best = Some(best.map_or(index, |current| current.min(index)));
                 }
-                best = Some(best.map_or(index, |current| current.min(index)));
             }
             match label.find('.') {
                 Some(dot) => label = &label[dot + 1..],

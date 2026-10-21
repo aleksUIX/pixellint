@@ -40,6 +40,7 @@ VENDORS = {
     "microsoft": ("Microsoft Advertising", "search", ["bat.bing.com", "bat.bing.net", "c.clarity.ms", "www.clarity.ms"], "vendor/microsoft-uet"),
     "yahoo": ("Yahoo", "search", ["sp.analytics.yahoo.com", "s.yimg.com", "ads.yahoo.com", "batch.datax.yahoo.com"], "vendor/yahoo-dot"),
     "yandex": ("Yandex", "search", ["mc.yandex.ru", "mc.yandex.com", "an.yandex.ru"], None),
+    "yandex-adfox": ("Yandex Adfox", "video", ["yandex.ru"], None),
     "baidu": ("Baidu", "search", ["hm.baidu.com", "cpro.baidustatic.com"], "vendor/baidu"),
     "naver": ("Naver", "search", ["wcs.naver.net", "wcs.naver.com"], None),
 
@@ -56,6 +57,8 @@ VENDORS = {
     # Exact DISQO tracker attribution in official Roku and Edmunds partner lists.
     "disqo": ("DISQO", "measurement", ["track.activemetering.com"], None),
     "adctv": ("ADCTV", "video", ["track.adctv.com"], "vendor/adctv-tracker"),
+    "kimberlite": ("Kimberlite", "programmatic", ["kimberlite.io"], None),
+    "rtbhouse": ("RTB House", "programmatic", ["ams.creativecdn.com"], None),
 
     # Demand and supply side platforms
     "thetradedesk": ("The Trade Desk", "programmatic", ["insight.adsrvr.org", "js.adsrvr.org", "match.adsrvr.org"], "vendor/the-trade-desk"),
@@ -87,7 +90,7 @@ VENDORS = {
     "adobe_ecid": ("Adobe Experience Cloud ID Service", "identity", ["dpm.demdex.net"], "vendor/adobe-ecid"),
 
     # Verification and measurement
-    "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "rtb0.doubleverify.com"], "vendor/doubleverify"),
+    "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "tpsc-video.doubleverify.com", "rtb0.doubleverify.com"], "vendor/doubleverify"),
     "ias": ("Integral Ad Science", "verification", ["pixel.adsafeprotected.com", "static.adsafeprotected.com", "dt.adsafeprotected.com", "unified.adsafeprotected.com"], "vendor/ias"),
     "moat": ("Oracle Moat", "verification", ["px.moatads.com", "z.moatads.com", "js.moatads.com"], None),
     "nielsen": ("Nielsen", "measurement", ["audit.imrworldwide.com", "secure-dcr.imrworldwide.com", "secure-gl.imrworldwide.com"], "vendor/nielsen"),
@@ -152,6 +155,9 @@ VENDORS = {
 }
 
 
+PATH_PREFIXES = {"yandex-adfox": ["/adfox/"]}
+
+
 def resolves(host: str) -> bool:
     try:
         socket.getaddrinfo(host, 443, proto=socket.IPPROTO_TCP)
@@ -181,6 +187,8 @@ def main() -> None:
         }
         if rulepack:
             entry["rulepack"] = rulepack
+        if vendor in PATH_PREFIXES:
+            entry["path_prefixes"] = PATH_PREFIXES[vendor]
         entries.append(entry)
 
     directory = {"entries": entries}

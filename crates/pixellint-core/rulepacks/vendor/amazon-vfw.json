@@ -1,20 +1,20 @@
 {
   "id": "vendor/amazon-vfw",
   "display_name": "Amazon DSP Firefly DV measurement",
-  "description": "Amazon DSP Firefly viewability hops on vfw.amazon-adsystem.com /dv/, which wrap DoubleVerify measurement. Generated /dv/event.png and /dv/proxy tags always send vstevt. Generated /dv/proxy tags also send ctx, cmp, plc, and sid from the same dvparams Google documents on DoubleVerify wrappers. IAS /ias/ hops on the same host are not contracted. The Ad Tag loader is vendor/amazon-ads.",
+  "description": "Amazon DSP Firefly DoubleVerify measurement hops on vfw.amazon-adsystem.com/dv/event.png and /dv/proxy/sts.png. The measurement contract requires vstevt and validates supplied ctx, cmp, plc, and sid from DoubleVerify dvparams. Other /dv/ routes, including /dv/vtrk.doubleverify.com/ wrapper telemetry, are not covered by this pack. The proxy verification-error variant remains subject to the existing vstevt requirement pending an authoritative contract. IAS /ias/ hops on the same host are not contracted. The Ad Tag loader is vendor/amazon-ads.",
   "vendor": "amazon",
   "source_level": "ecosystem_reference",
   "docs": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers",
   "match": {
     "hosts": ["vfw.amazon-adsystem.com"],
-    "path_contains": ["/dv/"]
+    "paths": ["/dv/event.png", "/dv/proxy/sts.png"]
   },
   "params": [
     {
       "name": "vstevt",
       "requirement": "required",
       "format": { "kind": "non_empty" },
-      "description": "It is the Firefly viewability event code on Amazon-hosted DoubleVerify hops. Amazon documents DSP third-party verification with DoubleVerify, not this query; generated /dv/event.png and /dv/proxy tags always send vstevt, so an empty or missing value is a truncated wrapper.",
+      "description": "It is the Firefly viewability event code on the contracted /dv/event.png and /dv/proxy/sts.png measurement hops. The linked Amazon policy is ecosystem context, not a specification of this query. The existing measurement contract requires a non-empty value; proxy verification-error variants need a separate authoritative contract before that requirement can change.",
       "fix_hint": "Export the Firefly VAST again from Amazon DSP so vstevt is present on the /dv/ hop.",
       "doc": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers"
     },

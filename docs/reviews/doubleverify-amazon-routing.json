@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-20",
+  "review_kind": "Endpoint routing correction with unchanged parameter requiredness",
+  "spec_complete": false,
+  "sources_read": [
+    {
+      "url": "https://support.google.com/displayvideo/answer/2591756",
+      "authority": "Google Display & Video 360 documentation",
+      "supports": "The FlashTalking and DoubleVerify sample carries ctx, cmp, plc, and sid in dvparams.",
+      "does_not_establish": "Video endpoint hosts, vstevt requiredness, or the Amazon proxy verification-error contract."
+    },
+    {
+      "url": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers",
+      "authority": "Amazon Ads policy",
+      "supports": "Amazon restricts third-party ad technologies and publishes provider policy.",
+      "does_not_establish": "The wire format or required parameters of /dv/ measurement, telemetry, or error-proxy requests."
+    }
+  ],
+  "routing_evidence": {
+    "origin": "Aggregate inspection of the existing private generated-tracker corpus",
+    "retained_data": "Host names, fixed endpoint paths, parameter names, and counts only",
+    "doubleverify_unsuffixed": {
+      "host": "tpsc-video.doubleverify.com",
+      "event_png_count": 20,
+      "visit_jpg_count": 4,
+      "decision": "Add the exact host to the existing endpoint contracts. Parameter requirements remain unchanged."
+    },
+    "amazon_routes": [
+      {
+        "path": "/dv/event.png",
+        "count": 33,
+        "vstevt_present_count": 33,
+        "decision": "Retain the existing measurement contract on the exact path."
+      },
+      {
+        "path": "/dv/proxy/sts.png",
+        "count": 7,
+        "vstevt_present_count": 5,
+        "verification_error_variant_count": 2,
+        "decision": "Retain the existing measurement contract on the exact path. Do not infer an exception from observed frequency."
+      },
+      {
+        "path": "/dv/vtrk.doubleverify.com/",
+        "count": 6,
+        "observed_parameter_family": ["tid", "ec", "ea", "cid", "cd*", "cm*"],
+        "decision": "Exclude wrapper telemetry from the measurement contract. The vendor directory continues to expose missing rulepack coverage."
+      }
+    ]
+  },
+  "boundary_regressions": [
+    "The unsuffixed DoubleVerify host selects the same endpoint pack as supported regional hosts for URLs, VAST trackers, and captured GET requests.",
+    "Missing and empty required values retain their existing findings on the newly routed DoubleVerify host.",
+    "Exact endpoint filenames reject trailing suffixes, child paths, and unrelated parent paths.",
+    "Host lookalikes and unreviewed sibling domains do not select the DoubleVerify packs.",
+    "Amazon wrapper telemetry retains core privacy errors and reports uncovered vendor coverage.",
+    "Amazon missing-vstevt measurement requests and the unresolved proxy verification-error variant preserve the existing error."
+  ],
+  "missing_requirements": [
+    "An authoritative Amazon or DoubleVerify producer contract for /dv/proxy/sts.png verification-error requests that carry vasttrkevt and verr without vstevt.",
+    "An authoritative request schema for /dv/vtrk.doubleverify.com/ wrapper telemetry.",
+    "A primary specification for the existing generated video measurement requirements."
+  ]
+}

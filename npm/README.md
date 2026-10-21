@@ -30,6 +30,13 @@ const document = validateMany([
 document.summary.unique_artifacts; // 1
 ```
 
+`result.coverage` separates endpoint coverage from error findings. Its `status`
+is `vendor_checked`, `recognized_uncontracted` or `unrecognized`.
+`core_checks_ran` records core selection and `vendor_rulepacks` lists evaluated
+endpoint packs, including custom packs without vendor metadata. Each document,
+session or HAR artifact has the same field. `isOk(result)` still means no error
+findings, so show coverage alongside it when reporting validation results.
+
 Every finding carries a stable `code`, a `severity`, a `fix_hint`, the byte
 range it applies to, and the document it came from:
 

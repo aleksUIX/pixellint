@@ -96,6 +96,7 @@ pub struct AggregatedArtifact {
     pub raw_artifact: String,
     pub normalized_artifact: String,
     pub ok: bool,
+    pub coverage: crate::EndpointCoverage,
     pub summary: FindingCounts,
     pub reports: Vec<crate::ValidationReport>,
     pub occurrences: Vec<ArtifactOccurrence>,
@@ -378,6 +379,7 @@ impl Engine {
                 raw_artifact,
                 normalized_artifact,
                 ok: summary.is_ok(),
+                coverage: summary.coverage(),
                 summary: FindingCounts {
                     artifacts_total: None,
                     unique_artifacts: None,

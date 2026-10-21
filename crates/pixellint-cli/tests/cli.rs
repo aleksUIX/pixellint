@@ -112,6 +112,36 @@ fn json_output_is_parseable_and_reports_targets() {
 }
 
 #[test]
+fn endpoint_coverage_is_visible_in_text_and_json_without_changing_exit_codes() {
+    for (url, expected, exit) in [
+        (
+            "https://tpsc-video.doubleverify.com/event.png?vstevt=1",
+            "vendor_checked",
+            0,
+        ),
+        (
+            "https://unified.adsafeprotected.com/pixel.png?a=1",
+            "recognized_uncontracted",
+            0,
+        ),
+        ("https://unknown.example/pixel", "unrecognized", 0),
+        ("https://unknown.example/pixel?gdpr=NaN", "unrecognized", 1),
+    ] {
+        let (code, text, _) = run(&["validate", "url", url]);
+        assert_eq!(code, exit, "{text}");
+        assert!(
+            text.contains(&format!("coverage: {expected} (core checks: ran)")),
+            "{text}"
+        );
+        let (code, json, _) = run(&["validate", "url", url, "--json"]);
+        assert_eq!(code, exit);
+        let summary: serde_json::Value = serde_json::from_str(&json).unwrap();
+        assert_eq!(summary["coverage"]["status"], expected);
+        assert_eq!(summary["coverage"]["core_checks_ran"], true);
+    }
+}
+
+#[test]
 fn artifacts_can_be_read_from_a_file_or_stdin() {
     let fixture = repo_root().join("fixtures/core/clean-pixel.txt");
     let (code, _, stderr) = run(&["validate", "url", &format!("@{}", fixture.display())]);

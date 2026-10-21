@@ -1,0 +1,82 @@
+{
+  "review_date": "2026-10-20",
+  "scope": [
+    "unified.adsafeprotected.com/pixel.png",
+    "ad-events.flashtalking.com/ft.stat",
+    "vfw.amazon-adsystem.com/ias/ivt/"
+  ],
+  "decision": "Retain explicit directory attribution and core-only coverage. Do not claim a destination contract by selecting a neighboring pack or adding an identification-only manifest.",
+  "new_rulepacks": [],
+  "privacy": "Public sources and authored synthetic boundary inputs only. No captured identifiers, payload values or signed tracking URLs are included.",
+  "sources": [
+    {
+      "url": "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf",
+      "access": "reopened",
+      "source_level": "official_vendor",
+      "pages": [
+        4,
+        5
+      ],
+      "supported_scope": "The guide publishes /v2/{advertiser}/{publisher} MMT and /vevent/{event}/{advertiser}/{publisher} UVP templates, with external-session guidance for UVP and CTV pixels.",
+      "limitation": "No /pixel.png endpoint, a payload encoding, advEntityId/pubEntityId query contract or Amazon collector mapping is published in this guide. Its UVP requiredness cannot establish required fields on /pixel.png."
+    },
+    {
+      "url": "https://static.adsafeprotected.com/fw.js",
+      "access": "retrieved_and_inspected",
+      "source_level": "official_template",
+      "bytes": 324860,
+      "sha256": "82daa13daaa42f16b695f553ce9818d03b478cc922ec7b33e0020881b828a2dc",
+      "supported_scope": "The producer maps proxy partner 37103 to https://vfw.amazon-adsystem.com/ias/ivt/j for configuration lookup. Runtime request bases are supplied by the retrieved configuration or verification parameters.",
+      "limitation": "The downloaded asset has no literal pixel.png constructor. The configuration relay and generic request code do not establish /ias/ivt/u/pixel.png or /ias/ivt/fw/rfw/.../skeleton.gif field requirements."
+    },
+    {
+      "url": "https://static.adsafeprotected.com/main.19.8.267.js",
+      "access": "retrieved_and_inspected",
+      "source_level": "official_template",
+      "bytes": 201234,
+      "sha256": "33aa6d7c2684bf6b3ba88099443398c86d793d90ce5d96f5a45d27d748d336a6",
+      "supported_scope": "An older public IAS runtime supplies generic monitoring and enrichment transport helpers.",
+      "limitation": "No literal pixel.png or /ias/ivt/ constructor. Does not document the new collector fields."
+    },
+    {
+      "url": "https://cdn.flashtalking.com/frameworks/js/api/2/10/html5API.js",
+      "access": "retrieved_and_inspected",
+      "source_level": "official_template",
+      "bytes": 96407,
+      "sha256": "97fc5230d5cb8391cb09df4345a494801c20ca27ae5b75deb632acba3b28a774",
+      "supported_scope": "The HTML5 API sends creative tracker and click messages to its parent, and includes the separately contracted legacy /imp fallback.",
+      "limitation": "No ft.stat literal or raw positional collector constructor. JavaScript tracker messages do not define the parent transport's field positions, requiredness, event enumeration, signatures or session semantics."
+    },
+    {
+      "url": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers",
+      "access": "reopened",
+      "source_level": "official_vendor",
+      "publisher_updated_date": "2026-06-01",
+      "supported_scope": "Ad Verification Solutions identifies IAS, DoubleVerify and Adloox S2S integrations and instructs advertisers to obtain DSP-specific S2S measurement tags.",
+      "limitation": "The policy supplies no IAS collector URI, field table, payload encoding or per-request rejection contract. It cannot justify requiring the DV vstevt field on IAS hops."
+    }
+  ],
+  "remaining_requirements": [
+    {
+      "scope": "IAS /pixel.png and Amazon IAS /ivt/ collectors",
+      "needed_evidence": "A vendor collector contract or attributable public producer that constructs these exact endpoints, including a encoding, conditional identifiers, session fields and proxy-specific requirements."
+    },
+    {
+      "scope": "Flashtalking /ft.stat",
+      "needed_evidence": "The parent collector producer or vendor transport specification for its semicolon tuple, event codes, integrity fields and request/session conditions."
+    }
+  ],
+  "verification": {
+    "test_file": "crates/pixellint-core/tests/uncontracted_verification_routes.rs",
+    "synthetic_test_groups": 5,
+    "checks": [
+      "URL, VAST tracker and captured-request inputs expose directory.no_rulepack_coverage with the correct vendor and no selected vendor contract.",
+      "Opaque field values and positional tuples do not inherit unsupported sibling grammar or event enumerations.",
+      "Core GDPR errors and broken macro warnings remain active.",
+      "Existing /v2, /vevent, servedby /imp and Amazon DV event routes keep their own packs.",
+      "Host lookalikes receive no vendor attribution."
+    ],
+    "status": "passed",
+    "command": "cargo test -p pixellint-core --test uncontracted_verification_routes --offline"
+  }
+}

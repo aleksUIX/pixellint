@@ -70,6 +70,11 @@ Each unique extracted artifact should produce one aggregated artifact result.
   "raw_artifact": "https://example.com/pixel?id=1#frag",
   "normalized_artifact": "https://example.com/pixel?id=1#frag",
   "ok": true,
+  "coverage": {
+    "status": "unrecognized",
+    "core_checks_ran": true,
+    "vendor_rulepacks": []
+  },
   "summary": {
     "errors": 0,
     "warnings": 1,
@@ -88,6 +93,8 @@ Recommended fields:
 - `raw_artifact`: original extracted value
 - `normalized_artifact`: optional normalized value used for dedupe or downstream comparison
 - `ok`: whether any error-severity finding exists for this artifact
+- `coverage`: endpoint pack evaluation and core selection, independent of `ok`.
+  See [the coverage contract](VENDOR_DIRECTORY.md#coverage-is-separate-from-findings).
 - `summary`: per-artifact counts
 - `reports`: current Pixellint `ValidationReport[]`
 - `occurrences`: every place the artifact appeared in the source document

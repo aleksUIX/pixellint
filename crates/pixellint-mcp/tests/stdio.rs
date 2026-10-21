@@ -64,6 +64,42 @@ fn explicit_sessions_structured_report_and_input_errors() {
 }
 
 #[test]
+fn validation_exposes_endpoint_coverage_separately_from_validity() {
+    for (url, expected, ok) in [
+        (
+            "https://tpsc-video.doubleverify.com/event.png?vstevt=1",
+            "vendor_checked",
+            true,
+        ),
+        (
+            "https://unified.adsafeprotected.com/pixel.png?a=1",
+            "recognized_uncontracted",
+            true,
+        ),
+        (
+            "https://unknown.example/pixel?gdpr=NaN",
+            "unrecognized",
+            false,
+        ),
+    ] {
+        let responses = exchange(&[json!({
+            "jsonrpc":"2.0", "id":1, "method":"tools/call",
+            "params":{"name":"validate_artifact","arguments":{"artifact_kind":"url","artifact":url}}
+        })]);
+        let content = &responses[0]["result"]["structuredContent"];
+        assert_eq!(content["ok"], ok, "{responses:?}");
+        assert_eq!(content["coverage"]["status"], expected);
+        assert_eq!(content["coverage"]["core_checks_ran"], true);
+        assert!(
+            responses[0]["result"]["content"][0]["text"]
+                .as_str()
+                .unwrap()
+                .contains(expected)
+        );
+    }
+}
+
+#[test]
 fn initialize_reports_tools_capability_and_server_identity() {
     let responses = exchange(&[json!({
         "jsonrpc": "2.0",

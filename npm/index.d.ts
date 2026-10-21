@@ -71,6 +71,14 @@ export interface ValidationReport {
 
 export interface ValidationSummary {
   reports: ValidationReport[];
+  coverage: EndpointCoverage;
+}
+
+/** Local endpoint checks that actually ran, independent of validity. */
+export interface EndpointCoverage {
+  status: "vendor_checked" | "recognized_uncontracted" | "unrecognized";
+  core_checks_ran: boolean;
+  vendor_rulepacks: string[];
 }
 
 export interface RulePackMetadata {
@@ -87,6 +95,7 @@ export interface VendorEntry {
   display_name: string;
   category: string;
   hosts: string[];
+  path_prefixes?: string[];
   rulepack?: string | null;
 }
 
@@ -126,6 +135,7 @@ export interface AggregatedArtifact {
   raw_artifact: string;
   normalized_artifact: string;
   ok: boolean;
+  coverage: EndpointCoverage;
   summary: FindingCounts;
   reports: ValidationReport[];
   occurrences: ArtifactOccurrence[];

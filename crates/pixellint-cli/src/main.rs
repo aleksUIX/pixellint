@@ -127,7 +127,15 @@ fn run_list_vendors(args: &[String]) -> ExitCode {
             entry.display_name,
             entry.category,
             entry.rulepack.as_deref().unwrap_or("-"),
-            entry.hosts.join(",")
+            if entry.path_prefixes.is_empty() {
+                entry.hosts.join(",")
+            } else {
+                format!(
+                    "{} (path prefixes: {})",
+                    entry.hosts.join(","),
+                    entry.path_prefixes.join(",")
+                )
+            }
         );
     }
 
@@ -615,9 +623,22 @@ fn print_reports(reports: &[pixellint_core::ValidationReport]) -> (usize, usize,
 
 fn print_summary(summary: &ValidationSummary) {
     let (errors, warnings, infos) = print_reports(&summary.reports);
+    print_coverage(&summary.coverage());
     println!(
         "\n{errors} error(s), {warnings} warning(s), {infos} info message(s) across {} rulepack(s).",
         summary.reports.len()
+    );
+}
+
+fn print_coverage(coverage: &pixellint_core::EndpointCoverage) {
+    println!(
+        "coverage: {} (core checks: {})",
+        coverage.status.as_str(),
+        if coverage.core_checks_ran {
+            "ran"
+        } else {
+            "not run"
+        }
     );
 }
 
@@ -644,6 +665,7 @@ fn print_document(report: &DocumentReport) {
             artifact.normalized_artifact
         );
         print_reports(&artifact.reports);
+        print_coverage(&artifact.coverage);
     }
 
     println!(

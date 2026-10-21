@@ -858,11 +858,75 @@ impl ValidationReport {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ValidationSummary {
     pub reports: Vec<ValidationReport>,
+    pub coverage: EndpointCoverage,
+}
+
+/// Which endpoint-specific checks actually ran, independently of findings.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum EndpointCoverageStatus {
+    /// A selected endpoint-specific pack matched and ran. This includes custom
+    /// contracts whose optional vendor attribution metadata is omitted.
+    VendorChecked,
+    RecognizedUncontracted,
+    Unrecognized,
+}
+
+impl EndpointCoverageStatus {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::VendorChecked => "vendor_checked",
+            Self::RecognizedUncontracted => "recognized_uncontracted",
+            Self::Unrecognized => "unrecognized",
+        }
+    }
+}
+
+/// Coverage records applicable selected packs, independently of vendor
+/// attribution, findings, destination acceptance or specification completeness.
+/// Suppressed packs and explicit endpoint mismatches do not count as evaluated.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct EndpointCoverage {
+    pub status: EndpointCoverageStatus,
+    pub core_checks_ran: bool,
+    /// Applicable endpoint-specific pack IDs, including custom contracts.
+    pub vendor_rulepacks: Vec<String>,
+}
+
+impl EndpointCoverage {
+    fn from_evaluated(reports: &[ValidationReport], mut vendor_rulepacks: Vec<String>) -> Self {
+        vendor_rulepacks.sort_unstable();
+        vendor_rulepacks.dedup();
+        let status = if !vendor_rulepacks.is_empty() {
+            EndpointCoverageStatus::VendorChecked
+        } else if reports
+            .iter()
+            .any(|report| report.plugin_id == DIRECTORY_ID && report.detected_vendor.is_some())
+        {
+            EndpointCoverageStatus::RecognizedUncontracted
+        } else {
+            EndpointCoverageStatus::Unrecognized
+        };
+        EndpointCoverage {
+            status,
+            core_checks_ran: reports.iter().any(|report| report.plugin_id == "core"),
+            vendor_rulepacks,
+        }
+    }
 }
 
 impl ValidationSummary {
+    fn from_evaluated(reports: Vec<ValidationReport>, vendor_rulepacks: Vec<String>) -> Self {
+        let coverage = EndpointCoverage::from_evaluated(&reports, vendor_rulepacks);
+        Self { reports, coverage }
+    }
+
     pub fn is_ok(&self) -> bool {
         self.reports.iter().all(ValidationReport::is_ok)
+    }
+
+    pub fn coverage(&self) -> EndpointCoverage {
+        self.coverage.clone()
     }
 }
 
@@ -1119,6 +1183,15 @@ impl Engine {
         for plugin in &plugins {
             plugin.prepare_vendor_context(&mut prepared);
         }
+        let vendor_rulepacks = plugins
+            .iter()
+            .filter(|plugin| {
+                plugin.metadata().id != "core"
+                    && plugin.metadata().id != DIRECTORY_ID
+                    && plugin.supports_prepared(&prepared)
+            })
+            .map(|plugin| plugin.metadata().id.clone())
+            .collect::<Vec<_>>();
         let mut reports: Vec<ValidationReport> = plugins
             .into_iter()
             .map(|plugin| {
@@ -1138,11 +1211,12 @@ impl Engine {
             reports.insert(0, CoreRulePack::default().validate_prepared(&prepared));
         }
 
-        if let Some(report) = self.directory_report(&prepared, options, &reports) {
+        if let Some(report) = self.directory_report(&prepared, options, &reports, &vendor_rulepacks)
+        {
             reports.push(report);
         }
 
-        Ok(ValidationSummary { reports })
+        Ok(ValidationSummary::from_evaluated(reports, vendor_rulepacks))
     }
 
     fn rebuild_index(&mut self) {
@@ -1313,13 +1387,14 @@ impl Engine {
 
     /// Attributes an endpoint no rulepack claimed.
     ///
-    /// This runs only when nothing else detected a vendor: a matching vendor
-    /// pack is strictly better information than a directory hit.
+    /// This runs only when no applicable selected endpoint pack ran. A custom
+    /// pack also supplies coverage when its optional vendor metadata is absent.
     fn directory_report(
         &self,
         prepared: &PreparedArtifact<'_>,
         options: &ValidationOptions,
         reports: &[ValidationReport],
+        vendor_rulepacks: &[String],
     ) -> Option<ValidationReport> {
         if options.except_rulepacks.iter().any(|id| id == DIRECTORY_ID) {
             return None;
@@ -1331,25 +1406,30 @@ impl Engine {
             return None;
         }
 
-        if reports
-            .iter()
-            .any(|report| report.detected_vendor.is_some())
-        {
+        if !vendor_rulepacks.is_empty() {
             return None;
         }
 
         let artifact = prepared.trimmed();
         let host = prepared.url().and_then(|url| url.host.as_deref())?;
-        let entry = self.directory.lookup_host(host)?;
+        let entry = self
+            .directory
+            .lookup_endpoint(host, &prepared.url()?.path)?;
 
         let mut message = format!(
-            "This endpoint belongs to {} ({}). No Pixellint rulepack covers it, so only the core checks ran.",
+            "This endpoint belongs to {} ({}). No selected endpoint rulepack checked this request.",
             entry.display_name, entry.category
         );
 
+        message.push_str(if reports.iter().any(|report| report.plugin_id == "core") {
+            " Core checks ran."
+        } else {
+            " Core checks did not run."
+        });
+
         if let Some(rulepack) = &entry.rulepack {
             message.push_str(&format!(
-                " The `{rulepack}` rulepack covers other {} endpoints, not this one.",
+                " The directory lists `{rulepack}` for {}. It was not evaluated for this request.",
                 entry.display_name
             ));
         }

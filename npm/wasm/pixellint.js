@@ -209,7 +209,7 @@ function __wbg_get_imports() {
             const ret = new Object();
             return ret;
         },
-        __wbg_now_548ef14da7624652: function() {
+        __wbg_now_45429a8ef2f3443f: function() {
             const ret = Date.now();
             return ret;
         },

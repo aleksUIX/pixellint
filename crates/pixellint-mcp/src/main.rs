@@ -446,11 +446,12 @@ fn handle_validate_artifact(id: Value, arguments: Value, engine: &Engine) -> Val
                     "content": [{
                         "type": "text",
                         "text": format!(
-                            "Validation completed for {} with {} error(s), {} warning(s), and {} info message(s).",
+                            "Validation completed for {} with {} error(s), {} warning(s), and {} info message(s). Endpoint coverage: {}.",
                             args.artifact_kind,
                             counts.errors,
                             counts.warnings,
                             counts.infos,
+                            summary.coverage().status.as_str(),
                         )
                     }],
                     "structuredContent": {
@@ -459,6 +460,7 @@ fn handle_validate_artifact(id: Value, arguments: Value, engine: &Engine) -> Val
                         "detected_vendors": detected_vendors(&summary),
                         "expansion_state": expansion_state_label(expansion_state),
                         "ok": summary.is_ok(),
+                        "coverage": summary.coverage(),
                         "summary": {
                             "errors": counts.errors,
                             "warnings": counts.warnings,

@@ -310,7 +310,7 @@ for the complete inventory in your installed build.
 ### Vendor directory
 
 There are 166 vendor rulepacks across 87 vendors. The vendor directory
-covers additional hosts by attribution: 134 vendor rows and 326 hosts, so an unrecognized
+covers additional hosts by attribution: 137 vendor rows and 331 hosts, so an unrecognized
 pixel still gets a name. Full inventory: [docs/STANDARDS.md](docs/STANDARDS.md).
 
 The [per-pack depth audit](docs/RULEPACK_DEPTH_AUDIT.json) records reviewed
@@ -322,12 +322,17 @@ history remain explicit coverage limits.
 ```bash
 $ pixellint validate url 'https://trc.taboola.com/actions?a=1'
 rulepack: directory (vendor: taboola)
-  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No Pixellint rulepack covers it, so only the core checks ran. The `vendor/taboola` rulepack covers other Taboola endpoints, not this one.
+  info  directory.no_rulepack_coverage  This endpoint belongs to Taboola (native). No selected endpoint rulepack checked this request. Core checks ran. The directory lists `vendor/taboola` for Taboola. It was not evaluated for this request.
 ```
 
 Directory entries make one claim, that a host belongs to a vendor. They carry
 no parameter contracts, the finding is always `info`, and attribution never
 changes an exit code. See [docs/VENDOR_DIRECTORY.md](docs/VENDOR_DIRECTORY.md).
+
+Validation results also expose `coverage.status`: `vendor_checked`,
+`recognized_uncontracted` or `unrecognized`, plus whether core checks ran and
+the evaluated endpoint pack IDs. Display coverage alongside findings. An
+error-free core-only result does not establish vendor validation.
 
 ```bash
 pixellint list-vendors

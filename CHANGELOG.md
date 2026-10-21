@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.45.0 (2026-10-20)
+
+- Expose endpoint coverage independently of findings through Rust, CLI, MCP,
+  WASM and npm, including captured requests and each document artifact.
+- Route the unsuffixed DoubleVerify video host and the official Google IMA
+  live interaction endpoints to their existing contracts, with exact path
+  boundaries and regression fixtures.
+- Restrict Amazon DoubleVerify measurement checks to the contracted event and
+  proxy paths. Unsupported wrapper telemetry retains core checks and explicit
+  directory coverage information.
+- Attribute Kimberlite, the observed RTB House tracker host and Yandex Adfox.
+  Shared-host Adfox attribution respects normalized path boundaries.
+- Add public Rust `coverage` fields to `ValidationSummary` and
+  `AggregatedArtifact`, and `path_prefixes` to `VendorEntry`. Rust struct
+  literals must supply these fields. Existing directory JSON remains valid.
+
 ## 0.44.2 - 2026-10-20
 
 - **`serde_json` 1.0.151 → 1.0.154**: dependency update.

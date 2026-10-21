@@ -197,14 +197,15 @@ impl Engine {
             binary_body,
         }) = capture
         else {
-            return Ok(ValidationSummary {
-                reports: vec![core_report(vec![request_violation(
+            return Ok(ValidationSummary::from_evaluated(
+                vec![core_report(vec![request_violation(
                     "invalid_envelope",
                     None,
                     "A request capture needs string url and method, headers as an object or name/value list, and at most one raw string body or string body_base64. Availability declarations must agree with body presence.",
                     Severity::Error,
                 )])],
-            });
+                Vec::new(),
+            ));
         };
         let url_request = ValidationRequest {
             artifact_kind: ArtifactKind::Url,
@@ -288,6 +289,15 @@ impl Engine {
         for entry in &plugins {
             entry.plugin.prepare_vendor_context(&mut prepared);
         }
+        let vendor_rulepacks = plugins
+            .iter()
+            .filter(|entry| {
+                entry.plugin.metadata().id != "core"
+                    && entry.plugin.metadata().id != DIRECTORY_ID
+                    && entry.plugin.supports_http(&prepared)
+            })
+            .map(|entry| entry.plugin.metadata().id.clone())
+            .collect::<Vec<_>>();
         let mut sdk_violations = Vec::new();
         let content_types: Vec<_> = header_lines(&capture.headers)
             .into_iter()
@@ -391,7 +401,8 @@ impl Engine {
                 reports.insert(0, core_report(input_violations));
             }
         }
-        if let Some(report) = self.directory_report(&prepared, options, &reports) {
+        if let Some(report) = self.directory_report(&prepared, options, &reports, &vendor_rulepacks)
+        {
             reports.push(report);
         }
         // Normalized JSON and decoded-body byte ranges are not capture ranges.
@@ -427,7 +438,7 @@ impl Engine {
                 }
             }
         }
-        Ok(ValidationSummary { reports })
+        Ok(ValidationSummary::from_evaluated(reports, vendor_rulepacks))
     }
 }
 

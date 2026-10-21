@@ -87,7 +87,7 @@ assert.equal(vendorForHost("nobody.example"), null);
 
 // Both npm entry points must use the refreshed engine for live VAST findings.
 const cjs = createRequire(import.meta.url)("./index.cjs");
-for (const entry of [{ validate, vendorForHost }, cjs]) {
+for (const entry of [{ validate, validateMany, vendorForHost }, cjs]) {
   for (const [artifact, pack, code] of [
     ["https://googleads4.g.doubleclick.net/pcs/view?xai=x&sai=y", "vendor/google-cm360-pcs-view", "vendor.google-cm360-pcs-view.param.sig.missing"],
     ["https://track.adctv.com/", "vendor/adctv-tracker", "vendor.adctv-tracker.param.event.missing"],
@@ -115,6 +115,70 @@ for (const entry of [{ validate, vendorForHost }, cjs]) {
   assert.ok(redacted.reports.every(report => report.violations.every(finding => finding.severity !== "error")));
   const hashedIp = entry.validate(JSON.stringify({ api_key: "synthetic-project", event: "$pageview", distinct_id: "synthetic-user", properties: { $ip: "a".repeat(64) } }), { kind: "json" });
   assert.ok(hashedIp.reports.flatMap(report => report.violations).some(finding => finding.severity === "error" && finding.code === "vendor.posthog.body.hashed_plaintext_field"));
+
+  // Coverage describes the contracts that ran, independently of findings.
+  for (const [artifact, pack] of [
+    ["https://tpsc-video.doubleverify.com/event.png?vstevt=4&dup=synthetic-impression", "vendor/doubleverify-event"],
+    ["https://tpsc-video.doubleverify.com/visit.jpg?ctx=12345&cmp=12345&plc=12345&sid=12345", "vendor/doubleverify"],
+    ["https://pubads.g.doubleclick.net/pagead/live/interaction?ai=synthetic-ai&sigh=synthetic-signature&label=synthetic-event", "vendor/google-ima-interaction"],
+  ]) {
+    const result = entry.validate(artifact, { kind: "vast" });
+    assert.deepEqual(result.coverage, { status: "vendor_checked", core_checks_ran: true, vendor_rulepacks: [pack] });
+    assert.equal(isOk(result), true);
+    assert.deepEqual(result.reports.flatMap(report => report.violations), [], "covered clean endpoints can have no findings");
+  }
+  assert.equal(entry.vendorForHost("tpsc-video.doubleverify.com")?.vendor, "doubleverify");
+  const dvMissing = entry.validate("https://tpsc-video.doubleverify.com/event.png", { kind: "vast" });
+  assert.equal(dvMissing.coverage.status, "vendor_checked");
+  assert.ok(dvMissing.reports.flatMap(report => report.violations).some(finding => finding.code === "vendor.doubleverify-event.param.vstevt.missing"));
+
+  const knownCoreOnly = "https://unified.adsafeprotected.com/pixel.png";
+  const unknownCoreOnly = "https://unrecognized.example/pixel";
+  for (const [artifact, status] of [[knownCoreOnly, "recognized_uncontracted"], [unknownCoreOnly, "unrecognized"]]) {
+    const result = entry.validate(artifact);
+    assert.deepEqual(result.coverage, { status, core_checks_ran: true, vendor_rulepacks: [] });
+    assert.equal(isOk(result), true, "coverage does not invent validation errors");
+    const invalidPrivacy = entry.validate(`${artifact}?gdpr=invalid`);
+    assert.equal(invalidPrivacy.coverage.status, status, "coverage is independent of validation success");
+    assert.ok(invalidPrivacy.reports.flatMap(report => report.violations).some(finding => finding.code === "core.privacy.gdpr_invalid"));
+    assert.equal(isOk(invalidPrivacy), false);
+  }
+  const capturedUnknown = entry.validate(JSON.stringify({ url: unknownCoreOnly, method: "GET", headers: {} }), { kind: "request" });
+  assert.deepEqual(capturedUnknown.coverage, { status: "unrecognized", core_checks_ran: true, vendor_rulepacks: [] });
+
+  const endpointDocument = entry.validateMany({ artifacts: [
+    { artifact: unknownCoreOnly },
+    { artifact: knownCoreOnly },
+    { artifact: "https://tpsc-video.doubleverify.com/event.png?vstevt=4" },
+  ] });
+  assert.deepEqual(endpointDocument.artifacts.map(artifact => artifact.coverage), [
+    { status: "unrecognized", core_checks_ran: true, vendor_rulepacks: [] },
+    { status: "recognized_uncontracted", core_checks_ran: true, vendor_rulepacks: [] },
+    { status: "vendor_checked", core_checks_ran: true, vendor_rulepacks: ["vendor/doubleverify-event"] },
+  ], "document artifacts preserve each endpoint's coverage");
+
+  assert.equal(entry.vendorForHost("yandex.ru"), null, "path-scoped Adfox attribution requires a URL");
+  const adfox = entry.validate("https://yandex.ru/adfox/123456/event");
+  assert.equal(adfox.coverage.status, "recognized_uncontracted");
+  assert.equal(adfox.reports.find(report => report.plugin_id === "directory")?.detected_vendor, "yandex-adfox");
+  const normalizedAdfox = entry.validate("https://yandex.ru/other/../adfox/123456/event");
+  assert.equal(normalizedAdfox.coverage.status, "recognized_uncontracted", "Adfox attribution uses the requested normalized path");
+  for (const artifact of [
+    "https://yandex.ru/search",
+    "https://yandex.ru/search?redirect=/adfox/123456/event",
+    "https://yandex.ru/adfoxtest/123456/event",
+    "https://yandex.ru/adfox/../search",
+    "https://yandex.ru/adfox/%2e%2e/search",
+  ]) {
+    const result = entry.validate(artifact);
+    assert.equal(result.coverage.status, "unrecognized", "Adfox attribution stays within its path boundary");
+    assert.ok(result.reports.every(report => report.plugin_id !== "directory"));
+  }
+
+  const amazonTelemetry = entry.validate("https://vfw.amazon-adsystem.com/dv/vtrk.doubleverify.com/?tid=synthetic&ec=vast&ea=complete&cid=synthetic-impression", { kind: "vast" });
+  assert.deepEqual(amazonTelemetry.reports.map(report => report.plugin_id), ["core", "directory"]);
+  assert.deepEqual(amazonTelemetry.coverage, { status: "recognized_uncontracted", core_checks_ran: true, vendor_rulepacks: [] });
+  assert.deepEqual(amazonTelemetry.reports.flatMap(report => report.violations.map(finding => finding.code)), ["directory.no_rulepack_coverage"]);
 }
 assert.match(version(), /^\d+\.\d+\.\d+$/);
 assert.equal(version(), JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version, "the bundled engine must match the package version");

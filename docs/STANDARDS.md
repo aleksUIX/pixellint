@@ -1465,11 +1465,11 @@ Path captures: `/iu3/conversion/(?<advertiser_id>[^/]+)\.js`. Captured values ta
 
 ## `vendor/amazon-vfw`
 
-Amazon DSP Firefly viewability hops on vfw.amazon-adsystem.com /dv/, which wrap DoubleVerify measurement. Generated /dv/event.png and /dv/proxy tags always send vstevt. Generated /dv/proxy tags also send ctx, cmp, plc, and sid from the same dvparams Google documents on DoubleVerify wrappers. IAS /ias/ hops on the same host are not contracted. The Ad Tag loader is vendor/amazon-ads.
+Amazon DSP Firefly DoubleVerify measurement hops on vfw.amazon-adsystem.com/dv/event.png and /dv/proxy/sts.png. The measurement contract requires vstevt and validates supplied ctx, cmp, plc, and sid from DoubleVerify dvparams. Other /dv/ routes, including /dv/vtrk.doubleverify.com/ wrapper telemetry, are not covered by this pack. The proxy verification-error variant remains subject to the existing vstevt requirement pending an authoritative contract. IAS /ias/ hops on the same host are not contracted. The Ad Tag loader is vendor/amazon-ads.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/amazon-vfw.json).
 
-Matcher: `{"hosts":["vfw.amazon-adsystem.com"],"path_contains":["/dv/"]}`.
+Matcher: `{"hosts":["vfw.amazon-adsystem.com"],"paths":["/dv/event.png","/dv/proxy/sts.png"]}`.
 
 ### URL parameters
 
@@ -4086,11 +4086,11 @@ Path captures: `/(?<api_key>[^/]*)/loader\.js`. Captured values take precedence 
 
 ## `vendor/doubleverify-event`
 
-DoubleVerify video quartile and player-event beacons on tpsc-video-*.doubleverify.com/event.png and tps.doubleverify.com/event.png. Generated wrappers always send vstevt. Impression visit.jpg hops stay vendor/doubleverify. Amazon-hosted /dv/ hops stay vendor/amazon-vfw.
+DoubleVerify video quartile and player-event beacons on /event.png at tps.doubleverify.com, tpsc-video.doubleverify.com, and the listed regional tpsc-video hosts. Generated measurement event wrappers send vstevt. Impression visit.jpg hops stay vendor/doubleverify. Amazon-hosted measurement event and proxy hops stay vendor/amazon-vfw.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/doubleverify-event.json).
 
-Matcher: `{"hosts":["tps.doubleverify.com","tpsc-video-as.doubleverify.com","tpsc-video-eu.doubleverify.com","tpsc-video-ue.doubleverify.com","tpsc-video-uw.doubleverify.com"],"path_prefixes":["/event.png"]}`.
+Matcher: `{"hosts":["tps.doubleverify.com","tpsc-video.doubleverify.com","tpsc-video-as.doubleverify.com","tpsc-video-eu.doubleverify.com","tpsc-video-ue.doubleverify.com","tpsc-video-uw.doubleverify.com"],"paths":["/event.png"]}`.
 
 ### URL parameters
 
@@ -4101,11 +4101,11 @@ Matcher: `{"hosts":["tps.doubleverify.com","tpsc-video-as.doubleverify.com","tps
 
 ## `vendor/doubleverify`
 
-DoubleVerify impression beacons on tps.doubleverify.com/visit.jpg and tpsc-video-*.doubleverify.com/visit.jpg. Google documents ctx, cmp, plc, and sid on the generated FlashTalking and DoubleVerify wrapper as dvparams. Those names ride on visit.jpg. Generated video wrappers also send vstevt on visit.jpg. Quartile event.png hops are vendor/doubleverify-event. OMID dvtp_src.js, RTB, and VAST wrappers are not contracted. Amazon-hosted /dv/ hops stay vendor/amazon-vfw.
+DoubleVerify impression beacons on /visit.jpg at tps.doubleverify.com, tpsc-video.doubleverify.com, and the listed regional tpsc-video hosts. Google documents ctx, cmp, plc, and sid on the generated FlashTalking and DoubleVerify wrapper as dvparams. Those names ride on visit.jpg. Generated video wrappers also send vstevt on visit.jpg. Quartile event.png hops are vendor/doubleverify-event. OMID dvtp_src.js, RTB, and VAST wrappers are not contracted. Amazon-hosted measurement event and proxy hops stay vendor/amazon-vfw.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/doubleverify.json).
 
-Matcher: `{"hosts":["tps.doubleverify.com","tpsc-video-as.doubleverify.com","tpsc-video-eu.doubleverify.com","tpsc-video-ue.doubleverify.com","tpsc-video-uw.doubleverify.com"],"path_prefixes":["/visit.jpg"]}`.
+Matcher: `{"hosts":["tps.doubleverify.com","tpsc-video.doubleverify.com","tpsc-video-as.doubleverify.com","tpsc-video-eu.doubleverify.com","tpsc-video-ue.doubleverify.com","tpsc-video-uw.doubleverify.com"],"paths":["/visit.jpg"]}`.
 
 ### URL parameters
 
@@ -5233,11 +5233,11 @@ Matcher: `{"hosts":["googleads4.g.doubleclick.net"],"paths":["/pcs/view"]}`.
 
 ## `vendor/google-ima-interaction`
 
-Interaction URLs returned by the official Google IMA single-inline sample tag. Missing generated ai, sigh or event label is a template completeness advisory. Opaque signatures, additional server variants and session correctness are outside these locally observable checks.
+Interaction URLs returned by the official Google IMA single-inline sample ad unit through its standard and live ad producers. Missing generated ai, sigh or event label is a template completeness advisory. Opaque signatures, additional server variants and session correctness are outside these locally observable checks.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/google-ima-interaction.json).
 
-Matcher: `{"hosts":["pubads.g.doubleclick.net"],"paths":["/pagead/interaction","/pagead/interaction/"]}`.
+Matcher: `{"hosts":["pubads.g.doubleclick.net"],"paths":["/pagead/interaction","/pagead/interaction/","/pagead/live/interaction","/pagead/live/interaction/"]}`.
 
 ### URL parameters
 
