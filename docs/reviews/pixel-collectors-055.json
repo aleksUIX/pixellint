@@ -1,0 +1,107 @@
+{
+  "review_date": "2026-10-21",
+  "version": "0.55.0",
+  "new_rulepacks": [],
+  "deepened_rulepacks": [
+    "vendor/google-ads-conversion",
+    "vendor/kevel"
+  ],
+  "sources": {
+    "google-async.js": {
+      "url": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "0f225af3765918d95a97fea066b63ab9a26b7f115adea643f7aeba46b50da9ed",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "google-clicks.html": {
+      "url": "https://support.google.com/google-ads/answer/6331304?hl=en",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "67dd4cdfcb9b096bc098dd300d50bd452db97ced116e983aecd80d4718737375",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "kevel-response.md": {
+      "url": "https://dev.kevel.com/reference/response.md",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "4cda789810cd36c56c19161959ff102d5feda74eed00d50d4a94971399d1a9b5",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "kevel-metadata.md": {
+      "url": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks.md",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "af1765ffca028e16affad1e10d6f934091bdf30586ec129a69a8d8ab58e4a7cf",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "kevel-tracking.md": {
+      "url": "https://dev.kevel.com/docs/tracking-overview.md",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "cf44f353dba866e2a3244dcf95a8364139e47c56079c7c8ca136854394cce6de",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "kevel-proxy.md": {
+      "url": "https://dev.kevel.com/docs/proxying-impressions-through-your-own-server.md",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "ea9790efff42b31ba62fb2aec95d8150fa5a8bc329d3f899abfe3b0b132997f6",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "kevel-conversions.md": {
+      "url": "https://dev.kevel.com/docs/server-to-server-conversion-tracking2.md",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "5be9dd304a1b023e3f372c03d07cd0c48553d6231b69b04ba2b84173b492eea3",
+      "snapshot_kind": "original downloaded bytes"
+    }
+  },
+  "scope_limits": {
+    "google-ads-conversion": [
+      "Only the exact conversion and viewthroughconversion route families on the existing host suffixes are selected. gtag, first-party, CCM, privacy sandbox, server APIs and other endpoints need separate reviews.",
+      "New checks are advisory and require both cv=9 and async=1. They describe a pinned producer snapshot, not a complete receiver contract. Additional parameter hooks and URL processors can override producer output. Legacy and future producers are not assigned this profile.",
+      "Signed and exponent values are permitted within this profile. Legacy value checks remain. A conversion-action label is not required on remarketing. The pack makes no inference about configured conversion actions or accounting policies.",
+      "URL, referrer and top-frame fields are checked only for the producer 512 UTF-16-unit truncation bound. Custom schemes, incomplete URLs and arbitrary custom data escaping remain opaque.",
+      "Configured order IDs, user IDs, custom-data fields, currency/account eligibility, tag consent state, cookies, attribution, deduplication, delivery, redirects, and collector acceptance need external evidence. No timestamp age or global privacy flag requirement is invented."
+    ],
+    "kevel": [
+      "Only the existing /i.gif, /e.gif and /r routes are selected. The separate /conv/{id} API remains explicitly uncovered. It has distinct empty-value and duplicate-parameter semantics that must not inherit event-shim requirements.",
+      "New event multiplier checks are advisory and use the two documented inclusive numeric ranges. The source does not explicitly require integers. Fractions within each interval are allowed; JSON decimal and exponent spelling is accepted without claiming receiver parser equivalence.",
+      "Event multiplier placement override and revenue effects are not recomputed from a single pixel. Override revenue is not assumed to scale with the multiplier.",
+      "Bare and empty noredirect flags remain accepted. Shim and signature authenticity, expiry, bot filtering, impression/click deduplication, trusted client forwarding, configured metadata and delivery require external context."
+    ]
+  },
+  "golden_cases": 173,
+  "producer_controls": {
+    "producer_sha256": "0f225af3765918d95a97fea066b63ab9a26b7f115adea643f7aeba46b50da9ed",
+    "executions": 15,
+    "requests": 15,
+    "all_requests_intercepted": true,
+    "collector_requests_sent": 0,
+    "scenarios": [
+      "basic",
+      "remarketing",
+      "no-label",
+      "zero-value",
+      "negative-value",
+      "custom-data",
+      "no-personalization",
+      "remarketing-no-label",
+      "empty-values",
+      "exponent-value",
+      "privacy-flags",
+      "order-id",
+      "url-overrides",
+      "custom-escaping",
+      "fractional-snippet"
+    ],
+    "result": "Original pinned Google script executed in Chromium. Synthetic page and all resulting requests intercepted. This proves emitted format, not remote acceptance."
+  },
+  "review_notes": [
+    "No raw vendor source or article snapshot is distributed. URLs and hashes identify local review evidence.",
+    "Numeric interval format reuses exact numeric-text comparisons. Empty lists and reversed/non-comparable endpoints are rejected at load. Existing format branches are unchanged and checked by the full native suite.",
+    "Reviewed shared artifact hashes are refreshed for additive format support; each unrelated vendor retains its own source review and remaining requirements.",
+    "New fields are added only where the source supplies a concrete constraint. Opaque custom data and IDs are not counted as new checks."
+  ]
+}

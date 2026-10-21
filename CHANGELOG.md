@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.55.0
+
+- Deepen Google Ads conversion and remarketing pixels with scoped async producer advice for privacy flags, numeric metadata, frame and transport markers, language slices, and truncated URL lengths.
+- Preserve signed and exponent-form async conversion values and remarketing without a conversion-action label. Keep legacy and future producer profiles separate.
+- Check Kevel event multipliers against both documented inclusive ranges using exact decimal comparisons. Keep negative and fractional values within those ranges valid.
+- Add reusable numeric interval formats, intercepted producer controls, boundary fixtures, cross-artifact checks and fresh source reviews. Vendor specification completeness is not claimed.
+
 ## 0.54.0 (2026-10-21)
 
 - Deepen iSpot conversion pixels with documented general, retail and automotive field limits, amount precision, five-value dashboard custom data and optional IP/time forwarding syntax.

@@ -5206,25 +5206,61 @@ Context: `{}`.
 
 ## `vendor/google-ads-conversion`
 
-Google Ads conversion and view-through conversion image pixels, whose conversion ID rides on the path.
+Google Ads conversion and remarketing pixels on the exact /pagead/conversion/{id} and /pagead/viewthroughconversion/{id} route families. Legacy checks retain their profile; new advice follows the pinned cv=9, async=1 JavaScript producer. Remarketing does not require a conversion label. Other Google tag transports and receiver acceptance remain outside this review.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/google-ads-conversion.json).
 
-Matcher: `{"host_suffixes":["googleadservices.com","googleads.g.doubleclick.net"],"path_contains":["/pagead/conversion","/pagead/viewthroughconversion"]}`.
+Matcher: `{"host_suffixes":["googleadservices.com","googleads.g.doubleclick.net"],"path_patterns":["^/pagead/(?:viewthrough)?conversion(?:/[^/]*)?/?$"]}`.
 
-Path captures: `/pagead/(?:viewthrough)?conversion/(?<conversion_id>[^/?]*)`. Captured values take precedence over query keys with the same name.
+Path captures: `^/pagead/(?<tracking_route>conversion\|viewthroughconversion)(?:/(?<conversion_id>[^/]*))?/?$`. Captured values take precedence over query keys with the same name.
 
 ### URL parameters
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `conversion_id` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
-| `label` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
-| `value` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(\\.[0-9]+)?$"}}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
+| `label` | recommended | `{"format":{"kind":"non_empty"},"condition":{"kind":"value_in","param":"tracking_route","values":["conversion"]}}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
+| `value` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(\\.[0-9]+)?$"},"condition":{"kind":"not","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]}}}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
 | `currency_code` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{3}$"}}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
 | `ord` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
 | `guid` | optional | `{"format":{"kind":"enum","values":["ON"]},"format_severity":"warning"}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
 | `script` | optional | `{"format":{"kind":"enum","values":["0"]},"format_severity":"warning"}` | [official_vendor](https://support.google.com/tagassistant/answer/2947038) |
+| `tracking_route` | optional | `{}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `cv` | optional | `{}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `async` | optional | `{}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `random` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"integer"}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `fst` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"integer"}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `u_h` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"integer"}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `u_w` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"integer"}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `num` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"minimum":1}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `tfcd` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `tfua` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `npa` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `rdp` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `uaw` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `frm` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["0","1","2"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `ig` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["1"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `fmt` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["4"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `rfmt` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"format":{"kind":"enum","values":["3"]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `url` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"max_utf16_length":512,"allow_empty":true}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `ref` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"max_utf16_length":512,"allow_empty":true}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `top` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"max_utf16_length":512,"allow_empty":true}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `hl` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"min_length":2,"max_length":2}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `gl` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]},"min_length":2,"max_length":2}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.google-ads-conversion.async.value.numeric` | `{"kind":"format","param":"value","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"condition":{"kind":"all","conditions":[{"kind":"value_in","param":"cv","values":["9"]},{"kind":"value_in","param":"async","values":["1"]}]}}` | warning | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"severity":"warning","format":{"kind":"enum","values":["GET"]},"condition":{"kind":"all","conditions":[{"kind":"value_in","param":"query.cv","values":["9"]},{"kind":"value_in","param":"query.async","values":["1"]}]}}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `query.cv` | optional | `{}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
+| `query.async` | optional | `{}` | [official_vendor](https://www.googleadservices.com/pagead/conversion_async.js) |
 
 ## `vendor/google-analytics-collect`
 
@@ -6755,7 +6791,7 @@ Matcher: `{"hosts":["secure.insightexpressai.com"],"path_prefixes":["/adServer/a
 
 ## `vendor/kevel`
 
-Kevel impression, custom-event and click tracking URLs on e-{networkId}.adzerk.net/i.gif, /e.gif and /r. Published shim/signature and optional revenue or merchandising metadata are checked; response redirects, impression expiry and click deduplication need runtime context.
+Kevel impression, custom-event and click tracking URLs on e-{networkId}.adzerk.net/i.gif, /e.gif and /r. Published shim/signature and optional revenue or merchandising metadata are checked; response redirects, impression expiry and click deduplication need runtime context. Optional event multipliers receive advice for the published disjoint numeric ranges, preserving negative values and fractional values whose magnitude is at least one. The separate /conv/{id} API is not selected.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/kevel.json).
 
@@ -6767,22 +6803,23 @@ Path captures: `^/(?<tracking_route>i\.gif\|e\.gif\|r)$`. Captured values take p
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `e` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server) |
-| `s` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server) |
-| `override` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `additional` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `gmv` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `productId` | optional | `{"format":{"kind":"regex","pattern":"^[^,]+(?:,[^,]+){0,9}$"}}` | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `component` | optional | `{"format":{"kind":"regex","pattern":"^[^,]+(?:,[^,]+){0,9}$"}}` | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `position` | optional | `{"format":{"kind":"regex","pattern":"^[^,]+(?:,[^,]+){0,9}$"}}` | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `tracking_route` | optional | `{}` | [official_vendor](https://dev.kevel.com/hc/docs/tracking-overview) |
+| `e` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://dev.kevel.com/docs/proxying-impressions-through-your-own-server) |
+| `s` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://dev.kevel.com/docs/proxying-impressions-through-your-own-server) |
+| `override` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `additional` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `gmv` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `productId` | optional | `{"format":{"kind":"regex","pattern":"^[^,]+(?:,[^,]+){0,9}$"}}` | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `component` | optional | `{"format":{"kind":"regex","pattern":"^[^,]+(?:,[^,]+){0,9}$"}}` | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `position` | optional | `{"format":{"kind":"regex","pattern":"^[^,]+(?:,[^,]+){0,9}$"}}` | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `tracking_route` | optional | `{}` | [official_vendor](https://dev.kevel.com/docs/tracking-overview) |
+| `eventMultiplier` | optional | `{"severity":"warning","format":{"kind":"numeric_ranges","ranges":[{"minimum":-100000000,"maximum":-1},{"minimum":1,"maximum":100000000}]}}` | [official_vendor](https://dev.kevel.com/reference/response#event-multipliers) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
-| `vendor.kevel.query_too_long` | `{"kind":"max_query_length","max_length":1024}` | error | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `vendor.kevel.click.productId.single` | `{"kind":"format","param":"productId","format":{"kind":"regex","pattern":"^[^,]+$"},"condition":{"kind":"value_in","param":"tracking_route","values":["r"]}}` | error | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `vendor.kevel.click.component.single` | `{"kind":"format","param":"component","format":{"kind":"regex","pattern":"^[^,]+$"},"condition":{"kind":"value_in","param":"tracking_route","values":["r"]}}` | error | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
-| `vendor.kevel.click.position.single` | `{"kind":"format","param":"position","format":{"kind":"regex","pattern":"^[^,]+$"},"condition":{"kind":"value_in","param":"tracking_route","values":["r"]}}` | error | [official_vendor](https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks) |
+| `vendor.kevel.query_too_long` | `{"kind":"max_query_length","max_length":1024}` | error | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `vendor.kevel.click.productId.single` | `{"kind":"format","param":"productId","format":{"kind":"regex","pattern":"^[^,]+$"},"condition":{"kind":"value_in","param":"tracking_route","values":["r"]}}` | error | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `vendor.kevel.click.component.single` | `{"kind":"format","param":"component","format":{"kind":"regex","pattern":"^[^,]+$"},"condition":{"kind":"value_in","param":"tracking_route","values":["r"]}}` | error | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
+| `vendor.kevel.click.position.single` | `{"kind":"format","param":"position","format":{"kind":"regex","pattern":"^[^,]+$"},"condition":{"kind":"value_in","param":"tracking_route","values":["r"]}}` | error | [official_vendor](https://dev.kevel.com/docs/metadata-on-impressions-and-clicks) |
 
 ### Complete HTTP contract 1
 
@@ -6790,9 +6827,9 @@ Context: `{}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `path` | optional | `{}` | [official_vendor](https://dev.kevel.com/hc/docs/tracking-overview) |
-| `method` | required | `{"format":{"kind":"enum","values":["GET","POST"]},"condition":{"kind":"value_in","param":"path","values":["/i.gif","/r"]}}` | [official_vendor](https://dev.kevel.com/hc/docs/tracking-overview) |
-| `headers.user-agent` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://dev.kevel.com/hc/docs/tracking-overview) |
+| `path` | optional | `{}` | [official_vendor](https://dev.kevel.com/docs/tracking-overview) |
+| `method` | required | `{"format":{"kind":"enum","values":["GET","POST"]},"condition":{"kind":"value_in","param":"path","values":["/i.gif","/r"]}}` | [official_vendor](https://dev.kevel.com/docs/tracking-overview) |
+| `headers.user-agent` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://dev.kevel.com/docs/tracking-overview) |
 
 ## `vendor/klaviyo`
 

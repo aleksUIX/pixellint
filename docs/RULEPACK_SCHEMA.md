@@ -227,6 +227,7 @@ defect.
 | --- | --- | --- |
 | `non_empty` | | the value is not empty |
 | `integer` | `min_digits`, `max_digits` | the value is all ASCII digits within the bounds |
+| `numeric_ranges` | nonempty `ranges` of inclusive `minimum`, `maximum` endpoints | a JSON numeric value lies in at least one permitted interval, without floating-point rounding |
 | `enum` | `values`, `case_insensitive` | the value is in `values` |
 | `regex` | `pattern` | the pattern matches; compiled at load time |
 | `url` | `require_https` | the percent-decoded value parses as an absolute URL |
@@ -241,6 +242,8 @@ defect.
 | `adobe_products` | none | Adobe product rows, required names, UTF-8 byte limits, numeric cells, and merchandising event/eVar grammar |
 | `adobe_events` | none | Adobe built-in and numbered event names, numeric assignments, and nonempty serialization suffixes |
 | `currency` | `allow_historical`, `case_insensitive` | membership in the dated SIX ISO 4217 registry; current uppercase codes by default |
+
+`{"kind":"numeric_ranges","ranges":[{"minimum":-100000000,"maximum":-1},{"minimum":1,"maximum":100000000}]}` accepts a JSON numeric string inside at least one inclusive interval. Decimal and exponent notation are compared without floating-point rounding. Empty interval lists and reversed or non-comparable endpoints are rejected when the manifest loads. Fractions inside a permitted interval are allowed. Use a separate integer check when a source explicitly requires integers. Unresolved macro values retain the standard template behavior.
 
 `ip_chain` checks each comma-separated entry independently. Only a recognized
 macro occupying the complete trimmed entry is unresolved. Empty entries,

@@ -80,6 +80,8 @@ pub enum Requirement {
 pub enum ValueFormat {
     /// Any non-empty value.
     NonEmpty,
+    /// A JSON numeric value inside at least one inclusive interval.
+    NumericRanges { ranges: Vec<NumericRange> },
     /// Decimal digits only, with optional length bounds.
     Integer {
         #[serde(default)]
@@ -166,6 +168,14 @@ pub enum ValueFormat {
 pub enum IpVersion {
     V4,
     V6,
+}
+
+/// Inclusive numeric endpoints, compared without floating-point rounding.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NumericRange {
+    pub minimum: serde_json::Number,
+    pub maximum: serde_json::Number,
 }
 
 /// Supported second-resolution date/time representations. Named zones remain
@@ -831,6 +841,26 @@ fn validate_condition(
 }
 
 fn validate_format(pack_id: &str, name: &str, format: &ValueFormat) -> Result<(), ManifestError> {
+    if let ValueFormat::NumericRanges { ranges } = format {
+        if ranges.is_empty() {
+            return Err(ManifestError::EmptyFormatValues {
+                pack_id: pack_id.to_string(),
+                name: name.to_string(),
+            });
+        }
+        for range in ranges {
+            if !matches!(
+                compare_numeric_text(&range.minimum.to_string(), &range.maximum.to_string()),
+                Some(std::cmp::Ordering::Less | std::cmp::Ordering::Equal)
+            ) {
+                return Err(ManifestError::InvalidConstraint {
+                    pack_id: pack_id.to_string(),
+                    name: name.to_string(),
+                    reason: "numeric interval endpoints must be ordered and comparable".into(),
+                });
+            }
+        }
+    }
     if let ValueFormat::DateTimeFormats { formats } = format
         && formats.is_empty()
     {
@@ -6723,6 +6753,23 @@ fn format_has_unresolved_macro(format: &ValueFormat, value: &str) -> bool {
 fn format_violation(format: &ValueFormat, regex: Option<&Regex>, value: &str) -> Option<String> {
     match format {
         ValueFormat::NonEmpty => None,
+        ValueFormat::NumericRanges { ranges } => {
+            let matched = ranges.iter().any(|range| {
+                matches!(
+                    compare_numeric_text(value, &range.minimum.to_string()),
+                    Some(std::cmp::Ordering::Greater | std::cmp::Ordering::Equal)
+                ) && matches!(
+                    compare_numeric_text(value, &range.maximum.to_string()),
+                    Some(std::cmp::Ordering::Less | std::cmp::Ordering::Equal)
+                )
+            });
+            (!matched).then(|| {
+                let intervals = ranges.iter().map(|range| {
+                    format!("[{}, {}]", range.minimum, range.maximum)
+                }).collect::<Vec<_>>().join(" or ");
+                format!("must be a number in {intervals}, but is `{value}`.")
+            })
+        }
         ValueFormat::Integer {
             min_digits,
             max_digits,

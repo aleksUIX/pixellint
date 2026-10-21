@@ -205,6 +205,8 @@ fn analytics_existing_transport_fixtures_preserve_selection_and_findings() {
                     "url" => ArtifactKind::Url,
                     "json" => ArtifactKind::JsonPayload,
                     "request" => ArtifactKind::NetworkRequest,
+                    "vast" => ArtifactKind::VastTracker,
+                    "postback" => ArtifactKind::ServerPostback,
                     kind => panic!("unsupported fixture kind {kind}"),
                 },
                 artifact: fs::read_to_string(directory.join(case["fixture"].as_str().unwrap()))

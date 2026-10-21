@@ -1,19 +1,18 @@
 {
   "id": "vendor/google-ads-conversion",
   "display_name": "Google Ads conversion and remarketing pixel",
-  "description": "Google Ads conversion and view-through conversion image pixels, whose conversion ID rides on the path.",
+  "description": "Google Ads conversion and remarketing pixels on the exact /pagead/conversion/{id} and /pagead/viewthroughconversion/{id} route families. Legacy checks retain their profile; new advice follows the pinned cv=9, async=1 JavaScript producer. Remarketing does not require a conversion label. Other Google tag transports and receiver acceptance remain outside this review.",
   "vendor": "google",
   "source_level": "official_vendor",
   "docs": "https://support.google.com/tagassistant/answer/2947038",
-  "path_pattern": "/pagead/(?:viewthrough)?conversion/(?<conversion_id>[^/?]*)",
+  "path_pattern": "^/pagead/(?<tracking_route>conversion|viewthroughconversion)(?:/(?<conversion_id>[^/]*))?/?$",
   "match": {
     "host_suffixes": [
       "googleadservices.com",
       "googleads.g.doubleclick.net"
     ],
-    "path_contains": [
-      "/pagead/conversion",
-      "/pagead/viewthroughconversion"
+    "path_patterns": [
+      "^/pagead/(?:viewthrough)?conversion(?:/[^/]*)?/?$"
     ]
   },
   "params": [
@@ -33,9 +32,16 @@
       "format": {
         "kind": "non_empty"
       },
-      "description": "It identifies which conversion action fired. Without it, the hit lands on the account rather than on a specific action.",
+      "description": "A conversion-action label is recommended on conversion hits. Remarketing requests may omit a conversion label.",
       "fix_hint": "Add the conversion label from the conversion action's tag setup.",
-      "doc": "https://support.google.com/tagassistant/answer/2947038"
+      "doc": "https://support.google.com/tagassistant/answer/2947038",
+      "condition": {
+        "kind": "value_in",
+        "param": "tracking_route",
+        "values": [
+          "conversion"
+        ]
+      }
     },
     {
       "name": "value",
@@ -45,7 +51,29 @@
       },
       "description": "It is the conversion value. Google documents google_conversion_value as numbers and decimals only, with no currency symbol or comma.",
       "fix_hint": "Send a number such as 20 or 20.00, not $20.00.",
-      "doc": "https://support.google.com/tagassistant/answer/2947038"
+      "doc": "https://support.google.com/tagassistant/answer/2947038",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "cv",
+              "values": [
+                "9"
+              ]
+            },
+            {
+              "kind": "value_in",
+              "param": "async",
+              "values": [
+                "1"
+              ]
+            }
+          ]
+        }
+      }
     },
     {
       "name": "currency_code",
@@ -89,7 +117,678 @@
       "format_severity": "warning",
       "description": "The image fallback sends `script=0` to say no JavaScript ran.",
       "doc": "https://support.google.com/tagassistant/answer/2947038"
+    },
+    {
+      "name": "tracking_route",
+      "description": "Captured endpoint distinguishes conversion-action labeling from remarketing.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js"
+    },
+    {
+      "name": "cv",
+      "description": "Producer version marker. New advice is scoped to the reviewed version 9 with async=1.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js"
+    },
+    {
+      "name": "async",
+      "description": "Async transport marker. Missing, future or unresolved markers do not activate producer-specific advice.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js"
+    },
+    {
+      "name": "random",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The reviewed async producer serializes random as decimal digits. Timestamp freshness and screen plausibility are not inferred.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "fst",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The reviewed async producer serializes fst as decimal digits. Timestamp freshness and screen plausibility are not inferred.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "u_h",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The reviewed async producer serializes u_h as decimal digits. Timestamp freshness and screen plausibility are not inferred.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "u_w",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The reviewed async producer serializes u_w as decimal digits. Timestamp freshness and screen plausibility are not inferred.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "integer"
+      }
+    },
+    {
+      "name": "num",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The producer increments a positive snippet counter. No batch-size or upper bound is invented.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "minimum": 1
+    },
+    {
+      "name": "tfcd",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "Child-directed treatment. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "tfua",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "Under-age-of-consent treatment. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "npa",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "Ad personalization flag. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "rdp",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "Restricted data processing flag. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "uaw",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "User-agent WOW64 flag. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "frm",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "Producer frame context. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "name": "ig",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "Reviewed producer integration marker. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "fmt",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "Reviewed async script transport format. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "4"
+        ]
+      }
+    },
+    {
+      "name": "rfmt",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "Reviewed async response format. Advice describes the reviewed producer, not a universal receiver enum.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "3"
+        ]
+      }
+    },
+    {
+      "name": "url",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The producer truncates url to 512 UTF-16 code units before removing any fragment. Truncated and custom-scheme values remain opaque, so absolute-URL syntax is not imposed.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "max_utf16_length": 512,
+      "allow_empty": true
+    },
+    {
+      "name": "ref",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The producer truncates ref to 512 UTF-16 code units before removing any fragment. Truncated and custom-scheme values remain opaque, so absolute-URL syntax is not imposed.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "max_utf16_length": 512,
+      "allow_empty": true
+    },
+    {
+      "name": "top",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The producer truncates top to 512 UTF-16 code units before removing any fragment. Truncated and custom-scheme values remain opaque, so absolute-URL syntax is not imposed.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "max_utf16_length": 512,
+      "allow_empty": true
+    },
+    {
+      "name": "hl",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The producer emits a two-character language or region slice. This checks slice length without inventing an account language registry.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "min_length": 2,
+      "max_length": 2
+    },
+    {
+      "name": "gl",
+      "requirement": "optional",
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "description": "The producer emits a two-character language or region slice. This checks slice length without inventing an account language registry.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js",
+      "min_length": 2,
+      "max_length": 2
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.google-ads-conversion.async.value.numeric",
+      "kind": "format",
+      "param": "value",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+      },
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "cv",
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "value_in",
+            "param": "async",
+            "values": [
+              "1"
+            ]
+          }
+        ]
+      },
+      "severity": "warning",
+      "message": "The reviewed async producer supports signed numeric conversion values, including JavaScript exponent notation.",
+      "doc": "https://www.googleadservices.com/pagead/conversion_async.js"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "query.cv",
+              "values": [
+                "9"
+              ]
+            },
+            {
+              "kind": "value_in",
+              "param": "query.async",
+              "values": [
+                "1"
+              ]
+            }
+          ]
+        },
+        "description": "The reviewed async producer loads its conversion request with a GET script. Other producer versions and transports are not constrained.",
+        "doc": "https://www.googleadservices.com/pagead/conversion_async.js"
+      },
+      {
+        "name": "query.cv",
+        "description": "Producer marker used only to scope method advice.",
+        "doc": "https://www.googleadservices.com/pagead/conversion_async.js"
+      },
+      {
+        "name": "query.async",
+        "description": "Producer marker used only to scope method advice.",
+        "doc": "https://www.googleadservices.com/pagead/conversion_async.js"
+      }
+    ],
+    "rules": []
+  }
 }

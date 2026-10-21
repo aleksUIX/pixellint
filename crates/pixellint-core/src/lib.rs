@@ -58,8 +58,9 @@ pub use http::{
 };
 pub use manifest::{
     Assertion, DateTimeRepresentation, IpVersion, JsonType, JsonTypes, ManifestError,
-    ManifestRulePack, MatchSpec, PackRule, ParamContract, ParamStyle, RequestQuerySpec,
-    Requirement, RuleCondition, RulePackManifest, StringNormalization, ValueFormat,
+    ManifestRulePack, MatchSpec, NumericRange, PackRule, ParamContract, ParamStyle,
+    RequestQuerySpec, Requirement, RuleCondition, RulePackManifest, StringNormalization,
+    ValueFormat,
 };
 pub use prepare::PreparedArtifact;
 pub use timestamp::TimestampUnit;

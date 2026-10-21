@@ -2,9 +2,9 @@
   "id": "vendor/kevel",
   "display_name": "Kevel tracking pixel",
   "vendor": "adzerk",
-  "description": "Kevel impression, custom-event and click tracking URLs on e-{networkId}.adzerk.net/i.gif, /e.gif and /r. Published shim/signature and optional revenue or merchandising metadata are checked; response redirects, impression expiry and click deduplication need runtime context.",
+  "description": "Kevel impression, custom-event and click tracking URLs on e-{networkId}.adzerk.net/i.gif, /e.gif and /r. Published shim/signature and optional revenue or merchandising metadata are checked; response redirects, impression expiry and click deduplication need runtime context. Optional event multipliers receive advice for the published disjoint numeric ranges, preserving negative values and fractional values whose magnitude is at least one. The separate /conv/{id} API is not selected.",
   "source_level": "official_vendor",
-  "docs": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server",
+  "docs": "https://dev.kevel.com/docs/proxying-impressions-through-your-own-server",
   "match": {
     "host_suffixes": [
       "adzerk.net"
@@ -24,7 +24,7 @@
       },
       "description": "It is the base64 encoded event shim. Kevel documents e as unique to the event.",
       "fix_hint": "Send e from the Decision API impressionUrl or events[].url. Do not invent it.",
-      "doc": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server"
+      "doc": "https://dev.kevel.com/docs/proxying-impressions-through-your-own-server"
     },
     {
       "name": "s",
@@ -34,7 +34,7 @@
       },
       "description": "It is the signature that verifies the shim. Kevel documents s on every tracking pixel.",
       "fix_hint": "Send s from the same Decision API URL as e.",
-      "doc": "https://dev.kevel.com/ad/docs/proxying-impressions-through-your-own-server"
+      "doc": "https://dev.kevel.com/docs/proxying-impressions-through-your-own-server"
     },
     {
       "name": "override",
@@ -43,7 +43,7 @@
         "kind": "regex",
         "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
       },
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "name": "additional",
@@ -52,7 +52,7 @@
         "kind": "regex",
         "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
       },
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "name": "gmv",
@@ -61,7 +61,7 @@
         "kind": "regex",
         "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
       },
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "name": "productId",
@@ -70,7 +70,7 @@
         "kind": "regex",
         "pattern": "^[^,]+(?:,[^,]+){0,9}$"
       },
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "name": "component",
@@ -79,7 +79,7 @@
         "kind": "regex",
         "pattern": "^[^,]+(?:,[^,]+){0,9}$"
       },
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "name": "position",
@@ -88,12 +88,31 @@
         "kind": "regex",
         "pattern": "^[^,]+(?:,[^,]+){0,9}$"
       },
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "name": "tracking_route",
       "description": "The concrete URL path distinguishes click redirects from impression and custom-event pixels.",
-      "doc": "https://dev.kevel.com/hc/docs/tracking-overview"
+      "doc": "https://dev.kevel.com/docs/tracking-overview"
+    },
+    {
+      "name": "eventMultiplier",
+      "severity": "warning",
+      "format": {
+        "kind": "numeric_ranges",
+        "ranges": [
+          {
+            "minimum": -100000000,
+            "maximum": -1
+          },
+          {
+            "minimum": 1,
+            "maximum": 100000000
+          }
+        ]
+      },
+      "description": "Kevel documents the inclusive ranges [-100000000, -1] and [1, 100000000]. Numeric comparisons preserve boundary precision. The source does not explicitly restrict URL multipliers to integers. New advice accepts JSON decimal and exponent spelling; receiver spelling is not certified. Placement override and revenue multiplication need external context.",
+      "doc": "https://dev.kevel.com/reference/response#event-multipliers"
     }
   ],
   "rules": [
@@ -103,7 +122,7 @@
       "max_length": 1024,
       "severity": "error",
       "message": "Kevel limits the complete event URL query string to 1024 characters.",
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "code": "vendor.kevel.click.productId.single",
@@ -122,7 +141,7 @@
       },
       "severity": "error",
       "message": "Kevel click URLs accept only one productId value.",
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "code": "vendor.kevel.click.component.single",
@@ -141,7 +160,7 @@
       },
       "severity": "error",
       "message": "Kevel click URLs accept only one component value.",
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     },
     {
       "code": "vendor.kevel.click.position.single",
@@ -160,7 +179,7 @@
       },
       "severity": "error",
       "message": "Kevel click URLs accept only one position value.",
-      "doc": "https://dev.kevel.com/hc/docs/metadata-on-impressions-and-clicks"
+      "doc": "https://dev.kevel.com/docs/metadata-on-impressions-and-clicks"
     }
   ],
   "path_pattern": "^/(?<tracking_route>i\\.gif|e\\.gif|r)$",
@@ -169,12 +188,12 @@
       {
         "name": "path",
         "description": "The published /i.gif impression and /r click endpoints support GET or POST.",
-        "doc": "https://dev.kevel.com/hc/docs/tracking-overview"
+        "doc": "https://dev.kevel.com/docs/tracking-overview"
       },
       {
         "name": "method",
         "description": "Kevel documents GET or POST for impression and click tracking URLs.",
-        "doc": "https://dev.kevel.com/hc/docs/tracking-overview",
+        "doc": "https://dev.kevel.com/docs/tracking-overview",
         "requirement": "required",
         "format": {
           "kind": "enum",
@@ -195,7 +214,7 @@
       {
         "name": "headers.user-agent",
         "description": "For server-to-server event forwarding, Kevel instructs publishers to send the end-user User-Agent for bot filtering. Browser/server integration context is not inferred from method alone.",
-        "doc": "https://dev.kevel.com/hc/docs/tracking-overview",
+        "doc": "https://dev.kevel.com/docs/tracking-overview",
         "format": {
           "kind": "non_empty"
         }
