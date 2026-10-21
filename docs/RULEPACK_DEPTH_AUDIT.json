@@ -2,7 +2,7 @@
   "schema_version": 1,
   "review_date": "2026-10-10",
   "status": "validated_release_prepared",
-  "coverage_claim": "Source-scoped collectors with explicit remaining requirements. This release deepens Quora CAPI transport and CM360 tracking duplicate checks. New checks are advisory; vendor completeness is not claimed.",
+  "coverage_claim": "Source-scoped collectors with explicit remaining requirements. This release deepens Heap reserved property names and Nielsen audit transport. Context guards preserve unknown capture evidence. Vendor completeness is not claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
     "version": "0.34.0",
@@ -39,33 +39,36 @@
     "release_url": "https://github.com/aleksUIX/pixellint/releases/tag/v0.34.0"
   },
   "current": {
-    "version": "0.56.0",
+    "version": "0.57.0",
     "candidate_status": "release_prepared",
     "packs": 189,
     "vendors": 96,
-    "field_contracts": 6727,
-    "cross_field_assertions": 606,
+    "field_contracts": 6732,
+    "cross_field_assertions": 607,
     "body_contract_scopes": 525,
-    "http_contract_scopes": 103,
+    "http_contract_scopes": 104,
     "query_contract_scopes": 6,
     "bulk_query_sources": 2,
-    "http_contract_packs": 89,
+    "http_contract_packs": 90,
     "changed_packs_this_round": 2,
     "new_packs_this_round": 0,
     "deepened_existing_packs_this_round": 2,
     "source_reviewed_packs_this_round": 2,
     "manifest_changes_this_round": 2,
-    "new_source_cases": 92,
-    "remaining_requirement_entries": 644,
+    "new_source_cases": 76,
+    "remaining_requirement_entries": 648,
     "remaining_requirements_note": "Overlapping open requirements and source-case counts do not establish a percentage of vendor specification coverage.",
     "session_assertions": 2,
     "session_profile_changes_this_round": 0,
     "session_profiles": 1,
     "review_date": "2026-10-21",
-    "new_golden_cases": 92,
-    "new_source_executed_requests": 11,
+    "new_golden_cases": 76,
+    "new_source_executed_requests": 0,
     "new_field_contracts": 5,
-    "new_cross_field_assertions": 8
+    "new_cross_field_assertions": 1,
+    "new_browser_mechanism_controls": 11,
+    "new_context_only_fields": 1,
+    "new_validating_field_contracts": 4
   },
   "review_assignments": {
     "google_ias_adctv": "Official templates and IAS guidance",
@@ -99664,198 +99667,172 @@
       "status": "source_backed_http_depth_pass",
       "sources_read": [
         {
-          "url": "https://developers.heap.io/reference/add-user-properties",
-          "read_on": "2026-10-07",
-          "access": "opened_current_primary_vendor_page",
-          "evidence_level": "official_vendor_documentation"
-        },
-        {
-          "url": "https://developers.heap.io/reference/bulk-add-user-properties",
-          "read_on": "2026-10-07",
-          "access": "opened_current_primary_vendor_page",
-          "evidence_level": "official_vendor_documentation"
+          "url": "https://developers.heap.io/reference/add-user-properties.md",
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "1bd0d223ec6bfd46f07aa9b0b9ac6fc60d25b2f39ab0f0021e547798d994a78b",
+          "snapshot_kind": "original downloaded bytes"
         },
         {
           "url": "https://developers.heap.io/reference/add-user-properties",
-          "read_on": "2026-10-08",
-          "access": "opened_current_primary_vendor_page",
-          "evidence_level": "official_vendor_documentation",
-          "current_network_access": "read"
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "36d5022d57f34ef202362634550592b1f13517ea6d8dc8efe37c480dd0f512d8",
+          "snapshot_kind": "original downloaded bytes"
+        },
+        {
+          "url": "https://developers.heap.io/reference/bulk-add-user-properties.md",
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "9f338b95378a3b4ef68fa2131fa9714e82bf9e0e67932c24816f16ca324c6f95",
+          "snapshot_kind": "original downloaded bytes"
         }
       ],
-      "contracts_mapped": [
-        {
-          "transport_scope": "body[0]",
-          "body_context": {},
-          "field": "app_id",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "requirement": "required",
-            "format": {
-              "kind": "non_empty"
-            },
-            "json_type": "string"
-          }
-        },
-        {
-          "transport_scope": "body[0]",
-          "body_context": {},
-          "field": "users",
-          "source": "https://developers.heap.io/reference/bulk-add-user-properties",
-          "checks": {
-            "json_type": "array",
-            "max_items": 1000
-          }
-        },
-        {
-          "transport_scope": "body[0]",
-          "body_context": {},
-          "field": "users[]",
-          "source": "https://developers.heap.io/reference/bulk-add-user-properties",
-          "checks": {
-            "json_type": "object"
-          }
-        },
-        {
-          "transport_scope": "body[0]",
-          "body_context": {},
-          "field": "",
-          "source": "https://developers.heap.io/reference/bulk-add-user-properties",
-          "checks": {
-            "json_type": "object"
-          }
-        },
-        {
-          "transport_scope": "body[1]",
-          "body_context": {
-            "scope": [
-              "users[]",
-              ""
+      "contracts_mapped": {
+        "params": [],
+        "rules": [],
+        "body": [
+          {
+            "params": [
+              {
+                "name": "app_id",
+                "requirement": "required",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "It is the Heap environment ID. Heap documents it as required.",
+                "fix_hint": "Set app_id to the environment ID from Heap Projects.",
+                "doc": "https://developers.heap.io/reference/add-user-properties",
+                "json_type": "string"
+              },
+              {
+                "name": "users",
+                "json_type": "array",
+                "max_items": 1000,
+                "doc": "https://developers.heap.io/reference/bulk-add-user-properties"
+              },
+              {
+                "name": "users[]",
+                "json_type": "object",
+                "doc": "https://developers.heap.io/reference/bulk-add-user-properties"
+              },
+              {
+                "name": "",
+                "json_type": "object",
+                "doc": "https://developers.heap.io/reference/bulk-add-user-properties"
+              }
             ]
           },
-          "field": "identity",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "requirement": "required",
-            "format": {
-              "kind": "non_empty"
-            },
-            "json_type": "string",
-            "max_length": 255
-          }
-        },
-        {
-          "transport_scope": "body[1]",
-          "body_context": {
-            "scope": [
-              "users[]",
-              ""
-            ]
-          },
-          "field": "properties",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "requirement": "recommended",
-            "json_type": "object"
-          }
-        },
-        {
-          "transport_scope": "body[1]",
-          "body_context": {
-            "scope": [
-              "users[]",
-              ""
-            ]
-          },
-          "field": "property_value",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "json_type": [
-              "number",
-              "string"
+          {
+            "params": [
+              {
+                "name": "identity",
+                "requirement": "required",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "It is the known identity. Heap documents it as required. The server API cannot attach properties to an anonymous Heap user_id.",
+                "fix_hint": "Send the same identity you use in Heap Identify.",
+                "doc": "https://developers.heap.io/reference/add-user-properties",
+                "json_type": "string",
+                "max_length": 255
+              },
+              {
+                "name": "properties",
+                "requirement": "recommended",
+                "description": "It is the trait object. Heap documents keys and values as strings or numbers, fewer than 1024 characters. The builtin Email property is the lowercase key email.",
+                "fix_hint": "Send a properties object. Use the key email, lowercase, for Heap's builtin Email property.",
+                "doc": "https://developers.heap.io/reference/add-user-properties",
+                "json_type": "object"
+              },
+              {
+                "name": "property_value",
+                "description": "The vendor documents `property_value` in the request contract.",
+                "doc": "https://developers.heap.io/reference/add-user-properties",
+                "json_type": [
+                  "number",
+                  "string"
+                ],
+                "name_pattern": "(?s)^.*$",
+                "name_pattern_parent": "properties",
+                "max_length": 1023,
+                "allow_empty": true
+              },
+              {
+                "name": "",
+                "description": "The vendor documents `` in the request contract.",
+                "doc": "https://developers.heap.io/reference/add-user-properties",
+                "json_type": "object"
+              },
+              {
+                "name": "overlong_property_names",
+                "name_pattern": "(?s)^.{1024,}$",
+                "name_pattern_parent": "properties",
+                "requirement": "forbidden",
+                "severity": "error",
+                "doc": "https://developers.heap.io/reference/add-user-properties",
+                "description": "Property keys must have fewer than1024characters, counted afterJSONdecoding."
+              },
+              {
+                "name": "reserved_id_property",
+                "name_pattern": "^(?i:id)$",
+                "name_pattern_parent": "properties",
+                "requirement": "forbidden",
+                "severity": "warning",
+                "description": "The official Add User Properties guide reserves all casings of id for internal variables. This advice applies to immediate property keys in single and bulk updates, not substrings, nested keys or account properties.",
+                "fix_hint": "Rename this custom property. Keep the user identity in the top-level identity field.",
+                "doc": "https://developers.heap.io/reference/add-user-properties"
+              }
             ],
-            "name_pattern": "(?s)^.*$",
-            "name_pattern_parent": "properties",
-            "max_length": 1023,
-            "allow_empty": true
-          }
-        },
-        {
-          "transport_scope": "body[1]",
-          "body_context": {
+            "rules": [],
             "scope": [
               "users[]",
               ""
             ]
-          },
-          "field": "",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "json_type": "object"
           }
-        },
-        {
-          "transport_scope": "body[1]",
-          "body_context": {
-            "scope": [
-              "users[]",
-              ""
-            ]
-          },
-          "field": "overlong_property_names",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "name_pattern": "(?s)^.{1024,}$",
-            "name_pattern_parent": "properties",
-            "requirement": "forbidden",
-            "severity": "error"
-          }
-        },
-        {
-          "transport_scope": "http[0]",
-          "body_context": {},
-          "field": "method",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "requirement": "required",
-            "json_type": "string",
-            "format": {
-              "kind": "enum",
-              "values": [
-                "POST"
-              ]
-            }
-          }
-        },
-        {
-          "transport_scope": "http[0]",
-          "body_context": {},
-          "field": "content_type",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "json_type": "string",
-            "format": {
-              "kind": "enum",
-              "values": [
-                "application/json"
-              ]
+        ],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "This published ingestion operation uses HTTP POST.",
+              "doc": "https://developers.heap.io/reference/add-user-properties",
+              "requirement": "required",
+              "json_type": "string",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "POST"
+                ]
+              }
             },
-            "severity": "warning",
-            "format_severity": "warning",
-            "requirement": "recommended"
-          }
+            {
+              "name": "content_type",
+              "description": "Use a published request media type.",
+              "doc": "https://developers.heap.io/reference/add-user-properties",
+              "json_type": "string",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "application/json"
+                ]
+              },
+              "severity": "warning",
+              "format_severity": "warning",
+              "requirement": "recommended"
+            },
+            {
+              "name": "body",
+              "description": "The request body is a JSON object.",
+              "doc": "https://developers.heap.io/reference/add-user-properties",
+              "requirement": "required",
+              "json_type": "object"
+            }
+          ],
+          "rules": []
         },
-        {
-          "transport_scope": "http[0]",
-          "body_context": {},
-          "field": "body",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "checks": {
-            "requirement": "required",
-            "json_type": "object"
-          }
-        }
-      ],
+        "http_queries": []
+      },
       "added_checks": [
         {
           "transport_scope": "body[0]",
@@ -99989,24 +99966,10 @@
         "User-property bulk input supports at most 1000 users and validates each item independently."
       ],
       "missing_requirements": [
-        {
-          "requirement": "Stored property overwrite effects",
-          "applicability": "Custom property updates can change existing values and their stored types",
-          "reason": "Property keys/strings less than1024 characters, nullable/scalar values, bulk users<=1000 and native numeric identities are mapped. No primary endpoint evidence supports the earlier invented1024-property or1 MB aggregate limit. Stored state is unavailable.",
-          "gap_kind": "external_state",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "status": "remaining",
-          "locally_checkable": false
-        },
-        {
-          "requirement": "Registered app ID and existing identity",
-          "applicability": "Body app_id and identity refer to a particular Heap environment and existing user.",
-          "reason": "Published POST transport and JSON object body are now checked; account ownership and prior identity state remain external.",
-          "gap_kind": "external_state",
-          "source": "https://developers.heap.io/reference/add-user-properties",
-          "status": "remaining",
-          "locally_checkable": false
-        }
+        "Only the exact documented /api/add_user_properties endpoint on the existing US and EU hosts is selected. Bare JSON retains the existing shape discriminator. Similar paths stay uncovered.",
+        "New reserved id-key checks are warnings, following the published server-side API guide. They cover each immediate properties key in single and bulk rows, in all four letter cases. They do not forbid substrings, arbitrary custom keys, key values or account-property IDs.",
+        "Case-sensitive identity semantics, PII policy, registered projects, rate limits, account state and receiver acceptance require external context. No Email-case error is invented: the source explicitly permits such keys as separate custom properties.",
+        "Published property types, key/value lengths, batch bounds and HTTP contracts retain their existing scope. Documentation is not treated as a complete live rejection schema."
       ],
       "tests": [
         {
@@ -100068,7 +100031,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "9a4114cda0141d02c0c84c160c97b14b400d004e0431167520675c784ef1f8a4",
+      "manifest_sha256": "905ee2a606bc07f081885e10a16335521ba6fbd007b340f30b86ea308fe4fc55",
       "fixture_sha256": {
         "fixtures/vendor-heap-user-properties/appsflyer-shaped.txt": "e5337950c6e0bf0922390b28faabf299144fd8f4814009dcfee7942c8afbf077",
         "fixtures/vendor-heap-user-properties/clean-properties.txt": "805b2dc9ba90b9b40a94a96df0871d60a8814d73387ce24e583018c127ead42b",
@@ -100164,16 +100127,57 @@
         "automatic_http_routing_examples": 1
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/heap-user-properties.json": "9a4114cda0141d02c0c84c160c97b14b400d004e0431167520675c784ef1f8a4",
+        "crates/pixellint-core/rulepacks/vendor/heap-user-properties.json": "905ee2a606bc07f081885e10a16335521ba6fbd007b340f30b86ea308fe4fc55",
         "fixtures/vendor-heap-user-properties/appsflyer-shaped.txt": "e5337950c6e0bf0922390b28faabf299144fd8f4814009dcfee7942c8afbf077",
         "fixtures/vendor-heap-user-properties/clean-properties.txt": "805b2dc9ba90b9b40a94a96df0871d60a8814d73387ce24e583018c127ead42b",
         "fixtures/vendor-heap-user-properties/clean-url.txt": "93fb9c5c614ce294d672cbc3be0dd52eeb59fd7bfe8c6143553546cfe96e80f1",
         "fixtures/vendor-heap-user-properties/depth-cases.json": "1af3fb4570acdd9bf4314cd794c1160d036a1e9f09549e1e3da16d73b95e8457",
-        "fixtures/vendor-heap-user-properties/manifest.json": "22f6f79e7536bfb25de4af03072e9fa595e313cb384bbaf59831c1625ee911d9",
+        "fixtures/vendor-heap-user-properties/manifest.json": "c951ccfd9cf78cf5e01baec777adc79662423c5bb64bc7106c4117dd74fbe38a",
         "fixtures/vendor-heap-user-properties/missing-identity.txt": "73fcaab44af8dfb5e8a7b21e65a7415128c30f4cdefbd87c7d056c9aa751c274",
         "fixtures/vendor-heap-user-properties/missing-properties.txt": "9dda5b3a5c7cebbcea993701fb1f4e9018970d604e6e0d930be2978e4c31bbf7",
         "fixtures/vendor-heap-user-properties/session-depth-cases.json": "863ebe838e45212e5955993a1805060ea5c78369d07e0132287c0b95a7e22c0a",
-        "fixtures/vendor-heap-user-properties/spec-cases.json": "61d628c3e75105ba0242d4ab73a82475afbd0122b42c9ede90d3d5e48b6c2481"
+        "fixtures/vendor-heap-user-properties/spec-cases.json": "61d628c3e75105ba0242d4ab73a82475afbd0122b42c9ede90d3d5e48b6c2481",
+        "docs/reviews/pixel-collectors-057.json": "b255d6eca099ddcb26fe277719a7c161dadad3ad32b8f76ddf9ac802b41eed64",
+        "crates/pixellint-core/tests/pixel_collectors_057.rs": "b564a1113e766554fe52a889a8e18015844dc13da798a9c39f65460a6f48b117",
+        "fixtures/vendor-heap-user-properties/depth057-000-reserved-id-0.txt": "45747f4630393c5496a47479f660a366aa99425c0f0d435b8790045cfb3eea2f",
+        "fixtures/vendor-heap-user-properties/depth057-001-reserved-id-1.txt": "952e22e8f173d4ed9ff622803f8c24cbf687afa1142596bf47b9a9a3ad10b113",
+        "fixtures/vendor-heap-user-properties/depth057-002-reserved-id-2.txt": "f060269bdfc8e20bd12658b3a88ab064ea7bd2008f8cd9c8715bc03e85f69af7",
+        "fixtures/vendor-heap-user-properties/depth057-003-reserved-ID-3.txt": "0a1f5998a84dd19b3046d650053a710264378f69d4767c6eda6a6b2665c8e922",
+        "fixtures/vendor-heap-user-properties/depth057-004-reserved-ID-4.txt": "040f3f5452f7c78ecd50c4e17a5ce4c1ec73272730923be74adcfdc4dc91fa9b",
+        "fixtures/vendor-heap-user-properties/depth057-005-reserved-ID-5.txt": "abd274c775abb674e42ae1b90b26f82e422c7a03bebb263f549351629f334b53",
+        "fixtures/vendor-heap-user-properties/depth057-006-reserved-iD-6.txt": "6b409845778b521d2d2ededd5a30570b9e21bdd57f908410885788ba78928e91",
+        "fixtures/vendor-heap-user-properties/depth057-007-reserved-iD-7.txt": "adc4269df67a0d5ef1254fcc81aab17a5e4bcfdca86d2a1daeaca0f61f6e97c3",
+        "fixtures/vendor-heap-user-properties/depth057-008-reserved-iD-8.txt": "7de8d76122919a15b1fe288b286ad2e78bbc39243d3c6745c1db663dea9f79fc",
+        "fixtures/vendor-heap-user-properties/depth057-009-reserved-Id-9.txt": "59b90751b9ef28347d0805c3a21a753a45608721821619de71ece280a5d9f627",
+        "fixtures/vendor-heap-user-properties/depth057-010-reserved-Id-10.txt": "3dcd0b72e1c83e8ea7dac5d161035787da97dfa19cb12019d0c9d7e9437029dc",
+        "fixtures/vendor-heap-user-properties/depth057-011-reserved-Id-11.txt": "0d0b71db6e7714c4aa387975b559b07908608687f350f78eeeb430db636556e3",
+        "fixtures/vendor-heap-user-properties/depth057-012-ordinary-identity.txt": "731398d94d937e559311078c0117533bc78ecd106ad6c00b493cb25b49136009",
+        "fixtures/vendor-heap-user-properties/depth057-013-ordinary-user_id.txt": "6b16ad6f8a008b02c227bbe424f46275e3ff4f11bd5f03b2911a9ad04e6bc5b0",
+        "fixtures/vendor-heap-user-properties/depth057-014-ordinary-order_id.txt": "2ee19b93bc9c6458410a31cdbf29efd5967688f120ead76e25ab7ad02c59788c",
+        "fixtures/vendor-heap-user-properties/depth057-015-ordinary-grid.txt": "386d799b9707a5611613fe28c2cf808728cc63bc51cc6650f4ed55b0631985f5",
+        "fixtures/vendor-heap-user-properties/depth057-016-ordinary-ids.txt": "b37f43450e2ebede53f8c7ed4cb40eef21ec05fcdc5ad890edc53375fc374ea4",
+        "fixtures/vendor-heap-user-properties/depth057-017-ordinary-IDx.txt": "01949c0a0673c08b0a0997d5532ff7d4da919876ddb4337627b1b0cff893120c",
+        "fixtures/vendor-heap-user-properties/depth057-018-ordinary-xid.txt": "3bdf612c5efd7c91dad814d27f911913172108ddf121bf1ee0b86597ecad5592",
+        "fixtures/vendor-heap-user-properties/depth057-019-ordinary-email.txt": "109f8a2d735f48c2937bcd30e23ab8d2e9983de13e41e6af656371d91e18048c",
+        "fixtures/vendor-heap-user-properties/depth057-020-ordinary-Email.txt": "7adef3fa18b8b346102d1b18e28fe5a3ad5f53a2d6b4771e3bba4b7dd7871617",
+        "fixtures/vendor-heap-user-properties/depth057-021-reserved-value-macro.txt": "4cf019f81884706da05074ddb441748c27fa43602ed050323352cc5dc8cf5ee8",
+        "fixtures/vendor-heap-user-properties/depth057-022-all-reserved-cases.txt": "e5ebf7f35f4faff4cba4ffd145519e0d5d56504761e53b5e05e486e50652d510",
+        "fixtures/vendor-heap-user-properties/depth057-023-bulk-one-bad-row.txt": "a97ffaa13bd94a19f40b675e13741c463a75f0692799ad904d81df3bac822cab",
+        "fixtures/vendor-heap-user-properties/depth057-024-bulk-both-bad.txt": "0a928f7254cae01fda29d66ddbfe18e20d8c099a8f38491a69fc367f79c4b070",
+        "fixtures/vendor-heap-user-properties/depth057-025-escaped-name.txt": "507f1d0cf0b8be6bc0c9050bfff77eb066f430fdc45d31ce33d63a81c69231f2",
+        "fixtures/vendor-heap-user-properties/depth057-026-top-level-id-allowed.txt": "88967ac70ea03f9ae3a2289d13eaa627ba48a32236db3f5bffb74e4e670c0462",
+        "fixtures/vendor-heap-user-properties/depth057-027-empty-properties.txt": "e3ce4afac8098d21cffd43d2b1f6280d5234d2afb6728440282dd8780451dae8",
+        "fixtures/vendor-heap-user-properties/depth057-028-request-28.txt": "ede27c7624ab62bc76b06869927c399bf0fe22f00ac3d09cc5ad0287b3d7495c",
+        "fixtures/vendor-heap-user-properties/depth057-029-request-29.txt": "8064a9092aa8893b2727aba24757ced5baa717b9ea684cc8c02379ff45a5e36d",
+        "fixtures/vendor-heap-user-properties/depth057-030-request-30.txt": "5c21038cc16231a6701254dce5617879603533fc16c5e1f77d6083c8a3658a49",
+        "fixtures/vendor-heap-user-properties/depth057-031-request-31.txt": "e1de30b3718245ead1a120dcdaa799bf5a12c5e677f4ab45afd3c0e407ef330b",
+        "fixtures/vendor-heap-user-properties/depth057-032-neighbor-32.txt": "5aa44c1f3ac18b38ec3e214dddf8a068e8953807a012d5d053460824cf277c78",
+        "fixtures/vendor-heap-user-properties/depth057-033-neighbor-33.txt": "261137262def0f1df8448b8a234160d917c9b3a2762fdb73f77d4294138efc9f",
+        "fixtures/vendor-heap-user-properties/depth057-034-neighbor-34.txt": "277c78414413b4288577d66e4d39f6b30ba4272bbad1131192c05e99a7576837",
+        "crates/pixellint-core/src/manifest.rs": "d383f6c67144cb2386c9e5b01f23c93adc72bd840d0a6cfa4ce160522b6452b7",
+        "crates/pixellint-core/src/lib.rs": "8d55355e751f1b3d2ef5aa073e6ac10f858f0509d52f511d5948243936f5bf3c",
+        "docs/RULEPACK_SCHEMA.md": "d4ef07cdb6461c5d4da7405c3673b84543adf29de6b3d2c836eb30f73a7a5bb1",
+        "crates/pixellint-core/tests/analytics_depth.rs": "b54dd89112be43a15e8689d478389db4cb2fb7bc68d0ecd38e9528cc120f0804"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -100248,7 +100252,66 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "disposition": "implemented_source_scoped_partial",
+      "match": {
+        "hosts": [
+          "heapanalytics.com",
+          "c.eu.heap-api.com"
+        ],
+        "json_paths": [
+          "app_id",
+          {
+            "any_of": [
+              "identity",
+              "properties",
+              "users"
+            ]
+          },
+          {
+            "path": "event",
+            "excludes": ".+"
+          },
+          {
+            "path": "eventName",
+            "excludes": ".+"
+          },
+          {
+            "path": "appsflyer_id",
+            "excludes": ".+"
+          },
+          {
+            "path": "user_id",
+            "excludes": ".+"
+          },
+          {
+            "path": "account_id",
+            "excludes": ".*"
+          },
+          {
+            "path": "accounts",
+            "excludes": ".*"
+          },
+          {
+            "path": "distinct_id",
+            "excludes": ".+"
+          },
+          {
+            "path": "api_key",
+            "excludes": ".+"
+          }
+        ],
+        "paths": [
+          "/api/add_user_properties"
+        ]
+      },
+      "source_urls": [
+        "https://developers.heap.io/reference/add-user-properties.md",
+        "https://developers.heap.io/reference/add-user-properties",
+        "https://developers.heap.io/reference/bulk-add-user-properties.md"
+      ],
+      "golden_cases": 40,
+      "collector_followup": "docs/reviews/pixel-collectors-057.json"
     },
     {
       "id": "vendor/hotjar",
@@ -204897,9 +204960,17 @@
       "sources_read": [
         {
           "url": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
-          "access": "read",
-          "evidence_level": "official_vendor",
-          "notes": "Pack-cited source was opened or attempted during this audit."
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "ed993aa8b5109b0918b4675c220229feef9ff33f5a98363ce1b3117f5f9d020d",
+          "snapshot_kind": "original downloaded bytes"
+        },
+        {
+          "url": "https://fetch.spec.whatwg.org/",
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "63b0a018753c330adf1e40417524eb70ea02d4d3e123bcb39b6770f23bad911b",
+          "snapshot_kind": "original downloaded bytes"
         }
       ],
       "source_access_attempts": [],
@@ -204907,79 +204978,209 @@
         "prd audit value; required intid/sessionid/product/createtm; alphanumeric session/product.",
         "apid is required for documented content products rather than every ads beacon."
       ],
-      "contracts_mapped": [
-        {
-          "name": "prd",
-          "requirement": "required",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "audit"
+      "contracts_mapped": {
+        "params": [
+          {
+            "name": "prd",
+            "requirement": "required",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "audit"
+              ]
+            },
+            "description": "It marks the request as an audit ping. Nielsen documents the ads audit URL as /cgi-bin/gn?prd=audit.",
+            "fix_hint": "Set prd=audit on every ads audit ping.",
+            "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+          },
+          {
+            "name": "intid",
+            "requirement": "required",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the integration ID Nielsen assigns for all audit pings across platforms.",
+            "fix_hint": "Set intid to the integration ID Nielsen issued.",
+            "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+          },
+          {
+            "name": "sessionid",
+            "requirement": "required",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[A-Za-z0-9]+$"
+            },
+            "description": "It is the session ID generated when the player is instantiated. Nielsen documents it as mandatory.",
+            "fix_hint": "Send a stable sessionid for the playback session, and fire again if it changes.",
+            "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+          },
+          {
+            "name": "product",
+            "requirement": "required",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[A-Za-z0-9]+$"
+            },
+            "description": "It names the Nielsen product the ping corresponds to. Nielsen documents examples dar, dcr, and dtvr.",
+            "fix_hint": "Set product to the Nielsen product for this integration, such as dar, dcr, or dtvr.",
+            "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+          },
+          {
+            "name": "createtm",
+            "requirement": "required",
+            "format": {
+              "kind": "integer"
+            },
+            "description": "It is the time the ping was fired. Nielsen documents createtm as Unix time.",
+            "fix_hint": "Set createtm to the Unix timestamp when the ping fired, such as 1643858542.",
+            "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+          },
+          {
+            "name": "apid",
+            "requirement": "optional",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the Nielsen Server App ID. Nielsen documents apid as required only for content measurement.",
+            "fix_hint": "Send apid when this audit ping is for content measurement.",
+            "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+          }
+        ],
+        "rules": [
+          {
+            "code": "vendor.nielsen-audit.content_app_id_required",
+            "kind": "required_when_value",
+            "severity": "error",
+            "message": "Nielsen requires its Server App ID for content measurement audit pings.",
+            "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
+            "when": "product",
+            "equals": [
+              "dcr",
+              "dtvr"
+            ],
+            "requires": [
+              "apid"
             ]
           },
-          "description": "It marks the request as an audit ping. Nielsen documents the ads audit URL as /cgi-bin/gn?prd=audit.",
-          "fix_hint": "Set prd=audit on every ads audit ping.",
-          "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
-          "surface": "params"
+          {
+            "code": "vendor.nielsen-audit.https_required",
+            "kind": "require_https",
+            "severity": "error",
+            "message": "Nielsen documents audit pings as HTTPS requests.",
+            "fix_hint": "Use https://audit.imrworldwide.com/cgi-bin/gn with the generated audit parameters.",
+            "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+          }
+        ],
+        "body": [],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET"
+                ]
+              },
+              "severity": "warning",
+              "description": "Nielsen prefers simple GET audit requests to avoid preflight. This is advice rather than a universal receiver method enumeration.",
+              "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+            },
+            {
+              "name": "headers.origin",
+              "description": "Capture context for cross-origin browser transport advice. No Origin header is required and its syntax is not newly constrained.",
+              "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
+              "allow_empty": true
+            },
+            {
+              "name": "content_type",
+              "severity": "warning",
+              "condition": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "present",
+                    "param": "headers.origin"
+                  },
+                  {
+                    "kind": "value_pattern",
+                    "param": "headers.origin",
+                    "pattern": "(?i)^(?:null|https?://[^/?#\\s]+)$"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "value_pattern",
+                      "param": "headers.origin",
+                      "pattern": "(?i)^https://audit\\.imrworldwide\\.com(?::443)?$"
+                    }
+                  }
+                ]
+              },
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "text/plain",
+                  "application/x-www-form-urlencoded",
+                  "multipart/form-data"
+                ]
+              },
+              "description": "For a captured request carrying a non-collector Origin, these MIME essences are CORS-safelisted. A different media type can require preflight, which Nielsen warns its downstream collectors reject. Header absence is allowed.",
+              "doc": "https://fetch.spec.whatwg.org/#cors-safelisted-request-header",
+              "fix_hint": "For browser cross-origin audit GETs, omit Content-Type or use a CORS-safelisted media type, such as text/plain.",
+              "source_level": "normative"
+            },
+            {
+              "name": "headers.content-type",
+              "severity": "warning",
+              "condition": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "present",
+                        "param": "headers.origin"
+                      },
+                      {
+                        "kind": "value_pattern",
+                        "param": "headers.origin",
+                        "pattern": "(?i)^(?:null|https?://[^/?#\\s]+)$"
+                      },
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "value_pattern",
+                          "param": "headers.origin",
+                          "pattern": "(?i)^https://audit\\.imrworldwide\\.com(?::443)?$"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "value_pattern",
+                    "param": "headers.content-type",
+                    "pattern": "^[\\x00-\\xff]*$"
+                  }
+                ]
+              },
+              "format": {
+                "kind": "regex",
+                "pattern": "^[^\\x00-\\x08\\x0a-\\x1f\\x7f\"():<>?@\\[\\]\\\\{}]*$"
+              },
+              "description": "Fetch limits a CORS-safelisted Content-Type value to 128 bytes and excludes CORS-unsafe bytes. For a captured Latin-1 header value each character is one byte, including MIME parameters. Values outside Latin-1 remain unverified by this raw-header advice. This does not certify the complete browser preflight decision.",
+              "doc": "https://fetch.spec.whatwg.org/#cors-safelisted-request-header",
+              "fix_hint": "Use a short Content-Type value without CORS-unsafe bytes. For this audit GET, the header may also be omitted.",
+              "max_length": 128,
+              "source_level": "normative"
+            }
+          ],
+          "rules": []
         },
-        {
-          "name": "intid",
-          "requirement": "required",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the integration ID Nielsen assigns for all audit pings across platforms.",
-          "fix_hint": "Set intid to the integration ID Nielsen issued.",
-          "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
-          "surface": "params"
-        },
-        {
-          "name": "sessionid",
-          "requirement": "required",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[A-Za-z0-9]+$"
-          },
-          "description": "It is the session ID generated when the player is instantiated. Nielsen documents it as mandatory.",
-          "fix_hint": "Send a stable sessionid for the playback session, and fire again if it changes.",
-          "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
-          "surface": "params"
-        },
-        {
-          "name": "product",
-          "requirement": "required",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[A-Za-z0-9]+$"
-          },
-          "description": "It names the Nielsen product the ping corresponds to. Nielsen documents examples dar, dcr, and dtvr.",
-          "fix_hint": "Set product to the Nielsen product for this integration, such as dar, dcr, or dtvr.",
-          "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
-          "surface": "params"
-        },
-        {
-          "name": "createtm",
-          "requirement": "required",
-          "format": {
-            "kind": "integer"
-          },
-          "description": "It is the time the ping was fired. Nielsen documents createtm as Unix time.",
-          "fix_hint": "Set createtm to the Unix timestamp when the ping fired, such as 1643858542.",
-          "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
-          "surface": "params"
-        },
-        {
-          "name": "apid",
-          "requirement": "optional",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the Nielsen Server App ID. Nielsen documents apid as required only for content measurement.",
-          "fix_hint": "Send apid when this audit ping is for content measurement.",
-          "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
-          "surface": "params"
-        }
-      ],
+        "http_queries": []
+      },
       "assertions_mapped": [
         {
           "code": "vendor.nielsen-audit.content_app_id_required",
@@ -205000,27 +205201,11 @@
       ],
       "added_checks": [],
       "missing_requirements": [
-        {
-          "requirement": "Complete product code registry",
-          "category": "unpublished_transport",
-          "locally_checkable": false,
-          "reason": "dar/dcr/dtvr are examples, not a declared closed enum.",
-          "next_action": "Obtain or publish the primary complete transport contract."
-        },
-        {
-          "requirement": "sessionid/impid consistency, periodic ping lifecycle and millisecond/second provenance",
-          "category": "external_state",
-          "locally_checkable": false,
-          "reason": "Requires measurement sessions and related beacon history.",
-          "next_action": "Validate with the required runtime/account/HTML context."
-        },
-        {
-          "requirement": "Assigned integration/app IDs and opt-out API",
-          "category": "external_state",
-          "locally_checkable": false,
-          "reason": "Requires account and user state.",
-          "next_action": "Validate with the required runtime/account/HTML context."
-        }
+        "Only exact /cgi-bin/gn on audit.imrworldwide.com is selected. Nearby paths stay uncovered. HTTPS follows the explicit vendor request scheme. GET is advice rather than an exhaustive method rejection policy.",
+        "Content-Type advice requires a captured populated HTTP(S)-shaped or null Origin that is not the collector itself. Missing, redacted, macro, malformed and unsupported-scheme Origin values do not establish browser CORS context.",
+        "MIME essence is checked separately from the raw header. Raw safelist byte/length advice applies only to Latin-1 values, where every Unicode character represents one header byte. It uses 128 characters, not UTF-8 length. Values outside Latin-1 remain unverified by this raw-header check.",
+        "These checks do not certify preflight-free behavior. Other headers, combined safelist sizes, credentials, redirects, browser policy, same-origin normalization edge cases, opaque headers and receiver responses remain outside these local contracts. No Content-Type or Origin header is required.",
+        "Product identifiers remain an open alphanumeric namespace. Integration IDs, server app ownership, session/impid linkage, periodic ping timing, opt-out state and delivery require external context. No fixed ID length or guessed timestamp-age rule is added."
       ],
       "tests": {
         "manifest": "pixellint/fixtures/vendor-nielsen-audit/manifest.json",
@@ -205103,7 +205288,7 @@
         ]
       },
       "review_assignment": "endpoints",
-      "manifest_sha256": "213146d8e666795e766fe2d5e2c0331cfa89e874e61097101c2ad5d762dd9ddc",
+      "manifest_sha256": "f21cb24347d7abef143a04929c4cd60b48871caacaf66500c1646695fcfea0d8",
       "implemented_counts": {
         "field_contracts": 6,
         "cross_field_assertions": 1,
@@ -205116,8 +205301,8 @@
         "transport_goldens": 9
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/nielsen-audit.json": "213146d8e666795e766fe2d5e2c0331cfa89e874e61097101c2ad5d762dd9ddc",
-        "fixtures/vendor-nielsen-audit/manifest.json": "099f4843649d4131c7f19bec2f14a0740d96f8f732fd58cdca80b03fe888fb86",
+        "crates/pixellint-core/rulepacks/vendor/nielsen-audit.json": "f21cb24347d7abef143a04929c4cd60b48871caacaf66500c1646695fcfea0d8",
+        "fixtures/vendor-nielsen-audit/manifest.json": "cb78046467d1fca1a73ec390250a7467ba8e47c1db927cfa0fc3bd8f9bc19acd",
         "fixtures/vendor-nielsen-audit/clean-audit.txt": "328f5a93d6ae2b052a84b2a2ec94e50337269271ef8a8f728d675a1f0bbf4b57",
         "fixtures/vendor-nielsen-audit/missing-intid.txt": "29e6df83818bf2f79d4d12512667edfd6490314743564a4133575018b0ce63b2",
         "fixtures/vendor-nielsen-audit/invalid-prd.txt": "3358225d76682e606bce6a8b9e53cd51f503c13222d5b592ddb97ae368b05cc7",
@@ -205126,10 +205311,62 @@
         "fixtures/vendor-nielsen-audit/depth-content-app.txt": "18312eb6c8e838d421542dcb1c7af5fdb96b4e12baa0e90646e607e7d80b66ea",
         "fixtures/vendor-nielsen-audit/depth-content-missing-app.txt": "022d1a6d4e65e5f7d70494285a57bb6d635e5d00ac346acac96a20052b7c16f7",
         "fixtures/vendor-nielsen-audit/depth-sessionid-format.txt": "706c1873cb628b705c39c3b1d788d622f3a3358bc5605d4fd6c1f9d6cd7d1d53",
-        "fixtures/vendor-nielsen-audit/depth-product-format.txt": "180826a6e9f3bf1c1c73f88d27591adcf44e789cb26db41bfb6e7126c8556c45"
+        "fixtures/vendor-nielsen-audit/depth-product-format.txt": "180826a6e9f3bf1c1c73f88d27591adcf44e789cb26db41bfb6e7126c8556c45",
+        "docs/reviews/pixel-collectors-057.json": "b255d6eca099ddcb26fe277719a7c161dadad3ad32b8f76ddf9ac802b41eed64",
+        "crates/pixellint-core/tests/pixel_collectors_057.rs": "b564a1113e766554fe52a889a8e18015844dc13da798a9c39f65460a6f48b117",
+        "fixtures/vendor-nielsen-audit/depth057-000-https-clean.txt": "d272db91f80c10e3b2773dbfb58090343a489f418f6b5fdabcb0b44845e4af05",
+        "fixtures/vendor-nielsen-audit/depth057-001-http.txt": "d8164ccdfcfe3b753c05a99c857c0b0793e002cc30789bd18963eaf80442c004",
+        "fixtures/vendor-nielsen-audit/depth057-002-http-vast.txt": "d8164ccdfcfe3b753c05a99c857c0b0793e002cc30789bd18963eaf80442c004",
+        "fixtures/vendor-nielsen-audit/depth057-003-http-postback.txt": "d8164ccdfcfe3b753c05a99c857c0b0793e002cc30789bd18963eaf80442c004",
+        "fixtures/vendor-nielsen-audit/depth057-004-open-product.txt": "b50a4e985f7a0cb727103ed182e4a6e1d33b5366b9cd820bb1283ef1583f0434",
+        "fixtures/vendor-nielsen-audit/depth057-005-query-macro.txt": "4db100604afce6580904a48d5cd00c3cc24391b8d4e1fdbf9163aead625f4715",
+        "fixtures/vendor-nielsen-audit/depth057-006-get-no-headers.txt": "aa352937abd4e93d6e274c24cf5c1e430e4277cde87ce7bebf30afdd7230f9a1",
+        "fixtures/vendor-nielsen-audit/depth057-007-method-POST.txt": "2f5179bea9ced0b776569d292ae71b55df6b6f9062a0af0eae5039787b50b21b",
+        "fixtures/vendor-nielsen-audit/depth057-008-method-PUT.txt": "4b44346d1e02cbcf4a3a10bf649ad0d6a1db34b5335819dd81840d4682880ddc",
+        "fixtures/vendor-nielsen-audit/depth057-009-method-OPTIONS.txt": "62261c56eee329403fe09373b4eee4ecc94835a44f6d628f6e1682eb95214575",
+        "fixtures/vendor-nielsen-audit/depth057-010-cross-safe-10.txt": "586a91beb1990fc30a51d1e49a7e4860a446ad6f3e7afb1de6efec795f906a89",
+        "fixtures/vendor-nielsen-audit/depth057-011-cross-safe-11.txt": "c92f197ae790a67a2d1b02c6fce0c138ce76ddd55497eb06fc3fd779a454c249",
+        "fixtures/vendor-nielsen-audit/depth057-012-cross-safe-12.txt": "a034c531dd19a8c24f54a389447180db33a3fb064714c722fb948dea7940d6a2",
+        "fixtures/vendor-nielsen-audit/depth057-013-cross-safe-13.txt": "60c4a840d617e1c1d3983f8eb3816b8aac9c7e1f3213acd6b3c680f9b5e7f97e",
+        "fixtures/vendor-nielsen-audit/depth057-014-cross-unsafe-type-14.txt": "4d371fd7ad78e02b40b0425fcb91faccf2c3fa8529526c4a0e2e0ef5c09a109e",
+        "fixtures/vendor-nielsen-audit/depth057-015-cross-unsafe-type-15.txt": "13ca696b8c6eeefd90bbcfd6fb8c7a21344e7e42064ae19fab8207d8677186c8",
+        "fixtures/vendor-nielsen-audit/depth057-016-cross-unsafe-type-16.txt": "6e29d3022f9040c0d062a1d312e64452fb701f4e8bd00851c07c5f510f95774e",
+        "fixtures/vendor-nielsen-audit/depth057-017-cross-unsafe-raw-17.txt": "e8da13bbfc71ce4d6ed3b5e7d36d1c1f3025c531ffb4f0a651ba3f5212d217cc",
+        "fixtures/vendor-nielsen-audit/depth057-018-cross-unsafe-raw-18.txt": "9591a4095958dbe24da5c049865782095dfae2afc3a4d7b9af831f393fbbf14b",
+        "fixtures/vendor-nielsen-audit/depth057-019-cross-unsafe-raw-19.txt": "945e49f272eedff4acdf145c0fe4610cd68d9876efff7c151140f71bb1f81c04",
+        "fixtures/vendor-nielsen-audit/depth057-020-header-length-128-20.txt": "99438375c2ff752eb3a3766fa47b447a696839c48d3369c5a1635fd0dc765b05",
+        "fixtures/vendor-nielsen-audit/depth057-021-header-length-128-21.txt": "576368aafe963b9666fa0c352e23e55d9b737814e651eb18309fae0c53eec9c8",
+        "fixtures/vendor-nielsen-audit/depth057-022-header-length-129-22.txt": "ec159f693132ffe5fe5ef231e4a2c98be45a139ceb05100fbc79150f6c6768c6",
+        "fixtures/vendor-nielsen-audit/depth057-023-header-length-129-23.txt": "ebefdd5e42969dc162a0e24f067b1fdb785167bae21d7970a3ce042c5496174a",
+        "fixtures/vendor-nielsen-audit/depth057-024-non-latin1-opaque.txt": "6ce8ac8b6bc15a3907532d136f49344507a844dd42d9e32c09759f28660c023f",
+        "fixtures/vendor-nielsen-audit/depth057-025-without-origin-json-preserved.txt": "e0b77401a62f91ecb61413ab37387500b096aa0f7bf6337073ea1f01d2ea442b",
+        "fixtures/vendor-nielsen-audit/depth057-026-unknown-origin-26.txt": "086722bc50a69196f258c25a4a14c1da0b25a40177eaf0707c25d5933a74bd68",
+        "fixtures/vendor-nielsen-audit/depth057-027-unknown-origin-27.txt": "751c414f4090c831fa4a0fdf6b5e3eaad33ce0059e879295bd717a27420b6fd6",
+        "fixtures/vendor-nielsen-audit/depth057-028-unknown-origin-28.txt": "f534a68d66d677069fec7a7341dbac90339da7b278e9dd8b4accb71245a194d4",
+        "fixtures/vendor-nielsen-audit/depth057-029-unknown-origin-29.txt": "5bd9f2192aed35daa9144f8091a4924a765f1ac31c35d1ba610b9196e4630b66",
+        "fixtures/vendor-nielsen-audit/depth057-030-same-origin-30.txt": "da4734fffeb148c1a4c0308ad8b97f2de5acc1a463dac90030e6a0ddabdc714a",
+        "fixtures/vendor-nielsen-audit/depth057-031-same-origin-31.txt": "a50379fb1677572aaabaa71c94152460165e09fc262c2c4a112869162ff11a00",
+        "fixtures/vendor-nielsen-audit/depth057-032-same-origin-32.txt": "8ee40ec48dcf3c01f36b2b2853594865aef6848cc4a3837459957ec2c81b70cc",
+        "fixtures/vendor-nielsen-audit/depth057-033-opaque-null-origin.txt": "7401dac450c85b86e732a819065c0482975b416db10ff31159114f02c98de440",
+        "fixtures/vendor-nielsen-audit/depth057-034-post-json-cross.txt": "4d0258438be5341a36a122ab0c7f8aceb712a808c4d7cfa71aa331666e163111",
+        "fixtures/vendor-nielsen-audit/depth057-035-http-request.txt": "542783836820a049779e94c68cefe16ff6d32d289e8d330d787e29c6f60598a3",
+        "fixtures/vendor-nielsen-audit/depth057-036-neighbor-36.txt": "80b953cb8593a06e13ed515b5fe4927dd6149bb5b16a5dde10cae1015fa442ed",
+        "fixtures/vendor-nielsen-audit/depth057-037-neighbor-37.txt": "402bea9e359c4a77607e5e752938931ff2f22758adf897c2240019d8cf54c822",
+        "fixtures/vendor-nielsen-audit/depth057-038-neighbor-38.txt": "80b953cb8593a06e13ed515b5fe4927dd6149bb5b16a5dde10cae1015fa442ed",
+        "crates/pixellint-core/src/manifest.rs": "d383f6c67144cb2386c9e5b01f23c93adc72bd840d0a6cfa4ce160522b6452b7",
+        "crates/pixellint-core/src/lib.rs": "8d55355e751f1b3d2ef5aa073e6ac10f858f0509d52f511d5948243936f5bf3c",
+        "docs/RULEPACK_SCHEMA.md": "d4ef07cdb6461c5d4da7405c3673b84543adf29de6b3d2c836eb30f73a7a5bb1",
+        "crates/pixellint-core/tests/analytics_depth.rs": "b54dd89112be43a15e8689d478389db4cb2fb7bc68d0ecd38e9528cc120f0804",
+        "fixtures/vendor-nielsen-audit/depth057-033-same-host-cross-origin-33.txt": "696fb5a231952970b9594aaa408587c303e8e590e3534a436a43f7446bfd589d",
+        "fixtures/vendor-nielsen-audit/depth057-034-same-host-cross-origin-34.txt": "2f362769fb066c192b5754913c1337bf51bae0ee4920db41cc5183da6cee026e",
+        "fixtures/vendor-nielsen-audit/depth057-035-opaque-null-origin.txt": "7401dac450c85b86e732a819065c0482975b416db10ff31159114f02c98de440",
+        "fixtures/vendor-nielsen-audit/depth057-036-post-json-cross.txt": "4d0258438be5341a36a122ab0c7f8aceb712a808c4d7cfa71aa331666e163111",
+        "fixtures/vendor-nielsen-audit/depth057-037-http-request.txt": "542783836820a049779e94c68cefe16ff6d32d289e8d330d787e29c6f60598a3",
+        "fixtures/vendor-nielsen-audit/depth057-039-neighbor-39.txt": "402bea9e359c4a77607e5e752938931ff2f22758adf897c2240019d8cf54c822",
+        "fixtures/vendor-nielsen-audit/depth057-040-neighbor-40.txt": "d54ca019c985ce47d773a0b6e0b3b1713ada7786fc8012ee98f7750c19209fe5"
       },
       "prior_status": "deepened_with_documented_gaps",
-      "disposition": "Retained existing contracts after reopening the canonical source. Detailed baseline inventory is carried forward; no new hard transport restriction was supported for the current matched surface in this bounded pass.",
+      "disposition": "implemented_source_scoped_partial",
       "baseline_review_date": "2026-10-07",
       "baseline_added_checks": [
         "Enforce documented alphanumeric session and product identifiers.",
@@ -205168,7 +205405,21 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "match": {
+        "hosts": [
+          "audit.imrworldwide.com"
+        ],
+        "paths": [
+          "/cgi-bin/gn"
+        ]
+      },
+      "source_urls": [
+        "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
+        "https://fetch.spec.whatwg.org/"
+      ],
+      "golden_cases": 50,
+      "collector_followup": "docs/reviews/pixel-collectors-057.json"
     },
     {
       "id": "vendor/nielsen-config",
@@ -305358,5 +305609,10 @@
     "review": "docs/reviews/pixel-collectors-056.json",
     "golden_cases": 92,
     "sdk_executions": 14
+  },
+  "pixel_collectors_057_followup": {
+    "review": "docs/reviews/pixel-collectors-057.json",
+    "golden_cases": 76,
+    "browser_controls": 11
   }
 }

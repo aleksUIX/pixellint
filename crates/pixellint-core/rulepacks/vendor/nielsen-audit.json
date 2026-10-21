@@ -2,14 +2,14 @@
   "id": "vendor/nielsen-audit",
   "display_name": "Nielsen ads audit ping",
   "vendor": "nielsen",
-  "description": "Nielsen Digital Measurement ads audit pings on audit.imrworldwide.com/cgi-bin/gn. Nielsen documents prd=audit, intid, sessionid, product, and createtm as mandatory. DCR cfg hello pings stay vendor/nielsen.",
+  "description": "Nielsen audience-validation audit pings on the exact /cgi-bin/gn endpoint. Existing integration, session and product fields retain their checks. HTTPS is required; GET and captured cross-origin Content-Type checks give advice for avoiding browser preflight. Full CORS behavior, session linkage and delivery require external context.",
   "source_level": "official_vendor",
   "docs": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
   "match": {
     "hosts": [
       "audit.imrworldwide.com"
     ],
-    "path_prefixes": [
+    "paths": [
       "/cgi-bin/gn"
     ]
   },
@@ -95,6 +95,121 @@
       "requires": [
         "apid"
       ]
+    },
+    {
+      "code": "vendor.nielsen-audit.https_required",
+      "kind": "require_https",
+      "severity": "error",
+      "message": "Nielsen documents audit pings as HTTPS requests.",
+      "fix_hint": "Use https://audit.imrworldwide.com/cgi-bin/gn with the generated audit parameters.",
+      "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "description": "Nielsen prefers simple GET audit requests to avoid preflight. This is advice rather than a universal receiver method enumeration.",
+        "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon"
+      },
+      {
+        "name": "headers.origin",
+        "description": "Capture context for cross-origin browser transport advice. No Origin header is required and its syntax is not newly constrained.",
+        "doc": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
+        "allow_empty": true
+      },
+      {
+        "name": "content_type",
+        "severity": "warning",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "present",
+              "param": "headers.origin"
+            },
+            {
+              "kind": "value_pattern",
+              "param": "headers.origin",
+              "pattern": "(?i)^(?:null|https?://[^/?#\\s]+)$"
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "value_pattern",
+                "param": "headers.origin",
+                "pattern": "(?i)^https://audit\\.imrworldwide\\.com(?::443)?$"
+              }
+            }
+          ]
+        },
+        "format": {
+          "kind": "enum",
+          "values": [
+            "text/plain",
+            "application/x-www-form-urlencoded",
+            "multipart/form-data"
+          ]
+        },
+        "description": "For a captured request carrying a non-collector Origin, these MIME essences are CORS-safelisted. A different media type can require preflight, which Nielsen warns its downstream collectors reject. Header absence is allowed.",
+        "doc": "https://fetch.spec.whatwg.org/#cors-safelisted-request-header",
+        "fix_hint": "For browser cross-origin audit GETs, omit Content-Type or use a CORS-safelisted media type, such as text/plain.",
+        "source_level": "normative"
+      },
+      {
+        "name": "headers.content-type",
+        "severity": "warning",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "present",
+                  "param": "headers.origin"
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "headers.origin",
+                  "pattern": "(?i)^(?:null|https?://[^/?#\\s]+)$"
+                },
+                {
+                  "kind": "not",
+                  "condition": {
+                    "kind": "value_pattern",
+                    "param": "headers.origin",
+                    "pattern": "(?i)^https://audit\\.imrworldwide\\.com(?::443)?$"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "value_pattern",
+              "param": "headers.content-type",
+              "pattern": "^[\\x00-\\xff]*$"
+            }
+          ]
+        },
+        "format": {
+          "kind": "regex",
+          "pattern": "^[^\\x00-\\x08\\x0a-\\x1f\\x7f\"():<>?@\\[\\]\\\\{}]*$"
+        },
+        "description": "Fetch limits a CORS-safelisted Content-Type value to 128 bytes and excludes CORS-unsafe bytes. For a captured Latin-1 header value each character is one byte, including MIME parameters. Values outside Latin-1 remain unverified by this raw-header advice. This does not certify the complete browser preflight decision.",
+        "doc": "https://fetch.spec.whatwg.org/#cors-safelisted-request-header",
+        "fix_hint": "Use a short Content-Type value without CORS-unsafe bytes. For this audit GET, the header may also be omitted.",
+        "max_length": 128,
+        "source_level": "normative"
+      }
+    ],
+    "rules": []
+  }
 }

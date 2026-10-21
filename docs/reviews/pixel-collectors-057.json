@@ -1,0 +1,76 @@
+{
+  "review_date": "2026-10-21",
+  "version": "0.57.0",
+  "new_rulepacks": [],
+  "deepened_rulepacks": [
+    "vendor/heap-user-properties",
+    "vendor/nielsen-audit"
+  ],
+  "sources": {
+    "heap-user-properties.md": {
+      "url": "https://developers.heap.io/reference/add-user-properties.md",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "1bd0d223ec6bfd46f07aa9b0b9ac6fc60d25b2f39ab0f0021e547798d994a78b",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "heap-user-properties.html": {
+      "url": "https://developers.heap.io/reference/add-user-properties",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "36d5022d57f34ef202362634550592b1f13517ea6d8dc8efe37c480dd0f512d8",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "heap-bulk-user-properties.md": {
+      "url": "https://developers.heap.io/reference/bulk-add-user-properties.md",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "9f338b95378a3b4ef68fa2131fa9714e82bf9e0e67932c24816f16ca324c6f95",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "nielsen-audit.html": {
+      "url": "https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "ed993aa8b5109b0918b4675c220229feef9ff33f5a98363ce1b3117f5f9d020d",
+      "snapshot_kind": "original downloaded bytes"
+    },
+    "fetch-standard.html": {
+      "url": "https://fetch.spec.whatwg.org/",
+      "access": "read_primary_source",
+      "retrieved_on": "2026-10-21",
+      "snapshot_sha256": "63b0a018753c330adf1e40417524eb70ea02d4d3e123bcb39b6770f23bad911b",
+      "snapshot_kind": "original downloaded bytes"
+    }
+  },
+  "scope_limits": {
+    "heap-user-properties": [
+      "Only the exact documented /api/add_user_properties endpoint on the existing US and EU hosts is selected. Bare JSON retains the existing shape discriminator. Similar paths stay uncovered.",
+      "New reserved id-key checks are warnings, following the published server-side API guide. They cover each immediate properties key in single and bulk rows, in all four letter cases. They do not forbid substrings, arbitrary custom keys, key values or account-property IDs.",
+      "Case-sensitive identity semantics, PII policy, registered projects, rate limits, account state and receiver acceptance require external context. No Email-case error is invented: the source explicitly permits such keys as separate custom properties.",
+      "Published property types, key/value lengths, batch bounds and HTTP contracts retain their existing scope. Documentation is not treated as a complete live rejection schema."
+    ],
+    "nielsen-audit": [
+      "Only exact /cgi-bin/gn on audit.imrworldwide.com is selected. Nearby paths stay uncovered. HTTPS follows the explicit vendor request scheme. GET is advice rather than an exhaustive method rejection policy.",
+      "Content-Type advice requires a captured populated HTTP(S)-shaped or null Origin that is not the collector itself. Missing, redacted, macro, malformed and unsupported-scheme Origin values do not establish browser CORS context.",
+      "MIME essence is checked separately from the raw header. Raw safelist byte/length advice applies only to Latin-1 values, where every Unicode character represents one header byte. It uses 128 characters, not UTF-8 length. Values outside Latin-1 remain unverified by this raw-header check.",
+      "These checks do not certify preflight-free behavior. Other headers, combined safelist sizes, credentials, redirects, browser policy, same-origin normalization edge cases, opaque headers and receiver responses remain outside these local contracts. No Content-Type or Origin header is required.",
+      "Product identifiers remain an open alphanumeric namespace. Integration IDs, server app ownership, session/impid linkage, periodic ping timing, opt-out state and delivery require external context. No fixed ID length or guessed timestamp-age rule is added."
+    ]
+  },
+  "golden_cases": 76,
+  "browser_controls": {
+    "executions": 11,
+    "requests": 11,
+    "vendor_sdk_executed": false,
+    "vendor_receiver_tested": false,
+    "external_vendor_requests": 0,
+    "result": "Chromium Fetch requests to local servers verify actual preflight behavior for MIME essence, quoted values, 128/129-byte ASCII and Latin-1 boundaries, header omission and same-origin JSON. The local preflight handler deliberately returns 403. These are browser mechanism controls, not Nielsen acceptance tests."
+  },
+  "review_notes": [
+    "No raw vendor articles or standard snapshot are distributed. Primary URLs and hashes identify local evidence.",
+    "Low contract counts are not automatically defects. Several loader, image and S2S packs already map their published field table; unspecified ID grammar and receiver enums are left open.",
+    "No shared engine behavior changes. One HTTP Origin field supplies context only and is counted separately from newly validating fields.",
+    "Source reviews remain partial and do not certify complete vendor coverage."
+  ]
+}

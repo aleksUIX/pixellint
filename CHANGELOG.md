@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.57.0
+
+- Deepen Heap user-property updates with advice for reserved id keys in every letter case, across single and bulk requests. Keep unrelated custom keys open.
+- Require HTTPS on Nielsen audit pings and add advice for GET and captured cross-origin Content-Type values that can require preflight. Inspect MIME essence, raw unsafe bytes and the 128-byte safelist bound without claiming complete CORS certification.
+- Constrain both packs to exact documented endpoints. Neighboring paths retain explicit coverage diagnostics.
+- Add source-reviewed fixtures, browser transport controls and capture-availability regressions. Receiver and vendor completeness remain partial.
+
 ## 0.56.0
 
 - Deepen Quora CAPI with advisory checks for POST, JSON transport, Bearer authorization and captured request-body presence, following a pinned official server template.

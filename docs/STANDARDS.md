@@ -5847,11 +5847,11 @@ Context: `{}`.
 
 ## `vendor/heap-user-properties`
 
-Server-side add_user_properties posted to heapanalytics.com/api/add_user_properties. Heap requires app_id and identity. properties is the object that actually writes traits. Bulk users[] is not contracted. Track stays vendor/heap-track. Identify is vendor/heap-identify.
+Heap single and bulk user-property updates on the exact documented endpoint. Existing value, identity and batch checks are joined by advice for the reserved id property in every letter case. Other custom keys remain open. Account state and receiver acceptance require external evidence.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/heap-user-properties.json).
 
-Matcher: `{"hosts":["heapanalytics.com","c.eu.heap-api.com"],"path_prefixes":["/api/add_user_properties"],"json_paths":["app_id",{"any_of":["identity","properties","users"]},{"path":"event","excludes":".+"},{"path":"eventName","excludes":".+"},{"path":"appsflyer_id","excludes":".+"},{"path":"user_id","excludes":".+"},{"path":"account_id","excludes":".*"},{"path":"accounts","excludes":".*"},{"path":"distinct_id","excludes":".+"},{"path":"api_key","excludes":".+"}]}`.
+Matcher: `{"hosts":["heapanalytics.com","c.eu.heap-api.com"],"json_paths":["app_id",{"any_of":["identity","properties","users"]},{"path":"event","excludes":".+"},{"path":"eventName","excludes":".+"},{"path":"appsflyer_id","excludes":".+"},{"path":"user_id","excludes":".+"},{"path":"account_id","excludes":".*"},{"path":"accounts","excludes":".*"},{"path":"distinct_id","excludes":".+"},{"path":"api_key","excludes":".+"}],"paths":["/api/add_user_properties"]}`.
 
 ### JSON contract 1
 
@@ -5875,6 +5875,7 @@ Context: `{"scope":["users[]",""]}`.
 | `property_value` | optional | `{"json_type":["number","string"],"name_pattern":"(?s)^.*$","name_pattern_parent":"properties","max_length":1023,"allow_empty":true}` | [official_vendor](https://developers.heap.io/reference/add-user-properties) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.heap.io/reference/add-user-properties) |
 | `overlong_property_names` | forbidden | `{"name_pattern":"(?s)^.{1024,}$","name_pattern_parent":"properties","severity":"error"}` | [official_vendor](https://developers.heap.io/reference/add-user-properties) |
+| `reserved_id_property` | forbidden | `{"name_pattern":"^(?i:id)$","name_pattern_parent":"properties","severity":"warning"}` | [official_vendor](https://developers.heap.io/reference/add-user-properties) |
 
 ### Complete HTTP contract 1
 
@@ -10264,11 +10265,11 @@ Context: `{"condition":{"kind":"value_in","param":"method","values":["POST"]}}`.
 
 ## `vendor/nielsen-audit`
 
-Nielsen Digital Measurement ads audit pings on audit.imrworldwide.com/cgi-bin/gn. Nielsen documents prd=audit, intid, sessionid, product, and createtm as mandatory. DCR cfg hello pings stay vendor/nielsen.
+Nielsen audience-validation audit pings on the exact /cgi-bin/gn endpoint. Existing integration, session and product fields retain their checks. HTTPS is required; GET and captured cross-origin Content-Type checks give advice for avoiding browser preflight. Full CORS behavior, session linkage and delivery require external context.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/nielsen-audit.json).
 
-Matcher: `{"hosts":["audit.imrworldwide.com"],"path_prefixes":["/cgi-bin/gn"]}`.
+Matcher: `{"hosts":["audit.imrworldwide.com"],"paths":["/cgi-bin/gn"]}`.
 
 ### URL parameters
 
@@ -10284,6 +10285,18 @@ Matcher: `{"hosts":["audit.imrworldwide.com"],"path_prefixes":["/cgi-bin/gn"]}`.
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.nielsen-audit.content_app_id_required` | `{"kind":"required_when_value","when":"product","equals":["dcr","dtvr"],"requires":["apid"]}` | error | [official_vendor](https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon) |
+| `vendor.nielsen-audit.https_required` | `{"kind":"require_https"}` | error | [official_vendor](https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_vendor](https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon) |
+| `headers.origin` | optional | `{"allow_empty":true}` | [official_vendor](https://engineeringportal.nielsen.com/wiki/Digital_Measurement_Ads_Audit_Beacon) |
+| `content_type` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"present","param":"headers.origin"},{"kind":"value_pattern","param":"headers.origin","pattern":"(?i)^(?:null\|https?://[^/?#\\s]+)$"},{"kind":"not","condition":{"kind":"value_pattern","param":"headers.origin","pattern":"(?i)^https://audit\\.imrworldwide\\.com(?::443)?$"}}]},"format":{"kind":"enum","values":["text/plain","application/x-www-form-urlencoded","multipart/form-data"]}}` | [normative](https://fetch.spec.whatwg.org/#cors-safelisted-request-header) |
+| `headers.content-type` | optional | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"all","conditions":[{"kind":"present","param":"headers.origin"},{"kind":"value_pattern","param":"headers.origin","pattern":"(?i)^(?:null\|https?://[^/?#\\s]+)$"},{"kind":"not","condition":{"kind":"value_pattern","param":"headers.origin","pattern":"(?i)^https://audit\\.imrworldwide\\.com(?::443)?$"}}]},{"kind":"value_pattern","param":"headers.content-type","pattern":"^[\\x00-\\xff]*$"}]},"format":{"kind":"regex","pattern":"^[^\\x00-\\x08\\x0a-\\x1f\\x7f\"():<>?@\\[\\]\\\\{}]*$"},"max_length":128}` | [normative](https://fetch.spec.whatwg.org/#cors-safelisted-request-header) |
 
 ## `vendor/nielsen-config`
 

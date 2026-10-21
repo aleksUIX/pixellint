@@ -2,16 +2,13 @@
   "id": "vendor/heap-user-properties",
   "display_name": "Heap add user properties",
   "vendor": "heap",
-  "description": "Server-side add_user_properties posted to heapanalytics.com/api/add_user_properties. Heap requires app_id and identity. properties is the object that actually writes traits. Bulk users[] is not contracted. Track stays vendor/heap-track. Identify is vendor/heap-identify.",
+  "description": "Heap single and bulk user-property updates on the exact documented endpoint. Existing value, identity and batch checks are joined by advice for the reserved id property in every letter case. Other custom keys remain open. Account state and receiver acceptance require external evidence.",
   "source_level": "official_vendor",
   "docs": "https://developers.heap.io/reference/add-user-properties",
   "match": {
     "hosts": [
       "heapanalytics.com",
       "c.eu.heap-api.com"
-    ],
-    "path_prefixes": [
-      "/api/add_user_properties"
     ],
     "json_paths": [
       "app_id",
@@ -54,6 +51,9 @@
         "path": "api_key",
         "excludes": ".+"
       }
+    ],
+    "paths": [
+      "/api/add_user_properties"
     ]
   },
   "body": [
@@ -137,6 +137,16 @@
           "severity": "error",
           "doc": "https://developers.heap.io/reference/add-user-properties",
           "description": "Property keys must have fewer than1024characters, counted afterJSONdecoding."
+        },
+        {
+          "name": "reserved_id_property",
+          "name_pattern": "^(?i:id)$",
+          "name_pattern_parent": "properties",
+          "requirement": "forbidden",
+          "severity": "warning",
+          "description": "The official Add User Properties guide reserves all casings of id for internal variables. This advice applies to immediate property keys in single and bulk updates, not substrings, nested keys or account properties.",
+          "fix_hint": "Rename this custom property. Keep the user identity in the top-level identity field.",
+          "doc": "https://developers.heap.io/reference/add-user-properties"
         }
       ],
       "rules": [],
