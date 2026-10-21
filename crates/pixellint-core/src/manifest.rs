@@ -1129,13 +1129,15 @@ pub enum ParamEncoding {
     PercentEncodedJson,
     /// Form-style query fields represented as JSON strings or repeated arrays.
     QueryParamsJson,
+    /// Nonempty JSON lines represented as an array, preserving original byte limits.
+    Ndjson,
 }
 
 impl ParamEncoding {
     fn decoded_byte_length(self, source: &str, text: &str) -> usize {
         match self {
             Self::Base64Latin1Json => text.chars().count(),
-            Self::PipeDelimitedJson | Self::QueryParamsJson => source.len(),
+            Self::PipeDelimitedJson | Self::QueryParamsJson | Self::Ndjson => source.len(),
             Self::Json | Self::Base64Json | Self::PercentEncodedJson => text.len(),
         }
     }
@@ -1147,6 +1149,15 @@ impl ParamEncoding {
             Self::Base64Latin1Json => decode_base64_latin1_json(source),
             Self::PercentEncodedJson => decode_percent_encoded_json(source),
             Self::QueryParamsJson => decode_query_params_json(source),
+            Self::Ndjson => {
+                let values = source
+                    .lines()
+                    .filter(|line| !line.trim().is_empty())
+                    .map(serde_json::from_str::<serde_json::Value>)
+                    .collect::<Result<Vec<_>, _>>()
+                    .map_err(|error| error.to_string())?;
+                serde_json::to_string(&values).map_err(|error| error.to_string())
+            }
             Self::PipeDelimitedJson => {
                 serde_json::to_string(&source.split('|').collect::<Vec<_>>())
                     .map_err(|error| error.to_string())

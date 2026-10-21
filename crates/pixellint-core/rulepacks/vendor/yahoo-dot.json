@@ -1,20 +1,28 @@
 {
   "id": "vendor/yahoo-dot",
   "display_name": "Yahoo Dot pixel",
-  "description": "Yahoo DSP Dot image pixels on sp.analytics.yahoo.com/spp.pl, as generated in the pixel instrumentation code.",
+  "description": "Documented Yahoo DSP noscript image pixels on the exact /spp.pl route, with optional producer page metadata and hashed matching fields. JavaScript /sp.pl and purchase /collect collectors have their own source profile.",
   "vendor": "yahoo",
   "source_level": "official_vendor",
   "docs": "https://help.yahooinc.com/dsp-api/docs/pixels",
   "match": {
-    "hosts": ["sp.analytics.yahoo.com"],
-    "path_prefixes": ["/spp.pl"]
+    "hosts": [
+      "sp.analytics.yahoo.com"
+    ],
+    "paths": [
+      "/spp.pl"
+    ]
   },
   "params": [
     {
       "name": "a",
-      "aliases": ["projectId"],
+      "aliases": [
+        "projectId"
+      ],
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the project ID. Every official image pixel Yahoo returns includes `a`, and the JavaScript twin sends it as `projectId`.",
       "fix_hint": "Copy the image pixel from Yahoo DSP so `a` carries the project ID.",
       "doc": "https://help.yahooinc.com/dsp-api/docs/pixels"
@@ -22,24 +30,114 @@
     {
       "name": ".yp",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the Yahoo Dot pixel ID. Every official image pixel includes `.yp`, and the Conversions API docs identify Dot firings by that parameter.",
       "fix_hint": "Copy the image pixel from Yahoo DSP so `.yp` carries the pixel ID.",
       "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api"
     },
     {
       "name": "he",
-      "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{64}$"
+      },
       "description": "Enhanced matching sends the email as a SHA-256 hex digest.",
       "fix_hint": "Hash the email with SHA-256 and send the hex digest as `he`.",
       "doc": "https://help.yahooinc.com/identity/docs/enhanced-matching"
     },
     {
       "name": "hph",
-      "format": { "kind": "regex", "pattern": "^[A-Fa-f0-9]{64}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Fa-f0-9]{64}$"
+      },
       "description": "Enhanced matching sends the phone number hashed.",
       "fix_hint": "Hash the phone number and send the digest as `hph`.",
       "doc": "https://help.yahooinc.com/identity/docs/enhanced-matching"
+    },
+    {
+      "name": "b",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://s.yimg.com/wi/ytc.js"
+    },
+    {
+      "name": "c",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://s.yimg.com/wi/ytc.js"
+    },
+    {
+      "name": "f",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "format": {
+        "kind": "url"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.yimg.com/wi/ytc.js"
+    },
+    {
+      "name": "e",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "format": {
+        "kind": "url"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.yimg.com/wi/ytc.js"
+    },
+    {
+      "name": "enc",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://s.yimg.com/wi/ytc.js"
+    },
+    {
+      "name": "yv",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://s.yimg.com/wi/ytc.js"
+    },
+    {
+      "name": "isIframe",
+      "description": "The producer marks iframe pixels with 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.yimg.com/wi/ytc.js"
+    },
+    {
+      "name": "auid",
+      "description": "Enhanced matching is a SHA-256 hexadecimal digest.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.yimg.com/wi/ytc.js"
     }
   ],
   "rules": [

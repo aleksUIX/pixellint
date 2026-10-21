@@ -72,6 +72,22 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/yahoo-browser",
+        include_str!("../rulepacks/vendor/yahoo-browser.json"),
+    ),
+    (
+        "vendor/woopra",
+        include_str!("../rulepacks/vendor/woopra.json"),
+    ),
+    (
+        "vendor/piwik-pro",
+        include_str!("../rulepacks/vendor/piwik-pro.json"),
+    ),
+    (
+        "vendor/sixsense-pixel",
+        include_str!("../rulepacks/vendor/sixsense-pixel.json"),
+    ),
+    (
         "vendor/comscore-modern",
         include_str!("../rulepacks/vendor/comscore-modern.json"),
     ),

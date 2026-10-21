@@ -1,0 +1,562 @@
+{
+  "id": "vendor/woopra",
+  "display_name": "Woopra event and identity collectors",
+  "vendor": "woopra",
+  "description": "Documented event and identity GET collectors plus pinned SDK v11 multipart NDJSON push batches. Checks each record independently. Enterprise identifiers, arbitrary event and visitor properties, custom tracking domains and account configuration require external context.",
+  "docs": "https://docs.woopra.com/reference/track-ce",
+  "source_level": "official_vendor",
+  "match": {
+    "hosts": [
+      "www.woopra.com",
+      "kr.track.airis.appier.net"
+    ],
+    "paths": [
+      "/track/ce",
+      "/track/ce/",
+      "/track/identify",
+      "/track/identify/",
+      "/track/push",
+      "/track/push/"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "operation",
+      "description": "Collector operation from the endpoint path.",
+      "requirement": "optional"
+    },
+    {
+      "name": "payload",
+      "description": "SDK push batches contain NDJSON.",
+      "requirement": "optional"
+    },
+    {
+      "name": "project",
+      "description": "The configured project name.",
+      "requirement": "required",
+      "aliases": [
+        "host"
+      ],
+      "format": {
+        "kind": "non_empty"
+      },
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "name": "event",
+      "description": "Event names are lowercase strings; spaces are allowed.",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^A-Z]+$"
+      },
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "operation",
+              "values": [
+                "push"
+              ]
+            }
+          },
+          {
+            "kind": "value_in",
+            "param": "operation",
+            "values": [
+              "ce"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "cookie",
+      "description": "Opaque visitor device cookie.",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "name": "cv_id",
+      "description": "Optional configured visitor identity.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "name": "cv_email",
+      "description": "Optional visitor email identity.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "name": "timestamp",
+      "description": "Optional event time in Unix milliseconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ip",
+      "description": "Optional visitor IPv4 or IPv6.",
+      "requirement": "optional",
+      "format": {
+        "kind": "ip"
+      },
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "name": "timeout",
+      "description": "Optional visit timeout in milliseconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "name": "referer",
+      "description": "The legacy example accepts a schemeless referring URL.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "name": "redirect",
+      "description": "Optional allowlisted redirect destination.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.woopra.identity_context",
+      "kind": "require_one_of",
+      "params": [
+        "cookie",
+        "cv_id",
+        "cv_email"
+      ],
+      "severity": "info",
+      "message": "Supply a cookie or a configured unique visitor property. Enterprise projects can configure identifiers beyond cv_id and cv_email.",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "operation",
+          "values": [
+            "push"
+          ]
+        }
+      }
+    },
+    {
+      "code": "vendor.woopra.future_timestamp",
+      "kind": "time_window",
+      "param": "timestamp",
+      "unit": "milliseconds",
+      "max_future_seconds": 1,
+      "severity": "error",
+      "message": "Event timestamps cannot be in the future. A one-second tolerance matches the validator clock resolution.",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "operation",
+              "values": [
+                "push"
+              ]
+            }
+          },
+          {
+            "kind": "value_pattern",
+            "param": "timestamp",
+            "pattern": "^[+-]?[0-9]+$"
+          }
+        ]
+      }
+    }
+  ],
+  "path_pattern": "^/track/(?<operation>ce|identify|push)/?$",
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "payload",
+      "encoding": "ndjson",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "push"
+        ]
+      }
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "endpoint",
+          "description": "The published contract specifies this field type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params",
+          "description": "The published contract specifies this field type.",
+          "requirement": "recommended",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.project",
+          "description": "The configured project name.",
+          "requirement": "recommended",
+          "format": {
+            "kind": "non_empty"
+          },
+          "severity": "warning",
+          "json_type": "string",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.event",
+          "description": "Event names are lowercase strings; spaces are allowed.",
+          "requirement": "recommended",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[^A-Z]+$"
+          },
+          "condition": {
+            "kind": "value_in",
+            "param": "endpoint",
+            "values": [
+              "ce"
+            ]
+          },
+          "severity": "warning",
+          "json_type": "string",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.cookie",
+          "description": "Opaque visitor device cookie.",
+          "requirement": "optional",
+          "format": {
+            "kind": "non_empty"
+          },
+          "severity": "warning",
+          "json_type": "string",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.cv_id",
+          "description": "Optional configured visitor identity.",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "json_type": "string",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.cv_email",
+          "description": "Optional visitor email identity.",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "json_type": "string",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.timestamp",
+          "description": "Optional event time in Unix milliseconds.",
+          "requirement": "optional",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+$"
+          },
+          "severity": "warning",
+          "json_type": "integer",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.ip",
+          "description": "Optional visitor IPv4 or IPv6.",
+          "requirement": "optional",
+          "format": {
+            "kind": "ip"
+          },
+          "severity": "warning",
+          "json_type": "string",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.timeout",
+          "description": "Optional visit timeout in milliseconds.",
+          "requirement": "optional",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+$"
+          },
+          "severity": "warning",
+          "json_type": "integer",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.referer",
+          "description": "The legacy example accepts a schemeless referring URL.",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "json_type": "string",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        },
+        {
+          "name": "params.redirect",
+          "description": "Optional allowlisted redirect destination.",
+          "requirement": "optional",
+          "format": {
+            "kind": "url"
+          },
+          "severity": "warning",
+          "json_type": "string",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.woopra.identity_context",
+          "kind": "require_one_of",
+          "params": [
+            "params.cookie",
+            "params.cv_id",
+            "params.cv_email"
+          ],
+          "severity": "info",
+          "message": "Supply a cookie or a configured unique visitor property. Enterprise projects can configure identifiers beyond cv_id and cv_email.",
+          "source_level": "official_template",
+          "doc": "https://static.woopra.com/js/w.js"
+        }
+      ],
+      "scope": "[]",
+      "source_param": "payload",
+      "encoding": "ndjson",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "operation",
+        "values": [
+          "push"
+        ]
+      }
+    }
+  ],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "path",
+          "description": "Collector route.",
+          "requirement": "optional"
+        },
+        {
+          "name": "method",
+          "description": "GET event or identity transport.",
+          "requirement": "required",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "GET"
+            ]
+          },
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "path",
+              "values": [
+                "/track/push",
+                "/track/push/"
+              ]
+            }
+          }
+        },
+        {
+          "name": "push_method",
+          "description": "The pinned SDK sends push batches with POST.",
+          "requirement": "recommended",
+          "root_path": "method",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST"
+            ]
+          },
+          "severity": "warning",
+          "condition": {
+            "kind": "value_in",
+            "param": "path",
+            "values": [
+              "/track/push",
+              "/track/push/"
+            ]
+          }
+        },
+        {
+          "name": "body.payload",
+          "description": "The published contract specifies this field type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "condition": {
+            "kind": "value_in",
+            "param": "path",
+            "values": [
+              "/track/push",
+              "/track/push/"
+            ]
+          }
+        }
+      ],
+      "rules": []
+    }
+  ]
+}

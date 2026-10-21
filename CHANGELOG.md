@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.50.0 (2026-10-21)
+
+- Add 6sense external-media image pixels, Piwik PRO tracking, Woopra event and identity collectors, and Yahoo browser image and purchase collectors.
+- Check Piwik PRO bulk requests, nullable ecommerce tuples, UTF-8 product limits, visitor identity, custom variables and performance bounds. Keep its API separate from Matomo.
+- Add generic encoded-source NDJSON support for Woopra multipart push batches, including later-record failures and original source byte limits.
+- Deepen X legacy and OneTag image/form routes, nested event payloads, matching hashes and metadata. Extend Yahoo Dot optional metadata. SDK profile checks remain advisory.
+- Add 178 synthetic golden cases and five native tests. Eight offline SDK executions emit 16 intercepted collector requests.
+
 ## 0.49.0 (2026-10-21)
 
 - Add Optimizely Event API validation for native visitor, snapshot, decision, attribute and event types, scalar tags and exact signed 64-bit revenue. Personalization null decisions remain valid.

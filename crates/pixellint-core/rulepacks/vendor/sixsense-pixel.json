@@ -1,0 +1,69 @@
+{
+  "id": "vendor/sixsense-pixel",
+  "display_name": "6sense external media pixel",
+  "vendor": "sixsense",
+  "description": "Documented impression and click image pixels. Checks event type and opaque pixel identity. Account ownership, configured event type, platform support and delivery require external context.",
+  "docs": "https://support.6sense.com/docs/external-media-pixels",
+  "source_level": "official_vendor",
+  "match": {
+    "hosts": [
+      "t.6sc.co"
+    ],
+    "paths": [
+      "/img.gif"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "event",
+      "description": "The generated pixel selects impressions or clicks.",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "imp",
+          "clk"
+        ]
+      }
+    },
+    {
+      "name": "pid",
+      "description": "The configured pixel identifier is opaque.",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cb",
+      "description": "Optional platform cache buster.",
+      "requirement": "optional",
+      "allow_empty": true
+    }
+  ],
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Supported collector transport methods.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template"
+      }
+    ],
+    "rules": []
+  }
+}

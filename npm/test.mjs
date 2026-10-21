@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 184, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 188, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -299,4 +299,18 @@ for (const entry of [{ validate }, cjs]) {
   const configured = entry.validate("https://sb.scorecardresearch.com/b?c1=2&c2=opaque&cs_cfg=0000110");
   assert.deepEqual(configured.coverage.vendor_rulepacks, ["vendor/comscore-modern"]);
   assert.equal(configured.reports.flatMap(r => r.violations).length, 0);
+}
+
+// Collector routing and multipart NDJSON must agree in both package entry points.
+for (const entry of [{validate}, cjs]) {
+  for (const [slug, fixture, finding] of [
+    ["piwik-pro", "bulk-second-row", "vendor.piwik-pro.param.h.invalid"],
+    ["woopra", "push-second-record", "vendor.woopra.body.params.event.invalid"],
+    ["yahoo-browser", "hash-array-item", "vendor.yahoo-browser.body.userData.ids.EMAIL[].invalid"],
+    ["x", "event-later-tuple", "vendor.x.body.[1].invalid"],
+  ]) {
+    const artifact = readFileSync(new URL(`../fixtures/vendor-${slug}/depth050-${fixture}.txt`, import.meta.url), "utf8");
+    const result = entry.validate(artifact, {kind: slug === "x" ? "url" : "request"});
+    assert.ok(result.reports.flatMap(r => r.violations).some(v => v.code === finding));
+  }
 }

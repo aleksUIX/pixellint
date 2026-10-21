@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 184 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 188 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -11027,6 +11027,246 @@ Matcher: `{"hosts":["ct.pinterest.com"],"path_prefixes":["/v3"]}`.
 | --- | --- | --- | --- |
 | `vendor.pinterest.checkout_requires_value_and_currency` | `{"kind":"required_when_value","when":"event","equals":["checkout","addtocart"],"requires":["ed[value]","ed[currency]"]}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
 
+## `vendor/piwik-pro`
+
+Managed ppms.php query and form requests, plus documented JSON bulk query strings. Checks application and visitor identities, flags, performance bounds, custom variables, search categories and nullable eight-position ecommerce rows. Raw text query bodies, flat JSON parameter maps and custom collector domains remain outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/piwik-pro.json).
+
+Matcher: `{"host_suffixes":["piwik.pro"],"paths":["/ppms.php"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `idsite` | recommended | `{"min_length":36,"max_length":36,"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `rec` | recommended | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `url` | recommended | `{"format":{"kind":"regex","pattern":"(?i)^(?:[a-z][a-z0-9+.-]*://[^/?#\\s]+\|//[^/?#\\s]+\|mailto:[^\\s]+)"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `action_name` | recommended | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `_id` | recommended | `{"min_length":16,"max_length":16,"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{16}$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `r` | recommended | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `urlref` | optional | `{"format":{"kind":"regex","pattern":"(?i)^(?:[a-z][a-z0-9+.-]*://[^/?#\\s]+\|//[^/?#\\s]+\|mailto:[^\\s]+)"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `_cvar` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `cvar` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `_idvc` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `_viewts` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `_idts` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `res` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+x[0-9]+$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `h` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":23}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `m` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":59}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `s` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":59}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ua` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `lang` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `uid` | optional | `{"min_length":1}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `cid` | optional | `{"min_length":16,"max_length":16,"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{16}$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `new_visit` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `link` | optional | `{"format":{"kind":"regex","pattern":"(?i)^(?:[a-z][a-z0-9+.-]*://[^/?#\\s]+\|//[^/?#\\s]+\|mailto:[^\\s]+)"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `download` | optional | `{"format":{"kind":"regex","pattern":"(?i)^(?:[a-z][a-z0-9+.-]*://[^/?#\\s]+\|//[^/?#\\s]+\|mailto:[^\\s]+)"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `search` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `search_cat` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `search_cats` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `search_count` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":4294967295}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `pv_id` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{6}$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `idgoal` | optional | `{"format":{"kind":"regex","pattern":"^(?:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}\|[0-9]+)$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `revenue` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `e_t` | optional | `{"format":{"kind":"enum","values":["order","cart-update","product-detail-view","add-to-cart","remove-from-cart"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ec_id` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ec_items` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ec_products` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ec_st` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ec_tx` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ec_sh` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ec_dt` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `cur` | optional | `{"format":{"kind":"currency"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `_ects` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `gt_ms` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `cs` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `cookie` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `fla` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `java` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `dir` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `qt` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `realp` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `pdf` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `wma` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `gears` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ag` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `e_c` | optional | `{"min_length":1,"max_length":16384}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `e_a` | optional | `{"min_length":1,"max_length":16384}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `e_n` | optional | `{"min_length":1,"max_length":16384}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `e_v` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"minimum":0,"maximum":100000000000}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `c_n` | optional | `{"min_length":1,"max_length":1024}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `c_p` | optional | `{"min_length":1,"max_length":1024}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `c_t` | optional | `{"min_length":1,"max_length":1024}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `c_i` | optional | `{"min_length":1,"max_length":1024}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `c_persid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `send_image` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `cip` | optional | `{"format":{"kind":"ip"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `cdt` | optional | `{"format":{"kind":"regex","pattern":"^(?:[0-9]+\|[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `country` | optional | `{"format":{"kind":"regex","pattern":"^[a-z]{2}$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `city` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `lat` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"minimum":-90,"maximum":90}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `lon` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"minimum":-180,"maximum":180}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `uia` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `dda` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ping` | optional | `{"format":{"kind":"enum","values":["1","2","3","4","5","6"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_us` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_ue` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_rs` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_re` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_ss` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_fs` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_ds` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_cs` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_ce` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_qs` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_as` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_ae` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_dl` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":65535}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_di` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":16777215}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_ls` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":16777215}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_le` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":16777215}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_dc` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":16777215}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `t_ee` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"minimum":0,"maximum":16777215}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ts_n` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `ts_v` | optional | `{"format":{"kind":"regex","pattern":"^(0\|[1-9][0-9]*)\\.(0\|[1-9][0-9]*)\\.(0\|[1-9][0-9]*)(?:-(?:0\|[1-9][0-9]*\|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0\|[1-9][0-9]*\|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `sh` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `rmip` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `custom_dimensions` | optional | `{"name_pattern":"^dimension[0-9]+$","allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.piwik-pro.recording_disabled` | `{"kind":"forbid_value_pattern","params":["rec"],"pattern":"^0$"}` | warning | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 1
+
+Context: `{"source_param":"_cvar"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `slots` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"","min_items":2,"max_items":2}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `*[]` | optional | `{"json_type":"string","max_length":200,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 2
+
+Context: `{"source_param":"cvar"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `slots` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"","min_items":2,"max_items":2}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `*[]` | optional | `{"json_type":"string","max_length":200,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 3
+
+Context: `{"source_param":"search_cats"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array"}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[]` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 4
+
+Context: `{"source_param":"ec_products"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","max_items":100}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[]` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 5
+
+Context: `{"scope":"[]","source_param":"ec_products"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `[0]` | required | `{"json_type":"string","max_byte_length":1024,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[1]` | optional | `{"json_type":["string","null"],"max_byte_length":1024,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[2]` | optional | `{"json_type":["string","array","null"],"max_byte_length":1024,"max_items":5,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[2][]` | optional | `{"json_type":"string","max_byte_length":1024,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[3]` | optional | `{"json_type":["number","null"]}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[4]` | optional | `{"json_type":["integer","null"]}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[5]` | optional | `{"json_type":["string","null"],"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[6]` | optional | `{"json_type":["string","null"],"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[7]` | optional | `{"json_type":["object","null"],"max_properties":20}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 6
+
+Context: `{"scope":"[][7]","source_param":"ec_products"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `dimensions` | optional | `{"json_type":"string","name_pattern":"(?s)^.*$","name_pattern_parent":"","allow_empty":true,"key_pattern":"^0*(?:[0-9]\|1[0-9]\|20)$"}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 7
+
+Context: `{"source_param":"ec_items"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","max_items":100}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[]` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 8
+
+Context: `{"scope":"[]","source_param":"ec_items"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `[0]` | required | `{"json_type":"string","max_byte_length":1024,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[1]` | optional | `{"json_type":["string","null"],"max_byte_length":1024,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[2]` | optional | `{"json_type":["string","array","null"],"max_byte_length":1024,"max_items":5,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[2][]` | optional | `{"json_type":"string","max_byte_length":1024,"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[3]` | optional | `{"json_type":["number","null"]}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[4]` | optional | `{"json_type":["integer","null"]}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[5]` | optional | `{"json_type":["string","null"],"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[6]` | optional | `{"json_type":["string","null"],"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `[7]` | optional | `{"json_type":["object","null"],"max_properties":20}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### JSON contract 9
+
+Context: `{"scope":"[][7]","source_param":"ec_items"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `dimensions` | optional | `{"json_type":"string","name_pattern":"(?s)^.*$","name_pattern_parent":"","allow_empty":true,"key_pattern":"^0*(?:[0-9]\|1[0-9]\|20)$"}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+Bulk query sources: `[{"source_field":"body.requests[]","encoding":"query"}]`.
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["GET","POST"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `body_encoding` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `body.requests` | optional | `{}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `body` | optional | `{"allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.piwik-pro.body_representation_unvalidated` | `{"kind":"forbid_value_pattern","params":["body_encoding"],"pattern":"(?s).*","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"method","values":["POST"]},{"kind":"json_type","param":"body","json_type":["object","string"]},{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["form"]}},{"kind":"not","condition":{"kind":"exists","param":"body.requests"}}]}}` | info | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### Complete HTTP contract 2
+
+Context: `{"condition":{"kind":"exists","param":"body.requests"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+| `body.requests` | required | `{"json_type":"array"}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
+### Complete HTTP contract 3
+
+Context: `{"scope":"body.requests[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
+
 ## `vendor/plausible`
 
 Plausible Events API posts to plausible.io/api/event. Self-hosted endpoints on other hosts are not contracted.
@@ -12344,6 +12584,30 @@ Context: `{"source_param":"e","condition":{"kind":"value_in","param":"n","values
 | --- | --- | --- | --- |
 | `ad_platform` | required | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 
+## `vendor/sixsense-pixel`
+
+Documented impression and click image pixels. Checks event type and opaque pixel identity. Account ownership, configured event type, platform support and delivery require external context.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/sixsense-pixel.json).
+
+Matcher: `{"hosts":["t.6sc.co"],"paths":["/img.gif"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `event` | required | `{"format":{"kind":"enum","values":["imp","clk"]}}` | [official_vendor](https://support.6sense.com/docs/external-media-pixels) |
+| `pid` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.6sense.com/docs/external-media-pixels) |
+| `cb` | optional | `{"allow_empty":true}` | [official_vendor](https://support.6sense.com/docs/external-media-pixels) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://support.6sense.com/docs/external-media-pixels) |
+
 ## `vendor/snapchat`
 
 Server-side event requests to the Snapchat Conversions API v3 events endpoint, including the JSON event payload.
@@ -13432,6 +13696,81 @@ Path captures: `/v2/notice/(?<notice_id>[^/]*)`. Captured values take precedence
 | --- | --- | --- | --- |
 | `notice_id` | required | `{"format":{"kind":"non_empty"}}` | [official_template](https://github.com/trustarc/trustarc-segment-wrapper) |
 
+## `vendor/woopra`
+
+Documented event and identity GET collectors plus pinned SDK v11 multipart NDJSON push batches. Checks each record independently. Enterprise identifiers, arbitrary event and visitor properties, custom tracking domains and account configuration require external context.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/woopra.json).
+
+Matcher: `{"hosts":["www.woopra.com","kr.track.airis.appier.net"],"paths":["/track/ce","/track/ce/","/track/identify","/track/identify/","/track/push","/track/push/"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+Path captures: `^/track/(?<operation>ce\|identify\|push)/?$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `operation` | optional | `{}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `payload` | optional | `{}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `project` | required | `{"aliases":["host"],"format":{"kind":"non_empty"},"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `event` | required | `{"format":{"kind":"regex","pattern":"^[^A-Z]+$"},"condition":{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}},{"kind":"value_in","param":"operation","values":["ce"]}]}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `cookie` | optional | `{"format":{"kind":"non_empty"},"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `cv_id` | optional | `{"allow_empty":true,"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `cv_email` | optional | `{"allow_empty":true,"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `timestamp` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `ip` | optional | `{"format":{"kind":"ip"},"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `timeout` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `referer` | optional | `{"allow_empty":true,"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `redirect` | optional | `{"format":{"kind":"url"},"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.woopra.identity_context` | `{"kind":"require_one_of","params":["cookie","cv_id","cv_email"],"condition":{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}}}` | info | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `vendor.woopra.future_timestamp` | `{"kind":"time_window","param":"timestamp","unit":"milliseconds","max_future_seconds":1,"condition":{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_in","param":"operation","values":["push"]}},{"kind":"value_pattern","param":"timestamp","pattern":"^[+-]?[0-9]+$"}]}}` | error | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+
+### JSON contract 1
+
+Context: `{"source_param":"payload","encoding":"ndjson","encoding_severity":"warning","condition":{"kind":"value_in","param":"operation","values":["push"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://static.woopra.com/js/w.js) |
+
+### JSON contract 2
+
+Context: `{"scope":"[]","source_param":"payload","encoding":"ndjson","encoding_severity":"warning","condition":{"kind":"value_in","param":"operation","values":["push"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `endpoint` | recommended | `{"json_type":"string","severity":"warning"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params` | recommended | `{"json_type":"object","severity":"warning"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.project` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning","json_type":"string"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.event` | recommended | `{"format":{"kind":"regex","pattern":"^[^A-Z]+$"},"condition":{"kind":"value_in","param":"endpoint","values":["ce"]},"severity":"warning","json_type":"string"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.cookie` | optional | `{"format":{"kind":"non_empty"},"severity":"warning","json_type":"string"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.cv_id` | optional | `{"allow_empty":true,"severity":"warning","json_type":"string"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.cv_email` | optional | `{"allow_empty":true,"severity":"warning","json_type":"string"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.timestamp` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"severity":"warning","json_type":"integer"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.ip` | optional | `{"format":{"kind":"ip"},"severity":"warning","json_type":"string"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.timeout` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"severity":"warning","json_type":"integer"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.referer` | optional | `{"allow_empty":true,"severity":"warning","json_type":"string"}` | [official_template](https://static.woopra.com/js/w.js) |
+| `params.redirect` | optional | `{"format":{"kind":"url"},"severity":"warning","json_type":"string"}` | [official_template](https://static.woopra.com/js/w.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.woopra.identity_context` | `{"kind":"require_one_of","params":["params.cookie","params.cv_id","params.cv_email"]}` | info | [official_template](https://static.woopra.com/js/w.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `path` | optional | `{}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"condition":{"kind":"not","condition":{"kind":"value_in","param":"path","values":["/track/push","/track/push/"]}}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `push_method` | recommended | `{"root_path":"method","format":{"kind":"enum","values":["POST"]},"severity":"warning","condition":{"kind":"value_in","param":"path","values":["/track/push","/track/push/"]}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+| `body.payload` | recommended | `{"json_type":"string","severity":"warning","condition":{"kind":"value_in","param":"path","values":["/track/push","/track/push/"]}}` | [official_vendor](https://docs.woopra.com/reference/track-ce) |
+
 ## `vendor/x-conversions-api`
 
 Website conversion events posted to the X Ads measurement conversions endpoint.
@@ -13481,11 +13820,11 @@ Context: `{"scope":"conversions[]"}`.
 
 ## `vendor/x`
 
-X conversion image pixels on analytics.twitter.com/i/adsct, analytics.x.com, and t.co. txn_id is the conversion ID. Generated pixels send p_id=Twitter. tw_sale_amount and tw_order_quantity ride on purchase fires. twclid is the click ID X documents for matching. X documents twq, not this query. The conversion API stays vendor/x-conversions-api.
+X website tag image and form collectors on exact /i/adsct and /i/adsctp routes. Adds pinned UWT 2.4.12 nested event objects and legacy event tuples, optional metadata and matching hashes. Custom event properties remain open. Conversions API has its own pack.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/x.json).
 
-Matcher: `{"hosts":["analytics.twitter.com","analytics.x.com","t.co"],"path_contains":["/adsct"]}`.
+Matcher: `{"hosts":["analytics.twitter.com","analytics.x.com","t.co"],"paths":["/i/adsct","/i/adsctp","/1/i/adsct","/1/i/adsctp"]}`.
 
 ### URL parameters
 
@@ -13493,9 +13832,64 @@ Matcher: `{"hosts":["analytics.twitter.com","analytics.x.com","t.co"],"path_cont
 | --- | --- | --- | --- |
 | `txn_id` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html) |
 | `p_id` | recommended | `{"format":{"kind":"enum","values":["Twitter"]},"format_severity":"warning"}` | [ecosystem_reference](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html) |
-| `tw_sale_amount` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(\\.[0-9]+)?$"},"format_severity":"warning"}` | [ecosystem_reference](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html) |
+| `tw_sale_amount` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"format_severity":"warning"}` | [ecosystem_reference](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html) |
 | `tw_order_quantity` | optional | `{"format":{"kind":"integer"},"format_severity":"warning"}` | [ecosystem_reference](https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html) |
 | `twclid` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
+| `tw_document_href` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"url"}}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `tw_document_referrer` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"url"}}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `version` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `type` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `integration` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `event_id` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `pl_id` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `tw_session_id` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `tw_engaged_ms` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `tw_session_count` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `tw_session_start` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `bci` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `eci` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `tw_iframe_status` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `email_address` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning","allow_empty":true}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `phone_number` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning","allow_empty":true}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `external_id` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning","allow_empty":true}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `first_name` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning","allow_empty":true}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `last_name` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning","allow_empty":true}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `event` | optional | `{}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `events` | optional | `{}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+
+### JSON contract 1
+
+Context: `{"source_param":"event","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+
+### JSON contract 2
+
+Context: `{"source_param":"events","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `[]` | optional | `{"json_type":"array","min_items":2,"max_items":2,"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+
+### JSON contract 3
+
+Context: `{"scope":"[]","source_param":"events","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `[0]` | recommended | `{"json_type":"string","severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+| `[1]` | recommended | `{"json_type":"object","severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://static.ads-twitter.com/uwt.js) |
 
 ## `vendor/xandr-sspx`
 
@@ -13671,6 +14065,65 @@ Context: `{"condition":{"kind":"not","condition":{"kind":"value_in","param":"bod
 | `method` | optional | `{"severity":"warning","format_severity":"warning","json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_template](https://cdn.xpln.tech/a.js) |
 | `content_type` | optional | `{"severity":"warning","format_severity":"warning","json_type":"string","allow_empty":true,"format":{"kind":"enum","values":["text/plain"]}}` | [official_template](https://cdn.xpln.tech/a.js) |
 
+## `vendor/yahoo-browser`
+
+Pinned ytc.js 1.17.1 GET image collector and JSON purchase collector. Checks SDK envelope fields and hashed email/phone arrays. Custom qstrings, forwarded eventData and other identifiers remain open. The documented noscript image uses the separate Yahoo Dot pack.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/yahoo-browser.json).
+
+Matcher: `{"hosts":["sp.analytics.yahoo.com"],"paths":["/sp.pl","/collect"],"json_paths":["eventEpoch","eventSource","eventType"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+Path captures: `^/(?<transport>sp\.pl\|collect)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `transport` | optional | `{}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `a` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning","condition":{"kind":"value_in","param":"transport","values":["sp.pl"]}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `.yp` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning","condition":{"kind":"value_in","param":"transport","values":["sp.pl"]}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `b` | optional | `{"allow_empty":true}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `c` | optional | `{"allow_empty":true}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `f` | optional | `{"allow_empty":true,"format":{"kind":"url"},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `e` | optional | `{"allow_empty":true,"format":{"kind":"url"},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `enc` | optional | `{"allow_empty":true}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `yv` | optional | `{"allow_empty":true}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `isIframe` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `he` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `hph` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `auid` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+
+### JSON contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `eventEpoch` | recommended | `{"json_type":"integer","severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `eventSource` | recommended | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["web"]}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `eventType` | recommended | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["purchase"]}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `pageUrl` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"url"}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `pixelId` | optional | `{}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `privacyData` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `userData` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `userData.ids` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `userData.ids.EMAIL` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `userData.ids.PHONE` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `userData.ids.EMAIL[]` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `userData.ids.PHONE[]` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `path` | optional | `{}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning","condition":{"kind":"value_in","param":"path","values":["/sp.pl"]}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `purchase_method` | recommended | `{"root_path":"method","format":{"kind":"enum","values":["POST"]},"severity":"warning","condition":{"kind":"value_in","param":"path","values":["/collect"]}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `body` | recommended | `{"json_type":"object","severity":"warning","condition":{"kind":"value_in","param":"path","values":["/collect"]}}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+
 ## `vendor/yahoo-conversions-api`
 
 Server-side events posted to batch.datax.yahoo.com/v1/events/{pixelId}. The pixel ID rides in the path. Dot image pixels stay vendor/yahoo-dot. Product CAPI, which requires eventId, is not contracted.
@@ -13756,11 +14209,11 @@ Context: `{"scope":"[]"}`.
 
 ## `vendor/yahoo-dot`
 
-Yahoo DSP Dot image pixels on sp.analytics.yahoo.com/spp.pl, as generated in the pixel instrumentation code.
+Documented Yahoo DSP noscript image pixels on the exact /spp.pl route, with optional producer page metadata and hashed matching fields. JavaScript /sp.pl and purchase /collect collectors have their own source profile.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/yahoo-dot.json).
 
-Matcher: `{"hosts":["sp.analytics.yahoo.com"],"path_prefixes":["/spp.pl"]}`.
+Matcher: `{"hosts":["sp.analytics.yahoo.com"],"paths":["/spp.pl"]}`.
 
 ### URL parameters
 
@@ -13770,6 +14223,14 @@ Matcher: `{"hosts":["sp.analytics.yahoo.com"],"path_prefixes":["/spp.pl"]}`.
 | `.yp` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
 | `he` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://help.yahooinc.com/identity/docs/enhanced-matching) |
 | `hph` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://help.yahooinc.com/identity/docs/enhanced-matching) |
+| `b` | optional | `{"allow_empty":true}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `c` | optional | `{"allow_empty":true}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `f` | optional | `{"allow_empty":true,"format":{"kind":"url"},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `e` | optional | `{"allow_empty":true,"format":{"kind":"url"},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `enc` | optional | `{"allow_empty":true}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `yv` | optional | `{"allow_empty":true}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `isIframe` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
+| `auid` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{64}$"},"severity":"warning"}` | [official_template](https://s.yimg.com/wi/ytc.js) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |

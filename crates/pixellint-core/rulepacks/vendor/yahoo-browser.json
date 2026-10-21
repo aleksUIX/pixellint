@@ -1,0 +1,337 @@
+{
+  "id": "vendor/yahoo-browser",
+  "display_name": "Yahoo browser collectors",
+  "vendor": "yahoo",
+  "description": "Pinned ytc.js 1.17.1 GET image collector and JSON purchase collector. Checks SDK envelope fields and hashed email/phone arrays. Custom qstrings, forwarded eventData and other identifiers remain open. The documented noscript image uses the separate Yahoo Dot pack.",
+  "docs": "https://s.yimg.com/wi/ytc.js",
+  "source_level": "official_template",
+  "match": {
+    "hosts": [
+      "sp.analytics.yahoo.com"
+    ],
+    "paths": [
+      "/sp.pl",
+      "/collect"
+    ],
+    "json_paths": [
+      "eventEpoch",
+      "eventSource",
+      "eventType"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "transport",
+      "description": "Collector route from the path.",
+      "requirement": "optional"
+    },
+    {
+      "name": "a",
+      "description": "The JavaScript image collector supplies a configured identifier.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "transport",
+        "values": [
+          "sp.pl"
+        ]
+      }
+    },
+    {
+      "name": ".yp",
+      "description": "The JavaScript image collector supplies a configured identifier.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "transport",
+        "values": [
+          "sp.pl"
+        ]
+      }
+    },
+    {
+      "name": "b",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "c",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "f",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "format": {
+        "kind": "url"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "e",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "format": {
+        "kind": "url"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "enc",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "yv",
+      "description": "Optional page metadata from the producer.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "isIframe",
+      "description": "The producer marks iframe pixels with 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "he",
+      "description": "Enhanced matching is a SHA-256 hexadecimal digest.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "hph",
+      "description": "Enhanced matching is a SHA-256 hexadecimal digest.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "auid",
+      "description": "Enhanced matching is a SHA-256 hexadecimal digest.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "severity": "warning"
+    }
+  ],
+  "rules": [],
+  "path_pattern": "^/(?<transport>sp\\.pl|collect)$",
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "eventEpoch",
+          "description": "The published contract specifies this field type.",
+          "requirement": "recommended",
+          "json_type": "integer",
+          "severity": "warning"
+        },
+        {
+          "name": "eventSource",
+          "description": "The published contract specifies this field type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "web"
+            ]
+          }
+        },
+        {
+          "name": "eventType",
+          "description": "The published contract specifies this field type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "purchase"
+            ]
+          }
+        },
+        {
+          "name": "pageUrl",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "url"
+          }
+        },
+        {
+          "name": "pixelId",
+          "description": "The SDK forwards the caller pixel identity.",
+          "requirement": "optional"
+        },
+        {
+          "name": "privacyData",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "userData",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "userData.ids",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "userData.ids.EMAIL",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "warning"
+        },
+        {
+          "name": "userData.ids.PHONE",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "warning"
+        },
+        {
+          "name": "userData.ids.EMAIL[]",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          }
+        },
+        {
+          "name": "userData.ids.PHONE[]",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          }
+        }
+      ],
+      "rules": []
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "path",
+        "description": "Collector route.",
+        "requirement": "optional"
+      },
+      {
+        "name": "method",
+        "description": "GET images and POST purchase JSON.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "path",
+          "values": [
+            "/sp.pl"
+          ]
+        }
+      },
+      {
+        "name": "purchase_method",
+        "description": "Purchase JSON uses POST.",
+        "requirement": "recommended",
+        "root_path": "method",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        },
+        "severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "path",
+          "values": [
+            "/collect"
+          ]
+        }
+      },
+      {
+        "name": "body",
+        "description": "A complete purchase capture carries a JSON object.",
+        "requirement": "recommended",
+        "json_type": "object",
+        "severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "path",
+          "values": [
+            "/collect"
+          ]
+        }
+      }
+    ],
+    "rules": []
+  }
+}

@@ -240,3 +240,56 @@ fn encoding_severity_rejects_unknown_values_and_specs_without_encoded_sources() 
         assert!(error.contains(reason), "{error}");
     }
 }
+
+#[test]
+fn ndjson_checks_every_record_without_losing_utf8_or_original_byte_limits() {
+    let payload = "\n{\"value\":\"雪😀\"}\r\n\n{\"value\":123}\n";
+    let contracts = json!([{"source_param":"payload","encoding":"ndjson",
+        "params":[{"name":"","json_type":"array","min_items":2,"max_items":2}]},
+        {"source_param":"payload","encoding":"ndjson","scope":"[]",
+        "params":[{"name":"value","json_type":"string"}]}]);
+    let report = pack(contracts, false).validate(&request(url(payload, "test"), false));
+    assert_eq!(report.violations.len(), 1);
+    assert_eq!(
+        report.violations[0].code,
+        "custom.encoding.body.value.invalid"
+    );
+    assert_eq!(
+        report.violations[0].targets[0].value.as_deref(),
+        Some(payload)
+    );
+
+    let bounded = pack(
+        json!({"source_param":"payload","encoding":"ndjson",
+        "rules":[{"code":"custom.encoding.bytes","kind":"max_body_bytes",
+        "max_bytes":payload.len()-1,"severity":"error","message":"Original source byte limit."}]}),
+        false,
+    );
+    let report = bounded.validate(&request(url(payload, "test"), false));
+    assert_eq!(
+        report.violations.len(),
+        1,
+        "The limit counts original UTF-8 and blank lines"
+    );
+
+    let syntax = pack(
+        json!({"source_param":"payload","encoding":"ndjson",
+        "encoding_severity":"warning"}),
+        false,
+    );
+    for invalid in ["{}\n{\"broken\":}", "{} {}", "{}\n[]\n{\"later\":}"] {
+        let report = syntax.validate(&request(url(invalid, "test"), false));
+        assert_eq!(report.violations.len(), 1);
+        assert_eq!(
+            report.violations[0].code,
+            "custom.encoding.body.payload.invalid"
+        );
+        assert_eq!(report.violations[0].severity, Severity::Warning);
+    }
+    assert!(
+        syntax
+            .validate(&request(url(" \n\r\n", "test"), false))
+            .violations
+            .is_empty()
+    );
+}

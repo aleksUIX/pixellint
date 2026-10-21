@@ -1,7 +1,7 @@
 {
   "id": "vendor/x",
   "display_name": "X website tag",
-  "description": "X conversion image pixels on analytics.twitter.com/i/adsct, analytics.x.com, and t.co. txn_id is the conversion ID. Generated pixels send p_id=Twitter. tw_sale_amount and tw_order_quantity ride on purchase fires. twclid is the click ID X documents for matching. X documents twq, not this query. The conversion API stays vendor/x-conversions-api.",
+  "description": "X website tag image and form collectors on exact /i/adsct and /i/adsctp routes. Adds pinned UWT 2.4.12 nested event objects and legacy event tuples, optional metadata and matching hashes. Custom event properties remain open. Conversions API has its own pack.",
   "vendor": "x",
   "source_level": "ecosystem_reference",
   "docs": "https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html",
@@ -11,13 +11,20 @@
       "analytics.x.com",
       "t.co"
     ],
-    "path_contains": ["/adsct"]
+    "paths": [
+      "/i/adsct",
+      "/i/adsctp",
+      "/1/i/adsct",
+      "/1/i/adsctp"
+    ]
   },
   "params": [
     {
       "name": "txn_id",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the conversion or pixel ID the website tag fires. X documents the JavaScript tag rather than this query, so the rule is ecosystem evidence.",
       "fix_hint": "Copy the conversion ID from the generated website tag so `txn_id` carries it.",
       "doc": "https://business.twitter.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites.html"
@@ -25,7 +32,12 @@
     {
       "name": "p_id",
       "requirement": "recommended",
-      "format": { "kind": "enum", "values": ["Twitter"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "Twitter"
+        ]
+      },
       "format_severity": "warning",
       "description": "Generated image pixels send `p_id=Twitter`.",
       "fix_hint": "Keep `p_id=Twitter` from the generated website tag.",
@@ -33,7 +45,10 @@
     },
     {
       "name": "tw_sale_amount",
-      "format": { "kind": "regex", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
       "format_severity": "warning",
       "description": "Purchase fires send the revenue amount. Generated pixels use a number with no currency symbol.",
       "fix_hint": "Set tw_sale_amount to a number such as 10 or 10.50, not $10.",
@@ -41,7 +56,9 @@
     },
     {
       "name": "tw_order_quantity",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "format_severity": "warning",
       "description": "Purchase fires send the item count as an integer.",
       "fix_hint": "Set tw_order_quantity to the item count, digits only.",
@@ -49,12 +66,337 @@
     },
     {
       "name": "twclid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the X click identifier from the landing URL. X documents twclid as a matching identifier on the pixel and the conversion API. Page fires without an ad click omit it.",
       "fix_hint": "Set twclid to the click ID from the landing URL query, or drop the pair when there was no click.",
       "doc": "https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions",
       "source_level": "official_vendor"
+    },
+    {
+      "name": "tw_document_href",
+      "description": "Pinned UWT producer metadata.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning",
+      "format": {
+        "kind": "url"
+      }
+    },
+    {
+      "name": "tw_document_referrer",
+      "description": "Pinned UWT producer metadata.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning",
+      "format": {
+        "kind": "url"
+      }
+    },
+    {
+      "name": "version",
+      "description": "Pinned UWT producer metadata.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "type",
+      "description": "Pinned UWT producer metadata.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "integration",
+      "description": "Pinned UWT producer metadata.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "event_id",
+      "description": "Pinned UWT producer metadata.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "pl_id",
+      "description": "Pinned UWT producer metadata.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "tw_session_id",
+      "description": "Pinned UWT producer metadata.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "tw_engaged_ms",
+      "description": "Pinned producer emits a nonnegative integer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "tw_session_count",
+      "description": "Pinned producer emits a nonnegative integer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "tw_session_start",
+      "description": "Pinned producer emits a nonnegative integer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "bci",
+      "description": "Pinned producer emits a nonnegative integer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "eci",
+      "description": "Pinned producer emits a nonnegative integer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "tw_iframe_status",
+      "description": "Pinned producer marks iframe context as 0 or 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning"
+    },
+    {
+      "name": "email_address",
+      "description": "Pinned producer hashes matching data before transport.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning",
+      "allow_empty": true
+    },
+    {
+      "name": "phone_number",
+      "description": "Pinned producer hashes matching data before transport.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning",
+      "allow_empty": true
+    },
+    {
+      "name": "external_id",
+      "description": "Pinned producer hashes matching data before transport.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning",
+      "allow_empty": true
+    },
+    {
+      "name": "first_name",
+      "description": "Pinned producer hashes matching data before transport.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning",
+      "allow_empty": true
+    },
+    {
+      "name": "last_name",
+      "description": "Pinned producer hashes matching data before transport.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{64}$"
+      },
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js",
+      "severity": "warning",
+      "allow_empty": true
+    },
+    {
+      "name": "event",
+      "description": "Pinned producer serializes nested event data as JSON.",
+      "requirement": "optional",
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js"
+    },
+    {
+      "name": "events",
+      "description": "Pinned producer serializes nested event data as JSON.",
+      "requirement": "optional",
+      "source_level": "official_template",
+      "doc": "https://static.ads-twitter.com/uwt.js"
     }
   ],
-  "rules": []
+  "rules": [],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.ads-twitter.com/uwt.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "event",
+      "encoding_severity": "warning"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.ads-twitter.com/uwt.js"
+        },
+        {
+          "name": "[]",
+          "description": "The published contract specifies this field type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "min_items": 2,
+          "max_items": 2,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.ads-twitter.com/uwt.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "events",
+      "encoding_severity": "warning"
+    },
+    {
+      "params": [
+        {
+          "name": "[0]",
+          "description": "The published contract specifies this field type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.ads-twitter.com/uwt.js"
+        },
+        {
+          "name": "[1]",
+          "description": "The published contract specifies this field type.",
+          "requirement": "recommended",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://static.ads-twitter.com/uwt.js"
+        }
+      ],
+      "rules": [],
+      "scope": "[]",
+      "source_param": "events",
+      "encoding_severity": "warning"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Pinned producer uses GET images and POST form beacons.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://static.ads-twitter.com/uwt.js"
+      }
+    ],
+    "rules": []
+  }
 }
