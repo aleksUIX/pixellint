@@ -314,3 +314,14 @@ for (const entry of [{validate}, cjs]) {
     assert.ok(result.reports.flatMap(r => r.violations).some(v => v.code === finding));
   }
 }
+
+// Existing browser collectors retain their independent wire formats.
+for (const entry of [{validate}, cjs]) {
+  const clean = entry.validate("https://px.ads.linkedin.com/collect?pid=123,456&fmt=js");
+  assert.equal(clean.reports.flatMap(r => r.violations).length, 0);
+  for (const [url, finding] of [
+    ["https://ct.pinterest.com/v3/?tid=opaque&event=Custom&ed=%7B%22value%22%3A%22money%22%7D", "vendor.pinterest.body.value.invalid"],
+    ["https://q.quora.com/_/ad/opaque/pixel?tag=DwellTime&dwt=0&ive=blur", "vendor.quora-pixel.param.dwt.invalid"],
+    ["https://ping.chartbeat.net/ping?h=example.test&g=123&p=/a&d=example.test&t=opaque&R=1&W=1&I=0", "vendor.chartbeat.activity_flags_conflict"],
+  ]) assert.ok(entry.validate(url).reports.flatMap(r => r.violations).some(v => v.code === finding));
+}

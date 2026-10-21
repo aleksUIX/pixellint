@@ -1,7 +1,7 @@
 {
   "id": "vendor/chartbeat",
   "display_name": "Chartbeat ping",
-  "description": "Chartbeat engagement pings on ping.chartbeat.net/ping, whose site host and account UID ride as h and g. The chartbeat.js loader is not contracted.",
+  "description": "Chartbeat exact /ping collector with documented site, account and page context plus advisory SDK engagement counters, viewport metrics, one-hot activity flags and request method checks. Empty referrers and cached internal page paths remain valid. The loader, MAB and custom collector hosts remain outside this profile.",
   "vendor": "chartbeat",
   "source_level": "official_vendor",
   "docs": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
@@ -9,7 +9,7 @@
     "hosts": [
       "ping.chartbeat.net"
     ],
-    "path_prefixes": [
+    "paths": [
       "/ping"
     ]
   },
@@ -86,7 +86,8 @@
         "kind": "non_empty"
       },
       "description": "It is the page title. Chartbeat documents it as present on the first ping of a page-session.",
-      "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+      "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
+      "allow_empty": true
     },
     {
       "name": "r",
@@ -94,16 +95,470 @@
       "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
       "format": {
         "kind": "url"
-      }
+      },
+      "allow_empty": true
     },
     {
       "name": "v",
-      "description": "The vendor documents `v` in the request contract.",
+      "description": "Internal referrer. The SDK sends either a URL or a cached previous page path.",
       "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
+      "allow_empty": true
+    },
+    {
+      "name": "c",
+      "description": "Elapsed seconds since the page-view start.",
+      "requirement": "optional",
       "format": {
-        "kind": "url"
-      }
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "x",
+      "description": "Current scroll position, floored by the SDK.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "m",
+      "description": "Maximum observed scroll position.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "y",
+      "description": "Document scroll height.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "o",
+      "description": "Document scroll width.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "w",
+      "description": "Viewport client height.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "j",
+      "description": "Scheduled ping interval in seconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "E",
+      "description": "Cumulative engaged seconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "e",
+      "description": "Engaged seconds since the previous ping.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "tz",
+      "description": "Signed timezone offset in minutes.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "sn",
+      "description": "Ping sequence counter.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "V",
+      "description": "Producer version number.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": false,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "b",
+      "description": "Navigation timing value when available.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "R",
+      "description": "Producer activity or HUD flag, encoded as 0 or 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "W",
+      "description": "Producer activity or HUD flag, encoded as 0 or 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "I",
+      "description": "Producer activity or HUD flag, encoded as 0 or 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "L",
+      "description": "Producer activity or HUD flag, encoded as 0 or 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "nc",
+      "description": "Optional producer marker encoded as 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "vp",
+      "description": "Optional producer marker encoded as 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "C",
+      "description": "Optional producer marker encoded as 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "l",
+      "description": "Optional producer marker encoded as 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "im",
+      "description": "Producer image capability mask.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[a-fA-F0-9]{8}$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    },
+    {
+      "name": "l1",
+      "description": "Cached internal page counter.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.chartbeat.activity_flags_conflict",
+      "kind": "forbid_value_pattern",
+      "params": [
+        "R"
+      ],
+      "pattern": "^[01]$",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "exists",
+                "param": "R"
+              },
+              {
+                "kind": "exists",
+                "param": "W"
+              },
+              {
+                "kind": "exists",
+                "param": "I"
+              }
+            ]
+          },
+          {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "R",
+                    "values": [
+                      "0"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "W",
+                    "values": [
+                      "0"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "I",
+                    "values": [
+                      "0"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "R",
+                    "values": [
+                      "1"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "W",
+                    "values": [
+                      "1"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "R",
+                    "values": [
+                      "1"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "I",
+                    "values": [
+                      "1"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "W",
+                    "values": [
+                      "1"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "I",
+                    "values": [
+                      "1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "severity": "warning",
+      "message": "The pinned producer sets exactly one of R, W and I to 1 per ping.",
+      "source_level": "official_template",
+      "doc": "https://static.chartbeat.com/js/chartbeat.js"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Pinned browser collector transport.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://static.chartbeat.com/js/chartbeat.js"
+      }
+    ],
+    "rules": []
+  }
 }

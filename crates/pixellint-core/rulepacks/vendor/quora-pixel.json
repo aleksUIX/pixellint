@@ -2,7 +2,7 @@
   "id": "vendor/quora-pixel",
   "display_name": "Quora browser pixel",
   "vendor": "quora",
-  "description": "Quora image callbacks constructed by the public qevents SDK. Checks path identity, event tag, SDK marker, timestamp syntax and the SDK accepted email hash profile. Custom event names and conversion values remain open; this is not the Conversions API contract.",
+  "description": "Quora image callbacks on exact /_/ad/{pixel_id}/pixel routes. Adds source-scoped dwell durations, lifecycle reason markers, FB Instant Article flags, click IDs and GET transport checks. Custom event names, caller event IDs and string conversion values remain open.",
   "source_level": "official_template",
   "docs": "https://quoraadsupport.zendesk.com/hc/en-us/articles/115010466208-How-do-I-install-the-Quora-pixel",
   "match": {
@@ -10,7 +10,7 @@
       "q.quora.com"
     ],
     "path_patterns": [
-      "/_/ad/[^/]*/pixel"
+      "^/_/ad/[^/]*/pixel$"
     ]
   },
   "params": [
@@ -108,8 +108,82 @@
       "description": "Optional caller event identifier. Its format is not restricted by the SDK.",
       "allow_empty": true,
       "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "dwt",
+      "description": "Positive wall-clock dwell duration in milliseconds, emitted on DwellTime.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "minimum": 1,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "ive",
+      "description": "Lifecycle reason passed by the timer. It is a string, not a Boolean.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "hidden",
+          "msHidden",
+          "webkitHidden",
+          "mozHidden",
+          "pagehide",
+          "blur"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "fbia",
+      "description": "FB Instant Article marker emitted as 1.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "qclid",
+      "description": "Opaque click identifier retained from the landing URL.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://a.quora.com/qevents.js"
     }
   ],
   "rules": [],
-  "path_pattern": "^/_/ad/(?<pixel_id>[^/]*)/pixel$"
+  "path_pattern": "^/_/ad/(?<pixel_id>[^/]*)/pixel$",
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Pinned browser collector transport.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://a.quora.com/qevents.js"
+      }
+    ],
+    "rules": []
+  }
 }

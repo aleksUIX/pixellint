@@ -1,7 +1,7 @@
 {
   "id": "vendor/pinterest",
   "display_name": "Pinterest Tag",
-  "description": "Pinterest conversion tag requests to ct.pinterest.com, including the noscript image fallback.",
+  "description": "Pinterest /v3 image and browser collectors, including JSON-encoded event, partner and automatic data in GET queries and POST forms. Noscript bracket fields retain documented checks. Custom events, arbitrary custom properties and SDK-supported hash arrays remain open. New browser checks are advisory.",
   "vendor": "pinterest",
   "source_level": "official_vendor",
   "docs": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/",
@@ -9,8 +9,9 @@
     "hosts": [
       "ct.pinterest.com"
     ],
-    "path_prefixes": [
-      "/v3"
+    "paths": [
+      "/v3",
+      "/v3/"
     ]
   },
   "params": [
@@ -27,33 +28,10 @@
     {
       "name": "event",
       "format": {
-        "kind": "enum",
-        "values": [
-          "init",
-          "pagevisit",
-          "checkout",
-          "addtocart",
-          "signup",
-          "lead",
-          "search",
-          "viewcategory",
-          "viewcontent",
-          "watchvideo",
-          "addtowishlist",
-          "initiateCheckout",
-          "addpaymentinfo",
-          "contact",
-          "customizeproduct",
-          "findlocation",
-          "schedule",
-          "starttrial",
-          "subscribe",
-          "submitapplication",
-          "custom"
-        ]
+        "kind": "non_empty"
       },
       "format_severity": "warning",
-      "description": "The base code omits it; event code sends one. Custom event names are allowed, so check that an unrecognized value is deliberate and not a misspelled standard event.",
+      "description": "Standard and configured custom event names are accepted. The SDK forwards custom names after a console warning.",
       "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
     },
     {
@@ -261,6 +239,50 @@
       "description": "It is the lead type on the noscript image. Pinterest documents `lead_type` as a string.",
       "fix_hint": "Send the lead type in `ed[lead_type]`, or drop the empty pair.",
       "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+    },
+    {
+      "name": "ed",
+      "description": "JSON string serialized by the browser producer.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+    },
+    {
+      "name": "pd",
+      "description": "JSON string serialized by the browser producer.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+    },
+    {
+      "name": "ad",
+      "description": "JSON string serialized by the browser producer.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+    },
+    {
+      "name": "ov",
+      "description": "JSON string serialized by the browser producer.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+    },
+    {
+      "name": "cb",
+      "description": "Producer cache buster in Unix milliseconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
     }
   ],
   "rules": [
@@ -279,7 +301,1168 @@
       "severity": "warning",
       "message": "A checkout or add-to-cart tag is missing `ed[value]` or `ed[currency]`. Pinterest documents those keys on the image tag for conversion reporting.",
       "fix_hint": "Add `ed[value]` and `ed[currency]` to the noscript image, or fire the event from JavaScript.",
-      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+      "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "exists",
+          "param": "ed"
+        }
+      }
     }
-  ]
+  ],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "value",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "currency",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "currency",
+            "case_insensitive": true
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "order_quantity",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "array",
+            "null"
+          ],
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "order_id",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "promo_code",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "property",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "search_query",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "video_title",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "lead_type",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "event_id",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "eventID",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "eid",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[].product_name",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[].product_id",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[].product_category",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[].product_variant_id",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[].product_variant",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[].product_brand",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[].product_price",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "line_items[].product_quantity",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "ed",
+      "encoding_severity": "warning"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "em",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "em[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "external_id",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "external_id[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "fn",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "fn[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ln",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ln[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ph",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ph[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ge",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ge[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "db",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "db[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ct",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ct[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "st",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "st[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "zp",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "zp[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "country",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "country[]",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "fp_cookie",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "fp_localStorage",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "pd",
+      "encoding_severity": "warning"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "loc",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "string",
+          "allow_empty": true,
+          "format": {
+            "kind": "url"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ref",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "string",
+          "allow_empty": true,
+          "format": {
+            "kind": "url"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "if",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "is_eu",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "is_restricted_region",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "sh",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "sw",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "mh",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "string",
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "cs",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "string",
+          "allow_empty": true,
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "try",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9]+$"
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "ad",
+      "encoding_severity": "warning"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "ov",
+      "encoding_severity": "warning"
+    },
+    {
+      "params": [
+        {
+          "name": "em",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "em",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "external_id",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "external_id",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "fn",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "fn",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ln",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "ln",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ph",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "ph",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ge",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "ge",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "db",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "db",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "ct",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "ct",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "st",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "st",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "zp",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "zp",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        },
+        {
+          "name": "country",
+          "description": "Pinned producer field; receiver acceptance may differ.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "country",
+            "json_type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+        }
+      ],
+      "rules": [],
+      "source_param": "pd",
+      "encoding_severity": "warning"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Pinned browser collector transport.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+      }
+    ],
+    "rules": []
+  }
 }

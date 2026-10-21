@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.51.0 (2026-10-21)
+
+Deepen four existing browser collectors, with 110 additional field contracts and one activity-state assertion. The inventory remains 188 vendor packs across 96 vendors.
+
+- LinkedIn Insight accepts comma-separated partner IDs and ordinary page fires without conversion IDs. Adds advisory version, clock, conversion-type and GET checks.
+- Pinterest checks JSON event, partner, automatic and override data in query and POST form captures. Custom events remain valid. SDK hash arrays preserve supported prehashes, null and empty entries. Noscript fields keep their documented checks.
+- Quora adds dwell duration, lifecycle reason, Instant Article marker and GET checks. Lifecycle reasons such as blur and pagehide remain strings.
+- Chartbeat adds engagement counters, viewport metrics, capability masks and consistent activity flags. Empty referrers, cached internal paths and case-distinct fields remain valid.
+- Exact collector routes leave neighboring protocols recognized without claiming their contracts. LinkedIn Website Actions /wa/ remains outside the /collect profile.
+- Add 162 golden fixtures, including 18 requests captured from four unmodified vendor SDKs with every network request intercepted, plus six integration tests and CommonJS/ESM parity checks. New SDK checks are advisory.
+
 ## 0.50.0 (2026-10-21)
 
 - Add 6sense external-media image pixels, Piwik PRO tracking, Woopra event and identity collectors, and Yahoo browser image and purchase collectors.

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "review_date": "2026-10-10",
   "status": "validated_release_prepared",
-  "coverage_claim": "Source-scoped browser collectors and conversion APIs with explicit provenance and remaining requirements. This release adds Optimizely Event API, TikTok browser events, Clarity collection and modern Comscore, plus deeper GA4, StackAdapt and legacy Comscore checks. Vendor completeness is not claimed.",
+  "coverage_claim": "Source-scoped collectors with explicit remaining requirements. This release deepens LinkedIn Insight, Pinterest Tag, Quora and Chartbeat. New SDK checks are advisory. Vendor completeness is not claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
     "version": "0.34.0",
@@ -39,31 +39,31 @@
     "release_url": "https://github.com/aleksUIX/pixellint/releases/tag/v0.34.0"
   },
   "current": {
-    "version": "0.50.0",
+    "version": "0.51.0",
     "candidate_status": "release_prepared",
     "packs": 188,
     "vendors": 96,
-    "field_contracts": 6453,
-    "cross_field_assertions": 579,
-    "body_contract_scopes": 520,
-    "http_contract_scopes": 89,
+    "field_contracts": 6563,
+    "cross_field_assertions": 580,
+    "body_contract_scopes": 525,
+    "http_contract_scopes": 93,
     "query_contract_scopes": 6,
     "bulk_query_sources": 2,
-    "http_contract_packs": 75,
-    "changed_packs_this_round": 6,
-    "new_packs_this_round": 4,
-    "deepened_existing_packs_this_round": 2,
-    "source_reviewed_packs_this_round": 6,
-    "manifest_changes_this_round": 6,
-    "new_source_cases": 178,
-    "remaining_requirement_entries": 611,
+    "http_contract_packs": 79,
+    "changed_packs_this_round": 4,
+    "new_packs_this_round": 0,
+    "deepened_existing_packs_this_round": 4,
+    "source_reviewed_packs_this_round": 4,
+    "manifest_changes_this_round": 4,
+    "new_source_cases": 162,
+    "remaining_requirement_entries": 617,
     "remaining_requirements_note": "Overlapping open requirements and source-case counts do not establish a percentage of vendor specification coverage.",
     "session_assertions": 2,
     "session_profile_changes_this_round": 0,
     "session_profiles": 1,
     "review_date": "2026-10-21",
-    "new_golden_cases": 178,
-    "new_source_executed_requests": 16
+    "new_golden_cases": 162,
+    "new_source_executed_requests": 18
   },
   "review_assignments": {
     "google_ias_adctv": "Official templates and IAS guidance",
@@ -61203,129 +61203,574 @@
       "status": "baseline_inventory_retained_after_gap_triage",
       "sources_read": [
         {
+          "file": "chartbeat.js",
+          "url": "https://static.chartbeat.com/js/chartbeat.js",
+          "actual_url": "https://static.chartbeat.com/js/chartbeat.js",
+          "status": 200,
+          "bytes": 43004,
+          "sha256": "6b1c5f8f9fbe84bd4abf9402f2ac6b9a905090871a3bbd4b38f0094e9ef8a962"
+        },
+        {
+          "file": "chartbeat-qa.html",
           "url": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "read_on": "2026-10-07",
-          "access": "opened_current_primary_vendor_page",
-          "evidence_level": "official_vendor_documentation"
+          "actual_url": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
+          "status": 200,
+          "bytes": 673628,
+          "sha256": "d1bf2032db73d7cfe9798521e8618f7d0062a184f786bfcff48154ce884c5164"
         }
       ],
-      "contracts_mapped": [
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "h",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+      "contracts_mapped": {
+        "params": [
+          {
+            "name": "h",
             "requirement": "required",
             "format": {
               "kind": "non_empty"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "g",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "description": "It is the Chartbeat site id, the host where traffic appears in the dashboard. Chartbeat documents it as the `config.domain` value on the ping.",
+            "fix_hint": "Set `h` to the site id from the Chartbeat snippet, usually the site's root domain.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+          },
+          {
+            "name": "g",
             "requirement": "required",
             "format": {
               "kind": "integer"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "p",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "description": "It is the numeric Chartbeat account UID from `config.uid`.",
+            "fix_hint": "Set `g` to the numeric uid from the Chartbeat snippet.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+          },
+          {
+            "name": "p",
             "requirement": "recommended",
             "format": {
               "kind": "non_empty"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "d",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "description": "It is the page path. Chartbeat documents it as a ping key to check in QA, from `config.path` or the canonical path.",
+            "fix_hint": "Set `p` to the canonical path Chartbeat should report.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+          },
+          {
+            "name": "d",
             "requirement": "recommended",
             "format": {
               "kind": "non_empty"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "t",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "description": "It is the actual domain of the page, which may differ from `h`. Chartbeat documents it as a ping key to check in QA.",
+            "fix_hint": "Set `d` to the page's domain, or the canonical domain when `useCanonicalDomain` is true.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+          },
+          {
+            "name": "t",
             "requirement": "recommended",
             "format": {
               "kind": "non_empty"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "g0",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "description": "It is the unique identifier for the page-session. Chartbeat documents each distinct `t` as a separate pageview.",
+            "fix_hint": "Send a stable page-session id in `t` so successive pings on the same view stay together.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+          },
+          {
+            "name": "g0",
             "format": {
               "kind": "non_empty"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "g1",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "description": "It is the comma-delimited list of sections from `config.sections`. Chartbeat documents it as a ping key to check in QA.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+          },
+          {
+            "name": "g1",
             "format": {
               "kind": "non_empty"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "i",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "description": "It is the comma-delimited list of authors from `config.authors`. Chartbeat documents it as a ping key to check in QA.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+          },
+          {
+            "name": "i",
             "format": {
               "kind": "non_empty"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "r",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "description": "It is the page title. Chartbeat documents it as present on the first ping of a page-session.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
+            "allow_empty": true
+          },
+          {
+            "name": "r",
+            "description": "The vendor documents `r` in the request contract.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
             "format": {
               "kind": "url"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "v",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "checks": {
+            },
+            "allow_empty": true
+          },
+          {
+            "name": "v",
+            "description": "Internal referrer. The SDK sends either a URL or a cached previous page path.",
+            "doc": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
+            "allow_empty": true
+          },
+          {
+            "name": "c",
+            "description": "Elapsed seconds since the page-view start.",
+            "requirement": "optional",
             "format": {
-              "kind": "url"
-            }
+              "kind": "regex",
+              "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "x",
+            "description": "Current scroll position, floored by the SDK.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "m",
+            "description": "Maximum observed scroll position.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "y",
+            "description": "Document scroll height.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "o",
+            "description": "Document scroll width.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "w",
+            "description": "Viewport client height.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "j",
+            "description": "Scheduled ping interval in seconds.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "E",
+            "description": "Cumulative engaged seconds.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "e",
+            "description": "Engaged seconds since the previous ping.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "tz",
+            "description": "Signed timezone offset in minutes.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "sn",
+            "description": "Ping sequence counter.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "V",
+            "description": "Producer version number.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "b",
+            "description": "Navigation timing value when available.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+$"
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "R",
+            "description": "Producer activity or HUD flag, encoded as 0 or 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "W",
+            "description": "Producer activity or HUD flag, encoded as 0 or 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "I",
+            "description": "Producer activity or HUD flag, encoded as 0 or 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "L",
+            "description": "Producer activity or HUD flag, encoded as 0 or 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "nc",
+            "description": "Optional producer marker encoded as 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "vp",
+            "description": "Optional producer marker encoded as 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "C",
+            "description": "Optional producer marker encoded as 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "l",
+            "description": "Optional producer marker encoded as 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "im",
+            "description": "Producer image capability mask.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[a-fA-F0-9]{8}$"
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          },
+          {
+            "name": "l1",
+            "description": "Cached internal page counter.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
           }
-        }
-      ],
+        ],
+        "rules": [
+          {
+            "code": "vendor.chartbeat.activity_flags_conflict",
+            "kind": "forbid_value_pattern",
+            "params": [
+              "R"
+            ],
+            "pattern": "^[01]$",
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "all",
+                  "conditions": [
+                    {
+                      "kind": "exists",
+                      "param": "R"
+                    },
+                    {
+                      "kind": "exists",
+                      "param": "W"
+                    },
+                    {
+                      "kind": "exists",
+                      "param": "I"
+                    }
+                  ]
+                },
+                {
+                  "kind": "any",
+                  "conditions": [
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "value_in",
+                          "param": "R",
+                          "values": [
+                            "0"
+                          ]
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "W",
+                          "values": [
+                            "0"
+                          ]
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "I",
+                          "values": [
+                            "0"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "value_in",
+                          "param": "R",
+                          "values": [
+                            "1"
+                          ]
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "W",
+                          "values": [
+                            "1"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "value_in",
+                          "param": "R",
+                          "values": [
+                            "1"
+                          ]
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "I",
+                          "values": [
+                            "1"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "all",
+                      "conditions": [
+                        {
+                          "kind": "value_in",
+                          "param": "W",
+                          "values": [
+                            "1"
+                          ]
+                        },
+                        {
+                          "kind": "value_in",
+                          "param": "I",
+                          "values": [
+                            "1"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "severity": "warning",
+            "message": "The pinned producer sets exactly one of R, W and I to 1 per ping.",
+            "source_level": "official_template",
+            "doc": "https://static.chartbeat.com/js/chartbeat.js"
+          }
+        ],
+        "body": [],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "Pinned browser collector transport.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET"
+                ]
+              },
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://static.chartbeat.com/js/chartbeat.js"
+            }
+          ],
+          "rules": []
+        },
+        "http_queries": []
+      },
       "added_checks": [
         {
           "transport_scope": "query",
@@ -61352,24 +61797,10 @@
       ],
       "corrected_checks": [],
       "missing_requirements": [
-        {
-          "requirement": "Full proprietary ping schema",
-          "applicability": "Official QA page names only h,p,d,g,g0,g1,i,r,v,t and says it is a subset",
-          "reason": "All named fields mapped. Other SDK wire keys have no published complete schema on this source.",
-          "gap_kind": "unpublished_transport_schema",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "status": "remaining",
-          "locally_checkable": false
-        },
-        {
-          "requirement": "Sequence-dependent fields",
-          "applicability": "i only first ping, t shared pageview, ping cadence15seconds and configured author/section mappings",
-          "reason": "Needs request stream, page metadata and account site registration.",
-          "gap_kind": "external_state",
-          "source": "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration",
-          "status": "remaining",
-          "locally_checkable": false
-        }
+        "Exact /ping requests on ping.chartbeat.net are covered. Loader scripts, /ping/mab, custom ping servers and other Chartbeat products remain outside this profile.",
+        "Producer counters, viewport metrics, activity flags, capability mask and GET checks are advisory. No unstated metric bounds, future-version restriction or configured-metadata vocabulary is inferred.",
+        "Empty external referrers, empty titles, opaque session metadata and cached internal page paths remain valid. Case-distinct fields E/e, R/r, W/w, I/i and L/l remain independent.",
+        "Account configuration, page-session continuity, cookie permissions, engagement truth and delivery require external context."
       ],
       "tests": [
         {
@@ -61405,7 +61836,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "32e2143978282c5544643533e6bc0a615e130ee11b07b05a3513ea0800f74cba",
+      "manifest_sha256": "720079843979b0e5f0a09285d475e536f7cf747c39cee1151f8665758ad2ab81",
       "fixture_sha256": {
         "fixtures/vendor-chartbeat/clean-amp-keys.txt": "28a23d6dd16dc9aead2788532d086565331959bf30223061236111065d8f94bd",
         "fixtures/vendor-chartbeat/clean-ping.txt": "efb452d911000ceb7e6b51192b301103605334d935a3d88488e2272bc846c1c4",
@@ -61455,15 +61886,61 @@
         "automatic_http_routing_examples": 0
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/chartbeat.json": "32e2143978282c5544643533e6bc0a615e130ee11b07b05a3513ea0800f74cba",
+        "crates/pixellint-core/rulepacks/vendor/chartbeat.json": "720079843979b0e5f0a09285d475e536f7cf747c39cee1151f8665758ad2ab81",
         "fixtures/vendor-chartbeat/clean-amp-keys.txt": "28a23d6dd16dc9aead2788532d086565331959bf30223061236111065d8f94bd",
         "fixtures/vendor-chartbeat/clean-ping.txt": "efb452d911000ceb7e6b51192b301103605334d935a3d88488e2272bc846c1c4",
         "fixtures/vendor-chartbeat/empty-path.txt": "eae4cd041268d7028bb49f0e5cf3e971e585ad55dd313d9ac6b4a8570c755a7a",
         "fixtures/vendor-chartbeat/invalid-uid.txt": "3b8b0e0f4ff7a4924c0506c5793cbd80fe2268bf56f710043cc2628ff104f908",
-        "fixtures/vendor-chartbeat/manifest.json": "5462efe715c46b8126895c2e88025f34f1863d191f920b52e6144135901359ab",
+        "fixtures/vendor-chartbeat/manifest.json": "c60844e512532cb10748331d78160c7a483ce4ccc4fd08bea6700b5173f7bfbd",
         "fixtures/vendor-chartbeat/missing-host.txt": "d9daafadac6801d66f5cec260b61bd86b325e160df6144632534882a3c888a70",
         "fixtures/vendor-chartbeat/missing-ping-keys.txt": "c9761a032346fdf734169b49b1376eadf2f33df243a167acf6c18af175c147f7",
-        "fixtures/vendor-chartbeat/missing-uid.txt": "130bb1d9ad96be706dd287ee04d88d71aedab8fab4d86e0c9c22aa0a91c1e282"
+        "fixtures/vendor-chartbeat/missing-uid.txt": "130bb1d9ad96be706dd287ee04d88d71aedab8fab4d86e0c9c22aa0a91c1e282",
+        "fixtures/vendor-chartbeat/depth051-040-conflict-4.txt": "5109e0b192b798c0dbcfa336123b8f3eadb08a813f6da1552fb72f5fcbc8d916",
+        "fixtures/vendor-chartbeat/depth051-030-bad-flag-C.txt": "61b69f6e865881557bc84607ae7dd607da8bd27e8583d02ccf2bb31ddf95b2d0",
+        "fixtures/vendor-chartbeat/depth051-019-bad-number-tz.txt": "40749f10a3d4bc1c7d8e9c5820fd8b24d61292d2b49bdd16de492ee8705b74c0",
+        "fixtures/vendor-chartbeat/depth051-029-bad-flag-vp.txt": "8c5ddb60e1b2b26031c5109b0183056f8fe6f007d9c36bd6a81a2452b2c83331",
+        "fixtures/vendor-chartbeat/depth051-002-producer-chartbeat-virtual-1.txt": "8d03fe511f67e84893f7489f03327f3bd4cb97ff1e6c0988506d1fb4475dffc0",
+        "fixtures/vendor-chartbeat/depth051-038-conflict-2.txt": "77d24268d45ebe1629aad2ee058c3bbc97d15fc30da8516248a63bf307dbca49",
+        "fixtures/vendor-chartbeat/depth051-025-bad-flag-W.txt": "786d278586ddad52a88d9a905a5b106150204a85b565a9d4771a12b94a31ff1a",
+        "fixtures/vendor-chartbeat/depth051-037-conflict-1.txt": "8688b16030194f81f96e758c41a8a68c130e87b02c3b6090177a0c2936dd50ab",
+        "fixtures/vendor-chartbeat/depth051-024-bad-flag-R.txt": "22d0d13f09ee3fc1163868a5217e36326dba91023320eb9d5895b6025464a30e",
+        "fixtures/vendor-chartbeat/depth051-039-conflict-3.txt": "c9fd55ad61acab85eb392c8d0f9a796bb4848577954a2a026b365707aa103d41",
+        "fixtures/vendor-chartbeat/depth051-041-partial-flags.txt": "8422cb934873e5c0618eef30540b895f59d4973854c354552cc64c2accd8d9ec",
+        "fixtures/vendor-chartbeat/depth051-036-conflict-0.txt": "f3deb64302b08e94177b90cc3b27e08b2c10580707a62293cb5a43cd1d172743",
+        "fixtures/vendor-chartbeat/depth051-011-bad-number-x.txt": "82b50577f65ff47d710d0ce10c11e59d56ff3c095fc242788d45e4a1e7e5a4ac",
+        "fixtures/vendor-chartbeat/depth051-014-bad-number-o.txt": "ee1b9a79fb5a8e6f8b221119778428f3f75f70ed4ca1c47fad25e0d2edff4a9c",
+        "fixtures/vendor-chartbeat/depth051-017-bad-number-E.txt": "64997ee5a7b4fedc490521a43f98ea995b7434c7bc0f54312daecb562cdd99fe",
+        "fixtures/vendor-chartbeat/depth051-000-producer-chartbeat-first-0.txt": "61f7c64972da1f2dce5f467246558ae07a03f353514a9dd177e1a117593b8c28",
+        "fixtures/vendor-chartbeat/depth051-023-bad-number-l1.txt": "523d22ca7abba09b248d9d43781f48b5621cb76c32604ffc49e98c05dc647183",
+        "fixtures/vendor-chartbeat/depth051-008-zero-flags.txt": "9387168eba81df83236392d831ce6daea0940322d2b0edb6741abb3efeed913c",
+        "fixtures/vendor-chartbeat/depth051-006-signed-values.txt": "f1a449f3d101be3b8e6b8e68965508af9484662ee41643340db344fb36e4d797",
+        "fixtures/vendor-chartbeat/depth051-035-activity-2.txt": "c369fd9947e7049eb2ffee5a49dacd4486bbf8787bdffeb062491671eaef928c",
+        "fixtures/vendor-chartbeat/depth051-018-bad-number-e.txt": "d1411ce34c83436bd3621619b1d6ea3a8302380fc715aa6f2bbebb939ec74527",
+        "fixtures/vendor-chartbeat/depth051-028-bad-flag-nc.txt": "5660949a73246c8b4ffbd829e83bf276d4355ea05c07e6412762dcf792fa8277",
+        "fixtures/vendor-chartbeat/depth051-033-activity-0.txt": "e240ef9a38ae9491dc342877bd6c0f5fedee0fd004e00de252a40ba223cfde41",
+        "fixtures/vendor-chartbeat/depth051-034-activity-1.txt": "35c42632f56d7c0ea09c3a955ad661088ba74839c58fe54194ddeb962b8e2350",
+        "fixtures/vendor-chartbeat/depth051-022-bad-number-b.txt": "f514b75638a31eb4077d5aa1b5b715229f61015c8e403f1b3963bb9af2bf4cc8",
+        "fixtures/vendor-chartbeat/depth051-001-producer-chartbeat-virtual-0.txt": "230451444168df4671212e55cc065f0fcc5376c41286f9ab13952ae89fa9d042",
+        "fixtures/vendor-chartbeat/depth051-010-bad-number-c.txt": "cf87280db9c6f7b1565cd290a0ac3fb6250be120ba2d43bf948e106107b2bec2",
+        "fixtures/vendor-chartbeat/depth051-027-bad-flag-L.txt": "460017d7a2ab53c059653d8e6fef22fd4ae26d01ce43663117792f8e66bf9694",
+        "fixtures/vendor-chartbeat/depth051-003-empty-referrers.txt": "31ce44e59125770b2faf7d2fd9e8e7309e948170dd9c5d9964cbb28ede14e4c4",
+        "fixtures/vendor-chartbeat/depth051-026-bad-flag-I.txt": "21be6873db43575c0b62bec0668fa96c7c1fcf6c15a4924776c3ea4eaf4e1484",
+        "fixtures/vendor-chartbeat/depth051-042-post-method.txt": "ef316bbcfa355cdfe3a634f66633ded245b38d4d65e82dee74ee46d4320e286d",
+        "fixtures/vendor-chartbeat/depth051-013-bad-number-y.txt": "678ebe57ce809c2402868b6751447b25ecc470bfdfceacd573fbc08a59a2a8c5",
+        "fixtures/vendor-chartbeat/depth051-005-opaque-metadata.txt": "16904478436a9258f5eeefab7235864548b66ae32ab7e75a69917a5ff49d8e5a",
+        "fixtures/vendor-chartbeat/depth051-020-bad-number-sn.txt": "9ad81c49a2fe691c917932d436514db26216d092a54b9a9e093e16f1d00b23c6",
+        "fixtures/vendor-chartbeat/depth051-021-bad-number-V.txt": "c4dbb5e9828e813678420aec6704922764a61e035c944b782bd26d43f339eef7",
+        "fixtures/vendor-chartbeat/depth051-043-neighbor-43.txt": "5c2940b7497d6551c7c1309c9b0bdf4a62e7b152d9ca0981c82049491e4e5d70",
+        "fixtures/vendor-chartbeat/depth051-032-bad-mask.txt": "c9462460682f62a709cecb12482ae178140a3e424bac8449c9ad1ff001c48fb8",
+        "fixtures/vendor-chartbeat/depth051-007-future-version.txt": "4e2cc18dfee260bfd975d5619a60cfb67a1d771bad29ace2dd82ced139ae9c00",
+        "fixtures/vendor-chartbeat/depth051-031-bad-flag-l.txt": "ddb806079e39a30dde1f19a71725255f37b868fc373a5a674fcd191e40e166a0",
+        "fixtures/vendor-chartbeat/depth051-016-bad-number-j.txt": "44dda84239c373897e23d1711dc366910bb76a2f02808edbca8e16a77d3ae94b",
+        "fixtures/vendor-chartbeat/depth051-015-bad-number-w.txt": "8093fada13ec08285d0bf233cd3474245023839b127f466d9e733b99f925cf41",
+        "fixtures/vendor-chartbeat/depth051-004-internal-path.txt": "6aea5dbdb87d9e2050abbe04e32f5345bb69aa6361a2046b4d5b985c0b197054",
+        "fixtures/vendor-chartbeat/depth051-009-empty-title.txt": "c8b7e56b0bbdf7a96c55a86881abc6eff4e0ea3ca853e36d617a4ce37a83d5c9",
+        "fixtures/vendor-chartbeat/depth051-012-bad-number-m.txt": "8baf691262adcde0f031672b4075715b34dbbaa5518a1b9c07bc2fa60c0866d7",
+        "docs/reviews/pixel-collectors-051.json": "78a699253c6798283b2f11c4a4f17370bad763ea56c32819797b7f6cef589153",
+        "crates/pixellint-core/tests/pixel_collectors_051.rs": "cf17600aca7406c051933ff189f85e9a29614de6bbd4708024b7e0052d65e63d"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -61488,7 +61965,22 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "disposition": "implemented_source_scoped_partial",
+      "match": {
+        "hosts": [
+          "ping.chartbeat.net"
+        ],
+        "paths": [
+          "/ping"
+        ]
+      },
+      "source_urls": [
+        "https://static.chartbeat.com/js/chartbeat.js",
+        "https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration"
+      ],
+      "golden_cases": 51,
+      "collector_followup": "docs/reviews/pixel-collectors-051.json"
     },
     {
       "id": "vendor/cj",
@@ -103193,7 +103685,7 @@
         "npm/index.mjs": "ed8d6582cf6a81b2f10490a8f998d215116a18b463367c60fd580745fd60196b",
         "npm/index.cjs": "e814973e6d7ca46d098f19bfc902a988229a9a9a0331e4767a10276e678e8373",
         "npm/index.d.ts": "ed971b90b0680acd0e2c231bcd74223e07f2b7236932bf49354863b3fce0a1a4",
-        "npm/test.mjs": "e41cd048747e7098b01dc9aa5c794c48ce516b3f4449add62158a9972dbf7a18",
+        "npm/test.mjs": "daf9c5ca7f9c0f383a809f8a0ca62f026aa7d61fef84f46c7083566f5e9d5cb0",
         "npm/sessions.test.mjs": "2934e636468d6a2549a34b886f351ccc3c1fd819a5069b93dacde1ad58c06483",
         "docs/SESSION_SCHEMA.md": "0b1cea0b2e76d0310f7823d0cc239cbe9b17c56d53b731f3c5c504c564c56dc5",
         "docs/reviews/explicit-ad-sessions.json": "fea3dde54f37824d6e6d3cfead737e27c127fa9be9a85d1be849cd15553683c3",
@@ -125355,118 +125847,194 @@
       "reviewed_at": "2026-10-08",
       "status": "reviewed_with_gaps",
       "spec_complete": false,
-      "manifest_sha256": "d64299db21bb92a83702d20883bcd7655e97f744eafa585c02d47977e845fda6",
+      "manifest_sha256": "82d25818c35f7ca6d130898b864eac1e0be0ec60c9bd4514801d0d66954ed74e",
       "fixture_corpus_sha256": "86a167c59972caa187c65d1e1c043d961e8bc35baf99fdd0534e0b825472c58b",
       "protocol_scope": "LinkedIn conversion image pixels on px.ads.linkedin.com/collect. Campaign Manager generates pid, conversionId, and fmt. eventId is the dedup key LinkedIn documents on the image URL. oid is the Path to Conversion order ID. url is the conversion match URL when conversionId is absent. Insight Tag page-load fires omit conversionId. CAPI stays vendor/linkedin-conversions-api.",
       "source_level": "ecosystem_reference",
       "sources_read": [
         {
-          "url": "https://www.linkedin.com/help/lms/answer/a422796",
-          "access": "read",
-          "note": "Primary vendor page read and compared with the shipped contract."
+          "file": "linkedin.js",
+          "url": "https://snap.licdn.com/li.lms-analytics/insight.min.js",
+          "actual_url": "https://snap.licdn.com/li.lms-analytics/insight.min.js",
+          "status": 200,
+          "bytes": 62285,
+          "sha256": "6bf5727704bae5678f2eda82936111834382603f7175ba0e9cb6c806f338782d"
+        },
+        {
+          "file": "linkedin-template.tpl",
+          "url": "https://raw.githubusercontent.com/linkedin/linkedin-gtm-community-template/main/template.tpl",
+          "actual_url": "https://raw.githubusercontent.com/linkedin/linkedin-gtm-community-template/main/template.tpl",
+          "status": 200,
+          "bytes": 21540,
+          "sha256": "4d7eb7696e137c9633bd692621983cfc962f4a858d06ac6b7d6e434aec7ac0eb"
         }
       ],
       "published_contract_groups": [
         "Existing observed Insight Tag collection parameters",
         "Official installation and troubleshooting references"
       ],
-      "contracts_mapped": [
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
+      "contracts_mapped": {
+        "params": [
+          {
+            "name": "pid",
+            "requirement": "required",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+(?:,[0-9]+)*$"
+            },
+            "description": "The Insight producer joins numeric partner IDs with commas. A single partner ID remains valid.",
+            "fix_hint": "Copy the image pixel from the conversion's Sources page so `pid` carries the Partner ID.",
+            "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js",
+            "source_level": "official_template"
           },
-          "name": "pid",
-          "requirement": "required",
-          "format": {
-            "kind": "integer"
+          {
+            "name": "conversionId",
+            "requirement": "optional",
+            "format": {
+              "kind": "integer"
+            },
+            "description": "Optional numeric conversion identity. Ordinary Insight page-load and noscript pixels omit it.",
+            "doc": "https://www.linkedin.com/help/lms/answer/a422796"
           },
-          "description": "It is the numeric Partner ID of the Insight Tag. LinkedIn generates this pixel in Campaign Manager rather than publishing the parameter contract, so this rule is ecosystem evidence, not a published contract.",
-          "fix_hint": "Copy the image pixel from the conversion's Sources page so `pid` carries the Partner ID.",
-          "doc": "https://www.linkedin.com/help/lms/answer/a422796"
+          {
+            "name": "fmt",
+            "requirement": "recommended",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "gif",
+                "img",
+                "js"
+              ]
+            },
+            "format_severity": "warning",
+            "description": "Image pixels are generated with `fmt=gif`. LinkedIn's conversion API sample uses `fmt=img`.",
+            "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking"
+          },
+          {
+            "name": "eventId",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the per-event deduplication key. LinkedIn documents it on the image URL as eventId when the same conversion is also sent through the Conversions API.",
+            "fix_hint": "Set eventId to the same value the Conversions API event sends as event_id.",
+            "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/conversions/deduplication",
+            "source_level": "official_vendor"
+          },
+          {
+            "name": "oid",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the advertiser-defined order ID. LinkedIn documents oid on the image pixel for Path to Conversion, so impressions and clicks within 90 days can be joined to the conversion.",
+            "fix_hint": "Set oid to the order ID you want Path to Conversion to attribute, or drop the pair when you are not using that feature.",
+            "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking",
+            "source_level": "official_vendor"
+          },
+          {
+            "name": "url",
+            "format": {
+              "kind": "url"
+            },
+            "description": "It is the conversion match URL. LinkedIn documents url as a URL-encoded page address used when conversionId is absent. The referrer is used when both are missing.",
+            "fix_hint": "Set url to the URL-encoded page you want to match, or drop the pair when conversionId is present.",
+            "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking",
+            "source_level": "official_vendor"
+          },
+          {
+            "name": "v",
+            "description": "Pinned collector protocol version.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "2"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js"
+          },
+          {
+            "name": "time",
+            "description": "Producer time in Unix milliseconds. No freshness window is inferred.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js"
+          },
+          {
+            "name": "type",
+            "description": "Conversion types forwarded by the pinned producer.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "AD_CLICK",
+                "AD_VIEW",
+                "ADD_BILLING_INFO",
+                "ADD_TO_CART",
+                "ADD_TO_LIST",
+                "BOOK_APPOINTMENT",
+                "COMPLETE_SIGNUP",
+                "CONTACT",
+                "DONATE",
+                "DOWNLOAD",
+                "INSTALL",
+                "JOB_APPLY",
+                "KEY_PAGE_VIEW",
+                "LEAD",
+                "LOGIN",
+                "OTHER",
+                "OUTBOUND_CLICK",
+                "PHONE_CALL",
+                "PURCHASE",
+                "REQUEST_QUOTE",
+                "SAVE",
+                "SCHEDULE",
+                "SEARCH",
+                "SHARE",
+                "SIGN_UP",
+                "START_CHECKOUT",
+                "START_TRIAL",
+                "SUBMIT_APPLICATION",
+                "SUBSCRIBE",
+                "VIEW_CONTENT",
+                "VIEW_VIDEO"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js"
+          }
+        ],
+        "rules": [],
+        "body": [],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "Pinned browser collector transport.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET"
+                ]
+              },
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js"
+            }
+          ],
+          "rules": []
         },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "conversionId",
-          "requirement": "recommended",
-          "format": {
-            "kind": "integer"
-          },
-          "description": "Without it the fire is attributed to the Insight Tag rather than to a specific conversion. Page-load noscript tags omit it on purpose.",
-          "fix_hint": "Add the numeric conversion ID from Campaign Manager.",
-          "doc": "https://www.linkedin.com/help/lms/answer/a422796"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "fmt",
-          "requirement": "recommended",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "gif",
-              "img",
-              "js"
-            ]
-          },
-          "format_severity": "warning",
-          "description": "Image pixels are generated with `fmt=gif`. LinkedIn's conversion API sample uses `fmt=img`.",
-          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "eventId",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the per-event deduplication key. LinkedIn documents it on the image URL as eventId when the same conversion is also sent through the Conversions API.",
-          "fix_hint": "Set eventId to the same value the Conversions API event sends as event_id.",
-          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/conversions/deduplication",
-          "source_level": "official_vendor"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "oid",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the advertiser-defined order ID. LinkedIn documents oid on the image pixel for Path to Conversion, so impressions and clicks within 90 days can be joined to the conversion.",
-          "fix_hint": "Set oid to the order ID you want Path to Conversion to attribute, or drop the pair when you are not using that feature.",
-          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking",
-          "source_level": "official_vendor"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "url",
-          "format": {
-            "kind": "url"
-          },
-          "description": "It is the conversion match URL. LinkedIn documents url as a URL-encoded page address used when conversionId is absent. The referrer is used when both are missing.",
-          "fix_hint": "Set url to the URL-encoded page you want to match, or drop the pair when conversionId is present.",
-          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking",
-          "source_level": "official_vendor"
-        }
-      ],
+        "http_queries": []
+      },
       "supplemental_published_inventory": null,
       "currency_registry_contracts": [],
       "currency_registry_snapshot": null,
@@ -125480,12 +126048,9 @@
       "gdpr_context_change": null,
       "path_capture_change": null,
       "missing_requirements": [
-        {
-          "requirement": "Complete Insight Tag browser wire schema and payload",
-          "reason": "The official help article documents installation and debugging, not a comprehensive collection query schema.",
-          "class": "source_partial",
-          "source": "https://www.linkedin.com/help/lms/answer/a422796"
-        }
+        "Exact /collect and /collect/ routes on px.ads.linkedin.com are covered. Modern /wa/ Website Actions sends a separate compressed/base64 protocol and remains recognized without a contract. Alternate hosts are not inferred.",
+        "The pinned producer emits comma-separated numeric partner IDs and optional conversion IDs. Version, time, type and GET checks are advisory. Currency, value, tag-manager and browser identities are forwarded values without an inferred receiver schema.",
+        "Partner and conversion ownership, matching permissions, deduplication and delivery require external context. Conversions API is a separate pack."
       ],
       "tests": {
         "fixture_directory": "fixtures/vendor-linkedin",
@@ -125529,8 +126094,8 @@
         "source_targets": 0
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/linkedin.json": "d64299db21bb92a83702d20883bcd7655e97f744eafa585c02d47977e845fda6",
-        "fixtures/vendor-linkedin/manifest.json": "44ff2763582e335eb8ac2b13ba6a7ac6ad5dfaead87e5fa42192da7926b28c40",
+        "crates/pixellint-core/rulepacks/vendor/linkedin.json": "82d25818c35f7ca6d130898b864eac1e0be0ec60c9bd4514801d0d66954ed74e",
+        "fixtures/vendor-linkedin/manifest.json": "8c33d528c5d7bbb206ac4ebee136b162c518b0673badee84066f10a74729ae54",
         "fixtures/vendor-linkedin/source-targets.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
         "fixtures/vendor-linkedin/clean-conversion.txt": "c82c06c8e07e7e52edd76d4157e8f8f512c9bbbe4aa720ce8ef0e43b04456f1f",
         "fixtures/vendor-linkedin/empty-partner-id.txt": "4e0a474e02d990082037c846f18cab6339ea938be71fd42ad7ff14ce3debc0bc",
@@ -125542,7 +126107,28 @@
         "fixtures/vendor-linkedin/empty-event-id.txt": "5dfe66f6cab29c950a669ed56ba5057bbe3d29ce7fec68fab6f9e43d50b0c51a",
         "fixtures/vendor-linkedin/clean-order-id.txt": "ac374639ed200cc2b4fd1a991e987ceed6daf0dd01e82edc6573f9356600f25c",
         "fixtures/vendor-linkedin/empty-order-id.txt": "adb1066d90352c0739267d2c7c77ac4bbca5349bd0739811b16239a686daa0e3",
-        "fixtures/vendor-linkedin/invalid-url.txt": "f48bdca1c456adad708cea172b8219a333270b9106e435cc257f37ebd7e6685e"
+        "fixtures/vendor-linkedin/invalid-url.txt": "f48bdca1c456adad708cea172b8219a333270b9106e435cc257f37ebd7e6685e",
+        "fixtures/vendor-linkedin/depth051-011-bad-pid-11.txt": "e739671ce3a5fa0ca37847415b660a29e6a22a79a08a1ca9d02ee8045c6a33a7",
+        "fixtures/vendor-linkedin/depth051-001-producer-linkedin-conversion-0.txt": "49a6767ae741053fb4023bc170f9e047db8811f49e6048fc8e48147fac640fc3",
+        "fixtures/vendor-linkedin/depth051-000-producer-linkedin-page-0.txt": "8bd1b60597a4b5bddf57456565ee20979229b17118864339db9adfd0ef75d3c1",
+        "fixtures/vendor-linkedin/depth051-010-bad-pid-10.txt": "e36e8c7df7166c72324c966d4bae4617555c547598ba74b8c44382775803bd5f",
+        "fixtures/vendor-linkedin/depth051-015-bad-type-15.txt": "0eeafe4b06af5c774fb9ce5f9ceb6936e9bb02ca4fd1b22ed1e4c48bdaddeced",
+        "fixtures/vendor-linkedin/depth051-018-neighbor-18.txt": "5f559b31bfa3851e8940880c5caf8e3b20766dd930e870b06f3cc71bc4eb3fde",
+        "fixtures/vendor-linkedin/depth051-016-post-method.txt": "394105430501ff6b63f13d428c06cb913be1517562016dd21313416a77c198b6",
+        "fixtures/vendor-linkedin/depth051-012-bad-pid-12.txt": "d8093b6b022bc85a707f8f987c0293f7c383a0b26d197bfa191282a45b79655d",
+        "fixtures/vendor-linkedin/depth051-004-noscript.txt": "a6bd200493d341456d777e3bf45fc5300b9cd1dc636091a6de3eed3fd3350c3d",
+        "fixtures/vendor-linkedin/depth051-005-trailing-slash.txt": "c264d707f7de02f35802ad769028fe8580589ffa8ccb543b01df4087e47895c6",
+        "fixtures/vendor-linkedin/depth051-009-bad-pid-9.txt": "bde1722dbe856569dd019791ec70214793854e6756d4fcc77868919651cc9032",
+        "fixtures/vendor-linkedin/depth051-007-forwarded-values.txt": "90ddba1ef4115c25ff0d455e2e61b4694463d81673126ab23a8bc354f6ef4269",
+        "fixtures/vendor-linkedin/depth051-003-page.txt": "e0faacfbfb821ff7de5c05b99a3a1c87f24998878e80a0695804f4ba3e14ae60",
+        "fixtures/vendor-linkedin/depth051-013-bad-v-13.txt": "db7d65095f747d93518ba5c1d82fdf1b00e43d7ba42c76bb2b3a6a1f1232e321",
+        "fixtures/vendor-linkedin/depth051-017-neighbor-17.txt": "6054bf50baa47e72100b3618332165102882224e007e00c693e6010e4a91cb4b",
+        "fixtures/vendor-linkedin/depth051-002-producer-linkedin-conversion-1.txt": "8f4b09a3cfcad8a890dd807e0be64553844b9af577e2f393afeda5348d323b44",
+        "fixtures/vendor-linkedin/depth051-014-bad-time-14.txt": "aa5c34784e6f11cd4d326eb11c250979c14ac113d7aec9272a05b12cb79919d5",
+        "fixtures/vendor-linkedin/depth051-008-conversion.txt": "2e1bcfd98acc9e7232baced3931c437bbb48b041c6a501089edbbc13c2fdcb99",
+        "fixtures/vendor-linkedin/depth051-006-opaque-identities.txt": "4cb49f7521510328bf2f1acd15996a1c6429d30a67be986a6f34927f58d3b59b",
+        "docs/reviews/pixel-collectors-051.json": "78a699253c6798283b2f11c4a4f17370bad763ea56c32819797b7f6cef589153",
+        "crates/pixellint-core/tests/pixel_collectors_051.rs": "cf17600aca7406c051933ff189f85e9a29614de6bbd4708024b7e0052d65e63d"
       },
       "session_date": "2026-10-08",
       "session_baseline": "released_v0.32.0",
@@ -125567,7 +126153,23 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "disposition": "implemented_source_scoped_partial",
+      "match": {
+        "hosts": [
+          "px.ads.linkedin.com"
+        ],
+        "paths": [
+          "/collect",
+          "/collect/"
+        ]
+      },
+      "source_urls": [
+        "https://snap.licdn.com/li.lms-analytics/insight.min.js",
+        "https://raw.githubusercontent.com/linkedin/linkedin-gtm-community-template/main/template.tpl"
+      ],
+      "golden_cases": 30,
+      "collector_followup": "docs/reviews/pixel-collectors-051.json"
     },
     {
       "id": "vendor/linkedin-conversions-api",
@@ -216732,396 +217334,1502 @@
       "reviewed_at": "2026-10-08",
       "status": "deepened_with_gaps",
       "spec_complete": false,
-      "manifest_sha256": "2212e30e09577bde9c996f66fb6503ec8bbb4a3e9c8badc0cc503c1aa7cd4a0e",
+      "manifest_sha256": "a7ba2ccfe1016d00ccd311ef1274ef1c3f949b12bfa5d30019b10e61439122a3",
       "fixture_corpus_sha256": "e2904c147e4e8752201fb55602915a63e10b36d585c64c4eb630ee301c0c8e2c",
       "protocol_scope": "Pinterest conversion tag requests to ct.pinterest.com, including the noscript image fallback.",
       "source_level": "official_vendor",
       "sources_read": [
         {
-          "url": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/",
-          "access": "read",
-          "note": "Primary vendor page read and compared with the shipped contract."
+          "file": "pinterest-core.js",
+          "url": "https://s.pinimg.com/ct/core.js",
+          "actual_url": "https://s.pinimg.com/ct/core.js",
+          "status": 200,
+          "bytes": 5072,
+          "sha256": "0c6f153ac1ff139ef982719ffd3d8665c2feb22a1e665db689d002cf935e8af9"
         },
         {
-          "url": "https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml",
-          "access": "read",
-          "note": "Primary vendor/official SDK supporting source read."
+          "file": "pinterest-template.tpl",
+          "url": "https://raw.githubusercontent.com/pinterest/ws-gtm-template/main/template.tpl",
+          "actual_url": "https://raw.githubusercontent.com/pinterest/ws-gtm-template/main/template.tpl",
+          "status": 200,
+          "bytes": 46236,
+          "sha256": "6de6feb0b093ea700c4f9af4ee07d3d2313747b12607a754efbb2921dc76489b"
         },
         {
-          "url": "https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-three.xml",
-          "access": "read",
-          "note": "Primary vendor/official SDK supporting source read."
+          "file": "pinterest-events.html",
+          "url": "https://help.pinterest.com/en/business/article/add-event-codes",
+          "actual_url": "https://help.pinterest.com/en/business/article/add-event-codes",
+          "status": 200,
+          "bytes": 226597,
+          "sha256": "4b115749a5c8c5a9fe976a011009d2b2b733826c3089398098dfd39bafd460a7"
+        },
+        {
+          "file": "pinterest-main.js",
+          "url": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js",
+          "actual_url": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js",
+          "status": 200,
+          "bytes": 164029,
+          "sha256": "30b6dcd74eeaa72edf9f6ffecdb9d919a811e43e6e6c35f5ab96dbae5591631d"
         }
       ],
       "published_contract_groups": [
         "Published base and conversion image parameters",
         "Every indexed line item and commerce value"
       ],
-      "contracts_mapped": [
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
+      "contracts_mapped": {
+        "params": [
+          {
+            "name": "tid",
+            "requirement": "required",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the Pinterest conversion tag ID.",
+            "fix_hint": "Copy the tag ID from Ads Manager into `tid`.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
           },
-          "name": "tid",
-          "requirement": "required",
-          "format": {
-            "kind": "non_empty"
+          {
+            "name": "event",
+            "format": {
+              "kind": "non_empty"
+            },
+            "format_severity": "warning",
+            "description": "Standard and configured custom event names are accepted. The SDK forwards custom names after a console warning.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
           },
-          "description": "It is the Pinterest conversion tag ID.",
-          "fix_hint": "Copy the tag ID from Ads Manager into `tid`.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
+          {
+            "name": "noscript",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "format_severity": "warning",
+            "description": "The image fallback in the base code sends `noscript=1`.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
           },
-          "name": "event",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "init",
-              "pagevisit",
+          {
+            "name": "ed[value]",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+(\\.[0-9]+)?$"
+            },
+            "description": "It is the purchase value on the noscript image. Pinterest documents `ed[value]` on checkout and add to cart tags.",
+            "fix_hint": "Send a number in `ed[value]`, without a currency symbol.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[currency]",
+            "format": {
+              "kind": "currency",
+              "case_insensitive": true
+            },
+            "description": "It is the ISO 4217 currency of `ed[value]`. Pinterest documents `ed[currency]` on the image tag.",
+            "fix_hint": "Send a three-letter currency code in `ed[currency]`, such as `USD`.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[order_quantity]",
+            "format": {
+              "kind": "integer"
+            },
+            "description": "It is the order quantity on the noscript image. Pinterest documents `ed[order_quantity]` next to `ed[value]`.",
+            "fix_hint": "Send an integer item count in `ed[order_quantity]`.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[event_id]",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the event id on the noscript image. Pinterest documents `ed[event_id]` for deduplication against the JavaScript tag.",
+            "fix_hint": "Send the same event id the JavaScript tag fired, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "pd[em]",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "description": "It is the hashed email for Enhanced Match on the image tag. Pinterest documents SHA-256 hex after lowercase and trim. The JavaScript tag hashes in the browser; the img tag does not.",
+            "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest in `pd[em]`.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "pd[external_id]",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "description": "It is the hashed advertiser-side user id for Enhanced Match on the image tag. Pinterest documents SHA-256 hex.",
+            "fix_hint": "Hash the identifier with SHA-256 and send the hex digest in `pd[external_id]`.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[line_items][0][product_price]",
+            "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_price\\]$",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?[0-9]+(\\.[0-9]+)?$"
+            },
+            "description": "It is a line-item price on the noscript image. Pinterest documents `ed[line_items][n][product_price]` as a number.",
+            "fix_hint": "Send a number in `ed[line_items][n][product_price]`, without a currency symbol.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[line_items][0][product_quantity]",
+            "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_quantity\\]$",
+            "format": {
+              "kind": "integer"
+            },
+            "description": "It is a line-item quantity on the noscript image. Pinterest documents `ed[line_items][n][product_quantity]` as an integer.",
+            "fix_hint": "Send an integer item count in `ed[line_items][n][product_quantity]`.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[line_items][0][product_name]",
+            "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_name\\]$",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is a line-item name on the noscript image. Pinterest documents `ed[line_items][n][product_name]` as a string.",
+            "fix_hint": "Send the product name in `ed[line_items][n][product_name]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[line_items][0][product_id]",
+            "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_id\\]$",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is a line-item product id on the noscript image. Pinterest documents `ed[line_items][n][product_id]` as a string.",
+            "fix_hint": "Send the catalog product id in `ed[line_items][n][product_id]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[line_items][0][product_category]",
+            "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_category\\]$",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is a line-item category on the noscript image. Pinterest documents `ed[line_items][n][product_category]` as a string.",
+            "fix_hint": "Send the category in `ed[line_items][n][product_category]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[line_items][0][product_variant_id]",
+            "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_variant_id\\]$",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is a line-item variant id on the noscript image. Pinterest documents `ed[line_items][n][product_variant_id]` as a string.",
+            "fix_hint": "Send the variant id in `ed[line_items][n][product_variant_id]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[line_items][0][product_variant]",
+            "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_variant\\]$",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is a line-item variant name on the noscript image. Pinterest documents `ed[line_items][n][product_variant]` as a string.",
+            "fix_hint": "Send the variant name in `ed[line_items][n][product_variant]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[line_items][0][product_brand]",
+            "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_brand\\]$",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is a line-item brand on the noscript image. Pinterest documents `ed[line_items][n][product_brand]` as a string.",
+            "fix_hint": "Send the brand in `ed[line_items][n][product_brand]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[order_id]",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the order id on the noscript image. Pinterest documents `order_id` as a string for conversion reporting.",
+            "fix_hint": "Send the order id in `ed[order_id]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[promo_code]",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is a promotion code on the noscript image. Pinterest documents `promo_code` as a string.",
+            "fix_hint": "Send the code in `ed[promo_code]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[property]",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the store or property name on the noscript image. Pinterest documents `property` as a string.",
+            "fix_hint": "Send the property name in `ed[property]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[search_query]",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the search string on the noscript image. Pinterest documents `ed[search_query]` on search tags.",
+            "fix_hint": "Send the query in `ed[search_query]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[video_title]",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the video title on the noscript image. Pinterest documents `video_title` as a string.",
+            "fix_hint": "Send the title in `ed[video_title]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed[lead_type]",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "It is the lead type on the noscript image. Pinterest documents `lead_type` as a string.",
+            "fix_hint": "Send the lead type in `ed[lead_type]`, or drop the empty pair.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          },
+          {
+            "name": "ed",
+            "description": "JSON string serialized by the browser producer.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+          },
+          {
+            "name": "pd",
+            "description": "JSON string serialized by the browser producer.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+          },
+          {
+            "name": "ad",
+            "description": "JSON string serialized by the browser producer.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+          },
+          {
+            "name": "ov",
+            "description": "JSON string serialized by the browser producer.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+          },
+          {
+            "name": "cb",
+            "description": "Producer cache buster in Unix milliseconds.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+          }
+        ],
+        "rules": [
+          {
+            "code": "vendor.pinterest.checkout_requires_value_and_currency",
+            "kind": "required_when_value",
+            "when": "event",
+            "equals": [
               "checkout",
-              "addtocart",
-              "signup",
-              "lead",
-              "search",
-              "viewcategory",
-              "viewcontent",
-              "watchvideo",
-              "addtowishlist",
-              "initiateCheckout",
-              "addpaymentinfo",
-              "contact",
-              "customizeproduct",
-              "findlocation",
-              "schedule",
-              "starttrial",
-              "subscribe",
-              "submitapplication",
-              "custom"
-            ]
+              "addtocart"
+            ],
+            "requires": [
+              "ed[value]",
+              "ed[currency]"
+            ],
+            "severity": "warning",
+            "message": "A checkout or add-to-cart tag is missing `ed[value]` or `ed[currency]`. Pinterest documents those keys on the image tag for conversion reporting.",
+            "fix_hint": "Add `ed[value]` and `ed[currency]` to the noscript image, or fire the event from JavaScript.",
+            "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/",
+            "condition": {
+              "kind": "not",
+              "condition": {
+                "kind": "exists",
+                "param": "ed"
+              }
+            }
+          }
+        ],
+        "body": [
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "object",
+                  "array"
+                ],
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "value",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "number",
+                  "null"
+                ],
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "currency",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "currency",
+                  "case_insensitive": true
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "order_quantity",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "array",
+                  "null"
+                ],
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "order_id",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "promo_code",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "property",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "search_query",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "video_title",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "lead_type",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "event_id",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "eventID",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "eid",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[].product_name",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[].product_id",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[].product_category",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[].product_variant_id",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[].product_variant",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[].product_brand",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[].product_price",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "line_items[].product_quantity",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              }
+            ],
+            "rules": [],
+            "source_param": "ed",
+            "encoding_severity": "warning"
           },
-          "format_severity": "warning",
-          "description": "The base code omits it; event code sends one. Custom event names are allowed, so check that an unrecognized value is deliberate and not a misspelled standard event.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "em",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "em[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "external_id",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "external_id[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "fn",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "fn[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ln",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ln[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ph",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ph[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ge",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ge[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "db",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "db[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ct",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ct[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "st",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "st[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "zp",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "zp[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "country",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "array",
+                  "null"
+                ],
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "country[]",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "fp_cookie",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "fp_localStorage",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              }
+            ],
+            "rules": [],
+            "source_param": "pd",
+            "encoding_severity": "warning"
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "loc",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "string",
+                "allow_empty": true,
+                "format": {
+                  "kind": "url"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ref",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "string",
+                "allow_empty": true,
+                "format": {
+                  "kind": "url"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "if",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "is_eu",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "is_restricted_region",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "sh",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "integer",
+                  "null"
+                ],
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "sw",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "integer",
+                  "null"
+                ],
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "mh",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "string",
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "cs",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "string",
+                "allow_empty": true,
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "try",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "string",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^[0-9]+$"
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              }
+            ],
+            "rules": [],
+            "source_param": "ad",
+            "encoding_severity": "warning"
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              }
+            ],
+            "rules": [],
+            "source_param": "ov",
+            "encoding_severity": "warning"
+          },
+          {
+            "params": [
+              {
+                "name": "em",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "em",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "external_id",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "external_id",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "fn",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "fn",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ln",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "ln",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ph",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "ph",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ge",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "ge",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "db",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "db",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "ct",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "ct",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "st",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "st",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "zp",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "zp",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              },
+              {
+                "name": "country",
+                "description": "Pinned producer field; receiver acceptance may differ.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "allow_empty": true,
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^(?:[a-fA-F0-9]{32}|[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+                },
+                "condition": {
+                  "kind": "json_type",
+                  "param": "country",
+                  "json_type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "severity": "warning",
+                "source_level": "official_template",
+                "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+              }
+            ],
+            "rules": [],
+            "source_param": "pd",
+            "encoding_severity": "warning"
+          }
+        ],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "Pinned browser collector transport.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET",
+                  "POST"
+                ]
+              },
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+            }
+          ],
+          "rules": []
         },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "noscript",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "0",
-              "1"
-            ]
-          },
-          "format_severity": "warning",
-          "description": "The image fallback in the base code sends `noscript=1`.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[value]",
-          "format": {
-            "kind": "regex",
-            "pattern": "^-?[0-9]+(\\.[0-9]+)?$"
-          },
-          "description": "It is the purchase value on the noscript image. Pinterest documents `ed[value]` on checkout and add to cart tags.",
-          "fix_hint": "Send a number in `ed[value]`, without a currency symbol.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[currency]",
-          "format": {
-            "kind": "currency",
-            "case_insensitive": true
-          },
-          "description": "It is the ISO 4217 currency of `ed[value]`. Pinterest documents `ed[currency]` on the image tag.",
-          "fix_hint": "Send a three-letter currency code in `ed[currency]`, such as `USD`.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[order_quantity]",
-          "format": {
-            "kind": "integer"
-          },
-          "description": "It is the order quantity on the noscript image. Pinterest documents `ed[order_quantity]` next to `ed[value]`.",
-          "fix_hint": "Send an integer item count in `ed[order_quantity]`.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[event_id]",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the event id on the noscript image. Pinterest documents `ed[event_id]` for deduplication against the JavaScript tag.",
-          "fix_hint": "Send the same event id the JavaScript tag fired, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "pd[em]",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[A-Fa-f0-9]{64}$"
-          },
-          "description": "It is the hashed email for Enhanced Match on the image tag. Pinterest documents SHA-256 hex after lowercase and trim. The JavaScript tag hashes in the browser; the img tag does not.",
-          "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest in `pd[em]`.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "pd[external_id]",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[A-Fa-f0-9]{64}$"
-          },
-          "description": "It is the hashed advertiser-side user id for Enhanced Match on the image tag. Pinterest documents SHA-256 hex.",
-          "fix_hint": "Hash the identifier with SHA-256 and send the hex digest in `pd[external_id]`.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[line_items][0][product_price]",
-          "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_price\\]$",
-          "format": {
-            "kind": "regex",
-            "pattern": "^-?[0-9]+(\\.[0-9]+)?$"
-          },
-          "description": "It is a line-item price on the noscript image. Pinterest documents `ed[line_items][n][product_price]` as a number.",
-          "fix_hint": "Send a number in `ed[line_items][n][product_price]`, without a currency symbol.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[line_items][0][product_quantity]",
-          "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_quantity\\]$",
-          "format": {
-            "kind": "integer"
-          },
-          "description": "It is a line-item quantity on the noscript image. Pinterest documents `ed[line_items][n][product_quantity]` as an integer.",
-          "fix_hint": "Send an integer item count in `ed[line_items][n][product_quantity]`.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[line_items][0][product_name]",
-          "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_name\\]$",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is a line-item name on the noscript image. Pinterest documents `ed[line_items][n][product_name]` as a string.",
-          "fix_hint": "Send the product name in `ed[line_items][n][product_name]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[line_items][0][product_id]",
-          "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_id\\]$",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is a line-item product id on the noscript image. Pinterest documents `ed[line_items][n][product_id]` as a string.",
-          "fix_hint": "Send the catalog product id in `ed[line_items][n][product_id]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[line_items][0][product_category]",
-          "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_category\\]$",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is a line-item category on the noscript image. Pinterest documents `ed[line_items][n][product_category]` as a string.",
-          "fix_hint": "Send the category in `ed[line_items][n][product_category]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[line_items][0][product_variant_id]",
-          "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_variant_id\\]$",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is a line-item variant id on the noscript image. Pinterest documents `ed[line_items][n][product_variant_id]` as a string.",
-          "fix_hint": "Send the variant id in `ed[line_items][n][product_variant_id]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[line_items][0][product_variant]",
-          "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_variant\\]$",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is a line-item variant name on the noscript image. Pinterest documents `ed[line_items][n][product_variant]` as a string.",
-          "fix_hint": "Send the variant name in `ed[line_items][n][product_variant]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[line_items][0][product_brand]",
-          "name_pattern": "^ed\\[line_items\\]\\[[0-9]+\\]\\[product_brand\\]$",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is a line-item brand on the noscript image. Pinterest documents `ed[line_items][n][product_brand]` as a string.",
-          "fix_hint": "Send the brand in `ed[line_items][n][product_brand]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[order_id]",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the order id on the noscript image. Pinterest documents `order_id` as a string for conversion reporting.",
-          "fix_hint": "Send the order id in `ed[order_id]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[promo_code]",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is a promotion code on the noscript image. Pinterest documents `promo_code` as a string.",
-          "fix_hint": "Send the code in `ed[promo_code]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[property]",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the store or property name on the noscript image. Pinterest documents `property` as a string.",
-          "fix_hint": "Send the property name in `ed[property]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[search_query]",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the search string on the noscript image. Pinterest documents `ed[search_query]` on search tags.",
-          "fix_hint": "Send the query in `ed[search_query]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[video_title]",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the video title on the noscript image. Pinterest documents `video_title` as a string.",
-          "fix_hint": "Send the title in `ed[video_title]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "transport": "url",
-          "scope": "url",
-          "context": {
-            "scope": "url"
-          },
-          "name": "ed[lead_type]",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the lead type on the noscript image. Pinterest documents `lead_type` as a string.",
-          "fix_hint": "Send the lead type in `ed[lead_type]`, or drop the empty pair.",
-          "doc": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        }
-      ],
+        "http_queries": []
+      },
       "supplemental_published_inventory": null,
       "currency_registry_contracts": [
         {
@@ -217212,18 +218920,11 @@
       "gdpr_context_change": null,
       "path_capture_change": null,
       "missing_requirements": [
-        {
-          "requirement": "Complete modern browser tag payload schema and command variants",
-          "reason": "Published image example is partial; SDK command semantics exceed the observed query transport.",
-          "class": "scope",
-          "source": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        },
-        {
-          "requirement": "Currency and event variants beyond the image example",
-          "reason": "Need current complete wire-contract source before tightening accepted names/currencies.",
-          "class": "source_partial",
-          "source": "https://developers.pinterest.com/docs/track-conversions/pinterest-tag/"
-        }
+        "Exact /v3 and /v3/ collectors are covered. /user/, /stats/, metadata, configuration and no-code CAPI protocols remain outside this profile.",
+        "Browser ed, pd, ad and ov JSON strings are checked in query and form captures. Source event data arrays and custom event names are accepted. Arbitrary custom properties remain open.",
+        "SDK partner hashes may be scalar or arrays and retain MD5, SHA-1 and SHA-256 prehashes, null and empty entries. Noscript enhanced-match fields retain their separate documented SHA-256 grammar. Digest correctness and matching permissions are not established.",
+        "Native quantities are integer checked; numeric strings follow the producer numeric profile without asserting full integer coercion. SDK event IDs and product identifiers accept numeric caller values. Missing JSON purchase totals are not borrowed from the noscript bracket requirements.",
+        "Producer structure and transport checks are advisory. Configuration ownership, consent decisions, deduplication and delivery remain external."
       ],
       "tests": {
         "fixture_directory": "fixtures/vendor-pinterest",
@@ -217275,8 +218976,8 @@
         "source_targets": 4
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/pinterest.json": "2212e30e09577bde9c996f66fb6503ec8bbb4a3e9c8badc0cc503c1aa7cd4a0e",
-        "fixtures/vendor-pinterest/manifest.json": "a8d27a36e65bc6e064a532073983a89195bc426eccd91507e719b31e90d178ed",
+        "crates/pixellint-core/rulepacks/vendor/pinterest.json": "a7ba2ccfe1016d00ccd311ef1274ef1c3f949b12bfa5d30019b10e61439122a3",
+        "fixtures/vendor-pinterest/manifest.json": "2af4751ef9c2582d54262a7045abef58f21344c664ea70342f275f9bb2ff0caa",
         "fixtures/vendor-pinterest/source-targets.json": "f530d6966ee86427eee81954971009be57f85a320e81e39e1ec9d172fe3ec1cb",
         "fixtures/vendor-pinterest/clean-base-code.txt": "fa24ed7ac3c28a1b0f5094a898aace71f52d16205df2972c4e0761fd8cdd9cfd",
         "fixtures/vendor-pinterest/clean-checkout.txt": "95c5d6cef8f22eaa9371efcef8aff44fdefc9b29df7a57f86f1c4718920a1805",
@@ -217292,7 +218993,90 @@
         "fixtures/vendor-pinterest/depth-later-lineitem-empty.txt": "5be158db5391ba6112e9f7402f310494622010b8500c0084a74fab91c4878327",
         "fixtures/vendor-pinterest/depth-iso4217-00-current.txt": "926081f34bc13bdfaff35608236c18a2468ded91d4f65c787ead6e39d5a43649",
         "fixtures/vendor-pinterest/depth-iso4217-00-unassigned.txt": "f7e2d2e6d2f44faba12a0362ab88d4081ed67040402cb505b91f4e9bc0f10e58",
-        "fixtures/vendor-pinterest/depth-iso4217-00-retired.txt": "abe90f498b27439cbf711c993a9d5b42e4c4410730cd78634842382abe722df1"
+        "fixtures/vendor-pinterest/depth-iso4217-00-retired.txt": "abe90f498b27439cbf711c993a9d5b42e4c4410730cd78634842382abe722df1",
+        "fixtures/vendor-pinterest/depth051-051-hash-array-ct.txt": "c6bf03424d5c710783fc028d0a3c7bb8fd725ae2d33396b2e6fb51840082ccba",
+        "fixtures/vendor-pinterest/depth051-019-later-item-product_quantity.txt": "d23fee2be5ae2e3f267dc31838835de50517615fca326c2f3cd1a66ca8ce3c60",
+        "fixtures/vendor-pinterest/depth051-004-producer-pinterest-large-post-0.txt": "2217bb75f700242570bb9d6c3be4972f6dfde27fd0ec10d4249fc40275483b52",
+        "fixtures/vendor-pinterest/depth051-016-bad-line_items.txt": "003f094bfe2eaae7d60f49cb2f862f061792cea9ab831ed1493327eb60f0bc8c",
+        "fixtures/vendor-pinterest/depth051-042-hash-array-ph.txt": "b5c20f2d7fef62fe3adca3b3a046e2216804bb674413d3c104f6ac01ae397b8d",
+        "fixtures/vendor-pinterest/depth051-025-wrong-root-ed.txt": "f08289b79e1c217c3ba1a37ee43aa2cbe1d04c6c0576bcb9741e7c84f830438c",
+        "fixtures/vendor-pinterest/depth051-076-pd-flag-fp_localStorage.txt": "166ecd329e247ec918656b2f17a552f7f605f2455631c0c3c901da4798a167cf",
+        "fixtures/vendor-pinterest/depth051-058-bad-hash-zp.txt": "0398a29c7c8bbe226fcb3aea5b65e04cec572c197710944de830bd330f87aea2",
+        "fixtures/vendor-pinterest/depth051-035-hash-scalar-fn.txt": "25fda8d1db60d7d3fd3a1942cc1fb4b48d5befdf3dba753c5a9891578f0aeede",
+        "fixtures/vendor-pinterest/depth051-029-hash-scalar-em.txt": "552b01cdf5aea8ef7949361c080ff865ed2ca0f2e616680cfd3b28122bcf0393",
+        "fixtures/vendor-pinterest/depth051-070-ad-bad-sh.txt": "d02f2669b96d107aa5229267137b690f61a4b9d30bf8a36344ccb3c247e1cc76",
+        "fixtures/vendor-pinterest/depth051-078-core-still-runs.txt": "e912f3c230c7bef04d7eb0dcfcd82e478945ed7b851b3cab1eae50ddf28ef3b4",
+        "fixtures/vendor-pinterest/depth051-067-ad-bad-loc.txt": "8ce9d710764387a3fab72fb0301beba733a67b6d424557e5f0ec5d5db1ed077a",
+        "fixtures/vendor-pinterest/depth051-068-ad-bad-ref.txt": "f855375f4331641474c27961245445bbbc43a193ed022d53174b990f0542f6bd",
+        "fixtures/vendor-pinterest/depth051-044-hash-scalar-ge.txt": "14ea3aebf097b2d8ab95f60c7a0282dcd4e2170008e7ff3d86eac0826b2cd963",
+        "fixtures/vendor-pinterest/depth051-008-json-get.txt": "9b859deb4a218b648fea06e2fffa3fb56f4614df0361e0e21d771a4127b65893",
+        "fixtures/vendor-pinterest/depth051-011-native-array-event-data.txt": "136ed2729b3e0c8a36db26f755479931d4f611e7629bb9594e1cede3cec10404",
+        "fixtures/vendor-pinterest/depth051-050-hash-scalar-ct.txt": "46a61ce64ab20141641ba03fcda39fb583bc7afa359bb7379a7e6e20c49d54c5",
+        "fixtures/vendor-pinterest/depth051-071-ad-bad-sw.txt": "625de7ca18568932d749f80e76db29868a86886deacf1db5bd2b9513ebb18258",
+        "fixtures/vendor-pinterest/depth051-074-ad-bad-try.txt": "5b37ea1ff3933f7943e36c22c9db3e269c17a34eadefaf39c419e667ab05127e",
+        "fixtures/vendor-pinterest/depth051-040-bad-hash-ln.txt": "e8b5bd8265e8c3604f4113666aad2d3a1a6f83435384491c246cb36a241a0757",
+        "fixtures/vendor-pinterest/depth051-075-pd-flag-fp_cookie.txt": "35297283672a46befc6a8e8dad4407d9c9e6d65a574dc1729548bd5e17e87450",
+        "fixtures/vendor-pinterest/depth051-055-bad-hash-st.txt": "01935fde03a1da06809f280102c138ce0ecaa73f0877a604a0e9529b0f5daac6",
+        "fixtures/vendor-pinterest/depth051-077-unsupported-method.txt": "deb86d648260dbb5be0b64d0032dbdc2bc73b08bef29df39e604af0c2ca345dc",
+        "fixtures/vendor-pinterest/depth051-034-bad-hash-external_id.txt": "e8a6f25e235d2fcd1d6b1c68e9b41a18728ead00d350579866adf76ec53815e8",
+        "fixtures/vendor-pinterest/depth051-057-hash-array-zp.txt": "3f0a01a89ac23805919069317b96bfd65547266edfd5fc5150d7188d90266617",
+        "fixtures/vendor-pinterest/depth051-041-hash-scalar-ph.txt": "71d9a846f15251e95d93b10b14819452998ea4c702f9c071bef7ab6291a5da6d",
+        "fixtures/vendor-pinterest/depth051-072-ad-bad-is_eu.txt": "aa72aab57e1fd8dc02a583678d9943efe86ca43f5f138bdca96526b04efaf3c8",
+        "fixtures/vendor-pinterest/depth051-038-hash-scalar-ln.txt": "149f453d700f7a6e4e3cb7da4d70c61bf454bb510dfe8089752d047da68fe824",
+        "fixtures/vendor-pinterest/depth051-045-hash-array-ge.txt": "6b577d4d0f1b57ce1113804321292246242bd8473b5f87bf69aae28a6eeb1d35",
+        "fixtures/vendor-pinterest/depth051-056-hash-scalar-zp.txt": "add050ec832bb642795acb3b40cf472c2c55088b37306fc485abcf5ba4d66e55",
+        "fixtures/vendor-pinterest/depth051-033-hash-array-external_id.txt": "c5a36fb31be70995251479f57406425ba17f7dac4bbeaf1d6d606e97751bd259",
+        "fixtures/vendor-pinterest/depth051-010-custom-event.txt": "e7d603ef7f11f53bf151e7f7787369276d88ad7d576a8f7b7fd1d0a875925475",
+        "fixtures/vendor-pinterest/depth051-069-ad-bad-if.txt": "d84a98b9c6b699dbab5c30c014ad084dc2913e8e1a2336aa63d7fc69992e0dfa",
+        "fixtures/vendor-pinterest/depth051-031-bad-hash-em.txt": "8cacfee60bde14d46f892b95916210e8c77c9f96eb3e044f78241b163a80e998",
+        "fixtures/vendor-pinterest/depth051-002-producer-pinterest-custom-0.txt": "2c97377dd678d48ed0dd6413a8e2825f5d8db7aa50395270fc7fda410e5de86f",
+        "fixtures/vendor-pinterest/depth051-043-bad-hash-ph.txt": "1f367d70e668fd1a692b476ca6deb2cc2408095e2d5a36650c40694031c63413",
+        "fixtures/vendor-pinterest/depth051-048-hash-array-db.txt": "e2b39a5239e97b67a38a4fb4b16421273b3d4f1057cfd090da98e0dc3d62fdba",
+        "fixtures/vendor-pinterest/depth051-026-wrong-root-pd.txt": "6ff25d483b919dea1c065fb81707485485c1862f9d0f3132069653215c055833",
+        "fixtures/vendor-pinterest/depth051-036-hash-array-fn.txt": "f7fe0a35a7ccc47815d740cee075266e69f6f41d66e44de3868d0dfdc9db05bf",
+        "fixtures/vendor-pinterest/depth051-049-bad-hash-db.txt": "67ff1b5308e81f475cc183ddabd89bb81b1e99dff3f2da4d0d1bec2f7df22cfb",
+        "fixtures/vendor-pinterest/depth051-007-producer-pinterest-hash-arrays-1.txt": "8b3e6ab0c76faa40c5b0cd8c1288e75a547375cecd5db6bf38d27d3201ce7ce3",
+        "fixtures/vendor-pinterest/depth051-005-producer-pinterest-large-post-1.txt": "e3d76283c5206870a4a570a8a7887e0ec2d59d77791bfa465c99c55188cf11e8",
+        "fixtures/vendor-pinterest/depth051-015-bad-order_quantity.txt": "1e620e0a2ab66958e8783e98a460a6a846fa37795f0e70d97ca958c4492ed48c",
+        "fixtures/vendor-pinterest/depth051-080-neighbor-80.txt": "e26154b4c48991a15dbf7bfdde165353cd60e9ac576dff0d3268c0e43312ac61",
+        "fixtures/vendor-pinterest/depth051-063-bad-hash-length-56.txt": "deb5e8e732874d82e467d454a7a8c4a4439ce275fbfa49983660c9e32801eb30",
+        "fixtures/vendor-pinterest/depth051-020-later-item-product_id.txt": "f413779f76755aae349e3677a19f39eace6b913cbccb438baaf4fb98f77ef70d",
+        "fixtures/vendor-pinterest/depth051-053-hash-scalar-st.txt": "77c018676cbac7739fb382a4aa7019e98753bf8ae0c763d099da12c4672fe9ad",
+        "fixtures/vendor-pinterest/depth051-028-wrong-root-ov.txt": "8637c0f4ebdfefd122c96d5cce58f6a865ba0f26677e840988a3c305845b8e28",
+        "fixtures/vendor-pinterest/depth051-006-producer-pinterest-hash-arrays-0.txt": "4a4f29037c7b125a05e4b74e6e1b4e0470b731d5f2b5c1e50ffbf379e9b0b2f1",
+        "fixtures/vendor-pinterest/depth051-062-bad-hash-later-array.txt": "51430e2e6271cecf645f876ec225b7337f9415f2fe3b17f54b61f45acaeab22e",
+        "fixtures/vendor-pinterest/depth051-023-broken-json-ad.txt": "124c3f00e2caa7cb502345875dd69fd2a877bba929b14fbb80659e1e4348c420",
+        "fixtures/vendor-pinterest/depth051-066-ad-valid.txt": "8c7a2980b7d00a60738d6cb3c3b04991169dfe755ab428021d412df51ea10b89",
+        "fixtures/vendor-pinterest/depth051-054-hash-array-st.txt": "5b65c5f5b5c323b04c2b89e6b9b2f0d39dc867f7a2b49ebc641ba2f065a9eac3",
+        "fixtures/vendor-pinterest/depth051-039-hash-array-ln.txt": "4c6ddb84944b98786cadb706700c9ff100006222b1d8c8a77a77f65179c0309f",
+        "fixtures/vendor-pinterest/depth051-000-producer-pinterest-checkout-0.txt": "18f67f2f6ad26a86d0396c125c03a9fa1e34340bc56486b7ed9531aca6b5fb3c",
+        "fixtures/vendor-pinterest/depth051-046-bad-hash-ge.txt": "5174476e19b092eee29f15e0b030aa72a13fcf4bef71eb94128dffdc126bbc46",
+        "fixtures/vendor-pinterest/depth051-009-json-post.txt": "fd31da707b2619a660e8ee5a17bf99a9e0fc889d03a3b41f8403075889458532",
+        "fixtures/vendor-pinterest/depth051-003-producer-pinterest-custom-1.txt": "618225bbfaf92728903e1ba746cb3b55efef4699414c31a4dfd10952b09dc1dd",
+        "fixtures/vendor-pinterest/depth051-061-bad-hash-country.txt": "b8e8277163bd849b2a2854ec218c5d4e6d5ddc8acdc20d8f7a9a81f247dc4490",
+        "fixtures/vendor-pinterest/depth051-047-hash-scalar-db.txt": "dfbf24c867ec34b9fe783f6cd3189a59c9f4693cac18cbe7a6177a04da146567",
+        "fixtures/vendor-pinterest/depth051-060-hash-array-country.txt": "1351c631b22d9e73be18417080840c808d40ace9fabf8d6700ed1b2a37186aaf",
+        "fixtures/vendor-pinterest/depth051-018-later-item-product_price.txt": "7f628fa3ae30e23bac1e506ddf43db556aa5b54dbdd114295eae7f895f08026f",
+        "fixtures/vendor-pinterest/depth051-027-wrong-root-ad.txt": "c6f1c4515989ed8205486bd27ace3405d83f5f2beb183785afee71df89ce6b35",
+        "fixtures/vendor-pinterest/depth051-012-negative-exponent.txt": "f8921cbc018098ad140a22b540ecc954d75721e5af506e08b0fe9b7ffaa44648",
+        "fixtures/vendor-pinterest/depth051-059-hash-scalar-country.txt": "c5abb9c8f80e5b4b8eab943f6c15f52353372208fec06a32e5edc7477850d710",
+        "fixtures/vendor-pinterest/depth051-024-broken-json-ov.txt": "2ddbc854e7604ff91fd3b01e25ff65e58b2009b558b47a0a06d34d9202a8fc0f",
+        "fixtures/vendor-pinterest/depth051-037-bad-hash-fn.txt": "4f8a19a930f2c8073a9c7b35b62ebdc86c40e4e85dfbbf4642050d7422e405ce",
+        "fixtures/vendor-pinterest/depth051-052-bad-hash-ct.txt": "6a136c5e2829068ee21c3f6a994ddb6ec6264f8c6301b61e3925fda35e3612e4",
+        "fixtures/vendor-pinterest/depth051-079-neighbor-79.txt": "20e6e96eec375e7e2f71f570993b3318935dc6256499800a9ee7aca4c705175c",
+        "fixtures/vendor-pinterest/depth051-064-hash-null.txt": "1ec4af39db70ffbabbb2d1f0c46da2c229d4aa99f284e92daffafec1824d488b",
+        "fixtures/vendor-pinterest/depth051-022-broken-json-pd.txt": "b9666b5f7fd1804401fcd2f3defc0bc439a3e35a296aa1d0ca86bb1a76c5e8e4",
+        "fixtures/vendor-pinterest/depth051-017-bad-line_items.txt": "ca239d9a6d8fd49e2a4f605f2e7c5ed281f5232d1eaa22625b00ae2cf73dff53",
+        "fixtures/vendor-pinterest/depth051-032-hash-scalar-external_id.txt": "6ce516ddc95e06934806716f984733897dcd46eab4b2b297807bc0cd74b2eb82",
+        "fixtures/vendor-pinterest/depth051-014-bad-currency.txt": "c68100fbe1000f89b5fa7dc064efb4d49a7b9c2e5ec91922f40ef7743a938088",
+        "fixtures/vendor-pinterest/depth051-065-hash-number.txt": "5f12f8c797c9805dcd58e6466e854bbc3e35216346f9e0d4672570b674844b8e",
+        "fixtures/vendor-pinterest/depth051-021-broken-json-ed.txt": "aabb9837440f07f5ff861956224b78a5feb7007c117555648fcea68c440faac5",
+        "fixtures/vendor-pinterest/depth051-030-hash-array-em.txt": "887337d281a6929874b1020df63f24f9df883242e57c183a0985da4058a5b1a2",
+        "fixtures/vendor-pinterest/depth051-001-producer-pinterest-checkout-1.txt": "b0e454094ec54917da58eb2b02560a412c5e5a5d2b2447a51e85a99c18059161",
+        "fixtures/vendor-pinterest/depth051-013-bad-value.txt": "135fb0d9d8e9ad3c9f78087c6a10f531bf02c20ac09252864dcf5c3833f79ede",
+        "fixtures/vendor-pinterest/depth051-073-ad-bad-is_restricted_region.txt": "e94af1bf85dfee617fa6e98b15428add257c18a932e73c0bf365f71bd8ab0034",
+        "docs/reviews/pixel-collectors-051.json": "78a699253c6798283b2f11c4a4f17370bad763ea56c32819797b7f6cef589153",
+        "crates/pixellint-core/tests/pixel_collectors_051.rs": "cf17600aca7406c051933ff189f85e9a29614de6bbd4708024b7e0052d65e63d"
       },
       "session_date": "2026-10-08",
       "session_baseline": "released_v0.32.0",
@@ -217317,7 +219101,25 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "disposition": "implemented_source_scoped_partial",
+      "match": {
+        "hosts": [
+          "ct.pinterest.com"
+        ],
+        "paths": [
+          "/v3",
+          "/v3/"
+        ]
+      },
+      "source_urls": [
+        "https://s.pinimg.com/ct/core.js",
+        "https://raw.githubusercontent.com/pinterest/ws-gtm-template/main/template.tpl",
+        "https://help.pinterest.com/en/business/article/add-event-codes",
+        "https://s.pinimg.com/ct/lib/main.cc6bb38d.js"
+      ],
+      "golden_cases": 96,
+      "collector_followup": "docs/reviews/pixel-collectors-051.json"
     },
     {
       "id": "vendor/pinterest-conversions-api",
@@ -288137,14 +289939,12 @@
           "q.quora.com"
         ],
         "path_patterns": [
-          "/_/ad/[^/]*/pixel"
+          "^/_/ad/[^/]*/pixel$"
         ]
       },
-      "contracts_mapped": [
-        {
-          "scope": "params",
-          "name": "pixel_id",
-          "contract": {
+      "contracts_mapped": {
+        "params": [
+          {
             "name": "pixel_id",
             "requirement": "recommended",
             "format": {
@@ -288153,12 +289953,8 @@
             "description": "The producer places its configured pixel identity in this path segment. It does not enforce a UUID grammar.",
             "severity": "warning",
             "doc": "https://a.quora.com/qevents.js"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "tag",
-          "contract": {
+          },
+          {
             "name": "tag",
             "requirement": "recommended",
             "format": {
@@ -288167,12 +289963,8 @@
             "description": "The event name is carried in tag. Custom names remain accepted.",
             "severity": "warning",
             "doc": "https://a.quora.com/qevents.js"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "j",
-          "contract": {
+          },
+          {
             "name": "j",
             "requirement": "optional",
             "format": {
@@ -288184,12 +289976,8 @@
             "description": "The JavaScript producer emits 1. Noscript calls are not required to supply this marker.",
             "severity": "warning",
             "doc": "https://a.quora.com/qevents.js"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "ts",
-          "contract": {
+          },
+          {
             "name": "ts",
             "requirement": "optional",
             "format": {
@@ -288198,12 +289986,8 @@
             "description": "The JavaScript producer emits a decimal millisecond clock value. No freshness window is inferred.",
             "severity": "warning",
             "doc": "https://a.quora.com/qevents.js"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "em",
-          "contract": {
+          },
+          {
             "name": "em",
             "requirement": "optional",
             "format": {
@@ -288213,12 +289997,8 @@
             "description": "The pinned SDK accepts 64 case-insensitive alphanumeric characters as prehashed email. This check mirrors that profile without asserting digest correctness.",
             "severity": "warning",
             "doc": "https://a.quora.com/qevents.js"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "u",
-          "contract": {
+          },
+          {
             "name": "u",
             "requirement": "optional",
             "format": {
@@ -288228,12 +290008,8 @@
             "allow_empty": true,
             "severity": "warning",
             "doc": "https://a.quora.com/qevents.js"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "v",
-          "contract": {
+          },
+          {
             "name": "v",
             "requirement": "optional",
             "format": {
@@ -288242,12 +290018,8 @@
             "description": "The SDK permits string or numeric conversion values, including empty strings. No closed numeric grammar is imposed.",
             "allow_empty": true,
             "doc": "https://a.quora.com/qevents.js"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "i",
-          "contract": {
+          },
+          {
             "name": "i",
             "requirement": "optional",
             "format": {
@@ -288256,12 +290028,8 @@
             "description": "Optional event source string; its values remain open.",
             "allow_empty": true,
             "doc": "https://a.quora.com/qevents.js"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "evid",
-          "contract": {
+          },
+          {
             "name": "evid",
             "requirement": "optional",
             "format": {
@@ -288270,9 +290038,86 @@
             "description": "Optional caller event identifier. Its format is not restricted by the SDK.",
             "allow_empty": true,
             "doc": "https://a.quora.com/qevents.js"
+          },
+          {
+            "name": "dwt",
+            "description": "Positive wall-clock dwell duration in milliseconds, emitted on DwellTime.",
+            "requirement": "optional",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            },
+            "minimum": 1,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://a.quora.com/qevents.js"
+          },
+          {
+            "name": "ive",
+            "description": "Lifecycle reason passed by the timer. It is a string, not a Boolean.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "hidden",
+                "msHidden",
+                "webkitHidden",
+                "mozHidden",
+                "pagehide",
+                "blur"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://a.quora.com/qevents.js"
+          },
+          {
+            "name": "fbia",
+            "description": "FB Instant Article marker emitted as 1.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "1"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://a.quora.com/qevents.js"
+          },
+          {
+            "name": "qclid",
+            "description": "Opaque click identifier retained from the landing URL.",
+            "requirement": "optional",
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://a.quora.com/qevents.js"
           }
-        }
-      ],
+        ],
+        "rules": [],
+        "body": [],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "Pinned browser collector transport.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET"
+                ]
+              },
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://a.quora.com/qevents.js"
+            }
+          ],
+          "rules": []
+        },
+        "http_queries": []
+      },
       "sources_read": [
         {
           "file": "quora.js",
@@ -288284,18 +290129,17 @@
         }
       ],
       "source_urls": [
-        "https://quoraadsupport.zendesk.com/hc/en-us/articles/115010466208-How-do-I-install-the-Quora-pixel"
+        "https://a.quora.com/qevents.js"
       ],
       "missing_requirements": [
-        "Pinned public qevents SDK profile, not a published backend rejection schema. Findings are advisory.",
-        "The SDK hash prevalidation accepts alphanumeric characters beyond hex. This profile intentionally preserves that behavior.",
-        "No UUID-only pixel ID, closed event list, required noscript SDK marker or numeric-only conversion-value policy is inferred.",
-        "No cryptographic digest authentication, destination acceptance or deduplication claim."
+        "Exact /_/ad/{pixel_id}/pixel image callbacks are covered. Pixel identities and custom event names remain opaque. No Conversions API contract is borrowed.",
+        "Dwell duration, lifecycle reason, Instant Article marker and GET checks follow the pinned producer and remain advisory. Timer reasons are lifecycle strings, including blur and pagehide, not Booleans.",
+        "Caller conversion strings and event IDs remain open. Timestamp freshness, account ownership, matching permissions and delivery require external context."
       ],
-      "golden_cases": 13,
+      "golden_cases": 31,
       "source_executed_requests": 2,
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/quora-pixel.json": "a0cd1757ea2622bf59197064ad04cdbb31e99b6adab5e9a85d167c2b0759f7e2",
+        "crates/pixellint-core/rulepacks/vendor/quora-pixel.json": "dad11201a84ff4994c2d1f49eb18d845d26e502412bf5818ff6b47a57bd46b3a",
         "fixtures/vendor-quora-pixel/source-produced.json": "5f4ba20d34c2738d28f8f5d5558067bb5f6a983c89a3042fc9f7848a12142637",
         "fixtures/vendor-quora-pixel/lookalike.txt": "e4c0f9a655afc02080b422d4c3bd091a03e0cb49b06a2f56dba111052e90e574",
         "fixtures/vendor-quora-pixel/missing-tag.txt": "736372b0cd3edfc2fce47a364579ba3ba8ffcff5606ec0356d523b44dce3dfd4",
@@ -288306,21 +290150,42 @@
         "fixtures/vendor-quora-pixel/minimal-noscript.txt": "8d2b26be1295590aa06977aad4e24af37083b4e22d4b6bcdc5b9d4a881f69534",
         "fixtures/vendor-quora-pixel/template.txt": "1fc67622e985e31cc28325eb1524551e6178bfb295688402c2a4c18fd0ae3cd3",
         "fixtures/vendor-quora-pixel/raw-email.txt": "2894711f920a010686b255c1aba86541c9da89ac24ac65bae361e14186df3b2e",
-        "fixtures/vendor-quora-pixel/manifest.json": "a810b752c4a7a24da5978f7a225f031f8d2435a3946c1d76e63786f191992025",
+        "fixtures/vendor-quora-pixel/manifest.json": "7de201f0d77807f64e511c24b28ac118639fbc71184f9c05f7de4d227d06e51a",
         "fixtures/vendor-quora-pixel/producer-1.txt": "234ec3a66d98e1597f844dff0b19a85b4be232ebe560302b56191a762a24bfda",
         "fixtures/vendor-quora-pixel/neighbor-route.txt": "881c026b34b635d6917135e2d4d4148ac1fd812d655614c73863149253dda6e7",
         "fixtures/vendor-quora-pixel/producer-0.txt": "565a7401ad97894a95c023e96c3dffd36da33b2ffcda6124e1a1fee053c6b0e1",
         "fixtures/vendor-quora-pixel/sdk-alphanumeric-hash-profile.txt": "059aeecd8660ad88ab4e800f116f9dd9878c483bad4c7a063210569caeb1c266",
         "docs/reviews/pixel-expansion-046.json": "7e718fa586bed7c4a60c7dc81510f9efe6147737d4a414ac18181dd05c8a03bb",
-        "crates/pixellint-core/tests/pixel_pack_expansion.rs": "8227927b97bb5217b531c2435268ddf45e9edebee434257926a090ec43b7cf72"
+        "crates/pixellint-core/tests/pixel_pack_expansion.rs": "8227927b97bb5217b531c2435268ddf45e9edebee434257926a090ec43b7cf72",
+        "fixtures/vendor-quora-pixel/depth051-007-dwell-mozHidden.txt": "903062cb2046ae3d3e86814eb5fd0bba4eb7dabcba447993065e4fd619ff0eb3",
+        "fixtures/vendor-quora-pixel/depth051-003-producer-quora-dwell-1.txt": "0473c1958474d282103cd026e8895a78f3ed7c7f9c3f5acabc0ce6cbf1f28853",
+        "fixtures/vendor-quora-pixel/depth051-004-dwell-hidden.txt": "330a1e5331cf6c231b7055cbda0a839b82626f7d587e6614e8068d9386926540",
+        "fixtures/vendor-quora-pixel/depth051-011-bad-dwt-11.txt": "cdfed34c01f884c6cd011691661b5f71d21566ac4a2053b40a11f85c4a34f117",
+        "fixtures/vendor-quora-pixel/depth051-005-dwell-msHidden.txt": "1d80faa99bb68169d6b608c352ecd07c1417dcb7ab4121b3f38c1c9ba7e79bc8",
+        "fixtures/vendor-quora-pixel/depth051-016-post-method.txt": "adfaf53e131188ab7fad73183bf2388ecd09946e1c32d9dc54b3806a3104fbcf",
+        "fixtures/vendor-quora-pixel/depth051-010-custom-identities.txt": "13b0f16c49e7d4cabbae031fd6b4066bf201926ab72faa53c0776062569893e3",
+        "fixtures/vendor-quora-pixel/depth051-015-bad-fbia-15.txt": "87ab66a40c3f8f9c8557e330f1ad50be8df13acd2faff9856ebf062b2ee47911",
+        "fixtures/vendor-quora-pixel/depth051-013-bad-dwt-13.txt": "89f8324ec8d496873e0d8f6e037107a24ca1ab2ba773752dbca72d70366d8bf1",
+        "fixtures/vendor-quora-pixel/depth051-012-bad-dwt-12.txt": "b232d7694667cc7fbe3d567614f6235aae2b152a58716de25052c69464104e1a",
+        "fixtures/vendor-quora-pixel/depth051-002-producer-quora-dwell-0.txt": "a84c9261378b56479ee6f2b53f8cadf815f371df10c926eb70034e1cdb15b9c3",
+        "fixtures/vendor-quora-pixel/depth051-001-producer-quora-custom-1.txt": "34f08d7ea50d6fd9fef88f634cdce2410ff9259e6b9adc1ba9de7d83dd467b86",
+        "fixtures/vendor-quora-pixel/depth051-006-dwell-webkitHidden.txt": "e0c39b68bddfb50e89286be6e82a157ebeaf69cb210b7fb87ffe3a629dae0381",
+        "fixtures/vendor-quora-pixel/depth051-008-dwell-pagehide.txt": "02f39005eed83390e9cd4e5a748a80da1f6bad97516aa3d13ac9578742e62fca",
+        "fixtures/vendor-quora-pixel/depth051-017-neighbor-17.txt": "64f3890bd672d6a13ce9393dceb7f15964a7c0397771294a66ed08e5df7a8d18",
+        "fixtures/vendor-quora-pixel/depth051-000-producer-quora-custom-0.txt": "17f4bef795e392b844de4854b493d4ada3c1f82051c86517c2ac3e6bd179e5e7",
+        "fixtures/vendor-quora-pixel/depth051-014-bad-ive-14.txt": "49ff0ae1df45fe50d54b057f160e1f03f9f72c3f385f4d8a44ed982cab765f14",
+        "fixtures/vendor-quora-pixel/depth051-009-dwell-blur.txt": "bf6bccb1e9ea58d1d7ac2cef18ca13fc782190a3cd2a1c6e1129fb537457b73f",
+        "docs/reviews/pixel-collectors-051.json": "78a699253c6798283b2f11c4a4f17370bad763ea56c32819797b7f6cef589153",
+        "crates/pixellint-core/tests/pixel_collectors_051.rs": "cf17600aca7406c051933ff189f85e9a29614de6bbd4708024b7e0052d65e63d"
       },
-      "manifest_sha256": "a0cd1757ea2622bf59197064ad04cdbb31e99b6adab5e9a85d167c2b0759f7e2",
+      "manifest_sha256": "dad11201a84ff4994c2d1f49eb18d845d26e502412bf5818ff6b47a57bd46b3a",
       "registration_followup_046": {
         "review": "Reviewed delta adds five registrations, two new vendor entries, Adfox path attribution and five npm coverage controls. Existing contracts and core evaluators are unchanged.",
         "artifacts": [
           "crates/pixellint-core/tests/pixel_pack_expansion.rs"
         ]
-      }
+      },
+      "collector_followup": "docs/reviews/pixel-collectors-051.json"
     },
     {
       "id": "vendor/yandex-adfox-links",
@@ -298749,5 +300614,11 @@
     "golden_cases": 178,
     "source_executions": 8,
     "source_executed_requests": 16
+  },
+  "pixel_collectors_051_followup": {
+    "review": "docs/reviews/pixel-collectors-051.json",
+    "golden_cases": 162,
+    "source_executions": 10,
+    "source_executed_requests": 18
   }
 }

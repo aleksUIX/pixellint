@@ -3855,11 +3855,11 @@ Context: `{}`.
 
 ## `vendor/chartbeat`
 
-Chartbeat engagement pings on ping.chartbeat.net/ping, whose site host and account UID ride as h and g. The chartbeat.js loader is not contracted.
+Chartbeat exact /ping collector with documented site, account and page context plus advisory SDK engagement counters, viewport metrics, one-hot activity flags and request method checks. Empty referrers and cached internal page paths remain valid. The loader, MAB and custom collector hosts remain outside this profile.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/chartbeat.json).
 
-Matcher: `{"hosts":["ping.chartbeat.net"],"path_prefixes":["/ping"]}`.
+Matcher: `{"hosts":["ping.chartbeat.net"],"paths":["/ping"]}`.
 
 ### URL parameters
 
@@ -3872,9 +3872,44 @@ Matcher: `{"hosts":["ping.chartbeat.net"],"path_prefixes":["/ping"]}`.
 | `t` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
 | `g0` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
 | `g1` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
-| `i` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
-| `r` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
-| `v` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
+| `i` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
+| `r` | optional | `{"format":{"kind":"url"},"allow_empty":true}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
+| `v` | optional | `{"allow_empty":true}` | [official_vendor](https://docs.chartbeat.com/cbp/tracking/standard-websites/qa-web-integration) |
+| `c` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `x` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `m` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `y` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `o` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `w` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `j` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `E` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `e` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `tz` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `sn` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `V` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":false,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `b` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `R` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `W` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `I` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `L` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `nc` | optional | `{"format":{"kind":"enum","values":["1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `vp` | optional | `{"format":{"kind":"enum","values":["1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `C` | optional | `{"format":{"kind":"enum","values":["1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `l` | optional | `{"format":{"kind":"enum","values":["1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `im` | optional | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{8}$"},"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+| `l1` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.chartbeat.activity_flags_conflict` | `{"kind":"forbid_value_pattern","params":["R"],"pattern":"^[01]$","condition":{"kind":"all","conditions":[{"kind":"all","conditions":[{"kind":"exists","param":"R"},{"kind":"exists","param":"W"},{"kind":"exists","param":"I"}]},{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"R","values":["0"]},{"kind":"value_in","param":"W","values":["0"]},{"kind":"value_in","param":"I","values":["0"]}]},{"kind":"all","conditions":[{"kind":"value_in","param":"R","values":["1"]},{"kind":"value_in","param":"W","values":["1"]}]},{"kind":"all","conditions":[{"kind":"value_in","param":"R","values":["1"]},{"kind":"value_in","param":"I","values":["1"]}]},{"kind":"all","conditions":[{"kind":"value_in","param":"W","values":["1"]},{"kind":"value_in","param":"I","values":["1"]}]}]}]}}` | warning | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
 
 ## `vendor/cj`
 
@@ -7024,22 +7059,33 @@ Context: `{"scope":["body.elements[].user.userInfo","body.user.userInfo"]}`.
 
 ## `vendor/linkedin`
 
-LinkedIn conversion image pixels on px.ads.linkedin.com/collect. Campaign Manager generates pid, conversionId, and fmt. eventId is the dedup key LinkedIn documents on the image URL. oid is the Path to Conversion order ID. url is the conversion match URL when conversionId is absent. Insight Tag page-load fires omit conversionId. CAPI stays vendor/linkedin-conversions-api.
+LinkedIn /collect image and Insight Tag requests, including comma-separated partner IDs, page-load fires, optional conversion metadata and the pinned GET transport. Website Actions /wa/ uses a separate compressed protocol and remains uncontracted. Conversions API has its own pack.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/linkedin.json).
 
-Matcher: `{"hosts":["px.ads.linkedin.com"],"path_prefixes":["/collect"]}`.
+Matcher: `{"hosts":["px.ads.linkedin.com"],"paths":["/collect","/collect/"]}`.
 
 ### URL parameters
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `pid` | required | `{"format":{"kind":"integer"}}` | [ecosystem_reference](https://www.linkedin.com/help/lms/answer/a422796) |
-| `conversionId` | recommended | `{"format":{"kind":"integer"}}` | [ecosystem_reference](https://www.linkedin.com/help/lms/answer/a422796) |
+| `pid` | required | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:,[0-9]+)*$"}}` | [official_template](https://snap.licdn.com/li.lms-analytics/insight.min.js) |
+| `conversionId` | optional | `{"format":{"kind":"integer"}}` | [ecosystem_reference](https://www.linkedin.com/help/lms/answer/a422796) |
 | `fmt` | recommended | `{"format":{"kind":"enum","values":["gif","img","js"]},"format_severity":"warning"}` | [ecosystem_reference](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking) |
 | `eventId` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/conversions/deduplication) |
 | `oid` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking) |
 | `url` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking) |
+| `v` | optional | `{"format":{"kind":"enum","values":["2"]},"severity":"warning"}` | [official_template](https://snap.licdn.com/li.lms-analytics/insight.min.js) |
+| `time` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://snap.licdn.com/li.lms-analytics/insight.min.js) |
+| `type` | optional | `{"format":{"kind":"enum","values":["AD_CLICK","AD_VIEW","ADD_BILLING_INFO","ADD_TO_CART","ADD_TO_LIST","BOOK_APPOINTMENT","COMPLETE_SIGNUP","CONTACT","DONATE","DOWNLOAD","INSTALL","JOB_APPLY","KEY_PAGE_VIEW","LEAD","LOGIN","OTHER","OUTBOUND_CLICK","PHONE_CALL","PURCHASE","REQUEST_QUOTE","SAVE","SCHEDULE","SEARCH","SHARE","SIGN_UP","START_CHECKOUT","START_TRIAL","SUBMIT_APPLICATION","SUBSCRIBE","VIEW_CONTENT","VIEW_VIDEO"]},"severity":"warning"}` | [official_template](https://snap.licdn.com/li.lms-analytics/insight.min.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://snap.licdn.com/li.lms-analytics/insight.min.js) |
 
 ## `vendor/liveramp-ctvid`
 
@@ -10989,18 +11035,18 @@ Context: `{}`.
 
 ## `vendor/pinterest`
 
-Pinterest conversion tag requests to ct.pinterest.com, including the noscript image fallback.
+Pinterest /v3 image and browser collectors, including JSON-encoded event, partner and automatic data in GET queries and POST forms. Noscript bracket fields retain documented checks. Custom events, arbitrary custom properties and SDK-supported hash arrays remain open. New browser checks are advisory.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/pinterest.json).
 
-Matcher: `{"hosts":["ct.pinterest.com"],"path_prefixes":["/v3"]}`.
+Matcher: `{"hosts":["ct.pinterest.com"],"paths":["/v3","/v3/"]}`.
 
 ### URL parameters
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `tid` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
-| `event` | optional | `{"format":{"kind":"enum","values":["init","pagevisit","checkout","addtocart","signup","lead","search","viewcategory","viewcontent","watchvideo","addtowishlist","initiateCheckout","addpaymentinfo","contact","customizeproduct","findlocation","schedule","starttrial","subscribe","submitapplication","custom"]},"format_severity":"warning"}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
+| `event` | optional | `{"format":{"kind":"non_empty"},"format_severity":"warning"}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
 | `noscript` | optional | `{"format":{"kind":"enum","values":["0","1"]},"format_severity":"warning"}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
 | `ed[value]` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(\\.[0-9]+)?$"}}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
 | `ed[currency]` | optional | `{"format":{"kind":"currency","case_insensitive":true}}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
@@ -11022,10 +11068,129 @@ Matcher: `{"hosts":["ct.pinterest.com"],"path_prefixes":["/v3"]}`.
 | `ed[search_query]` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
 | `ed[video_title]` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
 | `ed[lead_type]` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
+| `ed` | optional | `{"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `pd` | optional | `{"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ad` | optional | `{"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ov` | optional | `{"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `cb` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
-| `vendor.pinterest.checkout_requires_value_and_currency` | `{"kind":"required_when_value","when":"event","equals":["checkout","addtocart"],"requires":["ed[value]","ed[currency]"]}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
+| `vendor.pinterest.checkout_requires_value_and_currency` | `{"kind":"required_when_value","when":"event","equals":["checkout","addtocart"],"requires":["ed[value]","ed[currency]"],"condition":{"kind":"not","condition":{"kind":"exists","param":"ed"}}}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/pinterest-tag/) |
+
+### JSON contract 1
+
+Context: `{"source_param":"ed","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":["object","array"],"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `value` | optional | `{"json_type":["number","null"],"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `currency` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"currency","case_insensitive":true},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `order_quantity` | optional | `{"json_type":["integer","string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items` | optional | `{"json_type":["array","null"],"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[]` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `order_id` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `promo_code` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `property` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `search_query` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `video_title` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `lead_type` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `event_id` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `eventID` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `eid` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[].product_name` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[].product_id` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[].product_category` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[].product_variant_id` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[].product_variant` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[].product_brand` | optional | `{"json_type":["string","number","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[].product_price` | optional | `{"json_type":["number","string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `line_items[].product_quantity` | optional | `{"json_type":["integer","string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+
+### JSON contract 2
+
+Context: `{"source_param":"pd","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `em` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `em[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `external_id` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `external_id[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `fn` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `fn[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ln` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ln[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ph` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ph[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ge` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ge[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `db` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `db[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ct` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ct[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `st` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `st[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `zp` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `zp[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `country` | optional | `{"json_type":["string","array","null"],"allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `country[]` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `fp_cookie` | optional | `{"json_type":"boolean","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `fp_localStorage` | optional | `{"json_type":"boolean","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+
+### JSON contract 3
+
+Context: `{"source_param":"ad","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `loc` | optional | `{"json_type":"string","allow_empty":true,"format":{"kind":"url"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ref` | optional | `{"json_type":"string","allow_empty":true,"format":{"kind":"url"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `if` | optional | `{"json_type":"boolean","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `is_eu` | optional | `{"json_type":"boolean","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `is_restricted_region` | optional | `{"json_type":"boolean","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `sh` | optional | `{"json_type":["integer","null"],"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `sw` | optional | `{"json_type":["integer","null"],"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `mh` | optional | `{"json_type":"string","allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `cs` | optional | `{"json_type":"string","allow_empty":true,"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `try` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+
+### JSON contract 4
+
+Context: `{"source_param":"ov","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+
+### JSON contract 5
+
+Context: `{"source_param":"pd","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `em` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"em","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `external_id` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"external_id","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `fn` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"fn","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ln` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"ln","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ph` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"ph","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ge` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"ge","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `db` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"db","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `ct` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"ct","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `st` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"st","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `zp` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"zp","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+| `country` | optional | `{"json_type":["string","null"],"allow_empty":true,"format":{"kind":"regex","pattern":"^(?:[a-fA-F0-9]{32}\|[a-fA-F0-9]{40}\|[a-fA-F0-9]{64})$"},"condition":{"kind":"json_type","param":"country","json_type":["string","null"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://s.pinimg.com/ct/lib/main.cc6bb38d.js) |
 
 ## `vendor/piwik-pro`
 
@@ -11861,11 +12026,11 @@ Context: `{}`.
 
 ## `vendor/quora-pixel`
 
-Quora image callbacks constructed by the public qevents SDK. Checks path identity, event tag, SDK marker, timestamp syntax and the SDK accepted email hash profile. Custom event names and conversion values remain open; this is not the Conversions API contract.
+Quora image callbacks on exact /_/ad/{pixel_id}/pixel routes. Adds source-scoped dwell durations, lifecycle reason markers, FB Instant Article flags, click IDs and GET transport checks. Custom event names, caller event IDs and string conversion values remain open.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/quora-pixel.json).
 
-Matcher: `{"hosts":["q.quora.com"],"path_patterns":["/_/ad/[^/]*/pixel"]}`.
+Matcher: `{"hosts":["q.quora.com"],"path_patterns":["^/_/ad/[^/]*/pixel$"]}`.
 
 Path captures: `^/_/ad/(?<pixel_id>[^/]*)/pixel$`. Captured values take precedence over query keys with the same name.
 
@@ -11882,6 +12047,18 @@ Path captures: `^/_/ad/(?<pixel_id>[^/]*)/pixel$`. Captured values take preceden
 | `v` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_template](https://a.quora.com/qevents.js) |
 | `i` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_template](https://a.quora.com/qevents.js) |
 | `evid` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_template](https://a.quora.com/qevents.js) |
+| `dwt` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"minimum":1,"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `ive` | optional | `{"format":{"kind":"enum","values":["hidden","msHidden","webkitHidden","mozHidden","pagehide","blur"]},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `fbia` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `qclid` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
 
 ## `vendor/rakuten`
 

@@ -1,42 +1,61 @@
 {
   "id": "vendor/linkedin",
-  "display_name": "LinkedIn image pixel",
-  "description": "LinkedIn conversion image pixels on px.ads.linkedin.com/collect. Campaign Manager generates pid, conversionId, and fmt. eventId is the dedup key LinkedIn documents on the image URL. oid is the Path to Conversion order ID. url is the conversion match URL when conversionId is absent. Insight Tag page-load fires omit conversionId. CAPI stays vendor/linkedin-conversions-api.",
+  "display_name": "LinkedIn Insight collector",
+  "description": "LinkedIn /collect image and Insight Tag requests, including comma-separated partner IDs, page-load fires, optional conversion metadata and the pinned GET transport. Website Actions /wa/ uses a separate compressed protocol and remains uncontracted. Conversions API has its own pack.",
   "vendor": "linkedin",
   "source_level": "ecosystem_reference",
   "docs": "https://www.linkedin.com/help/lms/answer/a422796",
   "match": {
-    "hosts": ["px.ads.linkedin.com"],
-    "path_prefixes": ["/collect"]
+    "hosts": [
+      "px.ads.linkedin.com"
+    ],
+    "paths": [
+      "/collect",
+      "/collect/"
+    ]
   },
   "params": [
     {
       "name": "pid",
       "requirement": "required",
-      "format": { "kind": "integer" },
-      "description": "It is the numeric Partner ID of the Insight Tag. LinkedIn generates this pixel in Campaign Manager rather than publishing the parameter contract, so this rule is ecosystem evidence, not a published contract.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:,[0-9]+)*$"
+      },
+      "description": "The Insight producer joins numeric partner IDs with commas. A single partner ID remains valid.",
       "fix_hint": "Copy the image pixel from the conversion's Sources page so `pid` carries the Partner ID.",
-      "doc": "https://www.linkedin.com/help/lms/answer/a422796"
+      "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js",
+      "source_level": "official_template"
     },
     {
       "name": "conversionId",
-      "requirement": "recommended",
-      "format": { "kind": "integer" },
-      "description": "Without it the fire is attributed to the Insight Tag rather than to a specific conversion. Page-load noscript tags omit it on purpose.",
-      "fix_hint": "Add the numeric conversion ID from Campaign Manager.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "Optional numeric conversion identity. Ordinary Insight page-load and noscript pixels omit it.",
       "doc": "https://www.linkedin.com/help/lms/answer/a422796"
     },
     {
       "name": "fmt",
       "requirement": "recommended",
-      "format": { "kind": "enum", "values": ["gif", "img", "js"] },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "gif",
+          "img",
+          "js"
+        ]
+      },
       "format_severity": "warning",
       "description": "Image pixels are generated with `fmt=gif`. LinkedIn's conversion API sample uses `fmt=img`.",
       "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking"
     },
     {
       "name": "eventId",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the per-event deduplication key. LinkedIn documents it on the image URL as eventId when the same conversion is also sent through the Conversions API.",
       "fix_hint": "Set eventId to the same value the Conversions API event sends as event_id.",
       "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/conversions/deduplication",
@@ -44,7 +63,9 @@
     },
     {
       "name": "oid",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the advertiser-defined order ID. LinkedIn documents oid on the image pixel for Path to Conversion, so impressions and clicks within 90 days can be joined to the conversion.",
       "fix_hint": "Set oid to the order ID you want Path to Conversion to attribute, or drop the pair when you are not using that feature.",
       "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking",
@@ -52,12 +73,103 @@
     },
     {
       "name": "url",
-      "format": { "kind": "url" },
+      "format": {
+        "kind": "url"
+      },
       "description": "It is the conversion match URL. LinkedIn documents url as a URL-encoded page address used when conversionId is absent. The referrer is used when both are missing.",
       "fix_hint": "Set url to the URL-encoded page you want to match, or drop the pair when conversionId is present.",
       "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversion-tracking",
       "source_level": "official_vendor"
+    },
+    {
+      "name": "v",
+      "description": "Pinned collector protocol version.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "2"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js"
+    },
+    {
+      "name": "time",
+      "description": "Producer time in Unix milliseconds. No freshness window is inferred.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js"
+    },
+    {
+      "name": "type",
+      "description": "Conversion types forwarded by the pinned producer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "AD_CLICK",
+          "AD_VIEW",
+          "ADD_BILLING_INFO",
+          "ADD_TO_CART",
+          "ADD_TO_LIST",
+          "BOOK_APPOINTMENT",
+          "COMPLETE_SIGNUP",
+          "CONTACT",
+          "DONATE",
+          "DOWNLOAD",
+          "INSTALL",
+          "JOB_APPLY",
+          "KEY_PAGE_VIEW",
+          "LEAD",
+          "LOGIN",
+          "OTHER",
+          "OUTBOUND_CLICK",
+          "PHONE_CALL",
+          "PURCHASE",
+          "REQUEST_QUOTE",
+          "SAVE",
+          "SCHEDULE",
+          "SEARCH",
+          "SHARE",
+          "SIGN_UP",
+          "START_CHECKOUT",
+          "START_TRIAL",
+          "SUBMIT_APPLICATION",
+          "SUBSCRIBE",
+          "VIEW_CONTENT",
+          "VIEW_VIDEO"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js"
     }
   ],
-  "rules": []
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Pinned browser collector transport.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://snap.licdn.com/li.lms-analytics/insight.min.js"
+      }
+    ],
+    "rules": []
+  }
 }
