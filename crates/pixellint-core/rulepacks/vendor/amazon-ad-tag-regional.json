@@ -1,0 +1,317 @@
+{
+  "id": "vendor/amazon-ad-tag-regional",
+  "display_name": "Amazon Ad Tag regional collector",
+  "vendor": "amazon",
+  "description": "Amazon Ad Tag event requests emitted by the official browser SDK and server GTM template. Checks tag and event identity, UTF-16 event limits, normalized reporting attributes, item arrays and optional consent JSON. Producer checks remain advisory. The loader has a separate contract. This profile does not describe the Amazon Ads Conversions API.",
+  "docs": "https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl",
+  "source_level": "official_template",
+  "match": {
+    "hosts": [
+      "aax-eu.amazon-adsystem.com",
+      "aax-fe.amazon-adsystem.com"
+    ],
+    "paths": [
+      "/s/iu3"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "pid",
+      "description": "The producer sends its configured tag identity. The browser SDK accepts UUIDs; the server template leaves identity grammar open.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "event",
+      "description": "The event name is open and limited to 256 UTF-16 code units by both pinned producers.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "max_utf16_length": 256,
+      "severity": "warning"
+    },
+    {
+      "name": "eventSource",
+      "description": "The browser SDK marks its requests with amzn.js. Other producers remain open.",
+      "requirement": "optional"
+    },
+    {
+      "name": "items",
+      "description": "Array-style event attributes are serialized as JSON.",
+      "requirement": "optional"
+    },
+    {
+      "name": "amazonConsentString",
+      "description": "The producer serializes the optional consent object as JSON.",
+      "requirement": "optional"
+    },
+    {
+      "name": "reporting_attributes",
+      "description": "Both producers normalize these reserved reporting attributes to ASCII letters, digits and underscores.",
+      "requirement": "optional",
+      "name_pattern": "(?i)^(?:brand|category|productid|attr[1-9]|attr10)$",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9_]+$"
+      },
+      "max_utf16_length": 256,
+      "severity": "warning"
+    },
+    {
+      "name": "clientDedupeId",
+      "description": "The browser SDK retains nonempty deduplication strings through 256 UTF-16 code units. Cross-event uniqueness is external.",
+      "requirement": "optional",
+      "max_utf16_length": 256,
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "eventSource",
+        "values": [
+          "amzn.js"
+        ]
+      }
+    },
+    {
+      "name": "eventId",
+      "description": "The browser SDK retains nonempty deduplication strings through 256 UTF-16 code units. Cross-event uniqueness is external.",
+      "requirement": "optional",
+      "max_utf16_length": 256,
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "eventSource",
+        "values": [
+          "amzn.js"
+        ]
+      }
+    },
+    {
+      "name": "uuid",
+      "description": "The browser generates a per-request UUID when crypto.randomUUID is available.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "(?i)^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "ts",
+      "description": "The SDK stamps browser events with epoch milliseconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "eventSource",
+        "values": [
+          "amzn.js"
+        ]
+      }
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.amazon-ad-tag-regional.browser.tag_id",
+      "kind": "forbid_value_pattern",
+      "params": [
+        "pid"
+      ],
+      "pattern": "(?s).*",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "value_in",
+            "param": "eventSource",
+            "values": [
+              "amzn.js"
+            ]
+          },
+          {
+            "kind": "present",
+            "param": "pid"
+          },
+          {
+            "kind": "not",
+            "condition": {
+              "kind": "value_pattern",
+              "param": "pid",
+              "pattern": "(?i)^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ]
+      },
+      "severity": "warning",
+      "message": "The browser SDK expects its configured tag identity to be a UUID.",
+      "doc": "https://c.amazon-adsystem.com/aat/amzn.js"
+    }
+  ],
+  "body": [
+    {
+      "source_param": "items",
+      "encoding": "json",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "present",
+        "param": "items"
+      },
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "warning"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "items",
+      "encoding": "json",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "present",
+        "param": "items"
+      },
+      "scope": "[]",
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "amazonConsentString",
+      "encoding": "json",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "present",
+        "param": "amazonConsentString"
+      },
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "geo",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "geo.countryCode",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "geo.ipAddress",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "ip"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "consent",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "consent.amazonConsentFormat",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "consent.amazonConsentFormat.amzn_ad_storage",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "consent.amazonConsentFormat.amzn_user_data",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "consent.gpp",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "consent.tcf",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        }
+      ],
+      "rules": []
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The pinned producer uses these transport methods.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning"
+      }
+    ],
+    "rules": []
+  }
+}

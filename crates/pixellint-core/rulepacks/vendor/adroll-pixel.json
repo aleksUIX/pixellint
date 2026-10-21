@@ -1,0 +1,135 @@
+{
+  "id": "vendor/adroll-pixel",
+  "display_name": "AdRoll legacy browser pixel",
+  "vendor": "adroll",
+  "description": "AdRoll legacy roundtrip.js browser events on the exact /pixel/advertiser/pixel route. Checks path identities, populated numeric conversion values, page URL and producer flags. Legacy USC amounts and escaped Unicode custom data remain valid. Modern advertiser-specific v2 bundles and other collectors are outside this source profile.",
+  "docs": "https://s.adroll.com/j/roundtrip.js",
+  "source_level": "official_template",
+  "match": {
+    "hosts": [
+      "d.adroll.com"
+    ],
+    "path_patterns": [
+      "/pixel/[^/]*/[^/]*"
+    ]
+  },
+  "params": [
+    {
+      "name": "advertiser_id",
+      "description": "The legacy SDK supplies this path identity without a published fixed length.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Z0-9_]+$"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "pixel_id",
+      "description": "The legacy SDK supplies this path identity without a published fixed length.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Z0-9_]+$"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "conv_value",
+      "description": "The SDK emits a numeric conversion amount when configured. Dollar convenience values are converted to integer cents.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "adroll_currency",
+      "description": "The SDK passes the configured currency or emits legacy USC for its dollar convenience input. USC remains accepted.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Z]{3}$"
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "arrfrr",
+      "description": "The SDK sends the current absolute page URL after redacting selected sensitive query values.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "pv",
+      "description": "The producer generates a numeric page-view value, which can be fractional.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "no-cookies",
+      "description": "The producer uses 1 when cookies are unavailable.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "adroll_external_data",
+      "description": "Custom data uses legacy JavaScript escape, including percent-u Unicode and Latin-1 bytes. It remains opaque rather than being misread as UTF-8 form data.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "name",
+      "description": "Audience segments remain open.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "adroll_version",
+      "description": "The source identifies its legacy runtime version.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "cookie",
+      "description": "An empty cookie string is a valid initial request.",
+      "requirement": "optional",
+      "allow_empty": true
+    }
+  ],
+  "rules": [],
+  "path_pattern": "^/pixel/(?<advertiser_id>[^/]*)/(?<pixel_id>[^/]*)$",
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The pinned producer uses these transport methods.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning"
+      }
+    ],
+    "rules": []
+  }
+}

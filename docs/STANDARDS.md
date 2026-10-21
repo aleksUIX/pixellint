@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 176 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 180 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -1426,6 +1426,58 @@ Context: `{}`.
 | `body.events` | required | `{"json_type":"array","condition":{"kind":"value_pattern","param":"path","pattern":"/(?:v[12]/collect\|v1/interact)$"},"min_items":1}` | [official_vendor](https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/) |
 | `body.consent` | required | `{"json_type":"array","min_items":1,"condition":{"kind":"value_pattern","param":"path","pattern":"/v1/privacy/set-consent$"}}` | [official_vendor](https://github.com/adobe/alloy/blob/87b5173f53398a4ad0294fe93cd9fdd6b0643fbd/packages/core/src/components/Consent/validateSetConsentOptions.js) |
 
+## `vendor/adroll-image`
+
+AdRoll documented audience image pixels carry advertiser and pixel identities in the path, plus the configured audience segment in name. Exact image routing prevents JavaScript and adjacent collectors from inheriting this audience contract.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/adroll-image.json).
+
+Matcher: `{"hosts":["d.adroll.com"],"path_patterns":["/ipixel/[^/]*/[^/]*"]}`.
+
+Path captures: `^/ipixel/(?<advertiser_id>[^/]*)/(?<pixel_id>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `advertiser_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.adroll.com/hc/en-us/articles/360040998292-Eventbrite-Integration-Track-page-and-event-visitors-on-AdRoll) |
+| `pixel_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.adroll.com/hc/en-us/articles/360040998292-Eventbrite-Integration-Track-page-and-event-visitors-on-AdRoll) |
+| `name` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.adroll.com/hc/en-us/articles/360040998292-Eventbrite-Integration-Track-page-and-event-visitors-on-AdRoll) |
+
+## `vendor/adroll-pixel`
+
+AdRoll legacy roundtrip.js browser events on the exact /pixel/advertiser/pixel route. Checks path identities, populated numeric conversion values, page URL and producer flags. Legacy USC amounts and escaped Unicode custom data remain valid. Modern advertiser-specific v2 bundles and other collectors are outside this source profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/adroll-pixel.json).
+
+Matcher: `{"hosts":["d.adroll.com"],"path_patterns":["/pixel/[^/]*/[^/]*"]}`.
+
+Path captures: `^/pixel/(?<advertiser_id>[^/]*)/(?<pixel_id>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `advertiser_id` | recommended | `{"format":{"kind":"regex","pattern":"^[A-Z0-9_]+$"},"severity":"warning"}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `pixel_id` | recommended | `{"format":{"kind":"regex","pattern":"^[A-Z0-9_]+$"},"severity":"warning"}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `conv_value` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `adroll_currency` | optional | `{"format":{"kind":"regex","pattern":"^[A-Z]{3}$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `arrfrr` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `pv` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"},"severity":"warning"}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `no-cookies` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `adroll_external_data` | optional | `{"allow_empty":true}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `name` | optional | `{"allow_empty":true}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `adroll_version` | optional | `{"allow_empty":true}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+| `cookie` | optional | `{"allow_empty":true}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://s.adroll.com/j/roundtrip.js) |
+
 ## `vendor/adxspace-pixel`
 
 Advisory completeness checks for the published 00px /pixel/{token}/e.gif installation template. The opaque token has no inferred encoding or length requirement, and the optional cachebuster is checked only for the exact installation stub. The reported /tracking/ and /vast/pixel/ video trackers remain outside this pack.
@@ -1446,6 +1498,142 @@ Path captures: `^/pixel/(?<creative_token>[^/]*)/e\.gif$`. Captured values take 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.adxspace-pixel.cachebuster.installation_stub` | `{"kind":"forbid_value_pattern","params":["t"],"pattern":"^INSERIR(?: \|\\+)CACHEBUSTER$"}` | warning | [official_template](https://wiki.00px.com.br/en/technologies/pixel) |
+
+## `vendor/amazon-ad-tag-regional`
+
+Amazon Ad Tag event requests emitted by the official browser SDK and server GTM template. Checks tag and event identity, UTF-16 event limits, normalized reporting attributes, item arrays and optional consent JSON. Producer checks remain advisory. The loader has a separate contract. This profile does not describe the Amazon Ads Conversions API.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/amazon-ad-tag-regional.json).
+
+Matcher: `{"hosts":["aax-eu.amazon-adsystem.com","aax-fe.amazon-adsystem.com"],"paths":["/s/iu3"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pid` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `event` | recommended | `{"format":{"kind":"non_empty"},"max_utf16_length":256,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `eventSource` | optional | `{}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `items` | optional | `{}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `amazonConsentString` | optional | `{}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `reporting_attributes` | optional | `{"name_pattern":"(?i)^(?:brand\|category\|productid\|attr[1-9]\|attr10)$","format":{"kind":"regex","pattern":"^[A-Za-z0-9_]+$"},"max_utf16_length":256,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `clientDedupeId` | optional | `{"max_utf16_length":256,"allow_empty":true,"severity":"warning","condition":{"kind":"value_in","param":"eventSource","values":["amzn.js"]}}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `eventId` | optional | `{"max_utf16_length":256,"allow_empty":true,"severity":"warning","condition":{"kind":"value_in","param":"eventSource","values":["amzn.js"]}}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `uuid` | optional | `{"format":{"kind":"regex","pattern":"(?i)^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\|00000000-0000-0000-0000-000000000000\|ffffffff-ffff-ffff-ffff-ffffffffffff)$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `ts` | optional | `{"format":{"kind":"integer"},"severity":"warning","condition":{"kind":"value_in","param":"eventSource","values":["amzn.js"]}}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.amazon-ad-tag-regional.browser.tag_id` | `{"kind":"forbid_value_pattern","params":["pid"],"pattern":"(?s).*","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"eventSource","values":["amzn.js"]},{"kind":"present","param":"pid"},{"kind":"not","condition":{"kind":"value_pattern","param":"pid","pattern":"(?i)^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\|00000000-0000-0000-0000-000000000000\|ffffffff-ffff-ffff-ffff-ffffffffffff)$"}}]}}` | warning | [official_template](https://c.amazon-adsystem.com/aat/amzn.js) |
+
+### JSON contract 1
+
+Context: `{"source_param":"items","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"items"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+### JSON contract 2
+
+Context: `{"source_param":"items","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"items"},"scope":"[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+### JSON contract 3
+
+Context: `{"source_param":"amazonConsentString","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"amazonConsentString"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":["object","null"],"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `geo` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `geo.countryCode` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `geo.ipAddress` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"ip"},"allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.amazonConsentFormat` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.amazonConsentFormat.amzn_ad_storage` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.amazonConsentFormat.amzn_user_data` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.gpp` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.tcf` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+## `vendor/amazon-ad-tag`
+
+Amazon Ad Tag event requests emitted by the official browser SDK and server GTM template. Checks tag and event identity, UTF-16 event limits, normalized reporting attributes, item arrays and optional consent JSON. Producer checks remain advisory. The loader has a separate contract. This profile does not describe the Amazon Ads Conversions API.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/amazon-ad-tag.json).
+
+Matcher: `{"hosts":["s.amazon-adsystem.com"],"paths":["/iu3"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pid` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `event` | recommended | `{"format":{"kind":"non_empty"},"max_utf16_length":256,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `eventSource` | optional | `{}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `items` | optional | `{}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `amazonConsentString` | optional | `{}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `reporting_attributes` | optional | `{"name_pattern":"(?i)^(?:brand\|category\|productid\|attr[1-9]\|attr10)$","format":{"kind":"regex","pattern":"^[A-Za-z0-9_]+$"},"max_utf16_length":256,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `clientDedupeId` | optional | `{"max_utf16_length":256,"allow_empty":true,"severity":"warning","condition":{"kind":"value_in","param":"eventSource","values":["amzn.js"]}}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `eventId` | optional | `{"max_utf16_length":256,"allow_empty":true,"severity":"warning","condition":{"kind":"value_in","param":"eventSource","values":["amzn.js"]}}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `uuid` | optional | `{"format":{"kind":"regex","pattern":"(?i)^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\|00000000-0000-0000-0000-000000000000\|ffffffff-ffff-ffff-ffff-ffffffffffff)$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `ts` | optional | `{"format":{"kind":"integer"},"severity":"warning","condition":{"kind":"value_in","param":"eventSource","values":["amzn.js"]}}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.amazon-ad-tag.browser.tag_id` | `{"kind":"forbid_value_pattern","params":["pid"],"pattern":"(?s).*","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"eventSource","values":["amzn.js"]},{"kind":"present","param":"pid"},{"kind":"not","condition":{"kind":"value_pattern","param":"pid","pattern":"(?i)^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\|00000000-0000-0000-0000-000000000000\|ffffffff-ffff-ffff-ffff-ffffffffffff)$"}}]}}` | warning | [official_template](https://c.amazon-adsystem.com/aat/amzn.js) |
+
+### JSON contract 1
+
+Context: `{"source_param":"items","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"items"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+### JSON contract 2
+
+Context: `{"source_param":"items","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"items"},"scope":"[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+### JSON contract 3
+
+Context: `{"source_param":"amazonConsentString","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"amazonConsentString"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":["object","null"],"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `geo` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `geo.countryCode` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `geo.ipAddress` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"ip"},"allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.amazonConsentFormat` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.amazonConsentFormat.amzn_ad_storage` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.amazonConsentFormat.amzn_user_data` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.gpp` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+| `consent.tcf` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/amzn/ads-pao-amznjs-gtm-server-side-template/main/template.tpl) |
 
 ## `vendor/amazon-ads`
 
@@ -10103,7 +10291,7 @@ Path captures: `/site/(?<site_id>[^/]*)`. Captured values take precedence over q
 
 ## `vendor/outbrain`
 
-Outbrain conversion image and S2S pixels on tr.outbrain.com/pixel and /unifiedPixel. Generated noscript pixels send ob_adv_id. S2S sends ob_click_id. Outbrain documents orderValue, orderId, and currency on the postback. The JS loader on amplify.outbrain.com is a different surface and is not contracted.
+Outbrain browser, image and S2S conversion pixels on exact /pixel and /unifiedPixel routes. Browser requests carry marketerId and can fall back from GET to POST sendBeacon. Checks populated page metadata and browser event guidance while preserving the documented S2S GET contract and currency list.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/outbrain.json).
 
@@ -10120,11 +10308,20 @@ Matcher: `{"hosts":["tr.outbrain.com"],"paths":["/pixel","/unifiedPixel"]}`.
 | `orderId` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://www.outbrain.com/help/advertisers/dynamic-values/) |
 | `currency` | optional | `{"format":{"kind":"enum","values":["USD","CAD","EUR","GBP","ILS","AUD","MXN","BRL","SEK","SGD","RUB","NZD","INR","JPY","PHP","CHF","MYR"]}}` | [official_vendor](https://www.outbrain.com/help/advertisers/dynamic-values/) |
 | `timestamp` | optional | `{"format":{"kind":"datetime_formats","formats":["us12_hour","us24_hour","iso_local","iso_offset","iso_named_timezone"]},"format_severity":"warning","condition":{"kind":"present","param":"ob_click_id"}}` | [official_vendor](https://www.outbrain.com/help/advertisers/server2server-integrations/) |
+| `marketerId` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
+| `dl` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
+| `referrer` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
+| `pRef` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
+| `g` | optional | `{"format":{"kind":"enum","values":["0","1"]},"severity":"warning"}` | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
+| `sb` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
-| `vendor.outbrain.identifier_required` | `{"kind":"require_one_of","params":["ob_adv_id","ob_click_id"]}` | error | [ecosystem_reference](https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/) |
+| `vendor.outbrain.identifier_required` | `{"kind":"require_one_of","params":["ob_adv_id","ob_click_id","marketerId"]}` | error | [ecosystem_reference](https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/) |
 | `vendor.outbrain.s2s_event_required` | `{"kind":"required_with","when":"ob_click_id","requires":["name"]}` | error | [official_vendor](https://www.outbrain.com/help/advertisers/server2server-integrations/) |
+| `vendor.outbrain.browser.event_required` | `{"kind":"required_with","when":"marketerId","requires":["name"]}` | warning | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
+| `vendor.outbrain.browser.event_name` | `{"kind":"forbid_value_pattern","params":["name"],"pattern":"(?s)^(?:[^A-Za-z0-9].*\|.{101,}\|.*[^A-Za-z0-9 -].*)$","condition":{"kind":"all","conditions":[{"kind":"present","param":"marketerId"},{"kind":"not","condition":{"kind":"value_in","param":"name","values":["PAGE_VIEW","AUTO_10_SEC_ON_PAGE","AUTO_TAB_LOST_FOCUS","AUTO_NAVIGATE_ANOTHER_SITE"]}}]}}` | warning | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
+| `vendor.outbrain.browser.currency_recommended` | `{"kind":"required_with","when":"orderValue","requires":["currency"],"condition":{"kind":"all","conditions":[{"kind":"present","param":"marketerId"},{"kind":"value_pattern","param":"orderValue","pattern":"^(?:0*\\.0*[1-9][0-9]*\|[0-9]*[1-9][0-9]*(?:\\.[0-9]+)?)$"}]}}` | warning | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
 
 ### Complete HTTP contract 1
 
@@ -10133,7 +10330,8 @@ Context: `{}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `query.ob_click_id` | optional | `{}` | [ecosystem_reference](https://www.outbrain.com/help/advertisers/server2server-integrations/) |
-| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"condition":{"kind":"present","param":"query.ob_click_id"}}` | [ecosystem_reference](https://www.outbrain.com/help/advertisers/server2server-integrations/) |
+| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"condition":{"kind":"all","conditions":[{"kind":"present","param":"query.ob_click_id"},{"kind":"not","condition":{"kind":"present","param":"query.marketerId"}}]}}` | [ecosystem_reference](https://www.outbrain.com/help/advertisers/server2server-integrations/) |
+| `query.marketerId` | optional | `{}` | [official_template](https://amplify.outbrain.com/cp/obtp.js) |
 
 ## `vendor/pardot`
 
@@ -11297,11 +11495,11 @@ Context: `{"scope":"data.events[]"}`.
 
 ## `vendor/reddit`
 
-Reddit Pixel conversion requests to alb.reddit.com/rp.gif. Reddit documents standard event names on rdt('track'). The query spelling event is ecosystem evidence. CAPI v3 stays vendor/reddit-conversions-api.
+Reddit Pixel GET image fallbacks and POST form collectors. Checks standard event names, custom names, populated metadata, SDK-hashed matching fields and JSON product arrays. SDK profile checks are advisory; documented custom names retain their 64-character contract. CAPI v3 has a separate pack.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/reddit.json).
 
-Matcher: `{"hosts":["alb.reddit.com"],"path_prefixes":["/rp.gif"]}`.
+Matcher: `{"hosts":["alb.reddit.com"],"paths":["/rp.gif","/rp"],"artifact_kinds":["url","vast","postback","request"]}`.
 
 ### URL parameters
 
@@ -11309,11 +11507,59 @@ Matcher: `{"hosts":["alb.reddit.com"],"path_prefixes":["/rp.gif"]}`.
 | --- | --- | --- | --- |
 | `id` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://business.reddithelp.com/s/article/Install-the-Reddit-Pixel-on-your-website) |
 | `event` | recommended | `{"format":{"kind":"enum","values":["PageVisit","ViewContent","Search","AddToCart","AddToWishlist","Purchase","Lead","SignUp","Custom"]},"format_severity":"warning"}` | [ecosystem_reference](https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel) |
-| `m.customEventName` | optional | `{"format":{"kind":"regex","pattern":"^.{1,64}$"},"allow_empty":true}` | [ecosystem_reference](https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel) |
+| `m.customEventName` | optional | `{"format":{"kind":"regex","pattern":"(?s)^.{1,64}$"},"allow_empty":true}` | [ecosystem_reference](https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel) |
+| `em` | optional | `{"format":{"kind":"hex","length":64},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `pn` | optional | `{"format":{"kind":"hex","length":64},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `aaid` | optional | `{"format":{"kind":"hex","length":64},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `external_id` | optional | `{"format":{"kind":"hex","length":64},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `idfa` | optional | `{"format":{"kind":"hex","length":64},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `m.conversionId` | optional | `{"format":{"kind":"hex","length":64},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `m.value` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `m.valueDecimal` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `m.itemCount` | optional | `{"format":{"kind":"integer"},"allow_empty":true,"format_severity":"warning"}` | [ecosystem_reference](https://business.reddithelp.com/articles/Knowledge/manual-conversion-events-with-the-reddit-pixel) |
+| `m.currency` | optional | `{"format":{"kind":"regex","pattern":"^[A-Z]{3}$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `m.orderId` | optional | `{"max_utf16_length":100,"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `m.products` | optional | `{"allow_empty":true}` | [ecosystem_reference](https://business.reddithelp.com/articles/Knowledge/manual-conversion-events-with-the-reddit-pixel) |
+| `esurl` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `drfr` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `ts` | optional | `{"format":{"kind":"integer"},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `sh` | optional | `{"format":{"kind":"integer"},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `sw` | optional | `{"format":{"kind":"integer"},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `opt_out` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.reddit.custom.requires_name` | `{"kind":"required_when_value","when":"event","equals":["Custom"],"requires":["m.customEventName"]}` | error | [ecosystem_reference](https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel) |
+
+### JSON contract 1
+
+Context: `{"source_param":"m.products","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"m.products"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+
+### JSON contract 2
+
+Context: `{"source_param":"m.products","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"m.products"},"scope":"[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `name` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `category` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `quantity` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `itemPrice` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+| `content_type` | recommended | `{"format":{"kind":"enum","values":["application/x-www-form-urlencoded"]},"severity":"warning","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
 
 ## `vendor/rudderstack`
 

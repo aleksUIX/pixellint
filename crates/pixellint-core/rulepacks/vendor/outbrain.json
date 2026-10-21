@@ -1,7 +1,7 @@
 {
   "id": "vendor/outbrain",
   "display_name": "Outbrain pixel",
-  "description": "Outbrain conversion image and S2S pixels on tr.outbrain.com/pixel and /unifiedPixel. Generated noscript pixels send ob_adv_id. S2S sends ob_click_id. Outbrain documents orderValue, orderId, and currency on the postback. The JS loader on amplify.outbrain.com is a different surface and is not contracted.",
+  "description": "Outbrain browser, image and S2S conversion pixels on exact /pixel and /unifiedPixel routes. Browser requests carry marketerId and can fall back from GET to POST sendBeacon. Checks populated page metadata and browser event guidance while preserving the documented S2S GET contract and currency list.",
   "vendor": "outbrain",
   "source_level": "ecosystem_reference",
   "docs": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/",
@@ -114,6 +114,82 @@
         "kind": "present",
         "param": "ob_click_id"
       }
+    },
+    {
+      "name": "marketerId",
+      "description": "The pinned browser SDK joins one or more configured marketer identities with commas. Fixed identity grammar is unpublished.",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
+    },
+    {
+      "name": "dl",
+      "description": "The browser SDK sends an absolute page or referrer URL. An empty referrer is valid.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
+    },
+    {
+      "name": "referrer",
+      "description": "The browser SDK sends an absolute page or referrer URL. An empty referrer is valid.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
+    },
+    {
+      "name": "pRef",
+      "description": "The browser SDK sends an absolute page or referrer URL. An empty referrer is valid.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
+    },
+    {
+      "name": "g",
+      "description": "The SDK marks its GTM origin or sendBeacon fallback.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
+    },
+    {
+      "name": "sb",
+      "description": "The SDK marks its GTM origin or sendBeacon fallback.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
     }
   ],
   "rules": [
@@ -122,11 +198,12 @@
       "kind": "require_one_of",
       "params": [
         "ob_adv_id",
-        "ob_click_id"
+        "ob_click_id",
+        "marketerId"
       ],
       "severity": "error",
-      "message": "The pixel has neither `ob_adv_id` nor `ob_click_id`. Generated fires carry one of the two.",
-      "fix_hint": "Send `ob_adv_id` for a noscript or page-view pixel, or `ob_click_id` for an S2S conversion.",
+      "message": "The pixel needs an advertiser identity, captured S2S click identity or browser marketer identity.",
+      "fix_hint": "Use ob_adv_id for an image, ob_click_id for S2S, or marketerId for the browser collector.",
       "doc": "https://www.outbrain.com/help/advertisers/outbrain-pixel-gtm/"
     },
     {
@@ -140,6 +217,78 @@
         "name"
       ],
       "source_level": "official_vendor"
+    },
+    {
+      "code": "vendor.outbrain.browser.event_required",
+      "kind": "required_with",
+      "when": "marketerId",
+      "requires": [
+        "name"
+      ],
+      "severity": "warning",
+      "message": "The browser collector sends its configured event name.",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
+    },
+    {
+      "code": "vendor.outbrain.browser.event_name",
+      "kind": "forbid_value_pattern",
+      "params": [
+        "name"
+      ],
+      "pattern": "(?s)^(?:[^A-Za-z0-9].*|.{101,}|.*[^A-Za-z0-9 -].*)$",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "present",
+            "param": "marketerId"
+          },
+          {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "name",
+              "values": [
+                "PAGE_VIEW",
+                "AUTO_10_SEC_ON_PAGE",
+                "AUTO_TAB_LOST_FOCUS",
+                "AUTO_NAVIGATE_ANOTHER_SITE"
+              ]
+            }
+          }
+        ]
+      },
+      "severity": "warning",
+      "message": "The browser helper advises event names of at most 100 ASCII letters, digits, spaces or hyphens, starting with a letter or digit. Receiver rejection is not established.",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
+    },
+    {
+      "code": "vendor.outbrain.browser.currency_recommended",
+      "kind": "required_with",
+      "when": "orderValue",
+      "requires": [
+        "currency"
+      ],
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "present",
+            "param": "marketerId"
+          },
+          {
+            "kind": "value_pattern",
+            "param": "orderValue",
+            "pattern": "^(?:0*\\.0*[1-9][0-9]*|[0-9]*[1-9][0-9]*(?:\\.[0-9]+)?)$"
+          }
+        ]
+      },
+      "severity": "warning",
+      "message": "The browser helper advises a currency for a populated positive conversion value.",
+      "source_level": "official_template",
+      "doc": "https://amplify.outbrain.com/cp/obtp.js"
     }
   ],
   "http": {
@@ -161,9 +310,28 @@
           ]
         },
         "condition": {
-          "kind": "present",
-          "param": "query.ob_click_id"
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "present",
+              "param": "query.ob_click_id"
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "present",
+                "param": "query.marketerId"
+              }
+            }
+          ]
         }
+      },
+      {
+        "name": "query.marketerId",
+        "description": "A browser identity separates the browser transport from the S2S method constraint.",
+        "requirement": "optional",
+        "source_level": "official_template",
+        "doc": "https://amplify.outbrain.com/cp/obtp.js"
       }
     ],
     "rules": []

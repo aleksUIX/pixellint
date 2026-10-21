@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 176, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 180, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -270,3 +270,17 @@ console.log(`pixellint ${version()}: npm smoke tests passed`);
 await import("./test-har.mjs");
 
 await import("./sessions.test.mjs");
+
+// New collectors and repaired browser forms must agree through both package entry points.
+for (const entry of [{ validate, isOk }, cjs]) {
+  for (const [url, code] of [
+    ["https://s.amazon-adsystem.com/iu3?event=Purchase", "vendor.amazon-ad-tag.param.pid.missing"],
+    ["https://aax-eu.amazon-adsystem.com/s/iu3?pid=synthetic", "vendor.amazon-ad-tag-regional.param.event.missing"],
+    ["https://d.adroll.com/ipixel/ADV/PIX", "vendor.adroll-image.param.name.missing"],
+    ["https://d.adroll.com/pixel/ADV/PIX?conv_value=free", "vendor.adroll-pixel.param.conv_value.invalid"],
+    ["https://alb.reddit.com/rp.gif?id=t2_synthetic&event=Purchase&em=raw", "vendor.reddit.param.em.invalid"],
+  ]) assert.ok(entry.validate(url,{kind:"url"}).reports.flatMap(r=>r.violations).some(v=>v.code===code));
+  const beacon={url:"https://tr.outbrain.com/unifiedPixel?marketerId=synthetic&ob_click_id=synthetic&name=Purchase&sb=1",method:"POST",headers:{}};
+  assert.ok(entry.isOk(entry.validate(JSON.stringify(beacon),{kind:"request"})));
+  assert.ok(entry.isOk(entry.validate("https://d.adroll.com/pixel/ADV/PIX?conv_value=1250&adroll_currency=USC",{kind:"url"})));
+}

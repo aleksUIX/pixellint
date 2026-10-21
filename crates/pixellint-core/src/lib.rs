@@ -72,6 +72,22 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/adroll-pixel",
+        include_str!("../rulepacks/vendor/adroll-pixel.json"),
+    ),
+    (
+        "vendor/adroll-image",
+        include_str!("../rulepacks/vendor/adroll-image.json"),
+    ),
+    (
+        "vendor/amazon-ad-tag-regional",
+        include_str!("../rulepacks/vendor/amazon-ad-tag-regional.json"),
+    ),
+    (
+        "vendor/amazon-ad-tag",
+        include_str!("../rulepacks/vendor/amazon-ad-tag.json"),
+    ),
+    (
         "vendor/nextdoor-pixel",
         include_str!("../rulepacks/vendor/nextdoor-pixel.json"),
     ),

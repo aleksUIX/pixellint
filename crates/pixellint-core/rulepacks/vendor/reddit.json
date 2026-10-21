@@ -1,19 +1,32 @@
 {
   "id": "vendor/reddit",
   "display_name": "Reddit Pixel",
-  "description": "Reddit Pixel conversion requests to alb.reddit.com/rp.gif. Reddit documents standard event names on rdt('track'). The query spelling event is ecosystem evidence. CAPI v3 stays vendor/reddit-conversions-api.",
+  "description": "Reddit Pixel GET image fallbacks and POST form collectors. Checks standard event names, custom names, populated metadata, SDK-hashed matching fields and JSON product arrays. SDK profile checks are advisory; documented custom names retain their 64-character contract. CAPI v3 has a separate pack.",
   "vendor": "reddit",
   "source_level": "ecosystem_reference",
-  "docs": "https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel",
+  "docs": "https://business.reddithelp.com/articles/Knowledge/manual-conversion-events-with-the-reddit-pixel",
   "match": {
-    "hosts": ["alb.reddit.com"],
-    "path_prefixes": ["/rp.gif"]
+    "hosts": [
+      "alb.reddit.com"
+    ],
+    "paths": [
+      "/rp.gif",
+      "/rp"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
   },
   "params": [
     {
       "name": "id",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the Reddit advertiser ID. Reddit documents how to install the pixel rather than this query name, so this rule is ecosystem evidence.",
       "fix_hint": "Copy the advertiser ID from Reddit Ads into the pixel snippet.",
       "doc": "https://business.reddithelp.com/s/article/Install-the-Reddit-Pixel-on-your-website"
@@ -42,11 +55,234 @@
     },
     {
       "name": "m.customEventName",
-      "format": { "kind": "regex", "pattern": "^.{1,64}$" },
+      "format": {
+        "kind": "regex",
+        "pattern": "(?s)^.{1,64}$"
+      },
       "allow_empty": true,
       "description": "It is the custom event name Reddit documents on rdt('track', 'Custom', { customEventName }). Generated pixels send it as m.customEventName. Reddit allows any UTF-8 character up to 64 characters including spaces. Empty slots on standard events are unfilled GTM template fields.",
       "fix_hint": "Set m.customEventName to the custom event name, at most 64 characters, or drop the pair on a standard event.",
       "doc": "https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel"
+    },
+    {
+      "name": "em",
+      "description": "The pinned SDK hashes this wire field to lowercase SHA-256 hex. Inputs may be raw or prehashed; hash correctness and identity ownership are external.",
+      "requirement": "optional",
+      "format": {
+        "kind": "hex",
+        "length": 64
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "pn",
+      "description": "The pinned SDK hashes this wire field to lowercase SHA-256 hex. Inputs may be raw or prehashed; hash correctness and identity ownership are external.",
+      "requirement": "optional",
+      "format": {
+        "kind": "hex",
+        "length": 64
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "aaid",
+      "description": "The pinned SDK hashes this wire field to lowercase SHA-256 hex. Inputs may be raw or prehashed; hash correctness and identity ownership are external.",
+      "requirement": "optional",
+      "format": {
+        "kind": "hex",
+        "length": 64
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "external_id",
+      "description": "The pinned SDK hashes this wire field to lowercase SHA-256 hex. Inputs may be raw or prehashed; hash correctness and identity ownership are external.",
+      "requirement": "optional",
+      "format": {
+        "kind": "hex",
+        "length": 64
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "idfa",
+      "description": "The pinned SDK hashes this wire field to lowercase SHA-256 hex. Inputs may be raw or prehashed; hash correctness and identity ownership are external.",
+      "requirement": "optional",
+      "format": {
+        "kind": "hex",
+        "length": 64
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "m.conversionId",
+      "description": "The pinned SDK hashes this wire field to lowercase SHA-256 hex. Inputs may be raw or prehashed; hash correctness and identity ownership are external.",
+      "requirement": "optional",
+      "format": {
+        "kind": "hex",
+        "length": 64
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "m.value",
+      "description": "Populated conversion values are numeric. Legacy cents and decimal values are separate fields; no positive amount or freshness bound is inferred.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "m.valueDecimal",
+      "description": "Populated conversion values are numeric. Legacy cents and decimal values are separate fields; no positive amount or freshness bound is inferred.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "m.itemCount",
+      "description": "The published metadata example specifies an integer item count.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "allow_empty": true,
+      "format_severity": "warning",
+      "doc": "https://business.reddithelp.com/articles/Knowledge/manual-conversion-events-with-the-reddit-pixel"
+    },
+    {
+      "name": "m.currency",
+      "description": "A populated metadata currency is a three-letter code. Account support is external.",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Z]{3}$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "m.orderId",
+      "description": "The pinned SDK truncates order identity to 100 UTF-16 code units.",
+      "requirement": "optional",
+      "max_utf16_length": 100,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "m.products",
+      "description": "The SDK serializes product objects as a JSON array. Empty metadata slots are valid.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "esurl",
+      "description": "The SDK sends an absolute page or referrer URL when available.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "drfr",
+      "description": "The SDK sends an absolute page or referrer URL when available.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "ts",
+      "description": "The SDK emits a nonnegative integer timestamp or screen dimension.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "sh",
+      "description": "The SDK emits a nonnegative integer timestamp or screen dimension.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "sw",
+      "description": "The SDK emits a nonnegative integer timestamp or screen dimension.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
+    },
+    {
+      "name": "opt_out",
+      "description": "The SDK uses a binary opt-out flag.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.redditstatic.com/ads/pixel.js"
     }
   ],
   "rules": [
@@ -54,12 +290,164 @@
       "code": "vendor.reddit.custom.requires_name",
       "kind": "required_when_value",
       "when": "event",
-      "equals": ["Custom"],
-      "requires": ["m.customEventName"],
+      "equals": [
+        "Custom"
+      ],
+      "requires": [
+        "m.customEventName"
+      ],
       "severity": "error",
       "message": "A Custom event is missing m.customEventName. Reddit documents rdt('track', 'Custom', { customEventName }) and treats that name as a distinct conversion.",
       "fix_hint": "Add m.customEventName with the custom event name, at most 64 characters.",
       "doc": "https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel"
     }
-  ]
+  ],
+  "body": [
+    {
+      "source_param": "m.products",
+      "encoding": "json",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "present",
+        "param": "m.products"
+      },
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.redditstatic.com/ads/pixel.js"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "source_param": "m.products",
+      "encoding": "json",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "present",
+        "param": "m.products"
+      },
+      "scope": "[]",
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.redditstatic.com/ads/pixel.js"
+        },
+        {
+          "name": "id",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true,
+          "source_level": "official_template",
+          "doc": "https://www.redditstatic.com/ads/pixel.js"
+        },
+        {
+          "name": "name",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true,
+          "source_level": "official_template",
+          "doc": "https://www.redditstatic.com/ads/pixel.js"
+        },
+        {
+          "name": "category",
+          "description": "The pinned SDK emits this JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true,
+          "source_level": "official_template",
+          "doc": "https://www.redditstatic.com/ads/pixel.js"
+        },
+        {
+          "name": "quantity",
+          "description": "The SDK retains native numbers and numeric strings in product metadata. No positive amount or integer-only quantity bound is inferred.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.redditstatic.com/ads/pixel.js",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          }
+        },
+        {
+          "name": "itemPrice",
+          "description": "The SDK retains native numbers and numeric strings in product metadata. No positive amount or integer-only quantity bound is inferred.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "source_level": "official_template",
+          "doc": "https://www.redditstatic.com/ads/pixel.js",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          }
+        }
+      ],
+      "rules": []
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Captured image and form producers use GET or POST.",
+        "requirement": "optional",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://www.redditstatic.com/ads/pixel.js"
+      },
+      {
+        "name": "content_type",
+        "description": "POST collector requests use URL-encoded form bodies.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/x-www-form-urlencoded"
+          ]
+        },
+        "severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "source_level": "official_template",
+        "doc": "https://www.redditstatic.com/ads/pixel.js"
+      }
+    ],
+    "rules": []
+  }
 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.48.0 (2026-10-21)
+
+- Add Amazon Ad Tag main and regional collector packs, AdRoll audience image pixels and the AdRoll legacy browser collector.
+- Validate event identity, UTF-16 limits, reporting attributes, item arrays, consent JSON, path identities and populated conversion metadata.
+- Extend Reddit to POST forms, matching hashes and product arrays. Accept documented newlines in custom names and numeric strings emitted in products.
+- Repair Outbrain browser identity and POST beacon routing while retaining its S2S GET requirement and documented currency list.
+- Add 138 synthetic golden cases and four integration tests, including 16 requests from 15 offline producer executions. SDK profile findings remain advisory.
+
+## 0.47.0 (2026-10-20)
+
+- Add Nextdoor browser, Spotify browser batch, Quantcast image, Quantcast Conversions API and MNTN image packs.
+- Separate Quantcast matrix and image identity carriers and add 87 synthetic golden cases.
+
 ## 0.46.0 (2026-10-20)
 
 - Add Spotify image, StackAdapt pixel, Quora browser pixel, Yandex Adfox simple-link, and Google IMA live PCS rulepacks.

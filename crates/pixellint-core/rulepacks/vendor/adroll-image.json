@@ -1,0 +1,44 @@
+{
+  "id": "vendor/adroll-image",
+  "display_name": "AdRoll audience image pixel",
+  "vendor": "adroll",
+  "description": "AdRoll documented audience image pixels carry advertiser and pixel identities in the path, plus the configured audience segment in name. Exact image routing prevents JavaScript and adjacent collectors from inheriting this audience contract.",
+  "docs": "https://help.adroll.com/hc/en-us/articles/360040998292-Eventbrite-Integration-Track-page-and-event-visitors-on-AdRoll",
+  "source_level": "official_vendor",
+  "match": {
+    "hosts": [
+      "d.adroll.com"
+    ],
+    "path_patterns": [
+      "/ipixel/[^/]*/[^/]*"
+    ]
+  },
+  "params": [
+    {
+      "name": "advertiser_id",
+      "description": "The published image template carries this identity in the path. Its opaque grammar remains open.",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "pixel_id",
+      "description": "The published image template carries this identity in the path. Its opaque grammar remains open.",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "name",
+      "description": "The documented audience image URL carries the configured segment identity.",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      }
+    }
+  ],
+  "rules": [],
+  "path_pattern": "^/ipixel/(?<advertiser_id>[^/]*)/(?<pixel_id>[^/]*)$"
+}
