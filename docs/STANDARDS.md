@@ -13053,9 +13053,9 @@ Context: `{}`.
 | `context.user.phone_number` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"(?i)^[a-f0-9]{64}$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 | `context.user.external_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 | `properties` | optional | `{"json_type":["object","array"],"severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `properties.value` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"minimum":0,"numeric_strings":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `properties.currency` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[A-Z]{3}$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `properties.content_type` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["product","product_group","destination","hotel","flight","vehicle"]}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.value` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.currency` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[A-Z]{3}$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.content_type` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["product","product_group","destination","hotel","flight","vehicle"]},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 | `properties.contents` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 
 ### JSON contract 2
@@ -13065,10 +13065,6 @@ Context: `{"scope":"properties.contents[]"}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `content_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `content_name` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `quantity` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `price` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 
 ### JSON contract 3
 
@@ -13097,9 +13093,9 @@ Context: `{"source_param":"analytics_message","encoding":"base64_json","encoding
 | `context.user.phone_number` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"(?i)^[a-f0-9]{64}$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 | `context.user.external_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 | `properties` | optional | `{"json_type":["object","array"],"severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `properties.value` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"minimum":0,"numeric_strings":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `properties.currency` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[A-Z]{3}$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `properties.content_type` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["product","product_group","destination","hotel","flight","vehicle"]}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.value` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.currency` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[A-Z]{3}$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.content_type` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["product","product_group","destination","hotel","flight","vehicle"]},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 | `properties.contents` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 
 ### JSON contract 4
@@ -13109,10 +13105,6 @@ Context: `{"scope":"properties.contents[]","source_param":"analytics_message","e
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `content_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `content_name` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `quantity` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
-| `price` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 
 ### Complete HTTP contract 1
 

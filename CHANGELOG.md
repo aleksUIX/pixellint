@@ -7,7 +7,7 @@
 - Add plaintext Microsoft Clarity collector envelope and event-row checks. The SDK custom gzip transport retains an explicit body-inspection deferral.
 - Add a modern Comscore SDK profile that respects disabled page URL collection and request truncation. Retain documented legacy Direct beacon requirements.
 - Deepen GA4 browser numeric properties, page metadata, counters and flags. Add StackAdapt server-template header checks. SDK-derived checks remain advisory.
-- Add 156 synthetic golden cases and four native integration tests. Seventeen offline producer executions emit 21 intercepted requests, including browser, image, compressed and server-template controls.
+- Add 158 synthetic golden cases and four native integration tests. Seventeen offline producer executions emit 21 intercepted requests, including browser, image, compressed and server-template controls.
 
 ## 0.48.0 (2026-10-21)
 
