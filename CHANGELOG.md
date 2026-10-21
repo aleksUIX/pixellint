@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.56.0
+
+- Deepen Quora CAPI with advisory checks for POST, JSON transport, Bearer authorization and captured request-body presence, following a pinned official server template.
+- Warn on repeated CM360 tracking-ad identifiers and privacy assignments, including empty and unresolved values. Preserve generated empty privacy slots and opaque extension fields.
+- Bound both packs to their documented endpoint families. Neighboring routes retain explicit coverage diagnostics.
+- Add intercepted server-template controls, cross-artifact and boundary fixtures, and current source reviews. Receiver completeness is not claimed.
+
 ## 0.55.0
 
 - Deepen Google Ads conversion and remarketing pixels with scoped async producer advice for privacy flags, numeric metadata, frame and transport markers, language slices, and truncated URL lengths.

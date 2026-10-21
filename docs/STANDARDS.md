@@ -4134,11 +4134,11 @@ Matcher: `{"hosts":["static.cloudflareinsights.com"],"path_contains":["beacon.mi
 
 ## `vendor/cm360-tracking-ad`
 
-CM360 impression and click tracking tags on doubleclick.net /ddm/trackimp and /ddm/trackclk, whose ad and creative IDs ride as semicolon-delimited path parameters.
+CM360 impression and click tracking tags on the /ddm/trackimp and /ddm/trackclk route families, including legacy unprefixed routes. Ad and creative IDs use semicolon path parameters. New warnings flag repeated contracted key-value pairs, including empty and unresolved values. Generated empty privacy slots remain valid. Signature validity, cache randomness and serving context need external evidence.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/cm360-tracking-ad.json).
 
-Matcher: `{"host_suffixes":["doubleclick.net"],"path_contains":["/trackimp","/trackclk"]}`.
+Matcher: `{"host_suffixes":["doubleclick.net"],"path_patterns":["^/(?:ddm/)?track(?:imp\|clk)(?:[;/].*)?$"]}`.
 
 ### URL parameters
 
@@ -4152,6 +4152,17 @@ Matcher: `{"host_suffixes":["doubleclick.net"],"path_contains":["/trackimp","/tr
 | `dc_rdid` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$"},"allow_empty":true}` | [official_vendor](https://support.google.com/campaignmanager/answer/2826636) |
 | `ord` | optional | `{"format":{"kind":"regex","pattern":"^[^\\[\\]{}:%/\\\\=]{8,}$"},"format_severity":"warning"}` | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
 | `ltd` | optional | `{"format":{"kind":"enum","values":["0","1","true","false"]},"allow_empty":true}` | [official_vendor](https://support.google.com/campaignmanager/answer/2826636) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.cm360-tracking-ad.duplicate.dc_trk_aid` | `{"kind":"max_occurrences","param":"dc_trk_aid","max_occurrences":1}` | warning | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
+| `vendor.cm360-tracking-ad.duplicate.dc_trk_cid` | `{"kind":"max_occurrences","param":"dc_trk_cid","max_occurrences":1}` | warning | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
+| `vendor.cm360-tracking-ad.duplicate.dc_lat` | `{"kind":"max_occurrences","param":"dc_lat","max_occurrences":1}` | warning | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
+| `vendor.cm360-tracking-ad.duplicate.tfua` | `{"kind":"max_occurrences","param":"tfua","max_occurrences":1}` | warning | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
+| `vendor.cm360-tracking-ad.duplicate.tag_for_child_directed_treatment` | `{"kind":"max_occurrences","param":"tag_for_child_directed_treatment","max_occurrences":1}` | warning | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
+| `vendor.cm360-tracking-ad.duplicate.dc_rdid` | `{"kind":"max_occurrences","param":"dc_rdid","max_occurrences":1}` | warning | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
+| `vendor.cm360-tracking-ad.duplicate.ord` | `{"kind":"max_occurrences","param":"ord","max_occurrences":1}` | warning | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
+| `vendor.cm360-tracking-ad.duplicate.ltd` | `{"kind":"max_occurrences","param":"ltd","max_occurrences":1}` | warning | [official_vendor](https://support.google.com/campaignmanager/answer/2829774) |
 
 ## `vendor/cm360-vast-event`
 
@@ -12137,11 +12148,11 @@ Context: `{}`.
 
 ## `vendor/quora-conversions-api`
 
-Server-side conversion events posted to api.quora.com/ads/v0/conversion. Browser pixels on q.quora.com stay directory-only.
+Quora server-side conversion objects on the exact /ads/v0/conversion endpoint. Existing event-body checks are joined by advice for POST, JSON transport, a populated Bearer authorization header and request-body presence, following the pinned official server template. Empty user objects and events without click attribution remain permitted. Full receiver schema, token validity and account ownership are not certified.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/quora-conversions-api.json).
 
-Matcher: `{"hosts":["api.quora.com"],"path_contains":["/ads/v0/conversion"],"json_paths":[{"any_of":["conversion.event_name","conversion.click_id"]}]}`.
+Matcher: `{"hosts":["api.quora.com"],"json_paths":[{"any_of":["conversion.event_name","conversion.click_id"]}],"paths":["/ads/v0/conversion"]}`.
 
 ### JSON contract 1
 
@@ -12163,6 +12174,18 @@ Context: `{}`.
 | `conversion` | optional | `{"json_type":"object"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/main/template.tpl) |
 | `device` | optional | `{"json_type":"object"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/main/template.tpl) |
 | `user` | required | `{"json_type":"object"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/main/template.tpl) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"severity":"warning","format":{"kind":"enum","values":["POST"]}}` | [official_template](https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl) |
+| `headers.authorization` | recommended | `{"severity":"warning","format":{"kind":"regex","pattern":"^(?i:Bearer) +[^\\s]+$"}}` | [official_template](https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl) |
+| `content_type` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["application/json"]}}` | [official_template](https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl) |
+| `body` | required | `{"severity":"warning"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl) |
+| `body_encoding` | required | `{"severity":"warning","format":{"kind":"enum","values":["json"]},"condition":{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["unsupported"]}},{"kind":"any","conditions":[{"kind":"value_in","param":"body_encoding","values":["none"]},{"kind":"value_in","param":"content_type","values":["application/json"]}]}]}}` | [official_template](https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl) |
 
 ## `vendor/quora-pixel`
 

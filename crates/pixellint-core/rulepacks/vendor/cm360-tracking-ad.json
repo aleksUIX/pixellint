@@ -1,7 +1,7 @@
 {
   "id": "vendor/cm360-tracking-ad",
   "display_name": "Campaign Manager 360 tracking ads",
-  "description": "CM360 impression and click tracking tags on doubleclick.net /ddm/trackimp and /ddm/trackclk, whose ad and creative IDs ride as semicolon-delimited path parameters.",
+  "description": "CM360 impression and click tracking tags on the /ddm/trackimp and /ddm/trackclk route families, including legacy unprefixed routes. Ad and creative IDs use semicolon path parameters. New warnings flag repeated contracted key-value pairs, including empty and unresolved values. Generated empty privacy slots remain valid. Signature validity, cache randomness and serving context need external evidence.",
   "vendor": "google",
   "source_level": "official_vendor",
   "docs": "https://support.google.com/campaignmanager/answer/2829774",
@@ -10,9 +10,8 @@
     "host_suffixes": [
       "doubleclick.net"
     ],
-    "path_contains": [
-      "/trackimp",
-      "/trackclk"
+    "path_patterns": [
+      "^/(?:ddm/)?track(?:imp|clk)(?:[;/].*)?$"
     ]
   },
   "params": [
@@ -114,5 +113,86 @@
       "allow_empty": true
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.cm360-tracking-ad.duplicate.dc_trk_aid",
+      "kind": "max_occurrences",
+      "param": "dc_trk_aid",
+      "max_occurrences": 1,
+      "severity": "warning",
+      "message": "CM360 warns that duplicate dc_trk_aid key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+      "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774"
+    },
+    {
+      "code": "vendor.cm360-tracking-ad.duplicate.dc_trk_cid",
+      "kind": "max_occurrences",
+      "param": "dc_trk_cid",
+      "max_occurrences": 1,
+      "severity": "warning",
+      "message": "CM360 warns that duplicate dc_trk_cid key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+      "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774"
+    },
+    {
+      "code": "vendor.cm360-tracking-ad.duplicate.dc_lat",
+      "kind": "max_occurrences",
+      "param": "dc_lat",
+      "max_occurrences": 1,
+      "severity": "warning",
+      "message": "CM360 warns that duplicate dc_lat key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+      "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774"
+    },
+    {
+      "code": "vendor.cm360-tracking-ad.duplicate.tfua",
+      "kind": "max_occurrences",
+      "param": "tfua",
+      "max_occurrences": 1,
+      "severity": "warning",
+      "message": "CM360 warns that duplicate tfua key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+      "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774"
+    },
+    {
+      "code": "vendor.cm360-tracking-ad.duplicate.tag_for_child_directed_treatment",
+      "kind": "max_occurrences",
+      "param": "tag_for_child_directed_treatment",
+      "max_occurrences": 1,
+      "severity": "warning",
+      "message": "CM360 warns that duplicate tag_for_child_directed_treatment key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+      "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774"
+    },
+    {
+      "code": "vendor.cm360-tracking-ad.duplicate.dc_rdid",
+      "kind": "max_occurrences",
+      "param": "dc_rdid",
+      "max_occurrences": 1,
+      "severity": "warning",
+      "message": "CM360 warns that duplicate dc_rdid key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+      "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774"
+    },
+    {
+      "code": "vendor.cm360-tracking-ad.duplicate.ord",
+      "kind": "max_occurrences",
+      "param": "ord",
+      "max_occurrences": 1,
+      "severity": "warning",
+      "message": "CM360 warns that duplicate ord key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+      "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774"
+    },
+    {
+      "code": "vendor.cm360-tracking-ad.duplicate.ltd",
+      "kind": "max_occurrences",
+      "param": "ltd",
+      "max_occurrences": 1,
+      "severity": "warning",
+      "message": "CM360 warns that duplicate ltd key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+      "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+      "doc": "https://support.google.com/campaignmanager/answer/2829774"
+    }
+  ]
 }

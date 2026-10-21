@@ -2,15 +2,12 @@
   "id": "vendor/quora-conversions-api",
   "display_name": "Quora Conversions API",
   "vendor": "quora",
-  "description": "Server-side conversion events posted to api.quora.com/ads/v0/conversion. Browser pixels on q.quora.com stay directory-only.",
+  "description": "Quora server-side conversion objects on the exact /ads/v0/conversion endpoint. Existing event-body checks are joined by advice for POST, JSON transport, a populated Bearer authorization header and request-body presence, following the pinned official server template. Empty user objects and events without click attribution remain permitted. Full receiver schema, token validity and account ownership are not certified.",
   "source_level": "official_vendor",
   "docs": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview",
   "match": {
     "hosts": [
       "api.quora.com"
-    ],
-    "path_contains": [
-      "/ads/v0/conversion"
     ],
     "json_paths": [
       {
@@ -19,6 +16,9 @@
           "conversion.click_id"
         ]
       }
+    ],
+    "paths": [
+      "/ads/v0/conversion"
     ]
   },
   "body": [
@@ -170,5 +170,107 @@
       ],
       "rules": []
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+        "description": "The pinned official server template sends POST. This is transport advice, not a complete receiver method specification.",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "headers.authorization",
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+        "description": "The official template sends an opaque access token in Authorization: Bearer. Token contents, ownership and expiration remain external.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?i:Bearer) +[^\\s]+$"
+        },
+        "fix_hint": "Send Authorization: Bearer followed by your CAPI access token. Keep tokens out of browser code."
+      },
+      {
+        "name": "content_type",
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+        "description": "The official server template serializes a JSON object and sets application/json.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "body",
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+        "description": "The server template always includes a request body. Unavailable or unsupported captured bodies retain the engine capture-state rules.",
+        "requirement": "required"
+      },
+      {
+        "name": "body_encoding",
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+        "description": "Known decoded entities must be JSON for the reviewed producer. Unsupported compressed or multipart representations remain explicitly unvalidated.",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "json"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "value_in",
+                "param": "body_encoding",
+                "values": [
+                  "unsupported"
+                ]
+              }
+            },
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "body_encoding",
+                  "values": [
+                    "none"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "content_type",
+                  "values": [
+                    "application/json"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "rules": []
+  }
 }

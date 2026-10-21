@@ -2,7 +2,7 @@
   "schema_version": 1,
   "review_date": "2026-10-10",
   "status": "validated_release_prepared",
-  "coverage_claim": "Source-scoped collectors with explicit remaining requirements. This release deepens Google Ads async pixels and Kevel event multipliers. New checks are advisory; vendor completeness is not claimed.",
+  "coverage_claim": "Source-scoped collectors with explicit remaining requirements. This release deepens Quora CAPI transport and CM360 tracking duplicate checks. New checks are advisory; vendor completeness is not claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
     "version": "0.34.0",
@@ -39,33 +39,33 @@
     "release_url": "https://github.com/aleksUIX/pixellint/releases/tag/v0.34.0"
   },
   "current": {
-    "version": "0.55.0",
+    "version": "0.56.0",
     "candidate_status": "release_prepared",
     "packs": 189,
     "vendors": 96,
-    "field_contracts": 6722,
-    "cross_field_assertions": 598,
+    "field_contracts": 6727,
+    "cross_field_assertions": 606,
     "body_contract_scopes": 525,
-    "http_contract_scopes": 102,
+    "http_contract_scopes": 103,
     "query_contract_scopes": 6,
     "bulk_query_sources": 2,
-    "http_contract_packs": 88,
+    "http_contract_packs": 89,
     "changed_packs_this_round": 2,
     "new_packs_this_round": 0,
     "deepened_existing_packs_this_round": 2,
     "source_reviewed_packs_this_round": 2,
     "manifest_changes_this_round": 2,
-    "new_source_cases": 173,
-    "remaining_requirement_entries": 641,
+    "new_source_cases": 92,
+    "remaining_requirement_entries": 644,
     "remaining_requirements_note": "Overlapping open requirements and source-case counts do not establish a percentage of vendor specification coverage.",
     "session_assertions": 2,
     "session_profile_changes_this_round": 0,
     "session_profiles": 1,
     "review_date": "2026-10-21",
-    "new_golden_cases": 173,
-    "new_source_executed_requests": 15,
-    "new_field_contracts": 26,
-    "new_cross_field_assertions": 1
+    "new_golden_cases": 92,
+    "new_source_executed_requests": 11,
+    "new_field_contracts": 5,
+    "new_cross_field_assertions": 8
   },
   "review_assignments": {
     "google_ias_adctv": "Official templates and IAS guidance",
@@ -66907,48 +66907,50 @@
       "sources_read": [
         {
           "url": "https://support.google.com/campaignmanager/answer/2829774",
-          "read_on": "2026-10-07",
-          "access": "opened_current_primary_vendor_page",
-          "evidence_level": "official_vendor_documentation"
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "bb930039be66e16161f59f88eb16b8dcad39973780417389d660d9bc01a050d1",
+          "snapshot_kind": "original downloaded bytes"
         },
         {
           "url": "https://support.google.com/campaignmanager/answer/2826636",
-          "read_on": "2026-10-07",
-          "access": "opened_current_primary_vendor_page",
-          "evidence_level": "official_vendor_documentation"
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "5ca814cfb68749c459b47465907b06ea977525eb807652f3e00fa4624b50ca59",
+          "snapshot_kind": "original downloaded bytes"
+        },
+        {
+          "url": "https://support.google.com/campaignmanager/answer/3040965",
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "d9d3fe408b58807c5b3303d09b825bba1f78d7f480aa9d0f31ef94f22110f3c3",
+          "snapshot_kind": "original downloaded bytes"
         }
       ],
-      "contracts_mapped": [
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "dc_trk_aid",
-          "source": "https://support.google.com/campaignmanager/answer/2829774",
-          "checks": {
+      "contracts_mapped": {
+        "params": [
+          {
+            "name": "dc_trk_aid",
             "requirement": "required",
             "format": {
               "kind": "integer"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "dc_trk_cid",
-          "source": "https://support.google.com/campaignmanager/answer/2829774",
-          "checks": {
+            },
+            "description": "It is the numeric tracking ad ID. Campaign Manager 360 flags a tracking tag as missing required parameters when dc_trk_aid is absent.",
+            "fix_hint": "Export the tag again from Campaign Manager 360 so dc_trk_aid is present.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "name": "dc_trk_cid",
             "requirement": "required",
             "format": {
               "kind": "integer"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "dc_lat",
-          "source": "https://support.google.com/campaignmanager/answer/2826636",
-          "checks": {
+            },
+            "description": "It is the numeric tracking creative ID. Campaign Manager 360 flags a tracking tag as missing required parameters when dc_trk_cid is absent.",
+            "fix_hint": "Export the tag again from Campaign Manager 360 so dc_trk_cid is present.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "name": "dc_lat",
             "format": {
               "kind": "enum",
               "values": [
@@ -66956,15 +66958,13 @@
                 "1"
               ]
             },
-            "allow_empty": true
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "tfua",
-          "source": "https://support.google.com/campaignmanager/answer/2826636",
-          "checks": {
+            "allow_empty": true,
+            "description": "It is the limited-ads signal. Google documents dc_lat=1 when Limit Ad Tracking is on for IDFA or AdID, and 0 when it is off. Generated tracking tags leave the slot empty until the publisher fills it.",
+            "fix_hint": "Send dc_lat=1 when Limit Ad Tracking is on, dc_lat=0 when it is off, or leave the generated empty slot.",
+            "doc": "https://support.google.com/campaignmanager/answer/2826636"
+          },
+          {
+            "name": "tfua",
             "format": {
               "kind": "enum",
               "values": [
@@ -66972,15 +66972,13 @@
                 "1"
               ]
             },
-            "allow_empty": true
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "tag_for_child_directed_treatment",
-          "source": "https://support.google.com/campaignmanager/answer/2826636",
-          "checks": {
+            "allow_empty": true,
+            "description": "It is the under-age signal. Google documents tfua on generated tracking ads. Exported tags leave it empty until a CMP fills it.",
+            "fix_hint": "Send tfua=1 when the request may come from a user under 16, otherwise 0 or leave the generated empty slot.",
+            "doc": "https://support.google.com/campaignmanager/answer/2826636"
+          },
+          {
+            "name": "tag_for_child_directed_treatment",
             "format": {
               "kind": "enum",
               "values": [
@@ -66988,41 +66986,35 @@
                 "1"
               ]
             },
-            "allow_empty": true
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "dc_rdid",
-          "source": "https://support.google.com/campaignmanager/answer/2826636",
-          "checks": {
+            "allow_empty": true,
+            "description": "It is the COPPA signal. Google documents tag_for_child_directed_treatment=1 when the request may come from a user under 13. Generated tracking tags leave the slot empty until the publisher fills it.",
+            "fix_hint": "Send tag_for_child_directed_treatment=1 for COPPA traffic, 0 otherwise, or leave the generated empty slot.",
+            "doc": "https://support.google.com/campaignmanager/answer/2826636"
+          },
+          {
+            "name": "dc_rdid",
+            "description": "The vendor documents `dc_rdid` in the request contract.",
+            "doc": "https://support.google.com/campaignmanager/answer/2826636",
             "format": {
               "kind": "regex",
               "pattern": "^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$"
             },
             "allow_empty": true
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "ord",
-          "source": "https://support.google.com/campaignmanager/answer/2829774",
-          "checks": {
+          },
+          {
+            "name": "ord",
+            "description": "The vendor documents `ord` in the request contract.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774",
             "format": {
               "kind": "regex",
               "pattern": "^[^\\[\\]{}:%/\\\\=]{8,}$"
             },
             "format_severity": "warning"
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "ltd",
-          "source": "https://support.google.com/campaignmanager/answer/2826636",
-          "checks": {
+          },
+          {
+            "name": "ltd",
+            "description": "The vendor documents `ltd` in the request contract.",
+            "doc": "https://support.google.com/campaignmanager/answer/2826636",
             "format": {
               "kind": "enum",
               "values": [
@@ -67034,8 +67026,93 @@
             },
             "allow_empty": true
           }
-        }
-      ],
+        ],
+        "rules": [
+          {
+            "code": "vendor.cm360-tracking-ad.duplicate.dc_trk_aid",
+            "kind": "max_occurrences",
+            "param": "dc_trk_aid",
+            "max_occurrences": 1,
+            "severity": "warning",
+            "message": "CM360 warns that duplicate dc_trk_aid key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+            "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "code": "vendor.cm360-tracking-ad.duplicate.dc_trk_cid",
+            "kind": "max_occurrences",
+            "param": "dc_trk_cid",
+            "max_occurrences": 1,
+            "severity": "warning",
+            "message": "CM360 warns that duplicate dc_trk_cid key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+            "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "code": "vendor.cm360-tracking-ad.duplicate.dc_lat",
+            "kind": "max_occurrences",
+            "param": "dc_lat",
+            "max_occurrences": 1,
+            "severity": "warning",
+            "message": "CM360 warns that duplicate dc_lat key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+            "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "code": "vendor.cm360-tracking-ad.duplicate.tfua",
+            "kind": "max_occurrences",
+            "param": "tfua",
+            "max_occurrences": 1,
+            "severity": "warning",
+            "message": "CM360 warns that duplicate tfua key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+            "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "code": "vendor.cm360-tracking-ad.duplicate.tag_for_child_directed_treatment",
+            "kind": "max_occurrences",
+            "param": "tag_for_child_directed_treatment",
+            "max_occurrences": 1,
+            "severity": "warning",
+            "message": "CM360 warns that duplicate tag_for_child_directed_treatment key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+            "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "code": "vendor.cm360-tracking-ad.duplicate.dc_rdid",
+            "kind": "max_occurrences",
+            "param": "dc_rdid",
+            "max_occurrences": 1,
+            "severity": "warning",
+            "message": "CM360 warns that duplicate dc_rdid key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+            "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "code": "vendor.cm360-tracking-ad.duplicate.ord",
+            "kind": "max_occurrences",
+            "param": "ord",
+            "max_occurrences": 1,
+            "severity": "warning",
+            "message": "CM360 warns that duplicate ord key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+            "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          },
+          {
+            "code": "vendor.cm360-tracking-ad.duplicate.ltd",
+            "kind": "max_occurrences",
+            "param": "ltd",
+            "max_occurrences": 1,
+            "severity": "warning",
+            "message": "CM360 warns that duplicate ltd key-value pairs can affect serving and reporting. Preserve one complete generated value.",
+            "fix_hint": "Compare the tracker with the exported CM360 tag and remove the repeated assignment.",
+            "doc": "https://support.google.com/campaignmanager/answer/2829774"
+          }
+        ],
+        "body": [],
+        "http": [],
+        "http_queries": []
+      },
       "added_checks": [
         {
           "transport_scope": "query",
@@ -67084,42 +67161,10 @@
       ],
       "corrected_checks": [],
       "missing_requirements": [
-        {
-          "requirement": "Account-generated placement templates",
-          "applicability": "Tracking impression/click/script/iframe/app tags are generated with placement-specific IDs and paths",
-          "reason": "All fields explicitly listed on the primary tracking-ad source are mapped. A broad all-variants schema is not published on that page; dynamic generated templates cannot be invented as local required fields.",
-          "gap_kind": "unpublished_transport_schema",
-          "source": "https://support.google.com/campaignmanager/answer/2829774",
-          "status": "remaining",
-          "locally_checkable": false
-        },
-        {
-          "requirement": "ord freshness",
-          "applicability": "ord >=8 chars checked, freshness/randomness and reuse per tag",
-          "reason": "Needs multiple observed requests and execution.",
-          "gap_kind": "external_state",
-          "source": "https://support.google.com/campaignmanager/answer/2829774",
-          "status": "remaining",
-          "locally_checkable": false
-        },
-        {
-          "requirement": "App identifier applicability",
-          "applicability": "dc_rdid raw IFA required for mobile app tags and SSL requirements",
-          "reason": "UUID format checked; platform, IDFA consent and tag context are unavailable.",
-          "gap_kind": "input_model",
-          "source": "https://support.google.com/campaignmanager/answer/2829774",
-          "status": "remaining",
-          "locally_checkable": false
-        },
-        {
-          "requirement": "Google tag custom snippet object",
-          "applicability": "dc_custom_params is published as an arbitrary JavaScript object on the Floodlight Google tag snippet, not an encoded CM360 tracking-ad URL member",
-          "reason": "The published object accepts arbitrary custom values. No URL-encoded JSON schema is inferred for this separate transport; JavaScript snippets need a different artifact.",
-          "gap_kind": "out_of_current_transport",
-          "source": "https://support.google.com/campaignmanager/answer/2829774",
-          "status": "remaining",
-          "locally_checkable": false
-        }
+        "Only exact trackimp and trackclk route families, optionally prefixed by /ddm/, are selected. Similar names and unrelated paths stay uncovered.",
+        "Eight existing singleton key-value parameters gain duplicate-assignment warnings following Google guidance. Empty assignments and macro assignments still count. The check uses the matrix parser and does not claim bare matrix flags or arbitrary extensions are singleton fields.",
+        "Generated empty privacy slots, unresolved template macros, legacy unprefixed tracking routes and repeated unknown extension parameters remain permitted. Each duplicate warning targets the submitted assigned occurrences.",
+        "ord is not made universally required on click tracking. Account/creative ownership, cache-buster randomness, runtime macro expansion, child-treatment decisions, consent, impression counting, attribution and delivery require external context."
       ],
       "tests": [
         {
@@ -67157,7 +67202,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "b7d70af10566455fafd9d376f36a3c666cdcdbf300e698dd430ca18ffbc419b2",
+      "manifest_sha256": "c474f25a3de5d813fdb0f6b05699b21a90b81ac348f2f65f1a84a0dd72e227bd",
       "fixture_sha256": {
         "fixtures/vendor-cm360-tracking-ad/clean-trackclk.txt": "0ae2cda987c63d77320484ff3196a49556fce0744f84500832fc2693becdc58e",
         "fixtures/vendor-cm360-tracking-ad/clean-trackimp.txt": "ab584725984ec53ab352fd97d040acdc90fd73e4e5113863d803ed66ce06af25",
@@ -67209,16 +67254,78 @@
         "automatic_http_routing_examples": 0
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/cm360-tracking-ad.json": "b7d70af10566455fafd9d376f36a3c666cdcdbf300e698dd430ca18ffbc419b2",
+        "crates/pixellint-core/rulepacks/vendor/cm360-tracking-ad.json": "c474f25a3de5d813fdb0f6b05699b21a90b81ac348f2f65f1a84a0dd72e227bd",
         "fixtures/vendor-cm360-tracking-ad/clean-trackclk.txt": "0ae2cda987c63d77320484ff3196a49556fce0744f84500832fc2693becdc58e",
         "fixtures/vendor-cm360-tracking-ad/clean-trackimp.txt": "ab584725984ec53ab352fd97d040acdc90fd73e4e5113863d803ed66ce06af25",
         "fixtures/vendor-cm360-tracking-ad/invalid-aid.txt": "3cb50a4f783c74ab96ae0c0c2045c7b1c4ca497bd123334f7a6589686cb74103",
         "fixtures/vendor-cm360-tracking-ad/invalid-dc_lat.txt": "2707fc4d9c4b488023255556213aca82766e870541d321ed4d0aefc798aab833",
         "fixtures/vendor-cm360-tracking-ad/invalid-tag_for_child_directed_treatment.txt": "0d1a1cbce192368135e77d51442e554aa946f5d0ab7200c5b91fc09b76c44b66",
         "fixtures/vendor-cm360-tracking-ad/invalid-tfua.txt": "cd0fdaedc6b17548a524baf5768425bf5ed8bf1e930fb90a8a355e7b05b77f59",
-        "fixtures/vendor-cm360-tracking-ad/manifest.json": "39228f25b70607c2b2559b528c6c291d136ee04b22d3b9113e32e4df73c31114",
+        "fixtures/vendor-cm360-tracking-ad/manifest.json": "4458002d71f1f1789025fe9a4fbacab32db4e3625367edfa7937f321ce3c3c34",
         "fixtures/vendor-cm360-tracking-ad/missing-aid.txt": "2de41d1f1d73d79c5752501bda4301c50ef7d8a35f4a23d809846bd164a86c81",
-        "fixtures/vendor-cm360-tracking-ad/missing-cid.txt": "18484567637b4cfbec37c38ceb2b2a6331606f3fefa598457f6fbe5ac9d26f3b"
+        "fixtures/vendor-cm360-tracking-ad/missing-cid.txt": "18484567637b4cfbec37c38ceb2b2a6331606f3fefa598457f6fbe5ac9d26f3b",
+        "fixtures/vendor-cm360-tracking-ad/depth056-000-single-dc_trk_aid.txt": "1d23e36207ca1cf6ec72a3fcabe2112a6761906a3aa501acdd7dea628beabf19",
+        "fixtures/vendor-cm360-tracking-ad/depth056-001-duplicate-trackimp-dc_trk_aid.txt": "c908feec48567a890c6297b5029c84f2887f6c4b243a216654265cd353823aa1",
+        "fixtures/vendor-cm360-tracking-ad/depth056-002-duplicate-trackclk-dc_trk_aid.txt": "ccb0ce3ecbc57f6019b8beff5ed2097ddbaa79e55dc9bfdfe2a40ed5ed1d7929",
+        "fixtures/vendor-cm360-tracking-ad/depth056-003-encoded-key-dc_trk_aid.txt": "5c19286167dceda807e938379c01cfdc9d29b3d82636b0a0c642cc1e906dd172",
+        "fixtures/vendor-cm360-tracking-ad/depth056-004-single-dc_trk_cid.txt": "544ba425997c2ec14b2ee167d5ea4b6f0976db56282fd2e7236586e6b5ddcb73",
+        "fixtures/vendor-cm360-tracking-ad/depth056-005-duplicate-trackimp-dc_trk_cid.txt": "ea6743a983f502a4a2929dab43d5edc15ccffa3574977421568075ab6973bd19",
+        "fixtures/vendor-cm360-tracking-ad/depth056-006-duplicate-trackclk-dc_trk_cid.txt": "2427797fbbed26a7c9946ffb1276a83d790d0710028739a3c6ff86fdb09d33a8",
+        "fixtures/vendor-cm360-tracking-ad/depth056-007-encoded-key-dc_trk_cid.txt": "539bf82b988e312916355c1b92c52ac2625fde8c294379889969e7febe34e3a7",
+        "fixtures/vendor-cm360-tracking-ad/depth056-008-single-dc_lat.txt": "d0c8f1840c211ff3caaec761d6cf20a8cc8a34d5c0f050c8959eacfae2f39c96",
+        "fixtures/vendor-cm360-tracking-ad/depth056-009-duplicate-trackimp-dc_lat.txt": "27da2805bc95daeec0dccca192805db7134a693dede802d7c09c0cac01f26766",
+        "fixtures/vendor-cm360-tracking-ad/depth056-010-duplicate-trackclk-dc_lat.txt": "44e0358fb07b70f7a7c749ed33370241be2eb5f3823496fa44c0b35c8f655fb0",
+        "fixtures/vendor-cm360-tracking-ad/depth056-011-encoded-key-dc_lat.txt": "f8da617dd9de56e6fce2950579f5333ef74e6d40607ecb9f0174187a1e303d7f",
+        "fixtures/vendor-cm360-tracking-ad/depth056-012-single-tfua.txt": "61cd4b04913aca7be96bdb7f2231b409b332b0aebb4ce9107a5b68633728122f",
+        "fixtures/vendor-cm360-tracking-ad/depth056-013-duplicate-trackimp-tfua.txt": "44b428f995421436c14f0297a16feef3d59645f3a7bbe591d393d170915c0fd6",
+        "fixtures/vendor-cm360-tracking-ad/depth056-014-duplicate-trackclk-tfua.txt": "01c72e2e15a5b0705bea6cfe6b431742e14e53eac0e9bef4ffcc907226f7a1f0",
+        "fixtures/vendor-cm360-tracking-ad/depth056-015-encoded-key-tfua.txt": "a79c0f9509b6760c84dd470682f04d9b24a39222774357b1b150aa34769ab8d0",
+        "fixtures/vendor-cm360-tracking-ad/depth056-016-single-tag_for_child_directed_treatment.txt": "f1345541e6b316b1b2e4fdb2b21b6d38577c2c24e5b6ad71a64e6797f56c1ba3",
+        "fixtures/vendor-cm360-tracking-ad/depth056-017-duplicate-trackimp-tag_for_child_directed_treatment.txt": "31fcb1bcc1a221080ec96b91f971161a491b239d4a5a7b27c7c34a2fbdfe1784",
+        "fixtures/vendor-cm360-tracking-ad/depth056-018-duplicate-trackclk-tag_for_child_directed_treatment.txt": "a34acd246b601c5699e345d2885c3937160362dac180c21aee7613f807930481",
+        "fixtures/vendor-cm360-tracking-ad/depth056-019-encoded-key-tag_for_child_directed_treatment.txt": "93bf05d380c16865c79611907eb7a01d02e1b430b7624a14789886f219566138",
+        "fixtures/vendor-cm360-tracking-ad/depth056-020-single-dc_rdid.txt": "29dddf70bc69d20a0ebce2e54d4a635f59752c448205ff9b0558abe3b856874b",
+        "fixtures/vendor-cm360-tracking-ad/depth056-021-duplicate-trackimp-dc_rdid.txt": "8e254d03c99ea9ade402b5ff1107dcd30a68104d61aefe81c72b62fd7763e28e",
+        "fixtures/vendor-cm360-tracking-ad/depth056-022-duplicate-trackclk-dc_rdid.txt": "d26978571c378e6b2d8d0b0c8ac70102db543730bbf406c13011a0a99b745055",
+        "fixtures/vendor-cm360-tracking-ad/depth056-023-encoded-key-dc_rdid.txt": "db0a89ded81f555e9f04d84f623b1ce6eb785a03ac38c9cc630b82bc41b121a7",
+        "fixtures/vendor-cm360-tracking-ad/depth056-024-single-ord.txt": "e1a61e4d8b2d1feed5aea4ebf510f6fcabee99f36d707c070ec5fed51354cfa8",
+        "fixtures/vendor-cm360-tracking-ad/depth056-025-duplicate-trackimp-ord.txt": "819fceb488f6455f38cf482d108c80a5986bc0a556044d54a548b96ef055742d",
+        "fixtures/vendor-cm360-tracking-ad/depth056-026-duplicate-trackclk-ord.txt": "54a79ebc0bd55522b0d19565e0a5a1120043f6320ed26645350e9d3839b4627f",
+        "fixtures/vendor-cm360-tracking-ad/depth056-027-encoded-key-ord.txt": "645c36080326619a92e729b2e5c4a694699e4e9723fccfd0e6258564df1bb9dd",
+        "fixtures/vendor-cm360-tracking-ad/depth056-028-single-ltd.txt": "acf4c476ec76ce532ee8076b1f290cc65642a1dc66f6b7036c64b542ea23d65d",
+        "fixtures/vendor-cm360-tracking-ad/depth056-029-duplicate-trackimp-ltd.txt": "662a7e22014590fa61319bfd6dbb09823cff7dc6074a734898270ed2291aaffd",
+        "fixtures/vendor-cm360-tracking-ad/depth056-030-duplicate-trackclk-ltd.txt": "7822dac338884982723e3ac431eb42c1b9a7df975da56a0f3738fab93b64fff9",
+        "fixtures/vendor-cm360-tracking-ad/depth056-031-encoded-key-ltd.txt": "5832d326126f43ca035b48716f002abc5b6c4a306901c8c5456e8a37713e5d25",
+        "fixtures/vendor-cm360-tracking-ad/depth056-032-empty-slot-dc_lat.txt": "80ed5ce81fef0ba202a2972969fce139773ced13aeb5460980d6a3ef6781eba8",
+        "fixtures/vendor-cm360-tracking-ad/depth056-033-duplicate-empty-slot-dc_lat.txt": "0287214d6e3816588c4e095a25217f2d925ff29d9c27888117133f72a116cfc6",
+        "fixtures/vendor-cm360-tracking-ad/depth056-034-empty-slot-tfua.txt": "db7f6d2b0ab14d77561693acbb8610a50171a0dc484a5da8553d8bc792672421",
+        "fixtures/vendor-cm360-tracking-ad/depth056-035-duplicate-empty-slot-tfua.txt": "e12c7549fad0ad5e6631b7334743a72c6bf0c2bae860a98437f62517236023b7",
+        "fixtures/vendor-cm360-tracking-ad/depth056-036-empty-slot-tag_for_child_directed_treatment.txt": "3cde48a31463e6470858bbed38e61284394fac47d98b9bfa6a192af9f2800771",
+        "fixtures/vendor-cm360-tracking-ad/depth056-037-duplicate-empty-slot-tag_for_child_directed_treatment.txt": "6bbd440fa10c868ee7313a2ddf1eb5f15d4eb571a000ebd5c7c3196af8bb486f",
+        "fixtures/vendor-cm360-tracking-ad/depth056-038-empty-slot-dc_rdid.txt": "d86db826a08e9b01147a9209cfd28daec4c3ac7ff5162ffd3015131af0d23b2d",
+        "fixtures/vendor-cm360-tracking-ad/depth056-039-duplicate-empty-slot-dc_rdid.txt": "215761ea0fc9ad1dd54c830d94547c97df268b5896528890c6fc031dc9d2cae0",
+        "fixtures/vendor-cm360-tracking-ad/depth056-040-empty-slot-ltd.txt": "dc7781d3e9b9e27bed64e2e4e75133853f59c90f0bc61db4ecde40941ea45af5",
+        "fixtures/vendor-cm360-tracking-ad/depth056-041-duplicate-empty-slot-ltd.txt": "532f144c68f3be85cd666a5f3eb36f9d1045647dbbfaec46efca70fc320116cf",
+        "fixtures/vendor-cm360-tracking-ad/depth056-042-all-singletons.txt": "1b8426f7ea06b867f6176547caa2d5d565f352ff1808c67c38247b6d4ab26cfb",
+        "fixtures/vendor-cm360-tracking-ad/depth056-043-all-repeated.txt": "ba9e748e5f621e4b38e3690cffb6618a04c91267be9eab81305a2bfaead09780",
+        "fixtures/vendor-cm360-tracking-ad/depth056-044-macro-duplicates.txt": "73aa7ef3a2f3396c87295ac5cab4869f97ef959948aa9030fec56c37ac7d15f6",
+        "fixtures/vendor-cm360-tracking-ad/depth056-045-blank-does-not-get-hidden.txt": "fcf55fe062bde657a78d8527b8d067fd14f736867d974cbfc0f1ff338efb5278",
+        "fixtures/vendor-cm360-tracking-ad/depth056-046-invalid-not-hidden.txt": "004ae351a22f3afaf28fd9faf871f4a3d989f430b1cdbe8b4723dd3d37e63d52",
+        "fixtures/vendor-cm360-tracking-ad/depth056-047-opaque-repeated-extensions.txt": "8039c1381c09835011e413b257e1a7e8bb7d9bed15c9d1a89029ba4393e76355",
+        "fixtures/vendor-cm360-tracking-ad/depth056-048-vast-duplicates.txt": "ea5f622b4786bf62d3acd1294b47c66eca93e4131ba3300975991658ff389a46",
+        "fixtures/vendor-cm360-tracking-ad/depth056-049-postback-duplicates.txt": "ea5f622b4786bf62d3acd1294b47c66eca93e4131ba3300975991658ff389a46",
+        "fixtures/vendor-cm360-tracking-ad/depth056-050-http-duplicates.txt": "d62a1314b0c096ca5c210cbf0bab4586a6392045f1e20ac56dd1b294285b512f",
+        "fixtures/vendor-cm360-tracking-ad/depth056-051-legacy-route-51.txt": "c5195d4bb6fe6345fcacce20de79eee5145c2b085cfd76e178e326df74da1b11",
+        "fixtures/vendor-cm360-tracking-ad/depth056-052-legacy-route-52.txt": "69e849896e32ef899394ea9dc700309cd353abf6118aedffaa0998973de45f08",
+        "fixtures/vendor-cm360-tracking-ad/depth056-053-neighbor-53.txt": "6d1527f39edbbe175eaed4d4bbc74784f792ad30c86bb3e05eff96adfa1bbeb3",
+        "fixtures/vendor-cm360-tracking-ad/depth056-054-neighbor-54.txt": "97c04483e8c0a7658ca48fcccfe1af0d5fe8263e343d6f40d30e6536eaad93ff",
+        "fixtures/vendor-cm360-tracking-ad/depth056-055-neighbor-55.txt": "6ac53d5eaa1949f6ae286a8ac9ed15f5d1ddcb00e3e16502a5b4ce4bc313b251",
+        "crates/pixellint-core/src/manifest.rs": "d383f6c67144cb2386c9e5b01f23c93adc72bd840d0a6cfa4ce160522b6452b7",
+        "crates/pixellint-core/src/lib.rs": "8d55355e751f1b3d2ef5aa073e6ac10f858f0509d52f511d5948243936f5bf3c",
+        "docs/RULEPACK_SCHEMA.md": "d4ef07cdb6461c5d4da7405c3673b84543adf29de6b3d2c836eb30f73a7a5bb1",
+        "crates/pixellint-core/tests/analytics_depth.rs": "b54dd89112be43a15e8689d478389db4cb2fb7bc68d0ecd38e9528cc120f0804",
+        "docs/reviews/pixel-collectors-056.json": "cd7ee5ad909d174c5b5acdb03aec1c4bc74df32962a1dd54dd2dc413066eb287",
+        "crates/pixellint-core/tests/pixel_collectors_056.rs": "fd471a1f99c57a39232b8ae36cd68ce55a481ecdcc145c00c65aee515b2609a9"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -67243,7 +67350,23 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "disposition": "implemented_source_scoped_partial",
+      "match": {
+        "host_suffixes": [
+          "doubleclick.net"
+        ],
+        "path_patterns": [
+          "^/(?:ddm/)?track(?:imp|clk)(?:[;/].*)?$"
+        ]
+      },
+      "source_urls": [
+        "https://support.google.com/campaignmanager/answer/2829774",
+        "https://support.google.com/campaignmanager/answer/2826636",
+        "https://support.google.com/campaignmanager/answer/3040965"
+      ],
+      "golden_cases": 64,
+      "collector_followup": "docs/reviews/pixel-collectors-056.json"
     },
     {
       "id": "vendor/cm360-vast-event",
@@ -249777,25 +249900,38 @@
       "reviewed_at": "2026-10-08",
       "status": "deepened_with_gaps",
       "spec_complete": false,
-      "manifest_sha256": "19c64c4861b1e1672127c77556339defa9a1969fd5f0e3e4c13d46d7e0086abe",
+      "manifest_sha256": "0bff461ea350c7849cb6018b8a8b5dd651b31ba7665c585a3ef91c7f6085fb00",
       "fixture_corpus_sha256": "255d088fd8c14d174aeeaafe7596b1328c6528e2fb476c58e773e02c8e0852af",
       "protocol_scope": "Server-side conversion events posted to api.quora.com/ads/v0/conversion. Browser pixels on q.quora.com stay directory-only.",
       "source_level": "official_vendor",
       "sources_read": [
         {
+          "url": "https://raw.githubusercontent.com/quora/quora-capi-tag/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "30110de1038f993843e3191fcb784f1a49f624c1bc97a63377caa04dd862174a",
+          "snapshot_kind": "original downloaded bytes"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/quora/quora-capi-tag/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/README.md",
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "671e96d2dc8706251de031f3c4b4767e7f909084976252a879ece9745c90e639",
+          "snapshot_kind": "original downloaded bytes"
+        },
+        {
           "url": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview",
-          "access": "read",
-          "note": "Primary vendor page read and compared with the shipped contract."
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "cc70246232d88837aac71ad13aa76e1192e8cd480e8f543b524849fd130a1098",
+          "snapshot_kind": "original downloaded bytes"
         },
         {
-          "url": "https://github.com/quora/quora-capi-tag",
-          "access": "read",
-          "note": "Primary vendor/official SDK supporting source read."
-        },
-        {
-          "url": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
-          "access": "read",
-          "note": "Primary vendor/official SDK supporting source read."
+          "url": "https://www.quora.com/ads/conversion_api_doc",
+          "access": "read_primary_source",
+          "retrieved_on": "2026-10-21",
+          "snapshot_sha256": "3612d912a02e4ed61431896c28b6df2490031b8d5092b3ea57576099381bd835",
+          "snapshot_kind": "original downloaded bytes"
         }
       ],
       "published_contract_groups": [
@@ -249804,193 +249940,263 @@
         "Click ID attribution recommendation and empty user object support",
         "Current guide versus inaccessible linked full schema"
       ],
-      "contracts_mapped": [
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "account_id",
-          "requirement": "required",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the Quora Ads account id. Quora documents it as required on the Conversion API request.",
-          "fix_hint": "Set `account_id` to the Ads account id from Quora Ads Manager.",
-          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
-          "json_type": "number",
-          "source_level": "official_template"
+      "contracts_mapped": {
+        "params": [],
+        "rules": [],
+        "body": [
+          {
+            "params": [
+              {
+                "name": "account_id",
+                "requirement": "required",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "It is the Quora Ads account id. Quora documents it as required on the Conversion API request.",
+                "fix_hint": "Set `account_id` to the Ads account id from Quora Ads Manager.",
+                "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+                "json_type": "number",
+                "source_level": "official_template"
+              },
+              {
+                "name": "conversion.event_name",
+                "requirement": "required",
+                "format": {
+                  "kind": "enum",
+                  "values": [
+                    "Generic",
+                    "ViewContent",
+                    "Search",
+                    "AddToCart",
+                    "AddToWishlist",
+                    "InitiateCheckout",
+                    "AddPaymentInfo",
+                    "Purchase",
+                    "GenerateLead",
+                    "CompleteRegistration",
+                    "AppInstall"
+                  ]
+                },
+                "description": "It is the conversion event name. Quora documents a fixed PixelCategory set on the Conversion API.",
+                "fix_hint": "Use a documented name such as `Purchase` or `Generic`.",
+                "doc": "https://github.com/quora/quora-capi-tag",
+                "json_type": "string"
+              },
+              {
+                "name": "conversion.click_id",
+                "requirement": "recommended",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "The official server-side template documents that events without qclid are accepted but cannot be attributed to an ad click.",
+                "fix_hint": "Send `conversion.click_id` as the `qclid` from the landing-page URL or `quora_qclid` cookie.",
+                "doc": "https://github.com/quora/quora-capi-tag",
+                "json_type": "string"
+              },
+              {
+                "name": "conversion.event_id",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "It identifies the event so Pixel and CAPI can deduplicate. Quora documents sharing the same `event_id` across both.",
+                "fix_hint": "Send a stable `conversion.event_id` on both the pixel and the Conversion API call.",
+                "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/46220613643789-How-Quora-counts-conversions",
+                "json_type": "string"
+              },
+              {
+                "name": "conversion.value",
+                "description": "It is the conversion value. Quora's Conversion API tag sends it as a number.",
+                "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
+                "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+                "json_type": "number",
+                "source_level": "official_template"
+              },
+              {
+                "name": "conversion.timestamp",
+                "format": {
+                  "kind": "integer"
+                },
+                "description": "It is the event time. Quora's Conversion API tag sends microseconds since epoch.",
+                "fix_hint": "Send an integer timestamp. The official tag uses microseconds.",
+                "doc": "https://github.com/quora/quora-capi-tag",
+                "json_type": "integer"
+              },
+              {
+                "name": "device.user_agent",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "It is the device user agent. Quora's Conversion API tag sends it unhashed when the client provides it.",
+                "fix_hint": "Send `device.user_agent`, or drop the empty pair.",
+                "doc": "https://github.com/quora/quora-capi-tag",
+                "json_type": "string"
+              },
+              {
+                "name": "device.referer",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "It is the page referrer. Quora's Conversion API tag uses the `referer` spelling.",
+                "fix_hint": "Send `device.referer`, or drop the empty pair.",
+                "doc": "https://github.com/quora/quora-capi-tag",
+                "json_type": "string"
+              },
+              {
+                "name": "device.language",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "It is the device language. Quora's Conversion API tag sends it when the client provides it.",
+                "fix_hint": "Send `device.language`, or drop the empty pair.",
+                "doc": "https://github.com/quora/quora-capi-tag",
+                "json_type": "string"
+              },
+              {
+                "name": "device.mobile_device_id",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "description": "It is the mobile advertising id. Quora's Conversion API tag sends it when the client provides it.",
+                "fix_hint": "Send `device.mobile_device_id`, or drop the empty pair.",
+                "doc": "https://github.com/quora/quora-capi-tag",
+                "json_type": "string"
+              },
+              {
+                "name": "",
+                "description": "Each event is a JSON object, rather than a scalar or list.",
+                "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview",
+                "json_type": "object"
+              },
+              {
+                "name": "conversion",
+                "description": "The current official vendor reference documents this field.",
+                "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+                "json_type": "object",
+                "source_level": "official_template"
+              },
+              {
+                "name": "device",
+                "description": "The current official vendor reference documents this field.",
+                "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+                "json_type": "object",
+                "source_level": "official_template"
+              },
+              {
+                "name": "user",
+                "requirement": "required",
+                "json_type": "object",
+                "description": "The official Quora server-side template identifies user as a required object and sends an empty object when no user data is mapped.",
+                "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
+                "source_level": "official_template"
+              }
+            ],
+            "rules": []
+          }
+        ],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+              "description": "The pinned official server template sends POST. This is transport advice, not a complete receiver method specification.",
+              "requirement": "required",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "POST"
+                ]
+              }
+            },
+            {
+              "name": "headers.authorization",
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+              "description": "The official template sends an opaque access token in Authorization: Bearer. Token contents, ownership and expiration remain external.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "regex",
+                "pattern": "^(?i:Bearer) +[^\\s]+$"
+              },
+              "fix_hint": "Send Authorization: Bearer followed by your CAPI access token. Keep tokens out of browser code."
+            },
+            {
+              "name": "content_type",
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+              "description": "The official server template serializes a JSON object and sets application/json.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "application/json"
+                ]
+              }
+            },
+            {
+              "name": "body",
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+              "description": "The server template always includes a request body. Unavailable or unsupported captured bodies retain the engine capture-state rules.",
+              "requirement": "required"
+            },
+            {
+              "name": "body_encoding",
+              "severity": "warning",
+              "source_level": "official_template",
+              "doc": "https://github.com/quora/quora-capi-tag/blob/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+              "description": "Known decoded entities must be JSON for the reviewed producer. Unsupported compressed or multipart representations remain explicitly unvalidated.",
+              "requirement": "required",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "json"
+                ]
+              },
+              "condition": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "value_in",
+                      "param": "body_encoding",
+                      "values": [
+                        "unsupported"
+                      ]
+                    }
+                  },
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "body_encoding",
+                        "values": [
+                          "none"
+                        ]
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "content_type",
+                        "values": [
+                          "application/json"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "rules": []
         },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "conversion.event_name",
-          "requirement": "required",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "Generic",
-              "ViewContent",
-              "Search",
-              "AddToCart",
-              "AddToWishlist",
-              "InitiateCheckout",
-              "AddPaymentInfo",
-              "Purchase",
-              "GenerateLead",
-              "CompleteRegistration",
-              "AppInstall"
-            ]
-          },
-          "description": "It is the conversion event name. Quora documents a fixed PixelCategory set on the Conversion API.",
-          "fix_hint": "Use a documented name such as `Purchase` or `Generic`.",
-          "doc": "https://github.com/quora/quora-capi-tag",
-          "json_type": "string"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "conversion.click_id",
-          "requirement": "recommended",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "The official server-side template documents that events without qclid are accepted but cannot be attributed to an ad click.",
-          "fix_hint": "Send `conversion.click_id` as the `qclid` from the landing-page URL or `quora_qclid` cookie.",
-          "doc": "https://github.com/quora/quora-capi-tag",
-          "json_type": "string"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "conversion.event_id",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It identifies the event so Pixel and CAPI can deduplicate. Quora documents sharing the same `event_id` across both.",
-          "fix_hint": "Send a stable `conversion.event_id` on both the pixel and the Conversion API call.",
-          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/46220613643789-How-Quora-counts-conversions",
-          "json_type": "string"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "conversion.value",
-          "description": "It is the conversion value. Quora's Conversion API tag sends it as a number.",
-          "fix_hint": "Send a number such as `129.99`, with no currency symbol.",
-          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
-          "json_type": "number",
-          "source_level": "official_template"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "conversion.timestamp",
-          "format": {
-            "kind": "integer"
-          },
-          "description": "It is the event time. Quora's Conversion API tag sends microseconds since epoch.",
-          "fix_hint": "Send an integer timestamp. The official tag uses microseconds.",
-          "doc": "https://github.com/quora/quora-capi-tag",
-          "json_type": "integer"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "device.user_agent",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the device user agent. Quora's Conversion API tag sends it unhashed when the client provides it.",
-          "fix_hint": "Send `device.user_agent`, or drop the empty pair.",
-          "doc": "https://github.com/quora/quora-capi-tag",
-          "json_type": "string"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "device.referer",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the page referrer. Quora's Conversion API tag uses the `referer` spelling.",
-          "fix_hint": "Send `device.referer`, or drop the empty pair.",
-          "doc": "https://github.com/quora/quora-capi-tag",
-          "json_type": "string"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "device.language",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the device language. Quora's Conversion API tag sends it when the client provides it.",
-          "fix_hint": "Send `device.language`, or drop the empty pair.",
-          "doc": "https://github.com/quora/quora-capi-tag",
-          "json_type": "string"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "device.mobile_device_id",
-          "format": {
-            "kind": "non_empty"
-          },
-          "description": "It is the mobile advertising id. Quora's Conversion API tag sends it when the client provides it.",
-          "fix_hint": "Send `device.mobile_device_id`, or drop the empty pair.",
-          "doc": "https://github.com/quora/quora-capi-tag",
-          "json_type": "string"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "",
-          "description": "Each event is a JSON object, rather than a scalar or list.",
-          "doc": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview",
-          "json_type": "object"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "conversion",
-          "description": "The current official vendor reference documents this field.",
-          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
-          "json_type": "object",
-          "source_level": "official_template"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "device",
-          "description": "The current official vendor reference documents this field.",
-          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
-          "json_type": "object",
-          "source_level": "official_template"
-        },
-        {
-          "transport": "body",
-          "scope": "",
-          "context": {},
-          "name": "user",
-          "requirement": "required",
-          "json_type": "object",
-          "description": "The official Quora server-side template identifies user as a required object and sends an empty object when no user data is mapped.",
-          "doc": "https://github.com/quora/quora-capi-tag/blob/main/template.tpl",
-          "source_level": "official_template"
-        }
-      ],
+        "http_queries": []
+      },
       "supplemental_published_inventory": null,
       "currency_registry_contracts": [],
       "currency_registry_snapshot": null,
@@ -250503,19 +250709,11 @@
       "gdpr_context_change": null,
       "path_capture_change": null,
       "missing_requirements": [
-        {
-          "requirement": "Complete current API schema and all user identifier rules",
-          "reason": "The official overview and server-side template were readable, but the full schema/setup link was inaccessible. Template types do not prove every server acceptance rule.",
-          "class": "source_partial",
-          "source": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview"
-        },
-        {
-          "requirement": "Authorization and active Quora account/click attribution",
-          "reason": "Complete captures now provide authorization headers. Source-specific credential syntax remains unapplied in this bounded pass; active account and click history remain external.",
-          "class": "unimplemented_http_branch_and_external_or_source_context",
-          "source": "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview",
-          "baseline_class": "external_state"
-        }
+        "Only the exact /ads/v0/conversion URL and existing JSON payload signature are selected. Neighboring routes stay uncovered. Bare URLs cannot prove HTTP transport or body correctness.",
+        "New POST, Bearer, JSON MIME, body-presence and decoded-encoding checks are advisory. They follow the official server template pinned at ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4, not a complete receiver specification. Missing or redacted capture evidence retains engine availability semantics.",
+        "The public Redoc wrapper was read, but its linked OpenAPI YAML returned HTTP 403 through an ordinary fetch and an ordinary unauthenticated browser request. No full receiver schema was read or inferred.",
+        "Existing event body contracts remain. Empty user objects, zero and signed values, unknown extension fields and events without click attribution remain permitted. The official template documents no-qclid acceptance; no universal click ID requirement is added.",
+        "User identifier hashing rules, token validity, account ownership, timestamp age, consent configuration, event deduplication, attribution and receiver acceptance require external evidence. No JWT grammar or hard producer-only required fields are invented."
       ],
       "tests": {
         "fixture_directory": "fixtures/vendor-quora-conversions-api",
@@ -250581,8 +250779,8 @@
         "source_targets": 18
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/quora-conversions-api.json": "19c64c4861b1e1672127c77556339defa9a1969fd5f0e3e4c13d46d7e0086abe",
-        "fixtures/vendor-quora-conversions-api/manifest.json": "41ca9822f3316a3ef47010ff66d1e2bee81a580295427b16ac9cc8acf843fdb0",
+        "crates/pixellint-core/rulepacks/vendor/quora-conversions-api.json": "0bff461ea350c7849cb6018b8a8b5dd651b31ba7665c585a3ef91c7f6085fb00",
+        "fixtures/vendor-quora-conversions-api/manifest.json": "f2b75112e676923f3556622e99c32d6e5a8f4c71a29e9e3cdc4076cfdf1cd4a0",
         "fixtures/vendor-quora-conversions-api/source-targets.json": "21e7fe33be5ec0bb96c49e38421e12020d505382cbdd87e625d9e6b9953f6b9f",
         "fixtures/vendor-quora-conversions-api/clean-purchase.txt": "e8be504897925172044afc980f63d098a30cd5e0fa62a6e3a8cb41e07d2de3a2",
         "fixtures/vendor-quora-conversions-api/missing-event-name.txt": "a6247ceb25f2560607945252d6152c8c894fef3abc90cd7142ee1a86fd3077db",
@@ -250606,7 +250804,49 @@
         "fixtures/vendor-quora-conversions-api/depth-zero-value.txt": "1769e52f57f921f4297444392a34972f2aa84873187b39ace2614fcb25462b5e",
         "fixtures/vendor-quora-conversions-api/depth-decimal-value.txt": "4d168762973e48a1d9f06c4af57d9c0f2a39a0d7e873b38b7672a06ac84db6a6",
         "fixtures/vendor-quora-conversions-api/depth-missing-user-object.txt": "aa655196291b0a90d6c614ddeb5416ca9af18822ce6a5d3b9b2d8764640d154b",
-        "fixtures/vendor-quora-conversions-api/depth-missing-click-advisory.txt": "b2efe39ce5fbb8394503a1741293ba4ad211835dd31c78569847305e8190f4ae"
+        "fixtures/vendor-quora-conversions-api/depth-missing-click-advisory.txt": "b2efe39ce5fbb8394503a1741293ba4ad211835dd31c78569847305e8190f4ae",
+        "fixtures/vendor-quora-conversions-api/depth056-000-producer-purchase.txt": "91147ac384f784a004f3a6632782d21f746aae15beb20230ae7d4c283e6e6687",
+        "fixtures/vendor-quora-conversions-api/depth056-001-producer-minimal.txt": "2c07e49e550051381a5cc803819f39225d55fe03e2f9d2d7a6964720e1b11211",
+        "fixtures/vendor-quora-conversions-api/depth056-002-producer-zero-value.txt": "a581fdf9c3d055b2f8832cd3c26727c581c3fc3f432d6bb7995ef0aeb98bf874",
+        "fixtures/vendor-quora-conversions-api/depth056-003-producer-signed-value.txt": "3f74682b66c1e47dbe6930bd8dd266779991a3ade287dce2ade93803eb90b872",
+        "fixtures/vendor-quora-conversions-api/depth056-004-producer-unknown-event.txt": "2c07e49e550051381a5cc803819f39225d55fe03e2f9d2d7a6964720e1b11211",
+        "fixtures/vendor-quora-conversions-api/depth056-005-producer-no-click.txt": "6b183afca7f130b5a685bec03c4037ffd742f85f4cb1b71c2b26e6860d9a59f3",
+        "fixtures/vendor-quora-conversions-api/depth056-006-producer-url-click.txt": "8758351b57717ef063bc40e6680175a3aedd208559799ed10512a68bdfec4323",
+        "fixtures/vendor-quora-conversions-api/depth056-007-producer-cookie-click.txt": "23fadb2604d15fee4c0fcfaa7243d0e25e00c6f90de011b157b4fd570651dcdc",
+        "fixtures/vendor-quora-conversions-api/depth056-008-producer-standard-event.txt": "eae88dbd8a145bfa2de6cf09569593e52ab1a49c577e308da8d4206b0f5c6026",
+        "fixtures/vendor-quora-conversions-api/depth056-009-producer-consent-granted.txt": "70e16e70dc64491646ddccf016e700fe0f2a587fa00bfd089ace17b78795e357",
+        "fixtures/vendor-quora-conversions-api/depth056-010-producer-referrer-click.txt": "a228ae05300d673edcf04eebe4644404c67fb3cbfaf70f18d4a391ec11a615b6",
+        "fixtures/vendor-quora-conversions-api/depth056-011-capture-valid.txt": "3854671258edca6558a9a684b4217ec04cedbcd24b344133583b615d60697d7b",
+        "fixtures/vendor-quora-conversions-api/depth056-012-method-get.txt": "476e8c7b2531247f2fbf99db0aa5ffc77e9844524ec5a8a89dad5cc7df47c699",
+        "fixtures/vendor-quora-conversions-api/depth056-013-method-put.txt": "f10328b2f9bb5558f96a8919ee18b125fd6f733f513453756e6e651a656c75fa",
+        "fixtures/vendor-quora-conversions-api/depth056-014-auth-empty.txt": "938c11efde80029814e58e2814af1c8eefb23c9b984c5de2acab73f0e134fb04",
+        "fixtures/vendor-quora-conversions-api/depth056-015-auth-scheme-only.txt": "419f29958f5137e8ff837d25b64a4911a6752d2575575480266d71d7fca34957",
+        "fixtures/vendor-quora-conversions-api/depth056-016-auth-empty-token.txt": "9066c8d7c4424c3443de5445ee27bd9a3d0554fe44d0b7f6cb15e58f91882d21",
+        "fixtures/vendor-quora-conversions-api/depth056-017-auth-basic.txt": "8e6bb83ce63528f4e2b0503362dae54a0dd62a6129ff7c22dda87023c043483f",
+        "fixtures/vendor-quora-conversions-api/depth056-018-auth-no-scheme.txt": "2d8d06c184227b9ad1b0348648425621c64e0f3bccda993d4bdb1257d790befa",
+        "fixtures/vendor-quora-conversions-api/depth056-019-auth-token-space.txt": "370ed79b407de8f1fe3f5e79f29737acc3ed6d5a663a2699789546b1dd5152bb",
+        "fixtures/vendor-quora-conversions-api/depth056-020-missing-auth.txt": "2ebc0951c68278bc6a026013f7bb4f9b3be57c16640f8f1eaf82137d929bfac3",
+        "fixtures/vendor-quora-conversions-api/depth056-021-auth-valid-21.txt": "a8611a2e27aeaec989a5eb922aafaf19d4b301f2c820597e1af469b15a754f1b",
+        "fixtures/vendor-quora-conversions-api/depth056-022-auth-valid-22.txt": "17bf827fce98de3758ecff7e9086944be0b05792742e0c6b37f7014ded1e46b7",
+        "fixtures/vendor-quora-conversions-api/depth056-023-auth-valid-23.txt": "b5ad12706690ab8a8693f22ae4ee3542e460b818a3537dc3273512712fe21893",
+        "fixtures/vendor-quora-conversions-api/depth056-024-charset-json.txt": "2cecd6beb6031598bcabb2a7783328f1c6023c9434ade1b17324b3c9e67260e5",
+        "fixtures/vendor-quora-conversions-api/depth056-025-missing-mime.txt": "86e9ff7cf7dc6e354e03f060fd4aaa8e65a3f6300ad9ef67b695d2204ff91813",
+        "fixtures/vendor-quora-conversions-api/depth056-026-wrong-mime.txt": "fc9bd1aee4da8c64e1f23454636b64c7116864f8a648ee8a27be30bef04050be",
+        "fixtures/vendor-quora-conversions-api/depth056-027-json-string-body.txt": "3854671258edca6558a9a684b4217ec04cedbcd24b344133583b615d60697d7b",
+        "fixtures/vendor-quora-conversions-api/depth056-028-no-body.txt": "add8b73fa3682aaa13ccd41a7f33d9f9d198cdd1b69ddaed5980fe63a2c004ec",
+        "fixtures/vendor-quora-conversions-api/depth056-029-empty-json-object.txt": "4d89df240b9516d0b79578cf47beaed69b3fc86be79317fb4c143713269f21c8",
+        "fixtures/vendor-quora-conversions-api/depth056-030-bare-json-no-http-advice.txt": "508e9d26fa9d7beb4ea1e3e834aa7732b77faba817de679a390c42f3fa243cd6",
+        "fixtures/vendor-quora-conversions-api/depth056-031-url-only-no-capture-requiredness.txt": "996faf009d5dc21ed0f8daff81db725778e04ec7a769482353fd851fa227e438",
+        "fixtures/vendor-quora-conversions-api/depth056-032-neighbor-32.txt": "44f7ae4f32af68ab5cadf3cf6aae8f1561b113eaeb7a7b7012557dda7f2afefe",
+        "fixtures/vendor-quora-conversions-api/depth056-033-neighbor-33.txt": "a9866f527ced54c88e1f8effe03e36ac56b6a92d236f5514c3defc50f317b591",
+        "fixtures/vendor-quora-conversions-api/depth056-034-neighbor-34.txt": "00117afa126ff724ee3963668627cf0b1dd832087e74f1ad52e6bd8659a770f6",
+        "fixtures/vendor-quora-conversions-api/depth056-035-unknown-user-fields-allowed.txt": "f2d33af6afd474d5c626d63bac438bd80985817c2576b648c3ec10b7f8232b20",
+        "crates/pixellint-core/src/manifest.rs": "d383f6c67144cb2386c9e5b01f23c93adc72bd840d0a6cfa4ce160522b6452b7",
+        "crates/pixellint-core/src/lib.rs": "8d55355e751f1b3d2ef5aa073e6ac10f858f0509d52f511d5948243936f5bf3c",
+        "docs/RULEPACK_SCHEMA.md": "d4ef07cdb6461c5d4da7405c3673b84543adf29de6b3d2c836eb30f73a7a5bb1",
+        "crates/pixellint-core/tests/analytics_depth.rs": "b54dd89112be43a15e8689d478389db4cb2fb7bc68d0ecd38e9528cc120f0804",
+        "docs/reviews/pixel-collectors-056.json": "cd7ee5ad909d174c5b5acdb03aec1c4bc74df32962a1dd54dd2dc413066eb287",
+        "crates/pixellint-core/tests/pixel_collectors_056.rs": "fd471a1f99c57a39232b8ae36cd68ce55a481ecdcc145c00c65aee515b2609a9"
       },
       "session_date": "2026-10-08",
       "session_baseline": "released_v0.32.0",
@@ -250631,7 +250871,32 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "disposition": "implemented_source_scoped_partial",
+      "match": {
+        "hosts": [
+          "api.quora.com"
+        ],
+        "json_paths": [
+          {
+            "any_of": [
+              "conversion.event_name",
+              "conversion.click_id"
+            ]
+          }
+        ],
+        "paths": [
+          "/ads/v0/conversion"
+        ]
+      },
+      "source_urls": [
+        "https://raw.githubusercontent.com/quora/quora-capi-tag/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/template.tpl",
+        "https://raw.githubusercontent.com/quora/quora-capi-tag/ce40ee26f9a62eb1dc3a84889a4797a6e1a8e4b4/README.md",
+        "https://quoraadsupport.zendesk.com/hc/en-us/articles/23065751885069-Conversion-API-Overview",
+        "https://www.quora.com/ads/conversion_api_doc"
+      ],
+      "golden_cases": 59,
+      "collector_followup": "docs/reviews/pixel-collectors-056.json"
     },
     {
       "id": "vendor/rakuten",
@@ -305088,5 +305353,10 @@
     "review": "docs/reviews/pixel-collectors-055.json",
     "golden_cases": 173,
     "sdk_executions": 15
+  },
+  "pixel_collectors_056_followup": {
+    "review": "docs/reviews/pixel-collectors-056.json",
+    "golden_cases": 92,
+    "sdk_executions": 14
   }
 }
