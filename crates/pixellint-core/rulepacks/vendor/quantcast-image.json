@@ -1,0 +1,50 @@
+{
+  "id": "vendor/quantcast-image",
+  "display_name": "Quantcast image pixel",
+  "vendor": "quantcast",
+  "description": "Documented Quantcast image pixels carry the p-code in the GIF path. Checks that identity and optional label, order and revenue fields without borrowing matrix-style account requirements.",
+  "source_level": "official_vendor",
+  "docs": "https://help.quantcast.com/docs/advanced-installation-image-pixels-non-javascript",
+  "match": {
+    "hosts": [
+      "pixel.quantserve.com"
+    ],
+    "path_patterns": [
+      "/pixel/[^/]*\\.gif"
+    ]
+  },
+  "params": [
+    {
+      "name": "pcode",
+      "requirement": "required",
+      "description": "The image path carries the configured p-code, starting with p-.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^p-.+$"
+      }
+    },
+    {
+      "name": "labels",
+      "requirement": "optional",
+      "description": "Optional event or audience labels remain open.",
+      "allow_empty": true
+    },
+    {
+      "name": "orderid",
+      "requirement": "optional",
+      "description": "Optional order identity remains opaque.",
+      "allow_empty": true
+    },
+    {
+      "name": "revenue",
+      "requirement": "optional",
+      "description": "Optional numeric order value, without a currency symbol.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      }
+    }
+  ],
+  "rules": [],
+  "path_pattern": "^/pixel/(?<pcode>[^/]*)\\.gif$"
+}

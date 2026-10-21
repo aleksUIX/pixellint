@@ -1,0 +1,687 @@
+{
+  "id": "vendor/spotify-ingest",
+  "display_name": "Spotify Ad Analytics browser collector",
+  "vendor": "spotify",
+  "description": "Batched Spotify browser SDK events posted to /v1/ingest. Checks batch and event structure, pixel identity, nullable commerce fields, line items and view metadata against a pinned public producer. Findings are advisory because receiver rejection rules are unpublished.",
+  "source_level": "official_template",
+  "docs": "https://help.adanalytics.spotify.com/technical-pixel-docs",
+  "match": {
+    "hosts": [
+      "pixels.spotify.com"
+    ],
+    "paths": [
+      "/v1/ingest"
+    ],
+    "json_paths": [
+      "batch[].pixel_id",
+      "batch[].pixel_version",
+      "batch[].events"
+    ]
+  },
+  "params": [],
+  "rules": [],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "batch",
+          "requirement": "recommended",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "array",
+          "severity": "warning",
+          "min_items": 1
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "batch[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "pixel_id",
+          "requirement": "recommended",
+          "description": "Each batch entry carries its configured pixel key.",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "events",
+          "requirement": "recommended",
+          "description": "Each batch entry contains emitted events.",
+          "json_type": "array",
+          "severity": "warning",
+          "min_items": 1
+        },
+        {
+          "name": "time",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "number",
+          "severity": "warning"
+        },
+        {
+          "name": "pixel_version",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "pid",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "sid",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "uid",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "batch[].events[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "action",
+          "requirement": "recommended",
+          "description": "The SDK emits known actions, including automatic matching and custom event slots. New actions remain advisory.",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "view",
+              "alias",
+              "aam",
+              "lead",
+              "signup",
+              "click",
+              "product",
+              "addtocart",
+              "checkout",
+              "purchase",
+              "custom",
+              "custom_event_1",
+              "custom_event_2",
+              "custom_event_3",
+              "custom_event_4",
+              "custom_event_5"
+            ]
+          }
+        },
+        {
+          "name": "time",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "number",
+          "severity": "warning"
+        },
+        {
+          "name": "body",
+          "requirement": "recommended",
+          "description": "Event-specific data is nested in body.",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "group",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "label",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "experiment",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.value",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.quantity",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.is_new_customer",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.line_items",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "array",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.auto_filled_fields",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "array",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.inIframe",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.windowWidth",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.windowHeight",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.timezoneOffset",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "body.viewParams",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "body.currency",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true,
+          "format": {
+            "kind": "currency",
+            "allow_historical": true
+          }
+        },
+        {
+          "name": "body.event_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.discount_code",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.order_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.product_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.product_name",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.product_type",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.product_vendor",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.variant_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.variant_name",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.type",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.category",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.custom_event_name",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.sign_up_method",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.trigger_source",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.alias_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.user_hashed_email",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.user_hashed_phone_number",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.partner_user_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.click_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "body.url",
+          "requirement": "optional",
+          "description": "Absolute page URLs are expected when populated; empty referrers and null custom-event URLs remain valid.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "format": {
+            "kind": "url"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "body.referrer",
+          "requirement": "optional",
+          "description": "Absolute page URLs are expected when populated; empty referrers and null custom-event URLs remain valid.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "format": {
+            "kind": "url"
+          },
+          "allow_empty": true
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "batch[].events[].body.line_items[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "value",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "quantity",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "product_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "product_name",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "product_type",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "product_vendor",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "variant_id",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "variant_name",
+          "requirement": "optional",
+          "description": "The pinned browser SDK emits this native JSON type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "warning",
+          "allow_empty": true
+        }
+      ],
+      "rules": []
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "description": "The documented transport uses these methods.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "body",
+        "requirement": "recommended",
+        "description": "The captured entity uses this root shape.",
+        "json_type": "object",
+        "severity": "warning"
+      },
+      {
+        "name": "content_type",
+        "requirement": "recommended",
+        "description": "The published JSON transport uses application/json.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "severity": "warning"
+      }
+    ],
+    "rules": []
+  }
+}

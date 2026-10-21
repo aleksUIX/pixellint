@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 171 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 176 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -9572,6 +9572,26 @@ Context: `{}`.
 | `content_type` | optional | `{"json_type":"string","format":{"kind":"enum","values":["application/json","application/x-www-form-urlencoded","text/plain"]},"severity":"warning","format_severity":"warning","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_vendor](https://raw.githubusercontent.com/mixpanel/mixpanel-js/master/src/mixpanel-core.js) |
 | `headers.content-encoding` | optional | `{"json_type":"string","format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 
+## `vendor/mntn-image`
+
+MNTN page and conversion image calls on px.mountain.com/sti. Checks advertiser identity, required cache-buster and populated page URL or conversion amount. Conversion identity and value may be omitted for non-revenue conversions; randomness, GA integration and product mapping need surrounding context.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/mntn-image.json).
+
+Matcher: `{"hosts":["px.mountain.com"],"paths":["/sti"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `shaid` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `cb` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `conv` | optional | `{"format":{"kind":"enum","values":["0","1"]},"format_severity":"warning"}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `plh` | optional | `{"format":{"kind":"url"},"allow_empty":true}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shoid` | optional | `{"allow_empty":true}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shoamt` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"},"allow_empty":true}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shadditional` | optional | `{"format":{"kind":"regex","pattern":"^[^=,]+=[^,]*(?:,[^=,]+=[^,]*)*$"},"allow_empty":true,"format_severity":"warning"}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+
 ## `vendor/mouseflow`
 
 Mouseflow project script on cdn.mouseflow.com/projects/{website_id}.js.
@@ -9686,6 +9706,63 @@ Context: `{}`.
 | `vendor.nextdoor-conversions-api.body.dob_calendar` | `{"kind":"format","param":"customer.date_of_birth","format":{"kind":"datetime","allow_date_only":true,"allow_basic":true},"condition":{"kind":"value_pattern","param":"customer.date_of_birth","pattern":"^[0-9]{8}$"}}` | error | [official_vendor](https://developer.nextdoor.com/reference/conversion-data-types) |
 | `vendor.nextdoor-conversions-api.body.submission_delay_recommended` | `{"kind":"time_window","param":"event_time_epoch","unit":"seconds","max_age_seconds":3600}` | warning | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
 | `vendor.nextdoor-conversions-api.body.legacy_submission_delay_recommended` | `{"kind":"time_window","param":"event_time","unit":"datetime","max_age_seconds":3600,"condition":{"kind":"not","condition":{"kind":"exists","param":"event_time_epoch"}}}` | warning | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
+
+## `vendor/nextdoor-pixel`
+
+Nextdoor browser events on exact production and test collector routes. Checks event identity, page location, optional custom-data JSON and hashed matching fields. GET and POST form captures share the same checks. SDK-specific checks remain advisory; legacy event migration is advisory.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/nextdoor-pixel.json).
+
+Matcher: `{"hosts":["flask.nextdoor.com"],"paths":["/pixel","/pixel-test"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pid` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `ev` | recommended | `{"format":{"kind":"enum","values":["purchase","lead","sign_up","add_to_cart","initiate_checkout","page_view","search","view_content","add_to_wishlist","subscribe","custom_conversion_1","custom_conversion_2","custom_conversion_3","custom_conversion_4","custom_conversion_5","custom_conversion_6","custom_conversion_7","custom_conversion_8","custom_conversion_9","custom_conversion_10"],"case_insensitive":true},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `pl` | recommended | `{"format":{"kind":"url"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `cd` | optional | `{}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `rf` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `ndclid_src` | optional | `{"format":{"kind":"enum","values":["0","1","2"]},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `v` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `sw` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `sh` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+
+### JSON contract 1
+
+Context: `{"source_param":"cd","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `email` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `phone_number` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `first_name` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `last_name` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `gender` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `street_address` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `city` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `state` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `zip_code` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `country` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{32}\|[A-Fa-f0-9]{40}\|[A-Fa-f0-9]{64}\|[A-Fa-f0-9]{128})$"},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+
+### Complete HTTP contract 2
+
+Context: `{"condition":{"kind":"value_in","param":"method","values":["POST"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
+| `content_type` | recommended | `{"format":{"kind":"enum","values":["application/x-www-form-urlencoded"]},"severity":"warning"}` | [official_template](https://developer.nextdoor.com/reference/universal-pixel) |
 
 ## `vendor/nielsen-audit`
 
@@ -10970,13 +11047,91 @@ Context: `{"scope":["properties.$exception_list[].stacktrace.frames[]","batch[].
 | --- | --- | --- | --- |
 | `vendor.posthog.body.frame_needs_platform` | `{"kind":"require_any_of","groups":[["platform"]],"condition":{"kind":"all","conditions":[{"kind":"any","conditions":[{"kind":"value_in","param":"stacktrace_type","values":["raw"]},{"kind":"not","condition":{"kind":"exists","param":"stacktrace_type"}}]},{"kind":"any","conditions":[{"kind":"exists","param":"platform"},{"kind":"not","condition":{"kind":"any","conditions":[{"kind":"exists","param":"abs_path"},{"kind":"exists","param":"context_line"},{"kind":"exists","param":"module"},{"kind":"exists","param":"pre_context"},{"kind":"exists","param":"post_context"}]}}]}]}}` | error | [official_vendor](https://raw.githubusercontent.com/PostHog/posthog/master/rust/cymbal/src/modes/processing/normalization.rs) |
 
+## `vendor/quantcast-conversions-api`
+
+Quantcast offline conversion batches on the exact documented endpoint. Checks the URL account, POST transport, JSON array, required event name and user identity alternatives, optional timestamps, IPs and conversion metadata. Account enablement, billing currency and browser token authenticity require external context.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/quantcast-conversions-api.json).
+
+Matcher: `{"hosts":["pixel.quantserve.com"],"paths":["/conversion"],"json_paths":["[].name","[].user"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `a` | required | `{"format":{"kind":"regex","pattern":"^p-.+$"}}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+
+### JSON contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+
+### JSON contract 2
+
+Context: `{"scope":"[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `name` | required | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `user` | required | `{"json_type":"object"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `user.token` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `user.external_id` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `user.client_user_agent` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `user.client_ip` | optional | `{"json_type":"string","format":{"kind":"ip"}}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `time` | optional | `{"json_type":"integer"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `url` | optional | `{"json_type":"string","format":{"kind":"url"},"allow_empty":true}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `referer` | optional | `{"json_type":"string","format":{"kind":"url"},"allow_empty":true}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `event` | optional | `{"json_type":"object"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `event.labels` | optional | `{"json_type":"array"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `event.labels[]` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `event.order_id` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `event.revenue` | optional | `{"json_type":"number"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `event.product_category` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.quantcast-conversions-api.body.user_identity` | `{"kind":"require_any_of","groups":[["user.token"],["user.external_id"]],"condition":{"kind":"json_type","param":"user","json_type":"object"}}` | error | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `body` | required | `{"json_type":"array"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+| `content_type` | recommended | `{"format":{"kind":"enum","values":["application/json"]},"severity":"warning"}` | [official_vendor](https://help.quantcast.com/v1/docs/sending-conversion-events) |
+
+## `vendor/quantcast-image`
+
+Documented Quantcast image pixels carry the p-code in the GIF path. Checks that identity and optional label, order and revenue fields without borrowing matrix-style account requirements.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/quantcast-image.json).
+
+Matcher: `{"hosts":["pixel.quantserve.com"],"path_patterns":["/pixel/[^/]*\\.gif"]}`.
+
+Path captures: `^/pixel/(?<pcode>[^/]*)\.gif$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pcode` | required | `{"format":{"kind":"regex","pattern":"^p-.+$"}}` | [official_vendor](https://help.quantcast.com/docs/advanced-installation-image-pixels-non-javascript) |
+| `labels` | optional | `{"allow_empty":true}` | [official_vendor](https://help.quantcast.com/docs/advanced-installation-image-pixels-non-javascript) |
+| `orderid` | optional | `{"allow_empty":true}` | [official_vendor](https://help.quantcast.com/docs/advanced-installation-image-pixels-non-javascript) |
+| `revenue` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://help.quantcast.com/docs/advanced-installation-image-pixels-non-javascript) |
+
 ## `vendor/quantcast`
 
-Quantcast Measure pixels on pixel.quantserve.com/pixel, whose p-code rides as matrix parameter a.
+Quantcast Measure matrix beacons on the exact /pixel route, including semicolon parameters. Account identity is carried in a. Image GIF paths and the Conversions API use separate contracts.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/quantcast.json).
 
-Matcher: `{"hosts":["pixel.quantserve.com","secure.quantserve.com"],"path_contains":["/pixel"]}`.
+Matcher: `{"hosts":["pixel.quantserve.com","secure.quantserve.com"],"paths":["/pixel"],"path_prefixes":["/pixel;"]}`.
 
 ### URL parameters
 
@@ -11885,6 +12040,110 @@ Matcher: `{"hosts":["img.byspotify.com"],"paths":["/"]}`.
 | `type` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
 | `category` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
 | `order_id` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+
+## `vendor/spotify-ingest`
+
+Batched Spotify browser SDK events posted to /v1/ingest. Checks batch and event structure, pixel identity, nullable commerce fields, line items and view metadata against a pinned public producer. Findings are advisory because receiver rejection rules are unpublished.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/spotify-ingest.json).
+
+Matcher: `{"hosts":["pixels.spotify.com"],"paths":["/v1/ingest"],"json_paths":["batch[].pixel_id","batch[].pixel_version","batch[].events"]}`.
+
+### JSON contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `batch` | recommended | `{"json_type":"array","severity":"warning","min_items":1}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+
+### JSON contract 2
+
+Context: `{"scope":"batch[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `pixel_id` | recommended | `{"json_type":"string","severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `events` | recommended | `{"json_type":"array","severity":"warning","min_items":1}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `time` | optional | `{"json_type":"number","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `pixel_version` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `pid` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `sid` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `uid` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+
+### JSON contract 3
+
+Context: `{"scope":"batch[].events[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `action` | recommended | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["view","alias","aam","lead","signup","click","product","addtocart","checkout","purchase","custom","custom_event_1","custom_event_2","custom_event_3","custom_event_4","custom_event_5"]}}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `time` | optional | `{"json_type":"number","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body` | recommended | `{"json_type":"object","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `group` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `label` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `experiment` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.value` | optional | `{"json_type":["number","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.quantity` | optional | `{"json_type":["integer","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.is_new_customer` | optional | `{"json_type":["boolean","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.line_items` | optional | `{"json_type":["array","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.auto_filled_fields` | optional | `{"json_type":["array","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.inIframe` | optional | `{"json_type":["boolean","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.windowWidth` | optional | `{"json_type":["integer","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.windowHeight` | optional | `{"json_type":["integer","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.timezoneOffset` | optional | `{"json_type":["integer","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.viewParams` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.currency` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true,"format":{"kind":"currency","allow_historical":true}}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.event_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.discount_code` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.order_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.product_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.product_name` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.product_type` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.product_vendor` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.variant_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.variant_name` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.type` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.category` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.custom_event_name` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.sign_up_method` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.trigger_source` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.alias_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.user_hashed_email` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.user_hashed_phone_number` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.partner_user_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.click_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.url` | optional | `{"json_type":["string","null"],"severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body.referrer` | optional | `{"json_type":["string","null"],"severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+
+### JSON contract 4
+
+Context: `{"scope":"batch[].events[].body.line_items[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `value` | optional | `{"json_type":["number","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `quantity` | optional | `{"json_type":["integer","null"],"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `product_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `product_name` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `product_type` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `product_vendor` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `variant_id` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `variant_name` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["POST"]},"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `body` | recommended | `{"json_type":"object","severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
+| `content_type` | recommended | `{"format":{"kind":"enum","values":["application/json"]},"severity":"warning"}` | [official_template](https://help.adanalytics.spotify.com/technical-pixel-docs) |
 
 ## `vendor/stackadapt-pixel`
 

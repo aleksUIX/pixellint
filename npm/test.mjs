@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 171, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 176, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -245,6 +245,24 @@ try {
   assert.equal(clockReads - before, 1, "document validation shares one clock across artifacts");
 } finally {
   Date.now = originalNow;
+}
+
+for (const entry of [{ validate }, cjs]) {
+  for (const [artifact, options, owner, finding] of [
+    ["https://flask.nextdoor.com/pixel?ev=purchase&pl=https%3A%2F%2Fexample.test%2F", {}, "vendor/nextdoor-pixel", "vendor.nextdoor-pixel.param.pid.missing"],
+    ["https://px.mountain.com/sti?shaid=synthetic", {}, "vendor/mntn-image", "vendor.mntn-image.param.cb.missing"],
+    ["https://pixel.quantserve.com/pixel/bad.gif?pcode=p-synthetic", {}, "vendor/quantcast-image", "vendor.quantcast-image.param.pcode.invalid"],
+    [JSON.stringify({url:"https://pixels.spotify.com/v1/ingest",method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({batch:[{pixel_id:"synthetic",events:[{action:"purchase",body:{value:"bad"}}]}]})}), {kind:"request"}, "vendor/spotify-ingest", "vendor.spotify-ingest.body.body.value.invalid"],
+    [JSON.stringify({url:"https://pixel.quantserve.com/conversion?a=p-synthetic",method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify([{name:"Purchase",user:{}}])}), {kind:"request"}, "vendor/quantcast-conversions-api", "vendor.quantcast-conversions-api.body.user_identity"],
+  ]) {
+    const result = entry.validate(artifact, options);
+    assert.deepEqual(result.coverage.vendor_rulepacks, [owner]);
+    assert.ok(result.reports.flatMap(report => report.violations).some(v => v.code === finding), finding);
+  }
+  const image = entry.validate("https://pixel.quantserve.com/pixel/p-synthetic.gif?revenue=12.5");
+  assert.deepEqual(image.coverage.vendor_rulepacks, ["vendor/quantcast-image"]);
+  assert.equal(image.reports.flatMap(report => report.violations).length, 0);
+  assert.equal(entry.validate("https://pixel.quantserve.com/pixels").coverage.status, "recognized_uncontracted");
 }
 
 console.log(`pixellint ${version()}: npm smoke tests passed`);

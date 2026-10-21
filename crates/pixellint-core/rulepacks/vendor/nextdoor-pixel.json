@@ -1,0 +1,300 @@
+{
+  "id": "vendor/nextdoor-pixel",
+  "display_name": "Nextdoor Universal Pixel",
+  "vendor": "nextdoor",
+  "description": "Nextdoor browser events on exact production and test collector routes. Checks event identity, page location, optional custom-data JSON and hashed matching fields. GET and POST form captures share the same checks. SDK-specific checks remain advisory; legacy event migration is advisory.",
+  "source_level": "official_template",
+  "docs": "https://developer.nextdoor.com/reference/universal-pixel",
+  "match": {
+    "hosts": [
+      "flask.nextdoor.com"
+    ],
+    "paths": [
+      "/pixel",
+      "/pixel-test"
+    ]
+  },
+  "params": [
+    {
+      "name": "pid",
+      "requirement": "recommended",
+      "description": "The SDK sends the configured pixel identity. Its identifier grammar is opaque.",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "ev",
+      "requirement": "recommended",
+      "description": "Universal Pixel documentation lists these events. Unknown or legacy event names receive migration advice.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "purchase",
+          "lead",
+          "sign_up",
+          "add_to_cart",
+          "initiate_checkout",
+          "page_view",
+          "search",
+          "view_content",
+          "add_to_wishlist",
+          "subscribe",
+          "custom_conversion_1",
+          "custom_conversion_2",
+          "custom_conversion_3",
+          "custom_conversion_4",
+          "custom_conversion_5",
+          "custom_conversion_6",
+          "custom_conversion_7",
+          "custom_conversion_8",
+          "custom_conversion_9",
+          "custom_conversion_10"
+        ],
+        "case_insensitive": true
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "pl",
+      "requirement": "recommended",
+      "description": "The SDK sends the current absolute page URL.",
+      "format": {
+        "kind": "url"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "cd",
+      "requirement": "optional",
+      "description": "The SDK serializes custom and matching data as a JSON object."
+    },
+    {
+      "name": "rf",
+      "requirement": "optional",
+      "description": "An empty referrer is normal.",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "ndclid_src",
+      "requirement": "optional",
+      "description": "The SDK marks missing, URL-derived and cookie-derived click IDs with 0, 1 and 2.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2"
+        ]
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "v",
+      "requirement": "optional",
+      "description": "Optional SDK bootstrap version.",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "sw",
+      "requirement": "optional",
+      "description": "The SDK emits a nonnegative integer screen dimension, including zero.",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "sh",
+      "requirement": "optional",
+      "description": "The SDK emits a nonnegative integer screen dimension, including zero.",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning"
+    }
+  ],
+  "rules": [],
+  "body": {
+    "source_param": "cd",
+    "encoding": "json",
+    "encoding_severity": "warning",
+    "params": [
+      {
+        "name": "",
+        "requirement": "optional",
+        "description": "The SDK emits an object; custom members remain open.",
+        "json_type": "object",
+        "severity": "warning"
+      },
+      {
+        "name": "email",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "phone_number",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "first_name",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "last_name",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "gender",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "street_address",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "city",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "state",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "zip_code",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "country",
+        "requirement": "optional",
+        "description": "Manual matching accepts prehashed MD5, SHA-1, SHA-256 or SHA-512 hex in the pinned SDK. Digest correctness is external.",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{128})$"
+        },
+        "severity": "warning"
+      }
+    ],
+    "rules": []
+  },
+  "http": [
+    {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "recommended",
+          "description": "The documented transport uses these methods.",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "GET",
+              "POST"
+            ]
+          },
+          "severity": "warning"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "condition": {
+        "kind": "value_in",
+        "param": "method",
+        "values": [
+          "POST"
+        ]
+      },
+      "params": [
+        {
+          "name": "method",
+          "requirement": "optional",
+          "description": "Scope guard."
+        },
+        {
+          "name": "content_type",
+          "requirement": "recommended",
+          "description": "The GET producer uses a form body when it switches to POST.",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "application/x-www-form-urlencoded"
+            ]
+          },
+          "severity": "warning"
+        }
+      ],
+      "rules": []
+    }
+  ]
+}

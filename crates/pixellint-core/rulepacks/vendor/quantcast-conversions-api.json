@@ -1,0 +1,227 @@
+{
+  "id": "vendor/quantcast-conversions-api",
+  "display_name": "Quantcast Conversions API",
+  "vendor": "quantcast",
+  "description": "Quantcast offline conversion batches on the exact documented endpoint. Checks the URL account, POST transport, JSON array, required event name and user identity alternatives, optional timestamps, IPs and conversion metadata. Account enablement, billing currency and browser token authenticity require external context.",
+  "source_level": "official_vendor",
+  "docs": "https://help.quantcast.com/v1/docs/sending-conversion-events",
+  "match": {
+    "hosts": [
+      "pixel.quantserve.com"
+    ],
+    "paths": [
+      "/conversion"
+    ],
+    "json_paths": [
+      "[].name",
+      "[].user"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "a",
+      "requirement": "required",
+      "description": "The endpoint requires the Quantcast account ID starting with p-.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^p-.+$"
+      }
+    }
+  ],
+  "rules": [],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "description": "The documented request is a JSON array of conversions.",
+          "json_type": "array"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "scope": "[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "description": "Each conversion is an object.",
+          "json_type": "object"
+        },
+        {
+          "name": "name",
+          "requirement": "required",
+          "description": "The documented event name is required and remains open.",
+          "json_type": "string",
+          "format": {
+            "kind": "non_empty"
+          }
+        },
+        {
+          "name": "user",
+          "requirement": "required",
+          "description": "Every conversion requires user identity.",
+          "json_type": "object"
+        },
+        {
+          "name": "user.token",
+          "requirement": "optional",
+          "description": "Opaque browser token. Either this or external_id is required.",
+          "json_type": "string",
+          "allow_empty": true
+        },
+        {
+          "name": "user.external_id",
+          "requirement": "optional",
+          "description": "Caller identity. Either this or token is required.",
+          "json_type": "string",
+          "allow_empty": true
+        },
+        {
+          "name": "user.client_user_agent",
+          "requirement": "optional",
+          "description": "Optional source user agent.",
+          "json_type": "string",
+          "allow_empty": true
+        },
+        {
+          "name": "user.client_ip",
+          "requirement": "optional",
+          "description": "Optional source IP literal.",
+          "json_type": "string",
+          "format": {
+            "kind": "ip"
+          }
+        },
+        {
+          "name": "time",
+          "requirement": "optional",
+          "description": "Optional Unix epoch seconds or milliseconds. Neither unit nor a freshness window is guessed.",
+          "json_type": "integer"
+        },
+        {
+          "name": "url",
+          "requirement": "optional",
+          "description": "Optional source page URL.",
+          "json_type": "string",
+          "format": {
+            "kind": "url"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "referer",
+          "requirement": "optional",
+          "description": "Optional referring page URL.",
+          "json_type": "string",
+          "format": {
+            "kind": "url"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "event",
+          "requirement": "optional",
+          "description": "Optional conversion metadata.",
+          "json_type": "object"
+        },
+        {
+          "name": "event.labels",
+          "requirement": "optional",
+          "description": "Labels are an open string array.",
+          "json_type": "array"
+        },
+        {
+          "name": "event.labels[]",
+          "requirement": "optional",
+          "description": "Each event label is a string.",
+          "json_type": "string",
+          "allow_empty": true
+        },
+        {
+          "name": "event.order_id",
+          "requirement": "optional",
+          "description": "Optional order identity.",
+          "json_type": "string",
+          "allow_empty": true
+        },
+        {
+          "name": "event.revenue",
+          "requirement": "optional",
+          "description": "Revenue is a JSON number in the account billing currency.",
+          "json_type": "number"
+        },
+        {
+          "name": "event.product_category",
+          "requirement": "optional",
+          "description": "Optional category string.",
+          "json_type": "string",
+          "allow_empty": true
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.quantcast-conversions-api.body.user_identity",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "user.token"
+            ],
+            [
+              "user.external_id"
+            ]
+          ],
+          "condition": {
+            "kind": "json_type",
+            "param": "user",
+            "json_type": "object"
+          },
+          "severity": "error",
+          "message": "Provide a populated user token or external_id."
+        }
+      ]
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "description": "The documented transport uses these methods.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "body",
+        "requirement": "required",
+        "description": "The captured entity uses this root shape.",
+        "json_type": "array"
+      },
+      {
+        "name": "content_type",
+        "requirement": "recommended",
+        "description": "The published JSON transport uses application/json.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "severity": "warning"
+      }
+    ],
+    "rules": []
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "id": "vendor/mntn-image",
+  "display_name": "MNTN image pixel",
+  "vendor": "mntn",
+  "description": "MNTN page and conversion image calls on px.mountain.com/sti. Checks advertiser identity, required cache-buster and populated page URL or conversion amount. Conversion identity and value may be omitted for non-revenue conversions; randomness, GA integration and product mapping need surrounding context.",
+  "source_level": "official_vendor",
+  "docs": "https://help.mountain.com/en/articles/7251381-install-image-pixels",
+  "match": {
+    "hosts": [
+      "px.mountain.com"
+    ],
+    "paths": [
+      "/sti"
+    ]
+  },
+  "params": [
+    {
+      "name": "shaid",
+      "requirement": "required",
+      "description": "The documented advertiser identity is required. It is usually numeric, so no numeric-only grammar is imposed.",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "cb",
+      "requirement": "required",
+      "description": "A nonempty cache-buster is required. The documentation permits arbitrary unique values.",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "conv",
+      "requirement": "optional",
+      "description": "The published conversion example uses 1. Zero is accepted as a page-view flag.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "format_severity": "warning"
+    },
+    {
+      "name": "plh",
+      "requirement": "optional",
+      "description": "Optional absolute page URL, including iframe context.",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "shoid",
+      "requirement": "optional",
+      "description": "Order or acquisition identity. The manual guide permits unmapped non-revenue conversions.",
+      "allow_empty": true
+    },
+    {
+      "name": "shoamt",
+      "requirement": "optional",
+      "description": "A populated acquisition amount is numeric. The manual guide permits omission for non-revenue conversions.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "shadditional",
+      "requirement": "optional",
+      "description": "The image guide describes comma-separated key=value pairs. Custom names and values remain open.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[^=,]+=[^,]*(?:,[^=,]+=[^,]*)*$"
+      },
+      "allow_empty": true,
+      "format_severity": "warning"
+    }
+  ],
+  "rules": []
+}

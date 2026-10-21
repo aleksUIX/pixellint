@@ -72,6 +72,26 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/nextdoor-pixel",
+        include_str!("../rulepacks/vendor/nextdoor-pixel.json"),
+    ),
+    (
+        "vendor/spotify-ingest",
+        include_str!("../rulepacks/vendor/spotify-ingest.json"),
+    ),
+    (
+        "vendor/quantcast-conversions-api",
+        include_str!("../rulepacks/vendor/quantcast-conversions-api.json"),
+    ),
+    (
+        "vendor/quantcast-image",
+        include_str!("../rulepacks/vendor/quantcast-image.json"),
+    ),
+    (
+        "vendor/mntn-image",
+        include_str!("../rulepacks/vendor/mntn-image.json"),
+    ),
+    (
         "vendor/spotify-image",
         include_str!("../rulepacks/vendor/spotify-image.json"),
     ),
