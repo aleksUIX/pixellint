@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 166 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 171 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -5247,6 +5247,24 @@ Matcher: `{"hosts":["pubads.g.doubleclick.net"],"paths":["/pagead/interaction","
 | `sigh` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags) |
 | `label` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags) |
 | `ad_mt` | optional | `{"allow_empty":true}` | [official_template](https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags) |
+
+## `vendor/google-ima-live-pcs`
+
+The exact live PCS view route returned by the official Google IMA live sample producer. Opaque xai, sai and sig receive template-completeness warnings. Signatures and unpublished PCS variants are outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/google-ima-live-pcs.json).
+
+Matcher: `{"hosts":["securepubads.g.doubleclick.net"],"paths":["/live/pcs/view"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `xai` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags) |
+| `sai` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags) |
+| `sig` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags) |
+| `adurl` | optional | `{"allow_empty":true}` | [official_template](https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags) |
+| `uach_m` | optional | `{"allow_empty":true}` | [official_template](https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags) |
 
 ## `vendor/google-ima-pcs`
 
@@ -11000,6 +11018,30 @@ Context: `{}`.
 | `device` | optional | `{"json_type":"object"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/main/template.tpl) |
 | `user` | required | `{"json_type":"object"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/main/template.tpl) |
 
+## `vendor/quora-pixel`
+
+Quora image callbacks constructed by the public qevents SDK. Checks path identity, event tag, SDK marker, timestamp syntax and the SDK accepted email hash profile. Custom event names and conversion values remain open; this is not the Conversions API contract.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/quora-pixel.json).
+
+Matcher: `{"hosts":["q.quora.com"],"path_patterns":["/_/ad/[^/]*/pixel"]}`.
+
+Path captures: `^/_/ad/(?<pixel_id>[^/]*)/pixel$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pixel_id` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `tag` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `j` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `ts` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `em` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z0-9]{64}$"},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `u` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
+| `v` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_template](https://a.quora.com/qevents.js) |
+| `i` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_template](https://a.quora.com/qevents.js) |
+| `evid` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_template](https://a.quora.com/qevents.js) |
+
 ## `vendor/rakuten`
 
 Rakuten Advertising conversion image on track.linksynergy.com/ep. Click redirects on click.linksynergy.com are not contracted.
@@ -11821,6 +11863,67 @@ Context: `{"scope":["data[]",""]}`.
 | `vendor.snapchat.body.event_time_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds_or_milliseconds","max_age_seconds":604800}` | error | [official_vendor](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI) |
 | `vendor.snapchat.body.ios_extinfo_app_id` | `{"kind":"format_when","when":"app_data.extinfo[0]","equals":["i2"],"param":"app_data.app_id","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
 | `vendor.snapchat.body.app_requires_app_id` | `{"kind":"required_when_value","when":"action_source","equals":["MOBILE_APP"],"requires":["app_data.app_id"]}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
+
+## `vendor/spotify-image`
+
+Spotify Ad Analytics image pixels on the root img.byspotify.com endpoint. Checks the pixel key, action, optional ISO currency and populated purchase value. Session identity, placement, deduplication and server-side forwarding requirements need surrounding context.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/spotify-image.json).
+
+Matcher: `{"hosts":["img.byspotify.com"],"paths":["/"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `key` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+| `a` | required | `{"format":{"kind":"enum","values":["init","lead","purchase"]},"format_severity":"warning"}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+| `value` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true,"condition":{"kind":"value_in","param":"a","values":["purchase"]}}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+| `currency` | optional | `{"format":{"kind":"currency","allow_historical":true},"allow_empty":true,"format_severity":"warning"}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+| `uid` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+| `alias` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+| `type` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+| `category` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+| `order_id` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://help.adanalytics.spotify.com/img-pixel-best-practices) |
+
+## `vendor/stackadapt-pixel`
+
+Source-profile checks for StackAdapt retargeting, dynamic retargeting, lookalike, conversion and universal pixel transports. Route-specific identifier fields, optional args JSON and the published GET transport are checked as producer advisories. Custom properties and opaque account IDs remain open.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/stackadapt-pixel.json).
+
+Matcher: `{"hosts":["tags.srv.stackadapt.com"],"paths":["/rt","/drt","/lal","/conv","/saq_pxl"]}`.
+
+Path captures: `^/(?<pixel_type>rt\|drt\|lal\|conv\|saq_pxl)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pixel_type` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `sid` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning","condition":{"kind":"value_in","param":"pixel_type","values":["rt","drt","lal"]}}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `cid` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning","condition":{"kind":"value_in","param":"pixel_type","values":["conv"]}}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `uid` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning","condition":{"kind":"value_in","param":"pixel_type","values":["saq_pxl"]}}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `args` | optional | `{"format":{"kind":"non_empty"},"allow_empty":true}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `gtm_ss` | optional | `{"format":{"kind":"enum","values":["1"]},"severity":"warning"}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `ip_fwd` | optional | `{"format":{"kind":"ip"},"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `url` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+
+### JSON contract 1
+
+Context: `{"source_param":"args","encoding":"json","encoding_severity":"warning","condition":{"kind":"value_in","param":"pixel_type","values":["drt","lal","conv","saq_pxl"]}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
 
 ## `vendor/taboola-s2s-bulk`
 
@@ -12811,6 +12914,20 @@ Matcher: `{"hosts":["sp.analytics.yahoo.com"],"path_prefixes":["/spp.pl"]}`.
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.yahoo-dot.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"}` | error | [official_vendor](https://help.yahooinc.com/identity/docs/enhanced-matching) |
+
+## `vendor/yandex-adfox-links`
+
+Documented Adfox getCode and goLink simple links. Checks the published numeric randomization value from 1 through 4294967295. Runtime event URLs, including pr=a, remain outside this simple-link contract.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/yandex-adfox-links.json).
+
+Matcher: `{"hosts":["yandex.ru","yandex.com"],"path_patterns":["/ads/adfox/[0-9]+/(?:getCode\|goLink)"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pr` | required | `{"format":{"kind":"integer"},"minimum":1,"maximum":4294967295}` | [official_vendor](https://yandex.com/support/adfox/en/banners/pixel1x1) |
 
 ## `vendor/yandex-metrica`
 

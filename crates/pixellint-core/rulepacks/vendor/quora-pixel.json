@@ -1,0 +1,115 @@
+{
+  "id": "vendor/quora-pixel",
+  "display_name": "Quora browser pixel",
+  "vendor": "quora",
+  "description": "Quora image callbacks constructed by the public qevents SDK. Checks path identity, event tag, SDK marker, timestamp syntax and the SDK accepted email hash profile. Custom event names and conversion values remain open; this is not the Conversions API contract.",
+  "source_level": "official_template",
+  "docs": "https://quoraadsupport.zendesk.com/hc/en-us/articles/115010466208-How-do-I-install-the-Quora-pixel",
+  "match": {
+    "hosts": [
+      "q.quora.com"
+    ],
+    "path_patterns": [
+      "/_/ad/[^/]*/pixel"
+    ]
+  },
+  "params": [
+    {
+      "name": "pixel_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The producer places its configured pixel identity in this path segment. It does not enforce a UUID grammar.",
+      "severity": "warning",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "tag",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The event name is carried in tag. Custom names remain accepted.",
+      "severity": "warning",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "j",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "description": "The JavaScript producer emits 1. Noscript calls are not required to supply this marker.",
+      "severity": "warning",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "ts",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "The JavaScript producer emits a decimal millisecond clock value. No freshness window is inferred.",
+      "severity": "warning",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "em",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9]{64}$"
+      },
+      "description": "The pinned SDK accepts 64 case-insensitive alphanumeric characters as prehashed email. This check mirrors that profile without asserting digest correctness.",
+      "severity": "warning",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "u",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "description": "Optional page location from the producer.",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "v",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The SDK permits string or numeric conversion values, including empty strings. No closed numeric grammar is imposed.",
+      "allow_empty": true,
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "i",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Optional event source string; its values remain open.",
+      "allow_empty": true,
+      "doc": "https://a.quora.com/qevents.js"
+    },
+    {
+      "name": "evid",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Optional caller event identifier. Its format is not restricted by the SDK.",
+      "allow_empty": true,
+      "doc": "https://a.quora.com/qevents.js"
+    }
+  ],
+  "rules": [],
+  "path_pattern": "^/_/ad/(?<pixel_id>[^/]*)/pixel$"
+}

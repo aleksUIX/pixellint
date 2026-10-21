@@ -72,6 +72,26 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/spotify-image",
+        include_str!("../rulepacks/vendor/spotify-image.json"),
+    ),
+    (
+        "vendor/stackadapt-pixel",
+        include_str!("../rulepacks/vendor/stackadapt-pixel.json"),
+    ),
+    (
+        "vendor/quora-pixel",
+        include_str!("../rulepacks/vendor/quora-pixel.json"),
+    ),
+    (
+        "vendor/yandex-adfox-links",
+        include_str!("../rulepacks/vendor/yandex-adfox-links.json"),
+    ),
+    (
+        "vendor/google-ima-live-pcs",
+        include_str!("../rulepacks/vendor/google-ima-live-pcs.json"),
+    ),
+    (
         "vendor/adform",
         include_str!("../rulepacks/vendor/adform.json"),
     ),

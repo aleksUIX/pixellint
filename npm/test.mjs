@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 166, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 171, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -118,6 +118,11 @@ for (const entry of [{ validate, validateMany, vendorForHost }, cjs]) {
 
   // Coverage describes the contracts that ran, independently of findings.
   for (const [artifact, pack] of [
+    ["https://img.byspotify.com/?key=synthetic&a=init", "vendor/spotify-image"],
+    ["https://tags.srv.stackadapt.com/conv?cid=synthetic", "vendor/stackadapt-pixel"],
+    ["https://q.quora.com/_/ad/synthetic/pixel?tag=CustomEvent", "vendor/quora-pixel"],
+    ["https://yandex.com/ads/adfox/123456/getCode?pr=1", "vendor/yandex-adfox-links"],
+    ["https://securepubads.g.doubleclick.net/live/pcs/view?xai=x&sai=s&sig=g", "vendor/google-ima-live-pcs"],
     ["https://tpsc-video.doubleverify.com/event.png?vstevt=4&dup=synthetic-impression", "vendor/doubleverify-event"],
     ["https://tpsc-video.doubleverify.com/visit.jpg?ctx=12345&cmp=12345&plc=12345&sid=12345", "vendor/doubleverify"],
     ["https://pubads.g.doubleclick.net/pagead/live/interaction?ai=synthetic-ai&sigh=synthetic-signature&label=synthetic-event", "vendor/google-ima-interaction"],

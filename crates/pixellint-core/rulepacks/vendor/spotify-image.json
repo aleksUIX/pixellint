@@ -1,0 +1,114 @@
+{
+  "id": "vendor/spotify-image",
+  "display_name": "Spotify Ad Analytics image pixel",
+  "vendor": "spotify",
+  "description": "Spotify Ad Analytics image pixels on the root img.byspotify.com endpoint. Checks the pixel key, action, optional ISO currency and populated purchase value. Session identity, placement, deduplication and server-side forwarding requirements need surrounding context.",
+  "source_level": "official_vendor",
+  "docs": "https://help.adanalytics.spotify.com/img-pixel-best-practices",
+  "match": {
+    "hosts": [
+      "img.byspotify.com"
+    ],
+    "paths": [
+      "/"
+    ]
+  },
+  "params": [
+    {
+      "name": "key",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The image URL identifies its advertiser pixel with this nonempty key. Numeric and alphanumeric keys remain accepted."
+    },
+    {
+      "name": "a",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "init",
+          "lead",
+          "purchase"
+        ]
+      },
+      "description": "The published image examples use init, lead and purchase. Unknown actions are advisory because the backend action set is not published.",
+      "format_severity": "warning"
+    },
+    {
+      "name": "value",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+      },
+      "description": "A populated purchase value must be numeric. Lead values retain their separate documented representations.",
+      "allow_empty": true,
+      "condition": {
+        "kind": "value_in",
+        "param": "a",
+        "values": [
+          "purchase"
+        ]
+      }
+    },
+    {
+      "name": "currency",
+      "requirement": "optional",
+      "format": {
+        "kind": "currency",
+        "allow_historical": true
+      },
+      "description": "The image template names an ISO currency. Membership is advisory; account eligibility is external.",
+      "allow_empty": true,
+      "format_severity": "warning"
+    },
+    {
+      "name": "uid",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Optional on ordinary image pixels. The ssGTM guide describes a hashed session identifier; no digest algorithm is specified.",
+      "allow_empty": true
+    },
+    {
+      "name": "alias",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Optional on ordinary image pixels. Internal identity semantics and cross-domain matching are external.",
+      "allow_empty": true
+    },
+    {
+      "name": "type",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Lead classification is optional and open.",
+      "allow_empty": true
+    },
+    {
+      "name": "category",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Lead category is optional and open.",
+      "allow_empty": true
+    },
+    {
+      "name": "order_id",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Optional advertiser order identifier. Repeated purchase detection requires surrounding events.",
+      "allow_empty": true
+    }
+  ],
+  "rules": []
+}

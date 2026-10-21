@@ -1,0 +1,165 @@
+{
+  "id": "vendor/stackadapt-pixel",
+  "display_name": "StackAdapt pixel transports",
+  "vendor": "stackadapt",
+  "description": "Source-profile checks for StackAdapt retargeting, dynamic retargeting, lookalike, conversion and universal pixel transports. Route-specific identifier fields, optional args JSON and the published GET transport are checked as producer advisories. Custom properties and opaque account IDs remain open.",
+  "source_level": "official_template",
+  "docs": "https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl",
+  "match": {
+    "hosts": [
+      "tags.srv.stackadapt.com"
+    ],
+    "paths": [
+      "/rt",
+      "/drt",
+      "/lal",
+      "/conv",
+      "/saq_pxl"
+    ]
+  },
+  "params": [
+    {
+      "name": "pixel_type",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Route selected by the public template.",
+      "severity": "warning"
+    },
+    {
+      "name": "sid",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The producer sends this configured identifier for the selected pixel route. No numeric or UUID grammar is imposed.",
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "pixel_type",
+        "values": [
+          "rt",
+          "drt",
+          "lal"
+        ]
+      }
+    },
+    {
+      "name": "cid",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The producer sends this configured identifier for the selected pixel route. No numeric or UUID grammar is imposed.",
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "pixel_type",
+        "values": [
+          "conv"
+        ]
+      }
+    },
+    {
+      "name": "uid",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The producer sends this configured identifier for the selected pixel route. No numeric or UUID grammar is imposed.",
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "pixel_type",
+        "values": [
+          "saq_pxl"
+        ]
+      }
+    },
+    {
+      "name": "args",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Optional JSON serialization of configured properties on non-retargeting transports.",
+      "allow_empty": true
+    },
+    {
+      "name": "gtm_ss",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "description": "The pinned server template marks its requests with 1. Ordinary browser pixels may omit it.",
+      "severity": "warning"
+    },
+    {
+      "name": "ip_fwd",
+      "requirement": "optional",
+      "format": {
+        "kind": "ip"
+      },
+      "description": "Optional source-profile IP address. Blank fallback values remain accepted.",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "url",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "description": "Optional source-profile page URL. Blank fallback values remain accepted.",
+      "allow_empty": true,
+      "severity": "warning"
+    }
+  ],
+  "rules": [],
+  "path_pattern": "^/(?<pixel_type>rt|drt|lal|conv|saq_pxl)$",
+  "body": {
+    "source_param": "args",
+    "encoding": "json",
+    "encoding_severity": "warning",
+    "condition": {
+      "kind": "value_in",
+      "param": "pixel_type",
+      "values": [
+        "drt",
+        "lal",
+        "conv",
+        "saq_pxl"
+      ]
+    },
+    "params": [
+      {
+        "name": "",
+        "json_type": "object",
+        "severity": "warning",
+        "description": "The public template serializes a property object. Additional members and their values remain open."
+      }
+    ],
+    "rules": []
+  },
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "description": "The pinned template sends GET. This advisory does not claim a server rejection policy."
+      }
+    ],
+    "rules": []
+  }
+}

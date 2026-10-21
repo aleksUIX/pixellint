@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.46.0 (2026-10-20)
+
+- Add Spotify image, StackAdapt pixel, Quora browser pixel, Yandex Adfox simple-link, and Google IMA live PCS rulepacks.
+- Validate route-specific identifiers, encoded StackAdapt property objects, Quora SDK email hash shape, Spotify image actions and purchase values, and documented Adfox randomization bounds.
+- Keep custom event names, opaque identifiers, runtime Adfox events and unsupported collectors within their verified scope. Producer-only checks remain advisory.
+- Add 60 source-based and boundary golden cases, including seven offline producer captures, plus cross-interface coverage and exclusion tests.
+
 ## 0.45.0 (2026-10-20)
 
 - Expose endpoint coverage independently of findings through Rust, CLI, MCP,

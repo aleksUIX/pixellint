@@ -1,0 +1,119 @@
+{
+  "review_date": "2026-10-20",
+  "version": "0.46.0",
+  "new_rulepacks": [
+    "vendor/spotify-image",
+    "vendor/stackadapt-pixel",
+    "vendor/quora-pixel",
+    "vendor/yandex-adfox-links",
+    "vendor/google-ima-live-pcs"
+  ],
+  "sources": {
+    "spotify-image": [
+      {
+        "file": "spotify-image-guide.html",
+        "url": "https://help.adanalytics.spotify.com/img-pixel-best-practices",
+        "status": 200,
+        "bytes": 120335,
+        "sha256": "447289af50a9326a45dcc739965956909767cca15ad2ffba3533031e4c0680bd"
+      },
+      {
+        "file": "spotify.html",
+        "url": "https://help.adanalytics.spotify.com/server-side-gtm-ssgtm-integration-1",
+        "actual_url": "https://help.adanalytics.spotify.com/server-side-gtm-ssgtm-integration-1",
+        "status": 200,
+        "bytes": 119567,
+        "sha256": "afddf5b26522c09f20c13fb3ef70bfe9034a73fc0c0f60ca8be3433260f9e1df"
+      }
+    ],
+    "stackadapt-pixel": [
+      {
+        "file": "stackadapt.tpl",
+        "url": "https://raw.githubusercontent.com/StackAdapt/stackadapt-gtm-server-side-pixel/main/template.tpl",
+        "actual_url": "https://raw.githubusercontent.com/StackAdapt/stackadapt-gtm-server-side-pixel/main/template.tpl",
+        "status": 200,
+        "bytes": 22902,
+        "sha256": "4e763d2dd257facb9d8a0b46ea1d4e8189abdf5caa88703b934c2b1205ecf348"
+      }
+    ],
+    "quora-pixel": [
+      {
+        "file": "quora.js",
+        "url": "https://a.quora.com/qevents.js",
+        "actual_url": "https://a.quora.com/qevents.js",
+        "status": 200,
+        "bytes": 42061,
+        "sha256": "307d57c094e52f8fd95823460c022bba22a14ec3d7cd53dc077a457525a9e905"
+      }
+    ],
+    "yandex-adfox-links": [
+      {
+        "file": "adfox.html",
+        "url": "https://yandex.com/support/adfox/en/banners/pixel1x1",
+        "actual_url": "https://yandex.com/support/adfox/en/banners/pixel1x1",
+        "status": 200,
+        "bytes": 181063,
+        "sha256": "5df68aaa432ac0069f739f88f028151c9700cbfae71f64f314ebbaa5e748064f"
+      },
+      {
+        "file": "adfox-third-party.html",
+        "url": "https://yandex.com/support/adfox/en/banners/pixel",
+        "status": 200,
+        "bytes": 250367,
+        "sha256": "7f022e662d7b73269aa7316c577584262f2b552cc360a226696da2abbd1d74b3"
+      }
+    ],
+    "google-ima-live-pcs": [
+      {
+        "url": "https://pubads.g.doubleclick.net/gampad/live/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&correlator=1792512345680",
+        "sha256": "cb20aeeab54fe49d0cf9faf171b1aed496790093628d5b16a5d26e2c0587ad2e",
+        "observation": "Official live IMA response contains securepubads.g.doubleclick.net/live/pcs/view with nonempty xai, sai and sig. No impression or event callback was fired."
+      }
+    ]
+  },
+  "scope_limits": {
+    "spotify-image": [
+      "Image endpoint only. JS collector and JS event payloads remain outside this pack.",
+      "No blanket uid, alias or forwarding-header requirements are applied to ordinary image pixels.",
+      "Lead values retain empty and opaque forms. Unknown image actions are advisory.",
+      "Session uniqueness, deduplication, delivery and account eligibility require external evidence."
+    ],
+    "stackadapt-pixel": [
+      "Pinned public GTM producer, not a published backend rejection schema. All producer-specific findings are advisory.",
+      "Opaque identifiers, custom event properties and browser-specific variants remain open.",
+      "Only property object shape is checked. Custom member semantics are not guessed."
+    ],
+    "quora-pixel": [
+      "Pinned public qevents SDK profile, not a published backend rejection schema. Findings are advisory.",
+      "The SDK hash prevalidation accepts alphanumeric characters beyond hex. This profile intentionally preserves that behavior.",
+      "No UUID-only pixel ID, closed event list, required noscript SDK marker or numeric-only conversion-value policy is inferred.",
+      "No cryptographic digest authentication, destination acceptance or deduplication claim."
+    ],
+    "yandex-adfox-links": [
+      "Only documented /ads/adfox/{account}/getCode and goLink simple links are selected.",
+      "Runtime /adfox/{account}/event and goLink URLs can carry pr=a. They do not inherit numeric randomization requirements.",
+      "Randomness, campaign activity, targeting and per-request uniqueness are external."
+    ],
+    "google-ima-live-pcs": [
+      "Exact securepubads.g.doubleclick.net/live/pcs/view only. Other host-route combinations remain unclaimed.",
+      "Opaque signature authentication and server rejection policy are unpublished. Completeness remains advisory."
+    ]
+  },
+  "producer_controls": {
+    "executions": 6,
+    "network_requests_performed": 0,
+    "fixtures": [
+      "fixtures/vendor-stackadapt-pixel/source-produced.json",
+      "fixtures/vendor-quora-pixel/source-produced.json"
+    ],
+    "generated_requests": 7
+  },
+  "retained_gaps": [
+    "IAS /pixel.png and Amazon IAS collectors",
+    "Flashtalking /ft.stat",
+    "pagead2 /pcs/view",
+    "RTB House /ad/imp-tags",
+    "Adfox runtime event tuples"
+  ],
+  "privacy": "Primary public docs, offline producer execution and authored synthetic fixtures. No captured customer identifiers or signed callbacks are published."
+}

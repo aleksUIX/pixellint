@@ -85,8 +85,11 @@ fn observed_hosts_and_scoped_adfox_routes_get_attribution_without_contract_claim
         .lookup_endpoint("yandex.ru", "/adfox/999999/event")
         .unwrap();
     assert_eq!(scoped.vendor, "yandex-adfox");
-    assert_eq!(scoped.path_prefixes, ["/adfox/"]);
-    assert!(scoped.rulepack.is_none());
+    assert_eq!(scoped.path_prefixes, ["/adfox/", "/ads/adfox/"]);
+    assert_eq!(
+        scoped.rulepack.as_deref(),
+        Some("vendor/yandex-adfox-links")
+    );
 }
 
 #[test]
@@ -164,10 +167,11 @@ fn adfox_scope_uses_the_browser_path_and_excludes_other_yandex_services() {
     for url in [
         "https://yandex.ru/",
         "https://yandex.ru/search",
+        "https://yandex.com/search",
+        "https://yandex.ru/ads/adfox/../search",
         "https://yandex.ru/adfox",
         "https://yandex.ru/adfox-other/999999/event",
         "https://yandex.ru/Adfox/999999/event",
-        "https://yandex.ru/ads/adfox/999999/event",
         "https://yandex.ru/search?redirect=/adfox/999999/event",
         "https://yandex.ru/#/adfox/999999/event",
         "https://yandex.ru/adfox/../search",
@@ -187,6 +191,7 @@ fn adfox_scope_uses_the_browser_path_and_excludes_other_yandex_services() {
     }
     for url in [
         "https://yandex.ru/other/../adfox/999999/event",
+        "https://yandex.ru/ads/adfox/999999/event",
         "https://YANDEX.RU/adfox/999999/goLink",
     ] {
         assert_attribution(&validate(&engine, url), "yandex-adfox");
