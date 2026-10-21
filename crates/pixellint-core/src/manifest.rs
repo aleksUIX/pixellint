@@ -532,6 +532,15 @@ pub enum Assertion {
         params: Vec<String>,
         separator: String,
     },
+    /// Numbered field families must form complete item groups beginning at one.
+    IndexedParamGroups {
+        params: Vec<String>,
+        #[serde(default)]
+        optional_params: Vec<String>,
+        max_index: usize,
+        #[serde(default)]
+        contiguous: bool,
+    },
     /// Exact sum of amounts in a delimited key/value list.
     DelimitedSum {
         param: String,
@@ -1965,6 +1974,24 @@ fn compile_rules(
                 reason: "equal_split_lengths requires two fields and a nonempty separator"
                     .to_string(),
             });
+        }
+        if let Assertion::IndexedParamGroups {
+            params,
+            optional_params,
+            max_index,
+            ..
+        } = &rule.assertion
+        {
+            let all: Vec<_> = params.iter().chain(optional_params).collect();
+            if params.len() < 2
+                || *max_index == 0
+                || all.iter().any(|p| {
+                    p.is_empty() || p.as_bytes().last().is_some_and(|b| b.is_ascii_digit())
+                })
+                || all.iter().collect::<BTreeSet<_>>().len() != all.len()
+            {
+                return Err(ManifestError::InvalidConstraint { pack_id: pack_id.into(), name: rule.code.clone(), reason: "indexed_param_groups needs distinct nonempty prefixes ending before the numeric index, two required families and a positive maximum index".into() });
+            }
         }
         if let Assertion::DelimitedSum {
             separator,
@@ -5128,6 +5155,34 @@ impl ManifestRulePack {
                 }
                 _ => (false, Vec::new()),
             },
+            Assertion::IndexedParamGroups {
+                params: required,
+                optional_params,
+                max_index,
+                contiguous,
+            } => {
+                let hits: Vec<_> = params.iter().filter(|param| live(param)).collect();
+                let triggered = !crate::indexed_params::valid(
+                    hits.iter().map(|p| p.name.as_ref()),
+                    required,
+                    optional_params,
+                    *max_index,
+                    *contiguous,
+                );
+                let prefixes: Vec<_> = required.iter().chain(optional_params).cloned().collect();
+                let targets = if triggered {
+                    hits.iter()
+                        .filter(|p| {
+                            crate::indexed_params::matching_prefix(p.name.as_ref(), &prefixes)
+                                .is_some()
+                        })
+                        .map(|p| p.target())
+                        .collect()
+                } else {
+                    Vec::new()
+                };
+                (triggered, targets)
+            }
             Assertion::EqualSplitLengths {
                 params: names,
                 separator,
@@ -5857,6 +5912,11 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
             vec![left, right]
         }
         Assertion::UrlPathLength { param, .. } => vec![param],
+        Assertion::IndexedParamGroups {
+            params,
+            optional_params,
+            ..
+        } => params.iter().chain(optional_params).collect(),
         Assertion::EqualSplitLengths { params, .. } => params.iter().collect(),
         Assertion::DelimitedSum { param, total, .. } => vec![param, total],
         Assertion::FtrackFingerprint { indexed, hash } => vec![indexed, hash],
@@ -5918,6 +5978,11 @@ fn assertion_params_mut(assertion: &mut Assertion) -> Vec<&mut String> {
             vec![left, right]
         }
         Assertion::UrlPathLength { param, .. } => vec![param],
+        Assertion::IndexedParamGroups {
+            params,
+            optional_params,
+            ..
+        } => params.iter_mut().chain(optional_params).collect(),
         Assertion::EqualSplitLengths { params, .. } => params.iter_mut().collect(),
         Assertion::DelimitedSum { param, total, .. } => vec![param, total],
         Assertion::FtrackFingerprint { indexed, hash } => vec![indexed, hash],

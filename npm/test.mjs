@@ -88,6 +88,18 @@ assert.equal(vendorForHost("nobody.example"), null);
 // Both npm entry points must use the refreshed engine for live VAST findings.
 const cjs = createRequire(import.meta.url)("./index.cjs");
 for (const entry of [{ validate, validateMany, vendorForHost }, cjs]) {
+  // Indexed affiliate fields and optional product mappings retain their own scope.
+  for (const [artifact, code] of [
+    ["https://www.emjcd.com/u?CID=123&TYPE=456&OID=synthetic&METHOD=S2S&CJEVENT=abc123&ITEM1=sku&AMT2=1&QTY1=1", "vendor.cj.items_incomplete"],
+    ["https://track.linksynergy.com/ep?mid=123&ord=synthetic&skulist=one&qlist=1%7C0&amtlist=100", "vendor.rakuten.numeric_lists_misaligned"],
+    ["https://px.mountain.com/sti?shaid=123&cb=opaque&shpp=money", "vendor.mntn-image.param.shpp.invalid"],
+  ]) assert.deepEqual(entry.validate(artifact).reports.flatMap(report => report.violations.map(finding => finding.code)), [code]);
+  for (const artifact of [
+    "https://www.emjcd.com/u?CID=123&TYPE=456&OID=legacy%20order&ITEM3=legacy",
+    "https://px.mountain.com/sti?shaid=123&cb=opaque&conv=1&shpp=null&shpi=null",
+    "https://track.linksynergy.com/ep?mid=123&ord=synthetic&skulist=sku%7Cencoded%7CDISCOUNT&qlist=1%7C0&amtlist=100%7C-20",
+  ]) assert.deepEqual(entry.validate(artifact).reports.flatMap(report => report.violations), []);
+
   // SDK aliases, initialization and fallback retain separate transport contracts.
   for (const [artifact, pack, code] of [
     ["https://prreqcroab.icu/pixel;a=p-synthetic;r=-1", "vendor/quantcast", "vendor.quantcast.param.r.invalid"],

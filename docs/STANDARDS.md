@@ -3913,7 +3913,7 @@ Context: `{}`.
 
 ## `vendor/cj`
 
-CJ Affiliate conversion image and S2S reads on www.emjcd.com/u. Click-redirect hosts are not contracted.
+CJ exact /u conversion pixels and METHOD=S2S postbacks. The S2S profile checks click identity, optional receipt-time defaults, currency, discounts and complete indexed item groups through 100. Legacy image requirements remain separate from S2S requiredness. Universal Tag and GraphQL are outside this pack.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/cj.json).
 
@@ -3926,6 +3926,33 @@ Matcher: `{"hosts":["www.emjcd.com"],"paths":["/u"]}`.
 | `CID` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://developers.cj.com/docs/plugins/mmp---adjust) |
 | `TYPE` | recommended | `{"format":{"kind":"integer"}}` | [official_vendor](https://developers.cj.com/docs/plugins/mmp---adjust) |
 | `OID` | recommended | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.cj.com/docs/plugins/mmp---adjust) |
+| `METHOD` | optional | `{}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `CJEVENT` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z0-9]{1,64}$"},"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `EVENTTIME` | optional | `{"aliases":["eventTime"],"format":{"kind":"datetime","require_timezone":true},"allow_empty":true,"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `CURRENCY` | optional | `{"format":{"kind":"currency"},"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `COUPON` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$"},"allow_empty":true,"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `DISCOUNT` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `AMOUNT` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"},"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `CUST_STATUS` | optional | `{"format":{"kind":"enum","values":["New","Return","Lapsed"]},"severity":"warning","condition":{"kind":"value_in","param":"METHOD","values":["S2S"]}}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `ITEM` | optional | `{"name_pattern":"^ITEM[0-9]+$","format":{"kind":"regex","pattern":"^[A-Za-z0-9_-]{1,100}$"},"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `AMT` | optional | `{"name_pattern":"^AMT[0-9]+$","format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"},"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `QTY` | optional | `{"name_pattern":"^QTY[0-9]+$","format":{"kind":"regex","pattern":"^[1-9][0-9]*$"},"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `DCNT` | optional | `{"name_pattern":"^DCNT[0-9]+$","format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]},"severity":"error"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.cj.s2s_identity_missing` | `{"kind":"required_when_value","when":"METHOD","equals":["S2S"],"requires":["TYPE","OID","CJEVENT"]}` | warning | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `vendor.cj.s2s_order_spelling` | `{"kind":"format_when","when":"METHOD","equals":["S2S"],"param":"OID","format":{"kind":"regex","pattern":"^[A-Za-z0-9_-]{1,96}$"}}` | warning | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `vendor.cj.items_incomplete` | `{"kind":"indexed_param_groups","params":["ITEM","AMT","QTY"],"optional_params":["DCNT"],"max_index":100,"contiguous":true,"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]}}` | error | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+| `vendor.cj.event_time_future` | `{"kind":"time_window","param":"EVENTTIME","unit":"datetime","max_future_seconds":86400,"condition":{"kind":"value_in","param":"METHOD","values":["S2S"]}}` | error | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
 
 ## `vendor/cloudflare-rum`
 
@@ -9946,7 +9973,7 @@ Context: `{}`.
 
 ## `vendor/mntn-image`
 
-MNTN page and conversion image calls on px.mountain.com/sti. Checks advertiser identity, required cache-buster and populated page URL or conversion amount. Conversion identity and value may be omitted for non-revenue conversions; randomness, GA integration and product mapping need surrounding context.
+MNTN exact /sti tracking and conversion image requests, including documented product mapping and optional analytics context. Checks populated product price and image URL while accepting the sample producer null sentinels. Non-revenue conversions still allow omitted amount and order identity; custom metadata remains open.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/mntn-image.json).
 
@@ -9963,6 +9990,21 @@ Matcher: `{"hosts":["px.mountain.com"],"paths":["/sti"]}`.
 | `shoid` | optional | `{"allow_empty":true}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
 | `shoamt` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"},"allow_empty":true}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
 | `shadditional` | optional | `{"format":{"kind":"regex","pattern":"^[^=,]+=[^,]*(?:,[^=,]+=[^,]*)*$"},"allow_empty":true,"format_severity":"warning"}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shpn` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shpp` | optional | `{"format":{"kind":"regex","pattern":"^(?:[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?\|null)$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shps` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shpi` | optional | `{"format":{"kind":"url"},"condition":{"kind":"not","condition":{"kind":"value_in","param":"shpi","values":["null"]}},"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shpt` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `ga_tracking_id` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `ga_client_id` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
 
 ## `vendor/mouseflow`
 
@@ -12087,7 +12129,7 @@ Context: `{}`.
 
 ## `vendor/rakuten`
 
-Rakuten Advertising conversion image on track.linksynergy.com/ep. Click redirects on click.linksynergy.com are not contracted.
+Rakuten exact /ep conversion requests with source-scoped quantity and amount lists, optional order data and official server-template markers. Zero quantity and negative discount/tax adjustment rows remain valid. Encoded SKU and name delimiters are opaque. Configured MOP, custom domains and browser loaders use other contracts.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/rakuten.json).
 
@@ -12100,6 +12142,47 @@ Matcher: `{"hosts":["track.linksynergy.com"],"paths":["/ep"]}`.
 | `mid` | required | `{"format":{"kind":"integer"}}` | [ecosystem_reference](https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4403182382861-Tracking-Methods-and-Transaction-Reports) |
 | `ord` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4403182382861-Tracking-Methods-and-Transaction-Reports) |
 | `skulist` | recommended | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4403182382861-Tracking-Methods-and-Transaction-Reports) |
+| `cur` | optional | `{"format":{"kind":"currency"},"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `qlist` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:\\\|[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?)*$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `amtlist` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:\\\|[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?)*$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `namelist` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `land` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]{4}(?:0[1-9]\|1[0-2])(?:0[1-9]\|[12][0-9]\|3[01])_(?:[01][0-9]\|2[0-3])[0-5][0-9]$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `tr` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `discount` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `disamt` | optional | `{"format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `custid` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `custstatus` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `source` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `spi` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `img` | optional | `{"format":{"kind":"enum","values":["1"]},"condition":{"kind":"value_in","param":"source","values":["sgtm"]},"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `trunc` | optional | `{"format":{"kind":"enum","values":["true"]},"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+| `altord` | optional | `{"max_length":40,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `cc` | optional | `{"max_length":16,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `commreason` | optional | `{"max_length":255,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `consumed` | optional | `{"max_length":32,"allow_empty":true,"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]{4}(?:0[1-9]\|1[0-2])(?:0[1-9]\|[12][0-9]\|3[01])_(?:[01][0-9]\|2[0-3])[0-5][0-9]$"}}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `coupon` | optional | `{"max_length":128,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `custscore` | optional | `{"max_length":16,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `did` | optional | `{"max_length":42,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `iscomm` | optional | `{"max_length":1,"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["Y","N"]}}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `ordstatus` | optional | `{"max_length":32,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `segment` | optional | `{"max_length":32,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `shipcountry` | optional | `{"max_length":3,"allow_empty":true,"severity":"warning","format":{"kind":"regex","pattern":"^[A-Z]{3}$"}}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `shipped` | optional | `{"max_length":32,"allow_empty":true,"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]{4}(?:0[1-9]\|1[0-2])(?:0[1-9]\|[12][0-9]\|3[01])_(?:[01][0-9]\|2[0-3])[0-5][0-9]$"}}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `sitename` | optional | `{"max_length":128,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `storecat` | optional | `{"max_length":255,"allow_empty":true,"severity":"warning"}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+| `storeid` | optional | `{"max_length":32,"allow_empty":true,"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | [official_vendor](https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.rakuten.numeric_lists_misaligned` | `{"kind":"equal_split_lengths","params":["qlist","amtlist"],"separator":"\|","condition":{"kind":"not","condition":{"kind":"value_in","param":"trunc","values":["true"]}}}` | warning | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl) |
 
 ## `vendor/reddit-conversions-api`
 

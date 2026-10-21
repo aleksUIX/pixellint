@@ -1,19 +1,25 @@
 {
   "id": "vendor/cj",
   "display_name": "CJ Affiliate conversion pixel",
-  "description": "CJ Affiliate conversion image and S2S reads on www.emjcd.com/u. Click-redirect hosts are not contracted.",
+  "description": "CJ exact /u conversion pixels and METHOD=S2S postbacks. The S2S profile checks click identity, optional receipt-time defaults, currency, discounts and complete indexed item groups through 100. Legacy image requirements remain separate from S2S requiredness. Universal Tag and GraphQL are outside this pack.",
   "vendor": "cj",
   "source_level": "official_vendor",
-  "docs": "https://developers.cj.com/docs/plugins/mmp---adjust",
+  "docs": "https://docs.cj.com/docs/s2s-implementation",
   "match": {
-    "hosts": ["www.emjcd.com"],
-    "paths": ["/u"]
+    "hosts": [
+      "www.emjcd.com"
+    ],
+    "paths": [
+      "/u"
+    ]
   },
   "params": [
     {
       "name": "CID",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric CJ Enterprise ID. CJ documents it as CID on the `/u` conversion endpoint.",
       "fix_hint": "Set `CID` to the Enterprise ID from CJ Account Manager.",
       "doc": "https://developers.cj.com/docs/plugins/mmp---adjust"
@@ -21,7 +27,9 @@
     {
       "name": "TYPE",
       "requirement": "recommended",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the Action ID for the conversion. CJ documents a unique TYPE per action.",
       "fix_hint": "Set `TYPE` to the Action ID from Account Manager.",
       "doc": "https://developers.cj.com/docs/plugins/mmp---adjust"
@@ -29,11 +37,320 @@
     {
       "name": "OID",
       "requirement": "recommended",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the unique order reference. CJ documents it for cross-referencing the transaction.",
       "fix_hint": "Set `OID` to a unique alphanumeric order ID, with no email address.",
       "doc": "https://developers.cj.com/docs/plugins/mmp---adjust"
+    },
+    {
+      "name": "METHOD",
+      "requirement": "optional",
+      "description": "Explicit S2S selects the published server postback contract. Other method markers remain open.",
+      "doc": "https://docs.cj.com/docs/s2s-implementation"
+    },
+    {
+      "name": "CJEVENT",
+      "requirement": "optional",
+      "description": "Current click identity for publisher attribution.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9]{1,64}$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "EVENTTIME",
+      "requirement": "optional",
+      "description": "ISO 8601 occurrence time. Omitted or empty values use receipt time.",
+      "aliases": [
+        "eventTime"
+      ],
+      "format": {
+        "kind": "datetime",
+        "require_timezone": true
+      },
+      "allow_empty": true,
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "CURRENCY",
+      "requirement": "optional",
+      "description": "A supplied currency must be populated and valid. Omission uses the program currency.",
+      "format": {
+        "kind": "currency"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "COUPON",
+      "requirement": "optional",
+      "description": "Optional coupon codes, with commas between multiple codes. Empty means no coupon.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$"
+      },
+      "allow_empty": true,
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "DISCOUNT",
+      "requirement": "optional",
+      "description": "Whole-order decimal discount. Empty is invalid; omission and zero remain valid.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "AMOUNT",
+      "requirement": "optional",
+      "description": "Optional decimal order value used in the published examples.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "CUST_STATUS",
+      "requirement": "optional",
+      "description": "Published customer status spellings are source guidance.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "New",
+          "Return",
+          "Lapsed"
+        ]
+      },
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation"
+    },
+    {
+      "name": "ITEM",
+      "requirement": "optional",
+      "description": "SKU, at most 100 characters.",
+      "name_pattern": "^ITEM[0-9]+$",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9_-]{1,100}$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "AMT",
+      "requirement": "optional",
+      "description": "Nonnegative unit price without currency symbols.",
+      "name_pattern": "^AMT[0-9]+$",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "QTY",
+      "requirement": "optional",
+      "description": "Positive whole quantity.",
+      "name_pattern": "^QTY[0-9]+$",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[1-9][0-9]*$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
+    },
+    {
+      "name": "DCNT",
+      "requirement": "optional",
+      "description": "Optional line discount. The index must refer to an existing item.",
+      "name_pattern": "^DCNT[0-9]+$",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "doc": "https://docs.cj.com/docs/s2s-implementation",
+      "severity": "error"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.cj.s2s_identity_missing",
+      "kind": "required_when_value",
+      "message": "S2S attribution uses action, order and click identities. Missing attribution data may be intentional for other integrations.",
+      "when": "METHOD",
+      "equals": [
+        "S2S"
+      ],
+      "requires": [
+        "TYPE",
+        "OID",
+        "CJEVENT"
+      ],
+      "severity": "warning",
+      "doc": "https://docs.cj.com/docs/s2s-implementation"
+    },
+    {
+      "code": "vendor.cj.s2s_order_spelling",
+      "kind": "format_when",
+      "message": "The documented order spelling is at most 96 characters; longer values are truncated.",
+      "when": "METHOD",
+      "equals": [
+        "S2S"
+      ],
+      "param": "OID",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9_-]{1,96}$"
+      },
+      "severity": "warning",
+      "doc": "https://docs.cj.com/docs/s2s-implementation"
+    },
+    {
+      "code": "vendor.cj.items_incomplete",
+      "kind": "indexed_param_groups",
+      "message": "Item, price and quantity families need matching indices from 1 through 100, without gaps. Optional discounts join an existing index.",
+      "params": [
+        "ITEM",
+        "AMT",
+        "QTY"
+      ],
+      "optional_params": [
+        "DCNT"
+      ],
+      "max_index": 100,
+      "contiguous": true,
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "severity": "error",
+      "doc": "https://docs.cj.com/docs/s2s-implementation"
+    },
+    {
+      "code": "vendor.cj.event_time_future",
+      "kind": "time_window",
+      "message": "CJ rejects timestamps more than 24 hours in the future.",
+      "param": "EVENTTIME",
+      "unit": "datetime",
+      "max_future_seconds": 86400,
+      "condition": {
+        "kind": "value_in",
+        "param": "METHOD",
+        "values": [
+          "S2S"
+        ]
+      },
+      "severity": "error",
+      "doc": "https://docs.cj.com/docs/s2s-implementation"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "description": "The published postback uses HTTP GET.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "doc": "https://docs.cj.com/docs/s2s-implementation",
+        "severity": "warning"
+      }
+    ]
+  }
 }

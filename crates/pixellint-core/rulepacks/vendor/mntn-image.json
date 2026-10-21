@@ -2,7 +2,7 @@
   "id": "vendor/mntn-image",
   "display_name": "MNTN image pixel",
   "vendor": "mntn",
-  "description": "MNTN page and conversion image calls on px.mountain.com/sti. Checks advertiser identity, required cache-buster and populated page URL or conversion amount. Conversion identity and value may be omitted for non-revenue conversions; randomness, GA integration and product mapping need surrounding context.",
+  "description": "MNTN exact /sti tracking and conversion image requests, including documented product mapping and optional analytics context. Checks populated product price and image URL while accepting the sample producer null sentinels. Non-revenue conversions still allow omitted amount and order identity; custom metadata remains open.",
   "source_level": "official_vendor",
   "docs": "https://help.mountain.com/en/articles/7251381-install-image-pixels",
   "match": {
@@ -78,7 +78,105 @@
       },
       "allow_empty": true,
       "format_severity": "warning"
+    },
+    {
+      "name": "shpn",
+      "requirement": "optional",
+      "description": "Optional mapped product name. The sample can stringify null.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
+    },
+    {
+      "name": "shpp",
+      "requirement": "optional",
+      "description": "Optional mapped product price or the sample null sentinel.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^(?:[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?|null)$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
+    },
+    {
+      "name": "shps",
+      "requirement": "optional",
+      "description": "Mapped SKU remains opaque caller data.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
+    },
+    {
+      "name": "shpi",
+      "requirement": "optional",
+      "description": "Optional mapped product image URL; the sample can stringify null.",
+      "format": {
+        "kind": "url"
+      },
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "shpi",
+          "values": [
+            "null"
+          ]
+        }
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
+    },
+    {
+      "name": "shpt",
+      "requirement": "optional",
+      "description": "Optional page title from the published analytics snippet.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
+    },
+    {
+      "name": "ga_tracking_id",
+      "requirement": "optional",
+      "description": "Optional analytics identities may be a semicolon-separated list.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
+    },
+    {
+      "name": "ga_client_id",
+      "requirement": "optional",
+      "description": "Optional analytics client identity remains opaque.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
     }
   ],
-  "rules": []
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "description": "Image tracking uses GET.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
+      }
+    ]
+  }
 }

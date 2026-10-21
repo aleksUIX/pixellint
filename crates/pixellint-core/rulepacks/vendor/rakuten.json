@@ -1,19 +1,25 @@
 {
   "id": "vendor/rakuten",
   "display_name": "Rakuten Advertising conversion pixel",
-  "description": "Rakuten Advertising conversion image on track.linksynergy.com/ep. Click redirects on click.linksynergy.com are not contracted.",
+  "description": "Rakuten exact /ep conversion requests with source-scoped quantity and amount lists, optional order data and official server-template markers. Zero quantity and negative discount/tax adjustment rows remain valid. Encoded SKU and name delimiters are opaque. Configured MOP, custom domains and browser loaders use other contracts.",
   "vendor": "rakuten",
   "source_level": "ecosystem_reference",
-  "docs": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4403182382861-Tracking-Methods-and-Transaction-Reports",
+  "docs": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl",
   "match": {
-    "hosts": ["track.linksynergy.com"],
-    "paths": ["/ep"]
+    "hosts": [
+      "track.linksynergy.com"
+    ],
+    "paths": [
+      "/ep"
+    ]
   },
   "params": [
     {
       "name": "mid",
       "requirement": "required",
-      "format": { "kind": "integer" },
+      "format": {
+        "kind": "integer"
+      },
       "description": "It is the numeric merchant ID. Generated `/ep` pixels send it. Rakuten documents tracking methods rather than this query, so the rule is ecosystem evidence.",
       "fix_hint": "Set `mid` to the Merchant ID from Rakuten Advertising.",
       "doc": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4403182382861-Tracking-Methods-and-Transaction-Reports"
@@ -21,7 +27,9 @@
     {
       "name": "ord",
       "requirement": "required",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the unique order ID. Generated `/ep` pixels send it.",
       "fix_hint": "Set `ord` to a unique order identifier.",
       "doc": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4403182382861-Tracking-Methods-and-Transaction-Reports"
@@ -29,11 +37,393 @@
     {
       "name": "skulist",
       "requirement": "recommended",
-      "format": { "kind": "non_empty" },
+      "format": {
+        "kind": "non_empty"
+      },
       "description": "It is the pipe-delimited SKU list generated pixels send for itemized orders.",
       "fix_hint": "Set `skulist` to the order SKUs, pipe-delimited when there is more than one item.",
       "doc": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4403182382861-Tracking-Methods-and-Transaction-Reports"
+    },
+    {
+      "name": "cur",
+      "requirement": "optional",
+      "description": "Transaction ISO 4217 currency.",
+      "format": {
+        "kind": "currency"
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "qlist",
+      "requirement": "optional",
+      "description": "Pipe-separated numeric quantities, including zero adjustment rows.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:\\|[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?)*$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "amtlist",
+      "requirement": "optional",
+      "description": "Pipe-separated line totals. Signed discount and tax rows remain valid.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:\\|[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?)*$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "namelist",
+      "requirement": "optional",
+      "description": "Names are encoded individually. Embedded separators remain opaque.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "land",
+      "requirement": "optional",
+      "description": "Optional landing UTC time spelling YYYYmmDD_HHMM.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]{4}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01])_(?:[01][0-9]|2[0-3])[0-5][0-9]$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "tr",
+      "requirement": "optional",
+      "description": "Publisher tracking identity remains opaque.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "discount",
+      "requirement": "optional",
+      "description": "Source numeric discount amount.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "disamt",
+      "requirement": "optional",
+      "description": "Source optional numeric discount amount.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "custid",
+      "requirement": "optional",
+      "description": "Internal customer identity remains opaque.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "custstatus",
+      "requirement": "optional",
+      "description": "Customer status is configured caller data.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "source",
+      "requirement": "optional",
+      "description": "Producer provenance marker, without a closed vocabulary.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "spi",
+      "requirement": "optional",
+      "description": "Producer version remains opaque and forward compatible.",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "img",
+      "requirement": "optional",
+      "description": "The official server template emits image mode 1.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1"
+        ]
+      },
+      "condition": {
+        "kind": "value_in",
+        "param": "source",
+        "values": [
+          "sgtm"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "trunc",
+      "requirement": "optional",
+      "description": "The source truncation marker is the string true.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true"
+        ]
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    },
+    {
+      "name": "altord",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 40,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "cc",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 16,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "commreason",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 255,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "consumed",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 32,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]{4}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01])_(?:[01][0-9]|2[0-3])[0-5][0-9]$"
+      }
+    },
+    {
+      "name": "coupon",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 128,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "custscore",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 16,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "did",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 42,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "iscomm",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 1,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "Y",
+          "N"
+        ]
+      }
+    },
+    {
+      "name": "ordstatus",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 32,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "segment",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 32,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "shipcountry",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 3,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Z]{3}$"
+      }
+    },
+    {
+      "name": "shipped",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 32,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]{4}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01])_(?:[01][0-9]|2[0-3])[0-5][0-9]$"
+      }
+    },
+    {
+      "name": "sitename",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 128,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "storecat",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 255,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf"
+    },
+    {
+      "name": "storeid",
+      "requirement": "optional",
+      "description": "Published optional order-level field limit.",
+      "max_length": 32,
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      }
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.rakuten.numeric_lists_misaligned",
+      "kind": "equal_split_lengths",
+      "message": "Quantity and amount lists describe the same number of rows. SKU/name separators are intentionally not counted after URL decoding.",
+      "params": [
+        "qlist",
+        "amtlist"
+      ],
+      "separator": "|",
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "trunc",
+          "values": [
+            "true"
+          ]
+        }
+      },
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "description": "The official server template uses GET.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://github.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/blob/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl"
+      }
+    ]
+  }
 }

@@ -1,0 +1,178 @@
+{
+  "review_date": "2026-10-21",
+  "version": "0.53.0",
+  "new_rulepacks": [],
+  "deepened_rulepacks": [
+    "vendor/cj",
+    "vendor/rakuten",
+    "vendor/mntn-image"
+  ],
+  "sources": {
+    "cj": [
+      {
+        "file": "cj-s2s.md",
+        "url": "https://docs.cj.com/docs/s2s.md",
+        "actual_url": "https://docs.cj.com/docs/s2s.md",
+        "status": 200,
+        "bytes": 3110,
+        "sha256": "382c0f278b1018fc13acdac4db3f1230c9154249eb2a62b91ffcca3b3ac72d5c"
+      },
+      {
+        "file": "cj-s2s-implementation.md",
+        "url": "https://docs.cj.com/docs/s2s-implementation.md",
+        "actual_url": "https://docs.cj.com/docs/s2s-implementation.md",
+        "status": 200,
+        "bytes": 10641,
+        "sha256": "0c5c8c46af8e006cd388dadbf29728f4d71eca9414be11ea75bbdfccbe7d6ebd"
+      },
+      {
+        "file": "cj-s2s-testing.md",
+        "url": "https://docs.cj.com/docs/s2s-testing.md",
+        "actual_url": "https://docs.cj.com/docs/s2s-testing.md",
+        "status": 200,
+        "bytes": 11784,
+        "sha256": "7a477585d7de9eb69441a5faa72de24e7a2d4ab84f092e6752be5395f2abdde5"
+      }
+    ],
+    "rakuten": [
+      {
+        "file": "rakuten-guide.pdf",
+        "url": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf",
+        "actual_url": "https://go.rakutenadvertising.com/hubfs/Rakuten-Affiliate-for-Server-Side-Google-Tag-Manager.pdf",
+        "status": 200,
+        "bytes": 3464483,
+        "sha256": "e4099b4c141d509d7e2d2ce9361ab1936c48311db7857f9d11f0162e2b415857"
+      },
+      {
+        "file": "rakuten-server.tpl",
+        "url": "https://raw.githubusercontent.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl",
+        "actual_url": "https://raw.githubusercontent.com/Rakuten-Advertising-Developers/Affiliate-for-Server-Side-GTM/bd2c08e8bb352cbe92db0d9ec97607c94401fffe/template.tpl",
+        "status": 200,
+        "bytes": 68923,
+        "sha256": "d1e0886131ea881a0aedfc1cbab1c2fc8ee38fabb2b47ba31775186d1d6b32ef"
+      }
+    ],
+    "mntn-image": [
+      {
+        "file": "mntn-image.html",
+        "url": "https://help.mountain.com/en/articles/7251381-install-image-pixels",
+        "actual_url": "https://help.mountain.com/en/articles/7251381-install-image-pixels",
+        "status": 200,
+        "bytes": 153887,
+        "sha256": "7360582dfdd95985ba6c3f96d9cd66ae1070b3587c0fbdce5c0c6ef78e46414e"
+      }
+    ]
+  },
+  "scope_limits": {
+    "cj": [
+      "Exact /u is covered. METHOD=S2S selects the current documented server postback profile; legacy image requiredness and formats remain unchanged. Universal Tag and GraphQL are different surfaces.",
+      "Indexed ITEM, AMT and QTY families must have matching indices from 1 through 100 without gaps; optional DCNT entries refer to an existing item. Repeated query interpretation is left to the receiver, without an invented uniqueness rule.",
+      "The parameter table labels EVENTTIME and CURRENCY required, but its notes explicitly allow omitted receipt time and program currency. Empty EVENTTIME is valid. Empty currency, malformed timestamps and timestamps more than 24 hours in the future are checked. Order values exceeding 96 characters are truncated and receive advice.",
+      "Missing S2S attribution identities receive advice because legacy and other integrations may omit click data. The existing clean-s2s case remains valid with that warning. Account/action ownership, latest-click provenance, catalog SKU parity, actual discounts, consent applicability and delivery require external context. The malformed Simple Action URL in the source example is retained as a negative amount fixture, not treated as a clean producer."
+    ],
+    "rakuten": [
+      "Exact /ep on track.linksynergy.com is covered. Configured MOP /eventnvppixel, alternate domains and browser loader protocols remain outside this profile.",
+      "The pinned official server template ran unmodified with mocked GTM APIs. Its quantity, amount, marker and HTTP checks are advisory. Zero quantity and signed discount/tax adjustment rows remain accepted. Source versions and custom fields stay open.",
+      "Quantity and amount lists are compared only when populated and not marked truncated. SKU/name arity is not inferred after URL decoding because encoded item separators become ambiguous. Item-level optional-data limits, item categories and name lengths remain deferred until a decoder can preserve those boundaries.",
+      "The published order-data appendix supplies optional scalar field lengths. Compact landing, consumed and shipped dates have spelling checks only, without a new calendar or timezone claim. Country checks cover three-letter shape, not membership in a country registry.",
+      "Click-cookie truth, merchant ownership, tax and currency-unit configuration, commissioning, permissions and delivery require external context. Negative amount rows alone do not establish a source configuration error."
+    ],
+    "mntn-image": [
+      "Exact /sti tracking and conversion images are covered. Account JS loaders and other MNTN endpoints retain their existing scope.",
+      "The official article image templates were instantiated with synthetic values in Chromium and every request intercepted. These are documentation controls, not execution of an account SDK. Its product JavaScript example contains a split let token; no repaired snippet is represented as unmodified execution.",
+      "Product price and URL checks are advisory and preserve empty and literal null values from the sample mapping. SKU, name, title, analytics IDs and custom metadata stay open. Non-revenue conversions retain omitted order identity and amount.",
+      "DOM selector correctness, product mapping, cache-buster uniqueness, account configuration, attribution and delivery require external context."
+    ]
+  },
+  "golden_cases": 130,
+  "producer_controls": {
+    "synthetic_only": true,
+    "external_network_requests_performed": 0,
+    "executions": 15,
+    "collector_requests": 15,
+    "cases": [
+      {
+        "scenario": "rakuten-sale",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-order-discount",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-order-tax",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-aggregate-duplicates",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-encoded-pipe",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-jpy",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-decimal-mode",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-lead",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-optional-data",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "rakuten-truncated",
+        "producer": "unmodified official server template with mocked GTM APIs",
+        "requests": 1
+      },
+      {
+        "scenario": "mntn-page",
+        "producer": "published image template instantiated with synthetic values",
+        "requests": 1
+      },
+      {
+        "scenario": "mntn-product",
+        "producer": "published image template instantiated with synthetic values",
+        "requests": 1
+      },
+      {
+        "scenario": "mntn-unmapped-product",
+        "producer": "published image template instantiated with synthetic values",
+        "requests": 1
+      },
+      {
+        "scenario": "mntn-conversion",
+        "producer": "published image template instantiated with synthetic values",
+        "requests": 1
+      },
+      {
+        "scenario": "mntn-non-revenue",
+        "producer": "published image template instantiated with synthetic values",
+        "requests": 1
+      }
+    ]
+  },
+  "engine_change": "Generic indexed_param_groups checks matching item indices, complete required families, bounded indices and optional contiguous numbering without expanding one hundred copies of the same rules.",
+  "review_notes": [
+    "CJ documentation templates, offline Rakuten server-template captures and instantiated MNTN image templates are distinct evidence. No conversion request reached an external collector.",
+    "Receiver-documented CJ errors retain error severity. Rakuten source-profile and MNTN template checks remain advisory.",
+    "The iSpot PDF was readable through web extraction but returned repeated HTTP 502 errors for the downloadable versions. That candidate was deferred; no additional iSpot completeness is claimed.",
+    "Source snapshots remain local. Product provenance contains URLs, hashes, scope limits and synthetic fixtures only."
+  ]
+}

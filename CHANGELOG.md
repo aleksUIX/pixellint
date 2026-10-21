@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.53.0 (2026-10-21)
+
+Deepen CJ, Rakuten and MNTN with 51 additional field contracts and five cross-field assertions. The inventory remains 189 vendor packs across 96 vendors.
+
+- CJ S2S postbacks validate click identity, currency, coupon and discount fields, timestamp syntax and the published 24-hour future bound. Omitted receipt timestamps and functional currency retain the documented defaults.
+- Add generic indexed parameter groups for complete, contiguous ITEM/AMT/QTY records through 100, with optional matching DCNT fields. One rule expresses the relationship without duplicating a hundred copies of it. Legacy pixels retain their existing requirements.
+- Rakuten validates quantity and amount lists, optional order data and official template transport markers. Zero quantity, signed discount/tax rows, opaque encoded SKU separators and truncated requests remain accepted.
+- MNTN validates mapped product prices and image URLs, retaining empty and literal null sentinels. Non-revenue conversions retain omitted order identity and amount.
+- Add 130 golden fixtures and six integration tests. Ten executions of the pinned Rakuten template and five instantiated MNTN image templates emitted 15 intercepted requests. New template checks remain advisory.
+
 ## 0.52.0 (2026-10-21)
 
 Deepen Quantcast, Taboola and The Trade Desk, adding 60 field contracts and 12 cross-field assertions. The inventory reaches 189 vendor packs across 96 vendors.

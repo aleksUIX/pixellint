@@ -329,10 +329,13 @@ rule names must also appear in `params`.
 | `gpp_field_values` | `param`, `section_param`, `field`, `values` | an applicable decoded US state field contains a choice outside the destination's permitted values; absent state fields and opaque layouts are skipped |
 | `equal_array_lengths` | `params` | present native JSON arrays contain different numbers of records; missing fields and wrong native types are left to their field contracts |
 | `unique_array_by` | `param`, `field` | objects in one native JSON array repeat a literal scalar member value; `field` is an exact member name, including punctuation; missing members, containers and macros are skipped; strings, numbers and Booleans remain distinct; numeric spellings normalize exactly within signed 64-bit exponent arithmetic, and identical numeric spellings outside that range still count as duplicates |
+| `indexed_param_groups` | `params`, `optional_params`, `max_index`, `contiguous` | numbered families must have matching indices, every required family per item, indices from 1 through the limit; optional families join existing items; contiguous indices start at 1 |
 | `equal_split_lengths` | `params`, `separator` | populated delimited lists contain different numbers of records; missing optional lists and macros are skipped |
 | `equal_occurrences` | `params` | repeated field families have different occurrence counts, including empty and macro positions |
 | `max_occurrences` | `param`, `max_occurrences`, optional `bare_url_only` | the submitted field exceeds its occurrence bound; empty and macro values count, query names are percent-decoded, and bare query keys without an equals sign count too; `bare_url_only: true` excludes body scopes and URL scopes supplied by complete HTTP captures |
 | `time_window` | `param`, `unit`, optional `fallback_param`, `max_age_seconds`, `max_future_seconds` | the effective timestamp falls outside inclusive age or future bounds relative to the shared validation clock |
+
+The indexed-group rule uses contracted family prefixes such as ITEM, AMT and QTY. Define those fields with name patterns such as `^ITEM[0-9]+$`. Optional families join an existing required group. Repeated query values do not create extra item rows, and nonnumeric suffixes stay outside this rule. Prefixes end before the numeric index.
 
 Timestamp units are `seconds`, `milliseconds`, `microseconds`,
 `seconds_or_milliseconds`, `datetime`, and `datetime_utc`. The last form treats
