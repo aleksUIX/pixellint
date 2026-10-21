@@ -1,7 +1,7 @@
 {
   "id": "vendor/google-analytics-collect",
   "display_name": "Google Analytics 4 gtag collect",
-  "description": "Browser collection requests the Google tag sends to the GA4 /g/collect transport.",
+  "description": "GA4 browser /g/collect query transports. Adds source-profile checks for populated page metadata, session counters, numeric event and user property families, screen size and binary flags. Custom names, string properties, consent encodings and product tuples remain open. Plaintext multi-event batch bodies are outside this query profile.",
   "vendor": "google",
   "source_level": "ecosystem_reference",
   "docs": "https://developers.google.com/analytics/devguides/collection/ga4",
@@ -12,9 +12,11 @@
     "hosts": [
       "analytics.google.com"
     ],
-    "path_prefixes": [
+    "paths": [
       "/g/collect",
-      "/debug/g/collect"
+      "/g/collect/",
+      "/debug/g/collect",
+      "/debug/g/collect/"
     ]
   },
   "params": [
@@ -61,7 +63,318 @@
       },
       "description": "It is the event name.",
       "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+    },
+    {
+      "name": "dl",
+      "description": "The producer sends an absolute page or referrer URL. Blank referrers remain valid.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "dr",
+      "description": "The producer sends an absolute page or referrer URL. Blank referrers remain valid.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "dt",
+      "description": "Document title remains an open string.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "allow_empty": true
+    },
+    {
+      "name": "cu",
+      "description": "The producer uses a three-letter currency token.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Z]{3}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "sr",
+      "description": "Browser screen dimensions use width x height.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+x[0-9]+$"
+      }
+    },
+    {
+      "name": "sid",
+      "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      }
+    },
+    {
+      "name": "sct",
+      "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      }
+    },
+    {
+      "name": "_s",
+      "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      }
+    },
+    {
+      "name": "_et",
+      "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      }
+    },
+    {
+      "name": "_p",
+      "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      }
+    },
+    {
+      "name": "tfd",
+      "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+$"
+      }
+    },
+    {
+      "name": "seg",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "frm",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "npa",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "dma",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "uamb",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "uaw",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "_fv",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "_ss",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "_nsi",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "_ee",
+      "description": "The pinned browser producer uses a binary flag.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "numeric_properties",
+      "description": "Numeric event and user property families retain signed decimal and exponent values.",
+      "requirement": "optional",
+      "severity": "warning",
+      "source_level": "official_template",
+      "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+      "name_pattern": "^(?:epn|upn)\\..+$",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+      }
     }
   ],
-  "rules": []
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The source uses these transport methods.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "severity": "warning"
+      }
+    ],
+    "rules": []
+  }
 }

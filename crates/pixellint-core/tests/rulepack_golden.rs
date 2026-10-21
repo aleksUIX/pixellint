@@ -201,12 +201,19 @@ fn auto_mode_matches_independent_plugin_supports_and_reports() {
                     .filter(|report| report.plugin_id != pixellint_core::DIRECTORY_ID)
                     .map(|report| report.plugin_id.as_str())
                     .collect();
-                if let Ok(capture) =
+                let capture_url =
                     serde_json::from_str::<pixellint_core::HttpRequest>(&request.artifact)
-                {
+                        .map(|capture| capture.url)
+                        .or_else(|_| {
+                            serde_json::from_str::<pixellint_core::BinaryHttpRequest>(
+                                &request.artifact,
+                            )
+                            .map(|capture| capture.url)
+                        });
+                if let Ok(capture_url) = capture_url {
                     let url_request = ValidationRequest {
                         artifact_kind: ArtifactKind::Url,
-                        artifact: capture.url,
+                        artifact: capture_url,
                         claimed_vendor: request.claimed_vendor.clone(),
                         expansion_state: request.expansion_state,
                     };

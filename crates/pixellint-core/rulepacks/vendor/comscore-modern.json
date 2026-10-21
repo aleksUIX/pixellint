@@ -1,0 +1,226 @@
+{
+  "id": "vendor/comscore-modern",
+  "display_name": "Comscore configured SDK beacon",
+  "vendor": "comscore",
+  "description": "Pinned beacon.js 4.14.0 configured browser beacons identified by cs_cfg. Checks configuration bits, populated metadata and source timing flags. Page URL may be disabled by configuration or moved into the truncated ns_cut tail. Legacy Direct beacons retain their separate documented requirements.",
+  "docs": "https://sb.scorecardresearch.com/beacon.js",
+  "source_level": "official_template",
+  "match": {
+    "hosts": [
+      "sb.scorecardresearch.com"
+    ],
+    "paths": [
+      "/b",
+      "/b2"
+    ],
+    "query_params_any": [
+      "cs_cfg"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "c1",
+      "description": "The SDK defaults browser beacons to publisher type 2.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "2"
+        ]
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "c2",
+      "description": "The SDK needs its configured client identity. Its grammar is opaque.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "cs_cfg",
+      "description": "The SDK emits seven binary configuration flags.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[01]{7}$"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "ns_cut",
+      "description": "Truncated query tail is opaque and can contain a partial page URL.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "c7",
+      "description": "The page URL is emitted when URL collection is enabled and the request is not truncated.",
+      "requirement": "recommended",
+      "format": {
+        "kind": "url"
+      },
+      "severity": "warning",
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {
+            "kind": "exists",
+            "param": "c7"
+          },
+          {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "value_pattern",
+                  "param": "cs_cfg",
+                  "pattern": "^[01]{3}0[01]{3}$"
+                }
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "exists",
+                  "param": "ns_cut"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "c8",
+      "description": "Optional document title.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "c9",
+      "description": "Optional document referrer.",
+      "requirement": "optional",
+      "format": {
+        "kind": "url"
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "ns__t",
+      "description": "The SDK stamps epoch milliseconds.",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning"
+    },
+    {
+      "name": "ns_if",
+      "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "cs_gpc",
+      "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "cs_ucfr",
+      "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "cs_ucc",
+      "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "ns_c",
+      "description": "Optional producer metadata with opaque grammar.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "cv",
+      "description": "Optional producer metadata with opaque grammar.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "cs_it",
+      "description": "Optional producer metadata with opaque grammar.",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "cs_fpcu",
+      "description": "Optional producer metadata with opaque grammar.",
+      "requirement": "optional",
+      "allow_empty": true
+    }
+  ],
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The source uses these transport methods.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning"
+      }
+    ],
+    "rules": []
+  }
+}

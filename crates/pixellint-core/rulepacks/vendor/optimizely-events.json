@@ -1,0 +1,460 @@
+{
+  "id": "vendor/optimizely-events",
+  "display_name": "Optimizely Event API",
+  "vendor": "optimizely",
+  "description": "Documented Event API batches on logx.optimizely.com/v1/events. Checks visitors, attributes, decision snapshots, events, scalar tags and exact signed 64-bit revenue. Personalization null decisions remain valid. Account ownership, campaign history and delivery require external context.",
+  "docs": "https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint",
+  "source_level": "official_vendor",
+  "match": {
+    "hosts": [
+      "logx.optimizely.com"
+    ],
+    "paths": [
+      "/v1/events"
+    ],
+    "json_paths": [
+      "account_id",
+      "visitors"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [],
+  "rules": [],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "object",
+          "severity": "error"
+        },
+        {
+          "name": "account_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "string",
+          "severity": "error"
+        },
+        {
+          "name": "visitors",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "array",
+          "severity": "error"
+        },
+        {
+          "name": "anonymize_ip",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "error"
+        },
+        {
+          "name": "enrich_decisions",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "error"
+        },
+        {
+          "name": "client_name",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error",
+          "allow_empty": true
+        },
+        {
+          "name": "client_version",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error",
+          "allow_empty": true
+        },
+        {
+          "name": "project_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error",
+          "allow_empty": true
+        }
+      ],
+      "rules": []
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "error"
+        },
+        {
+          "name": "visitor_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "string",
+          "severity": "error"
+        },
+        {
+          "name": "snapshots",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "array",
+          "severity": "error"
+        },
+        {
+          "name": "attributes",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "error"
+        },
+        {
+          "name": "session_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error",
+          "allow_empty": true
+        }
+      ],
+      "rules": [],
+      "scope": "visitors[]"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "error"
+        },
+        {
+          "name": "type",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "string",
+          "severity": "error"
+        },
+        {
+          "name": "value",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": [
+            "string",
+            "number",
+            "boolean"
+          ],
+          "severity": "error",
+          "allow_empty": true
+        },
+        {
+          "name": "entity_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error"
+        },
+        {
+          "name": "key",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error",
+          "allow_empty": true
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.optimizely-events.custom_attribute_identity",
+          "kind": "required_when_value",
+          "when": "type",
+          "equals": [
+            "custom"
+          ],
+          "requires": [
+            "entity_id",
+            "key"
+          ],
+          "severity": "error",
+          "message": "Custom attributes require their entity_id and key.",
+          "doc": "https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint"
+        },
+        {
+          "code": "vendor.optimizely-events.noncustom_attribute_entity",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "entity_id"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "exists",
+                "param": "type"
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "value_in",
+                  "param": "type",
+                  "values": [
+                    "custom"
+                  ]
+                }
+              }
+            ]
+          },
+          "severity": "error",
+          "message": "Only custom attributes may carry entity_id.",
+          "doc": "https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint",
+          "pattern": "(?s).*"
+        }
+      ],
+      "scope": "visitors[].attributes[]"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "error"
+        },
+        {
+          "name": "events",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "array",
+          "severity": "error"
+        },
+        {
+          "name": "decisions",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "error"
+        }
+      ],
+      "rules": [],
+      "scope": "visitors[].snapshots[]"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "error"
+        },
+        {
+          "name": "campaign_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "string",
+          "severity": "error"
+        },
+        {
+          "name": "experiment_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "error"
+        },
+        {
+          "name": "variation_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "severity": "error"
+        },
+        {
+          "name": "is_campaign_holdback",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "error"
+        }
+      ],
+      "rules": [],
+      "scope": "visitors[].snapshots[].decisions[]"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "error"
+        },
+        {
+          "name": "timestamp",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "integer",
+          "severity": "error"
+        },
+        {
+          "name": "uuid",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "required",
+          "json_type": "string",
+          "severity": "error"
+        },
+        {
+          "name": "entity_id",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error",
+          "allow_empty": true
+        },
+        {
+          "name": "key",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error",
+          "allow_empty": true
+        },
+        {
+          "name": "type",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "error",
+          "allow_empty": true
+        },
+        {
+          "name": "quantity",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "integer",
+          "severity": "error"
+        },
+        {
+          "name": "revenue",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "integer",
+          "severity": "error",
+          "minimum": -9223372036854775808,
+          "maximum": 9223372036854775807
+        },
+        {
+          "name": "value",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "number",
+          "severity": "error"
+        },
+        {
+          "name": "tags",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "error"
+        }
+      ],
+      "rules": [],
+      "scope": "visitors[].snapshots[].events[]"
+    },
+    {
+      "params": [
+        {
+          "name": "tag_values",
+          "description": "Native type from the published Event API schema.",
+          "requirement": "optional",
+          "json_type": [
+            "string",
+            "number",
+            "boolean"
+          ],
+          "severity": "error",
+          "name_pattern": "(?s)^.*$",
+          "name_pattern_parent": "",
+          "allow_empty": true
+        }
+      ],
+      "rules": [],
+      "scope": "visitors[].snapshots[].events[].tags"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The source uses these transport methods.",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        },
+        "severity": "error"
+      },
+      {
+        "name": "body",
+        "description": "A complete capture needs the JSON request body.",
+        "requirement": "required",
+        "json_type": "object",
+        "severity": "error",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "The documented request is JSON.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "headers.x-optimizely-strict",
+        "description": "The optional strict-mode header is a boolean token.",
+        "requirement": "optional",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "true",
+            "false"
+          ]
+        },
+        "severity": "error"
+      }
+    ],
+    "rules": []
+  }
+}

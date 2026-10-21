@@ -1,0 +1,694 @@
+{
+  "id": "vendor/tiktok-browser",
+  "display_name": "TikTok browser event collector",
+  "vendor": "tiktok",
+  "description": "Pinned pixel.js 2.2.1 browser events on the exact /api/v2/pixel route. POST JSON and UTF-8 Base64URL image fallbacks share advisory payload checks. Custom events and array properties remain open. Events API, onsite shop events, interaction and performance collectors have separate schemas.",
+  "docs": "https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js",
+  "source_level": "official_template",
+  "match": {
+    "hosts": [
+      "analytics.tiktok.com"
+    ],
+    "paths": [
+      "/api/v2/pixel"
+    ],
+    "json_paths": [
+      "event",
+      "context"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "analytics_message",
+      "description": "The image fallback carries unpadded UTF-8 Base64URL JSON.",
+      "requirement": "optional"
+    }
+  ],
+  "rules": [],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "event",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9_ -]*[A-Za-z0-9_-])?$"
+          },
+          "max_length": 50
+        },
+        {
+          "name": "event_id",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "message_id",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "timestamp",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "datetime"
+          }
+        },
+        {
+          "name": "is_onsite",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "warning"
+        },
+        {
+          "name": "context",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "recommended",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.pixel",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.pixel.code",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "is_onsite",
+              "values": [
+                "true"
+              ]
+            }
+          }
+        },
+        {
+          "name": "context.pixel.runtime",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.page.url",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "url"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.referrer",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "url"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.library",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.library.name",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "context.library.version",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "context.user",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.user.email",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?i)^[a-f0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.user.phone_number",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?i)^[a-f0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.user.external_id",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "properties.value",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "numeric_strings": true
+        },
+        {
+          "name": "properties.currency",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Z]{3}$"
+          }
+        },
+        {
+          "name": "properties.content_type",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group",
+              "destination",
+              "hotel",
+              "flight",
+              "vehicle"
+            ]
+          }
+        },
+        {
+          "name": "properties.contents",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "warning"
+        }
+      ],
+      "rules": []
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "content_id",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "content_name",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "quantity",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          }
+        },
+        {
+          "name": "price",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          }
+        }
+      ],
+      "rules": [],
+      "scope": "properties.contents[]"
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "event",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9_ -]*[A-Za-z0-9_-])?$"
+          },
+          "max_length": 50
+        },
+        {
+          "name": "event_id",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "message_id",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "timestamp",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "datetime"
+          }
+        },
+        {
+          "name": "is_onsite",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "boolean",
+          "severity": "warning"
+        },
+        {
+          "name": "context",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "recommended",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.pixel",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.pixel.code",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "recommended",
+          "json_type": "string",
+          "severity": "warning",
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "value_in",
+              "param": "is_onsite",
+              "values": [
+                "true"
+              ]
+            }
+          }
+        },
+        {
+          "name": "context.pixel.runtime",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "context.page",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.page.url",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "url"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.page.referrer",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "url"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.library",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.library.name",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "context.library.version",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "context.user",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "context.user.email",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?i)^[a-f0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.user.phone_number",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?i)^[a-f0-9]{64}$"
+          },
+          "allow_empty": true
+        },
+        {
+          "name": "context.user.external_id",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "properties",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "object",
+            "array"
+          ],
+          "severity": "warning"
+        },
+        {
+          "name": "properties.value",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          },
+          "minimum": 0,
+          "numeric_strings": true
+        },
+        {
+          "name": "properties.currency",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[A-Z]{3}$"
+          }
+        },
+        {
+          "name": "properties.content_type",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "product",
+              "product_group",
+              "destination",
+              "hotel",
+              "flight",
+              "vehicle"
+            ]
+          }
+        },
+        {
+          "name": "properties.contents",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "array",
+          "severity": "warning"
+        }
+      ],
+      "rules": [],
+      "source_param": "analytics_message",
+      "encoding": "base64_json",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "exists",
+        "param": "analytics_message"
+      }
+    },
+    {
+      "params": [
+        {
+          "name": "",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "object",
+          "severity": "warning"
+        },
+        {
+          "name": "content_id",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "content_name",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": "string",
+          "severity": "warning",
+          "allow_empty": true
+        },
+        {
+          "name": "quantity",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          }
+        },
+        {
+          "name": "price",
+          "description": "The pinned producer emits this native JSON type.",
+          "requirement": "optional",
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          }
+        }
+      ],
+      "rules": [],
+      "scope": "properties.contents[]",
+      "source_param": "analytics_message",
+      "encoding": "base64_json",
+      "encoding_severity": "warning",
+      "condition": {
+        "kind": "exists",
+        "param": "analytics_message"
+      }
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The source uses these transport methods.",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "severity": "warning"
+      },
+      {
+        "name": "body",
+        "description": "A complete capture needs the JSON request body.",
+        "requirement": "recommended",
+        "json_type": "object",
+        "severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        }
+      }
+    ],
+    "rules": []
+  }
+}

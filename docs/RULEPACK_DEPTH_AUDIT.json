@@ -2,7 +2,7 @@
   "schema_version": 1,
   "review_date": "2026-10-10",
   "status": "validated_release_prepared",
-  "coverage_claim": "Source-scoped browser collectors and conversion APIs, with explicit provenance and remaining requirements. This release adds Nextdoor, Spotify, Quantcast image and CAPI, and MNTN validation profiles, while constraining Quantcast matrix matching to its documented route. Vendor completeness is not claimed.",
+  "coverage_claim": "Source-scoped browser collectors and conversion APIs with explicit provenance and remaining requirements. This release adds Optimizely Event API, TikTok browser events, Clarity collection and modern Comscore, plus deeper GA4, StackAdapt and legacy Comscore checks. Vendor completeness is not claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
     "version": "0.34.0",
@@ -39,31 +39,31 @@
     "release_url": "https://github.com/aleksUIX/pixellint/releases/tag/v0.34.0"
   },
   "current": {
-    "version": "0.48.0",
+    "version": "0.49.0",
     "candidate_status": "release_prepared",
-    "packs": 180,
-    "vendors": 92,
-    "field_contracts": 6046,
-    "cross_field_assertions": 572,
-    "body_contract_scopes": 491,
-    "http_contract_scopes": 77,
+    "packs": 184,
+    "vendors": 93,
+    "field_contracts": 6229,
+    "cross_field_assertions": 574,
+    "body_contract_scopes": 505,
+    "http_contract_scopes": 82,
     "query_contract_scopes": 6,
     "bulk_query_sources": 1,
-    "http_contract_packs": 65,
-    "changed_packs_this_round": 6,
+    "http_contract_packs": 70,
+    "changed_packs_this_round": 7,
     "new_packs_this_round": 4,
-    "deepened_existing_packs_this_round": 2,
-    "source_reviewed_packs_this_round": 6,
-    "manifest_changes_this_round": 6,
-    "new_source_cases": 138,
-    "remaining_requirement_entries": 576,
+    "deepened_existing_packs_this_round": 3,
+    "source_reviewed_packs_this_round": 7,
+    "manifest_changes_this_round": 7,
+    "new_source_cases": 156,
+    "remaining_requirement_entries": 595,
     "remaining_requirements_note": "Overlapping open requirements and source-case counts do not establish a percentage of vendor specification coverage.",
     "session_assertions": 2,
     "session_profile_changes_this_round": 0,
     "session_profiles": 1,
     "review_date": "2026-10-21",
-    "new_golden_cases": 138,
-    "new_source_executed_requests": 16
+    "new_golden_cases": 156,
+    "new_source_executed_requests": 21
   },
   "review_assignments": {
     "google_ias_adctv": "Official templates and IAS guidance",
@@ -66538,10 +66538,20 @@
       ],
       "sources_read": [
         {
+          "file": "comscore.js",
+          "url": "https://sb.scorecardresearch.com/beacon.js",
+          "actual_url": "https://sb.scorecardresearch.com/beacon.js",
+          "status": 200,
+          "bytes": 21945,
+          "sha256": "d1887dfe6ef77d1a1c32a85251cf59773175285888295d54b725cccb5f645260"
+        },
+        {
+          "file": "comscore-docs.html",
           "url": "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended",
-          "access": "read",
-          "evidence_level": "official_vendor",
-          "notes": "Pack-cited source was opened or attempted during this audit."
+          "actual_url": "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended",
+          "status": 200,
+          "bytes": 17795,
+          "sha256": "ad115e3933ff5c0b7ffaa0f5afb8eaa022d60ff0a9aa06cba76044cca0d008a3"
         }
       ],
       "source_access_attempts": [],
@@ -66549,63 +66559,179 @@
         "c1=2, exact seven-digit c2 and absolute full-page c7 cover the explicit required table.",
         "Templates also show optional c3-c6,c8-c10,c15,c16,rn and cv without value semantics."
       ],
-      "contracts_mapped": [
-        {
-          "name": "c1",
-          "requirement": "required",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "2"
-            ]
+      "contracts_mapped": {
+        "url": [
+          {
+            "name": "c1",
+            "requirement": "required",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "2"
+              ]
+            },
+            "description": "Comscore documents `c1=2` on the publisher beacon.",
+            "fix_hint": "Set `c1` to `2` as in the generated Comscore Direct tag.",
+            "doc": "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended"
           },
-          "description": "Comscore documents `c1=2` on the publisher beacon.",
-          "fix_hint": "Set `c1` to `2` as in the generated Comscore Direct tag.",
-          "doc": "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended",
-          "surface": "params"
-        },
-        {
-          "name": "c2",
-          "requirement": "required",
-          "format": {
-            "kind": "integer",
-            "min_digits": 7,
-            "max_digits": 7
+          {
+            "name": "c2",
+            "requirement": "required",
+            "format": {
+              "kind": "integer",
+              "min_digits": 7,
+              "max_digits": 7
+            },
+            "description": "It is the seven-digit client ID assigned by Comscore Direct.",
+            "fix_hint": "Set `c2` to the seven-digit client ID from Comscore Direct.",
+            "doc": "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended"
           },
-          "description": "It is the seven-digit client ID assigned by Comscore Direct.",
-          "fix_hint": "Set `c2` to the seven-digit client ID from Comscore Direct.",
-          "doc": "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended",
-          "surface": "params"
-        },
-        {
-          "name": "c7",
-          "requirement": "required",
-          "format": {
-            "kind": "url"
+          {
+            "name": "c7",
+            "requirement": "required",
+            "format": {
+              "kind": "url"
+            },
+            "description": "It is the full page URL, including the query string. Comscore documents it as required on the final `/b` tag call.",
+            "fix_hint": "Set `c7` to the absolute URL of the page that fired the beacon.",
+            "doc": "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended"
           },
-          "description": "It is the full page URL, including the query string. Comscore documents it as required on the final `/b` tag call.",
-          "fix_hint": "Set `c7` to the absolute URL of the page that fired the beacon.",
-          "doc": "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended",
-          "surface": "params"
-        }
-      ],
+          {
+            "name": "c8",
+            "description": "Optional document title.",
+            "requirement": "optional",
+            "allow_empty": true,
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "c9",
+            "description": "Optional document referrer.",
+            "requirement": "optional",
+            "format": {
+              "kind": "url"
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "ns__t",
+            "description": "The SDK stamps epoch milliseconds.",
+            "requirement": "optional",
+            "format": {
+              "kind": "integer"
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "ns_if",
+            "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "cs_gpc",
+            "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "cs_ucfr",
+            "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "cs_ucc",
+            "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "ns_c",
+            "description": "Optional producer metadata with opaque grammar.",
+            "requirement": "optional",
+            "allow_empty": true,
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "cv",
+            "description": "Optional producer metadata with opaque grammar.",
+            "requirement": "optional",
+            "allow_empty": true,
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "cs_it",
+            "description": "Optional producer metadata with opaque grammar.",
+            "requirement": "optional",
+            "allow_empty": true,
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          },
+          {
+            "name": "cs_fpcu",
+            "description": "Optional producer metadata with opaque grammar.",
+            "requirement": "optional",
+            "allow_empty": true,
+            "source_level": "official_template",
+            "doc": "https://sb.scorecardresearch.com/beacon.js"
+          }
+        ],
+        "body": [],
+        "http": []
+      },
       "assertions_mapped": [],
       "added_checks": [],
       "missing_requirements": [
-        {
-          "requirement": "Optional generated dimensions",
-          "category": "unpublished_transport",
-          "locally_checkable": false,
-          "reason": "The page publishes examples but no types or limits for every optional field.",
-          "next_action": "Obtain or publish the primary complete transport contract."
-        },
-        {
-          "requirement": "Actual page URL and HTTP204 response",
-          "category": "external_state",
-          "locally_checkable": false,
-          "reason": "A single URL cannot verify page correspondence, script placement or server response.",
-          "next_action": "Validate with the required runtime/account/HTML context."
-        }
+        "The official legacy Direct c1=2, seven-digit c2 and c7 contract is retained. Configured SDK captures have a separate cs_cfg-selected pack.",
+        "Only optional SDK metadata is added as advisory. Receiver behavior on other beacon versions, account identity and delivery remain external."
       ],
       "tests": {
         "manifest": "pixellint/fixtures/vendor-comscore/manifest.json",
@@ -66688,7 +66814,7 @@
         ]
       },
       "review_assignment": "endpoints",
-      "manifest_sha256": "94decdf81ae312b50e80d9f8f80b8f1087c43fcdabb877802c2be7a9d554aa7c",
+      "manifest_sha256": "406d4b1b39a8dd18476f0f2c6f5e956212ab6fd8a02fe2c112c0082ddb06d581",
       "implemented_counts": {
         "field_contracts": 3,
         "cross_field_assertions": 0,
@@ -66701,8 +66827,8 @@
         "transport_goldens": 9
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/comscore.json": "94decdf81ae312b50e80d9f8f80b8f1087c43fcdabb877802c2be7a9d554aa7c",
-        "fixtures/vendor-comscore/manifest.json": "2b22e94c1c0c85a4cd0b5bcdcdc7bb7f00719384579a904d340ca5475ba63b19",
+        "crates/pixellint-core/rulepacks/vendor/comscore.json": "406d4b1b39a8dd18476f0f2c6f5e956212ab6fd8a02fe2c112c0082ddb06d581",
+        "fixtures/vendor-comscore/manifest.json": "ee6dc1beae2964e6ce2061aaf8c27bf003c98f11f343b6a8acd9371e391852d8",
         "fixtures/vendor-comscore/clean-b.txt": "f6118abcc6a5614f4250f931325e20b5344cf7f3cb948c0e19ab4e64b2ee6802",
         "fixtures/vendor-comscore/clean-secure.txt": "dede0f0d72df38748231258102d49994a8a28b0cb88e5deab832a48c064fd964",
         "fixtures/vendor-comscore/missing-c2.txt": "689563ab3244423f16258cc78819570d99e9e1c6f4fd2bbb68e198614c326b82",
@@ -66711,10 +66837,15 @@
         "fixtures/vendor-comscore/depth-client-id-7.txt": "151b352112a3ae7aea17e2c60c611e8591710e4af1623ef130c0f4c766ec834e",
         "fixtures/vendor-comscore/depth-client-id-8.txt": "eac07378535ccec51cdffab19d92d1fef32237a58c191e6195086a9c388d0d22",
         "fixtures/vendor-comscore/depth-nonpublisher-c1.txt": "572d0a397bd97d1af135f2f0abacb346c3632425498702adb337b4192d10af6c",
-        "fixtures/vendor-comscore/depth-relative-page.txt": "df7cd40989430596b9e403b3cf41314e8be7a634b1ff92e41300103406c87da6"
+        "fixtures/vendor-comscore/depth-relative-page.txt": "df7cd40989430596b9e403b3cf41314e8be7a634b1ff92e41300103406c87da6",
+        "fixtures/vendor-comscore/depth049-legacy-seven-digit-id.txt": "0955a5245cf418f20e535f7fb9b4c71faa32e608b32900bc64d977936c5f24b9",
+        "fixtures/vendor-comscore/depth049-legacy-bad-referrer.txt": "e06c6ab6d1b4421c9d563c07cb88657614ef51a6f180e109f99ca889a04ec860",
+        "fixtures/vendor-comscore/depth049-legacy-still-needs-url.txt": "a0b306202736ab8a78c881a33d3828e430f1bfcee7f139da00ec604dd2bf9301",
+        "docs/reviews/pixel-collectors-049.json": "738e5a551403222d3bd85a317088584e528a9cb8f1d560a2aa8cc706b2b1a4b2",
+        "crates/pixellint-core/tests/pixel_collectors_049.rs": "380482693db16f977ce13cb4aacb97d1de1448e85adaaa59016f2df4323f09c9"
       },
       "prior_status": "deepened_with_documented_gaps",
-      "disposition": "Retained existing contracts after reopening the canonical source. Detailed baseline inventory is carried forward; no new hard transport restriction was supported for the current matched surface in this bounded pass.",
+      "disposition": "implemented_source_scoped_partial",
       "baseline_review_date": "2026-10-07",
       "baseline_added_checks": [
         "Enforce the documented exact seven-digit client ID, with shorter, exact, and longer boundary fixtures.",
@@ -66755,7 +66886,25 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "match": {
+        "hosts": [
+          "b.scorecardresearch.com",
+          "sb.scorecardresearch.com"
+        ],
+        "paths": [
+          "/b",
+          "/p"
+        ],
+        "query_params_none": [
+          "cs_cfg"
+        ]
+      },
+      "source_urls": [
+        "https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended"
+      ],
+      "golden_cases": 12,
+      "collector_followup": "docs/reviews/pixel-collectors-049.json"
     },
     {
       "id": "vendor/cookiebot",
@@ -93986,19 +94135,17 @@
       "status": "baseline_inventory_retained_after_gap_triage",
       "sources_read": [
         {
-          "url": "https://developers.google.com/analytics/devguides/collection/ga4",
-          "read_on": "2026-10-07",
-          "access": "opened_current_primary_vendor_page",
-          "evidence_level": "official_vendor_documentation"
+          "file": "ga4.js",
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+          "status": 200,
+          "bytes": 443324,
+          "sha256": "89e1a9aae54885ba2f8b37ee7974447e4e73f055ac5fb4ab2b56e970cf7ae48e"
         }
       ],
-      "contracts_mapped": [
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "v",
-          "source": "https://developers.google.com/analytics/devguides/collection/ga4",
-          "checks": {
+      "contracts_mapped": {
+        "url": [
+          {
+            "name": "v",
             "requirement": "required",
             "format": {
               "kind": "enum",
@@ -94006,69 +94153,362 @@
                 "2"
               ]
             },
-            "format_severity": "warning"
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "tid",
-          "source": "https://developers.google.com/analytics/devguides/collection/ga4",
-          "checks": {
+            "format_severity": "warning",
+            "description": "GA4 collection uses protocol version 2. Version 1 is Universal Analytics, which stopped processing data.",
+            "fix_hint": "Send `v=2` from a Google tag configured for a GA4 property.",
+            "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+          },
+          {
+            "name": "tid",
             "requirement": "required",
             "format": {
               "kind": "regex",
               "pattern": "^G-[A-Za-z0-9]+$"
             },
-            "format_severity": "warning"
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "cid",
-          "source": "https://developers.google.com/analytics/devguides/collection/ga4",
-          "checks": {
+            "format_severity": "warning",
+            "description": "It is the GA4 measurement ID, which starts with `G-`. A `UA-` value here is a Universal Analytics property that no longer collects data.",
+            "fix_hint": "Point the tag at a GA4 measurement ID.",
+            "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+          },
+          {
+            "name": "cid",
             "requirement": "required",
             "format": {
               "kind": "non_empty"
-            }
-          }
-        },
-        {
-          "transport_scope": "url",
-          "body_context": {},
-          "field": "en",
-          "source": "https://developers.google.com/analytics/devguides/collection/ga4",
-          "checks": {
+            },
+            "description": "It is the client ID that ties events to one browser. Without it, hits cannot be attributed to a session.",
+            "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+          },
+          {
+            "name": "en",
             "requirement": "recommended",
             "format": {
               "kind": "non_empty"
+            },
+            "description": "It is the event name.",
+            "doc": "https://developers.google.com/analytics/devguides/collection/ga4"
+          },
+          {
+            "name": "dl",
+            "description": "The producer sends an absolute page or referrer URL. Blank referrers remain valid.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "url"
+            },
+            "allow_empty": true
+          },
+          {
+            "name": "dr",
+            "description": "The producer sends an absolute page or referrer URL. Blank referrers remain valid.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "url"
+            },
+            "allow_empty": true
+          },
+          {
+            "name": "dt",
+            "description": "Document title remains an open string.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "allow_empty": true
+          },
+          {
+            "name": "cu",
+            "description": "The producer uses a three-letter currency token.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[A-Z]{3}$"
+            },
+            "allow_empty": true
+          },
+          {
+            "name": "sr",
+            "description": "Browser screen dimensions use width x height.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+x[0-9]+$"
+            }
+          },
+          {
+            "name": "sid",
+            "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            }
+          },
+          {
+            "name": "sct",
+            "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            }
+          },
+          {
+            "name": "_s",
+            "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            }
+          },
+          {
+            "name": "_et",
+            "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            }
+          },
+          {
+            "name": "_p",
+            "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            }
+          },
+          {
+            "name": "tfd",
+            "description": "The browser producer emits a nonnegative integer counter or timestamp.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9]+$"
+            }
+          },
+          {
+            "name": "seg",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "frm",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "npa",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "dma",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "uamb",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "uaw",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "_fv",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "_ss",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "_nsi",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "_ee",
+            "description": "The pinned browser producer uses a binary flag.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "numeric_properties",
+            "description": "Numeric event and user property families retain signed decimal and exponent values.",
+            "requirement": "optional",
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0",
+            "name_pattern": "^(?:epn|upn)\\..+$",
+            "format": {
+              "kind": "regex",
+              "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
             }
           }
+        ],
+        "body": [],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "The source uses these transport methods.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET",
+                  "POST"
+                ]
+              },
+              "severity": "warning"
+            }
+          ],
+          "rules": []
         }
-      ],
+      },
       "added_checks": [],
       "corrected_checks": [],
       "missing_requirements": [
-        {
-          "requirement": "Full GA4 browser transport",
-          "applicability": "g/collect query flags, event parameter families and newline-delimited POST bodies are undocumented public wire format",
-          "reason": "Pack remains explicitly ecosystem-reference with tid/cid/en/core checks, cannot be called vendor-spec complete.",
-          "gap_kind": "unpublished_transport_schema",
-          "source": "https://developers.google.com/analytics/devguides/collection/ga4",
-          "status": "remaining",
-          "locally_checkable": false
-        },
-        {
-          "requirement": "Consents/sessionization/requests",
-          "applicability": "SDK-produced consent flags, session IDs, automatic events and multi-request sequencing",
-          "reason": "One URL lacks runtime configuration and history.",
-          "gap_kind": "input_model",
-          "source": "https://developers.google.com/analytics/devguides/collection/ga4",
-          "status": "remaining",
-          "locally_checkable": false
-        }
+        "Pinned public Google tag source and offline query controls support advisory metadata checks. Existing GA4 identity requirements are retained.",
+        "Numeric epn and upn families accept signed decimal and scientific notation. String properties, custom events, consent encodings and proprietary product tuples remain open.",
+        "This is the browser query protocol, not the Measurement Protocol JSON API. Plaintext multi-event batch bodies are not claimed as parsed.",
+        "Property configuration, consent eligibility, attribution, identity, deduplication and delivery require external context."
       ],
       "tests": [
         {
@@ -94104,7 +94544,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "6045185a8db060d42a2970070f9b6994ce287794e36613faea0b62db67ac992f",
+      "manifest_sha256": "ca2a3138157107912b8e061a6f9dca9b02ff2479f39784d49dfd9efc9f60fb73",
       "fixture_sha256": {
         "fixtures/vendor-google-analytics-collect/clean-page-view.txt": "bb85f9a4ac79eeeac4aef868d15a45e38b105d5d8f50e305c8ec40371bd5dfeb",
         "fixtures/vendor-google-analytics-collect/manifest.json": "c250eedc61127978a60049e4ad77f7ffd9997331a386b708f49452527990d5b1",
@@ -94155,12 +94595,32 @@
         "automatic_http_routing_examples": 0
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/google-analytics-collect.json": "6045185a8db060d42a2970070f9b6994ce287794e36613faea0b62db67ac992f",
+        "crates/pixellint-core/rulepacks/vendor/google-analytics-collect.json": "ca2a3138157107912b8e061a6f9dca9b02ff2479f39784d49dfd9efc9f60fb73",
         "fixtures/vendor-google-analytics-collect/clean-page-view.txt": "bb85f9a4ac79eeeac4aef868d15a45e38b105d5d8f50e305c8ec40371bd5dfeb",
-        "fixtures/vendor-google-analytics-collect/manifest.json": "c250eedc61127978a60049e4ad77f7ffd9997331a386b708f49452527990d5b1",
+        "fixtures/vendor-google-analytics-collect/manifest.json": "ab487d85c38b7735136deffc67cbf484d149b47b238f69241471868b1c831abc",
         "fixtures/vendor-google-analytics-collect/missing-client-id.txt": "8354cf2e83fb3c61ff2891ccaa6d6ec73a20993ed446d76e74c7efc3bf8ba201",
         "fixtures/vendor-google-analytics-collect/missing-event-name.txt": "0fa4e2718a0e494978e6dcb6cd4d184ad785518ec9dd6433a9d07483b48f8e60",
-        "fixtures/vendor-google-analytics-collect/universal-analytics-hit.txt": "a4ef3e53a60f7e483d54878d2d30aca09c2a198b30721d64438baaa71a7a0d84"
+        "fixtures/vendor-google-analytics-collect/universal-analytics-hit.txt": "a4ef3e53a60f7e483d54878d2d30aca09c2a198b30721d64438baaa71a7a0d84",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-dl.txt": "deeb7eeb79bf4b9f50cfbfa864f8211db879dcb908e51858dff28838755d37d6",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-sr.txt": "7a2ce65ada5e79825c4a604ee8d21c7695e45a34c8d61d1208dd17317fa84858",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-uamb.txt": "39afc6f1ce15681cc1599666e9fee5614504c994ca147f820dbedc8980cc7bd4",
+        "fixtures/vendor-google-analytics-collect/depth049-core-privacy-still-runs.txt": "d4cf074ebd8c58bd204a1cb35d7100d9bfc90ce47e49d104daa4f21cd8cdc052",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-npa.txt": "27bbc417545997a137bd98ae1a1be5001987fbe7e4abf0ed1e4082fc2cc455e0",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-sid.txt": "432861114b3ff2bbc5ea954d118a7ed53882c2bbf14ac73507d0bda9b6f3c0d3",
+        "fixtures/vendor-google-analytics-collect/depth049-screen.txt": "b84a9a9212b11edf52f1da0c3ec04b9bcb2b95a52ce6c8c0e44da7c649643f5a",
+        "fixtures/vendor-google-analytics-collect/depth049-lookalike.txt": "13bae2fc7b89bdb73155413ae3ed9f871bae82008ce276bcf96928b3fd8808f9",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-cu.txt": "b1f6778c9b5129ccbe891b190fdeba7748e2b632299eeaa3b0bf4bf9ef8034c4",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-event-number.txt": "3545d2ddbd4bf108463602ca3b69b1cc393795871ebc65063caab5119bed76cd",
+        "fixtures/vendor-google-analytics-collect/depth049-producer-ga4-page-0.txt": "f310128306bc49d135a344f0ec42f82242897c10cada77503d662d6fe95563a2",
+        "fixtures/vendor-google-analytics-collect/depth049-neighbor-route.txt": "36be7ac88443c3b9d5148d94575d1e19da4cba525caca1bf8bb10f101b1c12ac",
+        "fixtures/vendor-google-analytics-collect/depth049-producer-ga4-purchase-0.txt": "c673dad48d6fde0fc8cd9e8ffa401cad4c1404e754aac37a828f8f32b5c55915",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-user-number.txt": "f42fde87d61165dc6f6524d318f18c92218280c24ad00337ad87ec687553337a",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-dr.txt": "1f403afd319adae9ba79960f1d8d74546f1c3e574a062245ac29de2b72fb57d4",
+        "fixtures/vendor-google-analytics-collect/depth049-numeric-families.txt": "a7f2d18addfed8ecfcdd955392e695217845650c73ac98278b836821be3fcaf9",
+        "fixtures/vendor-google-analytics-collect/depth049-bad-_s.txt": "ce330905a0867a3a2919f76c6ab4795650060d10208fcf62fc7da7e91b2f32ff",
+        "fixtures/vendor-google-analytics-collect/depth049-empty-referrer.txt": "0f049378c4a1c11b0965514c81e27c671c1476d2348c11ab6b15ea979ec90575",
+        "docs/reviews/pixel-collectors-049.json": "738e5a551403222d3bd85a317088584e528a9cb8f1d560a2aa8cc706b2b1a4b2",
+        "crates/pixellint-core/tests/pixel_collectors_049.rs": "380482693db16f977ce13cb4aacb97d1de1448e85adaaa59016f2df4323f09c9"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -94185,7 +94645,27 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "disposition": "implemented_source_scoped_partial",
+      "match": {
+        "host_suffixes": [
+          "google-analytics.com"
+        ],
+        "hosts": [
+          "analytics.google.com"
+        ],
+        "paths": [
+          "/g/collect",
+          "/g/collect/",
+          "/debug/g/collect",
+          "/debug/g/collect/"
+        ]
+      },
+      "source_urls": [
+        "https://developers.google.com/analytics/devguides/collection/ga4"
+      ],
+      "golden_cases": 22,
+      "collector_followup": "docs/reviews/pixel-collectors-049.json"
     },
     {
       "id": "vendor/google-ima-interaction",
@@ -99545,7 +100025,7 @@
         "crates/pixellint-core/tests/endpoint_depth_round.rs": "b3c73d65976d6601ec3ea285d96b728dea8edfef10008642d8e8a2334de91a69",
         "crates/pixellint-core/src/manifest.rs": "a51315dee4eed170c610d7f326e8cd90cba91be9d66aad23219aa2806b2a634f",
         "crates/pixellint-core/src/datetime_formats.rs": "4762e085e01b4ae841c727b485d63908cd3cdc186a2e69edfdcf7ba790e31fa4",
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
         "crates/pixellint-core/tests/depth_035_engine_gaps.rs": "7d2966a6a7df132fb8e52be4d3c030d0d3703131a6f67181ae048a676587f6c8",
         "docs/RULEPACK_SCHEMA.md": "ccfbf05a84796c9a91308981f5ebdc9b54ca029b25143640b9314b95ea66b998",
         "fixtures/vendor-hubspot-pixel/depth035-tc-__ptbe.gif.txt": "757144e97317a61dad6f6b19919c2670113fe6a024d1a9ecd9bd4a82e7c139f9",
@@ -102703,7 +103183,7 @@
         "crates/pixellint-core/rulepacks/session/ias-video-pixel.json": "68e3c207846188bfbf9066497369840d859a35d0161abd6a6ba7f06b410dda27",
         "crates/pixellint-core/src/session.rs": "fbf410a1519e7772b19bdb54d97a6d574901602623db4c564f41ec9f12baabcf",
         "crates/pixellint-core/src/session_manifest.rs": "95b2ff29495db14a2f62a5c03a5a7837100abaf51afb0e3148705f13e27a35b8",
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
         "crates/pixellint-core/tests/sessions.rs": "5aba6132eb2ce599a69d16ea9f5db761259572b4d03e45cf7c0f5966a3f47d98",
         "crates/pixellint-cli/src/main.rs": "3a91685ffd374b9f74ded8eb668aaa0c3ed4ce28b7a800c6cdbd164712ff8ebf",
         "crates/pixellint-cli/tests/sessions.rs": "6c480a9280d805c8d920b1b0214a7ab5a69882f2b9db87214f3d3a322ee353e5",
@@ -102713,7 +103193,7 @@
         "npm/index.mjs": "ed8d6582cf6a81b2f10490a8f998d215116a18b463367c60fd580745fd60196b",
         "npm/index.cjs": "e814973e6d7ca46d098f19bfc902a988229a9a9a0331e4767a10276e678e8373",
         "npm/index.d.ts": "ed971b90b0680acd0e2c231bcd74223e07f2b7236932bf49354863b3fce0a1a4",
-        "npm/test.mjs": "c2ed7278c7c100cbca54c441fd1f0ff1a7b99a7c2d613f81eea5ad4626031538",
+        "npm/test.mjs": "5573e6bf94293a69134a0320491b66f78a34bd9ff6ee7704448948548dcd30f8",
         "npm/sessions.test.mjs": "2934e636468d6a2549a34b886f351ccc3c1fd819a5069b93dacde1ad58c06483",
         "docs/SESSION_SCHEMA.md": "0b1cea0b2e76d0310f7823d0cc239cbe9b17c56d53b731f3c5c504c564c56dc5",
         "docs/reviews/explicit-ad-sessions.json": "fea3dde54f37824d6e6d3cfead737e27c127fa9be9a85d1be849cd15553683c3",
@@ -129566,7 +130046,7 @@
         "fixtures/vendor-liveramp-envelope/http-server-repeated-atype-no-bypass.txt": "ed98d491c1edaba587473d9887dd4ddd5b882aa1735c6976cc6c465731103cc3",
         "fixtures/vendor-liveramp-envelope/http-integration-macro-context-unknown.txt": "e64b9375b49f1573140401facdac430aa3af90498cd790d38d69b514a5d7a89a",
         "crates/pixellint-core/src/datetime_formats.rs": "4762e085e01b4ae841c727b485d63908cd3cdc186a2e69edfdcf7ba790e31fa4",
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
         "crates/pixellint-core/src/manifest.rs": "a51315dee4eed170c610d7f326e8cd90cba91be9d66aad23219aa2806b2a634f",
         "crates/pixellint-core/tests/depth_035_engine_gaps.rs": "7d2966a6a7df132fb8e52be4d3c030d0d3703131a6f67181ae048a676587f6c8",
         "docs/RULEPACK_SCHEMA.md": "ccfbf05a84796c9a91308981f5ebdc9b54ca029b25143640b9314b95ea66b998",
@@ -132998,7 +133478,7 @@
         "fixtures/vendor-liveramp-envelope-refresh/http-server-repeated-atype-no-bypass.txt": "8120f99e542277e7bb226c106e05bdcae839c065c43d23e969996f0d0e7b9de1",
         "fixtures/vendor-liveramp-envelope-refresh/http-integration-macro-context-unknown.txt": "3513a2805a659a55ca531e87abf6fd8adf88bca191afb955a3bb75cdea9f9ed6",
         "crates/pixellint-core/src/datetime_formats.rs": "4762e085e01b4ae841c727b485d63908cd3cdc186a2e69edfdcf7ba790e31fa4",
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
         "crates/pixellint-core/src/manifest.rs": "a51315dee4eed170c610d7f326e8cd90cba91be9d66aad23219aa2806b2a634f",
         "crates/pixellint-core/tests/depth_035_engine_gaps.rs": "7d2966a6a7df132fb8e52be4d3c030d0d3703131a6f67181ae048a676587f6c8",
         "docs/RULEPACK_SCHEMA.md": "ccfbf05a84796c9a91308981f5ebdc9b54ca029b25143640b9314b95ea66b998",
@@ -183524,7 +184004,7 @@
         "crates/pixellint-core/src/sdk_body.rs": "16ad7480f9168536e5c9d184c5ddb1be707fae438f4abb3dd440800d25c14469",
         "crates/pixellint-core/src/http.rs": "7e174bf6e78bd86531eb45a5e970497ed65521b0c0ba6e2b1ee6a881cb27b4d3",
         "crates/pixellint-core/src/json.rs": "f1b6b7250805d87993ae88b51c4712b91c7678d85e2da46b3a1b1a4b8590453f",
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
         "crates/pixellint-core/src/manifest.rs": "a51315dee4eed170c610d7f326e8cd90cba91be9d66aad23219aa2806b2a634f",
         "crates/pixellint-core/tests/mixpanel_sdk_beacon.rs": "894fd47216b43fa9ae6ca5a143782ee7b146fdbb49d93f73ecc485144b590455",
         "docs/HTTP_REQUEST_SCHEMA.md": "3b945434f7657a076c9b5bdffa4ed48fd4f97df25e75ff2a1690b3601f1567ee"
@@ -189981,7 +190461,7 @@
         "crates/pixellint-core/src/sdk_body.rs": "16ad7480f9168536e5c9d184c5ddb1be707fae438f4abb3dd440800d25c14469",
         "crates/pixellint-core/src/http.rs": "7e174bf6e78bd86531eb45a5e970497ed65521b0c0ba6e2b1ee6a881cb27b4d3",
         "crates/pixellint-core/src/json.rs": "f1b6b7250805d87993ae88b51c4712b91c7678d85e2da46b3a1b1a4b8590453f",
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
         "crates/pixellint-core/src/manifest.rs": "a51315dee4eed170c610d7f326e8cd90cba91be9d66aad23219aa2806b2a634f",
         "crates/pixellint-core/tests/mixpanel_sdk_beacon.rs": "894fd47216b43fa9ae6ca5a143782ee7b146fdbb49d93f73ecc485144b590455",
         "docs/HTTP_REQUEST_SCHEMA.md": "3b945434f7657a076c9b5bdffa4ed48fd4f97df25e75ff2a1690b3601f1567ee"
@@ -195879,7 +196359,7 @@
         "crates/pixellint-core/src/sdk_body.rs": "16ad7480f9168536e5c9d184c5ddb1be707fae438f4abb3dd440800d25c14469",
         "crates/pixellint-core/src/http.rs": "7e174bf6e78bd86531eb45a5e970497ed65521b0c0ba6e2b1ee6a881cb27b4d3",
         "crates/pixellint-core/src/json.rs": "f1b6b7250805d87993ae88b51c4712b91c7678d85e2da46b3a1b1a4b8590453f",
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
         "crates/pixellint-core/src/manifest.rs": "a51315dee4eed170c610d7f326e8cd90cba91be9d66aad23219aa2806b2a634f",
         "crates/pixellint-core/tests/mixpanel_sdk_beacon.rs": "894fd47216b43fa9ae6ca5a143782ee7b146fdbb49d93f73ecc485144b590455",
         "docs/HTTP_REQUEST_SCHEMA.md": "3b945434f7657a076c9b5bdffa4ed48fd4f97df25e75ff2a1690b3601f1567ee"
@@ -209851,7 +210331,7 @@
         "fixtures/vendor-outbrain/http-s2s-method-post.txt": "b430cd5123e8288af090031967b5e74fd61a70a02e9fb26ee5ad085ec0da0204",
         "fixtures/vendor-outbrain/http-browser-method-uninferred.txt": "7c9e89c00be0b76f65178221cceada791e87d2871b872987c996eaaf005566e8",
         "crates/pixellint-core/src/datetime_formats.rs": "4762e085e01b4ae841c727b485d63908cd3cdc186a2e69edfdcf7ba790e31fa4",
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
         "crates/pixellint-core/src/manifest.rs": "a51315dee4eed170c610d7f326e8cd90cba91be9d66aad23219aa2806b2a634f",
         "crates/pixellint-core/tests/depth_035_engine_gaps.rs": "7d2966a6a7df132fb8e52be4d3c030d0d3703131a6f67181ae048a676587f6c8",
         "docs/RULEPACK_SCHEMA.md": "ccfbf05a84796c9a91308981f5ebdc9b54ca029b25143640b9314b95ea66b998",
@@ -271365,7 +271845,7 @@
       },
       "reviewed_artifacts": {
         "crates/pixellint-core/rulepacks/vendor/tiktok.json": "d450ff766de54c66accc7499fda79999cc22ae6c6d85bb9c7b2c341b0a2034bb",
-        "fixtures/vendor-tiktok/manifest.json": "ad851d61f2e814d7d29d1a872c3f3cc2d628e06eb9e870d25f69060ad07c13a7",
+        "fixtures/vendor-tiktok/manifest.json": "3eec94b5052b617c4b517e074a22b7ad7d64683e81ee929e6649ee6db125ac52",
         "fixtures/vendor-tiktok/source-targets.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
         "fixtures/vendor-tiktok/clean-loader.txt": "6d0c5c96bc3e0200c4f4ddc46144ae08d5ee13174213de776e2b5e05b9ffa633",
         "fixtures/vendor-tiktok/empty-sdkid-unknown-lib.txt": "98b2b8106ee355de15bb9f86111c4e0ed234bf48bd31d9966dc01b2d2639edd4",
@@ -284721,8 +285201,8 @@
         "All documented observable lengths, number types, URL/IP/hash formats and open custom parameters"
       ],
       "reviewed_artifacts": {
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
-        "crates/pixellint-core/rulepacks/directory.json": "afd71eed6a4950e8a4f310c63d4aed531e635e1182218e63c812bd49bf5b86b1",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
+        "crates/pixellint-core/rulepacks/directory.json": "b777ca8d72cf1e01dd0f10d23b02d244b6ca556836383b8daa0e6421bce032d0",
         "crates/pixellint-core/tests/appsflyer_web_s2s.rs": "a75e92b81261ca5e2a433f5d9571e25adf37a8f3f78176b6250d2201765d6cd3",
         "docs/reviews/appsflyer-web-s2s.json": "6b83bd9800e27cbe0b4afd2246299a135c3d2def75a4abb8e44f089808f01cdd",
         "fixtures/vendor-appsflyer-web-event/af_customer_event_id-empty-string.txt": "f6d42d26a305cae0220183bd65f6541bf900428d945295a61e44d67cb4f7ea8b",
@@ -285797,8 +286277,8 @@
         "All documented observable lengths, number types, URL/IP/hash formats and open custom parameters"
       ],
       "reviewed_artifacts": {
-        "crates/pixellint-core/src/lib.rs": "738405a489268815e959bef34725e18e0e815351000ed1df927cdc4fff9502a3",
-        "crates/pixellint-core/rulepacks/directory.json": "afd71eed6a4950e8a4f310c63d4aed531e635e1182218e63c812bd49bf5b86b1",
+        "crates/pixellint-core/src/lib.rs": "41318d0baf063ad2f1c49d1439cdfc0f8f61bc9be047db7ef5f1ed74e90d6567",
+        "crates/pixellint-core/rulepacks/directory.json": "b777ca8d72cf1e01dd0f10d23b02d244b6ca556836383b8daa0e6421bce032d0",
         "crates/pixellint-core/tests/appsflyer_web_s2s.rs": "a75e92b81261ca5e2a433f5d9571e25adf37a8f3f78176b6250d2201765d6cd3",
         "docs/reviews/appsflyer-web-s2s.json": "6b83bd9800e27cbe0b4afd2246299a135c3d2def75a4abb8e44f089808f01cdd",
         "fixtures/vendor-appsflyer-web-visit/all-documented-fields.txt": "50aaf3382f4228bbc7a0920b319eeb06ed7ea32e4341658ee7178b3147806568",
@@ -286938,11 +287418,9 @@
           "/saq_pxl"
         ]
       },
-      "contracts_mapped": [
-        {
-          "scope": "params",
-          "name": "pixel_type",
-          "contract": {
+      "contracts_mapped": {
+        "url": [
+          {
             "name": "pixel_type",
             "requirement": "optional",
             "format": {
@@ -286950,12 +287428,8 @@
             },
             "description": "Route selected by the public template.",
             "severity": "warning"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "sid",
-          "contract": {
+          },
+          {
             "name": "sid",
             "requirement": "recommended",
             "format": {
@@ -286972,12 +287446,8 @@
                 "lal"
               ]
             }
-          }
-        },
-        {
-          "scope": "params",
-          "name": "cid",
-          "contract": {
+          },
+          {
             "name": "cid",
             "requirement": "recommended",
             "format": {
@@ -286992,12 +287462,8 @@
                 "conv"
               ]
             }
-          }
-        },
-        {
-          "scope": "params",
-          "name": "uid",
-          "contract": {
+          },
+          {
             "name": "uid",
             "requirement": "recommended",
             "format": {
@@ -287012,12 +287478,8 @@
                 "saq_pxl"
               ]
             }
-          }
-        },
-        {
-          "scope": "params",
-          "name": "args",
-          "contract": {
+          },
+          {
             "name": "args",
             "requirement": "optional",
             "format": {
@@ -287025,12 +287487,8 @@
             },
             "description": "Optional JSON serialization of configured properties on non-retargeting transports.",
             "allow_empty": true
-          }
-        },
-        {
-          "scope": "params",
-          "name": "gtm_ss",
-          "contract": {
+          },
+          {
             "name": "gtm_ss",
             "requirement": "optional",
             "format": {
@@ -287041,12 +287499,8 @@
             },
             "description": "The pinned server template marks its requests with 1. Ordinary browser pixels may omit it.",
             "severity": "warning"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "ip_fwd",
-          "contract": {
+          },
+          {
             "name": "ip_fwd",
             "requirement": "optional",
             "format": {
@@ -287055,12 +287509,8 @@
             "description": "Optional source-profile IP address. Blank fallback values remain accepted.",
             "allow_empty": true,
             "severity": "warning"
-          }
-        },
-        {
-          "scope": "params",
-          "name": "url",
-          "contract": {
+          },
+          {
             "name": "url",
             "requirement": "optional",
             "format": {
@@ -287070,11 +287520,108 @@
             "allow_empty": true,
             "severity": "warning"
           }
+        ],
+        "body": {
+          "source_param": "args",
+          "encoding": "json",
+          "encoding_severity": "warning",
+          "condition": {
+            "kind": "value_in",
+            "param": "pixel_type",
+            "values": [
+              "drt",
+              "lal",
+              "conv",
+              "saq_pxl"
+            ]
+          },
+          "params": [
+            {
+              "name": "",
+              "json_type": "object",
+              "severity": "warning",
+              "description": "The public template serializes a property object. Additional members and their values remain open."
+            }
+          ],
+          "rules": []
+        },
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET"
+                ]
+              },
+              "severity": "warning",
+              "description": "The pinned template sends GET. This advisory does not claim a server rejection policy."
+            },
+            {
+              "name": "query.gtm_ss",
+              "description": "The server template marks the request with gtm_ss=1.",
+              "requirement": "optional"
+            },
+            {
+              "name": "headers.x-forwarded-for",
+              "description": "The official server template supplies this header. Blank IP and User-Agent fallbacks remain accepted.",
+              "requirement": "recommended",
+              "severity": "warning",
+              "condition": {
+                "kind": "value_in",
+                "param": "query.gtm_ss",
+                "values": [
+                  "1"
+                ]
+              },
+              "allow_empty": true,
+              "format": {
+                "kind": "ip"
+              }
+            },
+            {
+              "name": "headers.revision",
+              "description": "The official server template supplies this header. Blank IP and User-Agent fallbacks remain accepted.",
+              "requirement": "recommended",
+              "severity": "warning",
+              "condition": {
+                "kind": "value_in",
+                "param": "query.gtm_ss",
+                "values": [
+                  "1"
+                ]
+              },
+              "allow_empty": false,
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "2023-test"
+                ]
+              }
+            },
+            {
+              "name": "headers.user-agent",
+              "description": "The official server template supplies this header. Blank IP and User-Agent fallbacks remain accepted.",
+              "requirement": "recommended",
+              "severity": "warning",
+              "condition": {
+                "kind": "value_in",
+                "param": "query.gtm_ss",
+                "values": [
+                  "1"
+                ]
+              },
+              "allow_empty": true
+            }
+          ],
+          "rules": []
         }
-      ],
+      },
       "sources_read": [
         {
-          "file": "stackadapt.tpl",
+          "file": "stackadapt-server.tpl",
           "url": "https://raw.githubusercontent.com/StackAdapt/stackadapt-gtm-server-side-pixel/main/template.tpl",
           "actual_url": "https://raw.githubusercontent.com/StackAdapt/stackadapt-gtm-server-side-pixel/main/template.tpl",
           "status": 200,
@@ -287086,14 +287633,14 @@
         "https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl"
       ],
       "missing_requirements": [
-        "Pinned public GTM producer, not a published backend rejection schema. All producer-specific findings are advisory.",
-        "Opaque identifiers, custom event properties and browser-specific variants remain open.",
-        "Only property object shape is checked. Custom member semantics are not guessed."
+        "The official server template sends GET and specific headers when gtm_ss=1. Blank source IP and User-Agent fallbacks remain valid.",
+        "Custom args properties remain open because the template forwards their configured values without a receiver schema. Browser requests do not inherit server header requirements.",
+        "Account ownership, consent, identity, conversion attribution and delivery need external context."
       ],
-      "golden_cases": 18,
+      "golden_cases": 28,
       "source_executed_requests": 5,
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/stackadapt-pixel.json": "d5749c928e420286d199109122761bba629daa629fb1294083b062c723d21119",
+        "crates/pixellint-core/rulepacks/vendor/stackadapt-pixel.json": "434c5eee8fdc87945d4ac3cae71cb6551cd0dc9235e798034651246c0e677add",
         "fixtures/vendor-stackadapt-pixel/producer-lal.txt": "8a20471e1a851751050e069702802921a7150f17acea9f148fa3c412cc85e8b5",
         "fixtures/vendor-stackadapt-pixel/source-produced.json": "178c6091bd8a920b06b1ad4f72c25f47f90b1b348a131cf84ec48121357a0d24",
         "fixtures/vendor-stackadapt-pixel/lookalike.txt": "a7112451571fc73296a0f88e22c6ea490a40f2e48a4db721af4d1436187df7dd",
@@ -287105,7 +287652,7 @@
         "fixtures/vendor-stackadapt-pixel/template.txt": "14344333e51af53cab59bd80e04010e172fd78f2c237d7bdfd26f59e5dadc0bb",
         "fixtures/vendor-stackadapt-pixel/missing-conv.txt": "2d7a43ea58feb8109040b87a372d0baea37ff56117eb2c419764b4b5ef6ab14c",
         "fixtures/vendor-stackadapt-pixel/missing-lal.txt": "150805eca340fa1f621f4055cb66607cd194e4ade3fe1e39f8cb39f087ef0c28",
-        "fixtures/vendor-stackadapt-pixel/manifest.json": "e2afe100d9dc833102c447247dabf82a6af53b3733e4b2907ce28783c1ee1712",
+        "fixtures/vendor-stackadapt-pixel/manifest.json": "1b7902e2a28404d1472e93b3590602552b87cf0fb3801d613974a8ec63671049",
         "fixtures/vendor-stackadapt-pixel/missing-rt.txt": "d76c838a129c1486f06b28e937291ddb52f232ad80075cf89e0b393091d5e2f3",
         "fixtures/vendor-stackadapt-pixel/producer-rt.txt": "e042766104f9b4cd321380cfaf0bc585577b45eea84aa4d45020478ae9f4b734",
         "fixtures/vendor-stackadapt-pixel/missing-drt.txt": "62f106db89992d6dd99b43a9dcad5863b2cae008ffafff1856eb977d81448f25",
@@ -287115,15 +287662,28 @@
         "fixtures/vendor-stackadapt-pixel/http-post.txt": "6fbe991fcb0ef84236ec5f74692a9ad9fcc8ee3f4a0a989573ef693bd4a10cde",
         "fixtures/vendor-stackadapt-pixel/empty-conversion-id.txt": "f8623a21b2aaaeef25503e8fa450d5717f497f5e1ae6cb1904aaed1d72311cfb",
         "docs/reviews/pixel-expansion-046.json": "7e718fa586bed7c4a60c7dc81510f9efe6147737d4a414ac18181dd05c8a03bb",
-        "crates/pixellint-core/tests/pixel_pack_expansion.rs": "8227927b97bb5217b531c2435268ddf45e9edebee434257926a090ec43b7cf72"
+        "crates/pixellint-core/tests/pixel_pack_expansion.rs": "8227927b97bb5217b531c2435268ddf45e9edebee434257926a090ec43b7cf72",
+        "fixtures/vendor-stackadapt-pixel/depth049-server-headers.txt": "87bd60a73b9148aed8011033119a9edee3619628569d17f8d2282cd040c0a4c5",
+        "fixtures/vendor-stackadapt-pixel/depth049-missing-Revision.txt": "d375076112672fcd44ce81b847c66e0800966b27bc246e5667013566e760ea6a",
+        "fixtures/vendor-stackadapt-pixel/depth049-producer-stackadapt-server-empty-0.txt": "9c616f64a9f5658aa4db2b3bb47e44bab3ce4703bf5cdac17b127c0cbd05804e",
+        "fixtures/vendor-stackadapt-pixel/depth049-missing-X-Forwarded-For.txt": "862e635f62aaf2eb03b970fabac217370485d5c17f64cd314117689dbd0b82a9",
+        "fixtures/vendor-stackadapt-pixel/depth049-producer-stackadapt-server-populated-0.txt": "f82731ae1bf8e6ed9830f45fa3df5793b98c07379f4e95f0b4ce1f7b4ebd77fa",
+        "fixtures/vendor-stackadapt-pixel/depth049-browser-no-server-headers.txt": "a4fdbbc24212c9c84943094de078d38eebd932579eb04b1192a1e86df52acfeb",
+        "fixtures/vendor-stackadapt-pixel/depth049-bad-X-Forwarded-For.txt": "6584f46b1d987d0594ae2dc1a9712ddbc5e88e09c451436c03e72798ddba2a07",
+        "fixtures/vendor-stackadapt-pixel/depth049-bad-Revision.txt": "0d81bf7e01f4311c3129dcee3fb28e028df83ad295a759d41b067b8a3fb929bc",
+        "fixtures/vendor-stackadapt-pixel/depth049-server-empty-fallbacks.txt": "88eca65d80357cd58ad361142fbcd505e57a303190b584b947c0ea1baeaa7ced",
+        "fixtures/vendor-stackadapt-pixel/depth049-missing-User-Agent.txt": "a67cefef857d6913ec7338a994dcad8915e1242b2fc68cc08e0407a2c53f32b5",
+        "docs/reviews/pixel-collectors-049.json": "738e5a551403222d3bd85a317088584e528a9cb8f1d560a2aa8cc706b2b1a4b2",
+        "crates/pixellint-core/tests/pixel_collectors_049.rs": "380482693db16f977ce13cb4aacb97d1de1448e85adaaa59016f2df4323f09c9"
       },
-      "manifest_sha256": "d5749c928e420286d199109122761bba629daa629fb1294083b062c723d21119",
+      "manifest_sha256": "434c5eee8fdc87945d4ac3cae71cb6551cd0dc9235e798034651246c0e677add",
       "registration_followup_046": {
         "review": "Reviewed delta adds five registrations, two new vendor entries, Adfox path attribution and five npm coverage controls. Existing contracts and core evaluators are unchanged.",
         "artifacts": [
           "crates/pixellint-core/tests/pixel_pack_expansion.rs"
         ]
-      }
+      },
+      "collector_followup": "docs/reviews/pixel-collectors-049.json"
     },
     {
       "id": "vendor/quora-pixel",
@@ -290067,6 +290627,1923 @@
       "golden_cases": 19,
       "manifest_sha256": "4b50d19fc9593c135a531d9cc957737db517865f26964d4ceae945fdbbda51f3",
       "collector_followup": "docs/reviews/pixel-collectors-048.json"
+    },
+    {
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/optimizely-events.json": "eff444d4fa8ead571d4b82619ad17453d69f1efac14356168f71b544ae2df6aa",
+        "fixtures/vendor-optimizely-events/depth049-attribute-value-empty-string.txt": "843fa5fcd4c68624034225df7c49ebb282d9f57d4d179121ba339ac8edf2a615",
+        "fixtures/vendor-optimizely-events/depth049-attribute-value-object.txt": "05cf2cd8633a7dbb0cc2e705cda0c8d495e2b74be6d14107f4990206c5fedfbf",
+        "fixtures/vendor-optimizely-events/depth049-missing-events.txt": "80dfd083a82a7be7776db8ea48a613c39bf93c7863341221b99c87b11c7b4c53",
+        "fixtures/vendor-optimizely-events/depth049-attribute-value-array.txt": "4c1f2562bd42abaab6b3624daa3d5a0837e390a6d87beb721673ce19d14bd10f",
+        "fixtures/vendor-optimizely-events/depth049-open-custom-data.txt": "9b3a72bab1bcd410ce07a68a731257934b728a518b07c583d85cbcd1c27fb055",
+        "fixtures/vendor-optimizely-events/depth049-attribute-value-null.txt": "b7ebcf11f9a8599c9439ff3a59949f0e1eb5b2f916c4d74b843a42f0bfe2bdb1",
+        "fixtures/vendor-optimizely-events/depth049-event-missing-uuid.txt": "ed49b6ebb41ee09abb4d2445e911e07962ff52fb04a10cc30017284616dc36f6",
+        "fixtures/vendor-optimizely-events/depth049-empty-batch.txt": "46a02e3cf6b724361f43a2bcabdc3ebb04a100a72775362faa2a9f8839da7d40",
+        "fixtures/vendor-optimizely-events/depth049-tag-object-invalid.txt": "2a6ce4f912099961c3d88382d24cfcf13b334bfa22a06e551dd3e5f47d4bc68d",
+        "fixtures/vendor-optimizely-events/depth049-event-type-type-False.txt": "4862b49f6a77be937566401370435daf873a3b4cd9a09366b4dff8fc59ad040d",
+        "fixtures/vendor-optimizely-events/depth049-revenue-boundary--9223372036854775808.txt": "a56c4c284c1aa895ddb0bdf61ffe189b4a017494aa0caab39c3f3fb355ac3a38",
+        "fixtures/vendor-optimizely-events/depth049-event-type-timestamp-1792560000000.txt": "fe091849e9d89b015697261bdd3f32b9a0c976a7f6a7612d08a37686783b2c8d",
+        "fixtures/vendor-optimizely-events/depth049-visitor-native-type.txt": "b9ab9c34a951ca23195372bf11e230277274b1e101cb9d3fe880ed25c88cc7ab",
+        "fixtures/vendor-optimizely-events/depth049-snapshot-object.txt": "8220b82264b73635684dd8cdd02729202fef521f6fe2adbbf9bbdd0e9f676bfc",
+        "fixtures/vendor-optimizely-events/depth049-attribute-value-unicode-tagged.txt": "263496a04552fef79aa2866ef90d19d2ea67e211e4b6a98aae7427264494591e",
+        "fixtures/vendor-optimizely-events/depth049-tag-null-invalid.txt": "2508005706251b0db6df7ae4eb9e1e7c760cc72ee2f31a5f1251714978c1bbe3",
+        "fixtures/vendor-optimizely-events/depth049-attribute-missing-key.txt": "4f909d45dce94db5267b5b46c335ab560e207e66102c17d71747f726e44bfa79",
+        "fixtures/vendor-optimizely-events/depth049-visitor-null.txt": "91029c22f082f94d18e8e60d2cf0edd0e60cbfc638e140fc028cf75fcc63f0bf",
+        "fixtures/vendor-optimizely-events/depth049-event-type-tags-[].txt": "57ea6a9c3c337520aea76c84cb6dc80300f2f5de26326d8661ed3abae98dbed7",
+        "fixtures/vendor-optimizely-events/depth049-event-type-revenue--9223372036854775809.txt": "79cbc14f19992efa2ee35c108b2da001941cd96d9149d5eea13cd901c497a0b8",
+        "fixtures/vendor-optimizely-events/depth049-decision-missing-variation.txt": "325d7ce3a7981df26a5413223a355d26968ce8dea3862ed16d5151dc66c9f5d4",
+        "fixtures/vendor-optimizely-events/depth049-event-type-revenue-12.5.txt": "0b9199652c7735c0eb403c8df2cdec86b36d32ccbde8bd4f6218a748c5663206",
+        "fixtures/vendor-optimizely-events/depth049-noncustom-attribute.txt": "67128c56daa8fd15829cea6f90a67ee18510c825273bf3456fb41c7a08a9daa0",
+        "fixtures/vendor-optimizely-events/depth049-event-type-revenue-9223372036854775808.txt": "e3775df50c8e62019b5afae51edb33eee7fffa03b061ffaf89c8fd21f96c398e",
+        "fixtures/vendor-optimizely-events/depth049-documented-batch.txt": "9ef50e35a3c0bde700c31aafb1ba47903eb4a393c6e05d08bba45e7e8763bc06",
+        "fixtures/vendor-optimizely-events/depth049-lookalike.txt": "8fc6a5ea915223ffbeeee75242db882e9624b09ba30cb6ecc7881e85e57cd631",
+        "fixtures/vendor-optimizely-events/depth049-event-type-timestamp-1.5.txt": "80514f56e1af9d3e227ebb949aefcd79ad25d5c60007fc623ff8858f397d54ac",
+        "fixtures/vendor-optimizely-events/depth049-attribute-value-false.txt": "9f6c63cb0252f43e8e328e3d9d02c05518a19c80073f237fde8bcf9689923763",
+        "fixtures/vendor-optimizely-events/depth049-attribute-blank-id.txt": "38a75c76c97c801c888613d1fb23fb2232589811c8b306b81bb689b82a2444fd",
+        "fixtures/vendor-optimizely-events/depth049-missing-visitors.txt": "e96ed863aae5d8d9aee8d6fc1d5ff492674f0e4bf618c97890aa5415754eebf6",
+        "fixtures/vendor-optimizely-events/depth049-empty-snapshot-arrays.txt": "5c77e77e43262a674b255f5f712c70a46b7e3cb02e570b195cd1175e73424c59",
+        "fixtures/vendor-optimizely-events/manifest.json": "508c0266d843640a4efde4473aca3c32566df6f70c3c7adef645e672197f334d",
+        "fixtures/vendor-optimizely-events/depth049-neighbor-route.txt": "0037d0bf46284d16b47834b31c49d36f7bd088043fddfbc5bf71b2e63269fb22",
+        "fixtures/vendor-optimizely-events/depth049-event-missing-timestamp.txt": "1a3c2714476a7f80b38fbaef9d9bd82cbdc437ab3fe0b536f7c7ec5aa32d483d",
+        "fixtures/vendor-optimizely-events/depth049-revenue-boundary-9223372036854775807.txt": "0c9665e1d73a4eaddc357c728d318a2cdf29fb24c4522ce83132a7c293d854a4",
+        "fixtures/vendor-optimizely-events/depth049-missing-account_id.txt": "2822be50ed6e44f07c39bcee16b3282ab2747472575253f953a42637eee3f422",
+        "fixtures/vendor-optimizely-events/depth049-personalization-null.txt": "afb94e97d42dfd9e1c96c4d5f0fc1981ab9d95153c745e39b0e160c23b63c011",
+        "fixtures/vendor-optimizely-events/depth049-attribute-missing-id.txt": "be51a99163e9282481b98fc3851201000eb7bb7650e5817c13c261f1d5b36f7f",
+        "fixtures/vendor-optimizely-events/depth049-strict-header-invalid.txt": "b739807f1d3d10bb0704bc45d8b66db6c0d98cbb23fa83bffd6fa1cf06e07d43",
+        "fixtures/vendor-optimizely-events/depth049-noncustom-entity-forbidden.txt": "212eab07676b364f3096cbbdec526f9f00e83ce6fdfdc61273f8d98f0e27beb2",
+        "fixtures/vendor-optimizely-events/depth049-missing-snapshots.txt": "cb4445968e8ccdae477c7364b4443b66435211e72401abbd142bcd0d8d6f890d",
+        "fixtures/vendor-optimizely-events/depth049-strict-header.txt": "727a7df50d8bd4dc6bf84d96aa934d2b47f3ee62f9a6dafe02149e63dd07ee85",
+        "fixtures/vendor-optimizely-events/depth049-text-json.txt": "6027faab459072e8dfd9326cd8d4c214f7eab7dcbfabcf73033af81911a9ff89",
+        "fixtures/vendor-optimizely-events/depth049-wrong-method.txt": "06455deb81d5dd6851b7b259b7f5f6be35bb1f5b5f332ad71a8a9809bcc64fc8",
+        "fixtures/vendor-optimizely-events/depth049-event-type-quantity-2.txt": "fb50bbe9f8cf4bab7f260ae241e0bea71cc4bf2615a1be6053aedbaa03863a9f",
+        "fixtures/vendor-optimizely-events/depth049-event-type-value-12.5.txt": "3576f3e9786d22a7411fee03009b37020a1b8832c504d9f2c0642dab2d2bd83b",
+        "fixtures/vendor-optimizely-events/depth049-missing-body.txt": "7405bd9ad80b946d9b149d637b5f2a8ba004c69e3de951f71063a1092305803e",
+        "fixtures/vendor-optimizely-events/depth049-attribute-value-zero.txt": "e74b7ad1e18c28cd03c2414112894cb89939f2a0d3d2242626eeb29e4e966cfa",
+        "docs/reviews/pixel-collectors-049.json": "738e5a551403222d3bd85a317088584e528a9cb8f1d560a2aa8cc706b2b1a4b2",
+        "crates/pixellint-core/tests/pixel_collectors_049.rs": "380482693db16f977ce13cb4aacb97d1de1448e85adaaa59016f2df4323f09c9"
+      },
+      "id": "vendor/optimizely-events",
+      "vendor": "optimizely",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "logx.optimizely.com"
+        ],
+        "paths": [
+          "/v1/events"
+        ],
+        "json_paths": [
+          "account_id",
+          "visitors"
+        ],
+        "artifact_kinds": [
+          "url",
+          "vast",
+          "postback",
+          "request"
+        ]
+      },
+      "contracts_mapped": {
+        "url": [],
+        "body": [
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "object",
+                "severity": "error"
+              },
+              {
+                "name": "account_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "string",
+                "severity": "error"
+              },
+              {
+                "name": "visitors",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "array",
+                "severity": "error"
+              },
+              {
+                "name": "anonymize_ip",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "error"
+              },
+              {
+                "name": "enrich_decisions",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "error"
+              },
+              {
+                "name": "client_name",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error",
+                "allow_empty": true
+              },
+              {
+                "name": "client_version",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error",
+                "allow_empty": true
+              },
+              {
+                "name": "project_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error",
+                "allow_empty": true
+              }
+            ],
+            "rules": []
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "error"
+              },
+              {
+                "name": "visitor_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "string",
+                "severity": "error"
+              },
+              {
+                "name": "snapshots",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "array",
+                "severity": "error"
+              },
+              {
+                "name": "attributes",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "array",
+                "severity": "error"
+              },
+              {
+                "name": "session_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error",
+                "allow_empty": true
+              }
+            ],
+            "rules": [],
+            "scope": "visitors[]"
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "error"
+              },
+              {
+                "name": "type",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "string",
+                "severity": "error"
+              },
+              {
+                "name": "value",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ],
+                "severity": "error",
+                "allow_empty": true
+              },
+              {
+                "name": "entity_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error"
+              },
+              {
+                "name": "key",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error",
+                "allow_empty": true
+              }
+            ],
+            "rules": [
+              {
+                "code": "vendor.optimizely-events.custom_attribute_identity",
+                "kind": "required_when_value",
+                "when": "type",
+                "equals": [
+                  "custom"
+                ],
+                "requires": [
+                  "entity_id",
+                  "key"
+                ],
+                "severity": "error",
+                "message": "Custom attributes require their entity_id and key.",
+                "doc": "https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint"
+              },
+              {
+                "code": "vendor.optimizely-events.noncustom_attribute_entity",
+                "kind": "forbid_value_pattern",
+                "params": [
+                  "entity_id"
+                ],
+                "condition": {
+                  "kind": "all",
+                  "conditions": [
+                    {
+                      "kind": "exists",
+                      "param": "type"
+                    },
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "value_in",
+                        "param": "type",
+                        "values": [
+                          "custom"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "severity": "error",
+                "message": "Only custom attributes may carry entity_id.",
+                "doc": "https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint",
+                "pattern": "(?s).*"
+              }
+            ],
+            "scope": "visitors[].attributes[]"
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "error"
+              },
+              {
+                "name": "events",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "array",
+                "severity": "error"
+              },
+              {
+                "name": "decisions",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "array",
+                "severity": "error"
+              }
+            ],
+            "rules": [],
+            "scope": "visitors[].snapshots[]"
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "error"
+              },
+              {
+                "name": "campaign_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "string",
+                "severity": "error"
+              },
+              {
+                "name": "experiment_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "severity": "error"
+              },
+              {
+                "name": "variation_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": [
+                  "string",
+                  "null"
+                ],
+                "severity": "error"
+              },
+              {
+                "name": "is_campaign_holdback",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "error"
+              }
+            ],
+            "rules": [],
+            "scope": "visitors[].snapshots[].decisions[]"
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "error"
+              },
+              {
+                "name": "timestamp",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "integer",
+                "severity": "error"
+              },
+              {
+                "name": "uuid",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "required",
+                "json_type": "string",
+                "severity": "error"
+              },
+              {
+                "name": "entity_id",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error",
+                "allow_empty": true
+              },
+              {
+                "name": "key",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error",
+                "allow_empty": true
+              },
+              {
+                "name": "type",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "error",
+                "allow_empty": true
+              },
+              {
+                "name": "quantity",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "integer",
+                "severity": "error"
+              },
+              {
+                "name": "revenue",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "integer",
+                "severity": "error",
+                "minimum": -9223372036854775808,
+                "maximum": 9223372036854775807
+              },
+              {
+                "name": "value",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "number",
+                "severity": "error"
+              },
+              {
+                "name": "tags",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "error"
+              }
+            ],
+            "rules": [],
+            "scope": "visitors[].snapshots[].events[]"
+          },
+          {
+            "params": [
+              {
+                "name": "tag_values",
+                "description": "Native type from the published Event API schema.",
+                "requirement": "optional",
+                "json_type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ],
+                "severity": "error",
+                "name_pattern": "(?s)^.*$",
+                "name_pattern_parent": "",
+                "allow_empty": true
+              }
+            ],
+            "rules": [],
+            "scope": "visitors[].snapshots[].events[].tags"
+          }
+        ],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "The source uses these transport methods.",
+              "requirement": "required",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "POST"
+                ]
+              },
+              "severity": "error"
+            },
+            {
+              "name": "body",
+              "description": "A complete capture needs the JSON request body.",
+              "requirement": "required",
+              "json_type": "object",
+              "severity": "error",
+              "condition": {
+                "kind": "value_in",
+                "param": "method",
+                "values": [
+                  "POST"
+                ]
+              }
+            },
+            {
+              "name": "content_type",
+              "description": "The documented request is JSON.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "application/json"
+                ]
+              },
+              "severity": "warning"
+            },
+            {
+              "name": "headers.x-optimizely-strict",
+              "description": "The optional strict-mode header is a boolean token.",
+              "requirement": "optional",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "true",
+                  "false"
+                ]
+              },
+              "severity": "error"
+            }
+          ],
+          "rules": []
+        }
+      },
+      "sources_read": [
+        {
+          "file": "optimizely-docs.html",
+          "url": "https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint",
+          "actual_url": "https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint",
+          "status": 200,
+          "bytes": 76797,
+          "sha256": "0cb39c0e4e6639f28c65b66712a3b5b08d21ea8716204893498248aa9b49fff3"
+        }
+      ],
+      "source_urls": [
+        "https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint"
+      ],
+      "missing_requirements": [
+        "The public Event API schema defines these local contracts. Its default permissive processing mode can ignore unusable data; findings do not claim every invalid batch receives HTTP 400.",
+        "Project identity and campaign holdback requirements depend on the product in use and remain external. Explicit null experiment and variation decisions remain valid.",
+        "Array cardinality is not inferred. Custom event types and unknown properties remain open. U+E000-prefixed scalar strings are preserved.",
+        "Account identity, historic decision enrichment, UUID uniqueness, authorization and delivery require external context. The fixtures are schema-derived, not SDK-produced."
+      ],
+      "golden_cases": 47,
+      "manifest_sha256": "eff444d4fa8ead571d4b82619ad17453d69f1efac14356168f71b544ae2df6aa",
+      "collector_followup": "docs/reviews/pixel-collectors-049.json"
+    },
+    {
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/tiktok-browser.json": "ff08a3b80407b2947a06459cd5ffd109545ae14a9514186421e85166867390f1",
+        "fixtures/vendor-tiktok-browser/depth049-bad-property-content_type.txt": "5929bdbf602284e57599ca64c5d81cea79f1fd80132c6b06c03a050d103c3c95",
+        "fixtures/vendor-tiktok-browser/depth049-bad-timestamp.txt": "ac8f28855bbb7a9e5ffb89c034a10f0621da37527e84d07ddfd081cb2c861f46",
+        "fixtures/vendor-tiktok-browser/depth049-bad-property-contents.txt": "fa82a083d7b1f900819599254ed628546a22b105c792e09db3f664d7b2990435",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-identify-1.txt": "511a51388123dbd67bfb88c6508fc5ab2878482307fe52dab26268291c817687",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-identify-0.txt": "f81c2ce845472d8ceb3b1a5eaa1724d88cf03feaf172c64650fb1a2007300242",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-purchase-0.txt": "223781fd9c02de47a5a0ab58b63ff707bf4d4bbef6fe7bee6cad15473d9c7f1a",
+        "fixtures/vendor-tiktok-browser/depth049-hashes.txt": "334e4fb2f336d33124e84ae088202287b3d61bcdb189e7bd1fb82910dafe2cad",
+        "fixtures/vendor-tiktok-browser/depth049-unhashed-email.txt": "0d02186788ea82b55ff730d69d93eb5b9b76ed5323fd62a113019063f59bd44e",
+        "fixtures/vendor-tiktok-browser/depth049-image-bad-value.txt": "1a416e43781fbc9a86abdeadb7d1af88cd40706d677fd9d52e31ba99cdb109e7",
+        "fixtures/vendor-tiktok-browser/depth049-image-fallback.txt": "a042beeeddf3f21ebb6776fb16848544ae7244b448dac7c65d7bdb3801a079a0",
+        "fixtures/vendor-tiktok-browser/depth049-bad-event.txt": "d7e8c052b21f590ef1c688dd1e5d81c41c2839bf2b4c4d3e79b65631a3811995",
+        "fixtures/vendor-tiktok-browser/depth049-array-properties.txt": "8bfe4eb9ecab8dae577d2554bb3ce20d989c6721099f0b478defeaa0253d781d",
+        "fixtures/vendor-tiktok-browser/depth049-bad-properties.txt": "2bcc85a743c79d07d336ee03e7680adb68c25074d14c0afe1f8f040d8ea0542a",
+        "fixtures/vendor-tiktok-browser/depth049-bad-item-price.txt": "30aef76443830f5020f5ffc01dc2e228ef4f4e6bbc8c2768d1b6ebd79718e007",
+        "fixtures/vendor-tiktok-browser/depth049-lookalike.txt": "b7135470e485b8b7ac8db369127ee3b8506070770f5bcf83f19ab73e33769e4d",
+        "fixtures/vendor-tiktok-browser/depth049-missing-pixel.txt": "12be57bc936a2ae43047400504dfd8cbaddfdaeda1820dac00f2ad7a8be49115",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-array-0.txt": "ead733e6a5f0f2757195a66f6d558b0f41e8f93ab1d0479978d55b10ddda625a",
+        "fixtures/vendor-tiktok-browser/manifest.json": "b6e75348b5f197c885fec6dd1ed81731a3202b9c623e0370dda6ccf4be10f9b1",
+        "fixtures/vendor-tiktok-browser/depth049-bad-property-currency.txt": "93ef1f8ff79a26d5fac3e9560e047d5e0b8376b51d89abb0f443638e87308228",
+        "fixtures/vendor-tiktok-browser/depth049-browser-purchase.txt": "8e7fc99ee4dc06d6283c39aa30ba8689e19aae9f0be820b92471efa5b988a539",
+        "fixtures/vendor-tiktok-browser/depth049-neighbor-route.txt": "24a589edb586e386e49b0b5b1234c6bf7deb213c85c486f1f0c68754bd25d7c7",
+        "fixtures/vendor-tiktok-browser/depth049-bad-page.txt": "8d0b906bcfabb269d88895e1f39222d9a057ddc61375bb919429b5fb248bfe38",
+        "fixtures/vendor-tiktok-browser/depth049-bad-property-value.txt": "cb4eba66f711327eb8429c37a8107722f0048a3f117a61459c0ce3800e63b8b5",
+        "fixtures/vendor-tiktok-browser/depth049-bad-is_onsite.txt": "1582f65926ee11482675102c3618431a84fd8bab066d3a1829fb6afafc5ce733",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-page-0.txt": "7a1bdff2ac738d79e802643802cdb63c7e51f7e2c363767aeb99140c03c79710",
+        "fixtures/vendor-tiktok-browser/depth049-standalone-payload.txt": "0c35eff7444ae89fb251a9fa25162a19f315b8de3fb39632f65b00ac645ae3f4",
+        "fixtures/vendor-tiktok-browser/depth049-image-bad-base64.txt": "905849364e639d777992be2ea1b8408dc9953964330ebf8d26e63b66c27e9b5b",
+        "fixtures/vendor-tiktok-browser/depth049-onsite-deferred.txt": "7662dfd43fa5e4421917717baad27a958ac419010855c9584552052e02815888",
+        "fixtures/vendor-tiktok-browser/depth049-custom-event.txt": "9e211568e18c39a160a97fd9429472378df93de3b643006c8de210d743876f0d",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-image-0.txt": "b55e01f5d4d4d80009441f966d00791c4d85942eef758c6b7af6f3f6ef8f7a23",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-custom-0.txt": "56ec825bace71c1de33be34f41d69de8efe37207e3c074b0832848c386dae932",
+        "fixtures/vendor-tiktok-browser/depth049-wrong-method.txt": "38909965d8d6b9dccd47654aee228aeab2af6cc2dfe5a2717e182798ead1840b",
+        "fixtures/vendor-tiktok-browser/depth049-missing-body.txt": "bdf5e2dbad8302945bce4af8853a2b9505abd5fa4ecce4960e4e94a265b4931b",
+        "docs/reviews/pixel-collectors-049.json": "738e5a551403222d3bd85a317088584e528a9cb8f1d560a2aa8cc706b2b1a4b2",
+        "crates/pixellint-core/tests/pixel_collectors_049.rs": "380482693db16f977ce13cb4aacb97d1de1448e85adaaa59016f2df4323f09c9",
+        "fixtures/vendor-tiktok-browser/depth049-bad-event-overlong.txt": "5bf657a9d707ff11417504240fa7dcc5f3dba9b57c4fe7914a7c8e31e761bc1e",
+        "fixtures/vendor-tiktok-browser/depth049-bad-property-value-negative.txt": "d9c554c8cfd8040e8926c2fb3908a54040a4571be10e25a63473cb9983df5237",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-uppercase-identify-1.txt": "83d0d6c7e2573f2c91561882eb5873e222455d48030c757571f4bb4cf1434d63",
+        "fixtures/vendor-tiktok-browser/depth049-producer-tiktok-uppercase-identify-0.txt": "53aee942ba24b01069f88e91b9ea6693cef9764654c283cccbbdffd242a3c879",
+        "fixtures/vendor-tiktok-browser/depth049-uppercase-hashes.txt": "c150acf2d44cf0cd30785fc263c3b990a2bd8a8a08af716bea09d6cd7d742029"
+      },
+      "id": "vendor/tiktok-browser",
+      "vendor": "tiktok",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "analytics.tiktok.com"
+        ],
+        "paths": [
+          "/api/v2/pixel"
+        ],
+        "json_paths": [
+          "event",
+          "context"
+        ],
+        "artifact_kinds": [
+          "url",
+          "vast",
+          "postback",
+          "request"
+        ]
+      },
+      "contracts_mapped": {
+        "url": [
+          {
+            "name": "analytics_message",
+            "description": "The image fallback carries unpadded UTF-8 Base64URL JSON.",
+            "requirement": "optional"
+          }
+        ],
+        "body": [
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "event",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9_ -]*[A-Za-z0-9_-])?$"
+                },
+                "max_length": 50
+              },
+              {
+                "name": "event_id",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "message_id",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "timestamp",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "datetime"
+                }
+              },
+              {
+                "name": "is_onsite",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "warning"
+              },
+              {
+                "name": "context",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.pixel",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.pixel.code",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "string",
+                "severity": "warning",
+                "condition": {
+                  "kind": "not",
+                  "condition": {
+                    "kind": "value_in",
+                    "param": "is_onsite",
+                    "values": [
+                      "true"
+                    ]
+                  }
+                }
+              },
+              {
+                "name": "context.pixel.runtime",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "context.page",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.page.url",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "url"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "context.page.referrer",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "url"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "context.library",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.library.name",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "context.library.version",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "context.user",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.user.email",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "(?i)^[a-f0-9]{64}$"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "context.user.phone_number",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "(?i)^[a-f0-9]{64}$"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "context.user.external_id",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "properties",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": [
+                  "object",
+                  "array"
+                ],
+                "severity": "warning"
+              },
+              {
+                "name": "properties.value",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": [
+                  "number",
+                  "string"
+                ],
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+                },
+                "minimum": 0,
+                "numeric_strings": true
+              },
+              {
+                "name": "properties.currency",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^[A-Z]{3}$"
+                }
+              },
+              {
+                "name": "properties.content_type",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "enum",
+                  "values": [
+                    "product",
+                    "product_group",
+                    "destination",
+                    "hotel",
+                    "flight",
+                    "vehicle"
+                  ]
+                }
+              },
+              {
+                "name": "properties.contents",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "array",
+                "severity": "warning"
+              }
+            ],
+            "rules": []
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "content_id",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "content_name",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "quantity",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": [
+                  "number",
+                  "string"
+                ],
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+                }
+              },
+              {
+                "name": "price",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": [
+                  "number",
+                  "string"
+                ],
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+                }
+              }
+            ],
+            "rules": [],
+            "scope": "properties.contents[]"
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "event",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9_ -]*[A-Za-z0-9_-])?$"
+                },
+                "max_length": 50
+              },
+              {
+                "name": "event_id",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "message_id",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "timestamp",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "datetime"
+                }
+              },
+              {
+                "name": "is_onsite",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "boolean",
+                "severity": "warning"
+              },
+              {
+                "name": "context",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.pixel",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.pixel.code",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "string",
+                "severity": "warning",
+                "condition": {
+                  "kind": "not",
+                  "condition": {
+                    "kind": "value_in",
+                    "param": "is_onsite",
+                    "values": [
+                      "true"
+                    ]
+                  }
+                }
+              },
+              {
+                "name": "context.pixel.runtime",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "context.page",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.page.url",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "url"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "context.page.referrer",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "url"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "context.library",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.library.name",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "context.library.version",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "context.user",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "context.user.email",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "(?i)^[a-f0-9]{64}$"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "context.user.phone_number",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "(?i)^[a-f0-9]{64}$"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "context.user.external_id",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "properties",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": [
+                  "object",
+                  "array"
+                ],
+                "severity": "warning"
+              },
+              {
+                "name": "properties.value",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": [
+                  "number",
+                  "string"
+                ],
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+                },
+                "minimum": 0,
+                "numeric_strings": true
+              },
+              {
+                "name": "properties.currency",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^[A-Z]{3}$"
+                }
+              },
+              {
+                "name": "properties.content_type",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "enum",
+                  "values": [
+                    "product",
+                    "product_group",
+                    "destination",
+                    "hotel",
+                    "flight",
+                    "vehicle"
+                  ]
+                }
+              },
+              {
+                "name": "properties.contents",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "array",
+                "severity": "warning"
+              }
+            ],
+            "rules": [],
+            "source_param": "analytics_message",
+            "encoding": "base64_json",
+            "encoding_severity": "warning",
+            "condition": {
+              "kind": "exists",
+              "param": "analytics_message"
+            }
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "content_id",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "content_name",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "quantity",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": [
+                  "number",
+                  "string"
+                ],
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+                }
+              },
+              {
+                "name": "price",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": [
+                  "number",
+                  "string"
+                ],
+                "severity": "warning",
+                "format": {
+                  "kind": "regex",
+                  "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+                }
+              }
+            ],
+            "rules": [],
+            "scope": "properties.contents[]",
+            "source_param": "analytics_message",
+            "encoding": "base64_json",
+            "encoding_severity": "warning",
+            "condition": {
+              "kind": "exists",
+              "param": "analytics_message"
+            }
+          }
+        ],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "The source uses these transport methods.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET",
+                  "POST"
+                ]
+              },
+              "severity": "warning"
+            },
+            {
+              "name": "body",
+              "description": "A complete capture needs the JSON request body.",
+              "requirement": "recommended",
+              "json_type": "object",
+              "severity": "warning",
+              "condition": {
+                "kind": "value_in",
+                "param": "method",
+                "values": [
+                  "POST"
+                ]
+              }
+            }
+          ],
+          "rules": []
+        }
+      },
+      "sources_read": [
+        {
+          "file": "tiktok-main.js",
+          "url": "https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js",
+          "actual_url": "https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js",
+          "status": 200,
+          "bytes": 488179,
+          "sha256": "eda061a9765c039fad1b19127f3deeb1255a7a70c1c7555bbb710a58575807cd"
+        },
+        {
+          "file": "tiktok-loader.js",
+          "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=00000000000000000000&lib=ttq",
+          "actual_url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=00000000000000000000&lib=ttq",
+          "status": 200,
+          "bytes": 7927,
+          "sha256": "3ced64834755e4f7c62774a79dd4b4aab289d0d3b61825453d5a71ba0d0cbd09"
+        },
+        {
+          "file": "tiktok-identify.js",
+          "url": "https://analytics.tiktok.com/i18n/pixel/static/identify_0504602d.js",
+          "status": 200,
+          "bytes": 155676,
+          "sha256": "417c2fa4ff8cf5e36b1797c558e99b797cf8e9a960ce8e126ccd8de6ff09efca"
+        }
+      ],
+      "source_urls": [
+        "https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js"
+      ],
+      "missing_requirements": [
+        "Pinned pixel.js 2.2.1 browser profile. All new checks remain warnings. Only analytics.tiktok.com/api/v2/pixel is claimed.",
+        "The same SDK emits JSON POST and unpadded UTF-8 Base64URL image fallbacks. Interaction, performance, onsite shop events and Events API are outside this browser profile.",
+        "Custom event names and array properties remain valid. External identity remains plain; only SDK email and phone wire hashes receive syntax checks. Currency syntax does not prove account support.",
+        "Hash syntax, account identity, consent, attribution, deduplication and delivery require external evidence.",
+        "The SDK retains uppercase prehashed email and phone values. Hash grammar is case insensitive and verified against an intercepted producer execution."
+      ],
+      "golden_cases": 37,
+      "manifest_sha256": "ff08a3b80407b2947a06459cd5ffd109545ae14a9514186421e85166867390f1",
+      "collector_followup": "docs/reviews/pixel-collectors-049.json"
+    },
+    {
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/microsoft-clarity-collect.json": "4e8ffe2731f8b826bd24debd18cea5268d505398afe63aed0738b436d20be511",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-future-envelope.txt": "bc93a5df8e15fbd12a3ce8655a0d03eadb029b60be058480b4497a2e8c421903",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-producer-clarity-compressed-0.txt": "5a0aee087bb3f1474e8e89ef21e0e86e5fea0ede6e86f5e88659c0c308d67a4d",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-producer-clarity-compressed-1.txt": "c09b4568a57b72e5426033ffcaa92305036ea3a98b40e3e1f65eb9bb086bc20d",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-missing-analytics.txt": "d81a44249482dd72b6e25799b0590a0f696e5872d986123cb8c826b6c74caf34",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-plain-envelope.txt": "8a837e7935804c4bd4760ee2fc867fdf9fd13df350c709cf4247337193a97a5c",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-producer-clarity-unload-1.txt": "8f767da897f862651e10797ad4ec68e3f534fd01aed59333fc9191f7cf328743",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-producer-clarity-unload-0.txt": "158e00404c5eb4d13db8690a8b524be9f94250af4a05a94e52cb24cf8744c39a",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-envelope-9.txt": "0969c5a7afaf0c6d97f4e0abc8abae215d7b25b2a254c3acff3fedaeee841bba",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-null-event-row.txt": "63e13c65f3b6a54f7bceec63cfe14143888eff26aa0183a19ec0dbf0e1b579ae",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-envelope-11.txt": "36c76d05bba3d926d986f6db55a07a9d0edfb7f0ab27aad9b99f32154762ac42",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-envelope-8.txt": "873d1db2870eb7b7b2295d537829c48dd3ae2ee03692440bb872d5cfab2776a7",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-lookalike.txt": "fa6d366db9f3d62900d0e14a41635638f14aa543a09b1920a9c0fbc716dac180",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-short-event-row.txt": "2b675277c7b608b110af46c9b472a38e0978fb192bda3bce4e94676260827514",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-empty-event-arrays.txt": "7a9f4bc83bc4238ba19f1f28740cf242fca9a31eae37107f436a05989b1db943",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-cookieless-identities.txt": "840fbf3d798a68b37ca987672c6308ce69ed58730269915fe9cbb3402e7578cd",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-envelope-7.txt": "9cae76fadea49e1fee683d9ca0c9e3f1f017eea513c76bca93b4b6589f7bc654",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-envelope-3.txt": "e5dda495dd776fae6ff7a26ea43faeb870174e4137263f135083ea674a66edb1",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-envelope-2.txt": "ba83d1c70812e4a83186e5bfd0c7c7a56da8d6ed85ae1f4b5c9507c74ca85564",
+        "fixtures/vendor-microsoft-clarity-collect/manifest.json": "c8a5a84e48af44d8d2702ca90c8947fe8e0a6e71c8a67ce5603b344bf837c6d2",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-envelope-1.txt": "c404098a33e14999c9b66cb624c47e7d75e00ca1a7fd4e291e42e29d3f003f92",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-neighbor-route.txt": "51cc1e77da8a60d4334671c2b6734c9560137df821d5a0faa30621e629e7a95d",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-old-envelope.txt": "6a35645034d4fde5f1c3afc8e5951a2bb807828ecea638f36f7bfee9e027b43d",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-event-time.txt": "895d3ef3e54ba1416469b75c67d957ed52e1ade0ef726a63fd32d8f3089768ba",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-missing-body.txt": "4e7cf99018891e2115a887d9c494663c15489f7087c329f41404c857ea003b14",
+        "fixtures/vendor-microsoft-clarity-collect/depth049-bad-event-type.txt": "03459a6edc86168227517bfcdc12c9fbc9b860c9ddd0591b2365b29bfe3db63e",
+        "docs/reviews/pixel-collectors-049.json": "738e5a551403222d3bd85a317088584e528a9cb8f1d560a2aa8cc706b2b1a4b2",
+        "crates/pixellint-core/tests/pixel_collectors_049.rs": "380482693db16f977ce13cb4aacb97d1de1448e85adaaa59016f2df4323f09c9"
+      },
+      "id": "vendor/microsoft-clarity-collect",
+      "vendor": "microsoft",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "match": {
+        "host_suffixes": [
+          "clarity.ms"
+        ],
+        "paths": [
+          "/collect"
+        ],
+        "json_paths": [
+          "e",
+          "a"
+        ],
+        "artifact_kinds": [
+          "url",
+          "vast",
+          "postback",
+          "request"
+        ]
+      },
+      "contracts_mapped": {
+        "url": [],
+        "body": [
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "object",
+                "severity": "warning"
+              },
+              {
+                "name": "e",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "array",
+                "severity": "warning",
+                "min_items": 8
+              },
+              {
+                "name": "a",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "array",
+                "severity": "warning"
+              },
+              {
+                "name": "p",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "array",
+                "severity": "warning"
+              },
+              {
+                "name": "e[0]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "string",
+                "severity": "warning"
+              },
+              {
+                "name": "e[4]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "string",
+                "severity": "warning"
+              },
+              {
+                "name": "e[5]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "e[6]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "allow_empty": true
+              },
+              {
+                "name": "e[11]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "string",
+                "severity": "warning",
+                "format": {
+                  "kind": "url"
+                },
+                "allow_empty": true
+              },
+              {
+                "name": "e[1]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 1
+              },
+              {
+                "name": "e[2]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 0
+              },
+              {
+                "name": "e[3]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 0
+              },
+              {
+                "name": "e[7]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 1
+              },
+              {
+                "name": "e[8]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "integer",
+                "severity": "warning",
+                "format": {
+                  "kind": "enum",
+                  "values": [
+                    "0",
+                    "1"
+                  ]
+                }
+              },
+              {
+                "name": "e[9]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "integer",
+                "severity": "warning",
+                "format": {
+                  "kind": "enum",
+                  "values": [
+                    "0",
+                    "1"
+                  ]
+                }
+              },
+              {
+                "name": "e[10]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 0
+              }
+            ],
+            "rules": []
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "array",
+                "severity": "warning",
+                "min_items": 2
+              },
+              {
+                "name": "[0]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 0
+              },
+              {
+                "name": "[1]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 0
+              }
+            ],
+            "rules": [],
+            "scope": "a[]"
+          },
+          {
+            "params": [
+              {
+                "name": "",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "optional",
+                "json_type": "array",
+                "severity": "warning",
+                "min_items": 2
+              },
+              {
+                "name": "[0]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 0
+              },
+              {
+                "name": "[1]",
+                "description": "The pinned producer emits this native JSON type.",
+                "requirement": "recommended",
+                "json_type": "integer",
+                "severity": "warning",
+                "minimum": 0
+              }
+            ],
+            "rules": [],
+            "scope": "p[]"
+          }
+        ],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "The source uses these transport methods.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "POST"
+                ]
+              },
+              "severity": "warning"
+            },
+            {
+              "name": "body",
+              "description": "A complete capture needs the JSON request body.",
+              "requirement": "recommended",
+              "json_type": "object",
+              "severity": "warning",
+              "condition": {
+                "kind": "value_in",
+                "param": "method",
+                "values": [
+                  "POST"
+                ]
+              }
+            }
+          ],
+          "rules": []
+        }
+      },
+      "sources_read": [
+        {
+          "file": "clarity.js",
+          "url": "https://www.clarity.ms/s/0.8.49/clarity.js",
+          "bytes": 79977,
+          "sha256": "9a8d27353d098e7eb330c3633b29dbf4afb1b2f923c4d305df979d55a7e22ac9",
+          "status": 200
+        },
+        {
+          "file": "clarity-upload.ts",
+          "url": "https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts",
+          "actual_url": "https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts",
+          "status": 200,
+          "bytes": 15936,
+          "sha256": "87e5b291dcfcb22f0757cca2a0b9c309bd982258a8c9e805e104651345db3c0e"
+        },
+        {
+          "file": "clarity-envelope.ts",
+          "url": "https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/envelope.ts",
+          "actual_url": "https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/envelope.ts",
+          "status": 200,
+          "bytes": 1354,
+          "sha256": "35826da0c3671d3fd74c7a0205a25522784742944e1b359c57d91ddb93e5e28e"
+        },
+        {
+          "file": "clarity-types.ts",
+          "url": "https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/types/data.d.ts",
+          "actual_url": "https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/types/data.d.ts",
+          "status": 200,
+          "bytes": 14931,
+          "sha256": "c30b3fd6360111c37d1543ba4ea36fcef27caf75e9fcab4cb8d96b31d451e0ac"
+        }
+      ],
+      "source_urls": [
+        "https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts"
+      ],
+      "missing_requirements": [
+        "Pinned 0.8.49 producer and public TypeScript source profile. New checks remain warnings.",
+        "Plaintext JSON envelope fields and event-row prefixes are inspected. Future tuple members, event codes and replay payload tokens remain open. Older eight-member envelopes and empty cookieless identities remain accepted.",
+        "The SDK gzip transport uses a custom Accept header without Content-Encoding. Binary wire captures remain explicitly unvalidated by the existing core; no gzip magic sniffing or fake header is introduced.",
+        "Masking correctness, consent, replay semantics, project ownership and delivery require external context."
+      ],
+      "golden_cases": 24,
+      "manifest_sha256": "4e8ffe2731f8b826bd24debd18cea5268d505398afe63aed0738b436d20be511",
+      "collector_followup": "docs/reviews/pixel-collectors-049.json"
+    },
+    {
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/comscore-modern.json": "3456b437e66eb4510fc73542b093dae5dd82e70f17e8aa909cccf31cab74c9cf",
+        "fixtures/vendor-comscore-modern/depth049-configured.txt": "020c39a1381167e5090e605b01e4c6ac56696a88ed07d193697f0b5cda60a5a2",
+        "fixtures/vendor-comscore-modern/depth049-producer-comscore-page-0.txt": "9cd55c58e0f8c80e0cd72be8a0c0f8d3d8ebd87165e6c20736fcd6516f697d48",
+        "fixtures/vendor-comscore-modern/depth049-producer-comscore-truncated-0.txt": "bcf2c0f97918fc661ca1d766f674f052fd07482862cf09449222f6fb2f31d95b",
+        "fixtures/vendor-comscore-modern/depth049-producer-comscore-no-page-url-0.txt": "b58d65d76c484b6a02e58434176f8ceee2d658e81b5c19e89fd3f126d134e747",
+        "fixtures/vendor-comscore-modern/depth049-producer-comscore-denied-0.txt": "a8305130dadaf577cea6c7048e64821916c366a8c1b9d45e5eb2e2d70313bc0d",
+        "fixtures/vendor-comscore-modern/depth049-bad-ns__t-today.txt": "c08f62d98436c1db98275b65a882b10e13bbd9ffee6e92d53bcf58f9b11c7109",
+        "fixtures/vendor-comscore-modern/depth049-disabled-submitted-bad-url.txt": "ab2c7146c024c502e66b77b9e3c037a40e9297d5bda781f076122bd341b1463d",
+        "fixtures/vendor-comscore-modern/depth049-lookalike.txt": "c96ceac2ea2d0faf2a0e504989aa8c58a1713874724f9a6e4d32c352b45c4055",
+        "fixtures/vendor-comscore-modern/depth049-url-disabled.txt": "4e3b57b125e755e806a7f0a2fa93a8d961e584d1d26f47ff3b2e61c7ebd9781b",
+        "fixtures/vendor-comscore-modern/depth049-bad-cs_gpc-2.txt": "5f7aaee46c7f9190693cf299f228de8e67994450342019d3964e37d59b51e1e2",
+        "fixtures/vendor-comscore-modern/depth049-bad-c9-relative.txt": "928a5099c058c0981b84b463c2d1bab100f8cf75687acaca314dcd02440d9ada",
+        "fixtures/vendor-comscore-modern/manifest.json": "05aa9541a21504f1416288e52ae0b7124aca21a697c04595411dda3e5f4d0240",
+        "fixtures/vendor-comscore-modern/depth049-bad-cs_cfg-0002110.txt": "d15f301be793fa2c194d057dc5a4f956a95e91b7d5cd10cac2112d34683125fa",
+        "fixtures/vendor-comscore-modern/depth049-neighbor-route.txt": "cb3a7a0e1e50cb1fa8408ea38c5deff118dd50bb925a829c37d9eaa5959af714",
+        "fixtures/vendor-comscore-modern/depth049-enabled-needs-url.txt": "5c781ad83d2947f4b3ca98818b599e70327e8130b3e34b7e2d3ae9a96c78f426",
+        "fixtures/vendor-comscore-modern/depth049-bad-cs_cfg-000111.txt": "d73f472423182a8d31a4749ab42523d5e207927d69611cdedf482bf7615cb38d",
+        "fixtures/vendor-comscore-modern/depth049-truncated.txt": "3bf6fb2d4563ea241392aae0b2ef78c1b9060ae37b98be1b5a9c67f583cd61ba",
+        "fixtures/vendor-comscore-modern/depth049-empty-referrer.txt": "86cb61b7bf2e41e49eb0163f280b7708903227fc0d47ffdb0cff17ee83579370",
+        "docs/reviews/pixel-collectors-049.json": "738e5a551403222d3bd85a317088584e528a9cb8f1d560a2aa8cc706b2b1a4b2",
+        "crates/pixellint-core/tests/pixel_collectors_049.rs": "380482693db16f977ce13cb4aacb97d1de1448e85adaaa59016f2df4323f09c9"
+      },
+      "id": "vendor/comscore-modern",
+      "vendor": "comscore",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "sb.scorecardresearch.com"
+        ],
+        "paths": [
+          "/b",
+          "/b2"
+        ],
+        "query_params_any": [
+          "cs_cfg"
+        ],
+        "artifact_kinds": [
+          "url",
+          "vast",
+          "postback",
+          "request"
+        ]
+      },
+      "contracts_mapped": {
+        "url": [
+          {
+            "name": "c1",
+            "description": "The SDK defaults browser beacons to publisher type 2.",
+            "requirement": "recommended",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "2"
+              ]
+            },
+            "severity": "warning"
+          },
+          {
+            "name": "c2",
+            "description": "The SDK needs its configured client identity. Its grammar is opaque.",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning"
+          },
+          {
+            "name": "cs_cfg",
+            "description": "The SDK emits seven binary configuration flags.",
+            "requirement": "recommended",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[01]{7}$"
+            },
+            "severity": "warning"
+          },
+          {
+            "name": "ns_cut",
+            "description": "Truncated query tail is opaque and can contain a partial page URL.",
+            "requirement": "optional",
+            "allow_empty": true
+          },
+          {
+            "name": "c7",
+            "description": "The page URL is emitted when URL collection is enabled and the request is not truncated.",
+            "requirement": "recommended",
+            "format": {
+              "kind": "url"
+            },
+            "severity": "warning",
+            "condition": {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "exists",
+                  "param": "c7"
+                },
+                {
+                  "kind": "all",
+                  "conditions": [
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "value_pattern",
+                        "param": "cs_cfg",
+                        "pattern": "^[01]{3}0[01]{3}$"
+                      }
+                    },
+                    {
+                      "kind": "not",
+                      "condition": {
+                        "kind": "exists",
+                        "param": "ns_cut"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "c8",
+            "description": "Optional document title.",
+            "requirement": "optional",
+            "allow_empty": true
+          },
+          {
+            "name": "c9",
+            "description": "Optional document referrer.",
+            "requirement": "optional",
+            "format": {
+              "kind": "url"
+            },
+            "allow_empty": true,
+            "severity": "warning"
+          },
+          {
+            "name": "ns__t",
+            "description": "The SDK stamps epoch milliseconds.",
+            "requirement": "optional",
+            "format": {
+              "kind": "integer"
+            },
+            "severity": "warning"
+          },
+          {
+            "name": "ns_if",
+            "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning"
+          },
+          {
+            "name": "cs_gpc",
+            "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning"
+          },
+          {
+            "name": "cs_ucfr",
+            "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning"
+          },
+          {
+            "name": "cs_ucc",
+            "description": "Optional SDK binary flag. Blank fallback values remain valid.",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning"
+          },
+          {
+            "name": "ns_c",
+            "description": "Optional producer metadata with opaque grammar.",
+            "requirement": "optional",
+            "allow_empty": true
+          },
+          {
+            "name": "cv",
+            "description": "Optional producer metadata with opaque grammar.",
+            "requirement": "optional",
+            "allow_empty": true
+          },
+          {
+            "name": "cs_it",
+            "description": "Optional producer metadata with opaque grammar.",
+            "requirement": "optional",
+            "allow_empty": true
+          },
+          {
+            "name": "cs_fpcu",
+            "description": "Optional producer metadata with opaque grammar.",
+            "requirement": "optional",
+            "allow_empty": true
+          }
+        ],
+        "body": [],
+        "http": {
+          "params": [
+            {
+              "name": "method",
+              "description": "The source uses these transport methods.",
+              "requirement": "recommended",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "GET"
+                ]
+              },
+              "severity": "warning"
+            }
+          ],
+          "rules": []
+        }
+      },
+      "sources_read": [
+        {
+          "file": "comscore.js",
+          "url": "https://sb.scorecardresearch.com/beacon.js",
+          "actual_url": "https://sb.scorecardresearch.com/beacon.js",
+          "status": 200,
+          "bytes": 21945,
+          "sha256": "d1887dfe6ef77d1a1c32a85251cf59773175285888295d54b725cccb5f645260"
+        }
+      ],
+      "source_urls": [
+        "https://sb.scorecardresearch.com/beacon.js"
+      ],
+      "missing_requirements": [
+        "Pinned beacon.js 4.14.0 configured browser profile. New checks remain warnings. cs_cfg selects it on sb.scorecardresearch.com/b and /b2.",
+        "The configuration can disable c7. SDK truncation can move c7 into ns_cut. Both remain valid without inheriting the legacy documented c7 requirement.",
+        "Client identity grammar remains opaque in the modern producer. Cookie values and truncation tails remain opaque.",
+        "Core privacy findings still apply. One denied synthetic TCF control deliberately omits its consent string and retains the core error. Consent validity, identity ownership and delivery are external."
+      ],
+      "golden_cases": 17,
+      "manifest_sha256": "3456b437e66eb4510fc73542b093dae5dd82e70f17e8aa909cccf31cab74c9cf",
+      "collector_followup": "docs/reviews/pixel-collectors-049.json"
     }
   ],
   "previous_audit_baseline": {
@@ -293237,5 +295714,19 @@
     "reason": "Reviewed builtin registration additions, directory additions and CJS/ESM checks. Reddit and Outbrain contracts are separately re-reviewed against pinned SDKs and documentation. Existing unrelated evaluator contracts remain unchanged.",
     "golden_cases": 138,
     "source_executed_requests": 16
+  },
+  "pixel_collectors_049_followup": {
+    "source_review": "docs/reviews/pixel-collectors-049.json",
+    "golden_cases": 156,
+    "source_executions": 17,
+    "source_executed_requests": 21,
+    "shared_artifacts_refreshed": [
+      "crates/pixellint-core/rulepacks/directory.json",
+      "crates/pixellint-core/src/lib.rs",
+      "crates/pixellint-core/tests/pixel_collectors_049.rs",
+      "fixtures/vendor-tiktok/manifest.json",
+      "npm/test.mjs"
+    ],
+    "reason": "Reviewed four builtin registrations, Optimizely and Clarity directory entries, pack count and CJS/ESM checks. Existing unrelated engine and manifest contracts remain unchanged. The independent request-selection oracle now accepts the public binary envelope. The old TikTok collector URL fixture now selects its new owner."
   }
 }

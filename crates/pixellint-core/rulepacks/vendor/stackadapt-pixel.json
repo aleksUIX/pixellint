@@ -2,7 +2,7 @@
   "id": "vendor/stackadapt-pixel",
   "display_name": "StackAdapt pixel transports",
   "vendor": "stackadapt",
-  "description": "Source-profile checks for StackAdapt retargeting, dynamic retargeting, lookalike, conversion and universal pixel transports. Route-specific identifier fields, optional args JSON and the published GET transport are checked as producer advisories. Custom properties and opaque account IDs remain open.",
+  "description": "Source-profile checks for StackAdapt retargeting, dynamic retargeting, lookalike, conversion and universal pixels. Checks route identifiers, optional args JSON, GET and the official server template headers when gtm_ss=1. Browser requests retain their own transport context. Custom properties and opaque account IDs remain open.",
   "source_level": "official_template",
   "docs": "https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl",
   "match": {
@@ -158,6 +158,62 @@
         },
         "severity": "warning",
         "description": "The pinned template sends GET. This advisory does not claim a server rejection policy."
+      },
+      {
+        "name": "query.gtm_ss",
+        "description": "The server template marks the request with gtm_ss=1.",
+        "requirement": "optional"
+      },
+      {
+        "name": "headers.x-forwarded-for",
+        "description": "The official server template supplies this header. Blank IP and User-Agent fallbacks remain accepted.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "query.gtm_ss",
+          "values": [
+            "1"
+          ]
+        },
+        "allow_empty": true,
+        "format": {
+          "kind": "ip"
+        }
+      },
+      {
+        "name": "headers.revision",
+        "description": "The official server template supplies this header. Blank IP and User-Agent fallbacks remain accepted.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "query.gtm_ss",
+          "values": [
+            "1"
+          ]
+        },
+        "allow_empty": false,
+        "format": {
+          "kind": "enum",
+          "values": [
+            "2023-test"
+          ]
+        }
+      },
+      {
+        "name": "headers.user-agent",
+        "description": "The official server template supplies this header. Blank IP and User-Agent fallbacks remain accepted.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "condition": {
+          "kind": "value_in",
+          "param": "query.gtm_ss",
+          "values": [
+            "1"
+          ]
+        },
+        "allow_empty": true
       }
     ],
     "rules": []

@@ -72,6 +72,22 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/comscore-modern",
+        include_str!("../rulepacks/vendor/comscore-modern.json"),
+    ),
+    (
+        "vendor/microsoft-clarity-collect",
+        include_str!("../rulepacks/vendor/microsoft-clarity-collect.json"),
+    ),
+    (
+        "vendor/tiktok-browser",
+        include_str!("../rulepacks/vendor/tiktok-browser.json"),
+    ),
+    (
+        "vendor/optimizely-events",
+        include_str!("../rulepacks/vendor/optimizely-events.json"),
+    ),
+    (
         "vendor/adroll-pixel",
         include_str!("../rulepacks/vendor/adroll-pixel.json"),
     ),

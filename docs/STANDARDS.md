@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 180 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 184 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -4105,13 +4105,50 @@ Matcher: `{"host_suffixes":["googlesyndication.com"],"path_contains":["/ddm/acti
 | --- | --- | --- | --- |
 | `dc_oe` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://support.google.com/campaignmanager/answer/2826636) |
 
+## `vendor/comscore-modern`
+
+Pinned beacon.js 4.14.0 configured browser beacons identified by cs_cfg. Checks configuration bits, populated metadata and source timing flags. Page URL may be disabled by configuration or moved into the truncated ns_cut tail. Legacy Direct beacons retain their separate documented requirements.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/comscore-modern.json).
+
+Matcher: `{"hosts":["sb.scorecardresearch.com"],"paths":["/b","/b2"],"query_params_any":["cs_cfg"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `c1` | recommended | `{"format":{"kind":"enum","values":["2"]},"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `c2` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_cfg` | recommended | `{"format":{"kind":"regex","pattern":"^[01]{7}$"},"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `ns_cut` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `c7` | recommended | `{"format":{"kind":"url"},"severity":"warning","condition":{"kind":"any","conditions":[{"kind":"exists","param":"c7"},{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_pattern","param":"cs_cfg","pattern":"^[01]{3}0[01]{3}$"}},{"kind":"not","condition":{"kind":"exists","param":"ns_cut"}}]}]}}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `c8` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `c9` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `ns__t` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `ns_if` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_gpc` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_ucfr` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_ucc` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `ns_c` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cv` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_it` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_fpcu` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+
 ## `vendor/comscore`
 
-Comscore Direct collect beacons on b.scorecardresearch.com/b and /p. The beacon.js loader is a different surface and is not contracted.
+Documented legacy Comscore Direct /b and /p publisher beacons. Requires c1=2, the assigned seven-digit c2 and full page URL c7. Configured modern SDK requests identified by cs_cfg have a separate source profile that respects disabled URL collection and truncation.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/comscore.json).
 
-Matcher: `{"hosts":["b.scorecardresearch.com","sb.scorecardresearch.com"],"paths":["/b","/p"]}`.
+Matcher: `{"hosts":["b.scorecardresearch.com","sb.scorecardresearch.com"],"paths":["/b","/p"],"query_params_none":["cs_cfg"]}`.
 
 ### URL parameters
 
@@ -4120,6 +4157,17 @@ Matcher: `{"hosts":["b.scorecardresearch.com","sb.scorecardresearch.com"],"paths
 | `c1` | required | `{"format":{"kind":"enum","values":["2"]}}` | [official_vendor](https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended) |
 | `c2` | required | `{"format":{"kind":"integer","min_digits":7,"max_digits":7}}` | [official_vendor](https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended) |
 | `c7` | required | `{"format":{"kind":"url"}}` | [official_vendor](https://direct-support.comscore.com/hc/en-us/articles/360002578333-How-can-I-validate-my-tag-is-working-as-intended) |
+| `c8` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `c9` | optional | `{"format":{"kind":"url"},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `ns__t` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `ns_if` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_gpc` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_ucfr` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_ucc` | optional | `{"format":{"kind":"enum","values":["0","1"]},"allow_empty":true,"severity":"warning"}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `ns_c` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cv` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_it` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+| `cs_fpcu` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
 
 ## `vendor/cookiebot-declaration`
 
@@ -5118,11 +5166,11 @@ Path captures: `/pagead/(?:viewthrough)?conversion/(?<conversion_id>[^/?]*)`. Ca
 
 ## `vendor/google-analytics-collect`
 
-Browser collection requests the Google tag sends to the GA4 /g/collect transport.
+GA4 browser /g/collect query transports. Adds source-profile checks for populated page metadata, session counters, numeric event and user property families, screen size and binary flags. Custom names, string properties, consent encodings and product tuples remain open. Plaintext multi-event batch bodies are outside this query profile.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/google-analytics-collect.json).
 
-Matcher: `{"host_suffixes":["google-analytics.com"],"hosts":["analytics.google.com"],"path_prefixes":["/g/collect","/debug/g/collect"]}`.
+Matcher: `{"host_suffixes":["google-analytics.com"],"hosts":["analytics.google.com"],"paths":["/g/collect","/g/collect/","/debug/g/collect","/debug/g/collect/"]}`.
 
 ### URL parameters
 
@@ -5132,6 +5180,36 @@ Matcher: `{"host_suffixes":["google-analytics.com"],"hosts":["analytics.google.c
 | `tid` | required | `{"format":{"kind":"regex","pattern":"^G-[A-Za-z0-9]+$"},"format_severity":"warning"}` | [ecosystem_reference](https://developers.google.com/analytics/devguides/collection/ga4) |
 | `cid` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://developers.google.com/analytics/devguides/collection/ga4) |
 | `en` | recommended | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://developers.google.com/analytics/devguides/collection/ga4) |
+| `dl` | optional | `{"severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `dr` | optional | `{"severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `dt` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `cu` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[A-Z]{3}$"},"allow_empty":true}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `sr` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+x[0-9]+$"}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `sid` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `sct` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `_s` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `_et` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `_p` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `tfd` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `seg` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `frm` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `npa` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `dma` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `uamb` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `uaw` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `_fv` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `_ss` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `_nsi` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `_ee` | optional | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+| `numeric_properties` | optional | `{"severity":"warning","name_pattern":"^(?:epn\|upn)\\..+$","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://www.googletagmanager.com/gtag/js?id=G-SYNTHETIC0) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [ecosystem_reference](https://developers.google.com/analytics/devguides/collection/ga4) |
 
 ## `vendor/google-analytics`
 
@@ -7996,6 +8074,66 @@ Matcher: `{"host_suffixes":["facebook.com"],"path_prefixes":["/tr"]}`.
 | `vendor.meta.ldu.country_without_state` | `{"kind":"required_with","when":"dpoco","requires":["dpost"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-apis/data-processing-options) |
 | `vendor.meta.purchase_requires_value_and_currency` | `{"kind":"required_when_value","when":"ev","equals":["Purchase"],"requires":["cd[value]","cd[currency]"]}` | error | [ecosystem_reference](https://developers.facebook.com/docs/meta-pixel/reference) |
 
+## `vendor/microsoft-clarity-collect`
+
+Source-profile checks for plaintext Clarity collector envelopes, timing tuples and event rows. Optional replay tokens and future event codes remain open. The SDK custom gzip transport remains explicitly unvalidated unless the capture supplies a supported decoded representation. This profile does not prove consent, masking or delivery.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/microsoft-clarity-collect.json).
+
+Matcher: `{"host_suffixes":["clarity.ms"],"paths":["/collect"],"json_paths":["e","a"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### JSON contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e` | recommended | `{"json_type":"array","severity":"warning","min_items":8}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `a` | recommended | `{"json_type":"array","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `p` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[0]` | recommended | `{"json_type":"string","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[4]` | recommended | `{"json_type":"string","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[5]` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[6]` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[11]` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[1]` | recommended | `{"json_type":"integer","severity":"warning","minimum":1}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[2]` | recommended | `{"json_type":"integer","severity":"warning","minimum":0}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[3]` | recommended | `{"json_type":"integer","severity":"warning","minimum":0}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[7]` | recommended | `{"json_type":"integer","severity":"warning","minimum":1}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[8]` | optional | `{"json_type":"integer","severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[9]` | optional | `{"json_type":"integer","severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `e[10]` | optional | `{"json_type":"integer","severity":"warning","minimum":0}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+
+### JSON contract 2
+
+Context: `{"scope":"a[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning","min_items":2}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `[0]` | recommended | `{"json_type":"integer","severity":"warning","minimum":0}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `[1]` | recommended | `{"json_type":"integer","severity":"warning","minimum":0}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+
+### JSON contract 3
+
+Context: `{"scope":"p[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning","min_items":2}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `[0]` | recommended | `{"json_type":"integer","severity":"warning","minimum":0}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `[1]` | recommended | `{"json_type":"integer","severity":"warning","minimum":0}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["POST"]},"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+| `body` | recommended | `{"json_type":"object","severity":"warning","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_template](https://raw.githubusercontent.com/microsoft/clarity/master/packages/clarity-js/src/data/upload.ts) |
+
 ## `vendor/microsoft-clarity`
 
 Microsoft Clarity tag loader on www.clarity.ms/tag/{projectId}. Collect POSTs on /collect are not contracted.
@@ -10258,6 +10396,116 @@ Context: `{"source_param":"data[contents]"}`.
 | `[].variant_dict` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.openai.com/ads/image-tag) |
 | `[].variant_dict.*` | optional | `{"json_type":"string"}` | [official_vendor](https://developers.openai.com/ads/image-tag) |
 
+## `vendor/optimizely-events`
+
+Documented Event API batches on logx.optimizely.com/v1/events. Checks visitors, attributes, decision snapshots, events, scalar tags and exact signed 64-bit revenue. Personalization null decisions remain valid. Account ownership, campaign history and delivery require external context.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/optimizely-events.json).
+
+Matcher: `{"hosts":["logx.optimizely.com"],"paths":["/v1/events"],"json_paths":["account_id","visitors"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### JSON contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | required | `{"json_type":"object","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `account_id` | required | `{"json_type":"string","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `visitors` | required | `{"json_type":"array","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `anonymize_ip` | optional | `{"json_type":"boolean","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `enrich_decisions` | optional | `{"json_type":"boolean","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `client_name` | optional | `{"json_type":"string","severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `client_version` | optional | `{"json_type":"string","severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `project_id` | optional | `{"json_type":"string","severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
+### JSON contract 2
+
+Context: `{"scope":"visitors[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `visitor_id` | required | `{"json_type":"string","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `snapshots` | required | `{"json_type":"array","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `attributes` | optional | `{"json_type":"array","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `session_id` | optional | `{"json_type":"string","severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
+### JSON contract 3
+
+Context: `{"scope":"visitors[].attributes[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `type` | required | `{"json_type":"string","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `value` | required | `{"json_type":["string","number","boolean"],"severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `entity_id` | optional | `{"json_type":"string","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `key` | optional | `{"json_type":"string","severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.optimizely-events.custom_attribute_identity` | `{"kind":"required_when_value","when":"type","equals":["custom"],"requires":["entity_id","key"]}` | error | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `vendor.optimizely-events.noncustom_attribute_entity` | `{"kind":"forbid_value_pattern","params":["entity_id"],"condition":{"kind":"all","conditions":[{"kind":"exists","param":"type"},{"kind":"not","condition":{"kind":"value_in","param":"type","values":["custom"]}}]},"pattern":"(?s).*"}` | error | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
+### JSON contract 4
+
+Context: `{"scope":"visitors[].snapshots[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `events` | required | `{"json_type":"array","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `decisions` | optional | `{"json_type":"array","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
+### JSON contract 5
+
+Context: `{"scope":"visitors[].snapshots[].decisions[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `campaign_id` | required | `{"json_type":"string","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `experiment_id` | required | `{"json_type":["string","null"],"severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `variation_id` | required | `{"json_type":["string","null"],"severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `is_campaign_holdback` | optional | `{"json_type":"boolean","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
+### JSON contract 6
+
+Context: `{"scope":"visitors[].snapshots[].events[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `timestamp` | required | `{"json_type":"integer","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `uuid` | required | `{"json_type":"string","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `entity_id` | optional | `{"json_type":"string","severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `key` | optional | `{"json_type":"string","severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `type` | optional | `{"json_type":"string","severity":"error","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `quantity` | optional | `{"json_type":"integer","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `revenue` | optional | `{"json_type":"integer","severity":"error","minimum":-9223372036854775808,"maximum":9223372036854775807}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `value` | optional | `{"json_type":"number","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `tags` | optional | `{"json_type":"object","severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
+### JSON contract 7
+
+Context: `{"scope":"visitors[].snapshots[].events[].tags"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `tag_values` | optional | `{"json_type":["string","number","boolean"],"severity":"error","name_pattern":"(?s)^.*$","name_pattern_parent":"","allow_empty":true}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["POST"]},"severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `body` | required | `{"json_type":"object","severity":"error","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `content_type` | recommended | `{"format":{"kind":"enum","values":["application/json"]},"severity":"warning"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+| `headers.x-optimizely-strict` | optional | `{"format":{"kind":"enum","values":["true","false"]},"severity":"error"}` | [official_vendor](https://docs.optimizely.com/experimentation-strategy/data-api/log-endpoint) |
+
 ## `vendor/oracle-bluekai`
 
 Oracle BlueKai site tags on tags.bluekai.com/site/{siteId} and stags.bluekai.com/site/{siteId}. The site ID rides in the path. Oracle documents the ID swap tag on stags. The JS Return tag uses the same path on tags. CoreTag on tags.bkrtx.com is not contracted.
@@ -12393,7 +12641,7 @@ Context: `{}`.
 
 ## `vendor/stackadapt-pixel`
 
-Source-profile checks for StackAdapt retargeting, dynamic retargeting, lookalike, conversion and universal pixel transports. Route-specific identifier fields, optional args JSON and the published GET transport are checked as producer advisories. Custom properties and opaque account IDs remain open.
+Source-profile checks for StackAdapt retargeting, dynamic retargeting, lookalike, conversion and universal pixels. Checks route identifiers, optional args JSON, GET and the official server template headers when gtm_ss=1. Browser requests retain their own transport context. Custom properties and opaque account IDs remain open.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/stackadapt-pixel.json).
 
@@ -12429,6 +12677,10 @@ Context: `{}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `query.gtm_ss` | optional | `{}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `headers.x-forwarded-for` | recommended | `{"severity":"warning","condition":{"kind":"value_in","param":"query.gtm_ss","values":["1"]},"allow_empty":true,"format":{"kind":"ip"}}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `headers.revision` | recommended | `{"severity":"warning","condition":{"kind":"value_in","param":"query.gtm_ss","values":["1"]},"allow_empty":false,"format":{"kind":"enum","values":["2023-test"]}}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
+| `headers.user-agent` | recommended | `{"severity":"warning","condition":{"kind":"value_in","param":"query.gtm_ss","values":["1"]},"allow_empty":true}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
 
 ## `vendor/taboola-s2s-bulk`
 
@@ -12759,6 +13011,117 @@ Context: `{}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://partnersandbox.thetradedesk.com/v3/portal/data/doc/TrackingTagsUniversalPixel?branch=APIDOCS-2938) |
+
+## `vendor/tiktok-browser`
+
+Pinned pixel.js 2.2.1 browser events on the exact /api/v2/pixel route. POST JSON and UTF-8 Base64URL image fallbacks share advisory payload checks. Custom events and array properties remain open. Events API, onsite shop events, interaction and performance collectors have separate schemas.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/tiktok-browser.json).
+
+Matcher: `{"hosts":["analytics.tiktok.com"],"paths":["/api/v2/pixel"],"json_paths":["event","context"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `analytics_message` | optional | `{}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+
+### JSON contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `event` | recommended | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[A-Za-z0-9](?:[A-Za-z0-9_ -]*[A-Za-z0-9_-])?$"},"max_length":50}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `event_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `message_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `timestamp` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"datetime"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `is_onsite` | optional | `{"json_type":"boolean","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context` | recommended | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.pixel` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.pixel.code` | recommended | `{"json_type":"string","severity":"warning","condition":{"kind":"not","condition":{"kind":"value_in","param":"is_onsite","values":["true"]}}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.pixel.runtime` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.page` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.page.url` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.page.referrer` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.library` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.library.name` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.library.version` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.user` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.user.email` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"(?i)^[a-f0-9]{64}$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.user.phone_number` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"(?i)^[a-f0-9]{64}$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.user.external_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties` | optional | `{"json_type":["object","array"],"severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.value` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"minimum":0,"numeric_strings":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.currency` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[A-Z]{3}$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.content_type` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["product","product_group","destination","hotel","flight","vehicle"]}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.contents` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+
+### JSON contract 2
+
+Context: `{"scope":"properties.contents[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `content_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `content_name` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `quantity` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `price` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+
+### JSON contract 3
+
+Context: `{"source_param":"analytics_message","encoding":"base64_json","encoding_severity":"warning","condition":{"kind":"exists","param":"analytics_message"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `event` | recommended | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[A-Za-z0-9](?:[A-Za-z0-9_ -]*[A-Za-z0-9_-])?$"},"max_length":50}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `event_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `message_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `timestamp` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"datetime"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `is_onsite` | optional | `{"json_type":"boolean","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context` | recommended | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.pixel` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.pixel.code` | recommended | `{"json_type":"string","severity":"warning","condition":{"kind":"not","condition":{"kind":"value_in","param":"is_onsite","values":["true"]}}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.pixel.runtime` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.page` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.page.url` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.page.referrer` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"url"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.library` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.library.name` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.library.version` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.user` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.user.email` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"(?i)^[a-f0-9]{64}$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.user.phone_number` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"(?i)^[a-f0-9]{64}$"},"allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `context.user.external_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties` | optional | `{"json_type":["object","array"],"severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.value` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},"minimum":0,"numeric_strings":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.currency` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"regex","pattern":"^[A-Z]{3}$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.content_type` | optional | `{"json_type":"string","severity":"warning","format":{"kind":"enum","values":["product","product_group","destination","hotel","flight","vehicle"]}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `properties.contents` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+
+### JSON contract 4
+
+Context: `{"scope":"properties.contents[]","source_param":"analytics_message","encoding":"base64_json","encoding_severity":"warning","condition":{"kind":"exists","param":"analytics_message"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `content_id` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `content_name` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `quantity` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `price` | optional | `{"json_type":["number","string"],"severity":"warning","format":{"kind":"regex","pattern":"^-?(?:0\|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
+| `body` | recommended | `{"json_type":"object","severity":"warning","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_template](https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0MA.js) |
 
 ## `vendor/tiktok-events-2`
 
