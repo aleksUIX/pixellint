@@ -58,7 +58,7 @@ VENDORS = {
     "disqo": ("DISQO", "measurement", ["track.activemetering.com"], None),
     "adctv": ("ADCTV", "video", ["track.adctv.com"], "vendor/adctv-tracker"),
     "kimberlite": ("Kimberlite", "programmatic", ["kimberlite.io"], None),
-    "rtbhouse": ("RTB House", "programmatic", ["ams.creativecdn.com", "us.creativecdn.com", "asia.creativecdn.com"], None),
+    "rtbhouse": ("RTB House", "programmatic", ["ams.creativecdn.com", "us.creativecdn.com", "asia.creativecdn.com"], "vendor/rtbhouse-gtm-tags"),
 
     # Gamesight publishes the gsght.com impression tracker template.
     "gamesight": ("Gamesight", "measurement", ["gsght.com"], "vendor/gamesight-impression"),
@@ -119,7 +119,7 @@ VENDORS = {
     "segment": ("Segment", "analytics", ["api.segment.io", "cdn.segment.com"], "vendor/segment"),
     "heap": ("Heap", "analytics", ["heapanalytics.com", "cdn.heapanalytics.com"], None),
     "hotjar": ("Hotjar", "analytics", ["script.hotjar.com", "in.hotjar.com", "static.hotjar.com"], "vendor/hotjar"),
-    "fullstory": ("FullStory", "analytics", ["edge.fullstory.com", "rs.fullstory.com"], None),
+    "fullstory": ("FullStory", "analytics", ["edge.fullstory.com", "rs.fullstory.com"], "vendor/fullstory-settings"),
     "crazyegg": ("Crazy Egg", "analytics", ["script.crazyegg.com", "tracking.crazyegg.com"], None),
     "chartbeat": ("Chartbeat", "analytics", ["ping.chartbeat.net", "static.chartbeat.com"], None),
     "parsely": ("Parse.ly", "analytics", ["p1.parsely.com", "p1-irl.parsely.com", "cdn.parsely.com"], None),
@@ -148,7 +148,7 @@ VENDORS = {
     "cj": ("CJ Affiliate", "affiliate", ["www.emjcd.com", "www.mczbf.com"], "vendor/cj"),
     "rakuten": ("Rakuten Advertising", "affiliate", ["track.linksynergy.com", "click.linksynergy.com"], "vendor/rakuten"),
     "awin": ("Awin", "affiliate", ["www.awin1.com", "www.dwin1.com", "zenaps.com"], "vendor/awin"),
-    "shareasale": ("ShareASale", "affiliate", ["www.shareasale.com", "shareasale.com"], None),
+    "shareasale": ("ShareASale", "affiliate", ["www.shareasale.com", "shareasale.com"], "vendor/shareasale-legacy"),
     "partnerize": ("Partnerize", "affiliate", ["prf.hn", "cdn.performancehorizon.com"], None),
     "appsflyer": ("AppsFlyer", "mobile", ["impression.appsflyer.com", "launches.appsflyer.com", "onelink.me", "api3.appsflyer.com"], "vendor/appsflyer"),
     "adjust": ("Adjust", "mobile", ["app.adjust.com", "s2s.adjust.com", "view.adjust.com"], "vendor/adjust"),
