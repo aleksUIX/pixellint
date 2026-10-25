@@ -71,7 +71,7 @@ VENDORS = {
     "pubmatic": ("PubMatic", "programmatic", ["ads.pubmatic.com", "image6.pubmatic.com", "simage2.pubmatic.com"], None),
     "magnite": ("Magnite", "programmatic", ["pixel.rubiconproject.com", "eus.rubiconproject.com", "fastlane.rubiconproject.com"], None),
     "openx": ("OpenX", "programmatic", ["us-ads.openx.net", "rtb.openx.net"], None),
-    "indexexchange": ("Index Exchange", "programmatic", ["js-sec.indexww.com", "htlb.casalemedia.com"], None),
+    "indexexchange": ("Index Exchange", "programmatic", ["js-sec.indexww.com", "htlb.casalemedia.com", "a6111.casalemedia.com", "a6124.casalemedia.com", "k8s1-event-tracker-va.lb.indexww.com"], None),
     "tripleLift": ("TripleLift", "programmatic", ["eb2.3lift.com", "tlx.3lift.com"], "vendor/triplelift-sync"),
     "mediamath": ("MediaMath", "programmatic", ["pixel.mathtag.com", "sync.mathtag.com"], "vendor/mediamath"),
     "iqm": ("IQM", "programmatic", ["iqm.com"], "vendor/iqm"),
