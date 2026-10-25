@@ -2561,7 +2561,7 @@ Context: `{"source_param":"identification","encoding":"json","scope":["[]",""]}`
 | `group_properties.$append` | optional | `{"json_type":"object","max_properties":1024}` | [official_vendor](https://amplitude.com/docs/apis/analytics/group-identify) |
 | `group_properties.$prepend` | optional | `{"json_type":"object","max_properties":1024}` | [official_vendor](https://amplitude.com/docs/apis/analytics/group-identify) |
 | `group_properties.$unset` | optional | `{"json_type":"object","max_properties":1024}` | [official_vendor](https://amplitude.com/docs/apis/analytics/group-identify) |
-| `group_properties.$add.number` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"group_properties.$add","allow_empty":true}` | [official_vendor](https://amplitude.com/docs/apis/analytics/group-identify) |
+| `group_properties.$add.number` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"group_properties.$add","allow_empty":true}` | [official_vendor](https://amplitude.com/docs/apis/analytics/group-identify) |
 
 ### Complete HTTP contract 1
 
@@ -2574,11 +2574,11 @@ Context: `{}`.
 
 ## `vendor/amplitude-identify`
 
-Amplitude Identify API on /identify. Amplitude documents api_key and identification as required, on the query for GET or as form fields for POST. HTTP V2 events are vendor/amplitude. Group identify is vendor/amplitude-group-identify.
+Amplitude Identify API on exact /identify at the documented US and EU ingestion hosts. Amplitude documents api_key and identification as required, on the query for GET or as form fields for POST. HTTP V2 events are vendor/amplitude. Group identify is vendor/amplitude-group-identify.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/amplitude-identify.json).
 
-Matcher: `{"host_suffixes":["amplitude.com"],"paths":["/identify"]}`.
+Matcher: `{"hosts":["api2.amplitude.com","api.eu.amplitude.com"],"paths":["/identify"]}`.
 
 ### URL parameters
 
@@ -2630,10 +2630,11 @@ Context: `{"source_param":"identification","encoding":"json","scope":["[]",""]}`
 | `user_properties.$preInsert` | optional | `{"json_type":"object"}` | [official_vendor](https://amplitude.com/docs/apis/analytics/identify) |
 | `user_properties.$postInsert` | optional | `{"json_type":"object"}` | [official_vendor](https://amplitude.com/docs/apis/analytics/identify) |
 | `user_properties.$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://amplitude.com/docs/apis/analytics/identify) |
-| `user_properties.$add.number` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"user_properties.$add","allow_empty":true}` | [official_vendor](https://amplitude.com/docs/apis/analytics/identify) |
+| `user_properties.$add.number` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"user_properties.$add","allow_empty":true}` | [official_vendor](https://amplitude.com/docs/apis/analytics/identify) |
 | `groups.*` | optional | `{"json_type":["string","array"]}` | [official_vendor](https://www.amplitude.com/docs/sdks/analytics/node/node-js-sdk) |
 | `groups.*[]` | optional | `{"json_type":"string"}` | [official_vendor](https://www.amplitude.com/docs/sdks/analytics/node/node-js-sdk) |
-| `direct_property` | forbidden | `{"name_pattern":"^[^$].*$","name_pattern_parent":"user_properties","condition":{"kind":"any","conditions":[{"kind":"present","param":"user_properties.$set"},{"kind":"present","param":"user_properties.$setOnce"},{"kind":"present","param":"user_properties.$add"},{"kind":"present","param":"user_properties.$append"},{"kind":"present","param":"user_properties.$prepend"},{"kind":"present","param":"user_properties.$unset"},{"kind":"present","param":"user_properties.$preInsert"},{"kind":"present","param":"user_properties.$postInsert"},{"kind":"present","param":"user_properties.$remove"}]}}` | [official_vendor](https://amplitude.com/docs/apis/analytics/identify) |
+| `direct_property` | forbidden | `{"name_pattern":"(?s)^(?:[^$].*\|)$","name_pattern_parent":"user_properties","condition":{"kind":"any","conditions":[{"kind":"present","param":"user_properties.$set"},{"kind":"present","param":"user_properties.$setOnce"},{"kind":"present","param":"user_properties.$add"},{"kind":"present","param":"user_properties.$append"},{"kind":"present","param":"user_properties.$prepend"},{"kind":"present","param":"user_properties.$unset"},{"kind":"present","param":"user_properties.$preInsert"},{"kind":"present","param":"user_properties.$postInsert"},{"kind":"present","param":"user_properties.$remove"}]}}` | [official_vendor](https://amplitude.com/docs/apis/analytics/identify) |
+| `user_properties.$unset.value` | optional | `{"name_pattern":"(?s)^.*$","name_pattern_parent":"user_properties.$unset","json_type":"string","format":{"kind":"enum","values":["-"]},"severity":"error"}` | [official_vendor](https://amplitude.com/docs/apis/analytics/identify#clear-a-user-property-with-unset) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
@@ -15290,7 +15291,7 @@ Matcher: `{"hosts":["sspx-router.adnxs.com","secure.adnxs.com"],"paths":["/sspx"
 
 ## `vendor/xandr`
 
-Microsoft Monetize conversion pixels on ib.adnxs.com/px and secure.adnxs.com/px. Microsoft documents id as the pixel ID and t as 1 for JavaScript or 2 for image. seg and remove add or drop integer segment IDs on the same hop. Server-side /sspx is vendor/xandr-sspx. Cookie sync and RTB on the same hosts are not contracted.
+Microsoft Monetize conversion pixels on exact /px routes. Covers existing conversion fields plus opaque seg_code and its conditionally required member. Published combined conversion/segment examples omit t; submitted t values remain checked as 1 or 2. Server-side /sspx is vendor/xandr-sspx. Segment /seg and external conversion-code wire formats are outside this profile.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/xandr.json).
 
@@ -15301,7 +15302,7 @@ Matcher: `{"hosts":["ib.adnxs.com","secure.adnxs.com"],"paths":["/px"]}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `id` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced) |
-| `t` | required | `{"format":{"kind":"enum","values":["1","2"]}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/test-conversion-pixel-and-attribution) |
+| `t` | optional | `{"format":{"kind":"enum","values":["1","2"]},"severity":"error"}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/segment-pixels-advanced) |
 | `order_id` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z0-9]{1,36}$"}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced) |
 | `value` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(\\.[0-9]+)?$"}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced) |
 | `consent` | optional | `{"format":{"kind":"enum","values":["0","1"]}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced) |
@@ -15309,6 +15310,8 @@ Matcher: `{"hosts":["ib.adnxs.com","secure.adnxs.com"],"paths":["/px"]}`.
 | `redir` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced) |
 | `seg` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:,[0-9]+)*$"}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced) |
 | `remove` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:,[0-9]+)*$"}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/conversion-pixels-advanced) |
+| `seg_code` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/segment-pixels-advanced) |
+| `member` | required | `{"condition":{"kind":"present","param":"seg_code"},"format":{"kind":"non_empty"}}` | [official_vendor](https://learn.microsoft.com/en-us/xandr/monetize/segment-pixels-advanced) |
 
 ## `vendor/xpln-video`
 
