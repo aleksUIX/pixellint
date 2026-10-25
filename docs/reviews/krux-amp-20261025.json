@@ -4,7 +4,7 @@
   "disposition": "implemented_legacy_upstream_default_template_partial",
   "spec_complete": false,
   "manifest_path": "crates/pixellint-core/rulepacks/vendor/krux-amp.json",
-  "manifest_sha256": "e39c220cb9621a520ac3c93ad660184aeb3e46d83d7d6ba092ff186459bea49b",
+  "manifest_sha256": "4175bd23adef4bc0a22e25553a90dcd5bcc797cc46909da75c7347e5f767e374",
   "match": {
     "hosts": [
       "beacon.krxd.net"
@@ -280,8 +280,10 @@
         "allow_empty": true,
         "severity": "warning",
         "condition": {
-          "kind": "value_in",
-          "param": "amp_endpoint",
+          "kind": "all_values_in",
+          "params": [
+            "amp_endpoint"
+          ],
           "values": [
             "event"
           ]
@@ -328,7 +330,8 @@
     "Account IDs, client IDs, timing values, service operation, delivery and server acceptance remain external. No collector shutdown is inferred.",
     "No field type, timing bounds, identity format or forced pageview=false constraint is imposed.",
     "The unchanged legacy field extractor omits bare query keys; default templates use explicit key=value pairs.",
-    "Other Krux beacon routes and non-AMP transports remain outside automatic selection."
+    "Other Krux beacon routes and non-AMP transports remain outside automatic selection.",
+    "The path capture has precedence over caller query parameters with the same name. Explicit controls show that query values cannot reinterpret a pixel path as an event or hide the default event pageview advice."
   ],
   "test": "Two independent upstream golden requests, six authored template substitutions, each missing default field, captured image method and negative marker/host/path controls."
 }

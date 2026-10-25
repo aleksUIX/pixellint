@@ -35751,7 +35751,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -313156,7 +313156,7 @@
       "disposition": "implemented_legacy_upstream_default_template_partial",
       "spec_complete": false,
       "manifest_path": "crates/pixellint-core/rulepacks/vendor/krux-amp.json",
-      "manifest_sha256": "e39c220cb9621a520ac3c93ad660184aeb3e46d83d7d6ba092ff186459bea49b",
+      "manifest_sha256": "4175bd23adef4bc0a22e25553a90dcd5bcc797cc46909da75c7347e5f767e374",
       "match": {
         "hosts": [
           "beacon.krxd.net"
@@ -313432,8 +313432,10 @@
             "allow_empty": true,
             "severity": "warning",
             "condition": {
-              "kind": "value_in",
-              "param": "amp_endpoint",
+              "kind": "all_values_in",
+              "params": [
+                "amp_endpoint"
+              ],
               "values": [
                 "event"
               ]
@@ -313480,11 +313482,12 @@
         "Account IDs, client IDs, timing values, service operation, delivery and server acceptance remain external. No collector shutdown is inferred.",
         "No field type, timing bounds, identity format or forced pageview=false constraint is imposed.",
         "The unchanged legacy field extractor omits bare query keys; default templates use explicit key=value pairs.",
-        "Other Krux beacon routes and non-AMP transports remain outside automatic selection."
+        "Other Krux beacon routes and non-AMP transports remain outside automatic selection.",
+        "The path capture has precedence over caller query parameters with the same name. Explicit controls show that query values cannot reinterpret a pixel path as an event or hide the default event pageview advice."
       ],
       "test": "Two independent upstream golden requests, six authored template substitutions, each missing default field, captured image method and negative marker/host/path controls.",
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/krux-amp.json": "e39c220cb9621a520ac3c93ad660184aeb3e46d83d7d6ba092ff186459bea49b",
+        "crates/pixellint-core/rulepacks/vendor/krux-amp.json": "4175bd23adef4bc0a22e25553a90dcd5bcc797cc46909da75c7347e5f767e374",
         "fixtures/vendor-krux-amp/bare-conflicting-source.txt": "206226ebd7c8b67b0af319a9701427c335a45f7458bc87dbbb9db1209048f98d",
         "fixtures/vendor-krux-amp/captured-custom-post-advice.json": "f13642be5ecce347443e6a875394d3a1a28e3859167a1a65b9a24505dc4ac502",
         "fixtures/vendor-krux-amp/captured-image-get.json": "d6333b206dbf2201b09478df15c318e80c0bef24a1360d5620a59d2c7c4a3628",
@@ -313500,7 +313503,7 @@
         "fixtures/vendor-krux-amp/lookalike-host.txt": "852c475168f17d911752c63a4cd57c5305590587dd867fa430251ff700edadd8",
         "fixtures/vendor-krux-amp/macro-fields-template.txt": "374b41f35ceb8a8a0bac50c298488420b649fe5c676518608b06749d096549d9",
         "fixtures/vendor-krux-amp/macro-source.txt": "f2003fdb4f19761830a084b3a729b9e261d5e55cc8016d36a9c61b761f3c2b5c",
-        "fixtures/vendor-krux-amp/manifest.json": "88e0b43470512587aacb74ef36e0e6896760d4820d476fe34ef334210840b52d",
+        "fixtures/vendor-krux-amp/manifest.json": "f53c639621a77573c277a7175d8869a6bb1a49c867d1a3578cd7a945f03ac7dd",
         "fixtures/vendor-krux-amp/missing-confid.txt": "da83b25b4dab7b1386f7f348e5f31c9b5435cdc22c24f4d1534f79112a5c3198",
         "fixtures/vendor-krux-amp/missing-kcp_d.txt": "a5380447f4a26bdfadbc4c75aba1911b1a297fc11604aaf8e6f6f4e9d9313030",
         "fixtures/vendor-krux-amp/missing-kcp_s.txt": "b4e000f80bcd62ecb982ec1b1dca197c1c58291b4da54df353c69dd5aaeef0ae",
@@ -313537,7 +313540,10 @@
         "fixtures/vendor-krux-amp/upstream-golden-event.txt": "7271a9f90f30321bb01a975abca49475608c315d07e9a4714f1cd17e04048506",
         "fixtures/vendor-krux-amp/upstream-golden-pageview.txt": "3430333fa9ec028bf41c6f459b7bd47c4a32b9413244956ec15e3c7cc21a9005",
         "fixtures/vendor-krux-amp/wrong-source-case.txt": "6489fcfdb67238842017261bfb8e83dc0bfb674596e76fb9d7823e3f81ecdc0a",
-        "docs/reviews/krux-amp-20261025.json": "19b547c0a86eb1d8add85010b0cb12f1b7d56587688273e1c482a8f2f7f5424f"
+        "docs/reviews/krux-amp-20261025.json": "aba85de15bfe328b16c5330df2db236df873ca065f14cd3b0a696611abf607e5",
+        "fixtures/vendor-krux-amp/event-path-marker-conflict-open.txt": "4baa9ad03a8aa3bfa02126bc3d380cf2bba5999ef431b46f9ae097102be2b4aa",
+        "fixtures/vendor-krux-amp/event-path-marker-same-still-advised.txt": "795c25b87e8242af3084e20c74a97efa6992163019230577315f4a5b0867d60c",
+        "fixtures/vendor-krux-amp/pixel-path-marker-collision-open.txt": "fb941a47b5962035b2b00645f2cd8ec44a66ace24879c6fab62b7bd0ace39697"
       }
     },
     {
