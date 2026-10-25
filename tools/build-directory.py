@@ -60,6 +60,9 @@ VENDORS = {
     "kimberlite": ("Kimberlite", "programmatic", ["kimberlite.io"], None),
     "rtbhouse": ("RTB House", "programmatic", ["ams.creativecdn.com"], None),
 
+    # Gamesight publishes the gsght.com impression tracker template.
+    "gamesight": ("Gamesight", "measurement", ["gsght.com"], "vendor/gamesight-impression"),
+
     # Demand and supply side platforms
     "thetradedesk": ("The Trade Desk", "programmatic", ["insight.adsrvr.org", "js.adsrvr.org", "match.adsrvr.org", "enduser.adsrvr.org", "vam-bid.adsrvr.org"], "vendor/the-trade-desk"),
     "amazon": ("Amazon Ads", "programmatic", ["s.amazon-adsystem.com", "aax.amazon-adsystem.com", "c.amazon-adsystem.com", "fls-na.amazon-adsystem.com"], "vendor/amazon-ads"),

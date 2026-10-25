@@ -818,6 +818,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/naver-wcs-query",
         include_str!("../rulepacks/vendor/naver-wcs-query.json"),
     ),
+    (
+        "vendor/gamesight-impression",
+        include_str!("../rulepacks/vendor/gamesight-impression.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

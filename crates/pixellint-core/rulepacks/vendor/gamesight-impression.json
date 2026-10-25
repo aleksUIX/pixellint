@@ -1,0 +1,97 @@
+{
+  "id": "vendor/gamesight-impression",
+  "display_name": "Gamesight impression tracker",
+  "description": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Opaque IDs, custom domains, receiver acceptance and external identity relationships remain outside this profile.",
+  "vendor": "gamesight",
+  "source_level": "official_vendor",
+  "docs": "https://docs.gamesight.io/docs/tracker-url-parameters",
+  "path_pattern": "^/imgp/(?<tracker_id>[^/]*)$",
+  "match": {
+    "hosts": [
+      "gsght.com"
+    ],
+    "paths": [
+      "/imgp",
+      "/imgp/"
+    ],
+    "path_patterns": [
+      "/imgp/[^/]+"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "tracker_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Retain the opaque tracker slot from the published impression template.",
+      "doc": "https://docs.gamesight.io/docs/network-integration-guide",
+      "source_level": "official_template"
+    },
+    {
+      "name": "cost_model",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "CPM",
+          "CPC"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Published cost options; no server rejection claim."
+    },
+    {
+      "name": "external_hash_mode",
+      "name_pattern": "^xid\\[[0-9]*\\]\\[sha256\\]$",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "client",
+          "server"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Documented hashing modes, with unset values left open."
+    },
+    {
+      "name": "external_scope_type",
+      "name_pattern": "^xid\\[[0-9]*\\]\\[scope_type\\]$",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "game",
+          "org"
+        ]
+      },
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Documented identity scope options."
+    },
+    {
+      "name": "attribution_window",
+      "requirement": "forbidden",
+      "severity": "warning",
+      "description": "This option applies to click links."
+    },
+    {
+      "name": "destination_url",
+      "requirement": "forbidden",
+      "severity": "warning",
+      "description": "Redirect overrides apply to click links."
+    }
+  ],
+  "rules": []
+}
