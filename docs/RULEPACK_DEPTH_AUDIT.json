@@ -312830,6 +312830,329 @@
         "fixtures/vendor-hybrid-dss-pixel/wrong-path.txt": "fd3d201ca5b6e9d02975ac397ae1b5ac58dc7d798451e63490ac68fe80fd2665"
       },
       "independent_template_outputs": 1
+    },
+    {
+      "id": "vendor/aniview-default-track",
+      "vendor": "aniview",
+      "disposition": "implemented_transport_profile_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "track1.aniview.com"
+        ],
+        "paths": [
+          "/track"
+        ],
+        "artifact_kinds": [
+          "request"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/aniview-default-track.json",
+      "manifest_sha256": "0ebf51e7dd813e8ca6c39ec8e0b46607d7c1044253d41c44b011483b88627d24",
+      "sources_read": [
+        {
+          "id": "aniview-ad-manager",
+          "url": "https://player.aniview.com/script/ad-manager/stable/umd/ad-manager.js",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "b68be66bec1b422456b885d0bfefdc32040be22eeb773b575eae554ef75957e7",
+          "bytes": 521250,
+          "source_level": "official_template",
+          "scope": "Pinned v1.2.21 default domain in J1, Gm endpoint, DC/t8 transport choice and report descriptors. No event/value grammar inferred."
+        }
+      ],
+      "source_urls": [
+        "https://player.aniview.com/script/ad-manager/stable/umd/ad-manager.js"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "http",
+          "contract": {
+            "name": "method",
+            "requirement": "recommended",
+            "allow_empty": false,
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET",
+                "POST"
+              ]
+            },
+            "description": "Unchanged SDK t8 chooses only GET or POST. This is source transport advice, not a complete receiver method contract."
+          }
+        },
+        {
+          "scope": "http",
+          "contract": {
+            "name": "body.e",
+            "requirement": "optional",
+            "allow_empty": true,
+            "severity": "warning",
+            "format_severity": "warning",
+            "description": "Only submitted key presence selects the POST advice. Null, empty, number, array, object and unknown event values remain open."
+          }
+        },
+        {
+          "scope": "http rule",
+          "contract": {
+            "code": "vendor.aniview-default-track.http.payload_requires_post",
+            "kind": "value_when",
+            "when": "method",
+            "equals": [
+              "GET"
+            ],
+            "param": "method",
+            "value": "POST",
+            "condition": {
+              "kind": "exists",
+              "param": "body.e"
+            },
+            "severity": "warning",
+            "message": "The pinned SDK sends a nonempty object containing an e member using POST. Preserve its opaque event value."
+          }
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/aniview-default-track.json": "0ebf51e7dd813e8ca6c39ec8e0b46607d7c1044253d41c44b011483b88627d24",
+        "crates/pixellint-core/tests/creative_transport_profiles.rs": "8a1d67861cb46f19d4bf4e3e93d2091ca4a679c0b3822adbb0a62772579db15b",
+        "fixtures/vendor-aniview-default-track/README.md": "79068e9b7aa6a6c72e60770a67cdcffd22ef5bf6e5b1c6842151c41a55e28745",
+        "fixtures/vendor-aniview-default-track/bare-url.txt": "003d2fb5f83401bb399ee481c225b9ed2e836a198f42b267caee41d497c7fedb",
+        "fixtures/vendor-aniview-default-track/child-host.txt": "ac26eee92c3dc884a4d8e4634b6b5e780501e1f4d924da59cd32ce1c6a161187",
+        "fixtures/vendor-aniview-default-track/custom-host.txt": "f6ecdb0e3cf7dc83f5ad1513b6d2cc0d958be0da21fc3f452bffbf3fbec8396d",
+        "fixtures/vendor-aniview-default-track/extra-path.txt": "5a7f586a718d515cefd8c49baf246e17963f99a90e87a2ef1947398f9fa6acf0",
+        "fixtures/vendor-aniview-default-track/get-body-e-array.txt": "df3ee02070d7cc3e3037c90fce03dc42822fbb476bfc7718e89a1a9f89a4fa78",
+        "fixtures/vendor-aniview-default-track/get-body-e-empty-string.txt": "0107d43f6ce755f15e06b6b174f22f8a8ec8c1de4eee380b26eb6636fd2bc8b9",
+        "fixtures/vendor-aniview-default-track/get-body-e-future-string.txt": "1714bb49849fe351313c065817ca0ef7d0f1729e7d5af963ec8dbcb3f0a84354",
+        "fixtures/vendor-aniview-default-track/get-body-e-null.txt": "28bf85d6176590113eb8395e0fc6f44f5ad383c2c6140069a163632afe7e78d4",
+        "fixtures/vendor-aniview-default-track/get-body-e-number.txt": "858dc46513fa770d170eaff28bb27ae844c3c6b5c531f833c6a91fb0cd3529ba",
+        "fixtures/vendor-aniview-default-track/get-body-e-object.txt": "921b566fe19250cfaf4bbbdfe8218d6d5dcc066d417c580d6c3ade8b066dadf8",
+        "fixtures/vendor-aniview-default-track/get-opaque-query.txt": "35bd596a2eff444a03dc7f550c79a8392bebeb967d80d8d040c3b4cf98e82b89",
+        "fixtures/vendor-aniview-default-track/lookalike.txt": "e21abafcb77f3dcf2bdbbf095d222d3272a5a0041a447d103060a0cdf98e574f",
+        "fixtures/vendor-aniview-default-track/manifest.json": "f6b65748a558088d957c8dd22a125221c4dcdc088ed6c5679cd0432b0854751f",
+        "fixtures/vendor-aniview-default-track/nearby-route.txt": "240f23f2cf09abbeee3c6ae830e22e73ced4d0e100fb88adc34cf23d6c9f06c5",
+        "fixtures/vendor-aniview-default-track/post-buffer-array.txt": "3a2d0d1a55cbbc4e468d1484118689e3dc58beac1e822568c4882740b8b66f57",
+        "fixtures/vendor-aniview-default-track/post-json-null.txt": "5c9d2bf260ea4df14f0cc9002cfcc9686028ab4a1c5edcc99cc8b879d29b0dda",
+        "fixtures/vendor-aniview-default-track/post-unknown-mime.txt": "0a33b839506d67dc195cb63966ce16ef1a06ccea7268e87db30cb17151957a83",
+        "fixtures/vendor-aniview-default-track/producer-proof.json": "89f81fc3fb598b71b8893e71daad782d8decb718c9752b7ce0d1ca06c5cc47d7",
+        "fixtures/vendor-aniview-default-track/source-buffer-array.txt": "bef6fddf89b96783bb6d95ac54725cca609062f7fe16d8f85fb6d23cfe112842",
+        "fixtures/vendor-aniview-default-track/source-cases.json": "ec6d173fb624b1ca97db505a5b4330216aa0ac2051150754c1f72c3033696046",
+        "fixtures/vendor-aniview-default-track/source-default-beacon-object.txt": "d0fa5cbdda8d19f2eb8c682db2cd412951d0071053fa01f2fc059cc3feb3e40a",
+        "fixtures/vendor-aniview-default-track/source-default-image.txt": "ec2ee2f5ce18d606c5d63d4132623940a3cb0a80a392ed379f3f2dad71fcd141",
+        "fixtures/vendor-aniview-default-track/source-empty-beacon.txt": "c8c7f2afedf2d6ac9756b323c76ec969ef8bf1623f033f1b01cbf35f34f0a187",
+        "fixtures/vendor-aniview-default-track/source-empty-event-body.txt": "614b17ec99aece476fdd82c40ae5e743b01b2bf9eda7fda97892761fc890950d",
+        "fixtures/vendor-aniview-default-track/source-empty-fetch-body.txt": "ec2ee2f5ce18d606c5d63d4132623940a3cb0a80a392ed379f3f2dad71fcd141",
+        "fixtures/vendor-aniview-default-track/source-null-event-body.txt": "76970d531466bf3b15c047f8297c57dbb1798e136d87a27f8ff23c10ca778984",
+        "fixtures/vendor-aniview-default-track/source-null-fetch-body.txt": "ec2ee2f5ce18d606c5d63d4132623940a3cb0a80a392ed379f3f2dad71fcd141",
+        "fixtures/vendor-aniview-default-track/source-object-event-body.txt": "071456e705f9b7d1f4148e5775c541b8d51e03a39b59f2ede76f098f2cf757bb",
+        "fixtures/vendor-aniview-default-track/source-query-override.txt": "6579a31cd0b67759d4d093cf07d240334239ccc61cb246359486e78f2b0038a4",
+        "fixtures/vendor-aniview-default-track/source-string-body.txt": "7a0fde62b6c69fef6ac18eed492af3b8545a04e1e1660ffd792f164a2ae3c73c",
+        "fixtures/vendor-aniview-default-track/source-stringified-null-body.txt": "1d1bd97754c9724deb8334d13e22a229b443f589613bd2f636c06a810f212f33",
+        "fixtures/vendor-aniview-default-track/track4-alias.txt": "41d4e3a652fd3aac1d1689c965b334f3cbf4d5cb50819066688726086b598928",
+        "fixtures/vendor-aniview-default-track/unsupported-method.txt": "8ea479d896cc2128c12de7466d6323de09ac5fa908158400d2c93bcd00f512d1"
+      },
+      "independent_source_cases": 12,
+      "source_derived_boundary_cases": 18,
+      "diagnostic_code_order_snapshots": 30,
+      "oracle_method": "Actual unchanged public request-construction functions are extracted by syntax nodes and executed offline with native Request plus intercepted transports or local browser stubs. Authored source cases, mutations and negative directory expectations are prewritten before execution. No network measurement requests, private telemetry or engine-generated vendor oracles are used.",
+      "missing_requirements": [
+        {
+          "requirement": "Field requiredness, event values, identifiers, numeric bounds and receiver rejection behavior",
+          "reason": "Server/caller params and custom reporters remain open. The profile checks only default-host captured transport."
+        },
+        {
+          "requirement": "MIME, Accept header, body object shape and buffered/opaque payload schema",
+          "reason": "Native beacon, fetch, image and buffer branches use different carriers. No universal MIME or container rule is imposed."
+        },
+        {
+          "requirement": "track4/avh, configurable hosts, other paths and bare URL protocol checks",
+          "reason": "Default track1 is explicit in source. A DNS alias is not a receiver schema mapping."
+        }
+      ],
+      "review_date": "2026-10-25",
+      "test": {
+        "harness": "creative_transport_profiles.rs and rulepack_golden.rs",
+        "status": "Passed: 59 prewritten source, mutation and directory controls in creative_transport_profiles.rs; complete golden_corpus_matches_expected_findings; cargo clippy --all-targets --all-features -- -D warnings; cargo fmt --all --check. Independent QA verified all 18 source outputs and extracted function hashes. Full workspace checks and shared freshness pins remain coordinator integration work."
+      }
+    },
+    {
+      "id": "vendor/adglare-native-events",
+      "vendor": "adglare",
+      "disposition": "implemented_transport_profile_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "try.engine.adglare.net"
+        ],
+        "paths": [
+          "/event"
+        ],
+        "query_params_none": [
+          "data"
+        ],
+        "artifact_kinds": [
+          "request"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/adglare-native-events.json",
+      "manifest_sha256": "c1d2a713433251da9958c704e2889dbfdc627195c31de8fef10ecc56113fb2e2",
+      "sources_read": [
+        {
+          "id": "adglare-native",
+          "url": "https://www.adglare.com/user-guide/native-ads",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "104e5e9450a23e32e17bd6304df2682d9bf41c078513320f74bce9f961c35d9c",
+          "bytes": 82688,
+          "source_level": "official_vendor",
+          "scope": "Native guide explicitly binds POST /event with opaque event token as payload. The targeting JSON is for the separate native ad-serving URL."
+        },
+        {
+          "id": "adglare-tags",
+          "url": "https://www.adglare.com/user-guide/ad-tags",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "abc169ff37476bedf6f47a23a06aa47fdf68bd0ce10cd779472c92ce7b3c5a3d",
+          "bytes": 89321,
+          "source_level": "official_vendor",
+          "scope": "First-party example binds the exact try.engine.adglare.net host and public unconfigured loader."
+        },
+        {
+          "id": "adglare-loader",
+          "url": "https://try.engine.adglare.net/?js",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "a8f6fee424b2602b5a55f6480947fef3465f10c7aeb624e9a880b9ad813544ef",
+          "bytes": 15375,
+          "source_level": "official_template",
+          "scope": "Generic queue transport uses opaque joined tokens, POST sendBeacon/XHR and an excluded data= image fallback. Caller-provided URLs do not establish token grammar."
+        }
+      ],
+      "source_urls": [
+        "https://www.adglare.com/user-guide/native-ads",
+        "https://www.adglare.com/user-guide/ad-tags",
+        "https://try.engine.adglare.net/?js"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "http",
+          "contract": {
+            "name": "method",
+            "requirement": "recommended",
+            "allow_empty": false,
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "POST"
+              ]
+            },
+            "description": "The native guide explicitly instructs a POST to /event with its event token as payload."
+          }
+        },
+        {
+          "scope": "http",
+          "contract": {
+            "name": "body_encoding",
+            "requirement": "optional",
+            "allow_empty": true,
+            "severity": "warning",
+            "format_severity": "warning",
+            "description": "Only none means this complete capture supplies no entity. No MIME or decoded token schema is inferred."
+          }
+        },
+        {
+          "scope": "http",
+          "contract": {
+            "name": "entity_body_bytes",
+            "requirement": "optional",
+            "allow_empty": true,
+            "severity": "warning",
+            "format_severity": "warning",
+            "minimum": 1,
+            "description": "When explicit binary capture metadata is available, zero entity bytes cannot contain the documented event token. Raw-token grammar and native JSON shape are not checked."
+          }
+        },
+        {
+          "scope": "http rule",
+          "contract": {
+            "code": "vendor.adglare-native-events.http.payload_absent",
+            "kind": "forbid_value_pattern",
+            "params": [
+              "body_encoding"
+            ],
+            "pattern": "^none$",
+            "severity": "warning",
+            "message": "The native event guide includes an event-token payload. This complete capture supplies no entity."
+          }
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/adglare-native-events.json": "c1d2a713433251da9958c704e2889dbfdc627195c31de8fef10ecc56113fb2e2",
+        "crates/pixellint-core/tests/creative_transport_profiles.rs": "8a1d67861cb46f19d4bf4e3e93d2091ca4a679c0b3822adbb0a62772579db15b",
+        "fixtures/vendor-adglare-native-events/README.md": "79068e9b7aa6a6c72e60770a67cdcffd22ef5bf6e5b1c6842151c41a55e28745",
+        "fixtures/vendor-adglare-native-events/bare-data-key-limit.txt": "70ceef31412dcb7e8ff321203de00c88ddbc26ba2b08e8ab4972689b04c16161",
+        "fixtures/vendor-adglare-native-events/bare-engine.txt": "f12e67691caea804b61faa16f035fc70518509aa29a5aeefdc6c22f35d6b45b9",
+        "fixtures/vendor-adglare-native-events/bare-url.txt": "2afb0f9f9cc1de193ddcad495cb2a9e544d330b05b85ca7c7010581c0ce9887a",
+        "fixtures/vendor-adglare-native-events/binary-empty-entity.txt": "72afd616928b7f8ff5c80367f087db0b997aae13f5e714b5ae636700dc578635",
+        "fixtures/vendor-adglare-native-events/binary-opaque-entity.txt": "e9ef8f96b99497ab9872008e8901862a90112d148a5665347f7adedd990e852e",
+        "fixtures/vendor-adglare-native-events/child-host.txt": "5c50577b396600f71cf8ab1d3156d4f0a4c68f70566a851abf0bedb3ad6b44f2",
+        "fixtures/vendor-adglare-native-events/delimiter-token.txt": "ef25b7dcaa02a6acf56fd3eabf905e5be3748c9e8c267979766b87219dbef813",
+        "fixtures/vendor-adglare-native-events/empty-image-data.txt": "099989ccb1bef15215e11748c932acf2d08a8eeb817cadf626af9faa534a9acb",
+        "fixtures/vendor-adglare-native-events/image-data.txt": "87b513df7d929eece32acc04b32331723ca48ba85447d4027db47739751c8b42",
+        "fixtures/vendor-adglare-native-events/json-array-token.txt": "ec24a80656e9f08b0a7308840b13b88963168c8c6077ac668129c6f99e386b71",
+        "fixtures/vendor-adglare-native-events/json-empty-string-token.txt": "05c702bfeaa3c15df2998eb1142515615806df77c506d2938f777f682c2f4f8d",
+        "fixtures/vendor-adglare-native-events/json-null-token.txt": "4dcaf8636b6e858541b0b29fa043df0de959ea3b9a2c0a175e5d4854871a900b",
+        "fixtures/vendor-adglare-native-events/json-object-token.txt": "827ef7d6a22413b25df31d6bd735899a47084f812199382aa0e1bb117e869484",
+        "fixtures/vendor-adglare-native-events/loader.txt": "af5745dbcf06f7b1373c06475fcaeee1e25e40b9d0544e23e697b6c8944855f4",
+        "fixtures/vendor-adglare-native-events/lookalike.txt": "123d78e00f643fdde845694fa9d1a2a1a6f9dc9aadaf9633bf1125a51fc8ecdf",
+        "fixtures/vendor-adglare-native-events/manifest.json": "42f6dc1e73fd638b6cbd34355114525a2036d52f8e6807ccda0a5d73565d6be0",
+        "fixtures/vendor-adglare-native-events/other-tenant.txt": "55e4c2fbcae0c7b94bd7038b0d9002de74a22d9973b217e06e3cda152b8491a1",
+        "fixtures/vendor-adglare-native-events/path-token.txt": "735695a9b7c6ccd801d8e1ff2a217585258a1d26f5e7cb434a819096d69629d4",
+        "fixtures/vendor-adglare-native-events/payload-absent.txt": "1b93a6a7f33bf9cf8164288c26dd0f5f98e106a77a53c6999b15f4b15fd73ca3",
+        "fixtures/vendor-adglare-native-events/producer-proof.json": "ed773cd45888c23ca725daa5ff8bb2168e60243cc3f1f679e0ae418c0aa11406",
+        "fixtures/vendor-adglare-native-events/raw-empty-uncertain.txt": "e09af13c9f419e7912e6f3baf7e5e6f29922fa4bfdb75e933e2d0e0e003660bf",
+        "fixtures/vendor-adglare-native-events/source-cases.json": "38b463493e025e7ebbae8e4ebf82034d01cb7e4dc41f4ca243b3e52997c723d1",
+        "fixtures/vendor-adglare-native-events/source-native-beacon-batch.txt": "4a2c7547e69ac402e96606c58a248e62db154e2f3c922c3b966ff1776a6abde4",
+        "fixtures/vendor-adglare-native-events/source-native-beacon-token.txt": "2feec8efc312ac8c9cdafda0a8974f9eb273cf6b6032db1e26bff28f95b69212",
+        "fixtures/vendor-adglare-native-events/source-native-xhr-fallback.txt": "597d094f4611c6e8d604f298bf2402e2e243c5e5653ee1ef46f91b2235f57b75",
+        "fixtures/vendor-adglare-native-events/source-opaque-null-and-undefined.txt": "d00f21a3002ce863b71e9c29b2ff2b8df36be61a5f3bbcf2c96dac29e9c11849",
+        "fixtures/vendor-adglare-native-events/source-source-empty-token.txt": "4cc2cf5ca9daab1b6552c3d5f4d1044b3732d73fcc20dc5036f053f0e032e676",
+        "fixtures/vendor-adglare-native-events/source-source-image-fallback.txt": "56860e3b5c9f9d60c2f98da54a95077d6d2ed015ae30c007f7a4237aea058edb",
+        "fixtures/vendor-adglare-native-events/trailing-slash.txt": "38870e7cac2b14ae733ee3a711f10c755546ebec2e47c5e52998d9fe4831a773",
+        "fixtures/vendor-adglare-native-events/unicode-token.txt": "1d9ef89acb2d071d328882ba7a47488b7a644f69e9453bfd649370c45d1ea053",
+        "fixtures/vendor-adglare-native-events/wrong-method-and-absent.txt": "0a4ceab9b9c9c856233c29a93c68b92bf026b604fd7a77735973fc2d04c1bac6",
+        "fixtures/vendor-adglare-native-events/wrong-method.txt": "e25c7bbce464da7a5157b208ec9dea856d5c07a86c760768c34add9e29849065"
+      },
+      "independent_source_cases": 6,
+      "source_derived_boundary_cases": 23,
+      "diagnostic_code_order_snapshots": 29,
+      "oracle_method": "Actual unchanged public request-construction functions are extracted by syntax nodes and executed offline with native Request plus intercepted transports or local browser stubs. Authored source cases, mutations and negative directory expectations are prewritten before execution. No network measurement requests, private telemetry or engine-generated vendor oracles are used.",
+      "missing_requirements": [
+        {
+          "requirement": "Opaque token issuance, alphabet, delimiters, length, semantic contents and receiver acceptance",
+          "reason": "Native documentation only calls it an event token. Generic loader join behavior does not define its grammar."
+        },
+        {
+          "requirement": "Nonempty raw text token validity, beyond absent entity or explicit zero-byte binary metadata",
+          "reason": "The generic loader can emit empty raw strings. Decoded JSON null or empty strings must not be mistaken for absent opaque bytes. No unsupported token validation is invented."
+        },
+        {
+          "requirement": "Other tenant hosts, white-label domains, /event/{token}, /event/ aliases, native ad requests and conversion/VAST classification",
+          "reason": "Only exact publicly named try host and native /event captures are selected."
+        },
+        {
+          "requirement": "Bare ?data key exclusion",
+          "reason": "query_params_none uses the preserved legacy extractor, which omits bare keys without equals. The actual source fallback always emits data=. No global selector algorithm change is made."
+        }
+      ],
+      "review_date": "2026-10-25",
+      "test": {
+        "harness": "creative_transport_profiles.rs and rulepack_golden.rs",
+        "status": "Passed: 59 prewritten source, mutation and directory controls in creative_transport_profiles.rs; complete golden_corpus_matches_expected_findings; cargo clippy --all-targets --all-features -- -D warnings; cargo fmt --all --check. Independent QA verified all 18 source outputs and extracted function hashes. Full workspace checks and shared freshness pins remain coordinator integration work."
+      }
     }
   ],
   "previous_audit_baseline": {

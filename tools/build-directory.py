@@ -173,6 +173,8 @@ VENDORS = {
     "podscribe": ("Podscribe", "measurement", ["verifi.podscribe.com"], "vendor/podscribe-prx-impression"),
     "weborama": ("Weborama", "measurement", ["wcmvideotutorials.solution.weborama.fr"], "vendor/weborama-wcm-js-impression"),
     "adriver": ("AdRiver", "measurement", ["ad.adriver.ru", "ev.adriver.ru"], "vendor/adriver-vast-counter"),
+    "aniview": ("Aniview", "video", ["track1.aniview.com"], "vendor/aniview-default-track"),
+    "adglare": ("AdGlare", "programmatic", ["try.engine.adglare.net"], "vendor/adglare-native-events"),
 }
 
 

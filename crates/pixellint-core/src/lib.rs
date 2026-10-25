@@ -882,6 +882,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/adriver-vast-counter",
         include_str!("../rulepacks/vendor/adriver-vast-counter.json"),
     ),
+    (
+        "vendor/adglare-native-events",
+        include_str!("../rulepacks/vendor/adglare-native-events.json"),
+    ),
+    (
+        "vendor/aniview-default-track",
+        include_str!("../rulepacks/vendor/aniview-default-track.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

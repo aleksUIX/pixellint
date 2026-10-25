@@ -1,0 +1,1 @@
+These fixtures use unchanged public producer functions offline with intercepted transports and authored data. No measurement request was made. Expected vendor warnings and negative directory states were written before engine execution. See docs/reviews/creative-transport-profiles-20261025.json for source hashes, boundaries and remaining receiver requirements.

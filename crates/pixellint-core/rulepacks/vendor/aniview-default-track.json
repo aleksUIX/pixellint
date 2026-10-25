@@ -1,0 +1,64 @@
+{
+  "id": "vendor/aniview-default-track",
+  "vendor": "aniview",
+  "display_name": "Aniview default tracker transport",
+  "source_level": "official_template",
+  "docs": "https://player.aniview.com/script/ad-manager/stable/umd/ad-manager.js",
+  "description": "Advisory transport checks for captured requests on the pinned SDK default track1.aniview.com/track endpoint. The producer emits GET or POST, and an object body containing e uses POST. Image queries, opaque strings and buffered arrays retain their source behavior. No field grammar, event enum, MIME, receiver acceptance or track4/avh equivalence is inferred.",
+  "match": {
+    "hosts": [
+      "track1.aniview.com"
+    ],
+    "paths": [
+      "/track"
+    ],
+    "artifact_kinds": [
+      "request"
+    ]
+  },
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "allow_empty": false,
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "description": "Unchanged SDK t8 chooses only GET or POST. This is source transport advice, not a complete receiver method contract."
+      },
+      {
+        "name": "body.e",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "format_severity": "warning",
+        "description": "Only submitted key presence selects the POST advice. Null, empty, number, array, object and unknown event values remain open."
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.aniview-default-track.http.payload_requires_post",
+        "kind": "value_when",
+        "when": "method",
+        "equals": [
+          "GET"
+        ],
+        "param": "method",
+        "value": "POST",
+        "condition": {
+          "kind": "exists",
+          "param": "body.e"
+        },
+        "severity": "warning",
+        "message": "The pinned SDK sends a nonempty object containing an e member using POST. Preserve its opaque event value."
+      }
+    ]
+  }
+}

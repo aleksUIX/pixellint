@@ -1,0 +1,69 @@
+{
+  "id": "vendor/adglare-native-events",
+  "vendor": "adglare",
+  "display_name": "AdGlare native event POST transport",
+  "source_level": "official_vendor",
+  "docs": "https://www.adglare.com/user-guide/native-ads",
+  "description": "Advisory native event POST and captured entity-presence checks on the independently published try.engine.adglare.net host at exact /event. Populated data query carriers use a separate generic loader fallback and are excluded. Tokens, MIME and body encoding remain opaque; /event/{token}, other tenants, native ad requests and current receiver acceptance are outside this profile.",
+  "match": {
+    "hosts": [
+      "try.engine.adglare.net"
+    ],
+    "paths": [
+      "/event"
+    ],
+    "query_params_none": [
+      "data"
+    ],
+    "artifact_kinds": [
+      "request"
+    ]
+  },
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "allow_empty": false,
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The native guide explicitly instructs a POST to /event with its event token as payload."
+      },
+      {
+        "name": "body_encoding",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "format_severity": "warning",
+        "description": "Only none means this complete capture supplies no entity. No MIME or decoded token schema is inferred."
+      },
+      {
+        "name": "entity_body_bytes",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "format_severity": "warning",
+        "minimum": 1,
+        "description": "When explicit binary capture metadata is available, zero entity bytes cannot contain the documented event token. Raw-token grammar and native JSON shape are not checked."
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.adglare-native-events.http.payload_absent",
+        "kind": "forbid_value_pattern",
+        "params": [
+          "body_encoding"
+        ],
+        "pattern": "^none$",
+        "severity": "warning",
+        "message": "The native event guide includes an event-token payload. This complete capture supplies no entity."
+      }
+    ]
+  }
+}
