@@ -93,6 +93,7 @@ declares a self-hosted endpoint. That opt-in requires a specific non-root
 | `path_patterns` | Regular expression alternatives matching the complete path. Requires an explicit host or host suffix and cannot combine with `any_host`. |
 | `query_params_any` | At least one exact decoded query key must be submitted, including an empty value. |
 | `query_params_none` | None of the exact decoded query keys may be submitted. |
+| `query_params_values` | Every declared `{ "name": "mode", "values": ["web"] }` marker must occur, and every occurrence must have an allowed literal decoded value. |
 | `json_paths` | Shapes that identify a JSON body as this pack's. Required when the pack declares a `body`, and rejected without one. |
 | `artifact_kinds` | Artifact kinds the pack applies to. Defaults to the URL-like kinds: `url`, `vast`, `postback`, `request`, `unknown`. |
 
@@ -101,6 +102,16 @@ still resolves to its endpoint. If any path field is present, at least one path
 condition must hit. Query key selectors then apply independently. They do not
 read fragments or query values. Contradictory or empty query key declarations
 are rejected. Explicit pack selection still validates an unrecognized branch.
+
+Query value markers are ANDed with each other and with the host, path and query-key
+selectors. Keys and values are case-sensitive and decoded once by the normal query
+parser. Fragments, query text inside another value and second decoding do not supply
+markers. Repeated identical allowed values are accepted; one conflicting value or
+unresolved macro prevents automatic selection. An explicitly allowed empty string
+matches a submitted empty value, not an absent key. Marker names and allowed values
+must be distinct, names and value lists must be nonempty, and a marker cannot also
+appear in `query_params_none`. Explicit rulepack validation still checks a profile
+outside automatic selection and reports endpoint mismatch as before.
 
 Path expressions use Rust regex syntax and are compiled once with full-path
 anchors. Invalid or empty expressions are rejected. For example,

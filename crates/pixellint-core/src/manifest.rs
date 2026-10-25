@@ -226,11 +226,22 @@ pub struct MatchSpec {
     /// None of these query keys may be submitted.
     #[serde(default)]
     pub query_params_none: Vec<String>,
+    /// Every named query marker must occur, and all occurrences must be allowed.
+    #[serde(default)]
+    pub query_params_values: Vec<QueryParamValuesMatch>,
     /// JSON body shapes the pack claims. A body artifact belongs to this pack
     /// when every entry here holds, so the shape of the payload stands in for
     /// the host that a bare body does not carry.
     #[serde(default)]
     pub json_paths: Vec<ShapeMatch>,
+}
+
+/// An exact, decoded query marker selecting a source-specific endpoint profile.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct QueryParamValuesMatch {
+    pub name: String,
+    pub values: Vec<String>,
 }
 
 /// One condition on the shape of a JSON body.
@@ -2220,6 +2231,23 @@ impl ManifestRulePack {
             });
         }
 
+        let mut marker_names = BTreeSet::new();
+        for marker in &manifest.matcher.query_params_values {
+            let values: BTreeSet<_> = marker.values.iter().collect();
+            if marker.name.is_empty()
+                || !marker_names.insert(marker.name.as_str())
+                || marker.values.is_empty()
+                || values.len() != marker.values.len()
+                || manifest.matcher.query_params_none.contains(&marker.name)
+            {
+                return Err(ManifestError::InvalidConstraint {
+                    pack_id,
+                    name: "match.query_params_values".into(),
+                    reason: "query value selectors need distinct nonempty names, nonempty distinct value lists, and no forbidden-key conflict".into(),
+                });
+            }
+        }
+
         if manifest.matcher.any_host && !manifest.matcher.path_contains.is_empty() {
             return Err(ManifestError::InvalidConstraint {
                 pack_id,
@@ -2762,7 +2790,12 @@ impl ManifestRulePack {
         !self.shapes.is_empty() && self.shapes.iter().all(|shape| shape.holds(document))
     }
 
-    fn matches_parsed_url(&self, parsed: Option<&ArtifactUrl>, params: &[RawParam<'_>]) -> bool {
+    fn matches_parsed_url(
+        &self,
+        parsed: Option<&ArtifactUrl>,
+        params: &[RawParam<'_>],
+        artifact: &str,
+    ) -> bool {
         if !self.matches_parsed_endpoint(parsed) {
             return false;
         }
@@ -2785,6 +2818,45 @@ impl ManifestRulePack {
                     .any(|name| query_names.contains(name.as_str()))
             {
                 return false;
+            }
+        }
+
+        if !self.matcher.query_params_values.is_empty() {
+            let query = artifact
+                .split('#')
+                .next()
+                .unwrap_or(artifact)
+                .split_once('?')
+                .map_or("", |(_, query)| query);
+            // Read bare keys too, so a conflicting key without '=' cannot disappear.
+            // Reuse the normal one-pass query decoders and macro handling.
+            let pairs: Vec<_> = query
+                .split('&')
+                .filter(|pair| !pair.is_empty())
+                .map(|pair| {
+                    let (name, value) = pair.split_once('=').unwrap_or((pair, ""));
+                    (percent_decode(name), decode_param_value(value))
+                })
+                .collect();
+            for marker in &self.matcher.query_params_values {
+                let mut present = false;
+                for (_, value) in pairs
+                    .iter()
+                    .filter(|(name, _)| name.as_ref() == marker.name)
+                {
+                    present = true;
+                    if contains_macro(value.as_ref())
+                        || !marker
+                            .values
+                            .iter()
+                            .any(|accepted| accepted == value.as_ref())
+                    {
+                        return false;
+                    }
+                }
+                if !present {
+                    return false;
+                }
             }
         }
 
@@ -2864,7 +2936,11 @@ impl ValidatorPlugin for ManifestRulePack {
     }
 
     fn supports_http(&self, prepared: &PreparedArtifact<'_>) -> bool {
-        self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query))
+        self.matches_parsed_url(
+            prepared.url(),
+            prepared.params(ParamStyle::Query),
+            prepared.trimmed(),
+        )
     }
 
     fn validate_http(
@@ -3215,7 +3291,11 @@ impl ValidatorPlugin for ManifestRulePack {
         if self.accepts_client_fragment(prepared) {
             prepared.mark_client_fragment_configuration();
         }
-        if self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query)) {
+        if self.matches_parsed_url(
+            prepared.url(),
+            prepared.params(ParamStyle::Query),
+            prepared.trimmed(),
+        ) {
             for value in &self.gdpr_non_applicable_values {
                 prepared.allow_non_applicable_gdpr(value);
             }
@@ -3257,7 +3337,11 @@ impl ValidatorPlugin for ManifestRulePack {
             };
         }
 
-        self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query))
+        self.matches_parsed_url(
+            prepared.url(),
+            prepared.params(ParamStyle::Query),
+            prepared.trimmed(),
+        )
     }
 
     fn validate(&self, request: &ValidationRequest) -> ValidationReport {
@@ -3279,8 +3363,11 @@ impl ValidatorPlugin for ManifestRulePack {
             );
         }
 
-        let matches_endpoint =
-            self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query));
+        let matches_endpoint = self.matches_parsed_url(
+            prepared.url(),
+            prepared.params(ParamStyle::Query),
+            prepared.trimmed(),
+        );
         if !matches_endpoint {
             violations.push(Violation {
                 code: format!("{}.endpoint_mismatch", self.code_prefix),
@@ -3518,7 +3605,11 @@ impl ValidatorPlugin for ManifestRulePack {
                 prepared.request().artifact_kind,
                 ArtifactKind::Url | ArtifactKind::Unknown
             )
-            || !self.matches_parsed_url(prepared.url(), prepared.params(ParamStyle::Query))
+            || !self.matches_parsed_url(
+                prepared.url(),
+                prepared.params(ParamStyle::Query),
+                prepared.trimmed(),
+            )
         {
             return false;
         }
