@@ -58,7 +58,7 @@ VENDORS = {
     "disqo": ("DISQO", "measurement", ["track.activemetering.com"], None),
     "adctv": ("ADCTV", "video", ["track.adctv.com"], "vendor/adctv-tracker"),
     "kimberlite": ("Kimberlite", "programmatic", ["kimberlite.io"], None),
-    "rtbhouse": ("RTB House", "programmatic", ["ams.creativecdn.com"], None),
+    "rtbhouse": ("RTB House", "programmatic", ["ams.creativecdn.com", "us.creativecdn.com", "asia.creativecdn.com"], None),
 
     # Gamesight publishes the gsght.com impression tracker template.
     "gamesight": ("Gamesight", "measurement", ["gsght.com"], "vendor/gamesight-impression"),
@@ -166,6 +166,9 @@ VENDORS = {
     "audiostack": ("AudioStack", "video", ["vast.audiostack.ai", "track.audiostack.ai"], None),
     "nativo": ("Nativo", "native", ["jadserve.postrelease.com"], None),
     "clipflip": ("Clipflip", "video", ["app.clipflip.video"], "vendor/clipflip-vast-tracking"),
+    "lemonpi": ("LemonPI", "video", ["content.lemonpi.io"], "vendor/lemonpi-events"),
+    "podscribe": ("Podscribe", "measurement", ["verifi.podscribe.com"], "vendor/podscribe-prx-impression"),
+    "weborama": ("Weborama", "measurement", ["wcmvideotutorials.solution.weborama.fr"], "vendor/weborama-wcm-js-impression"),
 }
 
 
