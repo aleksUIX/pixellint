@@ -1,0 +1,81 @@
+{
+  "id": "vendor/top-mail-counter",
+  "display_name": "Top Mail.ru counter SDK profile",
+  "description": "Advisory profile for the published Top Mail.ru page-view producer and its noscript counter. Numeric identity follows the help guide. Age and gender checks apply only to the pinned SDK js=13 profile. Receiver acceptance and other Mail.ru transports remain unverified.",
+  "vendor": "top-mail",
+  "source_level": "official_template",
+  "docs": "https://top-fwz1.mail.ru/js/code.js",
+  "param_style": "query_semicolon",
+  "match": {
+    "hosts": [
+      "top-fwz1.mail.ru"
+    ],
+    "paths": [
+      "/counter"
+    ],
+    "artifact_kinds": [
+      "url",
+      "vast",
+      "postback",
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "integer"
+      },
+      "severity": "warning",
+      "description": "The producer serializes the configured numeric counter identifier.",
+      "doc": "https://top.mail.ru/help/en/settings/goals",
+      "source_level": "official_template"
+    },
+    {
+      "name": "js",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "Only the pinned js=13 profile enables producer-specific demographic checks."
+    },
+    {
+      "name": "age",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "minimum": 1,
+      "maximum": 127,
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "js",
+        "values": [
+          "13"
+        ]
+      },
+      "description": "The pinned producer retains integer ages from 1 through 127."
+    },
+    {
+      "name": "gender",
+      "requirement": "optional",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1",
+          "2"
+        ]
+      },
+      "severity": "warning",
+      "condition": {
+        "kind": "value_in",
+        "param": "js",
+        "values": [
+          "13"
+        ]
+      },
+      "description": "The pinned producer retains these two codes; this is a transport profile."
+    }
+  ],
+  "rules": []
+}

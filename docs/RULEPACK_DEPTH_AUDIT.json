@@ -306259,6 +306259,115 @@
           "cargo test -p pixellint-core --test rulepack_golden golden_corpus_matches_expected_findings --offline"
         ]
       }
+    },
+    {
+      "id": "vendor/top-mail-counter",
+      "vendor": "top-mail",
+      "status": "reviewed_pinned_sdk_counter_profile",
+      "scope": "Exact top-fwz1.mail.ru /counter only. SDK/template advisories, not server required-field claims.",
+      "spec_complete": false,
+      "sources_read": [
+        {
+          "url": "https://top-fwz1.mail.ru/js/code.js",
+          "retrieved_at": "2026-10-25",
+          "access": "HTTP 200",
+          "sha256": "717f5632eac507594e29676bcdab5de9521ec216dae0ec961e661573587764a6",
+          "scope": "Current producer pageView calls B with /counter. B emits semicolon-separated id and js=13, and conditionally emits age/gender after exact integer range checks."
+        },
+        {
+          "url": "https://top.mail.ru/help/en/settings/goals",
+          "retrieved_at": "2026-10-25",
+          "access": "HTTP 200",
+          "sha256": "971ea3957c4bad03e29ff4a17f15a4a8beeaa2102bffbb041a4e4395612f0fee",
+          "scope": "Guide requires a numeric configured counter ID. Its own noscript HTML publishes /counter?id={numeric};js=na."
+        }
+      ],
+      "vendor_rule_inventory": [
+        "Numeric counter ID advisory.",
+        "js=13 scoped age and gender producer checks."
+      ],
+      "contracts_mapped": [
+        {
+          "name": "id",
+          "surface": "params",
+          "source": "https://top.mail.ru/help/en/settings/goals"
+        },
+        {
+          "name": "js",
+          "surface": "params",
+          "source": "https://top-fwz1.mail.ru/js/code.js"
+        },
+        {
+          "name": "age",
+          "surface": "params",
+          "source": "https://top-fwz1.mail.ru/js/code.js"
+        },
+        {
+          "name": "gender",
+          "surface": "params",
+          "source": "https://top-fwz1.mail.ru/js/code.js"
+        }
+      ],
+      "missing_requirements": [
+        {
+          "requirement": "No server rejection, identity existence, counter configuration or consent state is established.",
+          "category": "unsupported_or_external_context",
+          "locally_checkable": false,
+          "reason": "This SDK profile does not establish a complete receiver contract.",
+          "next_action": "Obtain the exact missing protocol or runtime/account context."
+        },
+        {
+          "requirement": "Other js versions and the noscript branch do not inherit the js=13 demographic checks.",
+          "category": "unsupported_or_external_context",
+          "locally_checkable": false,
+          "reason": "This SDK profile does not establish a complete receiver contract.",
+          "next_action": "Obtain the exact missing protocol or runtime/account context."
+        },
+        {
+          "requirement": "/tracker, JS loaders, other Mail.ru roots and arbitrary custom transports remain outside this pack.",
+          "category": "unsupported_or_external_context",
+          "locally_checkable": false,
+          "reason": "This SDK profile does not establish a complete receiver contract.",
+          "next_action": "Obtain the exact missing protocol or runtime/account context."
+        },
+        {
+          "requirement": "Other producer fields and their relationships are not fully validated.",
+          "category": "unsupported_or_external_context",
+          "locally_checkable": false,
+          "reason": "This SDK profile does not establish a complete receiver contract.",
+          "next_action": "Obtain the exact missing protocol or runtime/account context."
+        }
+      ],
+      "manifest_sha256": "87aea91f91860ee2877c5e81a0c76ffd451b0b3bd87a11a300ffa4970fa45c95",
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/top-mail-counter.json": "87aea91f91860ee2877c5e81a0c76ffd451b0b3bd87a11a300ffa4970fa45c95",
+        "docs/reviews/top-mail-counter-20261025.json": "e61ba2449490653aa089184ae720b8466d1dfa6eab43d9ec244c77bd34fbe6d7",
+        "fixtures/vendor-top-mail-counter/age-above-producer-range.txt": "5f90c6416fab8f94e99ce5cd1cbbc101992b6276878098b5f40ec61885405e55",
+        "fixtures/vendor-top-mail-counter/age-below-producer-range.txt": "39dbf3859a98a4b5f09003dfa0e491d25e4c7f57e1d94fbf7251dcff9ca68a3d",
+        "fixtures/vendor-top-mail-counter/clean-published-noscript.txt": "2359e465842cb6bc742e5969b899558e4c2285d1d99077bb56c1bb29cdb47410",
+        "fixtures/vendor-top-mail-counter/clean-sdk-pageview.txt": "baefc2e5b5a729bbd92f65d5ca929f88616c5e698a91826cde518ac994887839",
+        "fixtures/vendor-top-mail-counter/clean-sdk-upper-bound.txt": "dd798dbb3f4bd6592526e33a9d58f87ef441d03a14d5bf36c063b6fc7b34812d",
+        "fixtures/vendor-top-mail-counter/empty-counter-id.txt": "ff1b329308312cf8f5c9083bcf4b8adcd0636e52ab3b5e4d0236f96b8fef89e3",
+        "fixtures/vendor-top-mail-counter/encoded-counter-id.txt": "c2d0b4db057bd02c3148494f8e002e5e770f93c6ad3239760e120d516f4b50fc",
+        "fixtures/vendor-top-mail-counter/fractional-age.txt": "7ab92f8d45faecdddecc00a37adc5351ee7ddc437713ab13a30e81aebc286faf",
+        "fixtures/vendor-top-mail-counter/long-opaque-numeric-id.txt": "aa5201f395b4746413812dba4da46047b82fd2cb3ae4283d565c237f8e4173d9",
+        "fixtures/vendor-top-mail-counter/manifest.json": "d59c0af28a2c2ffadf91a1662ffa13be0e62dc443dfef27adf69c7e974ae9289",
+        "fixtures/vendor-top-mail-counter/missing-counter-id.txt": "6dcf24e95e1dab825bdf3ded0679c3c8df04d7eb49347012fde394ce1bad0408",
+        "fixtures/vendor-top-mail-counter/nonnumeric-counter-id.txt": "c5e99ef36dbf68b47da61d5d42c4a67dad28a2c62f99b5abce9639a327d3900e",
+        "fixtures/vendor-top-mail-counter/optional-demographics-absent.txt": "3f3aaede52c321e2750fdef7e8e8529bd0d51f62f8da5322fad4621f883b74a8",
+        "fixtures/vendor-top-mail-counter/other-profile-stays-open.txt": "1004f5272281babf32e877d0e97109d2ba3e8a040b322648570034d2935a64d1",
+        "fixtures/vendor-top-mail-counter/unsupported-gender-code.txt": "2dfc76ed33baff446854af37b76ba50bcc42cebbe42d86d8ba2971fffecc0439",
+        "crates/pixellint-core/tests/top_mail_counter_profile.rs": "b99cc9c7b116bd2eb87c318b4b46c33860834a1730bd36461b37c49bd8d06489"
+      },
+      "tests": {
+        "fixture_directory": "fixtures/vendor-top-mail-counter",
+        "cases": 14,
+        "verification_status": "targeted_selection_and_complete_golden_corpus_passed",
+        "commands": [
+          "cargo test -p pixellint-core --test gamesight_impression_contract --test top_mail_counter_profile --offline",
+          "cargo test -p pixellint-core --test rulepack_golden golden_corpus_matches_expected_findings --offline"
+        ]
+      }
     }
   ],
   "previous_audit_baseline": {

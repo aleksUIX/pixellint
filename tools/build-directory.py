@@ -107,6 +107,7 @@ VENDORS = {
     "freewheel": ("FreeWheel", "video", ["v.fwmrm.net", "cdn.stickyadstv.com"], "vendor/freewheel"),
 
     # Product and web analytics
+    "top-mail": ("Top Mail.ru", "analytics", ["top-fwz1.mail.ru"], "vendor/top-mail-counter"),
     "adobe_analytics": ("Adobe Analytics", "analytics", ["sc.omtrdc.net", "smetrics.adobe.com", "assets.adobedtm.com", "edge.adobedc.net", "server.adobedc.net"], "vendor/adobe-analytics"),
     "amplitude": ("Amplitude", "analytics", ["api.amplitude.com", "api2.amplitude.com", "cdn.amplitude.com"], "vendor/amplitude"),
     "mixpanel": ("Mixpanel", "analytics", ["api.mixpanel.com", "cdn.mxpnl.com", "api-js.mixpanel.com"], "vendor/mixpanel"),

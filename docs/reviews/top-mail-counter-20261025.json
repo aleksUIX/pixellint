@@ -1,0 +1,37 @@
+{
+  "review_date": "2026-10-25",
+  "id": "vendor/top-mail-counter",
+  "scope": "Exact top-fwz1.mail.ru /counter only. SDK/template advisories, not server required-field claims.",
+  "spec_complete": false,
+  "sources": [
+    {
+      "url": "https://top-fwz1.mail.ru/js/code.js",
+      "retrieved_at": "2026-10-25",
+      "access": "HTTP 200",
+      "sha256": "717f5632eac507594e29676bcdab5de9521ec216dae0ec961e661573587764a6",
+      "scope": "Current producer pageView calls B with /counter. B emits semicolon-separated id and js=13, and conditionally emits age/gender after exact integer range checks."
+    },
+    {
+      "url": "https://top.mail.ru/help/en/settings/goals",
+      "retrieved_at": "2026-10-25",
+      "access": "HTTP 200",
+      "sha256": "971ea3957c4bad03e29ff4a17f15a4a8beeaa2102bffbb041a4e4395612f0fee",
+      "scope": "Guide requires a numeric configured counter ID. Its own noscript HTML publishes /counter?id={numeric};js=na."
+    }
+  ],
+  "independent_examples": [
+    "Noscript image published in the first-party guide HTML, with synthetic counter ID.",
+    "Current SDK pageView producer, with synthetic counter ID and boundary demographics."
+  ],
+  "implemented": [
+    "Numeric counter ID advisory.",
+    "js=13 scoped age and gender producer checks."
+  ],
+  "limitations": [
+    "No server rejection, identity existence, counter configuration or consent state is established.",
+    "Other js versions and the noscript branch do not inherit the js=13 demographic checks.",
+    "/tracker, JS loaders, other Mail.ru roots and arbitrary custom transports remain outside this pack.",
+    "Other producer fields and their relationships are not fully validated."
+  ],
+  "fixture_count": 14
+}

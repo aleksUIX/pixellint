@@ -822,6 +822,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/gamesight-impression",
         include_str!("../rulepacks/vendor/gamesight-impression.json"),
     ),
+    (
+        "vendor/top-mail-counter",
+        include_str!("../rulepacks/vendor/top-mail-counter.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
