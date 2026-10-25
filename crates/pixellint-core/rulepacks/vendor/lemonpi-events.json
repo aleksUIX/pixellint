@@ -1,0 +1,817 @@
+{
+  "id": "vendor/lemonpi-events",
+  "display_name": "LemonPI creative-library event profiles",
+  "vendor": "lemonpi",
+  "source_level": "official_template",
+  "docs": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+  "description": "Advisory checks for pinned LemonPI creative-library JSON carried in e on exact content.lemonpi.io/track/event. Recognized legacy/v2 click, impression and engagement profiles only. Unknown types, versions, engagement names and identifier types stay open; receiver acceptance remains external.",
+  "match": {
+    "hosts": [
+      "content.lemonpi.io"
+    ],
+    "paths": [
+      "/track/event"
+    ],
+    "query_params_any": [
+      "e"
+    ]
+  },
+  "params": [
+    {
+      "name": "e",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Pinned default URL builder carries event JSON in the e query value. No missing carrier rule is imposed on other profiles.",
+      "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/config-provider/src/lemonpi-config-provider.ts"
+    }
+  ],
+  "body": [
+    {
+      "source_param": "e",
+      "encoding": "json",
+      "encoding_severity": "warning",
+      "params": [
+        {
+          "name": "type",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open."
+        },
+        {
+          "name": "version",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open."
+        },
+        {
+          "name": "name",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/engagement-metrics/src/dispatch-event.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open."
+        },
+        {
+          "name": "schema",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Recognized legacy/v2 click and impression producers emit adset-creative. Unknown types and versions remain outside this assertion.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "click",
+                  "impression"
+                ]
+              },
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "version"
+                    }
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "adset-creative"
+            ]
+          }
+        },
+        {
+          "name": "adsetId",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "click",
+                  "impression"
+                ]
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "exists",
+                  "param": "version"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "creativeId",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "click",
+                  "impression"
+                ]
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "exists",
+                  "param": "version"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "adset-id",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open.",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "type",
+                    "values": [
+                      "click"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "type",
+                    "values": [
+                      "impression"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "type",
+                    "values": [
+                      "engagement"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "name",
+                    "values": [
+                      "viewability",
+                      "interaction",
+                      "interaction-time",
+                      "interaction-click"
+                    ]
+                  },
+                  {
+                    "kind": "any",
+                    "conditions": [
+                      {
+                        "kind": "not",
+                        "condition": {
+                          "kind": "exists",
+                          "param": "version"
+                        }
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "version",
+                        "values": [
+                          "2"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "creative-id",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open.",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "type",
+                    "values": [
+                      "click"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "type",
+                        "values": [
+                          "engagement"
+                        ]
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "name",
+                        "values": [
+                          "viewability",
+                          "interaction",
+                          "interaction-time",
+                          "interaction-click"
+                        ]
+                      },
+                      {
+                        "kind": "any",
+                        "conditions": [
+                          {
+                            "kind": "not",
+                            "condition": {
+                              "kind": "exists",
+                              "param": "version"
+                            }
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "version",
+                            "values": [
+                              "2"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "version"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "impression-id",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open.",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "type",
+                    "values": [
+                      "impression"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "type",
+                        "values": [
+                          "engagement"
+                        ]
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "name",
+                        "values": [
+                          "viewability",
+                          "interaction",
+                          "interaction-time",
+                          "interaction-click"
+                        ]
+                      },
+                      {
+                        "kind": "any",
+                        "conditions": [
+                          {
+                            "kind": "not",
+                            "condition": {
+                              "kind": "exists",
+                              "param": "version"
+                            }
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "version",
+                            "values": [
+                              "2"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "advertiser-id",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open.",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "type",
+                    "values": [
+                      "impression"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "type",
+                        "values": [
+                          "engagement"
+                        ]
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "name",
+                        "values": [
+                          "viewability",
+                          "interaction",
+                          "interaction-time",
+                          "interaction-click"
+                        ]
+                      },
+                      {
+                        "kind": "any",
+                        "conditions": [
+                          {
+                            "kind": "not",
+                            "condition": {
+                              "kind": "exists",
+                              "param": "version"
+                            }
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "version",
+                            "values": [
+                              "2"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "creative-revision-id",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Pinned SDK profile advice only. Identifier values, native types, registry membership and receiver acceptance remain open.",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "type",
+                    "values": [
+                      "impression"
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "type",
+                        "values": [
+                          "engagement"
+                        ]
+                      },
+                      {
+                        "kind": "value_in",
+                        "param": "name",
+                        "values": [
+                          "viewability",
+                          "interaction",
+                          "interaction-time",
+                          "interaction-click"
+                        ]
+                      },
+                      {
+                        "kind": "any",
+                        "conditions": [
+                          {
+                            "kind": "not",
+                            "condition": {
+                              "kind": "exists",
+                              "param": "version"
+                            }
+                          },
+                          {
+                            "kind": "value_in",
+                            "param": "version",
+                            "values": [
+                              "2"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "out",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Recognized click producer emits an encodeURIComponent string. No URL grammar, nonempty requirement or extra decoding is inferred.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "click"
+                ]
+              },
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "version"
+                    }
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "json_type": "string"
+        },
+        {
+          "name": "tracker",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Optional click tracker is an encodeURIComponent string. Absence and empty strings remain allowed; no URL grammar is imposed.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "click"
+                ]
+              },
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "version"
+                    }
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "json_type": "string"
+        },
+        {
+          "name": "content",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "Known content sources yield an object in v2 impressions. Unknown sources omit content, so presence is never required.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "impression"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "version",
+                "values": [
+                  "2"
+                ]
+              }
+            ]
+          },
+          "json_type": "object"
+        },
+        {
+          "name": "content.source",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts",
+          "description": "When a v2 impression content object exists, normalizeContent emits one of these three producer source labels. Missing parent content remains allowed.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "impression"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "version",
+                "values": [
+                  "2"
+                ]
+              }
+            ]
+          },
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "creative",
+              "s3",
+              "lemonpi"
+            ]
+          }
+        },
+        {
+          "name": "data",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "format_severity": "warning",
+          "doc": "https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/engagement-metrics/src/dispatch-event.ts",
+          "description": "The four recognized engagement dispatch branches spread their caller payload into an object. Empty and arbitrary object members remain open.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "engagement"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "name",
+                "values": [
+                  "viewability",
+                  "interaction",
+                  "interaction-time",
+                  "interaction-click"
+                ]
+              },
+              {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "version"
+                    }
+                  },
+                  {
+                    "kind": "value_in",
+                    "param": "version",
+                    "values": [
+                      "2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "json_type": "object"
+        }
+      ],
+      "condition": {
+        "kind": "not",
+        "condition": {
+          "kind": "value_in",
+          "param": "e",
+          "values": [
+            "LEMONPI%EVENTDATA"
+          ]
+        }
+      }
+    }
+  ]
+}

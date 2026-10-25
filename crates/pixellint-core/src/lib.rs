@@ -74,6 +74,10 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/lemonpi-events",
+        include_str!("../rulepacks/vendor/lemonpi-events.json"),
+    ),
+    (
         "vendor/tapad-tapestry",
         include_str!("../rulepacks/vendor/tapad-tapestry.json"),
     ),
