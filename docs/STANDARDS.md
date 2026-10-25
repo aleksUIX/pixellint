@@ -4410,17 +4410,23 @@ Path captures: `/(?<cbid>[^/]*)/cd\.js`. Captured values take precedence over qu
 
 ## `vendor/cookiebot`
 
-Cookiebot CMP banner on consent.cookiebot.com/uc.js. Cookiebot documents cbid on the query as uc.js?cbid=, or in data-cbid on the script tag. The Cookie Declaration loader is vendor/cookiebot-declaration.
+Cookiebot CMP uc.js loader identity and optional query settings. Official support permits data attributes to be moved to query parameters without the data- prefix. Settings may remain on the HTML tag. Culture and account/runtime configuration stay external; declaration rendering is vendor/cookiebot-declaration.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/cookiebot.json).
 
-Matcher: `{"hosts":["consent.cookiebot.com"],"path_contains":["uc.js"]}`.
+Matcher: `{"hosts":["consent.cookiebot.com"],"paths":["/uc.js"]}`.
 
 ### URL parameters
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `cbid` | recommended | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://www.cookiebot.com/en/developer/) |
+| `type` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["optin","optout","optinout","leveloptin","inlineoptin","optionaloptin"]}}` | [official_vendor](https://www.cookiebot.com/en/developer/) |
+| `level` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["implied","strict"]}}` | [official_vendor](https://www.cookiebot.com/en/developer/) |
+| `framework` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["IAB","IAB1","IABV2","TCFv2.2","TCFv2.3","TCF"],"case_insensitive":true}}` | [official_template](https://consent.cookiebot.com/uc.js) |
+| `blockingmode` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["auto","none"],"case_insensitive":true}}` | [official_vendor](https://www.cookiebot.com/en/developer/) |
+| `consentmode` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["disabled"],"case_insensitive":true}}` | [official_vendor](https://www.cookiebot.com/en/developer/) |
+| `consentmode-dataredaction` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["true","false","dynamic"]}}` | [official_template](https://consent.cookiebot.com/uc.js) |
 
 ## `vendor/crazyegg`
 
@@ -15683,7 +15689,7 @@ Context: `{"source_param":"params","encoding":"json"}`.
 
 ## `vendor/yandex-watch`
 
-Yandex Metrica browser counter hits to mc.yandex.ru/watch/{counter_id}. Measurement Protocol /collect is vendor/yandex-metrica.
+Yandex watch counter identity plus optional pinned-runtime advice for page-url, charset and JSON site-info. Runtime fields are guarded by browser-info presence; counter-only image hits remain supported. Query, form and bodyless transports retain their source behavior. Receiver law, session state and arbitrary custom data stay open.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/yandex-watch.json).
 
@@ -15696,6 +15702,18 @@ Path captures: `/watch/(?<counter_id>[^/?]*)`. Captured values take precedence o
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `counter_id` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://yandex.com/support/metrica/en/code/install-counter-csp) |
+| `browser-info` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/sender/default/query/watchAPI.ts) |
+| `page-url` | optional | `{"allow_empty":true,"severity":"warning","max_utf16_length":2048,"condition":{"kind":"present","param":"browser-info"}}` | [official_template](https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/prepareUrl/prepareUrl.ts) |
+| `charset` | optional | `{"allow_empty":true,"severity":"warning","condition":{"kind":"present","param":"browser-info"},"format":{"kind":"enum","values":["utf-8"]}}` | [official_template](https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/senderWatchInfo/senderWatchInfo.ts) |
+| `site-info` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/params/params.ts) |
+
+### JSON contract 1
+
+Context: `{"source_param":"site-info","encoding":"json","encoding_severity":"warning","condition":{"kind":"present","param":"browser-info"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/params/params.ts) |
 
 ## `vendor/zendesk`
 
