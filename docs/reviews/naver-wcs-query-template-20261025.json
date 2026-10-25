@@ -1,0 +1,59 @@
+{
+  "reviewed_at": "2026-10-25",
+  "pack_id": "vendor/naver-wcs-query",
+  "source_level": "official_template",
+  "spec_complete": false,
+  "sources": [
+    {
+      "url": "https://naver.github.io/conversion-tracking/pages/01_script_guide_wcstrans/",
+      "sha256": "a9214964c88c9f71c60b5988d22c49785bb2e3ddf0010a765360fb62dca6847e",
+      "scope": "Official Naver conversion installation guide links this SDK and explains configured wa as a site common key. It does not publish the collector field/rejection protocol."
+    },
+    {
+      "url": "https://wcs.naver.net/wcslog.js",
+      "sha256": "5bf3981a5ecaad9cd069423f8df141832b29525cb566ec8b739299487ad05051",
+      "bytes": 25430,
+      "sdk_version": "0.8.32",
+      "scope": "Default wcs_SerName is wcs.naver.com. Function j constructs /m with u/e, configured i/wa, optional ur/fwb/ui/ext, and vs/nt. pageviewOld and eventOld use image transport I. Function N separately sends JSON strings to /b using sendBeacon."
+    }
+  ],
+  "independent_constructors": [
+    "pageviewOld calls j, then appends pageview/custom fields and dispatches with image transport I.",
+    "eventOld calls j, adds event/category/action and dispatches with image transport I."
+  ],
+  "match": {
+    "hosts": [
+      "wcs.naver.com"
+    ],
+    "paths": [
+      "/m"
+    ],
+    "query_params_any": [
+      "u",
+      "vs",
+      "nt"
+    ]
+  },
+  "implemented_advisories": [
+    "Nonempty generated u/vs/nt in the default-host query profile",
+    "A submitted wa must be nonempty at warning severity only",
+    "Captured query transport method should match the SDK GET image profile"
+  ],
+  "explicit_nonrequirements": [
+    "No mandatory wa or invented i/wa equivalence",
+    "Empty or absent e allowed",
+    "No ID alphabet, clock grammar, timestamp bounds, event enum or server rejection claim",
+    "No query validation borrowed by POST /b or loader URLs",
+    "Configurable wcs_SerName hosts remain unclaimed"
+  ],
+  "unimplemented_source_surface": [
+    "Conversion-specific and custom fields",
+    "i/wa identifier relationship",
+    "ur/fwb/ui/ext/bt/cnv/cnv2/t/e_cat/e_act semantics and conditions",
+    "Modern /b JSON beacon body",
+    "Server acceptance and attribution state"
+  ],
+  "baseline_gap_rows": 0,
+  "fixture_manifest": "fixtures/vendor-naver-wcs-query/manifest.json",
+  "tests": "crates/pixellint-core/tests/naver_wcs_query_template.rs"
+}

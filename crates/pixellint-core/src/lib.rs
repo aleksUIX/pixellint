@@ -810,6 +810,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/adctv-tracker",
         include_str!("../rulepacks/vendor/adctv-tracker.json"),
     ),
+    (
+        "vendor/naver-wcs-query",
+        include_str!("../rulepacks/vendor/naver-wcs-query.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

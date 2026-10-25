@@ -1,0 +1,83 @@
+{
+  "id": "vendor/naver-wcs-query",
+  "display_name": "Naver WCS query collector",
+  "vendor": "naver",
+  "source_level": "official_template",
+  "docs": "https://wcs.naver.net/wcslog.js",
+  "description": "Advisory completeness checks for the default-host /m image-query producer in WCS SDK 0.8.32. The current page URL, SDK version and time slot stay nonempty. An optional submitted wa is checked for emptiness only. Loader URLs, POST /b, configurable hosts, conversion schemas and identifier or clock grammars remain outside this profile.",
+  "match": {
+    "hosts": [
+      "wcs.naver.com"
+    ],
+    "paths": [
+      "/m"
+    ],
+    "query_params_any": [
+      "u",
+      "vs",
+      "nt"
+    ]
+  },
+  "params": [
+    {
+      "name": "u",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The SDK query constructor always copies window.location.href into u. Only nonempty template completeness is checked; no unproved URL-scheme restriction is imposed."
+    },
+    {
+      "name": "vs",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The SDK emits its version string. Future version strings are not constrained to a closed grammar."
+    },
+    {
+      "name": "nt",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The SDK emits the current time slot. This profile does not assert numeric syntax, time bounds or clock correctness."
+    },
+    {
+      "name": "wa",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The SDK copies configured wa to the query. Check submitted emptiness only. Its absence, identifier spelling and relationship to the separately copied legacy i are not contracted."
+    },
+    {
+      "name": "e",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "The SDK explicitly emits an empty e when document.referrer is unavailable. It is not required by this partial profile."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "description": "The source image transport uses GET. A different method on this query profile is advisory; no body protocol or rejection policy is asserted."
+      }
+    ],
+    "rules": []
+  },
+  "rules": []
+}

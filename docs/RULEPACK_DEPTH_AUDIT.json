@@ -35749,7 +35749,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -305279,6 +305279,213 @@
         "fixtures/vendor-freewheel-callback/semicolon-only-profile-excluded.txt": "532d6c2537fd539cfab7857958a4046a08f114071891cffe98c9cf193200ff46"
       },
       "manifest_sha256": "03404c5905c11e006a22c2c379f1d5ee91291fbd503a45b8a290f6e7c33616ea"
+    },
+    {
+      "id": "vendor/naver-wcs-query",
+      "vendor": "naver",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "wcs.naver.com"
+        ],
+        "paths": [
+          "/m"
+        ],
+        "query_params_any": [
+          "u",
+          "vs",
+          "nt"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/naver-wcs-query.json",
+      "source_urls": [
+        "https://naver.github.io/conversion-tracking/pages/01_script_guide_wcstrans/",
+        "https://wcs.naver.net/wcslog.js"
+      ],
+      "sources_read": [
+        {
+          "url": "https://naver.github.io/conversion-tracking/pages/01_script_guide_wcstrans/",
+          "sha256": "a9214964c88c9f71c60b5988d22c49785bb2e3ddf0010a765360fb62dca6847e",
+          "scope": "Official Naver conversion installation guide links this SDK and explains configured wa as a site common key. It does not publish the collector field/rejection protocol.",
+          "read_on": "2026-10-25",
+          "access_result": "retrieved and read without executing remote code"
+        },
+        {
+          "url": "https://wcs.naver.net/wcslog.js",
+          "sha256": "5bf3981a5ecaad9cd069423f8df141832b29525cb566ec8b739299487ad05051",
+          "bytes": 25430,
+          "sdk_version": "0.8.32",
+          "scope": "Default wcs_SerName is wcs.naver.com. Function j constructs /m with u/e, configured i/wa, optional ur/fwb/ui/ext, and vs/nt. pageviewOld and eventOld use image transport I. Function N separately sends JSON strings to /b using sendBeacon.",
+          "read_on": "2026-10-25",
+          "access_result": "retrieved and read without executing remote code"
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "u",
+          "contract": {
+            "name": "u",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The SDK query constructor always copies window.location.href into u. Only nonempty template completeness is checked; no unproved URL-scheme restriction is imposed."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "vs",
+          "contract": {
+            "name": "vs",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The SDK emits its version string. Future version strings are not constrained to a closed grammar."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "nt",
+          "contract": {
+            "name": "nt",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The SDK emits the current time slot. This profile does not assert numeric syntax, time bounds or clock correctness."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "wa",
+          "contract": {
+            "name": "wa",
+            "requirement": "optional",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The SDK copies configured wa to the query. Check submitted emptiness only. Its absence, identifier spelling and relationship to the separately copied legacy i are not contracted."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "e",
+          "contract": {
+            "name": "e",
+            "requirement": "optional",
+            "allow_empty": true,
+            "description": "The SDK explicitly emits an empty e when document.referrer is unavailable. It is not required by this partial profile."
+          }
+        },
+        {
+          "scope": "http.params",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "recommended",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET"
+              ]
+            },
+            "severity": "warning",
+            "description": "The source image transport uses GET. A different method on this query profile is advisory; no body protocol or rejection policy is asserted."
+          }
+        }
+      ],
+      "independent_source_cases": 3,
+      "original_oracle_cases": 23,
+      "engine_derived_oracle_cases": 0,
+      "negative_cases": 8,
+      "request_cases": 3,
+      "test": {
+        "harness": "crates/pixellint-core/tests/naver_wcs_query_template.rs",
+        "status": "four endpoint tests, complete golden corpus, clippy and formatting passed; integrated full suite pending",
+        "expected_results": "Independently authored source-constructor examples and controls, no engine-generated or private-data oracle."
+      },
+      "implemented_counts": {
+        "field_contracts": 5,
+        "cross_field_assertions": 0,
+        "body_contract_scopes": 0,
+        "http_contract_scopes": 1,
+        "query_contract_scopes": 0,
+        "bulk_query_sources": 0
+      },
+      "missing_requirements": [
+        {
+          "requirement": "Conversion-specific and custom fields",
+          "reason": "Outside the explicitly reviewed default-host GET query profile.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://wcs.naver.net/wcslog.js"
+        },
+        {
+          "requirement": "i/wa identifier relationship",
+          "reason": "Outside the explicitly reviewed default-host GET query profile.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://wcs.naver.net/wcslog.js"
+        },
+        {
+          "requirement": "ur/fwb/ui/ext/bt/cnv/cnv2/t/e_cat/e_act semantics and conditions",
+          "reason": "Outside the explicitly reviewed default-host GET query profile.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://wcs.naver.net/wcslog.js"
+        },
+        {
+          "requirement": "Modern /b JSON beacon body",
+          "reason": "Outside the explicitly reviewed default-host GET query profile.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://wcs.naver.net/wcslog.js"
+        },
+        {
+          "requirement": "Server acceptance and attribution state",
+          "reason": "Outside the explicitly reviewed default-host GET query profile.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://wcs.naver.net/wcslog.js"
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/naver-wcs-query.json": "6bb51cf3294baa935ae0e55662837fed83d2b286e9e34930c225ed8b36902da0",
+        "docs/reviews/naver-wcs-query-template-20261025.json": "e5acd0f2ef731da42bfe837d9fd235ed58d68815a4070ea74c5c28cf086dcf43",
+        "crates/pixellint-core/tests/naver_wcs_query_template.rs": "ce80ddffa9d53d25c495e589dc0362d0831cf69b7da54f6e155c45d2dae0fb6a",
+        "fixtures/vendor-naver-wcs-query/source-captured-query.json": "c141c88a2640047e38cd45c0e51f44826b0cc6e026f50263b089c2f8b6408ca5",
+        "fixtures/vendor-naver-wcs-query/missing-vs.txt": "5020c3c6b5e6080c3e80071d967f86060a36003b5f27c44069e2ecd2b4834434",
+        "fixtures/vendor-naver-wcs-query/legacy-i-preserved.txt": "a9c9c22af75e020e6cee1643f4e04546212513252b61ecd7a5e5d55b91ded62c",
+        "fixtures/vendor-naver-wcs-query/missing-nt.txt": "8344174a4fde344bc57ac0cd2e4a7b3f7b7ec35034eb9e534225f094d6534936",
+        "fixtures/vendor-naver-wcs-query/loader-remains-attributed.txt": "a2eca048c67e7cd7408fe0dccead6323b584f3b54129d632e5acf171229ad5ac",
+        "fixtures/vendor-naver-wcs-query/empty-optional-wa.txt": "6df37259644432fb7f42060256f67d2b417b7d4940a1aadeddf57510de75df24",
+        "fixtures/vendor-naver-wcs-query/body-collector-remains-unclaimed.json": "ddc489c6138d6136326a937d997224a1baaec0b381b33e491c02b55987143368",
+        "fixtures/vendor-naver-wcs-query/missing-wa-allowed.txt": "7ee63d34a05280ba3d8b806d726a0f884f4f917625d151c598e72156651ea869",
+        "fixtures/vendor-naver-wcs-query/near-query-keys-do-not-select.txt": "44351c70878ebceec2ea21a8647bb57a93c9470bd02eaf403303d5bf528f05dd",
+        "fixtures/vendor-naver-wcs-query/profile-query-marker-required.txt": "32cf772cc7de034e68971ff109e7cf1d83ba04752598960d859079779d8009bf",
+        "fixtures/vendor-naver-wcs-query/extra-path-remains-unclaimed.txt": "e08e7423432c58237b528b9c7d97e4f5b8c50437e53fcc054dbd558827099c25",
+        "fixtures/vendor-naver-wcs-query/source-event.txt": "dfe3e81cdf76a1900e856b440587deacf9981ac16db398d9172aac17efd2af58",
+        "fixtures/vendor-naver-wcs-query/empty-u.txt": "2589ad11bd54f60cac3ea598014dacf5b5e5d5468774c82d6e55d3a6eea7e0cc",
+        "fixtures/vendor-naver-wcs-query/nondefault-host-remains-unclaimed.txt": "47f2502d3ae9edce0d6d2a4e8858045da77277e9d9ea45fdf678a0b2b71166b5",
+        "fixtures/vendor-naver-wcs-query/manifest.json": "60748c90f0e8c1badd1856b0d265d0c69e39a899c9c7de15c0fb5834755dd884",
+        "fixtures/vendor-naver-wcs-query/lookalike-host-remains-unclaimed.txt": "03862c99da1107573d779b4b809b544b7e800f669ef52ac0780fd4494792b8b2",
+        "fixtures/vendor-naver-wcs-query/unexpected-query-method.json": "1dbcd03e99b4c75b4bd08a544c7e7a0751a6d1d801e7f695993b5fdc3f91bcac",
+        "fixtures/vendor-naver-wcs-query/open-identifiers-and-clock.txt": "3e1bb9c663c98946f117dd5525e9ea2d632278dae570c3f07a4a38c73064a4fe",
+        "fixtures/vendor-naver-wcs-query/source-pageview.txt": "e54a11025b34e4237486d93b2a482c228a801a1427c7f23255e9390be85f3b75",
+        "fixtures/vendor-naver-wcs-query/empty-referrer-allowed.txt": "552f68b67d4437cdc4f1ca2bb028daec515cd50837ade073e92490c99c27959f",
+        "fixtures/vendor-naver-wcs-query/empty-nt.txt": "a15bf9a686aac661fb05ef2b1bb58bea047976625be533d2ba318e517985645d",
+        "fixtures/vendor-naver-wcs-query/empty-vs.txt": "42c5bde08d100ef5071e67660774e11e36fc3a5f6966f9655158bf6d4fc59412",
+        "fixtures/vendor-naver-wcs-query/trailing-slash-remains-unclaimed.txt": "b71cc57fafbff1ef0238d5656a6e9f2bf65558c0176b865d8ac50ac702d4b484",
+        "fixtures/vendor-naver-wcs-query/missing-u.txt": "8fd078887bd65102326917f7a178a14d411fdfaf24411e64c2a987be557e7565"
+      },
+      "manifest_sha256": "6bb51cf3294baa935ae0e55662837fed83d2b286e9e34930c225ed8b36902da0"
     }
   ],
   "previous_audit_baseline": {
