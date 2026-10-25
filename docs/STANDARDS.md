@@ -14775,9 +14775,9 @@ Matcher: `{"hosts":["wcmvideotutorials.solution.weborama.fr"],"paths":["/fcgi-bi
 | `a.he` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
 | `a.sh` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
 | `a.sw` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
-| `g.de` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
-| `g.ism` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
-| `a.we` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.de` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.ism` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.we` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
 | `g.pn` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
 | `g.puid` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
 | `a.ycp` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
