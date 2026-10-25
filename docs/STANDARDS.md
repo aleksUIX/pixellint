@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 211 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 214 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -7308,6 +7308,51 @@ Context: `{}`.
 | `vendor.kochava.body.device_ids_required` | `{"kind":"require_any_of","groups":[["kochava_device_id"],["data.device_ids.*"],["device_ids.*"]]}` | error | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
 | `vendor.kochava.body.consent_signal_alternative` | `{"kind":"require_any_of","groups":[["data.gdpr_privacy_consent.tc_string"],["data.gdpr_privacy_consent.ad_user_data","data.gdpr_privacy_consent.ad_personalization"]],"condition":{"kind":"present","param":"data.gdpr_privacy_consent"}}` | error | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
 
+## `vendor/krux-amp`
+
+Legacy upstream AMP default-template presence and image-transport advice on exact Krux image routes with source=amp. This is ecosystem producer evidence, not a Salesforce receiver contract. Customized requests, overrides, account configuration and service acceptance remain outside scope.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/krux-amp.json).
+
+Matcher: `{"hosts":["beacon.krxd.net"],"paths":["/pixel.gif","/event.gif"],"query_params_values":[{"name":"source","values":["amp"]}]}`.
+
+Path captures: `^/(?<amp_endpoint>pixel\|event)\.gif$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `amp_endpoint` | optional | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `source` | optional | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `confid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kpid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kcp_s` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kcp_sc` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kcp_ssc` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kcp_d` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kpref_` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kua_kx_amp_client_id` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kua_kx_lang` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kua_kx_tech_browser_language` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `_kua_kx_tz` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `t_navigation_type` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `t_dns` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `t_tcp` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `t_http_request` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `t_http_response` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `t_content_ready` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `t_window_load` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `t_redirect` | recommended | `{"allow_empty":true,"severity":"warning"}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+| `pageview` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all_values_in","params":["amp_endpoint"],"values":["event"]}}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["GET"]}}` | [ecosystem_reference](https://github.com/ampproject/amphtml/blob/2f76bee2ebaa5675350d5e39bd6d06982940f57a/extensions/amp-analytics/0.1/vendors/krux.json) |
+
 ## `vendor/kwai`
 
 Kwai Pixel loader on s1.kwai.net, whose Pixel ID rides as sdkid. Kwai documents kwaiq.load(pixelId) rather than this query.
@@ -7677,6 +7722,32 @@ Path captures: `/mcjs-connected/js/users/(?<user_id>[^/]+)/(?<site_id>[^/]*)\.js
 | --- | --- | --- | --- |
 | `user_id` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://mailchimp.com/developer/marketing/api/connected-sites/add-connected-site/) |
 | `site_id` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://mailchimp.com/developer/marketing/api/connected-sites/add-connected-site/) |
+
+## `vendor/marketo-munchkin-events`
+
+Partial advisory checks for the pinned Munchkin165 visitWebPage/clickLink query producer on mktoresp.com and its tenant subdomains. Exact _mchVr=165 plus the generated _mchNc carrier select this profile. Three stable location-key presences and captured GET/POST transport are checked. IDs, tokens, URL/link values, coercion branches, other versions and receiver acceptance remain open; the loader is not a collector.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/marketo-munchkin-events.json).
+
+Matcher: `{"host_suffixes":["mktoresp.com"],"paths":["/webevents/visitWebPage","/webevents/clickLink"],"query_params_any":["_mchNc"],"query_params_values":[{"name":"_mchVr","values":["165"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `_mchVr` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://munchkin.marketo.net/165/munchkin.js) |
+| `_mchNc` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://munchkin.marketo.net/165/munchkin.js) |
+| `_mchHo` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://munchkin.marketo.net/165/munchkin.js) |
+| `_mchPo` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://munchkin.marketo.net/165/munchkin.js) |
+| `_mchPc` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://munchkin.marketo.net/165/munchkin.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["GET","POST"]}}` | [official_template](https://munchkin.marketo.net/165/munchkin.js) |
 
 ## `vendor/matomo`
 
@@ -13697,6 +13768,30 @@ Context: `{"scope":["data[]",""]}`.
 | `vendor.snapchat.body.event_time_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds_or_milliseconds","max_age_seconds":604800}` | error | [official_vendor](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI) |
 | `vendor.snapchat.body.ios_extinfo_app_id` | `{"kind":"format_when","when":"app_data.extinfo[0]","equals":["i2"],"param":"app_data.app_id","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
 | `vendor.snapchat.body.app_requires_app_id` | `{"kind":"required_when_value","when":"action_source","equals":["MOBILE_APP"],"requires":["app_data.app_id"]}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
+
+## `vendor/sourcepoint-gdpr-choice`
+
+Warning-only captured HTTP advice for the exact legacy GDPR choice route published in the CMP callback article. The current SDK uses a different route. Choice IDs and identifiers stay opaque; callback outputs, body schemas, consent state and receiver acceptance are outside this partial profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/sourcepoint-gdpr-choice.json).
+
+Matcher: `{"hosts":["cdn.privacy-mgmt.com"],"path_patterns":["/wrapper/v2/messages/choice/gdpr/[^/]+"],"artifact_kinds":["request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `requestUUID` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP) |
+| `env` | recommended | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["prod","stage"]}}` | [official_vendor](https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP) |
+| `hasCsp` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP) |
 
 ## `vendor/spotify-image`
 
