@@ -1,0 +1,82 @@
+{
+  "id": "vendor/marketo-munchkin-events",
+  "display_name": "Adobe Marketo Munchkin 165 event queries",
+  "vendor": "marketo",
+  "source_level": "official_template",
+  "docs": "https://munchkin.marketo.net/165/munchkin.js",
+  "description": "Partial advisory checks for the pinned Munchkin165 visitWebPage/clickLink query producer on mktoresp.com and its tenant subdomains. Exact _mchVr=165 plus the generated _mchNc carrier select this profile. Three stable location-key presences and captured GET/POST transport are checked. IDs, tokens, URL/link values, coercion branches, other versions and receiver acceptance remain open; the loader is not a collector.",
+  "match": {
+    "host_suffixes": [
+      "mktoresp.com"
+    ],
+    "paths": [
+      "/webevents/visitWebPage",
+      "/webevents/clickLink"
+    ],
+    "query_params_any": [
+      "_mchNc"
+    ],
+    "query_params_values": [
+      {
+        "name": "_mchVr",
+        "values": [
+          "165"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "_mchVr",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The literal version marker identifies the pinned producer only. This is selection evidence, not a receiver-wide version enum."
+    },
+    {
+      "name": "_mchNc",
+      "requirement": "optional",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The source emits this query carrier in the generated route. Values remain open, with no timestamp spelling, time-window or cache-uniqueness rule."
+    },
+    {
+      "name": "_mchHo",
+      "requirement": "recommended",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The actual x constructor supplies the current page hostname before Q serializes it. Only key presence is advised; repeated or empty configured values remain open."
+    },
+    {
+      "name": "_mchPo",
+      "requirement": "recommended",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The actual constructor supplies the page port, commonly an empty string. No nonempty or numeric-port grammar is imposed."
+    },
+    {
+      "name": "_mchPc",
+      "requirement": "recommended",
+      "severity": "warning",
+      "allow_empty": true,
+      "description": "The actual constructor supplies the page protocol. Only key presence is advised, without an inferred scheme enum or HTTPS-only requirement."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "description": "Q uses bodyless sendBeacon POST, or GET through XHR/image fallback. No body or MIME requirement is imposed."
+      }
+    ]
+  }
+}

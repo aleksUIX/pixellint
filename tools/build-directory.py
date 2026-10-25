@@ -135,7 +135,8 @@ VENDORS = {
 
     # Marketing automation, CRM, and commerce
     "hubspot": ("HubSpot", "martech", ["js.hs-scripts.com", "track.hubspot.com", "js.hs-analytics.net"], "vendor/hubspot"),
-    "marketo": ("Adobe Marketo", "martech", ["munchkin.marketo.net"], None),
+    "marketo": ("Adobe Marketo", "martech", ["munchkin.marketo.net"], "vendor/marketo-munchkin-events"),
+    "marketo-munchkin": ("Adobe Marketo Munchkin", "martech", ["mktoresp.com"], "vendor/marketo-munchkin-events"),
     "pardot": ("Salesforce Account Engagement", "martech", ["pi.pardot.com", "pi.demand.salesforce.com"], None),
     "klaviyo": ("Klaviyo", "martech", ["static.klaviyo.com", "a.klaviyo.com"], "vendor/klaviyo"),
     "braze": ("Braze", "martech", ["sdk.iad-01.braze.com", "js.appboycdn.com"], "vendor/braze"),

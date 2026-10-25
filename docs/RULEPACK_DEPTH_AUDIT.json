@@ -35751,7 +35751,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -313774,6 +313774,269 @@
         "fixtures/vendor-sourcepoint-gdpr-choice/wrong-method-GET.json": "445e89628cf87dd2a9dba715b0f05cfe538639af7c011baf0b7a7278e4cad13d",
         "fixtures/vendor-sourcepoint-gdpr-choice/wrong-method-PUT.json": "b578be33cd9752b01c8680828f60edc68d35ef1bf5cad6d29fdf820d1949b9bb",
         "fixtures/vendor-sourcepoint-gdpr-choice/wrong-method-post.json": "7a9f3d91f8a6cc9238affa222e12d4e55c8f13c9712f8adc59562295494a5350"
+      }
+    },
+    {
+      "id": "vendor/marketo-munchkin-events",
+      "vendor": "marketo",
+      "disposition": "implemented_source_template_partial",
+      "spec_complete": false,
+      "match": {
+        "host_suffixes": [
+          "mktoresp.com"
+        ],
+        "paths": [
+          "/webevents/visitWebPage",
+          "/webevents/clickLink"
+        ],
+        "query_params_any": [
+          "_mchNc"
+        ],
+        "query_params_values": [
+          {
+            "name": "_mchVr",
+            "values": [
+              "165"
+            ]
+          }
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/marketo-munchkin-events.json",
+      "manifest_sha256": "120666e71299cdd05d96b78c3b9a5922c7cf96fc551ccf44273c6f82eff7673e",
+      "sources_read": [
+        {
+          "id": "munchkin-165",
+          "url": "https://munchkin.marketo.net/165/munchkin.js",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "a85866392118d4e9d6474f16c8d3654b039859e2085d6c01785129fd21422eb4",
+          "bytes": 12913,
+          "source_level": "official_template",
+          "scope": "Actual init builds protocol plus account.mktoresp.com default before options; x/Q/I construct and URI-encode the two query routes and choose bodyless beacon POST or XHR/image GET. Full unchanged runtime executed offline."
+        },
+        {
+          "id": "munchkin-loader",
+          "url": "https://munchkin.marketo.net/munchkin.js",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "bbdb0a56c8eb30d3b915526ca2bf873b4f73b05bb06be0ba790c9006abeb44fc",
+          "bytes": 1251,
+          "source_level": "official_template",
+          "scope": "Current public loader selects /165/munchkin.js. Loader itself is not the collector."
+        },
+        {
+          "id": "lead-tracking",
+          "url": "https://experienceleague.adobe.com/en/docs/marketo-developer/marketo/javascriptapi/leadtracking/lead-tracking",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "f7e91d0fed4cd16e98af83bd648f5209220d60dc9c9e171ab044723d763c322d",
+          "bytes": 15898,
+          "source_level": "official_vendor",
+          "scope": "Official tracking lifecycle, cookie suppression, opt-out and tel/mailto support. Does not publish HTTP wire requiredness."
+        },
+        {
+          "id": "api-reference",
+          "url": "https://experienceleague.adobe.com/en/docs/marketo-developer/marketo/javascriptapi/leadtracking/api-reference",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "a211c43eecda647bc47b37af10a869d2cd2f1034552fc93a65d02e935aea36a1",
+          "bytes": 14908,
+          "source_level": "official_vendor",
+          "scope": "Public JS visit/click inputs and deprecated associateLead. Argument requiredness is not translated directly into HTTP query requirements."
+        },
+        {
+          "id": "configuration",
+          "url": "https://experienceleague.adobe.com/en/docs/marketo-developer/marketo/javascriptapi/leadtracking/configuration",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "81b8adcf5694e2e73cd399f974b92ad0e3a1a52e09d5e8e80739fdc055b1c48a",
+          "bytes": 15684,
+          "source_level": "official_vendor",
+          "scope": "Documented altIds, cookieAnon, apiOnly, asyncOnly and beacon options. Current doc defaults are distinct from the pinned runtime behavior."
+        }
+      ],
+      "source_urls": [
+        "https://munchkin.marketo.net/165/munchkin.js",
+        "https://munchkin.marketo.net/munchkin.js",
+        "https://experienceleague.adobe.com/en/docs/marketo-developer/marketo/javascriptapi/leadtracking/lead-tracking",
+        "https://experienceleague.adobe.com/en/docs/marketo-developer/marketo/javascriptapi/leadtracking/api-reference",
+        "https://experienceleague.adobe.com/en/docs/marketo-developer/marketo/javascriptapi/leadtracking/configuration"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "url",
+          "contract": {
+            "name": "_mchVr",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The literal version marker identifies the pinned producer only. This is selection evidence, not a receiver-wide version enum."
+          }
+        },
+        {
+          "scope": "url",
+          "contract": {
+            "name": "_mchNc",
+            "requirement": "optional",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The source emits this query carrier in the generated route. Values remain open, with no timestamp spelling, time-window or cache-uniqueness rule."
+          }
+        },
+        {
+          "scope": "url",
+          "contract": {
+            "name": "_mchHo",
+            "requirement": "recommended",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The actual x constructor supplies the current page hostname before Q serializes it. Only key presence is advised; repeated or empty configured values remain open."
+          }
+        },
+        {
+          "scope": "url",
+          "contract": {
+            "name": "_mchPo",
+            "requirement": "recommended",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The actual constructor supplies the page port, commonly an empty string. No nonempty or numeric-port grammar is imposed."
+          }
+        },
+        {
+          "scope": "url",
+          "contract": {
+            "name": "_mchPc",
+            "requirement": "recommended",
+            "severity": "warning",
+            "allow_empty": true,
+            "description": "The actual constructor supplies the page protocol. Only key presence is advised, without an inferred scheme enum or HTTPS-only requirement."
+          }
+        },
+        {
+          "scope": "http",
+          "contract": {
+            "name": "method",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET",
+                "POST"
+              ]
+            },
+            "description": "Q uses bodyless sendBeacon POST, or GET through XHR/image fallback. No body or MIME requirement is imposed."
+          }
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/marketo-munchkin-events.json": "120666e71299cdd05d96b78c3b9a5922c7cf96fc551ccf44273c6f82eff7673e",
+        "crates/pixellint-core/tests/marketo_source_profiles.rs": "c9aed771a4757de7caa47ac874aba25c25c7d804aa8b8f005302ab0435ecd158",
+        "fixtures/vendor-marketo-munchkin-events/README.md": "36ebf8bae68acb22eff7fccc0d1e3f1b625a1f6a0621427d6ab6fd7ca9b048a4",
+        "fixtures/vendor-marketo-munchkin-events/collector-other-route.txt": "60318348dcf845b927fbeee15e32e6a517070636da80181feab61b8d1a8efbf9",
+        "fixtures/vendor-marketo-munchkin-events/collector-root-only.txt": "cc8bf8cf2e2a010936b0634c78811217b65a25f807300abf512918a66956f242",
+        "fixtures/vendor-marketo-munchkin-events/conflicting-version.txt": "addcd24ab0004cf0009be67410c6af6d3b7405942c1a261c2f1d32fac5d02202",
+        "fixtures/vendor-marketo-munchkin-events/core-privacy-preserved.txt": "1784d4fcd90a9e34e6ba06adf3ad507886e4b1df63e44c9b6b4e3e11b51598e2",
+        "fixtures/vendor-marketo-munchkin-events/duplicate-165.txt": "4909e0959929f96dc50185d78a785c9c3841e751c4a96c23f8b13e4da754e55a",
+        "fixtures/vendor-marketo-munchkin-events/empty-_mchHo.txt": "f507a5cfb3b4a9f2235c502d48f6d423fe67864bbafe339fbe1c4c8250741f31",
+        "fixtures/vendor-marketo-munchkin-events/empty-_mchPc.txt": "b19ba0e3fa46c5de31b57fac5659a390ad22cb0a131e4d05f48808736da1760e",
+        "fixtures/vendor-marketo-munchkin-events/empty-_mchPo.txt": "4dd5aa086e453b1719bde61170230216044379dc8b07be90160c83456295f5be",
+        "fixtures/vendor-marketo-munchkin-events/empty-cache-carrier.txt": "eea57ae491fdb8b76c4a224e63d8cb7e9a9d22cde4bc1438521d55ee983324ba",
+        "fixtures/vendor-marketo-munchkin-events/future-version.txt": "c631aaad0f7a58837a72efe041be87f212749b4b752d2919aa85bb5f7d4d0343",
+        "fixtures/vendor-marketo-munchkin-events/hostless-json.txt": "776a1d2750418366d2258bee982561b49c28dc9ee68e23c37e1763218a6286b6",
+        "fixtures/vendor-marketo-munchkin-events/loader.txt": "f4b21c6d1a6d1f80509aed6a16e7086c67de919ea401ca4bca685ff40544944e",
+        "fixtures/vendor-marketo-munchkin-events/lookalike-host.txt": "c1256305f2185e17dc3888b0f4e38a39ff5a4265865a290b7b679ad62a9fbb36",
+        "fixtures/vendor-marketo-munchkin-events/macro-version.txt": "6e84a81490c3771cf939f4682b4aeb26d809b5cd785a1e2ed1e3ebff0e273f1e",
+        "fixtures/vendor-marketo-munchkin-events/manifest.json": "ed36a78cc9976ffe7b4c67063ba9a5710191245b6032c3a549e3abd130b980e4",
+        "fixtures/vendor-marketo-munchkin-events/missing-_mchHo.txt": "3c08a79004c6bb7b286172bf75fa29570532e9e0644f585d4ab483a195c7163f",
+        "fixtures/vendor-marketo-munchkin-events/missing-_mchPc.txt": "d5cc7a5c16d89fab70aa8cb022b7feb073746831cde1dfc7f85a0a08f15c07ac",
+        "fixtures/vendor-marketo-munchkin-events/missing-_mchPo.txt": "a3e54ca5095cbb2235361339e53236463481128192dbee385a627c038cf9590a",
+        "fixtures/vendor-marketo-munchkin-events/missing-cache-carrier.txt": "72183992947e95de9f5dc14e7f5330b631aac7b785ec98523ee6827463b6bcd0",
+        "fixtures/vendor-marketo-munchkin-events/missing-version.txt": "cc6e03bc6ac63b74cb0d17a67e91b38ec09e2501991dced7d2f2e304d4e60eae",
+        "fixtures/vendor-marketo-munchkin-events/opaque-cache-value.txt": "f31831abf693b5ed18aed8bf0c2204b3c0d9b6d62170dd26e6edd9500ee597c9",
+        "fixtures/vendor-marketo-munchkin-events/opaque-location-values.txt": "fa9783b304f5104111d4bb133a95308031cdf8208e09a7ddb545b0ee3d51b7ba",
+        "fixtures/vendor-marketo-munchkin-events/producer-proof.json": "e3903f47a3ecf19c897b6b927171973ca0b7443631772f38121de4169c572ec3",
+        "fixtures/vendor-marketo-munchkin-events/source-1.txt": "4dd5aa086e453b1719bde61170230216044379dc8b07be90160c83456295f5be",
+        "fixtures/vendor-marketo-munchkin-events/source-10.txt": "78dc3144548dd8c2f5bc0ad1de392bb60ee83c350eef4b0759bc6ef6ae95dc6f",
+        "fixtures/vendor-marketo-munchkin-events/source-11.txt": "6d41db73aa7efa24c58060fb0455314404581da7a1d0e8921ef9542f373e2547",
+        "fixtures/vendor-marketo-munchkin-events/source-12.txt": "b00fe563e1a444179edb711105d5b30ba29f855e5f7c997b9c91534bff81815d",
+        "fixtures/vendor-marketo-munchkin-events/source-13.txt": "674744c2726633bc09e64d9b4448a30ec521917b59749e9e9cbccd2e4cf55ea5",
+        "fixtures/vendor-marketo-munchkin-events/source-14.txt": "322c6161bd6fad7ac9de9e621f0543c37c12cecc2c753b832c0f4b70be5a42f6",
+        "fixtures/vendor-marketo-munchkin-events/source-15.txt": "8c6e507c3a9ae34e70a776d6933f287eb37d91adbdc95d1d08350149e58b4d19",
+        "fixtures/vendor-marketo-munchkin-events/source-16.txt": "c83b77247475bf579c75aac594b34e565d040da51dacea036b42051e80aba30d",
+        "fixtures/vendor-marketo-munchkin-events/source-17.txt": "35e1475af1e9243d63a38c2f53f6f612cc0cd70670687420a3821b587be8b8bd",
+        "fixtures/vendor-marketo-munchkin-events/source-18.txt": "3039e1afaa51704b2473109b3f881d91c72937f9f19d9f5b9b553fb0c3f042ce",
+        "fixtures/vendor-marketo-munchkin-events/source-19.txt": "913b70b3ea51c1ff01fff52613800273a170974f4e0ed2bd8ea60d9c6b9e4f21",
+        "fixtures/vendor-marketo-munchkin-events/source-2.txt": "75d4d50b5dcdb1ef8b14461574b64f845dcc621604c6af731adbab44c9f1475a",
+        "fixtures/vendor-marketo-munchkin-events/source-20.txt": "ed4197e544d8ac1e86dec2c3d34f77a20af21319a5898b4cac51d13a47138363",
+        "fixtures/vendor-marketo-munchkin-events/source-21.txt": "401fc8636cd93059f79e152884d8ca2d775f6211c8e4dff6cf5b3727d6fc8e02",
+        "fixtures/vendor-marketo-munchkin-events/source-22.txt": "ef2b9f0939a4452abd82e37bf17ebc77e07a6be6aa9a8687bbbb33c1d7c0524b",
+        "fixtures/vendor-marketo-munchkin-events/source-23.txt": "e5c19eafed3cab10b54e61aa2ededd60df0553eb917392f192a96191d0bdd76e",
+        "fixtures/vendor-marketo-munchkin-events/source-24.txt": "47b69fcc1661d1c7eeb02b6762b7fe67d67c4813414f432d17d823072797acd6",
+        "fixtures/vendor-marketo-munchkin-events/source-25.txt": "20bdaca2fb74afd3ac4501491ce96ad0859515e4e6b075b304029ba0431d7a79",
+        "fixtures/vendor-marketo-munchkin-events/source-26.txt": "68a1e49540760f3867e2e4598bddae6d763d8c753b2c06a42d1c0f94074d3c46",
+        "fixtures/vendor-marketo-munchkin-events/source-27.txt": "c2823f5e78b04dcda32cef9cf5a72425284c442ad90fcbeec4ea2f62a57330fa",
+        "fixtures/vendor-marketo-munchkin-events/source-28.txt": "ee67fd4e7577e757b5f8a0c6fa9b2c0b251b0ceefb683e223569bc921aef7ad3",
+        "fixtures/vendor-marketo-munchkin-events/source-29.txt": "930ab490c39b53e80a327a4f87ee23dc006105b4c9d73cfe079ca3582ffcd157",
+        "fixtures/vendor-marketo-munchkin-events/source-3.txt": "75d4d50b5dcdb1ef8b14461574b64f845dcc621604c6af731adbab44c9f1475a",
+        "fixtures/vendor-marketo-munchkin-events/source-30.txt": "ab59fb5a5196ad498f0bfdfdfbf8cc1804255c4e203f43730874cd92db098b61",
+        "fixtures/vendor-marketo-munchkin-events/source-4.txt": "1675e41a1e5c3df77070324976706f57a6eeac4e7bfeced3297a941c73a8b852",
+        "fixtures/vendor-marketo-munchkin-events/source-5.txt": "0d99450a5b5d6d49826eabcdc6c8332b0fe3c5b8c00d4abbf1253b7460cd4113",
+        "fixtures/vendor-marketo-munchkin-events/source-6.txt": "705da9116229ca32182b6978b7b79771980799bef7b3da1fde7d60fc93766e53",
+        "fixtures/vendor-marketo-munchkin-events/source-7.txt": "c87d81bf1bbaf06af54ee094d2c75405dccb051b41760c4412e7ebb99fdc6fd5",
+        "fixtures/vendor-marketo-munchkin-events/source-8.txt": "3517fce2255d40a594e26c9dec0e8fc92962c58f5a2260786f5e96bd7c0e45c1",
+        "fixtures/vendor-marketo-munchkin-events/source-9.txt": "752d59205e2c57741b9bc5e3e048bdf65cd54940af45cdf6ecd05a0aed08252b",
+        "fixtures/vendor-marketo-munchkin-events/source-cases.json": "3d7a70f5791c68a3131fb609b1969cb886d746a7fd489c234a87227b8167e237",
+        "fixtures/vendor-marketo-munchkin-events/trailing-slash.txt": "0d432ea7b8643a48438b1532ef60b32bee7744e519020abf33808d6727f3d7ad",
+        "fixtures/vendor-marketo-munchkin-events/unrelated-domain.txt": "05089602d640bc75e992f863fde6defa5d89fb8d00b35f89f7f1e81d33aa4b4c",
+        "fixtures/vendor-marketo-munchkin-events/unsupported-method.txt": "1c974a55b443e6343d95d7fac7777fd44ae0b6b72ec928c1bd5e96b9b25184e3",
+        "fixtures/vendor-marketo-munchkin-events/url-source-carrier.txt": "e69d0847751a64cf314554fd36bfc2045f29673a2827154ee4535500cb5d023e",
+        "fixtures/vendor-marketo-munchkin-events/vast-source-carrier.txt": "e69d0847751a64cf314554fd36bfc2045f29673a2827154ee4535500cb5d023e",
+        "fixtures/vendor-marketo-munchkin-events/versioned-loader.txt": "704677c5df4db349bbfc99636321a957dd78b54e1b8836e2bbb1f6db406b8535"
+      },
+      "independent_source_cases": 30,
+      "source_case_inventory": {
+        "full_runtime_scenarios": 17,
+        "zero_request_scenarios": 3,
+        "actual_outputs": 30,
+        "selected_outputs": 28,
+        "unselected_override_outputs": 2,
+        "url_carrier_replays": 2
+      },
+      "source_derived_boundary_cases": 27,
+      "diagnostic_code_order_snapshots": 57,
+      "oracle_method": "The entire unchanged Munchkin165 r963 runtime is executed in an isolated browser-like VM with authored accounts, deterministic cookies/clock and intercepted sinks. Source outputs are preserved before engine execution. All 57 selection/field expectations are prewritten from that source, including native omission/coercion, bodyless beacon, GET transports, tel/mailto and cookie suppression. No measurement request or live account lookup is performed. The existing normative core insecure-transport warning on the actual HTTP-page output is retained after inspecting the established core rule.",
+      "missing_requirements": [
+        {
+          "requirement": "HTTP requiredness, accepted values and processing behavior beyond the three stable query-key presences",
+          "reason": "The public SDK emits native/coerced or omitted ID, cookie, name, path and link values. Full receiver acceptance is not published or tested."
+        },
+        {
+          "requirement": "Munchkin ID issuance, cookie token validity, account state and tenant existence",
+          "reason": "Default host construction is source-backed, but authored IDs are neither resolved as real tenants nor sent. A DNS-resolving root does not verify any account."
+        },
+        {
+          "requirement": "URL, link, identifier, port, protocol, timestamp or token grammar and duplicate-selection policy",
+          "reason": "Null/functions can be omitted; other native values URI-coerce. Delegated click lacks _mchLr, API visit can omit custom name and API functions can omit path/link fields. tel/mailto remain valid links."
+        },
+        {
+          "requirement": "Other Munchkin versions, revisions, endpoints and custom notifyPrefix destinations",
+          "reason": "Only canonical visit/click paths with literal165 and the _mchNc carrier are selected. A later revision might reuse wire marker165, so the current hash/revision needs re-review when published bytes change."
+        },
+        {
+          "requirement": "Cookie/no-cookie, opt-out and tracking permission state outside the captured artifact",
+          "reason": "Three offline scenarios correctly produce no request. The validator does not infer a missing event from absence of a capture."
+        },
+        {
+          "requirement": "Body or MIME contract",
+          "reason": "The actual beacon uses POST without a body, while XHR/image use GET. All event fields are query-carried; no body schema is imposed."
+        }
+      ],
+      "review_date": "2026-10-25",
+      "test": {
+        "harness": "marketo_source_profiles.rs and rulepack_golden.rs",
+        "status": "Passed: all57 prewritten source/selection cases in marketo_source_profiles.rs; complete golden_corpus_matches_expected_findings; cargo clippy --all-targets --all-features -- -D warnings; cargo fmt --all --check. Independent QA verified the final manifest and17 full-runtime scenarios/30 captures. Full workspace validation and shared freshness/inventory updates remain coordinator integration work."
       }
     }
   ],

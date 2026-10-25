@@ -898,6 +898,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/krux-amp",
         include_str!("../rulepacks/vendor/krux-amp.json"),
     ),
+    (
+        "vendor/marketo-munchkin-events",
+        include_str!("../rulepacks/vendor/marketo-munchkin-events.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
