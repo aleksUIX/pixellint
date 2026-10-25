@@ -8871,7 +8871,7 @@ Mixpanel user profile updates posted to /engage. /track is vendor/mixpanel. /imp
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/mixpanel-engage.json).
 
-Matcher: `{"host_suffixes":["mixpanel.com"],"path_contains":["/engage"],"json_paths":["[].$token","[].$distinct_id"]}`.
+Matcher: `{"json_paths":["[].$token","[].$distinct_id"],"hosts":["api.mixpanel.com","api-eu.mixpanel.com","api-in.mixpanel.com","api-js.mixpanel.com"],"paths":["/engage","/engage/"]}`.
 
 ### URL parameters
 
@@ -8915,8 +8915,8 @@ Context: `{"scope":"[]"}`.
 | `$ignore_time` | optional | `{"format":{"kind":"enum","values":["true","false"]},"json_type":"boolean"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
-| `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
-| `union` | optional | `{"json_type":"array","name_pattern":"^.+$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
+| `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
@@ -8952,8 +8952,8 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | `$ignore_time` | optional | `{"format":{"kind":"enum","values":["true","false"]},"json_type":"boolean"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
-| `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
-| `union` | optional | `{"json_type":"array","name_pattern":"^.+$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
+| `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
@@ -9309,8 +9309,8 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | `$ignore_time` | optional | `{"format":{"kind":"enum","values":["true","false"]},"json_type":"boolean"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
-| `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
-| `union` | optional | `{"json_type":"array","name_pattern":"^.+$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
+| `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
@@ -9497,7 +9497,7 @@ Mixpanel group profile updates posted to /groups. /track is vendor/mixpanel. /im
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/mixpanel-groups.json).
 
-Matcher: `{"host_suffixes":["mixpanel.com"],"path_contains":["/groups"],"json_paths":["[].$token","[].$group_key","[].$group_id"]}`.
+Matcher: `{"json_paths":["[].$token","[].$group_key","[].$group_id"],"hosts":["api.mixpanel.com","api-eu.mixpanel.com","api-in.mixpanel.com","api-js.mixpanel.com"],"paths":["/groups","/groups/"]}`.
 
 ### URL parameters
 
@@ -9539,7 +9539,7 @@ Context: `{"scope":"[]"}`.
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
-| `union` | optional | `{"json_type":"array","name_pattern":"^.+$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
@@ -9572,7 +9572,7 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
-| `union` | optional | `{"json_type":"array","name_pattern":"^.+$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
@@ -9925,7 +9925,7 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
-| `union` | optional | `{"json_type":"array","name_pattern":"^.+$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
