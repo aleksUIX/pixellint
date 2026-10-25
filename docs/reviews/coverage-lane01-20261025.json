@@ -1,0 +1,480 @@
+{
+  "review_date": "2026-10-25",
+  "scope": "Coverage backfill lane 01",
+  "decision": "Retain existing coverage and directory behavior. No new endpoint contract met the evidence gate.",
+  "sources": [
+    {
+      "id": "ias-fw.js",
+      "url": "https://static.adsafeprotected.com/fw.js",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_template",
+      "exact_supported_scope": "IAS configuration and generic transport implementation. The file hash matches the prior review.",
+      "limitations": "No literal pixel.png constructor. Proxy 37103 config mapping does not specify the downstream collector contract.",
+      "sha256": "82daa13daaa42f16b695f553ce9818d03b478cc922ec7b33e0020881b828a2dc"
+    },
+    {
+      "id": "ias-main.js",
+      "url": "https://static.adsafeprotected.com/main.19.8.267.js",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_template",
+      "exact_supported_scope": "Older IAS public generic runtime. Hash matches prior review.",
+      "limitations": "No exact pixel.png or Amazon IAS collector constructor.",
+      "sha256": "33aa6d7c2684bf6b3ba88099443398c86d793d90ce5d96f5a45d27d748d336a6"
+    },
+    {
+      "id": "dvbm.js",
+      "url": "https://cdn.doubleverify.com/dvbm.js",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_template",
+      "exact_supported_scope": "Public DoubleVerify browser measurement script.",
+      "limitations": "No literal vtrk or /v3/vast constructor found. It cannot establish a universal root-collector field contract.",
+      "sha256": "c0122c13c86d077a30cd3db93af0deeb7c1fb66f1b6e2f6e48e08d37dee5cccc"
+    },
+    {
+      "id": "dv-src.js",
+      "url": "https://cdn.doubleverify.com/dvtp_src.js",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_template",
+      "exact_supported_scope": "Public DoubleVerify browser loader.",
+      "limitations": "CDN origin checks and loader logic do not define the uncovered collector field table.",
+      "sha256": "13f4e53a8770c05dd95dcef0658b0af8e85eeccb08bc946f1996bfd1b289179b"
+    },
+    {
+      "id": "amzn.js",
+      "url": "https://c.amazon-adsystem.com/aat/amzn.js",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_template",
+      "exact_supported_scope": "Official Amazon Ad Tag browser SDK. Existing packs cover its collector.",
+      "limitations": "None of the 62 uncovered s.amazon-adsystem.com paths appears literally in this reviewed SDK. No contract for those routes follows.",
+      "sha256": "ff56a317c81fb9747a2811b2fe0ce975ad13df3c44a28590d560588c477227ca"
+    },
+    {
+      "id": "dv-wrapping-guide",
+      "url": "https://content.api.getguru.com/files/gt/6b633afb-ce42-46e6-9334-26db35d5bd2f",
+      "accessed_at": "2026-10-25",
+      "access_result": "sign-in redirect",
+      "source_level": "official_template",
+      "exact_supported_scope": "Search indexed an exact VAST wrapper example under this guide title.",
+      "limitations": "Current retrieval redirects to Guru sign-in. Cached screenshot text is insufficient to verify vendor-authored field requirements.",
+      "sha256": "58686f440aa14299b386161b81c9a559bbeba2bb01216adee7034b933a9eea12"
+    },
+    {
+      "id": "oracle-eol.pdf",
+      "url": "https://www.oracle.com/a/ocom/docs/oracle-advertising-end-of-life-faqs.pdf",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "August 12, 2024 version 3.0; page 2 lists Moat Analytics and Moat Reach ending September 30, 2024.",
+      "limitations": "Legacy product status does not define obo.moatads.com/pixel.gif encoding or fields.",
+      "sha256": "179f16108f5f783a79092c4b4835e4100557cd3a04fb0c96fe92bf5ee0ca5f2a"
+    },
+    {
+      "id": "ias-guide",
+      "url": "https://assets.ctfassets.net/o1orzsgogjpz/4Q8TPW9OcTv2lg35DRf3DX/7a0bd2d4564e4fea7cff97cb6137088e/IAS_Video_Solutions_Guide_.pdf",
+      "accessed_at": "2026-10-25",
+      "access_result": "read through browser tool",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "MMT /v2 and UVP /vevent templates, plus UVP session guidance.",
+      "limitations": "No /pixel.png or Amazon proxy collector field table."
+    },
+    {
+      "id": "amazon-policy",
+      "url": "https://advertising.amazon.com/resources/ad-policy/approved-3p-ad-servers",
+      "accessed_at": "2026-10-25",
+      "access_result": "read through browser tool",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "June 1, 2026 policy lists IAS, DV and Adloox S2S integrations and instructs advertisers to obtain DSP-specific tags.",
+      "limitations": "No collector URI grammar or endpoint parameter specification."
+    },
+    {
+      "id": "roku-approved",
+      "url": "https://help.ads.roku.com/en/articles/10386309-measuring-campaigns-with-third-party-solutions",
+      "accessed_at": "2026-10-25",
+      "access_result": "read through browser tool",
+      "source_level": "ecosystem_reference",
+      "exact_supported_scope": "Roku first-party integration page lists vtrk.dv.tech as a DV impression-tag domain.",
+      "limitations": "Attribution and Roku submission policy do not define DoubleVerify destination fields. Its legacy Moat listing does not override Oracle EOL."
+    },
+    {
+      "id": "sklik-examples",
+      "url": "https://napoveda.sklik.cz/reklamy/externi-kod/prehled-externich-kodu/",
+      "accessed_at": "2026-10-25",
+      "access_result": "read through browser tool",
+      "source_level": "ecosystem_reference",
+      "exact_supported_scope": "Sklik publisher documentation shows exact DV /v3/vast wrapper examples for Adform and Google.",
+      "limitations": "Integration examples do not establish universal DV rejection policy or vtrk root-collector requirements. No manifest is derived solely from these examples."
+    }
+  ],
+  "vendor_dispositions": [
+    {
+      "task_id": "V021",
+      "status": "evidence_blocked",
+      "endpoint_ids": [
+        "01-E056"
+      ],
+      "reason": "Legacy product: Oracle ended Moat Analytics and Moat Reach September 30, 2024. Preserve historical attribution; no archived exact obo pixel contract established."
+    },
+    {
+      "task_id": "V041",
+      "status": "evidence_blocked",
+      "endpoint_ids": [
+        "01-E002",
+        "01-E022",
+        "01-E042",
+        "01-E003",
+        "01-E004",
+        "01-E005",
+        "01-E009",
+        "01-E011",
+        "01-E014",
+        "01-E015",
+        "01-E021",
+        "01-E028",
+        "01-E031",
+        "01-E032",
+        "01-E033",
+        "01-E034",
+        "01-E035",
+        "01-E036",
+        "01-E040",
+        "01-E041",
+        "01-E043",
+        "01-E044",
+        "01-E045",
+        "01-E046",
+        "01-E047",
+        "01-E048",
+        "01-E049",
+        "01-E050",
+        "01-E051",
+        "01-E052",
+        "01-E053",
+        "01-E063",
+        "01-E064",
+        "01-E065",
+        "01-E066",
+        "01-E067",
+        "01-E068",
+        "01-E069",
+        "01-E072",
+        "01-E074",
+        "01-E006",
+        "01-E023",
+        "01-E008",
+        "01-E016",
+        "01-E060",
+        "01-E010",
+        "01-E058",
+        "01-E059",
+        "01-E017",
+        "01-E039"
+      ],
+      "reason": "No exact vendor field table or attributable producer establishes the uncovered endpoint contract."
+    },
+    {
+      "task_id": "V044",
+      "status": "evidence_blocked",
+      "endpoint_ids": [
+        "01-E001",
+        "01-E007"
+      ],
+      "reason": "No exact vendor field table or attributable producer establishes the uncovered endpoint contract."
+    },
+    {
+      "task_id": "V047",
+      "status": "evidence_blocked",
+      "endpoint_ids": [
+        "01-E012",
+        "01-E013",
+        "01-E018",
+        "01-E019",
+        "01-E020",
+        "01-E024",
+        "01-E025",
+        "01-E026",
+        "01-E027",
+        "01-E029",
+        "01-E038",
+        "01-E054",
+        "01-E055",
+        "01-E057",
+        "01-E061",
+        "01-E062",
+        "01-E070",
+        "01-E071",
+        "01-E073",
+        "01-E030",
+        "01-E037"
+      ],
+      "reason": "Root collector contract unavailable. Vendor wrapping guide redirects to sign-in; publisher examples alone are not adopted as a universal vendor contract. Loader-like asset remains attributed."
+    }
+  ],
+  "host_dispositions": [
+    {
+      "task_id": "H004",
+      "host": "vfw.amazon-adsystem.com",
+      "baseline_rows": 180,
+      "endpoint_ids": [
+        "01-E003",
+        "01-E004",
+        "01-E005",
+        "01-E009",
+        "01-E011",
+        "01-E014",
+        "01-E015",
+        "01-E021",
+        "01-E028",
+        "01-E031",
+        "01-E032",
+        "01-E033",
+        "01-E034",
+        "01-E035",
+        "01-E036",
+        "01-E040",
+        "01-E041",
+        "01-E043",
+        "01-E044",
+        "01-E045",
+        "01-E046",
+        "01-E047",
+        "01-E048",
+        "01-E049",
+        "01-E050",
+        "01-E051",
+        "01-E052",
+        "01-E053",
+        "01-E063",
+        "01-E064",
+        "01-E065",
+        "01-E066",
+        "01-E067",
+        "01-E068",
+        "01-E069",
+        "01-E072",
+        "01-E074"
+      ],
+      "status": "evidence_blocked",
+      "reason": "Exact collector contract unavailable. Preserve baseline attribution and core checks."
+    },
+    {
+      "task_id": "H010",
+      "host": "unified.adsafeprotected.com",
+      "baseline_rows": 92,
+      "endpoint_ids": [
+        "01-E001",
+        "01-E007"
+      ],
+      "status": "evidence_blocked",
+      "reason": "Exact collector contract unavailable. Preserve baseline attribution and core checks."
+    },
+    {
+      "task_id": "H014",
+      "host": "s.amazon-adsystem.com",
+      "baseline_rows": 62,
+      "endpoint_ids": [
+        "01-E002",
+        "01-E022",
+        "01-E042"
+      ],
+      "status": "evidence_blocked",
+      "reason": "Exact collector contract unavailable. Preserve baseline attribution and core checks."
+    },
+    {
+      "task_id": "H027",
+      "host": "aax-events-cell01-cf.us-east.aps.axp.amazon-adsystem.com",
+      "baseline_rows": 34,
+      "endpoint_ids": [
+        "01-E006",
+        "01-E023"
+      ],
+      "status": "still_unknown",
+      "reason": "Routing is a hostname research hint. Exact transport ownership/contract remains unestablished by the reviewed primary sources; retain unknown status."
+    },
+    {
+      "task_id": "H030",
+      "host": "vtrk.dv.tech",
+      "baseline_rows": 32,
+      "endpoint_ids": [
+        "01-E012",
+        "01-E013",
+        "01-E018",
+        "01-E019",
+        "01-E020",
+        "01-E024",
+        "01-E025",
+        "01-E026",
+        "01-E027",
+        "01-E029",
+        "01-E038",
+        "01-E054",
+        "01-E055",
+        "01-E057",
+        "01-E061",
+        "01-E062",
+        "01-E070",
+        "01-E071",
+        "01-E073"
+      ],
+      "status": "evidence_blocked",
+      "reason": "Exact collector contract unavailable. Preserve baseline attribution and core checks."
+    },
+    {
+      "task_id": "H057",
+      "host": "aes.us-east.3px.axp.amazon-adsystem.com",
+      "baseline_rows": 18,
+      "endpoint_ids": [
+        "01-E008",
+        "01-E016",
+        "01-E060"
+      ],
+      "status": "still_unknown",
+      "reason": "Routing is a hostname research hint. Exact transport ownership/contract remains unestablished by the reviewed primary sources; retain unknown status."
+    },
+    {
+      "task_id": "H087",
+      "host": "aax-events-cell02-cf.us-east.3px.axp.amazon-adsystem.com",
+      "baseline_rows": 11,
+      "endpoint_ids": [
+        "01-E010",
+        "01-E058",
+        "01-E059"
+      ],
+      "status": "still_unknown",
+      "reason": "Routing is a hostname research hint. Exact transport ownership/contract remains unestablished by the reviewed primary sources; retain unknown status."
+    },
+    {
+      "task_id": "H154",
+      "host": "cell8001.iad.stv.event-na.ads.aps.amazon-adsystem.com",
+      "baseline_rows": 3,
+      "endpoint_ids": [
+        "01-E017"
+      ],
+      "status": "still_unknown",
+      "reason": "Routing is a hostname research hint. Exact transport ownership/contract remains unestablished by the reviewed primary sources; retain unknown status."
+    },
+    {
+      "task_id": "H224",
+      "host": "cdn.doubleverify.com",
+      "baseline_rows": 1,
+      "endpoint_ids": [
+        "01-E030"
+      ],
+      "status": "directory_only",
+      "reason": "The observed path ends in .js and is a loader/asset candidate. This does not establish a measurement collector contract; retain directory attribution and core checks."
+    },
+    {
+      "task_id": "H226",
+      "host": "cell7001.iad.stv.event-na.ads.aps.amazon-adsystem.com",
+      "baseline_rows": 1,
+      "endpoint_ids": [
+        "01-E039"
+      ],
+      "status": "still_unknown",
+      "reason": "Routing is a hostname research hint. Exact transport ownership/contract remains unestablished by the reviewed primary sources; retain unknown status."
+    },
+    {
+      "task_id": "H253",
+      "host": "obo.moatads.com",
+      "baseline_rows": 1,
+      "endpoint_ids": [
+        "01-E056"
+      ],
+      "status": "still_unknown",
+      "reason": "Legacy Moat host candidate. Oracle EOL is confirmed, but this exact pixel contract remains unestablished; preserve baseline unknown status."
+    },
+    {
+      "task_id": "H279",
+      "host": "vast.doubleverify.com",
+      "baseline_rows": 1,
+      "endpoint_ids": [
+        "01-E037"
+      ],
+      "status": "evidence_blocked",
+      "reason": "Exact collector contract unavailable. Preserve baseline attribution and core checks."
+    }
+  ],
+  "remaining_blockers": [
+    {
+      "endpoint_or_task": "V021",
+      "missing_evidence_or_feature": "Legacy product: Oracle ended Moat Analytics and Moat Reach September 30, 2024. Preserve historical attribution; no archived exact obo pixel contract established.",
+      "sources_checked": [
+        "ias-fw.js",
+        "ias-main.js",
+        "dvbm.js",
+        "dv-src.js",
+        "amzn.js",
+        "dv-wrapping-guide",
+        "oracle-eol.pdf",
+        "ias-guide",
+        "amazon-policy",
+        "roku-approved",
+        "sklik-examples"
+      ],
+      "next_artifact_needed": "An accessible vendor field table or independently attributable producer for the exact assigned endpoint, with explicit encoding and conditions."
+    },
+    {
+      "endpoint_or_task": "V041",
+      "missing_evidence_or_feature": "No exact vendor field table or attributable producer establishes the uncovered endpoint contract.",
+      "sources_checked": [
+        "ias-fw.js",
+        "ias-main.js",
+        "dvbm.js",
+        "dv-src.js",
+        "amzn.js",
+        "dv-wrapping-guide",
+        "oracle-eol.pdf",
+        "ias-guide",
+        "amazon-policy",
+        "roku-approved",
+        "sklik-examples"
+      ],
+      "next_artifact_needed": "An accessible vendor field table or independently attributable producer for the exact assigned endpoint, with explicit encoding and conditions."
+    },
+    {
+      "endpoint_or_task": "V044",
+      "missing_evidence_or_feature": "No exact vendor field table or attributable producer establishes the uncovered endpoint contract.",
+      "sources_checked": [
+        "ias-fw.js",
+        "ias-main.js",
+        "dvbm.js",
+        "dv-src.js",
+        "amzn.js",
+        "dv-wrapping-guide",
+        "oracle-eol.pdf",
+        "ias-guide",
+        "amazon-policy",
+        "roku-approved",
+        "sklik-examples"
+      ],
+      "next_artifact_needed": "An accessible vendor field table or independently attributable producer for the exact assigned endpoint, with explicit encoding and conditions."
+    },
+    {
+      "endpoint_or_task": "V047",
+      "missing_evidence_or_feature": "Root collector contract unavailable. Vendor wrapping guide redirects to sign-in; publisher examples alone are not adopted as a universal vendor contract. Loader-like asset remains attributed.",
+      "sources_checked": [
+        "ias-fw.js",
+        "ias-main.js",
+        "dvbm.js",
+        "dv-src.js",
+        "amzn.js",
+        "dv-wrapping-guide",
+        "oracle-eol.pdf",
+        "ias-guide",
+        "amazon-policy",
+        "roku-approved",
+        "sklik-examples"
+      ],
+      "next_artifact_needed": "An accessible vendor field table or independently attributable producer for the exact assigned endpoint, with explicit encoding and conditions."
+    }
+  ],
+  "limitations": [
+    "Redacted route shapes are triage data, not match selectors. No private payload or query values are included.",
+    "Oracle EOL establishes legacy status, not a new validation rule.",
+    "No network request was sent to captured tracking URLs."
+  ]
+}
