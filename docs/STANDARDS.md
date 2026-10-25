@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 189 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 198 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -1498,6 +1498,24 @@ Path captures: `^/pixel/(?<creative_token>[^/]*)/e\.gif$`. Captured values take 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.adxspace-pixel.cachebuster.installation_stub` | `{"kind":"forbid_value_pattern","params":["t"],"pattern":"^INSERIR(?: \|\\+)CACHEBUSTER$"}` | warning | [official_template](https://wiki.00px.com.br/en/technologies/pixel) |
+
+## `vendor/adxspace-vast-tracking`
+
+Advisory completeness checks for the tracking and impression callback templates returned by the vendor-published VAST 4 example. Opaque path slots and the generated s field are checked only for emptiness or omission. Token validity, event acceptance, signatures, session state and private variants remain outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/adxspace-vast-tracking.json).
+
+Matcher: `{"hosts":["00px.net"],"path_patterns":["^/tracking/[^/]*/[^/]*$","^/vast/pixel/[^/]*/e\\.gif$"]}`.
+
+Path captures: `^/(?:tracking\|vast/pixel)/(?<tag_token>[^/]*)/(?<event_path>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `tag_token` | required | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://wiki.00px.com.br/en/technologies/vast4) |
+| `event_path` | required | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://wiki.00px.com.br/en/technologies/vast4) |
+| `s` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://wiki.00px.com.br/en/technologies/vast4) |
 
 ## `vendor/amazon-ad-tag-regional`
 
@@ -3954,6 +3972,24 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `method` | optional | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_vendor](https://docs.cj.com/docs/s2s-implementation) |
 
+## `vendor/clipflip-vast-tracking`
+
+Advisory completeness checks for callbacks returned by Clipflip's public VAST tester sample. Nonempty creative and event path slots and the generated v query field are checked. Issued identifiers, accepted events, ord semantics, server rejection policy and delivery remain outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/clipflip-vast-tracking.json).
+
+Matcher: `{"hosts":["app.clipflip.video"],"path_patterns":["^/api/vast/tracking/[^/]*/[^/]*$"]}`.
+
+Path captures: `^/api/vast/tracking/(?<creative_path>[^/]*)/(?<event_path>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `creative_path` | required | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://www.clipflip.video/vast-tester/) |
+| `event_path` | required | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://www.clipflip.video/vast-tester/) |
+| `v` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://www.clipflip.video/vast-tester/) |
+
 ## `vendor/cloudflare-rum`
 
 Reserved /cdn-cgi/rum collector routes on manual and automatic customer domains. Methods follow published ingestion requirements; body findings describe the current official beacon producer and remain warnings. Arbitrary configured forwarding URLs are not automatically claimed.
@@ -4634,6 +4670,22 @@ Matcher: `{"host_suffixes":["doubleclick.net"],"path_contains":["activity"]}`.
 | `vendor.floodlight.sales.cost_requires_qty` | `{"kind":"required_with","when":"cost","requires":["qty"]}` | error | [official_vendor](https://support.google.com/campaignmanager/answer/2823450) |
 | `vendor.floodlight.counting.unique_ord_value` | `{"kind":"value_with","when":"num","param":"ord","value":"1","condition":{"kind":"present","param":"num"}}` | error | [official_vendor](https://support.google.com/campaignmanager/answer/2823450) |
 
+## `vendor/freewheel-callback`
+
+Template-completeness advisories for the explicit cn/et callback profile on the exact MRM /ad/l/1 route. The public SDK and gallery producer establish these fields on network-host callbacks. Opaque s-only transports remain outside this profile; event vocabularies, issued-token validity and session attribution are not verified.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/freewheel-callback.json).
+
+Matcher: `{"host_suffixes":["v.fwmrm.net"],"paths":["/ad/l/1"],"query_params_any":["cn","et"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `cn` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js) |
+| `et` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js) |
+| `s` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://vi.freewheel.tv/static/api_docs/html5/) |
+
 ## `vendor/freewheel`
 
 FreeWheel GET ad requests on *.v.fwmrm.net/ad/g/. Global contracts apply to the first query group. SDK Type B temporal slots in later groups receive independent required-field and unique-ID checks. Legacy flat fields and the partial group1 VMAP slot retain optional validation. Account authorization and raw transport variants remain external or explicitly unmapped.
@@ -4733,6 +4785,27 @@ Context: `{"first_index":2,"condition":{"kind":"value_in","param":"ptgt","values
 | `slau` | required | `{}` | [official_vendor](https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js) |
 | `tpos` | required | `{}` | [official_vendor](https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js) |
 | `ptgt` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js) |
+
+## `vendor/gamesight-impression`
+
+Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Opaque IDs, custom domains, receiver acceptance and external identity relationships remain outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/gamesight-impression.json).
+
+Matcher: `{"hosts":["gsght.com"],"paths":["/imgp","/imgp/"],"path_patterns":["/imgp/[^/]+"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+Path captures: `^/imgp/(?<tracker_id>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `tracker_id` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://docs.gamesight.io/docs/network-integration-guide) |
+| `cost_model` | optional | `{"format":{"kind":"enum","values":["CPM","CPC"]},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `external_hash_mode` | optional | `{"name_pattern":"^xid\\[[0-9]*\\]\\[sha256\\]$","format":{"kind":"enum","values":["client","server"]},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `external_scope_type` | optional | `{"name_pattern":"^xid\\[[0-9]*\\]\\[scope_type\\]$","format":{"kind":"enum","values":["game","org"]},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `attribution_window` | forbidden | `{"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `destination_url` | forbidden | `{"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 
 ## `vendor/google-activeview`
 
@@ -10107,6 +10180,32 @@ Path captures: `/projects/(?<website_id>[^/]+)\.js`. Captured values take preced
 | --- | --- | --- | --- |
 | `website_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.mouseflow.com/en/articles/4312070-custom-variables) |
 
+## `vendor/naver-wcs-query`
+
+Advisory completeness checks for the default-host /m image-query producer in WCS SDK 0.8.32. The current page URL, SDK version and time slot stay nonempty. An optional submitted wa is checked for emptiness only. Loader URLs, POST /b, configurable hosts, conversion schemas and identifier or clock grammars remain outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/naver-wcs-query.json).
+
+Matcher: `{"hosts":["wcs.naver.com"],"paths":["/m"],"query_params_any":["u","vs","nt"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `u` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://wcs.naver.net/wcslog.js) |
+| `vs` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://wcs.naver.net/wcslog.js) |
+| `nt` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://wcs.naver.net/wcslog.js) |
+| `wa` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://wcs.naver.net/wcslog.js) |
+| `e` | optional | `{"allow_empty":true}` | [official_template](https://wcs.naver.net/wcslog.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://wcs.naver.net/wcslog.js) |
+
 ## `vendor/nextdoor-conversions-api`
 
 Server-side conversion events posted to ads.nextdoor.com/v2/api/conversions/track.
@@ -12890,6 +12989,34 @@ Context: `{}`.
 | `vendor.segment.http.oauth_write_key_required` | `{"kind":"required_with","condition":{"kind":"value_in","param":"authorization_scheme","values":["bearer"]},"requires":["body.writeKey"],"when":"headers.authorization"}` | error | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
 | `vendor.segment.http.basic_colon_recommended` | `{"kind":"format","condition":{"kind":"value_in","param":"authorization_scheme","values":["basic"]},"param":"basic_auth.has_colon","format":{"kind":"enum","values":["true"]}}` | warning | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
 
+## `vendor/shopify-monorail`
+
+Advisory checks for the pinned Shopify CLI SDK envelope on its exact /v1/produce request endpoint. The SDK sends schema_id and object payload using POST and JSON MIME. Payload fields, registry membership, timestamp-header requirements and remote acceptance are outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/shopify-monorail.json).
+
+Matcher: `{"hosts":["monorail-edge.shopifysvc.com"],"paths":["/v1/produce"],"artifact_kinds":["request"],"json_paths":["schema_id","payload"]}`.
+
+### JSON contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts) |
+| `schema_id` | recommended | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts) |
+| `payload` | recommended | `{"json_type":"object","severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["POST"]}}` | [official_template](https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts) |
+| `content_type` | recommended | `{"json_type":"string","severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["application/json"]}}` | [official_template](https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts) |
+| `body` | recommended | `{"json_type":"object","severity":"warning","format_severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts) |
+
 ## `vendor/singular`
 
 Server-to-server EVENT requests to s2s.singular.net/api/v1/evt and /api/v2/evt, as form or query parameters. JSON bodies are not this API.
@@ -13373,6 +13500,31 @@ Context: `{}`.
 | `headers.revision` | recommended | `{"severity":"warning","condition":{"kind":"value_in","param":"query.gtm_ss","values":["1"]},"allow_empty":false,"format":{"kind":"enum","values":["2023-test"]}}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
 | `headers.user-agent` | recommended | `{"severity":"warning","condition":{"kind":"value_in","param":"query.gtm_ss","values":["1"]},"allow_empty":true}` | [official_template](https://github.com/StackAdapt/stackadapt-gtm-server-side-pixel/blob/e718d8607317024ccc83234c58d975672dfd4ffe/template.tpl) |
 
+## `vendor/statcounter-noscript`
+
+Advisory checks for the exact published c.statcounter.com noscript image path. Project-slot completeness and image GET transport follow the installation template. Security checking can be disabled, so security values remain optional and opaque. Other collector formats and script loaders are outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/statcounter-noscript.json).
+
+Matcher: `{"hosts":["c.statcounter.com"],"path_patterns":["/[^/]*/0/[^/]*/1/"]}`.
+
+Path captures: `^/(?<project_id>[^/]*)/0/(?<security_code>[^/]*)/1/$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `project_id` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/) |
+| `security_code` | optional | `{"allow_empty":true}` | [official_template](https://statcounter.com/support/faq/127-what-is-the-security-code/) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/) |
+
 ## `vendor/taboola-s2s-bulk`
 
 Taboola bulk server-to-server conversions posted to trc.taboola.com/{account-id}/log/3/bulk-s2s-action. Single postbacks are vendor/taboola-s2s. The base pixel loader is vendor/taboola.
@@ -13508,6 +13660,135 @@ Path captures: `/libtrc/unip/(?<account_id>[0-9]+)/tfa\.js`. Captured values tak
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `account_id` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://developers.taboola.com/pixel/docs/add-the-base-pixel-manually) |
+
+## `vendor/tapad-tapestry`
+
+Legacy advisory profile of Tapad's archived Android Tapestry SDK for exact /tapestry/1. Checks documented numeric controls, empty operation flags and JSON string-map/list construction. Client-specific required fields, identifiers, current service behavior and other transports remain unvalidated.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/tapad-tapestry.json).
+
+Matcher: `{"hosts":["tapestry.tapad.com"],"paths":["/tapestry/1"],"query_params_any":["ta_sadd_data","ta_remove_data","ta_set_data","ta_add_data","ta_user_ids","ta_analytics","ta_typed_did","ta_clear_data","ta_add_audiences","ta_remove_audiences","ta_strength","ta_depth","ta_get","ta_list_devices"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `ta_sadd_data` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_remove_data` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_set_data` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_add_data` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_user_ids` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_analytics` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_typed_did` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_clear_data` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_add_audiences` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_remove_audiences` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_strength` | optional | `{"severity":"warning","format":{"kind":"integer"},"minimum":1,"maximum":5}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_depth` | optional | `{"severity":"warning","format":{"kind":"integer"},"minimum":0,"maximum":2}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_get` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":[""]}}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_list_devices` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":[""]}}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_partner_id` | optional | `{"allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_partner_did` | optional | `{"allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `ta_platform` | optional | `{"allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 1
+
+Context: `{"source_param":"ta_sadd_data","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `*` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 2
+
+Context: `{"source_param":"ta_remove_data","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `*` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 3
+
+Context: `{"source_param":"ta_set_data","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `*` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 4
+
+Context: `{"source_param":"ta_add_data","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `*` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 5
+
+Context: `{"source_param":"ta_user_ids","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `*` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 6
+
+Context: `{"source_param":"ta_analytics","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `*` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `isNewSession` | optional | `{"format":{"kind":"enum","values":["true","false"]},"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 7
+
+Context: `{"source_param":"ta_typed_did","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `*` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 8
+
+Context: `{"source_param":"ta_clear_data","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `[]` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 9
+
+Context: `{"source_param":"ta_add_audiences","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `[]` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### JSON contract 10
+
+Context: `{"source_param":"ta_remove_audiences","encoding":"json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"array","severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+| `[]` | optional | `{"json_type":["string","null"],"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryRequest.java) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/Tapad/tapestry-android-sdk/b365c9ccdd75d61eda1192e326aba88de0f30d49/tapestry/src/com/tapad/tapestry/TapestryClient.java) |
 
 ## `vendor/the-trade-desk-conversions`
 
@@ -14083,6 +14364,23 @@ Matcher: `{"hosts":["analytics.tiktok.com","analytics.us.tiktok.com"],"path_cont
 | --- | --- | --- | --- |
 | `sdkid` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://ads.tiktok.com/help/article/get-started-pixel) |
 | `lib` | recommended | `{"format":{"kind":"enum","values":["ttq"]},"format_severity":"warning"}` | [ecosystem_reference](https://ads.tiktok.com/help/article/get-started-pixel) |
+
+## `vendor/top-mail-counter`
+
+Advisory profile for the published Top Mail.ru page-view producer and its noscript counter. Numeric identity follows the help guide. Age and gender checks apply only to the pinned SDK js=13 profile. Receiver acceptance and other Mail.ru transports remain unverified.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/top-mail-counter.json).
+
+Matcher: `{"hosts":["top-fwz1.mail.ru"],"paths":["/counter"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `id` | recommended | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_template](https://top.mail.ru/help/en/settings/goals) |
+| `js` | optional | `{"allow_empty":true}` | [official_template](https://top-fwz1.mail.ru/js/code.js) |
+| `age` | optional | `{"format":{"kind":"integer"},"minimum":1,"maximum":127,"severity":"warning","condition":{"kind":"value_in","param":"js","values":["13"]}}` | [official_template](https://top-fwz1.mail.ru/js/code.js) |
+| `gender` | optional | `{"format":{"kind":"enum","values":["1","2"]},"severity":"warning","condition":{"kind":"value_in","param":"js","values":["13"]}}` | [official_template](https://top-fwz1.mail.ru/js/code.js) |
 
 ## `vendor/triplelift-sync`
 

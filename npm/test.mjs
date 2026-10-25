@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 189, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 198, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -124,9 +124,13 @@ for (const entry of [{ validate, validateMany, vendorForHost }, cjs]) {
     const report = entry.validate(artifact, { kind: "vast", state: "template" }).reports.find(report => report.plugin_id === pack);
     assert.ok(report?.violations.some(finding => finding.code === code && finding.severity === "warning"));
   }
-  for (const artifact of ["https://00px.net/tracking/token/starts", "https://00px.net/vast/pixel/token", "https://pagead2.googlesyndication.com/pcs/view"]) {
+  for (const artifact of ["https://00px.net/vast/pixel/token", "https://pagead2.googlesyndication.com/pcs/view"]) {
     assert.ok(entry.validate(artifact, { kind: "vast" }).reports.every(report => !report.plugin_id.startsWith("vendor/")), "undocumented siblings stay outside pack scope");
   }
+  const generatedTracker = entry.validate("https://00px.net/tracking/token/starts", { kind: "vast", state: "template" });
+  assert.deepEqual(generatedTracker.coverage.vendor_rulepacks, ["vendor/adxspace-vast-tracking"]);
+  assert.ok(generatedTracker.reports.flatMap(report => report.violations).some(finding =>
+    finding.code === "vendor.adxspace-vast-tracking.param.s.missing" && finding.severity === "warning"));
   assert.equal(entry.vendorForHost("track.activemetering.com")?.vendor, "disqo");
   const uvp = entry.validate("https://unified.adsafeprotected.com/vevent/start/1111111/66666666?xsId=[PLEASE_IMPLEMENT_UNIQUE_ADSERVER_IMPRESSION_ID_HERE]", { kind: "vast", state: "template" });
   assert.ok(uvp.reports.flatMap((report) => report.violations).some((finding) => finding.code === "vendor.ias-video-pixel.xsid.placeholder" && finding.severity === "error"));

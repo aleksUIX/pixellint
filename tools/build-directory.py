@@ -42,7 +42,7 @@ VENDORS = {
     "yandex": ("Yandex", "search", ["mc.yandex.ru", "mc.yandex.com", "an.yandex.ru"], None),
     "yandex-adfox": ("Yandex Adfox", "video", ["yandex.ru"], None),
     "baidu": ("Baidu", "search", ["hm.baidu.com", "cpro.baidustatic.com"], "vendor/baidu"),
-    "naver": ("Naver", "search", ["wcs.naver.net", "wcs.naver.com"], None),
+    "naver": ("Naver", "search", ["wcs.naver.net", "wcs.naver.com"], "vendor/naver-wcs-query"),
 
     # Exact pixel hosts attributed in the 2026-10-09 tester findings.
     "adxspace": ("Adxspace", "video", ["00px.net"], "vendor/adxspace-pixel"),
