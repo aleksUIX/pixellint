@@ -91,7 +91,7 @@ VENDORS = {
     "id5": ("ID5", "identity", ["id5-sync.com", "lb.eu-1-id5-sync.com"], "vendor/id5"),
     "lotame": ("Lotame", "identity", ["tags.crwdcntrl.net", "bcp.crwdcntrl.net"], "vendor/lotame"),
     "oracle": ("Oracle Advertising", "identity", ["tags.bluekai.com", "stags.bluekai.com"], "vendor/oracle-bluekai"),
-    "salesforce": ("Salesforce", "identity", ["beacon.krxd.net", "cdn.krxd.net"], None),
+    "salesforce": ("Salesforce", "identity", ["beacon.krxd.net", "cdn.krxd.net"], "vendor/krux-amp"),
     "neustar": ("TransUnion (Neustar)", "identity", ["aa.agkn.com"], None),
     "tapad": ("Tapad", "identity", ["pixel.tapad.com", "tapestry.tapad.com"], "vendor/tapad-tapestry"),
     "adobe_aam": ("Adobe Audience Manager", "identity", ["cm.everesttech.net"], None),

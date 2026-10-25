@@ -890,6 +890,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/aniview-default-track",
         include_str!("../rulepacks/vendor/aniview-default-track.json"),
     ),
+    (
+        "vendor/krux-amp",
+        include_str!("../rulepacks/vendor/krux-amp.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
