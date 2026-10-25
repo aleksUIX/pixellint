@@ -84,7 +84,7 @@ VENDORS = {
     "sharethrough": ("Sharethrough", "programmatic", ["btlr.sharethrough.com", "match.sharethrough.com"], None),
 
     # Identity, data, and onboarding
-    "liveramp": ("LiveRamp", "identity", ["idsync.rlcdn.com", "api.rlcdn.com", "ats.rlcdn.com"], "vendor/liveramp-envelope"),
+    "liveramp": ("LiveRamp", "identity", ["idsync.rlcdn.com", "api.rlcdn.com", "ats.rlcdn.com", "p.tvpixel.com"], "vendor/liveramp-envelope"),
     "id5": ("ID5", "identity", ["id5-sync.com", "lb.eu-1-id5-sync.com"], "vendor/id5"),
     "lotame": ("Lotame", "identity", ["tags.crwdcntrl.net", "bcp.crwdcntrl.net"], "vendor/lotame"),
     "oracle": ("Oracle Advertising", "identity", ["tags.bluekai.com", "stags.bluekai.com"], "vendor/oracle-bluekai"),
@@ -93,6 +93,11 @@ VENDORS = {
     "tapad": ("Tapad", "identity", ["pixel.tapad.com", "tapestry.tapad.com"], "vendor/tapad-tapestry"),
     "adobe_aam": ("Adobe Audience Manager", "identity", ["cm.everesttech.net"], None),
     "adobe_ecid": ("Adobe Experience Cloud ID Service", "identity", ["dpm.demdex.net"], "vendor/adobe-ecid"),
+
+    # Exact measurement roots in Roku's current approved-partner table.
+    "placed": ("Placed", "measurement", ["p.placed.com"], None),
+    "samba-tv": ("Samba TV", "measurement", ["pixel.mtrcs.samba.tv"], None),
+    "edo": ("EDO", "measurement", ["lighthouse.edoinc.com"], None),
 
     # Verification and measurement
     "doubleverify": ("DoubleVerify", "verification", ["cdn.doubleverify.com", "tps.doubleverify.com", "tpsc-video.doubleverify.com", "rtb0.doubleverify.com"], "vendor/doubleverify"),
