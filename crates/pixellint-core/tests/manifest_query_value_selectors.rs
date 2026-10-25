@@ -150,8 +150,13 @@ fn query_value_and_query_key_conditions_are_independent() {
     let pack = ManifestRulePack::from_json(&value.to_string()).unwrap();
     for (query, expected) in [
         ("a.A=im&enabled=", true),
+        ("a.A=im&enabled", true),
+        ("a.A=im&en%61bled", true),
         ("a.A=im", false),
         ("a.A=im&enabled=&disabled=", false),
+        ("a.A=im&enabled=&disabled", false),
+        ("a.A=im&enabled&dis%61bled", false),
+        ("a.A=im&enabled=&disabled=&disabled", false),
         ("a.A=cl&enabled=", false),
     ] {
         assert_eq!(

@@ -2799,29 +2799,9 @@ impl ManifestRulePack {
         if !self.matches_parsed_endpoint(parsed) {
             return false;
         }
-        if !self.matcher.query_params_any.is_empty() || !self.matcher.query_params_none.is_empty() {
-            let query_names: BTreeSet<_> = params
-                .iter()
-                .filter(|param| param.component == ViolationTargetComponent::QueryParam)
-                .map(|param| param.name.as_ref())
-                .collect();
-            if !self.matcher.query_params_any.is_empty()
-                && !self
-                    .matcher
-                    .query_params_any
-                    .iter()
-                    .any(|name| query_names.contains(name.as_str()))
-                || self
-                    .matcher
-                    .query_params_none
-                    .iter()
-                    .any(|name| query_names.contains(name.as_str()))
-            {
-                return false;
-            }
-        }
-
-        if !self.matcher.query_params_values.is_empty() {
+        let marker_pairs = if self.matcher.query_params_values.is_empty() {
+            None
+        } else {
             let query = artifact
                 .split('#')
                 .next()
@@ -2838,6 +2818,35 @@ impl ManifestRulePack {
                     (percent_decode(name), decode_param_value(value))
                 })
                 .collect();
+            Some(pairs)
+        };
+        if !self.matcher.query_params_any.is_empty() || !self.matcher.query_params_none.is_empty() {
+            let query_names: BTreeSet<&str> = if let Some(pairs) = &marker_pairs {
+                pairs.iter().map(|(name, _)| name.as_ref()).collect()
+            } else {
+                params
+                    .iter()
+                    .filter(|param| param.component == ViolationTargetComponent::QueryParam)
+                    .map(|param| param.name.as_ref())
+                    .collect()
+            };
+            if !self.matcher.query_params_any.is_empty()
+                && !self
+                    .matcher
+                    .query_params_any
+                    .iter()
+                    .any(|name| query_names.contains(name.as_str()))
+                || self
+                    .matcher
+                    .query_params_none
+                    .iter()
+                    .any(|name| query_names.contains(name.as_str()))
+            {
+                return false;
+            }
+        }
+
+        if let Some(pairs) = marker_pairs {
             for marker in &self.matcher.query_params_values {
                 let mut present = false;
                 for (_, value) in pairs
