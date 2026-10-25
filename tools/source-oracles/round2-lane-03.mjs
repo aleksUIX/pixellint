@@ -64,6 +64,8 @@ const wcmInputs=[
  ['source-optional-prices',{data:{price_paid:'12.50',bid_price:'15.0',publisherclick:'https://publisher.example/click?token=synthetic'}}],
  ['source-nonnumeric-prices',{data:{price_paid:'not-a-number',bid_price:'Infinity'}}],
  ['source-http-referrer',{protocol:'http:',referrer:'http://referrer.example/',data:{}}],
+ ['source-account-query-collisions',{data:{account_id:'opaque&g.de=2&g.ism=3&a.we=4'}}],
+ ['source-tracking-query-collisions',{data:{tracking_element_id:'opaque&g.de=2&g.ism=3&a.we=4'}}],
 ];
 const tagPattern=ttd.text.match(/`\/\/insight\.adsrvr\.org\/track\/\{TAG_TYPE\}\/`/);
 const queryPattern=ttd.text.match(/`adv=ADVERTISER_ID_PLACEHOLDER&ct=0:TRACKING_TAG_ID_PLACEHOLDER&fmt=3`/);
