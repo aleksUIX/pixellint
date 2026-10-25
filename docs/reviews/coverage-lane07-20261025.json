@@ -1,0 +1,830 @@
+{
+  "review_date": "2026-10-25",
+  "scope": "Coverage backfill lane 07: Mobile and acquisition endpoints",
+  "decision": "Add documented AdRoll x-host attribution with existing directory root semantics. Retain core-only behavior for all unsupported mobile and acquisition transports.",
+  "sources": [
+    {
+      "id": "smadex-index.txt",
+      "url": "https://docs.smadex.com/llms.txt",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Current public Smadex documentation index. Its hash matches the previous review.",
+      "limitations": "The index lists MMP integration guides, not the observed tracker contract.",
+      "sha256": "a39b50a744091d9c5020fdc8df172886e9a061fedc6614b9585078e73136ff54"
+    },
+    {
+      "id": "iqm-conversion.html",
+      "url": "https://developers.iqm.com/tutorials/create-a-conversion/",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Current official conversion-creation API tutorial and general postback description.",
+      "limitations": "It contains neither postback.iqm.com nor track.wrk.iqm.com. Browser pixel UUID requirements do not establish either collector contract.",
+      "sha256": "84ee8481e84bd3639adddf98bac5aec1943aff993b945db768d76455dc20e676"
+    },
+    {
+      "id": "smaato-impression.html",
+      "url": "https://developers-brand.verve.com/docs/impression-tracking-1",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Smaato/Verve explains placement of impression pixels in VAST.",
+      "limitations": "It does not define track.smaato.net /v2/video/event or /v2/impression request fields.",
+      "sha256": "21c097f4bb98e9c889c829832f7ebf09f1f6aa32055fb468d129cdbfff0b46bb"
+    },
+    {
+      "id": "zmaticoo-docs.html",
+      "url": "https://doc.zmaticoo.com/",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official SDK documentation entry page.",
+      "limitations": "The retrieved page is a client-rendered shell; no exact tracker contract is present.",
+      "sha256": "4c65e01e4fe067b4334c1f4a1fb3629ae7357d6972236ce3b8a50b005a235bf0"
+    },
+    {
+      "id": "inmobi-vast.pdf",
+      "url": "https://go.inmobi.net/hubfs/Publisher%20Collaterals%20%28Anish%29/API%203.0%20S2S%20VAST%20Integration%20Guidelines%20.pdf",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Vendor 2019 API 3.0 document specifies the ad-request endpoint and illustrates returned VAST URLs.",
+      "limitations": "Ad-request mandatory fields do not establish generated regional tracking URL fields or token serialization.",
+      "sha256": "2a5b698d330a4d6a591eb6ab79df0c41fb608c379a12604598c9ee08887997cd"
+    },
+    {
+      "id": "remerge-forwarding.html",
+      "url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding",
+      "accessed_at": "2026-10-25",
+      "access_result": "Direct retrieval returned HTTP 403; browser tool read indexed primary article",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official documentation defines GET https://remerge.events/event for in-app data forwarding.",
+      "limitations": "This endpoint differs from the assigned regional video callback routes; its app/key requirements cannot be imposed there.",
+      "sha256": null
+    },
+    {
+      "id": "remerge-rich-media.html",
+      "url": "https://help.remerge.io/hc/en-us/articles/8139078677276-Rich-Media",
+      "accessed_at": "2026-10-25",
+      "access_result": "Direct retrieval returned HTTP 403; browser tool read indexed primary article",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official creative guide publishes an ad_feedback error callback example on a regional host.",
+      "limitations": "It does not establish the assigned video routes or a universal field requirement for eu5.remerge.events.",
+      "sha256": null
+    },
+    {
+      "id": "adroll-csp.html",
+      "url": "https://help.adroll.com/hc/en-us/articles/6964547103629-Pixel-Troubleshooting-CSP-Errors",
+      "accessed_at": "2026-10-25",
+      "access_result": "Direct retrieval returned HTTP 403; browser tool read indexed primary article",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "AdRoll explicitly lists x.adroll.com among its pixel CSP domains.",
+      "limitations": "This establishes attribution under the configured directory root. It does not define the video callback protocol; existing directory entries also match subdomains.",
+      "sha256": null
+    },
+    {
+      "id": "criteo-onetag.html",
+      "url": "https://developers.criteo.com/retailer-integration/docs/onetag",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official OneTag integration documentation.",
+      "limitations": "It does not name the assigned cat.da1.us.criteo.com collector; loader rules cannot be copied to its generated events.",
+      "sha256": "b462a54a54b6ea3b320c02d39eba7662c6f6d75aacaccb6f40836402e489b481"
+    },
+    {
+      "id": "mintegral-docs.html",
+      "url": "https://dev.mintegral.com/doc/index.html",
+      "accessed_at": "2026-10-25",
+      "access_result": "retrieved HTTP 200",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official Mintegral documentation shell includes rayjump.com branding asset references.",
+      "limitations": "A branded asset reference does not establish exact rayjump tracker ownership or its event HTTP schema.",
+      "sha256": "ce8fc41292e78c82144fe62cfd55029aeeb22ec626c5296a5eaec3767b66177c"
+    },
+    {
+      "id": "smadex-01.md",
+      "url": "https://docs.smadex.com/docs/mmp-set-up-guides-for-advertisers-1.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "df106a3dff7c2f0bfd4cc8d776d4ebb3fd6a8fac19b15ca61d2e7b64480426ce"
+    },
+    {
+      "id": "smadex-02.md",
+      "url": "https://docs.smadex.com/docs/set-up-appsflyer.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "f03d3746c99c384cff7aa64a7af23e991059105e63ddff71bad3634687bac1af"
+    },
+    {
+      "id": "smadex-03.md",
+      "url": "https://docs.smadex.com/docs/appsflyer-ctv-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "dca670a19144ec3fe823db75f8b2732352a294d69326e7898506a5502ad5f27e"
+    },
+    {
+      "id": "smadex-04.md",
+      "url": "https://docs.smadex.com/docs/appsflyer-user-acquisition-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "0f077104b3d1e61cf560312f93876b16d27cbf2471dfcb39cca229abd064b6fd"
+    },
+    {
+      "id": "smadex-05.md",
+      "url": "https://docs.smadex.com/docs/set-up-adjust.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "da9b665de8e9e6b0ab9b834e615558eb4381c69b677a15d5dc7faac26b0032af"
+    },
+    {
+      "id": "smadex-06.md",
+      "url": "https://docs.smadex.com/docs/adjust-ctv-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "2e0183412fa6bbf0091334177dd7a6188db2a0628b056b56ea462ec56a739ffc"
+    },
+    {
+      "id": "smadex-07.md",
+      "url": "https://docs.smadex.com/docs/adjust-retargeting-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "751a3d2e5b3a602d446d34dd4cd123660292025072c038de4588c02769f59bd5"
+    },
+    {
+      "id": "smadex-08.md",
+      "url": "https://docs.smadex.com/docs/singular-user-acquisition-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "325bab66e4ab591edc91af2bc549cfb15edabfb1f1e5f48d31373b44e6f4e3ff"
+    },
+    {
+      "id": "smadex-09.md",
+      "url": "https://docs.smadex.com/docs/appsflyer-user-acquisition-integration-1.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "151f68dde1c8b304577ffdf40f42772c514728545eee1eee46eec39e53b282fd"
+    },
+    {
+      "id": "smadex-10.md",
+      "url": "https://docs.smadex.com/docs/singular-retargeting-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "24ddde71048a7a9e1b39c1215cd71b086c1f5db218e77b970eadae1d5cf14765"
+    },
+    {
+      "id": "smadex-11.md",
+      "url": "https://docs.smadex.com/docs/kochava-user-acquisition-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "32e8689b91ddddce9f66918c8b31de187ea538be6b9dd39f7138f58fc780372a"
+    },
+    {
+      "id": "smadex-12.md",
+      "url": "https://docs.smadex.com/docs/kochava-ctv-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "9eaaa06c94ce241d75df06cfec7fe8d90b6877e00371c90ca8a5613fc202f976"
+    },
+    {
+      "id": "smadex-13.md",
+      "url": "https://docs.smadex.com/docs/kochava-retargeting-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "0c8d84c86844e2e9bbec57c957450755b097dfdfd117ade0474e8f2afa0f0968"
+    },
+    {
+      "id": "smadex-14.md",
+      "url": "https://docs.smadex.com/docs/branch-user-acquisition-integration.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "6d1cb1347a48e69aec5bb03bd5f20b247ebf138e20571c1966154a4fc4a52833"
+    },
+    {
+      "id": "smadex-15.md",
+      "url": "https://docs.smadex.com/docs/adbrix-dfinery-user-acquisition-guide.md",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official MMP integration guide.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "6036f0a84f58a5b0786b16e1c122224cf1dc39c2c5f98cc72ef81b3b840cbc01"
+    },
+    {
+      "id": "zmaticoo-app.js",
+      "url": "https://doc.zmaticoo.com/js/app.81e5c8ab.js",
+      "accessed_at": "2026-10-25",
+      "access_result": "Fetched and searched for exact collector route/host strings",
+      "source_level": "official_vendor",
+      "exact_supported_scope": "Official client documentation application asset.",
+      "limitations": "No exact assigned collector route or host contract was found. No requiredness is inferred from the absence.",
+      "sha256": "0ddecfd72144bab68f4396fcc4729f82b770ec2289e5e9640c04959beb0fbdce"
+    }
+  ],
+  "vendor_dispositions": [
+    {
+      "task_id": "V029",
+      "status": "evidence_blocked",
+      "endpoint_ids": [
+        "07-E015",
+        "07-E020",
+        "07-E021",
+        "07-E022",
+        "07-E023",
+        "07-E024",
+        "07-E025",
+        "07-E050",
+        "07-E051",
+        "07-E049",
+        "07-E052",
+        "07-E053"
+      ],
+      "reason": "No current exact collector contract established for the assigned routes. Existing conversion or MMP documentation defines another interface."
+    },
+    {
+      "task_id": "V048",
+      "status": "evidence_blocked",
+      "endpoint_ids": [
+        "07-E003",
+        "07-E030",
+        "07-E004"
+      ],
+      "reason": "No current exact collector contract established for the assigned routes. Existing conversion or MMP documentation defines another interface."
+    }
+  ],
+  "host_dispositions": [
+    {
+      "task_id": "H024",
+      "host": "got-iad3rs0zoneb.track.smaato.net",
+      "baseline_rows": 38,
+      "endpoint_ids": [
+        "07-E001",
+        "07-E017",
+        "07-E018",
+        "07-E019"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H046",
+      "host": "tracker.zmaticoo.com",
+      "baseline_rows": 21,
+      "endpoint_ids": [
+        "07-E002",
+        "07-E011",
+        "07-E012"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H069",
+      "host": "b.de.inmobi.com",
+      "baseline_rows": 15,
+      "endpoint_ids": [
+        "07-E008",
+        "07-E010",
+        "07-E026",
+        "07-E043",
+        "07-E045"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H081",
+      "host": "cat.da1.us.criteo.com",
+      "baseline_rows": 12,
+      "endpoint_ids": [
+        "07-E005",
+        "07-E055",
+        "07-E056"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H085",
+      "host": "va-trk.smadex.com",
+      "baseline_rows": 12,
+      "endpoint_ids": [
+        "07-E021",
+        "07-E022",
+        "07-E023",
+        "07-E024",
+        "07-E025",
+        "07-E050",
+        "07-E051"
+      ],
+      "status": "evidence_blocked",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H086",
+      "host": "vg-ali-mtgtracking-adx-k8s.rayjump.com",
+      "baseline_rows": 12,
+      "endpoint_ids": [
+        "07-E006",
+        "07-E027"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H089",
+      "host": "et-eus.w.inmobi.com",
+      "baseline_rows": 11,
+      "endpoint_ids": [
+        "07-E013",
+        "07-E014",
+        "07-E016",
+        "07-E031",
+        "07-E032",
+        "07-E033"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H090",
+      "host": "postback.iqm.com",
+      "baseline_rows": 11,
+      "endpoint_ids": [
+        "07-E003",
+        "07-E030"
+      ],
+      "status": "evidence_blocked",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H096",
+      "host": "track.wrk.iqm.com",
+      "baseline_rows": 10,
+      "endpoint_ids": [
+        "07-E004"
+      ],
+      "status": "evidence_blocked",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H097",
+      "host": "tracking.inmobi.com",
+      "baseline_rows": 10,
+      "endpoint_ids": [
+        "07-E007",
+        "07-E046",
+        "07-E047"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H110",
+      "host": "eu5.remerge.events",
+      "baseline_rows": 8,
+      "endpoint_ids": [
+        "07-E035",
+        "07-E036",
+        "07-E037",
+        "07-E038",
+        "07-E039",
+        "07-E040",
+        "07-E041",
+        "07-E042"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H131",
+      "host": "gw-usa-tracker.zmaticoo.com",
+      "baseline_rows": 6,
+      "endpoint_ids": [
+        "07-E009",
+        "07-E048"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H135",
+      "host": "x.adroll.com",
+      "baseline_rows": 6,
+      "endpoint_ids": [
+        "07-E029",
+        "07-E057",
+        "07-E058",
+        "07-E059",
+        "07-E060"
+      ],
+      "status": "directory_only",
+      "reason": "Add the documented x.adroll.com directory root using existing suffix semantics. Preserve core-only video callbacks and existing d.adroll.com conversion selection. No new protocol validation is claimed."
+    },
+    {
+      "task_id": "H157",
+      "host": "ec-ed.smadex.com",
+      "baseline_rows": 3,
+      "endpoint_ids": [
+        "07-E015"
+      ],
+      "status": "evidence_blocked",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H177",
+      "host": "e.de.inmobi.com",
+      "baseline_rows": 2,
+      "endpoint_ids": [
+        "07-E044",
+        "07-E054"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H184",
+      "host": "pixel-ed.smadex.com",
+      "baseline_rows": 2,
+      "endpoint_ids": [
+        "07-E020"
+      ],
+      "status": "evidence_blocked",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H203",
+      "host": "vg-adx-ssp-tk.rayjump.com",
+      "baseline_rows": 2,
+      "endpoint_ids": [
+        "07-E028"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H220",
+      "host": "br-trk.smadex.com",
+      "baseline_rows": 1,
+      "endpoint_ids": [
+        "07-E049"
+      ],
+      "status": "evidence_blocked",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H221",
+      "host": "c-eus.w.inmobi.com",
+      "baseline_rows": 1,
+      "endpoint_ids": [
+        "07-E034"
+      ],
+      "status": "still_unknown",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H229",
+      "host": "cr-err.smadex.com",
+      "baseline_rows": 1,
+      "endpoint_ids": [
+        "07-E052"
+      ],
+      "status": "evidence_blocked",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    },
+    {
+      "task_id": "H237",
+      "host": "geo-tracker.smadex.com",
+      "baseline_rows": 1,
+      "endpoint_ids": [
+        "07-E053"
+      ],
+      "status": "evidence_blocked",
+      "reason": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema."
+    }
+  ],
+  "remaining_blockers": [
+    {
+      "endpoint_or_task": "H024",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "smaato-impression.html"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H046",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "zmaticoo-docs.html",
+        "zmaticoo-app.js"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H069",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "inmobi-vast.pdf"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H081",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "criteo-onetag.html"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H085",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "smadex-index.txt",
+        "smadex-01.md",
+        "smadex-02.md",
+        "smadex-03.md",
+        "smadex-04.md",
+        "smadex-05.md",
+        "smadex-06.md",
+        "smadex-07.md",
+        "smadex-08.md",
+        "smadex-09.md",
+        "smadex-10.md",
+        "smadex-11.md",
+        "smadex-12.md",
+        "smadex-13.md",
+        "smadex-14.md",
+        "smadex-15.md"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H086",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "mintegral-docs.html"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H089",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "inmobi-vast.pdf"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H090",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "iqm-conversion.html"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H096",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "iqm-conversion.html"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H097",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "inmobi-vast.pdf"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H110",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "remerge-forwarding.html",
+        "remerge-rich-media.html"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H131",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "zmaticoo-docs.html",
+        "zmaticoo-app.js"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H135",
+      "missing_evidence_or_feature": "Add the documented x.adroll.com directory root using existing suffix semantics. Preserve core-only video callbacks and existing d.adroll.com conversion selection. No new protocol validation is claimed.",
+      "sources_checked": [
+        "adroll-csp.html"
+      ],
+      "next_artifact_needed": "AdRoll video callback wire specification or attributable producer for these exact routes."
+    },
+    {
+      "endpoint_or_task": "H157",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "smadex-index.txt",
+        "smadex-01.md",
+        "smadex-02.md",
+        "smadex-03.md",
+        "smadex-04.md",
+        "smadex-05.md",
+        "smadex-06.md",
+        "smadex-07.md",
+        "smadex-08.md",
+        "smadex-09.md",
+        "smadex-10.md",
+        "smadex-11.md",
+        "smadex-12.md",
+        "smadex-13.md",
+        "smadex-14.md",
+        "smadex-15.md"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H177",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "inmobi-vast.pdf"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H184",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "smadex-index.txt",
+        "smadex-01.md",
+        "smadex-02.md",
+        "smadex-03.md",
+        "smadex-04.md",
+        "smadex-05.md",
+        "smadex-06.md",
+        "smadex-07.md",
+        "smadex-08.md",
+        "smadex-09.md",
+        "smadex-10.md",
+        "smadex-11.md",
+        "smadex-12.md",
+        "smadex-13.md",
+        "smadex-14.md",
+        "smadex-15.md"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H203",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "mintegral-docs.html"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H220",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "smadex-index.txt",
+        "smadex-01.md",
+        "smadex-02.md",
+        "smadex-03.md",
+        "smadex-04.md",
+        "smadex-05.md",
+        "smadex-06.md",
+        "smadex-07.md",
+        "smadex-08.md",
+        "smadex-09.md",
+        "smadex-10.md",
+        "smadex-11.md",
+        "smadex-12.md",
+        "smadex-13.md",
+        "smadex-14.md",
+        "smadex-15.md"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H221",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "inmobi-vast.pdf"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H229",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "smadex-index.txt",
+        "smadex-01.md",
+        "smadex-02.md",
+        "smadex-03.md",
+        "smadex-04.md",
+        "smadex-05.md",
+        "smadex-06.md",
+        "smadex-07.md",
+        "smadex-08.md",
+        "smadex-09.md",
+        "smadex-10.md",
+        "smadex-11.md",
+        "smadex-12.md",
+        "smadex-13.md",
+        "smadex-14.md",
+        "smadex-15.md"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    },
+    {
+      "endpoint_or_task": "H237",
+      "missing_evidence_or_feature": "No independent exact-endpoint collector field contract was established. Keep the assigned transport core-only; do not reuse a neighboring API or loader schema.",
+      "sources_checked": [
+        "smadex-index.txt",
+        "smadex-01.md",
+        "smadex-02.md",
+        "smadex-03.md",
+        "smadex-04.md",
+        "smadex-05.md",
+        "smadex-06.md",
+        "smadex-07.md",
+        "smadex-08.md",
+        "smadex-09.md",
+        "smadex-10.md",
+        "smadex-11.md",
+        "smadex-12.md",
+        "smadex-13.md",
+        "smadex-14.md",
+        "smadex-15.md"
+      ],
+      "next_artifact_needed": "Exact regional tracker producer or vendor route table covering path slots, required/optional parameters, encoding and event conditions."
+    }
+  ],
+  "searches": [
+    {
+      "queries": [
+        "site:docs.smaato.com \"video/event\"",
+        "site:docs.iqm.com \"postback.iqm.com\"",
+        "site:smadex.com \"hyperad\"",
+        "site:developers.inmobi.com \"tracking.inmobi.com\"",
+        "site:help.adroll.com \"x.adroll.com\"",
+        "site:help.remerge.io \"eu5.remerge.events\""
+      ],
+      "result": "AdRoll exact-host attribution found; other reviewed sources do not establish the assigned collector contracts."
+    }
+  ],
+  "limitations": [
+    "All baseline hosts are assigned a disposition. Redacted route shapes are triage data, not manifest selectors.",
+    "No private payloads, identifiers or captured query values are included.",
+    "A negative source search does not establish that no private or unindexed vendor specification exists."
+  ]
+}
