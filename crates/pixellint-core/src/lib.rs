@@ -858,6 +858,18 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/shopify-monorail",
         include_str!("../rulepacks/vendor/shopify-monorail.json"),
     ),
+    (
+        "vendor/the-trade-desk-static",
+        include_str!("../rulepacks/vendor/the-trade-desk-static.json"),
+    ),
+    (
+        "vendor/rtbhouse-gtm-tags",
+        include_str!("../rulepacks/vendor/rtbhouse-gtm-tags.json"),
+    ),
+    (
+        "vendor/weborama-wcm-js-impression",
+        include_str!("../rulepacks/vendor/weborama-wcm-js-impression.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

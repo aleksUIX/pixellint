@@ -1,0 +1,101 @@
+{
+  "id": "vendor/rtbhouse-gtm-tags",
+  "display_name": "RTB House GTM retargeting tags",
+  "description": "Warning-only completeness for the commit-pinned GTM iframe /tags producer on its three published region choices. Repeated IDs and custom tag content stay opaque. Auction impression and win callbacks are excluded.",
+  "vendor": "rtbhouse",
+  "source_level": "official_template",
+  "docs": "https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl",
+  "match": {
+    "hosts": [
+      "ams.creativecdn.com",
+      "us.creativecdn.com",
+      "asia.creativecdn.com"
+    ],
+    "paths": [
+      "/tags"
+    ],
+    "query_params_values": [
+      {
+        "name": "type",
+        "values": [
+          "iframe"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "type",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "Pinned GTM iframe transport marker.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "iframe"
+        ]
+      }
+    },
+    {
+      "name": "id",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "Repeated tag strings are opaque. Custom values and reused local IDs may contain arbitrary characters or create empty repeated values; no field grammar or multiplicity bound is inferred.",
+      "allow_empty": true
+    },
+    {
+      "name": "su",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "The GTM source emits the encoded page URL or an empty string.",
+      "allow_empty": true
+    },
+    {
+      "name": "sr",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "The GTM source emits the encoded referrer or an empty string.",
+      "allow_empty": true
+    },
+    {
+      "name": "ts",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "The source appends getTimestampMillis, but unescaped custom tag values can create additional arbitrary or empty ts occurrences. Only presence is advised; no value grammar or duplicate-selection policy is inferred.",
+      "allow_empty": true
+    },
+    {
+      "name": "ncm",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional value emitted by the other-only tag branch; not a global event discriminator.",
+      "allow_empty": true
+    },
+    {
+      "name": "cd",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional order-status deduplication setting. Custom tag values remain opaque and no cross-tag grammar is imposed.",
+      "allow_empty": true
+    }
+  ],
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl",
+        "description": "The GTM template injects a hidden iframe whose src produces a GET."
+      }
+    ]
+  }
+}

@@ -309336,6 +309336,1017 @@
         "harness": "crates/pixellint-core/tests/round2_source_profiles.rs",
         "status": "Passed: 161 focused fixture cases, five existing Clipflip regressions, all five full golden/parity harness tests, offline source proof, formatting and core clippy all-targets/all-features. Full workspace suite and shared registration digests are integration-owned."
       }
+    },
+    {
+      "id": "vendor/the-trade-desk-static",
+      "vendor": "thetradedesk",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/the-trade-desk-static.json",
+      "manifest_sha256": "dd5fb23817523b0f04fe3992dc6a1b786082e5c8be129d212d360fd581e0eae2",
+      "match": {
+        "hosts": [
+          "insight.adsrvr.org"
+        ],
+        "paths": [
+          "/track/pxl/",
+          "/track/conv/",
+          "/track/envt/",
+          "/track/imp/"
+        ]
+      },
+      "sources_read": [
+        {
+          "url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic",
+          "read_at": "2026-10-25T20:44:26.558040+00:00",
+          "access_result": "read pinned public documentation or SDK source; source outputs generated offline with no network",
+          "sha256": "550aff06ea965bbb7be403e1a62d4a70ba197f21f65c3f88866deb4f89c35104"
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "static_kind",
+          "contract": {
+            "name": "static_kind",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Exact static tag route extracted from the path."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "adv",
+          "contract": {
+            "name": "adv",
+            "requirement": "required",
+            "severity": "warning",
+            "description": "Documented advertiser identifier. Issuance and account ownership remain external.",
+            "format": {
+              "kind": "non_empty"
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ct",
+          "contract": {
+            "name": "ct",
+            "requirement": "required",
+            "severity": "warning",
+            "description": "The documented wire value combines the fixed prefix 0, a colon, and an opaque tracking-tag identifier. The Integer table label applies to the prefix, not the complete compound value.",
+            "format": {
+              "kind": "regex",
+              "pattern": "^0:[\\s\\S]+$"
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "fmt",
+          "contract": {
+            "name": "fmt",
+            "requirement": "required",
+            "severity": "warning",
+            "description": "Documented static pixel cookie-sync choice: 3 enables syncing and 4 disables it.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "3",
+                "4"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "v",
+          "contract": {
+            "name": "v",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional revenue value uses a period rather than a comma. No amount minimum or maximum is inferred.",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "vf",
+          "contract": {
+            "name": "vf",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional currency-code string. Reporting uses advertiser currency; no account-currency or closed value constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "orderid",
+          "contract": {
+            "name": "orderid",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional opaque order identifier.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "td_values",
+          "contract": {
+            "name": "td_values",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Custom values beyond the documented 64-character stored limit receive an advisory, not a receiver-rejection claim.",
+            "name_pattern": "^td(?:[1-9]|10)$",
+            "max_length": 64,
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "gdpr",
+          "contract": {
+            "name": "gdpr",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional destination privacy indicator; core retains its canonical signal validation.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "gdpr_consent",
+          "contract": {
+            "name": "gdpr_consent",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional canonical TC String; core retains structural and applicability checks.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "gpp_consent",
+          "contract": {
+            "name": "gpp_consent",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional GPP carrier documented for static tags.",
+            "format": {
+              "kind": "gpp"
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "dpop",
+          "contract": {
+            "name": "dpop",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional comma-separated processing policies. LDU is the only currently documented value.",
+            "format": {
+              "kind": "regex",
+              "pattern": "^LDU(?:,LDU)*$"
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "dpor",
+          "contract": {
+            "name": "dpor",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional US region syntax. Geographic eligibility is external.",
+            "format": {
+              "kind": "regex",
+              "pattern": "^US-[A-Z]{2}$"
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "http.params",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "required",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic",
+            "description": "The published static image tag produces a browser GET."
+          }
+        },
+        {
+          "scope": "rules",
+          "name": "vendor.the-trade-desk-static.legacy_route",
+          "contract": {
+            "kind": "forbid_value_pattern",
+            "pattern": "^(?:conv|envt|imp)$",
+            "params": [
+              "static_kind"
+            ],
+            "code": "vendor.the-trade-desk-static.legacy_route",
+            "severity": "warning",
+            "message": "The vendor documents this exact static tag type as deprecated but still in use."
+          }
+        }
+      ],
+      "independent_source_cases": 5,
+      "engine_derived_oracle_cases": 0,
+      "original_oracle_cases": 34,
+      "missing_requirements": [
+        {
+          "requirement": "Other Trade Desk transports remain in existing packs or uncontracted.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic"
+        },
+        {
+          "requirement": "Account-issued advertiser and tracking IDs, delivery, reporting truncation units and geographic/privacy context remain external.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic"
+        },
+        {
+          "requirement": "Optional vf and custom values remain open; no receiver duplicate-selection policy is inferred.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic"
+        }
+      ],
+      "test": {
+        "status": "passed focused source and selector tests plus complete golden suite",
+        "harness": "crates/pixellint-core/tests/rulepack_golden.rs",
+        "additional_harnesses": [
+          "crates/pixellint-core/tests/round2_lane03_profiles.rs",
+          "crates/pixellint-core/tests/manifest_query_value_selectors.rs"
+        ],
+        "full_integrated_validation": "coordinator-owned and pending"
+      },
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/the-trade-desk-static.json": "dd5fb23817523b0f04fe3992dc6a1b786082e5c8be129d212d360fd581e0eae2",
+        "docs/reviews/the-trade-desk-static-20261025.json": "696f5e2f87b7b213ac7b5ed5fcde6cc035da07e03ed96b04dc6ef11905e4f7dd",
+        "tools/source-oracles/round2-lane-03.mjs": "266a46e9b51b448083cce18d8c35c8cb8241a1f6b68a0361022e5c7f831085b4",
+        "crates/pixellint-core/tests/round2_lane03_profiles.rs": "6c7ebcbbe7acde9a1a3ac6e93249cc29721f586e591b684ece4012cc82ff3d18",
+        "fixtures/vendor-the-trade-desk-static/compound-opaque-id.txt": "19178b571727253fbe6bd1c511be92c80cb058bffd582df3ac027a6ac6cca55e",
+        "fixtures/vendor-the-trade-desk-static/different-case.txt": "d5f8a37e010dc3c527dc59c7eef37fe3f345d4c4a4e1e414cac7299467dca863",
+        "fixtures/vendor-the-trade-desk-static/empty-adv.txt": "2cbcf0ec1bf252e4424a7c2825fa2be96b40b01825a2a38f51b2d286b8171038",
+        "fixtures/vendor-the-trade-desk-static/empty-ct.txt": "aedbd0ef125dd3d434bb79413227e036f9886f4d2e1fadbaec342c76cffef5fd",
+        "fixtures/vendor-the-trade-desk-static/empty-fmt.txt": "bf711c0b497ce9e7df3132a9f4540e7cb64b1c3e699a0271d82e79d27bfc320e",
+        "fixtures/vendor-the-trade-desk-static/extra-path.txt": "0c1720e4173ccada20375bfb67841ac9e38c65e707750f240fb4abbd73a3a8bc",
+        "fixtures/vendor-the-trade-desk-static/fragment-cannot-supply-markers.txt": "2f4211f2febcf4a97c40a0c6017d6c762ff326d13cef3a91fff9f20ca4afd9ae",
+        "fixtures/vendor-the-trade-desk-static/invalid-ct-0.txt": "2d0a8e0780c506d734bb845795defff8f77c37b64f3b56ab140c3fad4d3c4223",
+        "fixtures/vendor-the-trade-desk-static/invalid-ct-1.txt": "c15e0f1fc68afcfeef5dfe64dcb63c921daaac6a4f8c5eaae998228ae9f9d2ef",
+        "fixtures/vendor-the-trade-desk-static/invalid-ct-2.txt": "5c2f2b4163e60ef19293011188e02b3788b10b98b60671794be80fb10f396e75",
+        "fixtures/vendor-the-trade-desk-static/invalid-dpop-5.txt": "c87471a28f2685349897ce3dfaae4b618b5a520a6cc461e9482f0c845a5279d1",
+        "fixtures/vendor-the-trade-desk-static/invalid-dpor-6.txt": "7f687962f4dd636631671ab1d460da022ec6675ea4322a3303ac959b9d7e22a2",
+        "fixtures/vendor-the-trade-desk-static/invalid-fmt-3.txt": "017ee1171562ac6118a75f46f02cb7c13c3cd245c86d810fe1e2e537bffe4290",
+        "fixtures/vendor-the-trade-desk-static/invalid-v-4.txt": "53f1c72a77e2881346b551ac57357e09a67ceb4cce85e87b6fefad9368753b53",
+        "fixtures/vendor-the-trade-desk-static/lookalike-host.txt": "4f944ff2c4f87a761c06fb452d6e79bb7a52f7a4fa35ffc4fcc80a409319a3f8",
+        "fixtures/vendor-the-trade-desk-static/manifest.json": "77d84f56e9a2777dff939be2f5ff40af68cacc880c7f687d3d349482f35dbc06",
+        "fixtures/vendor-the-trade-desk-static/missing-adv.txt": "d594baf80ab20812db5754599a114a1c893695aa75449689a09a99cf06a17b35",
+        "fixtures/vendor-the-trade-desk-static/missing-ct.txt": "fa98dffe3c54539c2aff51180a80f5edcdcdc2ea6e4f2c6f8e5f7e17a4e35222",
+        "fixtures/vendor-the-trade-desk-static/missing-fmt.txt": "e5d6d18e00f913bd72807b08e6c288eaa2a9674ed3b56ddb78569561ad1fec6d",
+        "fixtures/vendor-the-trade-desk-static/negative-revenue-allowed.txt": "1f83f26a72d983196d6917416404f9318ba915c1644b7389b65082d39b6ae91c",
+        "fixtures/vendor-the-trade-desk-static/optional-open-values.txt": "20db9230783c31d29886ade92bc4ea547e4845b93773e6691ad14d679560ef60",
+        "fixtures/vendor-the-trade-desk-static/query-cannot-change-kind.txt": "d127539fc2d884788a19d5b2005f76121f228a43311f2a517728404dd455a997",
+        "fixtures/vendor-the-trade-desk-static/query-cannot-spoof-endpoint.txt": "cff34aa180032f4a542623ed86caab39c84581e8da1a540548edc1bcd8646674",
+        "fixtures/vendor-the-trade-desk-static/related-opaque-callback.txt": "dd9c85af5aecf5d2dd9d1dbec5add77aa9af1cdc85c76291fbea1f188f046ed6",
+        "fixtures/vendor-the-trade-desk-static/slashless-route.txt": "02b160fb82761e49cbef36c61ed8b76c838b64458dd176308b9675df2764dc97",
+        "fixtures/vendor-the-trade-desk-static/source-cases.json": "54ece1b8b7d8c462024803f3f72143022a0fdf48bad46b399a592bff1e49f774",
+        "fixtures/vendor-the-trade-desk-static/source-complete-request.json": "e98e7ed4a2f51957707c7d2cbfa50642510f5f93a595d8b710c30ea1861654db",
+        "fixtures/vendor-the-trade-desk-static/source-conv-template.txt": "892e390a450e5505376244fdd92a921a9488a10b58f3d082ab329e5fc9433b37",
+        "fixtures/vendor-the-trade-desk-static/source-dynamic-template.txt": "feb7b5e887dba9ac5677adaccc16eb2c3bece03af664812c758df1cb320feaaf",
+        "fixtures/vendor-the-trade-desk-static/source-envt-template.txt": "a714af77f36fbde88ab1eb3cc3fe9b632e381ec325b81945045ca895a6bfa599",
+        "fixtures/vendor-the-trade-desk-static/source-imp-template.txt": "29a0eb4e30c011ac6170f6c5c24285cbb05e644e4874c06702ff005fddc27c28",
+        "fixtures/vendor-the-trade-desk-static/source-pxl-template.txt": "206eede4db1ed02d386b71221cb56206b47a6923b4f66ed3feeb11ae5e2189f6",
+        "fixtures/vendor-the-trade-desk-static/source-vast-tracker.txt": "206eede4db1ed02d386b71221cb56206b47a6923b4f66ed3feeb11ae5e2189f6",
+        "fixtures/vendor-the-trade-desk-static/td64-boundary.txt": "67125f9d5352699b73643c1384fc1d2e394e00dd279de99f0d146cd4a6873ae2",
+        "fixtures/vendor-the-trade-desk-static/td65-stored-limit.txt": "713ac8ac9bdcd7fe4d87a8161a195de7d1790b476a1c72f76418e84c0cf52f37",
+        "fixtures/vendor-the-trade-desk-static/wrong-request-method.json": "91021bff6424b043e3737acafe5dd3aa3b625cab04ad0cb1e71996fe20ca71d1"
+      }
+    },
+    {
+      "id": "vendor/rtbhouse-gtm-tags",
+      "vendor": "rtbhouse",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/rtbhouse-gtm-tags.json",
+      "manifest_sha256": "50a2dd1d2bed662c550684e5e5f7ee3bc7c3492792a2edb69cfaab7e09bc35e6",
+      "match": {
+        "hosts": [
+          "ams.creativecdn.com",
+          "us.creativecdn.com",
+          "asia.creativecdn.com"
+        ],
+        "paths": [
+          "/tags"
+        ],
+        "query_params_values": [
+          {
+            "name": "type",
+            "values": [
+              "iframe"
+            ]
+          }
+        ]
+      },
+      "sources_read": [
+        {
+          "url": "https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl",
+          "read_at": "2026-10-25T20:44:26.558040+00:00",
+          "access_result": "read pinned public documentation or SDK source; source outputs generated offline with no network",
+          "sha256": "a31899759ba794a1928e8c83cd016af8b303a174c12d4b7ccc958858910a9a5c",
+          "git_commit": "a0d161cf4a144ff11bdcaae218f03f27c9ca2197"
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "type",
+          "contract": {
+            "name": "type",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Pinned GTM iframe transport marker.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "iframe"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "id",
+          "contract": {
+            "name": "id",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Repeated tag strings are opaque. Custom values and reused local IDs may contain arbitrary characters or create empty repeated values; no field grammar or multiplicity bound is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "su",
+          "contract": {
+            "name": "su",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The GTM source emits the encoded page URL or an empty string.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "sr",
+          "contract": {
+            "name": "sr",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The GTM source emits the encoded referrer or an empty string.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ts",
+          "contract": {
+            "name": "ts",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The source appends getTimestampMillis, but unescaped custom tag values can create additional arbitrary or empty ts occurrences. Only presence is advised; no value grammar or duplicate-selection policy is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ncm",
+          "contract": {
+            "name": "ncm",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional value emitted by the other-only tag branch; not a global event discriminator.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "cd",
+          "contract": {
+            "name": "cd",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional order-status deduplication setting. Custom tag values remain opaque and no cross-tag grammar is imposed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "http.params",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "required",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl",
+            "description": "The GTM template injects a hidden iframe whose src produces a GET."
+          }
+        }
+      ],
+      "independent_source_cases": 15,
+      "engine_derived_oracle_cases": 0,
+      "original_oracle_cases": 37,
+      "missing_requirements": [
+        {
+          "requirement": "No contract for /ad/imp-tags, /ad/win-notify or /imp-delivery.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl"
+        },
+        {
+          "requirement": "Custom tags and repeated IDs remain opaque. Template UI hash/local-ID conventions do not define a receiver-wide grammar.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl"
+        },
+        {
+          "requirement": "Backend acceptance, attribution and account-issued identifiers remain external.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl"
+        }
+      ],
+      "test": {
+        "status": "passed focused source and selector tests plus complete golden suite",
+        "harness": "crates/pixellint-core/tests/rulepack_golden.rs",
+        "additional_harnesses": [
+          "crates/pixellint-core/tests/round2_lane03_profiles.rs",
+          "crates/pixellint-core/tests/manifest_query_value_selectors.rs"
+        ],
+        "full_integrated_validation": "coordinator-owned and pending"
+      },
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/rtbhouse-gtm-tags.json": "50a2dd1d2bed662c550684e5e5f7ee3bc7c3492792a2edb69cfaab7e09bc35e6",
+        "docs/reviews/rtbhouse-gtm-tags-20261025.json": "ed235f4ddbbb8208efdf6a9f2647e1211bbdeac39cd40957fdb103e3e41a53ee",
+        "tools/source-oracles/round2-lane-03.mjs": "266a46e9b51b448083cce18d8c35c8cb8241a1f6b68a0361022e5c7f831085b4",
+        "crates/pixellint-core/tests/round2_lane03_profiles.rs": "6c7ebcbbe7acde9a1a3ac6e93249cc29721f586e591b684ece4012cc82ff3d18",
+        "fixtures/vendor-rtbhouse-gtm-tags/bare-conflicting-type.txt": "a8dda709dc43ac0c23cd1e90b6129aeae53915b98dd71b88124695a20d14d58a",
+        "fixtures/vendor-rtbhouse-gtm-tags/conflicting-type.txt": "36e61ca50f9bdc263ec88f727bd006242cf94bd3f4f57ce05714ef754700e174",
+        "fixtures/vendor-rtbhouse-gtm-tags/empty-ts.txt": "cc53943bad8501ce9eedfe7237a8e85353e48d3d7006c6be4a1b837091c8f8e3",
+        "fixtures/vendor-rtbhouse-gtm-tags/fragment-cannot-supply-markers.txt": "c8e732ad3e0f8189ff5746af385e9e4343f4acff5e2d965c14aaf8f82ca87ac2",
+        "fixtures/vendor-rtbhouse-gtm-tags/imp-delivery-excluded.txt": "90643495ea3f15bb619b2799a0198b445f449e23ad9cdb47ed2586122d58404a",
+        "fixtures/vendor-rtbhouse-gtm-tags/imp-tags-excluded.txt": "ecebce3487afc1e5c7ef91bc5dbd5f75b05bb79c859cf4da08b2156c69ad1786",
+        "fixtures/vendor-rtbhouse-gtm-tags/lookalike-host.txt": "8b63fc15e844cb11deb27ef62d6c21afb6c87360c113da15cd6a5acb185b844e",
+        "fixtures/vendor-rtbhouse-gtm-tags/manifest.json": "ec2404c892cb4231c98a5676eef78489a0a2b242b78f979a68c5d3cb196de325",
+        "fixtures/vendor-rtbhouse-gtm-tags/missing-id.txt": "48a06c8a551f44996e1aac41db5d867865eff12b073a1d4899b9884ac441862e",
+        "fixtures/vendor-rtbhouse-gtm-tags/missing-sr.txt": "f857eda19cc3f327611773b65bf3f88888d37a4a8b89e798cf2bb29e966a8b7b",
+        "fixtures/vendor-rtbhouse-gtm-tags/missing-su.txt": "248ff446c629f66339ce583cbb1a0c4c14d7a83fff99807768e0fb651fd256d7",
+        "fixtures/vendor-rtbhouse-gtm-tags/missing-ts.txt": "51e4ac5e5553e54004ef8c1c22e8713a88e246d0aa25adab3bb7281de6e5b36a",
+        "fixtures/vendor-rtbhouse-gtm-tags/missing-type.txt": "6d05235a27f803799732ecf3d313881d4fefa29c3dc25e9f04641e3be6561f46",
+        "fixtures/vendor-rtbhouse-gtm-tags/open-custom-id.txt": "50b3b644e9b5f9537823f4cfec3c185bfaf2298868773566b4293a929f1f8261",
+        "fixtures/vendor-rtbhouse-gtm-tags/open-ts-text.txt": "e74914ef679db602fa5d17a4aecabf318d1a0e775590a2e75bc262f535d1c265",
+        "fixtures/vendor-rtbhouse-gtm-tags/query-cannot-spoof-endpoint.txt": "0a870f244de88ccf85b4d06bf54977fe101b46f728a8e6dfdbc56fdee46a70a9",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-cases.json": "192d655b98905091be9c81628b85a0e84fe68744d71ca0db57f327a934412504",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-complete-request.json": "7aa10cf5d7bb2d290ce0e088ccf25843802c3dedea36fdbdd16b99c41dab1da9",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-custom-asia.txt": "da050765528e20f715ee827903b6e85b5dd6a5c28ba6fb01dd7986f195197df0",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-custom-empty-ts-collision.txt": "40213ae9939ff0aeaac01da4b42b7bb24d791b2ca681fd76281f20709e45da0b",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-custom-query-syntax.txt": "471b9db8c67a4f75b1867104e6b6460d0a04a2cc21324843f48df3e3a887d55d",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-custom-ts-collision.txt": "1344ab8e3058f0def80ee58966a6be8a964a5913e52a068f21910c5ba30a21ae",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-empty-context.txt": "82c9b9d919ec47850754a7a4b4658be6d7cb0d74bdcd77fe9f3a6358213b1d23",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-empty-offer.txt": "68bbd40c919863e8e43ad8d31b7adae3dd8cf9452d57719630d98fd41b249c51",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-home-ams.txt": "b870ac2765493342b166320781a475caf69967067008076687e6ba72b67dc3f4",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-lid-only.txt": "68754b1a9108bd137a3632af0c6a7ef37bd8a8229cc1036dddcc415f55191d67",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-many-us.txt": "24dfdf6b0904c9db8fe27b3a03a5fbc98e87e590abb769a4f56f4157ac90409e",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-opaque-stored-lid.txt": "d55e4cdd9f907245abdd757af3b8eaabadf97275276e9c7c7a50cf1590919ffa",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-orderstatus-default.txt": "8a602475193b03b3f4530eb1f0beb15702b36d00aea9f67f32eb4a40a566d5bf",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-orderstatus-false.txt": "47f09e87906d4b4d6e1309fb326602629ce2e977c61cc2befc640a83f67ab2ec",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-orderstatus-true.txt": "95ef1ddfc87f7290cdb35b171cbab1eec20c6f447bfe2e27c377317c553a00d9",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-other-ncm.txt": "4ae659035455c9ea2277c69cf30c186342909e4a9d89abe8cd3589d27386d87a",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-vast-tracker.txt": "b870ac2765493342b166320781a475caf69967067008076687e6ba72b67dc3f4",
+        "fixtures/vendor-rtbhouse-gtm-tags/source-zero-timestamp.txt": "de1bc6096ce0d632bc8451aa6171ef1e272492534fb08ea6ce1115136960e94c",
+        "fixtures/vendor-rtbhouse-gtm-tags/trailing-slash-excluded.txt": "0f0d81a85e854c50126e490d39953178345bb8e2ac08335f1c89c8ab473feead",
+        "fixtures/vendor-rtbhouse-gtm-tags/unpublished-sibling-region.txt": "f36f596f9d7d2eaf079186b5c1489444035c051316eb9143747b66d08c8c6af1",
+        "fixtures/vendor-rtbhouse-gtm-tags/win-notify-excluded.txt": "a82a5d7607c5be6cbe6ab5e2fb03a6d526a1703302cd33803c95875726121d85",
+        "fixtures/vendor-rtbhouse-gtm-tags/wrong-request-method.json": "f4b3fd384f0288d27a8b6fe1e6e99d5a8ff4136599e77c7b587f3950d03044a8",
+        "fixtures/vendor-rtbhouse-gtm-tags/wrong-type.txt": "598b1d1f015e074b2fb3ed7c1a2a7bac7d4acc5718affb0c49c0069b350fcea1"
+      }
+    },
+    {
+      "id": "vendor/weborama-wcm-js-impression",
+      "vendor": "weborama",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/weborama-wcm-js-impression.json",
+      "manifest_sha256": "b099123e866ff6584ed6275f6d8cebddc660e8bf294ad7cdb0a7e3ee0fed319a",
+      "match": {
+        "hosts": [
+          "wcmvideotutorials.solution.weborama.fr"
+        ],
+        "paths": [
+          "/fcgi-bin/dispatch.fcgi"
+        ],
+        "query_params_values": [
+          {
+            "name": "a.A",
+            "values": [
+              "im"
+            ]
+          },
+          {
+            "name": "a.hr",
+            "values": [
+              "js"
+            ]
+          }
+        ]
+      },
+      "sources_read": [
+        {
+          "url": "https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js",
+          "read_at": "2026-10-25T20:44:26.558040+00:00",
+          "access_result": "read pinned public documentation or SDK source; source outputs generated offline with no network",
+          "sha256": "988281412a86dddce13e30b5e2a5a15b05e9e0e7f0caa7be2137ecd7f4fe3a9b"
+        },
+        {
+          "url": "https://doc.weborama.com/WCM/WCM_Tag_Integration_Guide.pdf",
+          "read_at": "2026-10-25T20:44:26.558040+00:00",
+          "sha256": "90c5e969adcfe0744fcb77044affd3fb48b1d0e87d02bca7283abe7d1f3bf0b5",
+          "scope": "Official five-page guide names only wcmvideotutorials.solution.weborama.fr for this dispatch template. The Russian host is excluded."
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "a.A",
+          "contract": {
+            "name": "a.A",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Impression marker required by this source-profile selector.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "im"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.hr",
+          "contract": {
+            "name": "a.hr",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "JS response marker required by this source-profile selector.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "js"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.si",
+          "contract": {
+            "name": "a.si",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source account_id is concatenated without native numeric validation. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.te",
+          "contract": {
+            "name": "a.te",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source tracking_element_id is concatenated without native numeric validation. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.ra",
+          "contract": {
+            "name": "a.ra",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source random placeholder value. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.agi",
+          "contract": {
+            "name": "a.agi",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source action-group value. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ca",
+          "contract": {
+            "name": "ca",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source cache-buster value. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.wi",
+          "contract": {
+            "name": "a.wi",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source width placeholder. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.he",
+          "contract": {
+            "name": "a.he",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source height placeholder. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.sh",
+          "contract": {
+            "name": "a.sh",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source screen-height placeholder. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.sw",
+          "contract": {
+            "name": "a.sw",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "Source screen-width placeholder. Presence is a producer advisory; empty values and opaque types remain allowed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.de",
+          "contract": {
+            "name": "g.de",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The pinned source emits this flag from a Boolean expression.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.ism",
+          "contract": {
+            "name": "g.ism",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The pinned source emits this flag from a Boolean expression.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.we",
+          "contract": {
+            "name": "a.we",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The pinned source emits this flag from a Boolean expression.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.pn",
+          "contract": {
+            "name": "g.pn",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.puid",
+          "contract": {
+            "name": "g.puid",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.ycp",
+          "contract": {
+            "name": "a.ycp",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.hd",
+          "contract": {
+            "name": "a.hd",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.did",
+          "contract": {
+            "name": "g.did",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "a.pc",
+          "contract": {
+            "name": "a.pc",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.rst",
+          "contract": {
+            "name": "g.rst",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.rtbpp",
+          "contract": {
+            "name": "g.rtbpp",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.rtbbp",
+          "contract": {
+            "name": "g.rtbbp",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.pu",
+          "contract": {
+            "name": "g.pu",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "g.ru",
+          "contract": {
+            "name": "g.ru",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "gdpr_cmp_failure",
+          "contract": {
+            "name": "gdpr_cmp_failure",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "gdpr",
+          "contract": {
+            "name": "gdpr",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "gdpr_consent",
+          "contract": {
+            "name": "gdpr_consent",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional source field or branch value. No receiver-wide presence, numeric bound, URL shape or account-state constraint is inferred.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "http.params",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "required",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET"
+              ]
+            },
+            "severity": "warning",
+            "source_level": "official_template",
+            "doc": "https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js",
+            "description": "The pinned JS producer inserts a script src request using GET."
+          }
+        }
+      ],
+      "independent_source_cases": 8,
+      "engine_derived_oracle_cases": 0,
+      "original_oracle_cases": 43,
+      "missing_requirements": [
+        {
+          "requirement": "The Russian host and all non-impression or non-JS actions remain excluded.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js"
+        },
+        {
+          "requirement": "Native input types and numeric bounds are not established by concatenation and parseFloat.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js"
+        },
+        {
+          "requirement": "Receiver rejection policy, optional branches, account validity and delivery remain external.",
+          "reason": "Outside the pinned source profile or requires receiver/account context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js"
+        }
+      ],
+      "test": {
+        "status": "passed focused source and selector tests plus complete golden suite",
+        "harness": "crates/pixellint-core/tests/rulepack_golden.rs",
+        "additional_harnesses": [
+          "crates/pixellint-core/tests/round2_lane03_profiles.rs",
+          "crates/pixellint-core/tests/manifest_query_value_selectors.rs"
+        ],
+        "full_integrated_validation": "coordinator-owned and pending"
+      },
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/weborama-wcm-js-impression.json": "b099123e866ff6584ed6275f6d8cebddc660e8bf294ad7cdb0a7e3ee0fed319a",
+        "docs/reviews/weborama-wcm-js-impression-20261025.json": "7ba4662e71dd80fd7e8a43393a5deeb0b5e2ecb46ebc6f48439df2a106ad3abb",
+        "tools/source-oracles/round2-lane-03.mjs": "266a46e9b51b448083cce18d8c35c8cb8241a1f6b68a0361022e5c7f831085b4",
+        "crates/pixellint-core/tests/round2_lane03_profiles.rs": "6c7ebcbbe7acde9a1a3ac6e93249cc29721f586e591b684ece4012cc82ff3d18",
+        "fixtures/vendor-weborama-wcm-js-impression/bare-conflicting-marker.txt": "48f437ab081ab8827e6d9c2d64271f3e736d546695896d731e2a8a760acba7de",
+        "fixtures/vendor-weborama-wcm-js-impression/click-excluded.txt": "319578da7c1c35e88b39d0c7b75bf7b94d73fdce11d17e9b91cc8e1e90b59d67",
+        "fixtures/vendor-weborama-wcm-js-impression/configured-sibling-excluded.txt": "88c74613cb5d644281f325ec7d5bc078d5e7140e09c55583a445e569e7237ff5",
+        "fixtures/vendor-weborama-wcm-js-impression/conflicting-action.txt": "82d05cd5dfc69340bc598c1b6aa74386d7ad16e6c839fa52a11e23227953315d",
+        "fixtures/vendor-weborama-wcm-js-impression/conflicting-response.txt": "ddfa798288ceb2b673cb25753a45f202f1c0264cb8f3ef53a629735afb0c1cf7",
+        "fixtures/vendor-weborama-wcm-js-impression/empty-a-we.txt": "42738bdd04a35590f84947e053ce21b6949d3f2f44bf1a7241859edbf0c97852",
+        "fixtures/vendor-weborama-wcm-js-impression/empty-g-de.txt": "e97ddcce57e84b5daa2010808f1f2f04a16d02e6c2c20de1b1a495fc510f2a80",
+        "fixtures/vendor-weborama-wcm-js-impression/empty-g-ism.txt": "62f011c7da1fe35171a6c44b41b2369b5ffcc538f3f88dfe4819654f12bec745",
+        "fixtures/vendor-weborama-wcm-js-impression/fragment-cannot-supply-markers.txt": "f73ac38e1814d68bcc7872bbd332ef761dd7d4767012ffcb8e9bfe6a0b623c42",
+        "fixtures/vendor-weborama-wcm-js-impression/invalid-a-we-2.txt": "71051c69ccd5518fb0c84740f4daa1c67f9a5895a564bf38fb86cfc5e8de2ecb",
+        "fixtures/vendor-weborama-wcm-js-impression/invalid-g-de-0.txt": "28e7a3e76e0923ca058f6b31c2cda1bcb76b50638edf7004e5d6996e91e6eb63",
+        "fixtures/vendor-weborama-wcm-js-impression/invalid-g-ism-1.txt": "4ca5026499bf87718ae08d59ba56f2a1939192264c32fde683b7a9d8a5ba5874",
+        "fixtures/vendor-weborama-wcm-js-impression/lookalike-host.txt": "fb33bee951ad5ecca6f11313803b2d5cd2f38370c6d9dd85c46e8b793c9169b4",
+        "fixtures/vendor-weborama-wcm-js-impression/manifest.json": "09bf80a5a17b7b78ed8b0e9105877a62933022f2319524dd9e0fc7fb3db25f3e",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-agi.txt": "76b694b1102347dccb9ed0595f057e6f30d8b007fe947357dae4706dea03efd1",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-he.txt": "84cf6cb57e02e1c3aff3a3f0033832b500936eb327e0d317ebb95abf438cebba",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-ra.txt": "46433c3c19a6d761af9531b8d6fddc866cc82801810c62efa771e63607a92f62",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-sh.txt": "3e90a47670e6e6de6e73cd47ba1397b7d786dcc395241c32d53ce5611f799bc0",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-si.txt": "2282c296bc0964bf71da748f697f2a5308e1f16537045a20558697c34e8c9bfe",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-sw.txt": "9e27e3d2f25a0cb572156863ab59858f275b70dea71ac424b80354b4df540581",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-te.txt": "6eadc36670fea9f597ffadb3524c044cefe2d660524066d0572609daed9a4985",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-we.txt": "733285693d089ed028918bfb4a92903746ffdd72b99e99f15c7f387adcd4a842",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-a-wi.txt": "d5fec45cbc8c30ec329bf50a0b1eacb3d7d4c844d34ced27d606b43ce6b2783d",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-action-marker.txt": "0e40babed8b4ac2bb9fc265c1e5cc642c6a1b0ccaee74bfd65b1e101d674d66b",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-ca.txt": "78d9c6fa5cd969db3622beb60862affa2d8497fef82d790dd1db33762ee34e38",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-g-de.txt": "d543a9c61dc95780329d1d6231ef29acaeb14187344be7d1402452af477f9b7c",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-g-ism.txt": "7b0bdba16095a4ccab441b882cb01495e7369eb022693574ba68b24c46fa94f4",
+        "fixtures/vendor-weborama-wcm-js-impression/missing-response-marker.txt": "a96ff6d8cb0f27b80547ad62f465b0c57aa25b01b2ba910775da7982933d2876",
+        "fixtures/vendor-weborama-wcm-js-impression/no-optional-price-fields.txt": "d27763535bbb858f8e1cd566725c62e4eed9d1308e13bd742df6c467c703c8eb",
+        "fixtures/vendor-weborama-wcm-js-impression/noscript-excluded.txt": "9c83e74832060703889b8e5762303770c0e4c2bebd0a3346b96581cdcccee652",
+        "fixtures/vendor-weborama-wcm-js-impression/other-dispatch-path.txt": "3a4e384498cb9c2751a4e717ab79f78caba10ffdf782f9cf1c0496bb753f279b",
+        "fixtures/vendor-weborama-wcm-js-impression/query-cannot-spoof-endpoint.txt": "c87a5f7ab30807d640c99e88b9ab773822723fe24fa3bf4eaa17297b5fd08548",
+        "fixtures/vendor-weborama-wcm-js-impression/russian-host-excluded.txt": "5f1ca12560d18df5828e6145bae0b8ae897663c0883891c7350b60e82c769393",
+        "fixtures/vendor-weborama-wcm-js-impression/source-cases.json": "d17d7666786cd7105a74ff015fdb35df7ecbdaac578c1daf5c7dca894f318752",
+        "fixtures/vendor-weborama-wcm-js-impression/source-complete-request.json": "831781b93eec556bc0defaaa6300c7662e1425a15d1cd943548fe01c1c05688b",
+        "fixtures/vendor-weborama-wcm-js-impression/source-empty-identifiers.txt": "2d8d115a876c0bb387d58041b7000ef12b20e3571fefe52e278582bbc0db5923",
+        "fixtures/vendor-weborama-wcm-js-impression/source-guide-default.txt": "d5c06a549f25503edab95277d4b50fe63b9c77e00b0bc2cbbc6e8f29a597c7bd",
+        "fixtures/vendor-weborama-wcm-js-impression/source-http-referrer.txt": "663b65a49747403bed3c353f7200b7747ad591aa0a2c14edb44b14360f13ce39",
+        "fixtures/vendor-weborama-wcm-js-impression/source-nonnumeric-prices.txt": "421acbedc868c0328fb7cc143739a2bd4bcbee67c05617fd3edd086f20bc1ba2",
+        "fixtures/vendor-weborama-wcm-js-impression/source-opaque-identifiers.txt": "57f4f15c7580cad10c96671899278726f2016a53f1905ffc11099ebc037c4044",
+        "fixtures/vendor-weborama-wcm-js-impression/source-optional-flags.txt": "c64ecfd5d7da15135c2e54f0d523f9ddb1fc995e4b8c9e43f740b9e7ef7a7a52",
+        "fixtures/vendor-weborama-wcm-js-impression/source-optional-prices.txt": "5f44a734005f8a553781070304e6b175658863ec5442acf2c31b4e978389d23d",
+        "fixtures/vendor-weborama-wcm-js-impression/source-vast-tracker.txt": "d5c06a549f25503edab95277d4b50fe63b9c77e00b0bc2cbbc6e8f29a597c7bd",
+        "fixtures/vendor-weborama-wcm-js-impression/source-zero-identifiers.txt": "e2adbb57714ad94237faee65134865e5179198e0c1444b1d66a77ac8eb18a2b6",
+        "fixtures/vendor-weborama-wcm-js-impression/wrong-request-method.json": "b6446092527f2240f839648fa85ce2038804bba93826475d8109c16b66d0a534"
+      }
     }
   ],
   "previous_audit_baseline": {

@@ -1,0 +1,170 @@
+{
+  "id": "vendor/the-trade-desk-static",
+  "display_name": "The Trade Desk static pixels",
+  "description": "Documented static pxl image-tag fields and the individually named legacy conv, envt and imp routes. Checks are warnings; account state, delivery and other Trade Desk transports remain outside this profile.",
+  "vendor": "thetradedesk",
+  "source_level": "official_vendor",
+  "docs": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic",
+  "match": {
+    "hosts": [
+      "insight.adsrvr.org"
+    ],
+    "paths": [
+      "/track/pxl/",
+      "/track/conv/",
+      "/track/envt/",
+      "/track/imp/"
+    ]
+  },
+  "path_pattern": "^/track/(?<static_kind>pxl|conv|envt|imp)/$",
+  "params": [
+    {
+      "name": "static_kind",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Exact static tag route extracted from the path."
+    },
+    {
+      "name": "adv",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented advertiser identifier. Issuance and account ownership remain external.",
+      "format": {
+        "kind": "non_empty"
+      }
+    },
+    {
+      "name": "ct",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "The documented wire value combines the fixed prefix 0, a colon, and an opaque tracking-tag identifier. The Integer table label applies to the prefix, not the complete compound value.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^0:[\\s\\S]+$"
+      }
+    },
+    {
+      "name": "fmt",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented static pixel cookie-sync choice: 3 enables syncing and 4 disables it.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "3",
+          "4"
+        ]
+      }
+    },
+    {
+      "name": "v",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional revenue value uses a period rather than a comma. No amount minimum or maximum is inferred.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "vf",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional currency-code string. Reporting uses advertiser currency; no account-currency or closed value constraint is inferred.",
+      "allow_empty": true
+    },
+    {
+      "name": "orderid",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional opaque order identifier.",
+      "allow_empty": true
+    },
+    {
+      "name": "td_values",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Custom values beyond the documented 64-character stored limit receive an advisory, not a receiver-rejection claim.",
+      "name_pattern": "^td(?:[1-9]|10)$",
+      "max_length": 64,
+      "allow_empty": true
+    },
+    {
+      "name": "gdpr",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional destination privacy indicator; core retains its canonical signal validation.",
+      "allow_empty": true
+    },
+    {
+      "name": "gdpr_consent",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional canonical TC String; core retains structural and applicability checks.",
+      "allow_empty": true
+    },
+    {
+      "name": "gpp_consent",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional GPP carrier documented for static tags.",
+      "format": {
+        "kind": "gpp"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "dpop",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional comma-separated processing policies. LDU is the only currently documented value.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^LDU(?:,LDU)*$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "dpor",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional US region syntax. Geographic eligibility is external.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^US-[A-Z]{2}$"
+      },
+      "allow_empty": true
+    }
+  ],
+  "rules": [
+    {
+      "kind": "forbid_value_pattern",
+      "pattern": "^(?:conv|envt|imp)$",
+      "params": [
+        "static_kind"
+      ],
+      "code": "vendor.the-trade-desk-static.legacy_route",
+      "severity": "warning",
+      "message": "The vendor documents this exact static tag type as deprecated but still in use."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic",
+        "description": "The published static image tag produces a browser GET."
+      }
+    ]
+  }
+}
