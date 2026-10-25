@@ -1,0 +1,1255 @@
+{
+  "id": "vendor/adriver-vast-counter",
+  "display_name": "AdRiver VAST-counter template",
+  "description": "Warning-only completeness and known event-pair consistency for the documented bt=76 VAST-counter profile. Other banner types, ad serving, click URLs and receiver acceptance remain outside this pack.",
+  "vendor": "adriver",
+  "source_level": "official_template",
+  "docs": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+  "match": {
+    "hosts": [
+      "ad.adriver.ru",
+      "ev.adriver.ru"
+    ],
+    "paths": [
+      "/cgi-bin/event.cgi"
+    ],
+    "query_params_values": [
+      {
+        "name": "bt",
+        "values": [
+          "76"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "bt",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "sid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "ad",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "pid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "bid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "bn",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "type",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "custom",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "rnd",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "description": "Presence advice for the published bt=76 VAST template. Values and account-issued identifiers remain opaque; no universal receiver requiredness is inferred."
+    },
+    {
+      "name": "tuid",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/partners/avito-ad",
+      "description": "Published examples vary or omit this field. Its value remains open."
+    },
+    {
+      "name": "exss",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.adriver.ru/partners/avito-ad",
+      "description": "Published examples vary or omit this field. Its value remains open."
+    }
+  ],
+  "rules": [
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "0"
+      ],
+      "param": "custom",
+      "value": "Impression",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "0"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_0.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "1"
+      ],
+      "param": "custom",
+      "value": "creativeView",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "1"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_1.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "2"
+      ],
+      "param": "custom",
+      "value": "start",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "2"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_2.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "3"
+      ],
+      "param": "custom",
+      "value": "midpoint",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "3"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_3.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "4"
+      ],
+      "param": "custom",
+      "value": "firstQuartile",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "4"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_4.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "5"
+      ],
+      "param": "custom",
+      "value": "thirdQuartile",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "5"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_5.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "6"
+      ],
+      "param": "custom",
+      "value": "complete",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "6"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_6.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "7"
+      ],
+      "param": "custom",
+      "value": "mute",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "7"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_7.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "8"
+      ],
+      "param": "custom",
+      "value": "unmute",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "8"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_8.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "9"
+      ],
+      "param": "custom",
+      "value": "pause",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "9"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_9.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "10"
+      ],
+      "param": "custom",
+      "value": "rewind",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "10"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_10.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "11"
+      ],
+      "param": "custom",
+      "value": "resume",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "11"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_11.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "12"
+      ],
+      "param": "custom",
+      "value": "expand",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "12"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_12.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "13"
+      ],
+      "param": "custom",
+      "value": "collapse",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "13"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_13.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "14"
+      ],
+      "param": "custom",
+      "value": "acceptInvitation",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "14"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_14.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "15"
+      ],
+      "param": "custom",
+      "value": "close",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "15"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_15.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "16"
+      ],
+      "param": "custom",
+      "value": "fullscreen",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "16"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_16.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "17"
+      ],
+      "param": "custom",
+      "value": "exitFullscreen",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "17"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_17.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "18"
+      ],
+      "param": "custom",
+      "value": "skip",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "18"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_18.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    },
+    {
+      "kind": "value_when",
+      "when": "type",
+      "equals": [
+        "19"
+      ],
+      "param": "custom",
+      "value": "progress",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "type"
+            ],
+            "values": [
+              "19"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "custom"
+            ],
+            "values": [
+              "Impression",
+              "creativeView",
+              "start",
+              "midpoint",
+              "firstQuartile",
+              "thirdQuartile",
+              "complete",
+              "mute",
+              "unmute",
+              "pause",
+              "rewind",
+              "resume",
+              "expand",
+              "collapse",
+              "acceptInvitation",
+              "close",
+              "fullscreen",
+              "exitFullscreen",
+              "skip",
+              "progress"
+            ]
+          }
+        ]
+      },
+      "code": "vendor.adriver-vast-counter.event.type_19.custom_mismatch",
+      "severity": "warning",
+      "message": "This known literal type/custom pair differs from the published VAST-counter template. Unknown values and conflicting value-bearing type scalars remain open.",
+      "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+      "source_level": "official_template"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "source_level": "official_template",
+        "doc": "https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/",
+        "description": "The documented image-counter template emits GET. Other receiver transports are not certified by these examples."
+      }
+    ]
+  }
+}

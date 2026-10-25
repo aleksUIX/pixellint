@@ -169,6 +169,7 @@ VENDORS = {
     "lemonpi": ("LemonPI", "video", ["content.lemonpi.io"], "vendor/lemonpi-events"),
     "podscribe": ("Podscribe", "measurement", ["verifi.podscribe.com"], "vendor/podscribe-prx-impression"),
     "weborama": ("Weborama", "measurement", ["wcmvideotutorials.solution.weborama.fr"], "vendor/weborama-wcm-js-impression"),
+    "adriver": ("AdRiver", "measurement", ["ad.adriver.ru", "ev.adriver.ru"], "vendor/adriver-vast-counter"),
 }
 
 

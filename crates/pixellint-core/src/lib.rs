@@ -870,6 +870,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/weborama-wcm-js-impression",
         include_str!("../rulepacks/vendor/weborama-wcm-js-impression.json"),
     ),
+    (
+        "vendor/adriver-vast-counter",
+        include_str!("../rulepacks/vendor/adriver-vast-counter.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
