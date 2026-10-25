@@ -74,6 +74,14 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/remerge-event",
+        include_str!("../rulepacks/vendor/remerge-event.json"),
+    ),
+    (
+        "vendor/hybrid-dss-pixel",
+        include_str!("../rulepacks/vendor/hybrid-dss-pixel.json"),
+    ),
+    (
         "vendor/lemonpi-events",
         include_str!("../rulepacks/vendor/lemonpi-events.json"),
     ),

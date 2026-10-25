@@ -35755,7 +35755,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -312122,6 +312122,714 @@
         "fixtures/vendor-adriver-vast-counter/bare-custom-after.txt": "19610c5a8a1d11392568523eeba9a23685ec6ed5d7f2634dcda7cea21481753b",
         "fixtures/vendor-adriver-vast-counter/bare-type-before.txt": "532cc78fde487dc0a2cde672caa11645c03f83783a77dcca27f085e4ad4e9e5c"
       }
+    },
+    {
+      "id": "vendor/remerge-event",
+      "vendor": "remerge",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/remerge-event.json",
+      "manifest_sha256": "1e212bb57f78656707e845ff7583f0a38b7edbfc84b1a93d8633ccbf52e707b9",
+      "match": {
+        "hosts": [
+          "remerge.events"
+        ],
+        "paths": [
+          "/event"
+        ]
+      },
+      "sources_read": [
+        {
+          "key": "remerge-event",
+          "url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding",
+          "fetched_at": "2026-10-25T21:22:51.765786+00:00",
+          "error": "HTTP Error 403: Forbidden",
+          "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round3-20261025/lane-02-sources/remerge-event.html",
+          "sha256": "9f2f9abe31ca513cf1f2d55018679512e0c53bc6e2d0d7a7438afd77a1ed9275",
+          "cache_origin": "Prior canonical research fetched 2026-10-25. Direct refetch403; official article independently reopened through web tool at implementation review.",
+          "web_access_status": "opened full primary article",
+          "web_access_checked_at": "2026-10-25",
+          "primary_level": "vendor_documentation",
+          "title": "Event Data Forwarding",
+          "supports": "Exact documented host/path and field prose only.",
+          "does_not_support": "Opaque callback equivalence, account validity, delivery or unspecified receiver behavior."
+        },
+        {
+          "key": "remerge-bi",
+          "url": "https://help.remerge.io/hc/en-us/articles/6055918247580-BI-Data-Forwarding",
+          "fetched_at": "2026-10-25T21:22:51.766180+00:00",
+          "error": "HTTP Error 403: Forbidden",
+          "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round3-20261025/lane-02-sources/remerge-bi.html",
+          "sha256": "f7300a96c13cbf2df5e580924920870e5f341775574b855eea22e838c314078b",
+          "cache_origin": "Prior canonical research fetched 2026-10-25. Direct refetch403; official article independently reopened through web tool at implementation review.",
+          "web_access_status": "opened full primary article",
+          "web_access_checked_at": "2026-10-25",
+          "primary_level": "vendor_documentation",
+          "title": "BI Data Forwarding",
+          "supports": "Exact documented host/path and field prose only.",
+          "does_not_support": "Opaque callback equivalence, account validity, delivery or unspecified receiver behavior."
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "app_id",
+          "contract": {
+            "name": "app_id",
+            "requirement": "required",
+            "severity": "warning",
+            "description": "Documented mandatory store app identifier. Preserve Android package names and iTunes identifiers without inferring a shared numeric grammar."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "event",
+          "contract": {
+            "name": "event",
+            "requirement": "required",
+            "severity": "warning",
+            "description": "Documented mandatory event name. Examples do not close the event vocabulary."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "partner",
+          "contract": {
+            "name": "partner",
+            "requirement": "required",
+            "severity": "warning",
+            "description": "Documented mandatory tracking partner name; registration is external."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "key",
+          "contract": {
+            "name": "key",
+            "requirement": "required",
+            "severity": "warning",
+            "description": "Documented mandatory partner key issued by Remerge; no local issuance or acceptance check."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ts",
+          "contract": {
+            "name": "ts",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional event Unix epoch timestamp is documented as ten digits in UTC. No freshness window is inferred.",
+            "format": {
+              "kind": "integer",
+              "min_digits": 10,
+              "max_digits": 10
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "idfa",
+          "contract": {
+            "name": "idfa",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional local format advisory for the documented uppercase Apple IDFA. Cross-platform mandatory labels do not establish when this ID is applicable.",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "aaid",
+          "contract": {
+            "name": "aaid",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional local format advisory for the documented lowercase Android Advertising ID. No simultaneous Apple and Android ID requirement is inferred.",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "idfv",
+          "contract": {
+            "name": "idfv",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "The vendor ID is described as applicable to iOS only. Applicability, alternatives and the mandatory table label require integration context.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "data",
+          "contract": {
+            "name": "data",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "The guide allows event metadata as JSON or a single string. No JSON-only syntax or custom-member schema is imposed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "non_app_event",
+          "contract": {
+            "name": "non_app_event",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional literal true or false. BI forwarding requires true when caller context establishes a non-app event; that context cannot be inferred from an event name.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "true",
+                "false"
+              ]
+            },
+            "allow_empty": true,
+            "doc": "https://help.remerge.io/hc/en-us/articles/6055918247580-BI-Data-Forwarding"
+          }
+        },
+        {
+          "scope": "params",
+          "name": "country",
+          "contract": {
+            "name": "country",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional ISO alpha-2 country-code shape only. Registry membership and geographic truth are not checked.",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[A-Za-z]{2}$"
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "currency",
+          "contract": {
+            "name": "currency",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional ISO 4217 currency-code shape only. Account currency, registry dates and value conversion remain external.",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[A-Za-z]{3}$"
+            },
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "device_name",
+          "contract": {
+            "name": "device_name",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Device name.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "os_name",
+          "contract": {
+            "name": "os_name",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional OS name; android and ios are examples, not a closed enumeration.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "os_version",
+          "contract": {
+            "name": "os_version",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional OS version.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "app_version",
+          "contract": {
+            "name": "app_version",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Application version.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "user",
+          "contract": {
+            "name": "user",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Customer user ID.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "revenue",
+          "contract": {
+            "name": "revenue",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Revenue in micro currency units; no sign, range or exact scalar grammar is established.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "revenue_float",
+          "contract": {
+            "name": "revenue_float",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Alternative revenue notation; no sign, range or mutual-exclusion rule is imposed.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "operator",
+          "contract": {
+            "name": "operator",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Mobile operator or carrier.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "zipcode",
+          "contract": {
+            "name": "zipcode",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Regional postal code.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "city",
+          "contract": {
+            "name": "city",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional City name; UN/LOCODE standardization is guidance.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "country_subdivision",
+          "contract": {
+            "name": "country_subdivision",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional State or subdivision name.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "partner_device_id",
+          "contract": {
+            "name": "partner_device_id",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Partner user ID.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ip",
+          "contract": {
+            "name": "ip",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional IP address; receiver family and representation rules remain open.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "language",
+          "contract": {
+            "name": "language",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Simple or extended language value; examples admit both hyphen and underscore.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "params",
+          "name": "sdk",
+          "contract": {
+            "name": "sdk",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "Optional Client SDK version.",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "rules",
+          "name": "vendor.remerge-event.https_required",
+          "contract": {
+            "kind": "require_https",
+            "code": "vendor.remerge-event.https_required",
+            "severity": "warning",
+            "message": "Remerge documents HTTPS for event forwarding."
+          }
+        },
+        {
+          "scope": "http.params",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "required",
+            "severity": "warning",
+            "description": "The public event-forwarding interface documents GET.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET"
+              ]
+            }
+          }
+        }
+      ],
+      "missing_requirements": [
+        {
+          "requirement": "Regional eu5 creative/video callbacks are outside this exact endpoint.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding"
+        },
+        {
+          "requirement": "Cross-platform ID applicability and identity alternatives are ambiguous in the mandatory table; no unconditional IDFA, AAID or IDFV requirement is inferred.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding"
+        },
+        {
+          "requirement": "BI context and non_app_event=true applicability cannot be inferred from event names alone.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding"
+        },
+        {
+          "requirement": "Account keys, attribution, delivery and HTTP204 success require external context.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding"
+        },
+        {
+          "requirement": "Throughput1k/sec, real-time forwarding and App Open10-minute scheduling require multiple requests and wall-clock/session context.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding"
+        },
+        {
+          "requirement": "JSON metadata can also be a single string, so arbitrary JSON syntax is not rejected.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding"
+        },
+        {
+          "requirement": "Registered country/currency membership, revenue grammar and optional-field receiver semantics remain open.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding"
+        }
+      ],
+      "original_oracle_cases": 46,
+      "engine_derived_oracle_cases": 0,
+      "test": {
+        "status": "passed four focused tests and all five golden tests",
+        "harness": "crates/pixellint-core/tests/rulepack_golden.rs",
+        "source_harness": "crates/pixellint-core/tests/round3_lane02_profiles.rs",
+        "clippy": "passed focused test target with -D warnings",
+        "full_integrated_validation": "coordinator-owned and pending"
+      },
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/remerge-event.json": "1e212bb57f78656707e845ff7583f0a38b7edbfc84b1a93d8633ccbf52e707b9",
+        "docs/reviews/remerge-event-20261025.json": "4724d211159f3a9350a431320dd9136a377917fa936826d750079a8883c1e6f1",
+        "tools/source-oracles/round3-lane-02.py": "4a74b4ccabceff520e88e6f9d5adf7aa1ec21b4dc3a9aaf99400236239266e26",
+        "crates/pixellint-core/tests/round3_lane02_profiles.rs": "0b9664e5df7f10b1f8a666b970a7068d1f507f872cd8bd6b513f20cc9562cbba",
+        "crates/pixellint-core/src/lib.rs": "b50df76ca2f219063d931daa4bd8bd574089bdcb30d4bc62801fdf7a12ee10b6",
+        "crates/pixellint-core/rulepacks/directory.json": "1a5cf9bc346ca24cab8cafb95d51ffdc06990ba90e651599d5b6568354f4b7cf",
+        "tools/build-directory.py": "3fa3239931614b51a978958f43a2f4090aeac421c2eff4e1d9e30f141c3d99c8",
+        "fixtures/vendor-remerge-event/captured-get.json": "0909009c204f1dcb71587f30f45df68e0d123a8b23cb38a30294ae5d4bfe9d31",
+        "fixtures/vendor-remerge-event/captured-lowercase-get.json": "f836a517a42e079ea6899ebd8d51c126cfc5775d3f1074e1fb7eca61e4aa622f",
+        "fixtures/vendor-remerge-event/captured-post.json": "300c82e7aaef44e18eab13b1e05a0798b61058ddad02feb9aeacf79ef9ef8c4f",
+        "fixtures/vendor-remerge-event/common-fields-only-identity-context-open.txt": "d336e6a2c9343283b8809c4fe7956fae2bdc69726991675569737cbfaa3e8f18",
+        "fixtures/vendor-remerge-event/empty-app_id.txt": "955f0bc553f3cd089f112d017dd5be47afa2a46ecfded269d538b537ec8b6b7d",
+        "fixtures/vendor-remerge-event/empty-event.txt": "97d7c30c9a6d7529c8cebe1bfca528c505cab52025219140a87c15d201964871",
+        "fixtures/vendor-remerge-event/empty-key.txt": "e4cfc76dca48645901edceb6aac2b4f901be1d783a7a07d9c933b7d98194b9bb",
+        "fixtures/vendor-remerge-event/empty-optional-ts.txt": "f3dbe683875f3c0534ac47fcb651307c1fd265f3e77415ea90dcb22c41402941",
+        "fixtures/vendor-remerge-event/empty-partner.txt": "ef26dd7f62049691bc12a2bb6f9128b66bb206afe54a432141807d7e1594b704",
+        "fixtures/vendor-remerge-event/encoded-ampersand.txt": "7a32e7138161c2d9eb6bbd4c76555945b8a3700f051ba21ff6d09ee1ef3a2b07",
+        "fixtures/vendor-remerge-event/encoded-key-once.txt": "946b45ea116b8ae550809453b5fa31cec12e4eb7be658d185441de9e0c66ca2e",
+        "fixtures/vendor-remerge-event/encoded-key-twice.txt": "7598c680948ffc0dd28ce578e20e123cebe465ecd4047b631a2db2007acf7487",
+        "fixtures/vendor-remerge-event/extended-language.txt": "a90bb33448abefbad4e4261a3668d8813af0f83b675b6c225061886eb155980a",
+        "fixtures/vendor-remerge-event/https-required.txt": "76b3218b8674a8412535205b96c727b200bb6066653da6937d93070f8d54830d",
+        "fixtures/vendor-remerge-event/invalid-aaid-16.txt": "905d32942ff8b9a4471227e8c729b8b52b7f4e02280cc12bc09078984c83a239",
+        "fixtures/vendor-remerge-event/invalid-country-18.txt": "e7b5c728c5cec7f8838a95e0d0ad3473b41826e91170b18faddd0a1574ec80c7",
+        "fixtures/vendor-remerge-event/invalid-currency-19.txt": "337dfe69a6e512a36aabf65fd5f800d1a474d714215abf79778700710a440cac",
+        "fixtures/vendor-remerge-event/invalid-idfa-15.txt": "e5b68dd625d3187cc08e0dc2347859d6471352a0ea5b07b63cff4f929fad6024",
+        "fixtures/vendor-remerge-event/invalid-non_app_event-17.txt": "1accee7faed81003e36dde99faadbff51ea15909467c698e8bf1c63bfa997a0b",
+        "fixtures/vendor-remerge-event/invalid-ts-12.txt": "de00dd4ce0e5116b0cf5aa63d3ed3c7aac0766c4dd780196c84aa31bd72d2e07",
+        "fixtures/vendor-remerge-event/invalid-ts-13.txt": "8781ba53d1dbeb762d1c189c8a2fd0ba2d42a9e161ef66fdd233ac6d9b0474ad",
+        "fixtures/vendor-remerge-event/invalid-ts-14.txt": "b05a8c0c9e4694478165c162d417b08657004b734b89985eb687ed09ddd3ac0a",
+        "fixtures/vendor-remerge-event/json-looking-string-remains-open.txt": "92ca9d73a6980c08b99b80f2c24b0402d8153b40c8c46fca6c3ab93babc34af8",
+        "fixtures/vendor-remerge-event/json-metadata.txt": "9a9535382bf83d2f455350fe72e2b2ce19304b62c810922ac38eefc26befcc81",
+        "fixtures/vendor-remerge-event/lookalike.txt": "68993b3c5b31812d3571afe8fe3eb1a4aef542e56382a18bd961af87926639ab",
+        "fixtures/vendor-remerge-event/manifest.json": "7df5bf5c86897c7077ab1d65d3e5e2c8c6b32373980ecc7515b164a0d8b08691",
+        "fixtures/vendor-remerge-event/missing-app_id.txt": "0d1a14e146a82617f6db16676d59a01faf89ef2edb61f7986034a5fb6fa7229c",
+        "fixtures/vendor-remerge-event/missing-event.txt": "598e83e59ec817e45358473b82664bf2d4832359caf5eb8de151e2573134f8c1",
+        "fixtures/vendor-remerge-event/missing-key.txt": "8304e730ecf4220d44b5e675a0876b790235d34d0c49d706039e5ebbf464986f",
+        "fixtures/vendor-remerge-event/missing-partner.txt": "56eacbb3785916ceafee2729228326fb871747df9573413df6c8a180d573b12d",
+        "fixtures/vendor-remerge-event/open-micro-revenue.txt": "d752db4ceede7c172c172ec9997ac77713b6402b9668813e346a524d9237723d",
+        "fixtures/vendor-remerge-event/open-os-name.txt": "5bcffc41cb7d954aba34f221698db87034d995bdcd7398989207dd4c02520694",
+        "fixtures/vendor-remerge-event/optional-fields.txt": "ef0d6053485549891f55242f324c615eeed038ff790f404377ee8715cff4bb7e",
+        "fixtures/vendor-remerge-event/query-path-spoof.txt": "99ca635de4c9a7ec0551c3e0396572d1a74662cbef2fe244e9b756cd8c42bafb",
+        "fixtures/vendor-remerge-event/regional-event.txt": "44d784ee3636793d45252a1c0b0f30eae1eb5da80e42a7278e7a07a14548675e",
+        "fixtures/vendor-remerge-event/regional-video.txt": "39805e30ac9ebec6e3d5c895471ac745f1ce751f0556b3ece6f8def1ce728f9d",
+        "fixtures/vendor-remerge-event/repeated-empty-and-good-event.txt": "5d30452417fec9776146f19c15079c8f2a2eebfdc1e3c3c333c936a05459c551",
+        "fixtures/vendor-remerge-event/repeated-opaque-events.txt": "66612640f99b24a540463b6c62a00202f385a56966e08a7ac1f9fab0f6606025",
+        "fixtures/vendor-remerge-event/repeated-valid-and-invalid-ts.txt": "4a1b483f9f3afa7f2c6e0bea70e3e8ebceacc2a18b763694850a26ff5369f383",
+        "fixtures/vendor-remerge-event/second-decoding-not-applied.txt": "3222ecc3624d81ae5b7c92384f4c3706f7fc1d0fe6c671b608ef9b77fce8ea1b",
+        "fixtures/vendor-remerge-event/single-string-metadata.txt": "c6c245cc7583cbc115c2b05e2c9945e5d5aa555e75af2a5c93fb715a0adabd61",
+        "fixtures/vendor-remerge-event/source-bi-template.txt": "59cad9678f2ee3e336acf6e4c357f5aafd4cf6e9c5800c4eba4d36238ecd9d12",
+        "fixtures/vendor-remerge-event/source-event-template.txt": "4bed6d7bd7bdceecfd8455fc76cfd6dd7dda67b3fa2d24b76ef512a3a54e8c97",
+        "fixtures/vendor-remerge-event/source-placeholders.txt": "c80581fa0cf7f0eaf1e6096ed619845eed0ba8f2c003996b323db7176d958d2d",
+        "fixtures/vendor-remerge-event/trailing-slash.txt": "783671ebfcb67280b0a98edd656a69209185c662f9f07bd0cba04f24099d359a",
+        "fixtures/vendor-remerge-event/unknown-macro-value.txt": "a70e36b5cfaa5db12dd97f5a9c813a7f2bb47379dae0889d985b8e4abf8d1bba",
+        "fixtures/vendor-remerge-event/wrong-path.txt": "a5075a5ea2a7c2965dfc79b95440fa3f02736dc5fceff5a1f4bdcff0e6c7c440"
+      },
+      "independent_template_outputs": 2
+    },
+    {
+      "id": "vendor/hybrid-dss-pixel",
+      "vendor": "hybrid",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/hybrid-dss-pixel.json",
+      "manifest_sha256": "da7f633d69f2b91ef798682f088fc4f0eea1b10ca18ebddb0c393a270c2586ae",
+      "match": {
+        "hosts": [
+          "dss.hybrid.ai"
+        ],
+        "paths": [
+          "/pixel/trackapi2"
+        ]
+      },
+      "sources_read": [
+        {
+          "key": "hybrid-en",
+          "url": "https://hybrid.ai/hybrid-api/",
+          "fetched_at": "2026-10-25T21:22:51.766282+00:00",
+          "status": 200,
+          "resolved_url": "https://hybrid.ai/hybrid-api/",
+          "sha256": "9436ccbf4ed6c4c5ab9568dcfa40c5390a09ad6d8aee1d30c11b8a787c7d75ff",
+          "bytes": 364380,
+          "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round3-20261025/lane-02-sources/hybrid-en.html",
+          "title": "Hybrid API, English site",
+          "primary_level": "vendor_documentation",
+          "supports": "Exact documented host/path and field prose only.",
+          "does_not_support": "Opaque callback equivalence, account validity, delivery or unspecified receiver behavior."
+        },
+        {
+          "key": "hybrid-ru",
+          "url": "https://hybrid.ru/hybrid-api/",
+          "fetched_at": "2026-10-25T21:22:51.766359+00:00",
+          "status": 200,
+          "resolved_url": "https://hybrid.ru/hybrid-api/",
+          "sha256": "a3231db9d1a13a509008168bcb11bbff1b2910038796678d87597f2a487f0e15",
+          "bytes": 295745,
+          "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round3-20261025/lane-02-sources/hybrid-ru.html",
+          "title": "Hybrid API, Russian site",
+          "primary_level": "vendor_documentation",
+          "supports": "Exact documented host/path and field prose only.",
+          "does_not_support": "Opaque callback equivalence, account validity, delivery or unspecified receiver behavior."
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "pid",
+          "contract": {
+            "name": "pid",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The published pixel template includes an opaque Pixel ID. The example does not establish a 24-hex or numeric grammar.",
+            "allow_empty": true,
+            "source_level": "official_template"
+          }
+        },
+        {
+          "scope": "params",
+          "name": "txid",
+          "contract": {
+            "name": "txid",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The pixel prose describes a visitor ID of exactly 20 characters from lowercase 0-9a-f.",
+            "format": {
+              "kind": "hex",
+              "length": 20
+            },
+            "source_level": "official_vendor"
+          }
+        },
+        {
+          "scope": "params",
+          "name": "evt",
+          "contract": {
+            "name": "evt",
+            "requirement": "recommended",
+            "severity": "warning",
+            "description": "The published pixel template includes an event name. No event vocabulary or numeric prefix is required.",
+            "allow_empty": true,
+            "source_level": "official_template"
+          }
+        },
+        {
+          "scope": "params",
+          "name": "cnt",
+          "contract": {
+            "name": "cnt",
+            "requirement": "optional",
+            "severity": "warning",
+            "description": "The documented pixel template leaves cnt empty. Requiredness, grammar and receiver meaning are not established.",
+            "allow_empty": true,
+            "source_level": "official_template"
+          }
+        }
+      ],
+      "missing_requirements": [
+        {
+          "requirement": "No schema equivalence with dsa-eu.hybrid.ai, ssp.hybrid.ai or capi management endpoints.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://hybrid.ai/hybrid-api/"
+        },
+        {
+          "requirement": "The management entity required-all and bearer authentication prose does not establish pixel requirements.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://hybrid.ai/hybrid-api/"
+        },
+        {
+          "requirement": "pid and evt are opaque; cnt grammar and requiredness remain unknown.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://hybrid.ai/hybrid-api/"
+        },
+        {
+          "requirement": "The published URL template does not independently establish allowed methods, headers or body behavior.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://hybrid.ai/hybrid-api/"
+        },
+        {
+          "requirement": "Receiver duplicate-selection policy, account validity and actual audience updates remain external.",
+          "reason": "Outside the exact documented local profile or requires integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://hybrid.ai/hybrid-api/"
+        }
+      ],
+      "original_oracle_cases": 37,
+      "engine_derived_oracle_cases": 0,
+      "test": {
+        "status": "passed four focused tests and all five golden tests",
+        "harness": "crates/pixellint-core/tests/rulepack_golden.rs",
+        "source_harness": "crates/pixellint-core/tests/round3_lane02_profiles.rs",
+        "clippy": "passed focused test target with -D warnings",
+        "full_integrated_validation": "coordinator-owned and pending"
+      },
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/hybrid-dss-pixel.json": "da7f633d69f2b91ef798682f088fc4f0eea1b10ca18ebddb0c393a270c2586ae",
+        "docs/reviews/hybrid-dss-pixel-20261025.json": "0856306240df2bd305bb796093a6d579e5d4c310741880e216a43ab5bb496046",
+        "tools/source-oracles/round3-lane-02.py": "4a74b4ccabceff520e88e6f9d5adf7aa1ec21b4dc3a9aaf99400236239266e26",
+        "crates/pixellint-core/tests/round3_lane02_profiles.rs": "0b9664e5df7f10b1f8a666b970a7068d1f507f872cd8bd6b513f20cc9562cbba",
+        "crates/pixellint-core/src/lib.rs": "b50df76ca2f219063d931daa4bd8bd574089bdcb30d4bc62801fdf7a12ee10b6",
+        "crates/pixellint-core/rulepacks/directory.json": "1a5cf9bc346ca24cab8cafb95d51ffdc06990ba90e651599d5b6568354f4b7cf",
+        "tools/build-directory.py": "3fa3239931614b51a978958f43a2f4090aeac421c2eff4e1d9e30f141c3d99c8",
+        "fixtures/vendor-hybrid-dss-pixel/captured-get-no-auth.json": "1e1bdd0612e89e1fc5da947ea0c9370e168fbb06d2afd5424b04303a965525bf",
+        "fixtures/vendor-hybrid-dss-pixel/captured-json-no-body-leak.json": "f5b8e95ce991b6fe3c1dd6334822550254b3a4a6f931627c11f05a08c8ccf286",
+        "fixtures/vendor-hybrid-dss-pixel/captured-post-method-open.json": "aa400b804494670eb6805e4a718df74746b28b894d7f843756a84b6a0b7ff4b1",
+        "fixtures/vendor-hybrid-dss-pixel/decoded-key-once.txt": "e1a429c6e5a96b8390453606c0dda24bb1953f7951402258fb8b78a313f80754",
+        "fixtures/vendor-hybrid-dss-pixel/decoded-key-twice.txt": "40d7467f3cfa0eab21c272298a95c097701b0551951d0a6c33be6a88009afb91",
+        "fixtures/vendor-hybrid-dss-pixel/dsa-eu-excluded.txt": "6b1c5e820b546f59f5bf3518054d34a3ca9616d083b0b91c6af69343f11c56db",
+        "fixtures/vendor-hybrid-dss-pixel/empty-cnt.txt": "2a9ddfd2787b8686f1ca9b74d5c07b39d6bf715ae5b255755d2e3d26559447be",
+        "fixtures/vendor-hybrid-dss-pixel/empty-evt.txt": "981c6042235feda6bd129643b3efd8e402f4ac1151434e377079d255d63d1682",
+        "fixtures/vendor-hybrid-dss-pixel/empty-pid.txt": "c7404cf06eaf5f639fc133ff25aeffa435976b5523f8bda18d32869b08de186a",
+        "fixtures/vendor-hybrid-dss-pixel/empty-txid.txt": "476f995a8ed2068df2649ebe4c81bc6ef4796c209d83b2cfcc8f460e5386710d",
+        "fixtures/vendor-hybrid-dss-pixel/encoded-event.txt": "3011046082e0e02cf2de260cb69523b4c2c40b75c906323fed4095fe78869238",
+        "fixtures/vendor-hybrid-dss-pixel/encoded-value-once.txt": "805ce62617a2ba5a08b70d77556c2f677f781a538a2d89c61af9bd5d555e8cba",
+        "fixtures/vendor-hybrid-dss-pixel/invalid-txid-long.txt": "0b1c6434ab36efe43c376fd9253a5dd4b5ac37dfa8e2b2c96f5749501541163d",
+        "fixtures/vendor-hybrid-dss-pixel/invalid-txid-nonhex.txt": "84bafd40a9943adcaf7e0db0f3826575bb8bae1da609989c72d5655ee2c0f657",
+        "fixtures/vendor-hybrid-dss-pixel/invalid-txid-second-encoded.txt": "16d6d43be68502da123e5cb55b1611df4830611c127b12e2512172e9516c550c",
+        "fixtures/vendor-hybrid-dss-pixel/invalid-txid-short.txt": "e6c495e139021906a502a29e9b75756bcd3e7a2a87d97a9c4ae1264ae486e395",
+        "fixtures/vendor-hybrid-dss-pixel/invalid-txid-space.txt": "0ccca2a585b91406d60dc3ecc21b025216ee0ad4fe0a2184cdf25484f81e3fe1",
+        "fixtures/vendor-hybrid-dss-pixel/invalid-txid-uppercase.txt": "d64ce2531c8e53ad52b37c0ad74475e50a96e9c65ecde56fe41783e907fd6cff",
+        "fixtures/vendor-hybrid-dss-pixel/lookalike.txt": "9816af84b76bc6e6479acc559f6bb9952f2bc1c26370b9996f7217a2603e1384",
+        "fixtures/vendor-hybrid-dss-pixel/lowerhex-boundary.txt": "04203f6c3ebedc179d83b85f36b2e4b14b912ff12742e438bea0394838d1f84e",
+        "fixtures/vendor-hybrid-dss-pixel/management-excluded.txt": "506422f97fdab4608d9a37f9a520986aad22828e2fa5381fd7dea56f9fffdde9",
+        "fixtures/vendor-hybrid-dss-pixel/manifest.json": "a89cd7c6ada3560a248d64925e359f2206e5a28198a6732b5cacd8266b306146",
+        "fixtures/vendor-hybrid-dss-pixel/missing-cnt.txt": "585cbd86518383f6a5b4ded8b114bfa00ca65c1ff4ae505c7044874b8a4d3239",
+        "fixtures/vendor-hybrid-dss-pixel/missing-evt.txt": "c76b9ecd7ab43f67610775354bf25429306b23ba157ba57b2a230318329dfd2f",
+        "fixtures/vendor-hybrid-dss-pixel/missing-pid.txt": "41aeb0d4df33a320550e58edafd1a93cce358208c075adf151ca0c78c4c00e7e",
+        "fixtures/vendor-hybrid-dss-pixel/missing-txid.txt": "53616332a220992c7ec5ed901495a7451be00329e7984acd31ee40af11f598f8",
+        "fixtures/vendor-hybrid-dss-pixel/opaque-cnt.txt": "54cfe1f506ba7fb599fc6ba301508a010194e9011c1a21a5a515125c7890666d",
+        "fixtures/vendor-hybrid-dss-pixel/opaque-pid.txt": "cea8672d4852dd86d0cb4281ea5a579c3325f0f169d21bbad5e4097f38957e86",
+        "fixtures/vendor-hybrid-dss-pixel/query-path-spoof.txt": "43925f187774ec78b147a1a5a4233b9ed07ca9f49d7c827dcf18a22b7278ee5b",
+        "fixtures/vendor-hybrid-dss-pixel/repeat-empty-and-valid-txid.txt": "fd4443fcae04462bfcbb5ead0b83c589290b1ee8b43d898aa9aa03d93dadfc34",
+        "fixtures/vendor-hybrid-dss-pixel/repeat-opaque-pid.txt": "03a52f9d8c3e081f7237ee5c0123cee92c01dd84b46a00b1c717d1d205154ff4",
+        "fixtures/vendor-hybrid-dss-pixel/repeat-valid-and-invalid-txid.txt": "31c9cdbe9d263601f22f85a0d0a869f3ef7f5277311294d9c93fb47831b84c8b",
+        "fixtures/vendor-hybrid-dss-pixel/source-opaque-event.txt": "e9f33a3757b77a7eacee0847ebf52ea9561342441171dcf6191762a25ce39b5b",
+        "fixtures/vendor-hybrid-dss-pixel/source-pixel-template.txt": "2a9ddfd2787b8686f1ca9b74d5c07b39d6bf715ae5b255755d2e3d26559447be",
+        "fixtures/vendor-hybrid-dss-pixel/source-placeholders.txt": "c6a386e1826e776dbaf7622ce10a2165b746b73708c448f32bd7bec41d57512a",
+        "fixtures/vendor-hybrid-dss-pixel/ssp-excluded.txt": "138d78685fd022f151b92c5bbbf5d706151ccbd8c264059591052eb2c8a21afc",
+        "fixtures/vendor-hybrid-dss-pixel/trailing-slash.txt": "10f52c5f7ee4f6569ae4dc7d5f35f3521cc0866eae2a9df6ea6c0cc6cc0d532c",
+        "fixtures/vendor-hybrid-dss-pixel/wrong-path.txt": "fd3d201ca5b6e9d02975ac397ae1b5ac58dc7d798451e63490ac68fe80fd2665"
+      },
+      "independent_template_outputs": 1
     }
   ],
   "previous_audit_baseline": {

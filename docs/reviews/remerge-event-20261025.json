@@ -1,0 +1,319 @@
+{
+  "id": "vendor/remerge-event",
+  "reviewed_at": "2026-10-25T21:29:26.055089+00:00",
+  "source_level": "official_vendor",
+  "spec_complete": false,
+  "match": {
+    "hosts": [
+      "remerge.events"
+    ],
+    "paths": [
+      "/event"
+    ]
+  },
+  "sources_read": [
+    {
+      "key": "remerge-event",
+      "url": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding",
+      "fetched_at": "2026-10-25T21:22:51.765786+00:00",
+      "error": "HTTP Error 403: Forbidden",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round3-20261025/lane-02-sources/remerge-event.html",
+      "sha256": "9f2f9abe31ca513cf1f2d55018679512e0c53bc6e2d0d7a7438afd77a1ed9275",
+      "cache_origin": "Prior canonical research fetched 2026-10-25. Direct refetch403; official article independently reopened through web tool at implementation review.",
+      "web_access_status": "opened full primary article",
+      "web_access_checked_at": "2026-10-25",
+      "primary_level": "vendor_documentation",
+      "title": "Event Data Forwarding",
+      "supports": "Exact documented host/path and field prose only.",
+      "does_not_support": "Opaque callback equivalence, account validity, delivery or unspecified receiver behavior."
+    },
+    {
+      "key": "remerge-bi",
+      "url": "https://help.remerge.io/hc/en-us/articles/6055918247580-BI-Data-Forwarding",
+      "fetched_at": "2026-10-25T21:22:51.766180+00:00",
+      "error": "HTTP Error 403: Forbidden",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round3-20261025/lane-02-sources/remerge-bi.html",
+      "sha256": "f7300a96c13cbf2df5e580924920870e5f341775574b855eea22e838c314078b",
+      "cache_origin": "Prior canonical research fetched 2026-10-25. Direct refetch403; official article independently reopened through web tool at implementation review.",
+      "web_access_status": "opened full primary article",
+      "web_access_checked_at": "2026-10-25",
+      "primary_level": "vendor_documentation",
+      "title": "BI Data Forwarding",
+      "supports": "Exact documented host/path and field prose only.",
+      "does_not_support": "Opaque callback equivalence, account validity, delivery or unspecified receiver behavior."
+    }
+  ],
+  "source_case_method": "Vendor-published documentation templates, independently substituted offline before engine evaluation. No measurement calls.",
+  "source_examples": [
+    {
+      "id": "source-event-template",
+      "url": "https://remerge.events/event?app_id=com.synthetic.example&event=purchase&partner=synthetic-partner&key=synthetic-key&idfa=00000000-0000-0000-0000-000000000000&aaid=00000000-0000-0000-0000-000000000000&country=DE&device_name=Synthetic%20Device&os_name=android&os_version=1.2&ts=1792886400&revenue=170000&currency=USD&non_app_event=false"
+    },
+    {
+      "id": "source-bi-template",
+      "url": "https://remerge.events/event?app_id=com.synthetic.example&event=whales_user&partner=synthetic-partner&key=synthetic-key&idfa=00000000-0000-0000-0000-000000000000&aaid=00000000-0000-0000-0000-000000000000&idfv=00000000-0000-0000-0000-000000000000&os_name=ios&non_app_event=true"
+    },
+    {
+      "id": "source-placeholders",
+      "url": "https://remerge.events/event?app_id={AppId}&event={EventName}&partner=yourname&key=yourkey&idfa={IDFA}&aaid={AAID}&country={Country}&device_name={DeviceName}&os_name={OS}&os_version={OSVersion}&ts={Timestamp}&revenue={RevenueAmount}&currency={Currency}&non_app_event=false"
+    }
+  ],
+  "field_inventory": [
+    {
+      "name": "app_id",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented mandatory store app identifier. Preserve Android package names and iTunes identifiers without inferring a shared numeric grammar."
+    },
+    {
+      "name": "event",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented mandatory event name. Examples do not close the event vocabulary."
+    },
+    {
+      "name": "partner",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented mandatory tracking partner name; registration is external."
+    },
+    {
+      "name": "key",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented mandatory partner key issued by Remerge; no local issuance or acceptance check."
+    },
+    {
+      "name": "ts",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional event Unix epoch timestamp is documented as ten digits in UTC. No freshness window is inferred.",
+      "format": {
+        "kind": "integer",
+        "min_digits": 10,
+        "max_digits": 10
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "idfa",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional local format advisory for the documented uppercase Apple IDFA. Cross-platform mandatory labels do not establish when this ID is applicable.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "aaid",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional local format advisory for the documented lowercase Android Advertising ID. No simultaneous Apple and Android ID requirement is inferred.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "idfv",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The vendor ID is described as applicable to iOS only. Applicability, alternatives and the mandatory table label require integration context.",
+      "allow_empty": true
+    },
+    {
+      "name": "data",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The guide allows event metadata as JSON or a single string. No JSON-only syntax or custom-member schema is imposed.",
+      "allow_empty": true
+    },
+    {
+      "name": "non_app_event",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional literal true or false. BI forwarding requires true when caller context establishes a non-app event; that context cannot be inferred from an event name.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "allow_empty": true,
+      "doc": "https://help.remerge.io/hc/en-us/articles/6055918247580-BI-Data-Forwarding"
+    },
+    {
+      "name": "country",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional ISO alpha-2 country-code shape only. Registry membership and geographic truth are not checked.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{2}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "currency",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional ISO 4217 currency-code shape only. Account currency, registry dates and value conversion remain external.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{3}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "device_name",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Device name.",
+      "allow_empty": true
+    },
+    {
+      "name": "os_name",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional OS name; android and ios are examples, not a closed enumeration.",
+      "allow_empty": true
+    },
+    {
+      "name": "os_version",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional OS version.",
+      "allow_empty": true
+    },
+    {
+      "name": "app_version",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Application version.",
+      "allow_empty": true
+    },
+    {
+      "name": "user",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Customer user ID.",
+      "allow_empty": true
+    },
+    {
+      "name": "revenue",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Revenue in micro currency units; no sign, range or exact scalar grammar is established.",
+      "allow_empty": true
+    },
+    {
+      "name": "revenue_float",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Alternative revenue notation; no sign, range or mutual-exclusion rule is imposed.",
+      "allow_empty": true
+    },
+    {
+      "name": "operator",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Mobile operator or carrier.",
+      "allow_empty": true
+    },
+    {
+      "name": "zipcode",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Regional postal code.",
+      "allow_empty": true
+    },
+    {
+      "name": "city",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional City name; UN/LOCODE standardization is guidance.",
+      "allow_empty": true
+    },
+    {
+      "name": "country_subdivision",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional State or subdivision name.",
+      "allow_empty": true
+    },
+    {
+      "name": "partner_device_id",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Partner user ID.",
+      "allow_empty": true
+    },
+    {
+      "name": "ip",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional IP address; receiver family and representation rules remain open.",
+      "allow_empty": true
+    },
+    {
+      "name": "language",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Simple or extended language value; examples admit both hyphen and underscore.",
+      "allow_empty": true
+    },
+    {
+      "name": "sdk",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Client SDK version.",
+      "allow_empty": true
+    }
+  ],
+  "transport_contract": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "severity": "warning",
+        "description": "The public event-forwarding interface documents GET.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        }
+      }
+    ]
+  },
+  "unimplemented_or_external_requirements": [
+    "Regional eu5 creative/video callbacks are outside this exact endpoint.",
+    "Cross-platform ID applicability and identity alternatives are ambiguous in the mandatory table; no unconditional IDFA, AAID or IDFV requirement is inferred.",
+    "BI context and non_app_event=true applicability cannot be inferred from event names alone.",
+    "Account keys, attribution, delivery and HTTP204 success require external context.",
+    "Throughput1k/sec, real-time forwarding and App Open10-minute scheduling require multiple requests and wall-clock/session context.",
+    "JSON metadata can also be a single string, so arbitrary JSON syntax is not rejected.",
+    "Registered country/currency membership, revenue grammar and optional-field receiver semantics remain open."
+  ],
+  "validation_status": "passed focused, golden, formatting and targeted clippy checks",
+  "coverage_claim": "Exact adjacent source profile only. No assigned opaque collector schema or corpus gain claimed.",
+  "source_oracle": {
+    "script": "tools/source-oracles/round3-lane-02.py",
+    "receipt": "lane-02-source-oracle.json",
+    "independent_template_outputs": 2,
+    "engine_derived": false,
+    "network_calls": 0
+  },
+  "validation": {
+    "focused_tests": 4,
+    "golden_tests": 5,
+    "fixture_cases": 46,
+    "clippy": "passed pixellint-core focused test target with -D warnings",
+    "formatting": "passed",
+    "full_integrated_validation": "coordinator-owned and pending"
+  }
+}

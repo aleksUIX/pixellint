@@ -1,0 +1,121 @@
+{
+  "id": "vendor/hybrid-dss-pixel",
+  "reviewed_at": "2026-10-25T21:29:26.055089+00:00",
+  "source_level": "official_template",
+  "spec_complete": false,
+  "match": {
+    "hosts": [
+      "dss.hybrid.ai"
+    ],
+    "paths": [
+      "/pixel/trackapi2"
+    ]
+  },
+  "sources_read": [
+    {
+      "key": "hybrid-en",
+      "url": "https://hybrid.ai/hybrid-api/",
+      "fetched_at": "2026-10-25T21:22:51.766282+00:00",
+      "status": 200,
+      "resolved_url": "https://hybrid.ai/hybrid-api/",
+      "sha256": "9436ccbf4ed6c4c5ab9568dcfa40c5390a09ad6d8aee1d30c11b8a787c7d75ff",
+      "bytes": 364380,
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round3-20261025/lane-02-sources/hybrid-en.html",
+      "title": "Hybrid API, English site",
+      "primary_level": "vendor_documentation",
+      "supports": "Exact documented host/path and field prose only.",
+      "does_not_support": "Opaque callback equivalence, account validity, delivery or unspecified receiver behavior."
+    },
+    {
+      "key": "hybrid-ru",
+      "url": "https://hybrid.ru/hybrid-api/",
+      "fetched_at": "2026-10-25T21:22:51.766359+00:00",
+      "status": 200,
+      "resolved_url": "https://hybrid.ru/hybrid-api/",
+      "sha256": "a3231db9d1a13a509008168bcb11bbff1b2910038796678d87597f2a487f0e15",
+      "bytes": 295745,
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round3-20261025/lane-02-sources/hybrid-ru.html",
+      "title": "Hybrid API, Russian site",
+      "primary_level": "vendor_documentation",
+      "supports": "Exact documented host/path and field prose only.",
+      "does_not_support": "Opaque callback equivalence, account validity, delivery or unspecified receiver behavior."
+    }
+  ],
+  "source_case_method": "Vendor-published documentation templates, independently substituted offline before engine evaluation. No measurement calls.",
+  "source_examples": [
+    {
+      "id": "source-pixel-template",
+      "url": "https://dss.hybrid.ai/pixel/trackapi2?pid=synthetic-pixel&txid=0123456789abcdef0123&evt=synthetic_event&cnt="
+    },
+    {
+      "id": "source-opaque-event",
+      "url": "https://dss.hybrid.ai/pixel/trackapi2?pid=synthetic-pixel&txid=0123456789abcdef0123&cnt=&evt=open%3Aopaque-event"
+    },
+    {
+      "id": "source-placeholders",
+      "url": "https://dss.hybrid.ai/pixel/trackapi2?pid={PIXEL_ID}&txid={VISITOR_ID}&evt={EVENT_NAME}&cnt="
+    }
+  ],
+  "field_inventory": [
+    {
+      "name": "pid",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "The published pixel template includes an opaque Pixel ID. The example does not establish a 24-hex or numeric grammar.",
+      "allow_empty": true,
+      "source_level": "official_template"
+    },
+    {
+      "name": "txid",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "The pixel prose describes a visitor ID of exactly 20 characters from lowercase 0-9a-f.",
+      "format": {
+        "kind": "hex",
+        "length": 20
+      },
+      "source_level": "official_vendor"
+    },
+    {
+      "name": "evt",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "The published pixel template includes an event name. No event vocabulary or numeric prefix is required.",
+      "allow_empty": true,
+      "source_level": "official_template"
+    },
+    {
+      "name": "cnt",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The documented pixel template leaves cnt empty. Requiredness, grammar and receiver meaning are not established.",
+      "allow_empty": true,
+      "source_level": "official_template"
+    }
+  ],
+  "transport_contract": {},
+  "unimplemented_or_external_requirements": [
+    "No schema equivalence with dsa-eu.hybrid.ai, ssp.hybrid.ai or capi management endpoints.",
+    "The management entity required-all and bearer authentication prose does not establish pixel requirements.",
+    "pid and evt are opaque; cnt grammar and requiredness remain unknown.",
+    "The published URL template does not independently establish allowed methods, headers or body behavior.",
+    "Receiver duplicate-selection policy, account validity and actual audience updates remain external."
+  ],
+  "validation_status": "passed focused, golden, formatting and targeted clippy checks",
+  "coverage_claim": "Exact adjacent source profile only. No assigned opaque collector schema or corpus gain claimed.",
+  "source_oracle": {
+    "script": "tools/source-oracles/round3-lane-02.py",
+    "receipt": "lane-02-source-oracle.json",
+    "independent_template_outputs": 1,
+    "engine_derived": false,
+    "network_calls": 0
+  },
+  "validation": {
+    "focused_tests": 4,
+    "golden_tests": 5,
+    "fixture_cases": 37,
+    "clippy": "passed pixellint-core focused test target with -D warnings",
+    "formatting": "passed",
+    "full_integrated_validation": "coordinator-owned and pending"
+  }
+}

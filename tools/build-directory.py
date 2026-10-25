@@ -12,6 +12,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 # vendor slug -> (display name, category, [hosts], rulepack or None)
 VENDORS = {
+    # Official event-forwarding and pixel templates bind these exact host roots.
+    "remerge": ("Remerge", "mobile", ["remerge.events"], "vendor/remerge-event"),
+    "hybrid": ("Hybrid Adtech", "programmatic", ["dss.hybrid.ai"], "vendor/hybrid-dss-pixel"),
     "adnami": ("Adnami", "video", ["functions.adnami.io"], "vendor/adnami-tracker"),
     "amplified": ("Amplified", "video", ["pixel.amplified.co"], "vendor/amplified"),
     "adcanvas": ("AdCanvas", "video", ["adcanvas.com"], "vendor/adcanvas-csc"),

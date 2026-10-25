@@ -1,0 +1,256 @@
+{
+  "id": "vendor/remerge-event",
+  "display_name": "Remerge event forwarding",
+  "description": "Exact documented event and BI forwarding GET endpoint. Scoped warning checks preserve open identity applicability and metadata strings; regional creative and video callbacks are excluded.",
+  "vendor": "remerge",
+  "source_level": "official_vendor",
+  "docs": "https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding",
+  "match": {
+    "hosts": [
+      "remerge.events"
+    ],
+    "paths": [
+      "/event"
+    ]
+  },
+  "params": [
+    {
+      "name": "app_id",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented mandatory store app identifier. Preserve Android package names and iTunes identifiers without inferring a shared numeric grammar."
+    },
+    {
+      "name": "event",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented mandatory event name. Examples do not close the event vocabulary."
+    },
+    {
+      "name": "partner",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented mandatory tracking partner name; registration is external."
+    },
+    {
+      "name": "key",
+      "requirement": "required",
+      "severity": "warning",
+      "description": "Documented mandatory partner key issued by Remerge; no local issuance or acceptance check."
+    },
+    {
+      "name": "ts",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional event Unix epoch timestamp is documented as ten digits in UTC. No freshness window is inferred.",
+      "format": {
+        "kind": "integer",
+        "min_digits": 10,
+        "max_digits": 10
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "idfa",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional local format advisory for the documented uppercase Apple IDFA. Cross-platform mandatory labels do not establish when this ID is applicable.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "aaid",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional local format advisory for the documented lowercase Android Advertising ID. No simultaneous Apple and Android ID requirement is inferred.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "idfv",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The vendor ID is described as applicable to iOS only. Applicability, alternatives and the mandatory table label require integration context.",
+      "allow_empty": true
+    },
+    {
+      "name": "data",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The guide allows event metadata as JSON or a single string. No JSON-only syntax or custom-member schema is imposed.",
+      "allow_empty": true
+    },
+    {
+      "name": "non_app_event",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional literal true or false. BI forwarding requires true when caller context establishes a non-app event; that context cannot be inferred from an event name.",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "allow_empty": true,
+      "doc": "https://help.remerge.io/hc/en-us/articles/6055918247580-BI-Data-Forwarding"
+    },
+    {
+      "name": "country",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional ISO alpha-2 country-code shape only. Registry membership and geographic truth are not checked.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{2}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "currency",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional ISO 4217 currency-code shape only. Account currency, registry dates and value conversion remain external.",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{3}$"
+      },
+      "allow_empty": true
+    },
+    {
+      "name": "device_name",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Device name.",
+      "allow_empty": true
+    },
+    {
+      "name": "os_name",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional OS name; android and ios are examples, not a closed enumeration.",
+      "allow_empty": true
+    },
+    {
+      "name": "os_version",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional OS version.",
+      "allow_empty": true
+    },
+    {
+      "name": "app_version",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Application version.",
+      "allow_empty": true
+    },
+    {
+      "name": "user",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Customer user ID.",
+      "allow_empty": true
+    },
+    {
+      "name": "revenue",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Revenue in micro currency units; no sign, range or exact scalar grammar is established.",
+      "allow_empty": true
+    },
+    {
+      "name": "revenue_float",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Alternative revenue notation; no sign, range or mutual-exclusion rule is imposed.",
+      "allow_empty": true
+    },
+    {
+      "name": "operator",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Mobile operator or carrier.",
+      "allow_empty": true
+    },
+    {
+      "name": "zipcode",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Regional postal code.",
+      "allow_empty": true
+    },
+    {
+      "name": "city",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional City name; UN/LOCODE standardization is guidance.",
+      "allow_empty": true
+    },
+    {
+      "name": "country_subdivision",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional State or subdivision name.",
+      "allow_empty": true
+    },
+    {
+      "name": "partner_device_id",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Partner user ID.",
+      "allow_empty": true
+    },
+    {
+      "name": "ip",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional IP address; receiver family and representation rules remain open.",
+      "allow_empty": true
+    },
+    {
+      "name": "language",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Simple or extended language value; examples admit both hyphen and underscore.",
+      "allow_empty": true
+    },
+    {
+      "name": "sdk",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "Optional Client SDK version.",
+      "allow_empty": true
+    }
+  ],
+  "rules": [
+    {
+      "kind": "require_https",
+      "code": "vendor.remerge-event.https_required",
+      "severity": "warning",
+      "message": "Remerge documents HTTPS for event forwarding."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "severity": "warning",
+        "description": "The public event-forwarding interface documents GET.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        }
+      }
+    ]
+  }
+}
