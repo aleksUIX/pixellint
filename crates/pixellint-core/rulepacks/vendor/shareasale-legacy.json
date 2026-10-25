@@ -1,0 +1,89 @@
+{
+  "id": "vendor/shareasale-legacy",
+  "display_name": "ShareASale legacy sale and lead template",
+  "vendor": "shareasale",
+  "source_level": "official_template",
+  "docs": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf",
+  "description": "Warning-only checks for the archived official sale.cfm image template for per-sale and per-lead programs. The document is historical; current collector support after migration is unverified. PPC programs, the separately approved q.cfm socket method, extensions, account permissions and delivery are outside this profile.",
+  "match": {
+    "hosts": [
+      "shareasale.com"
+    ],
+    "paths": [
+      "/sale.cfm"
+    ],
+    "query_params_values": [
+      {
+        "name": "transtype",
+        "values": [
+          "sale",
+          "lead"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "amount",
+      "requirement": "recommended",
+      "severity": "warning",
+      "format_severity": "warning",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "description": "The legacy template supplies the sale subtotal. Lead also supplies amount, including the documented 0.00 example. No sign or precision constraint is inferred."
+    },
+    {
+      "name": "tracking",
+      "requirement": "recommended",
+      "severity": "warning",
+      "format_severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The legacy order or lead identifier is opaque and may contain email-like text. No issued-ID, numeric or UUID grammar is imposed."
+    },
+    {
+      "name": "merchantID",
+      "requirement": "recommended",
+      "severity": "warning",
+      "format_severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The template supplies the merchant identifier. Issuance, numeric spelling, length and account state remain external."
+    },
+    {
+      "name": "transtype",
+      "requirement": "recommended",
+      "severity": "warning",
+      "format_severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "sale",
+          "lead"
+        ]
+      },
+      "description": "These are the two program types in this explicitly legacy sale/lead image-template profile. Other protocols are not covered."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "description": "The historical image producer uses GET. This does not describe the separately approved socket endpoint."
+      }
+    ]
+  }
+}

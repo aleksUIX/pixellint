@@ -1,0 +1,285 @@
+{
+  "reviewed_at": "2026-10-25",
+  "source_level": "official_template",
+  "spec_complete": false,
+  "method": "Review pinned vendor source and historical documentation offline. Source-authored synthetic fixtures and explicit boundary controls precede engine execution. No measurement callbacks are requested.",
+  "source_paths": {
+    "fullstory-sdk.raw": "30a0e0ba101942f8371e76e42a75d7cc99ff515dd4efc78c932b13c262c3e8bf",
+    "fullstory-sdk-decoded.js": "11258843fcf3fb75f1ad6a3e12b158b773775bcac8affa5b21c1360500aacfe5",
+    "fullstory-config.raw": "eda96c9551567441a403bbd6b33f5ebe7693b40bf6942e195f862e88136b3ea9"
+  },
+  "limitations": [
+    "All checks are producer-profile warnings. None proves remote acceptance or complete collector coverage.",
+    "Only default exact hosts and reviewed routes are claimed. Configured domains and adjacent transports remain excluded.",
+    "Privacy fields can be omitted or empty. Opaque runtime IDs and optional metadata stay optional. Empty key hashes are intentional.",
+    "The SDK emits text/plain JSON. Bundle payloads and compressed event formats are excluded."
+  ],
+  "pack_id": "vendor/fullstory-page",
+  "documentation": "https://edge.fullstory.com/s/fs.js",
+  "implemented_scope": {
+    "id": "vendor/fullstory-page",
+    "display_name": "FullStory default page producer",
+    "vendor": "fullstory",
+    "source_level": "official_template",
+    "docs": "https://edge.fullstory.com/s/fs.js",
+    "description": "Warning-only shape checks for the pinned browser SDK POST /rec/page on its default recorder host. The actual transport is text/plain containing JSON. Scrubbed and omitted privacy fields, empty key hashes and optional identity fields are preserved. Bundle encoding, custom hosts, session validity and receiver rejection policy remain external.",
+    "match": {
+      "hosts": [
+        "rs.fullstory.com"
+      ],
+      "paths": [
+        "/rec/page"
+      ],
+      "artifact_kinds": [
+        "request"
+      ]
+    },
+    "http": {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST"
+            ]
+          }
+        },
+        {
+          "name": "content_type",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "text/plain"
+            ]
+          }
+        },
+        {
+          "name": "body",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": "object",
+          "allow_empty": true
+        },
+        {
+          "name": "body.OrgId",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": "string",
+          "description": "Initialization requires a configured organization string. Only producer completeness is checked, without issued-ID grammar."
+        },
+        {
+          "name": "body.CompiledVersion",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": "string",
+          "description": "The producer emits its build string; no fixed hash or version value is imposed."
+        },
+        {
+          "name": "body.CompiledTimestamp",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": "number",
+          "description": "The producer emits its numeric build timestamp. No runtime clock or age bounds are inferred."
+        },
+        {
+          "name": "body.SessionKeyHash",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "The source initializes this field to an empty string. Empty is valid and no hash grammar is imposed."
+        },
+        {
+          "name": "body.PageKeyHash",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": "string",
+          "allow_empty": true,
+          "description": "The source initializes this field to an empty string. Empty is valid and no hash grammar is imposed."
+        },
+        {
+          "name": "body.Url",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "description": "Privacy scrubbing can omit or empty this field. No URL scheme, nonempty value or receiver requirement is inferred."
+        },
+        {
+          "name": "body.Base",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "description": "Privacy scrubbing can omit or empty this field. No URL scheme, nonempty value or receiver requirement is inferred."
+        },
+        {
+          "name": "body.Referrer",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "allow_empty": true,
+          "description": "Privacy scrubbing can omit or empty this field. No URL scheme, nonempty value or receiver requirement is inferred."
+        },
+        {
+          "name": "body.Width",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "description": "Optional source numeric metadata. No sign, size, integer or clock bounds are imposed."
+        },
+        {
+          "name": "body.Height",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "description": "Optional source numeric metadata. No sign, size, integer or clock bounds are imposed."
+        },
+        {
+          "name": "body.ScreenWidth",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "description": "Optional source numeric metadata. No sign, size, integer or clock bounds are imposed."
+        },
+        {
+          "name": "body.ScreenHeight",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "description": "Optional source numeric metadata. No sign, size, integer or clock bounds are imposed."
+        },
+        {
+          "name": "body.PreviewMode",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "json_type": "boolean",
+          "description": "The source omits false preview mode; true is emitted when enabled. Absence remains valid."
+        },
+        {
+          "name": "body.UserId",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.SessionId",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.PageId",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.SessionUid",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.SnippetVersion",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.AppId",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.TabId",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.Preroll",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.Doctype",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        },
+        {
+          "name": "body.ReplayFlags",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+        }
+      ]
+    }
+  },
+  "fixture_manifest": "fixtures/vendor-fullstory-page/manifest.json"
+}

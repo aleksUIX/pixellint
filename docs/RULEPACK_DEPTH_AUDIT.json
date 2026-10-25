@@ -35726,7 +35726,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -306349,7 +306349,7 @@
     {
       "id": "vendor/clipflip-vast-tracking",
       "vendor": "clipflip",
-      "disposition": "implemented_source_scoped_partial",
+      "disposition": "implemented_source_template_partial",
       "spec_complete": false,
       "match": {
         "hosts": [
@@ -306362,7 +306362,8 @@
       "manifest_path": "crates/pixellint-core/rulepacks/vendor/clipflip-vast-tracking.json",
       "source_urls": [
         "https://www.clipflip.video/vast-tester/",
-        "https://app.clipflip.video/api/vast/dbsWPSt7xIdY2xePBhrD?v=3_0"
+        "https://app.clipflip.video/api/vast/dbsWPSt7xIdY2xePBhrD?v=3_0",
+        "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
       ],
       "sources_read": [
         {
@@ -306381,6 +306382,14 @@
           "bytes": 43831,
           "evidence_level": "official_template",
           "scope": "Exact callback path slots, nonempty v, and impression-only ord observation."
+        },
+        {
+          "url": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "3354196f3ad63bca0fbf63d80a2ae6266519be1c629ec5f067fef50d8207667f",
+          "scope": "clipflip-vpaid.raw"
         }
       ],
       "contracts_mapped": [
@@ -306425,80 +306434,372 @@
             "description": "All reviewed impression, event, click and error callbacks retain a nonempty v query field. Presence is observed producer-template completeness, not a vendor mandatory-field or delivery guarantee. No version enumeration is inferred.",
             "fix_hint": "Preserve the original generated v field."
           }
+        },
+        {
+          "scope": "http",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
+        },
+        {
+          "scope": "http",
+          "name": "path",
+          "contract": {
+            "name": "path",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
+        },
+        {
+          "scope": "http",
+          "name": "content_type",
+          "contract": {
+            "name": "content_type",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "application/json"
+              ]
+            },
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "method",
+                  "values": [
+                    "POST"
+                  ]
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "path",
+                  "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+                }
+              ]
+            },
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body",
+          "contract": {
+            "name": "body",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "object",
+            "allow_empty": true,
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "method",
+                  "values": [
+                    "POST"
+                  ]
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "path",
+                  "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+                }
+              ]
+            },
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.data",
+          "contract": {
+            "name": "body.data",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "object",
+            "allow_empty": true,
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "method",
+                  "values": [
+                    "POST"
+                  ]
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "path",
+                  "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+                }
+              ]
+            },
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.data.overlayId",
+          "contract": {
+            "name": "body.data.overlayId",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "description": "The overlay branch runs for a truthy overlay identifier. The value stays opaque; no issued-ID or alphabet is imposed.",
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "method",
+                  "values": [
+                    "POST"
+                  ]
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "path",
+                  "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+                }
+              ]
+            },
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.data.source",
+          "contract": {
+            "name": "body.data.source",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "string",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "VAST"
+              ]
+            },
+            "description": "The pinned overlay producer emits VAST. This is a source-profile advisory, not a universal collector enum.",
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "method",
+                  "values": [
+                    "POST"
+                  ]
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "path",
+                  "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+                }
+              ]
+            },
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.data.eventType",
+          "contract": {
+            "name": "body.data.eventType",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "The first POST serializes the caller event before later a.includes can throw. Null, number, object, empty and omitted values are possible emitted boundaries. Native types and event vocabulary remain open.",
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "method",
+                  "values": [
+                    "POST"
+                  ]
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "path",
+                  "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+                }
+              ]
+            },
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.data.progress",
+          "contract": {
+            "name": "body.data.progress",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": [
+              "number",
+              "null"
+            ],
+            "description": "The producer rounds a progress ratio without clamping. Negative and greater-than-100 values remain valid. Nonfinite arithmetic serializes as null.",
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "method",
+                  "values": [
+                    "POST"
+                  ]
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "path",
+                  "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+                }
+              ]
+            },
+            "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+          }
         }
       ],
-      "independent_source_cases": 6,
-      "original_oracle_cases": 24,
-      "engine_derived_oracle_cases": 0,
+      "independent_source_cases": 19,
+      "original_oracle_cases": 49,
+      "engine_derived_oracle_cases": 2,
       "negative_cases": 8,
-      "request_cases": 1,
+      "request_cases": 27,
       "test": {
-        "harness": "crates/pixellint-core/tests/clipflip_vast_template.rs",
-        "status": "Five targeted endpoint tests and full golden corpus passed. Formatting and clippy passed. Full workspace suite deferred to final integration.",
-        "expected_results": "Source-authored completeness and boundary controls, independent of captured customer values."
+        "harness": "crates/pixellint-core/tests/round2_source_profiles.rs",
+        "status": "Passed: 161 focused fixture cases, five existing Clipflip regressions, all five full golden/parity harness tests, offline source proof, formatting and core clippy all-targets/all-features. Full workspace suite and shared registration digests are integration-owned."
       },
       "implemented_counts": {
-        "field_contracts": 3,
+        "field_contracts": 12,
         "cross_field_assertions": 0,
         "body_contract_scopes": 0,
-        "http_contract_scopes": 0,
+        "http_contract_scopes": 1,
         "query_contract_scopes": 0,
         "bulk_query_sources": 0
       },
       "missing_requirements": [
         {
-          "requirement": "Collector rejection policy and conditional field semantics",
-          "reason": "The reviewed public producer demonstrates emitted templates, not a complete collector specification or server state.",
+          "requirement": "All checks are producer-profile warnings. None proves remote acceptance or complete collector coverage.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
           "classification": "source_or_external_context",
           "locally_checkable": false,
           "source_url": "https://www.clipflip.video/vast-tester/"
         },
         {
-          "requirement": "Creative issuance, attribution and delivery verification",
-          "reason": "The reviewed public producer demonstrates emitted templates, not a complete collector specification or server state.",
+          "requirement": "Only default exact hosts and reviewed routes are claimed. Configured domains and adjacent transports remain excluded.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
           "classification": "source_or_external_context",
           "locally_checkable": false,
           "source_url": "https://www.clipflip.video/vast-tester/"
         },
         {
-          "requirement": "ord semantics, supported version values and private transport variants",
-          "reason": "The reviewed public producer demonstrates emitted templates, not a complete collector specification or server state.",
+          "requirement": "Overlay body checks require observed POST and exact overlay-click path. Falsy overlay identifiers produce ordinary GET calls and do not require body fields.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://www.clipflip.video/vast-tester/"
+        },
+        {
+          "requirement": "eventType is open and can be omitted by JSON serialization. progress is unclamped and allows null from nonfinite arithmetic.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://www.clipflip.video/vast-tester/"
+        },
+        {
+          "requirement": "The first fetch emits eventType before later a.includes can throw. Null, number and object values can be posted, undefined omits the field, and empty strings are preserved. The later error does not undo that request; no native event type is constrained.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
           "classification": "source_or_external_context",
           "locally_checkable": false,
           "source_url": "https://www.clipflip.video/vast-tester/"
         }
       ],
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/clipflip-vast-tracking.json": "426d8f8b4d65a41e3713456740d280aa1f9574ac080d9ddd3c71e6ffb516eb05",
+        "crates/pixellint-core/rulepacks/vendor/clipflip-vast-tracking.json": "e33258eedcf64a2f53d80cd8e994d241a8e7cb5532c0aa4028d62e06f0d4f533",
         "crates/pixellint-core/tests/clipflip_vast_template.rs": "3492ee8067c5c64dd682427abf76e9e6673e1841be290ae5cb034cb60687c81c",
+        "crates/pixellint-core/tests/round2_source_profiles.rs": "60e0f807cf6e9021e13870d1151089c393d94aefc5875dd7b54297a50aba8178",
         "docs/reviews/clipflip-vast-template-20261025.json": "669d837f193a526249f8225dc396df0fa7f182f5150080f8c444249ab97c3130",
+        "docs/reviews/round2-clipflip-vast-tracking-20261025.json": "1d446f1c631fa6a4fd6d645389a6a6dfbd643ce37d17e68ac225ad55d1aedd1a",
         "fixtures/vendor-clipflip-vast-tracking/cdn-host.txt": "448a51a6d88534fc3c724f33ec5df3ab1ab4d84da7d5de267511e782785403fa",
         "fixtures/vendor-clipflip-vast-tracking/empty-creative-path.txt": "a4749f89bd32a5dbbe43af9d082890f219c8df4fc3fd3d5a315e0d8f0c223f72",
+        "fixtures/vendor-clipflip-vast-tracking/empty-event-open.json": "166dc379e8a72b8c7cc7ab9865580a3f611f453fe4bef944b010c1c9c6426776",
         "fixtures/vendor-clipflip-vast-tracking/empty-event-path.txt": "70df2a5f76049df6d8e1142727873460c621588aaf1e3a9089d3bf3f8b3f94fa",
         "fixtures/vendor-clipflip-vast-tracking/empty-v.txt": "ef55d4ce05b247bc05510c7c7e5802deb439087591f500b8a6257c753689e0cf",
         "fixtures/vendor-clipflip-vast-tracking/extra-path-segment.txt": "2ab0f133b94460b1f93e94d460293ec0a5155c50ffaed428b72ad6b037e88ecd",
+        "fixtures/vendor-clipflip-vast-tracking/falsy-overlay-get-control.json": "bfe9378f2794b46a1bb779d440433fb005dcd008a4e81a1dd11f1e5d019a1770",
         "fixtures/vendor-clipflip-vast-tracking/lookalike-host.txt": "eada7ae95c27f124a0edb71b63f856594e5ddaa3fe324d6c1d6548eb75090f3b",
-        "fixtures/vendor-clipflip-vast-tracking/manifest.json": "34597f889626b36998417e4e0d432c556e7f4ee8801d4f8f6dcadd2692a9f84a",
+        "fixtures/vendor-clipflip-vast-tracking/manifest.json": "001ce2c31f5abce50b971ea99d5b14fe4874e602e7eace5d396086d87e7a143f",
         "fixtures/vendor-clipflip-vast-tracking/missing-event-component.txt": "1e29fc8102a1d79918039e1e07df0c35f6579dbe7d480b766569aa12cf378546",
         "fixtures/vendor-clipflip-vast-tracking/missing-v.txt": "ed99a42f352d97fada46ee933d7271cd8112035c4d9a95d8a43a333cdbc334a9",
         "fixtures/vendor-clipflip-vast-tracking/open-event-and-version.txt": "ee831a2f9a5d02bf44046673e4784bec9ae1af53d58ba9f325dc4a6b42e8e6cf",
         "fixtures/vendor-clipflip-vast-tracking/ord-empty-unconstrained.txt": "ea72ef075e4729f831d592f8930cc1f7a6e8872e52bc20dc2586a4e882955a98",
         "fixtures/vendor-clipflip-vast-tracking/ord-not-required.txt": "bb26f0d6a173ad61bbcd84980c678e88b62c0067a5e5b71b925389daffee2bdd",
+        "fixtures/vendor-clipflip-vast-tracking/ordinary-event-post-body-unclaimed.json": "f6107266d72bc72f012b0cfdf0b98d861c727ff768d6aebd24bf8d85c79aab69",
         "fixtures/vendor-clipflip-vast-tracking/other-app-route.txt": "eb9cd63ee0869a19471af2de5d2dc62899def5f9ab6ddf91a782aefe50acd7b7",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-array-data.json": "b0474eb7d2ea7ba9a3b089bc158c0f5ed64fe99673d56d87dc37b59e7e12e5a4",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-array-root.json": "c217fbc085675caa2e3e5a2e315a98fd79177ae4094ade4882ee893fb0ae0f3a",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-bad-overlayid.json": "ce11450d39341bc62c6bea429d75a238e795ebec2f11804a863d1e9a38f41677",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-bad-progress.json": "a9b2e24ce6e19de8402ea3ba384d55324ad5c002c6961a2add26efd825879846",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-bad-source.json": "f0e98708fb8b1e53ede37ded1b5b4d3efe059f66fb11e33bd8247a66ba6ff9be",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-missing-mime.json": "c6ea51cdd8cd1e5596321b04f84e6f7a3dcfce894deb0eba861b985355dadd72",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-missing-overlayid.json": "e59437e06274cf081ded77232ed8201416879303208c7c67056165180f0e652b",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-missing-progress.json": "17bf550fcf2a051a84a981ffc9a6fb1712b92c6b49ba9328d85395ff05e7b90a",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-missing-source.json": "550da48900557648d7d13c7f4728aa6abba4d5ec469bc30b25ed21043b60dd08",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-url-no-body-requirement.txt": "47bb77a2282fbab95e44b5e1ccc8eeca50e25bfd68974e371ba849be5159c1f6",
+        "fixtures/vendor-clipflip-vast-tracking/overlay-wrong-mime.json": "8dc2ac6ca43178477fbf4123ffa7832c76ad92b67b887adfccd33e838cf7e603",
         "fixtures/vendor-clipflip-vast-tracking/preserve-core-gdpr-error.txt": "b89fbf4c78e6b73b73f94020da3a992ba417fb70987691c7e02403b3d8827544",
         "fixtures/vendor-clipflip-vast-tracking/producer-endpoint.txt": "3e3babcd3cac12717e2d2e051f2f72c4f57c74a90de8c567c0b6beb432881926",
         "fixtures/vendor-clipflip-vast-tracking/query-cannot-repair-creative.txt": "a1215cc456b2a3114190d427df6316f5870a7293f8603ba391a017822f3e0918",
         "fixtures/vendor-clipflip-vast-tracking/query-cannot-repair-event.txt": "a27998d940d656882b363da3ad0768b6d30b622cc2b6ff96fd10c78594334eaa",
+        "fixtures/vendor-clipflip-vast-tracking/source-array-event.json": "4f49547934047e7a1321548d6ceb8fa78a8664f478d78f18dccc08ed1af60e12",
         "fixtures/vendor-clipflip-vast-tracking/source-click-template.txt": "34ec21bd0af8020707640833d3875e16c9f8587dcd949f11340e8df11d556a31",
+        "fixtures/vendor-clipflip-vast-tracking/source-empty-overlay-get.json": "bfe9378f2794b46a1bb779d440433fb005dcd008a4e81a1dd11f1e5d019a1770",
+        "fixtures/vendor-clipflip-vast-tracking/source-engaged.json": "c69e12e331c1d1495b55ded73e8569ba43fd1cfebde13a47a1ec5900e1b89585",
         "fixtures/vendor-clipflip-vast-tracking/source-error-template.txt": "368b6fe2b27c5b877088489df0333c618bfb0b99da457b2ed21dc97cae9b4845",
         "fixtures/vendor-clipflip-vast-tracking/source-event-template.txt": "0e219842d97eac7e2da1b91ddd8353f2e729b06087af70eda05dd1982b60e36b",
+        "fixtures/vendor-clipflip-vast-tracking/source-false-event.json": "f2988de2daf187a89e166da055256642cd4d2fc6353a0a59d180833c7e435673",
+        "fixtures/vendor-clipflip-vast-tracking/source-false-overlay-get.json": "31b9250a9b3c8b03a6f1fad56f6209f0b0470d6063ef83519eb5ac192d134a07",
         "fixtures/vendor-clipflip-vast-tracking/source-impression-template.txt": "35e9fff97842c9074a44eb1fc676c73d3775390e044d6bde262fa5991923b823",
+        "fixtures/vendor-clipflip-vast-tracking/source-nonfinite-null.json": "8f70e4b1b8083d923715d9dbaa2b6f0b8836b407e64aeb2999e8aace65d97522",
+        "fixtures/vendor-clipflip-vast-tracking/source-null-event.json": "d59bc4beede36098d275684cb03e6381299b1f031cb65ccf1fc73b2fcb94e1b2",
+        "fixtures/vendor-clipflip-vast-tracking/source-number-event.json": "bb83b9e854abf4256b32623bc9b832cc6d3e228b8a8fe7ad3abf5926356f0ed9",
+        "fixtures/vendor-clipflip-vast-tracking/source-object-event.json": "577d7a011cf9356959753c9b461ffaebb09c4cf132ab8229854019b2a114e8ff",
+        "fixtures/vendor-clipflip-vast-tracking/source-overlay-post.json": "d44191ae207a6558e990d46b2dded51ece149381a11a84f5e1b62a8ca1b98676",
         "fixtures/vendor-clipflip-vast-tracking/source-request-input.json": "ec74d8d1ff5273b5a48d63ed79864e80a9526e9ab9a4d046206e58418881f7bf",
+        "fixtures/vendor-clipflip-vast-tracking/source-slider-navigate.json": "bf366b66287740d60a76954de61228599a51c7bdd777245cd82dff18ceca2e07",
+        "fixtures/vendor-clipflip-vast-tracking/source-undefined-event-omitted.json": "5bcb9678cd3ed9fd06b02b3e3ed95015a692f9468fe0c101e8b73bc8d3b1398b",
         "fixtures/vendor-clipflip-vast-tracking/source-vast-input.txt": "ddd16414020c948e1e2a76d40532441d992e42b56492b86f9d8f29eeb00ddbeb",
+        "fixtures/vendor-clipflip-vast-tracking/source-zero-overlay-get.json": "31b9250a9b3c8b03a6f1fad56f6209f0b0470d6063ef83519eb5ac192d134a07",
         "fixtures/vendor-clipflip-vast-tracking/unconfigured-sibling.txt": "c952fd76175ccf8f7539919e7a1ed53c5f06ac08e2783ac9232945f4730c39cf",
-        "fixtures/vendor-clipflip-vast-tracking/wrong-case-route.txt": "79d7e0dbd5050a194d731fca6360fb66c10f639b5af5c4beb19c225107ce381e"
+        "fixtures/vendor-clipflip-vast-tracking/wrong-case-route.txt": "79d7e0dbd5050a194d731fca6360fb66c10f639b5af5c4beb19c225107ce381e",
+        "fixtures/vendor-fullstory-page/source-producer-proof.json": "04407a44d8f0a57cfbefd68db77d729e73b738081d7c17f7c04f13b1cbe44c47",
+        "tools/reviews/round2-lane02-producer-proof.mjs": "a8184f1088dfd1f3d1eaf58117c70012df23d31a130144db139a875e2561527d"
       },
-      "manifest_sha256": "426d8f8b4d65a41e3713456740d280aa1f9574ac080d9ddd3c71e6ffb516eb05"
+      "manifest_sha256": "e33258eedcf64a2f53d80cd8e994d241a8e7cb5532c0aa4028d62e06f0d4f533",
+      "review_date": "2026-10-25",
+      "oracle_method": "Four aggregate invalid/missing object diagnostic layouts use engine snapshots for existing parent suppression and normalized-null behavior; per-field and source boundaries remain source-authored. Expected selectors, warnings and clean boundaries authored from pinned source before running the engine. Exact FullStory constructor expressions and Clipflip tracking function execute offline with synthetic values and intercepted fetch. Other controls use synthetic source-derived mutations; none proves server acceptance."
     },
     {
       "id": "vendor/statcounter-noscript",
@@ -307837,6 +308138,1203 @@
       "test": {
         "harness": "lemonpi_source_profiles.rs and rulepack_golden.rs",
         "status": "Passed: targeted source/boundary test validates 70 prewritten cases; golden_corpus_matches_expected_findings passes; cargo clippy --all-targets --all-features -- -D warnings and cargo fmt --all --check pass. Full workspace suite remains coordinator integration work. Depth freshness finds only 21 pre-existing shared lib.rs pins made stale by registration; new pack artifacts are current."
+      }
+    },
+    {
+      "id": "vendor/fullstory-settings",
+      "vendor": "fullstory",
+      "disposition": "implemented_source_template_partial",
+      "spec_complete": false,
+      "review_date": "2026-10-25",
+      "match": {
+        "hosts": [
+          "edge.fullstory.com",
+          "rs.fullstory.com"
+        ],
+        "path_patterns": [
+          "^/s/settings/[^/]*/[^/]*/web$"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/fullstory-settings.json",
+      "manifest_sha256": "c210b117e00e4d6fef8f89f9cc88655e9a7bd1b9ddfc45f33bbaadc1c55cbed2",
+      "sources_read": [
+        {
+          "url": "https://edge.fullstory.com/s/fs.js",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "30a0e0ba101942f8371e76e42a75d7cc99ff515dd4efc78c932b13c262c3e8bf",
+          "scope": "fullstory-sdk.raw"
+        },
+        {
+          "url": "https://edge.fullstory.com/s/fs.js",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "11258843fcf3fb75f1ad6a3e12b158b773775bcac8affa5b21c1360500aacfe5",
+          "scope": "fullstory-sdk-decoded.js"
+        },
+        {
+          "url": "https://developer.fullstory.com/browser/fullcapture/configure-capture/",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "eda96c9551567441a403bbd6b33f5ebe7693b40bf6942e195f862e88136b3ea9",
+          "scope": "fullstory-config.raw"
+        }
+      ],
+      "source_urls": [
+        "https://edge.fullstory.com/s/fs.js",
+        "https://developer.fullstory.com/browser/fullcapture/configure-capture/"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "org_path",
+          "contract": {
+            "name": "org_path",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "The source inserts configured orgId into this opaque path slot. This is producer completeness, not organization issuance or acceptance."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "version_path",
+          "contract": {
+            "name": "version_path",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "The source defaults version to v1. Nonempty future values remain open; no version enum is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET"
+              ]
+            },
+            "description": "The pinned settings producer uses GET, including fallback and preview requests."
+          }
+        }
+      ],
+      "original_oracle_cases": 17,
+      "engine_derived_oracle_cases": 0,
+      "independent_source_cases": 5,
+      "negative_cases": 6,
+      "request_cases": 2,
+      "oracle_method": "Four aggregate invalid/missing object diagnostic layouts use engine snapshots for existing parent suppression and normalized-null behavior; per-field and source boundaries remain source-authored. Expected selectors, warnings and clean boundaries authored from pinned source before running the engine. Exact FullStory constructor expressions and Clipflip tracking function execute offline with synthetic values and intercepted fetch. Other controls use synthetic source-derived mutations; none proves server acceptance.",
+      "implemented_counts": {
+        "field_contracts": 3,
+        "cross_field_assertions": 0,
+        "body_contract_scopes": 0,
+        "http_contract_scopes": 1,
+        "query_contract_scopes": 0,
+        "bulk_query_sources": 0
+      },
+      "missing_requirements": [
+        {
+          "requirement": "All checks are producer-profile warnings. None proves remote acceptance or complete collector coverage.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        },
+        {
+          "requirement": "Only default exact hosts and reviewed routes are claimed. Configured domains and adjacent transports remain excluded.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        },
+        {
+          "requirement": "Settings profile checks configuration requests only and does not claim recorder measurement coverage.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        },
+        {
+          "requirement": "Recorder bundle formats, custom/GCLB hosts, issued session state and collector rejection policy remain unvalidated.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/fullstory-settings.json": "c210b117e00e4d6fef8f89f9cc88655e9a7bd1b9ddfc45f33bbaadc1c55cbed2",
+        "crates/pixellint-core/tests/round2_source_profiles.rs": "60e0f807cf6e9021e13870d1151089c393d94aefc5875dd7b54297a50aba8178",
+        "docs/reviews/round2-fullstory-settings-20261025.json": "580d8830cf774655c8743e6d1cff7ff1e285d05eb5c4bb6b488acb6ddf7cde14",
+        "fixtures/vendor-fullstory-page/source-producer-proof.json": "04407a44d8f0a57cfbefd68db77d729e73b738081d7c17f7c04f13b1cbe44c47",
+        "fixtures/vendor-fullstory-settings/bundle-unclaimed.txt": "f739891e81a61d3d18234b7edd5444d73cee03ddefd10d2e9ff77af915730375",
+        "fixtures/vendor-fullstory-settings/child-host.txt": "6819c7037101861de7519c7927758b41af477022e93cf853d1684b40241f7c15",
+        "fixtures/vendor-fullstory-settings/custom-host.txt": "d155385ecc948ae9527916bea0061da0b9653361c9a6af89b7978a3fb34bb053",
+        "fixtures/vendor-fullstory-settings/empty-org-query-spoof.txt": "03206e6130c142e0274e6ecca58c71f83355a7a654fa09a6d2163851d04b96c5",
+        "fixtures/vendor-fullstory-settings/empty-org.txt": "2f3d884e883a417513b410993fc80046963d170c67a9841c4b8e642bbcc01ec0",
+        "fixtures/vendor-fullstory-settings/empty-version-query-spoof.txt": "99937ccdc01ec7a448bb94b8425b2a4f51d03ed03bfb015ee54f1b5f423fa0bb",
+        "fixtures/vendor-fullstory-settings/empty-version.txt": "674f2c3e1cc16606f4eeb8683f31d77613e02856e6ec1873f212279da8822b7e",
+        "fixtures/vendor-fullstory-settings/extra-segment.txt": "fc521b17cf79bb915234f229caff5a42c3973a3ec999c28e729c5adb4699a073",
+        "fixtures/vendor-fullstory-settings/future-version.txt": "b87f0345e0341e544996ba829d1595420f34c9e88b2fc91b52fc80fcd5e48f8c",
+        "fixtures/vendor-fullstory-settings/lookalike.txt": "74c6d773f7398bea4ca9ae3470571ddab0bf7f8ed8c2233d06befcf93e3fca01",
+        "fixtures/vendor-fullstory-settings/manifest.json": "8614390753957aeed04d19bece71b80dc63f365698d857c09f86b9b90ffcdaf9",
+        "fixtures/vendor-fullstory-settings/settings-root.txt": "c3816365d17b070bd71246e323bdf0e4fea92819afe28ea8670bf5a2221c2210",
+        "fixtures/vendor-fullstory-settings/source-default.txt": "7b3a6f1211b01b367f3b3d7a4804e42bf146933131e77644ce64cb4f7508f2ee",
+        "fixtures/vendor-fullstory-settings/source-get-request.json": "35d3112f1d97793c3b3ce426bb22c5c220781cfedf2f67ac8ef6bc7ba36712d6",
+        "fixtures/vendor-fullstory-settings/source-preview.txt": "51a2958774db1c37112336ba62b7934866afa134ffab4bf68b4a0720699b90b3",
+        "fixtures/vendor-fullstory-settings/source-rs-fallback.txt": "fb19379583f0bebdd27aaf343ca79d4bc90b14d51b51ea10c5d59f506153bed0",
+        "fixtures/vendor-fullstory-settings/source-zone-bypass.txt": "1d3f0d5ae5dd06d0dd812065e226c59975d6892bf43f1ca0583d58e804fd595a",
+        "fixtures/vendor-fullstory-settings/wrong-method.json": "08e55de18451e58498a664c752b4aa526d741d4909eaf32f5fa8b8f86962f825",
+        "tools/reviews/round2-lane02-producer-proof.mjs": "a8184f1088dfd1f3d1eaf58117c70012df23d31a130144db139a875e2561527d"
+      },
+      "test": {
+        "harness": "crates/pixellint-core/tests/round2_source_profiles.rs",
+        "status": "Passed: 161 focused fixture cases, five existing Clipflip regressions, all five full golden/parity harness tests, offline source proof, formatting and core clippy all-targets/all-features. Full workspace suite and shared registration digests are integration-owned."
+      }
+    },
+    {
+      "id": "vendor/fullstory-page",
+      "vendor": "fullstory",
+      "disposition": "implemented_source_template_partial",
+      "spec_complete": false,
+      "review_date": "2026-10-25",
+      "match": {
+        "hosts": [
+          "rs.fullstory.com"
+        ],
+        "paths": [
+          "/rec/page"
+        ],
+        "artifact_kinds": [
+          "request"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/fullstory-page.json",
+      "manifest_sha256": "5cdf5c062f85ce8e452c43b6d7560bf028b185ad337e260599c5e04dbf7f364a",
+      "sources_read": [
+        {
+          "url": "https://edge.fullstory.com/s/fs.js",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "30a0e0ba101942f8371e76e42a75d7cc99ff515dd4efc78c932b13c262c3e8bf",
+          "scope": "fullstory-sdk.raw"
+        },
+        {
+          "url": "https://edge.fullstory.com/s/fs.js",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "11258843fcf3fb75f1ad6a3e12b158b773775bcac8affa5b21c1360500aacfe5",
+          "scope": "fullstory-sdk-decoded.js"
+        },
+        {
+          "url": "https://developer.fullstory.com/browser/fullcapture/configure-capture/",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "eda96c9551567441a403bbd6b33f5ebe7693b40bf6942e195f862e88136b3ea9",
+          "scope": "fullstory-config.raw"
+        }
+      ],
+      "source_urls": [
+        "https://edge.fullstory.com/s/fs.js",
+        "https://developer.fullstory.com/browser/fullcapture/configure-capture/"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "http",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "POST"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "http",
+          "name": "content_type",
+          "contract": {
+            "name": "content_type",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "text/plain"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body",
+          "contract": {
+            "name": "body",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "object",
+            "allow_empty": true
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.OrgId",
+          "contract": {
+            "name": "body.OrgId",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "string",
+            "description": "Initialization requires a configured organization string. Only producer completeness is checked, without issued-ID grammar."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.CompiledVersion",
+          "contract": {
+            "name": "body.CompiledVersion",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "string",
+            "description": "The producer emits its build string; no fixed hash or version value is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.CompiledTimestamp",
+          "contract": {
+            "name": "body.CompiledTimestamp",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "number",
+            "description": "The producer emits its numeric build timestamp. No runtime clock or age bounds are inferred."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.SessionKeyHash",
+          "contract": {
+            "name": "body.SessionKeyHash",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "string",
+            "allow_empty": true,
+            "description": "The source initializes this field to an empty string. Empty is valid and no hash grammar is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.PageKeyHash",
+          "contract": {
+            "name": "body.PageKeyHash",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "string",
+            "allow_empty": true,
+            "description": "The source initializes this field to an empty string. Empty is valid and no hash grammar is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.Url",
+          "contract": {
+            "name": "body.Url",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": [
+              "string",
+              "null"
+            ],
+            "allow_empty": true,
+            "description": "Privacy scrubbing can omit or empty this field. No URL scheme, nonempty value or receiver requirement is inferred."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.Base",
+          "contract": {
+            "name": "body.Base",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": [
+              "string",
+              "null"
+            ],
+            "allow_empty": true,
+            "description": "Privacy scrubbing can omit or empty this field. No URL scheme, nonempty value or receiver requirement is inferred."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.Referrer",
+          "contract": {
+            "name": "body.Referrer",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": [
+              "string",
+              "null"
+            ],
+            "allow_empty": true,
+            "description": "Privacy scrubbing can omit or empty this field. No URL scheme, nonempty value or receiver requirement is inferred."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.Width",
+          "contract": {
+            "name": "body.Width",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": [
+              "number",
+              "null"
+            ],
+            "description": "Optional source numeric metadata. No sign, size, integer or clock bounds are imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.Height",
+          "contract": {
+            "name": "body.Height",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": [
+              "number",
+              "null"
+            ],
+            "description": "Optional source numeric metadata. No sign, size, integer or clock bounds are imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.ScreenWidth",
+          "contract": {
+            "name": "body.ScreenWidth",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": [
+              "number",
+              "null"
+            ],
+            "description": "Optional source numeric metadata. No sign, size, integer or clock bounds are imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.ScreenHeight",
+          "contract": {
+            "name": "body.ScreenHeight",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": [
+              "number",
+              "null"
+            ],
+            "description": "Optional source numeric metadata. No sign, size, integer or clock bounds are imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.PreviewMode",
+          "contract": {
+            "name": "body.PreviewMode",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "json_type": "boolean",
+            "description": "The source omits false preview mode; true is emitted when enabled. Absence remains valid."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.UserId",
+          "contract": {
+            "name": "body.UserId",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.SessionId",
+          "contract": {
+            "name": "body.SessionId",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.PageId",
+          "contract": {
+            "name": "body.PageId",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.SessionUid",
+          "contract": {
+            "name": "body.SessionUid",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.SnippetVersion",
+          "contract": {
+            "name": "body.SnippetVersion",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.AppId",
+          "contract": {
+            "name": "body.AppId",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.TabId",
+          "contract": {
+            "name": "body.TabId",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.Preroll",
+          "contract": {
+            "name": "body.Preroll",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.Doctype",
+          "contract": {
+            "name": "body.Doctype",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "body.ReplayFlags",
+          "contract": {
+            "name": "body.ReplayFlags",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Source runtime value is opaque and may be omitted. No identifier alphabet or native type is imposed."
+          }
+        }
+      ],
+      "original_oracle_cases": 30,
+      "engine_derived_oracle_cases": 2,
+      "independent_source_cases": 1,
+      "negative_cases": 6,
+      "request_cases": 31,
+      "oracle_method": "Four aggregate invalid/missing object diagnostic layouts use engine snapshots for existing parent suppression and normalized-null behavior; per-field and source boundaries remain source-authored. Expected selectors, warnings and clean boundaries authored from pinned source before running the engine. Exact FullStory constructor expressions and Clipflip tracking function execute offline with synthetic values and intercepted fetch. Other controls use synthetic source-derived mutations; none proves server acceptance.",
+      "implemented_counts": {
+        "field_contracts": 26,
+        "cross_field_assertions": 0,
+        "body_contract_scopes": 0,
+        "http_contract_scopes": 1,
+        "query_contract_scopes": 0,
+        "bulk_query_sources": 0
+      },
+      "missing_requirements": [
+        {
+          "requirement": "All checks are producer-profile warnings. None proves remote acceptance or complete collector coverage.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        },
+        {
+          "requirement": "Only default exact hosts and reviewed routes are claimed. Configured domains and adjacent transports remain excluded.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        },
+        {
+          "requirement": "Privacy fields can be omitted or empty. Opaque runtime IDs and optional metadata stay optional. Empty key hashes are intentional.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        },
+        {
+          "requirement": "The SDK emits text/plain JSON. Bundle payloads and compressed event formats are excluded.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        },
+        {
+          "requirement": "Settings profile checks configuration requests only and does not claim recorder measurement coverage.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        },
+        {
+          "requirement": "Recorder bundle formats, custom/GCLB hosts, issued session state and collector rejection policy remain unvalidated.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://edge.fullstory.com/s/fs.js"
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/fullstory-page.json": "5cdf5c062f85ce8e452c43b6d7560bf028b185ad337e260599c5e04dbf7f364a",
+        "crates/pixellint-core/tests/round2_source_profiles.rs": "60e0f807cf6e9021e13870d1151089c393d94aefc5875dd7b54297a50aba8178",
+        "docs/reviews/round2-fullstory-page-20261025.json": "43f1f999d2ef9a30fa4b72f3212bc2b13d9f4d1ea29b12425aa34438f3685896",
+        "fixtures/vendor-fullstory-page/absent-body.json": "360fbec65482363c6b9dcf5b76f231c3456f8c7ffe3efa4de54f2b22f3107c00",
+        "fixtures/vendor-fullstory-page/array-body-shape.json": "cb8e7ff1e4118c0026484f0d7ca86aa7f7aa131dde481ad871120b6f8058fee2",
+        "fixtures/vendor-fullstory-page/bad-base.json": "5d2bcdf4016c4553f41d8548309a47b1624467cf80932cb2ed74ac54e4c9033f",
+        "fixtures/vendor-fullstory-page/bad-compiledtimestamp.json": "5f3f30d44523dc5fb0027e85744e79f202ed14dc1f20e2569594360234816502",
+        "fixtures/vendor-fullstory-page/bad-compiledversion.json": "92397dbfc168ae7d9483af1502bd74f90c8fff9a2de6950cd4ab9f34727141ca",
+        "fixtures/vendor-fullstory-page/bad-height.json": "617bcaca05430f66e2d49b2ec085e64f99bdb535e73f487197818c3caf413ce0",
+        "fixtures/vendor-fullstory-page/bad-orgid.json": "1bf0c828769cbcd46d7eccd82beb33ef969924acb9d18895e5a332eec37d0e18",
+        "fixtures/vendor-fullstory-page/bad-pagekeyhash.json": "ebe533bd6b321fabbedf3a5d9dd21255353d39e062d8cb6cfa043a9bea5238a9",
+        "fixtures/vendor-fullstory-page/bad-previewmode.json": "687c3678b203b31e85b6a1eaa0353f5e729b0230d1a2f55b776846bbab68efeb",
+        "fixtures/vendor-fullstory-page/bad-referrer.json": "2d99179ac8c9c247b63ea816c758d1f30311f1484e87e162cc47b346fc29fb79",
+        "fixtures/vendor-fullstory-page/bad-screenheight.json": "8b8c13e0d1a94060e03eab05019b795c815b183d465fbf5803d97e5ab6fdcca6",
+        "fixtures/vendor-fullstory-page/bad-screenwidth.json": "b8c37061e3538c851aff055c158c3ff16a8615210b76c53bb96e19c2a49cb0a6",
+        "fixtures/vendor-fullstory-page/bad-sessionkeyhash.json": "843fe2ed396b03de19e64811115c32a2966dc6dbe6930d6cee4e0ace79d603da",
+        "fixtures/vendor-fullstory-page/bad-url.json": "87bbc128b40cca23e1da12c2ec2bcd105e3ea360e88f0a25f7ac2fb91d9a1bd0",
+        "fixtures/vendor-fullstory-page/bad-width.json": "8a52ed5fbf349c1ab83e9575311a50522d7644a7a340153b3d08cf9ff689e42a",
+        "fixtures/vendor-fullstory-page/bare-url-unclaimed.txt": "1e5583ebd3bccaa9bad002126881d53f7f9e13fbbff3bd5d7531e65fc2fa7874",
+        "fixtures/vendor-fullstory-page/bundle-unclaimed.json": "017006a09739bcfb0337d08fbc392199769aae0d9dbe93b862a1d0de352e6b8a",
+        "fixtures/vendor-fullstory-page/custom-host.json": "47945ee4dd9208cf8d368e9b829638e2cd16f755e96935d658e9fa83c5aaeb96",
+        "fixtures/vendor-fullstory-page/edge-not-recorder.json": "900c702cf3133e05dc6785111aba8f4c058450a3fda8046ab50a9b8ff6cf02ff",
+        "fixtures/vendor-fullstory-page/extra-segment.json": "560c068e0488ab5f6adc573ccc1a99cfa937770cd951426fa6ac31c7346a5d4a",
+        "fixtures/vendor-fullstory-page/lookalike.json": "cf51066dcef3bc83fecbc6d7ebd1fcae9a1d6bb26aeabf7e151ca2c891dfeb60",
+        "fixtures/vendor-fullstory-page/manifest.json": "98e044dd6c161cb7aeff549b9b3d67f902a2c4561ee7e07c8c503e92e2d1bfd3",
+        "fixtures/vendor-fullstory-page/missing-compiledtimestamp.json": "1c542716bf0d3a0e7475e0b9431d1be14bf730e07d075eb9c111ca8666f3a21b",
+        "fixtures/vendor-fullstory-page/missing-compiledversion.json": "8d15d38d2caec901b4321d88fe7f73da13f15d415de6fb04716b54dab3622f40",
+        "fixtures/vendor-fullstory-page/missing-mime.json": "739f15e62f38bf47865a2dc5d9a27c32d7e3337b7375a36c96b37ed5866770b5",
+        "fixtures/vendor-fullstory-page/missing-orgid.json": "f67df698af553010b491bfe385375f2544099bfa8cdd1a8da749b37776d90eb6",
+        "fixtures/vendor-fullstory-page/missing-pagekeyhash.json": "d228729ec8e7ef111928f7d89439be04ccf51ffaaa09a161710b34bfe2eda3f7",
+        "fixtures/vendor-fullstory-page/missing-sessionkeyhash.json": "2d8311e08d86e397415b94ad001ce306bbb5a8cc096baaf4ded7addf11c5f272",
+        "fixtures/vendor-fullstory-page/preview-null-and-open-metadata.json": "6a401cac3ba60ab86c10a19092eefb360ee37d203f12a95673e955712e02f301",
+        "fixtures/vendor-fullstory-page/privacy-and-undefined-omitted.json": "a3732bf365c510ac41ef5a180af1b67ac807049f2c486ae773b27467407c9774",
+        "fixtures/vendor-fullstory-page/source-page-text-plain.json": "f9cd4bee3f325080eb1a22de847014e2beb685d8ad8fb0ec1e131409d3400162",
+        "fixtures/vendor-fullstory-page/source-producer-proof.json": "04407a44d8f0a57cfbefd68db77d729e73b738081d7c17f7c04f13b1cbe44c47",
+        "fixtures/vendor-fullstory-page/wrong-method.json": "bbe91d42266cc23987de959c1f6a58a98c96bcae20946942e54fbf12f7c581a1",
+        "fixtures/vendor-fullstory-page/wrong-mime.json": "b82f1598c90c44c4a3c6f06c0709152d0c03f93aa387db31c6c969b339848422",
+        "tools/reviews/round2-lane02-producer-proof.mjs": "a8184f1088dfd1f3d1eaf58117c70012df23d31a130144db139a875e2561527d"
+      },
+      "test": {
+        "harness": "crates/pixellint-core/tests/round2_source_profiles.rs",
+        "status": "Passed: 161 focused fixture cases, five existing Clipflip regressions, all five full golden/parity harness tests, offline source proof, formatting and core clippy all-targets/all-features. Full workspace suite and shared registration digests are integration-owned."
+      }
+    },
+    {
+      "id": "vendor/podscribe-prx-impression",
+      "vendor": "podscribe",
+      "disposition": "implemented_source_template_partial",
+      "spec_complete": false,
+      "review_date": "2026-10-25",
+      "match": {
+        "hosts": [
+          "verifi.podscribe.com"
+        ],
+        "paths": [
+          "/pxl"
+        ],
+        "query_params_values": [
+          {
+            "name": "plt",
+            "values": [
+              "prx"
+            ]
+          }
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/podscribe-prx-impression.json",
+      "manifest_sha256": "b25480ee1c22e8c121756503afb263b4d3f2ac05509c0f7409d79370d05f8a67",
+      "sources_read": [
+        {
+          "url": "https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "4822534466c0d573e68ed211b1ad537b40629a148bce6801be1dca19d3da9d5a",
+          "scope": "podscribe-creative.raw"
+        },
+        {
+          "url": "https://help.podscribe.com/campaign--publisher-tracking-setup/mdPMabRsDPjesRTbktukZc/setting-up-publisher-tracking-overview/d5Co5FqN6pU6XQFerZUQL4",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "06fa4c4b18d87b6eabb09fff0389abaebc782c7c380348b76717196e33acf341",
+          "scope": "podscribe-publisher-overview.raw"
+        }
+      ],
+      "source_urls": [
+        "https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN",
+        "https://help.podscribe.com/campaign--publisher-tracking-setup/mdPMabRsDPjesRTbktukZc/setting-up-publisher-tracking-overview/d5Co5FqN6pU6XQFerZUQL4"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "advertiser",
+          "contract": {
+            "name": "advertiser",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "cid",
+          "contract": {
+            "name": "cid",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "client",
+          "contract": {
+            "name": "client",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "clname",
+          "contract": {
+            "name": "clname",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "dt",
+          "contract": {
+            "name": "dt",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "eid",
+          "contract": {
+            "name": "eid",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "event_type",
+          "contract": {
+            "name": "event_type",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ord",
+          "contract": {
+            "name": "ord",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "plt",
+          "contract": {
+            "name": "plt",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "pub",
+          "contract": {
+            "name": "pub",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "requestId",
+          "contract": {
+            "name": "requestId",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "show",
+          "contract": {
+            "name": "show",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "This key appears in the official PRX example. Presence is template completeness only; no receiver-requiredness, identifier, time, IP or cache-buster grammar is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ip",
+          "contract": {
+            "name": "ip",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Optional open field. IP/user-agent may be supplied through HTTP headers, and creativeid is a caller-chosen creative name."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "ua",
+          "contract": {
+            "name": "ua",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Optional open field. IP/user-agent may be supplied through HTTP headers, and creativeid is a caller-chosen creative name."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "creativeid",
+          "contract": {
+            "name": "creativeid",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "description": "Optional open field. IP/user-agent may be supplied through HTTP headers, and creativeid is a caller-chosen creative name."
+          }
+        }
+      ],
+      "original_oracle_cases": 36,
+      "engine_derived_oracle_cases": 0,
+      "independent_source_cases": 2,
+      "negative_cases": 14,
+      "request_cases": 2,
+      "oracle_method": "Four aggregate invalid/missing object diagnostic layouts use engine snapshots for existing parent suppression and normalized-null behavior; per-field and source boundaries remain source-authored. Expected selectors, warnings and clean boundaries authored from pinned source before running the engine. Exact FullStory constructor expressions and Clipflip tracking function execute offline with synthetic values and intercepted fetch. Other controls use synthetic source-derived mutations; none proves server acceptance.",
+      "implemented_counts": {
+        "field_contracts": 15,
+        "cross_field_assertions": 0,
+        "body_contract_scopes": 0,
+        "http_contract_scopes": 0,
+        "query_contract_scopes": 0,
+        "bulk_query_sources": 0
+      },
+      "missing_requirements": [
+        {
+          "requirement": "All checks are producer-profile warnings. None proves remote acceptance or complete collector coverage.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN"
+        },
+        {
+          "requirement": "Only default exact hosts and reviewed routes are claimed. Configured domains and adjacent transports remain excluded.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN"
+        },
+        {
+          "requirement": "Only exact decoded plt=prx profile markers select; conflicting duplicate markers do not select. The separate /tag S2S schema is not applied.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN"
+        },
+        {
+          "requirement": "IP/user-agent fields remain optional because official overview permits header transport. Macro slots may be empty. Platform receiver requirements remain unverified.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN"
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/podscribe-prx-impression.json": "b25480ee1c22e8c121756503afb263b4d3f2ac05509c0f7409d79370d05f8a67",
+        "crates/pixellint-core/tests/round2_source_profiles.rs": "60e0f807cf6e9021e13870d1151089c393d94aefc5875dd7b54297a50aba8178",
+        "docs/reviews/round2-podscribe-prx-impression-20261025.json": "be6391e5f52adffdfb0bf94e93b40c89aa886770737c0f5bc4db4ac9133204c7",
+        "fixtures/vendor-podscribe-prx-impression/bare-key-conflict.txt": "90a5745fe27d71b7eb12171672cf063afbf1073eff3c1a2d81be7a0aa509e0da",
+        "fixtures/vendor-podscribe-prx-impression/body-marker-does-not-select.json": "17cc9a68312e03fb9bd654774df362599743782cc802ad80ad10465bc068827d",
+        "fixtures/vendor-podscribe-prx-impression/conflicting-marker.txt": "94d8a7f526f22eae6099868bfdc80295509631d287a7f739eb8653245fb43b63",
+        "fixtures/vendor-podscribe-prx-impression/decoded-marker-value.txt": "50aa656086ed18969d17918c84005939c4c939b1331bc9983b4c16d6272e736b",
+        "fixtures/vendor-podscribe-prx-impression/different-marker.txt": "a7f1e5bcdbb5aa47f3ffa60de252d1447e993071580210a670c12acea4167639",
+        "fixtures/vendor-podscribe-prx-impression/empty-advertiser.txt": "f398bcfab15deea7b4d36caa55a0b4e4f9330628a8a5ef7cc66d5a06c4c70894",
+        "fixtures/vendor-podscribe-prx-impression/empty-clname.txt": "dc3a8f8b0072af26426e095973f654bdccc93950b1f7b2401d1b57690d485730",
+        "fixtures/vendor-podscribe-prx-impression/empty-event_type.txt": "a4cff38604663b495e125a03491ca8dd45c28e448418ba1013eeb91c85b8de5c",
+        "fixtures/vendor-podscribe-prx-impression/empty-marker.txt": "4bf5ec5697b27f870c82e6fd72a61575f71ebd43b33f640d24205015f1a1bae5",
+        "fixtures/vendor-podscribe-prx-impression/empty-pub.txt": "21696a4d3cd2c56281674ba2f1d9f652335024c26a71cf930e3bbc2513ebb916",
+        "fixtures/vendor-podscribe-prx-impression/empty-runtime-macro-slots.txt": "76bbdd40b1ad4326f7628ca0035b88444245aeccbdd0dee8827964b71c8bfb50",
+        "fixtures/vendor-podscribe-prx-impression/extra-segment.txt": "c9ad2aeccd344535c17e0476cbfac029600a436a6480e7299b79973b3cd720dd",
+        "fixtures/vendor-podscribe-prx-impression/fragment-marker.txt": "ca721e6c0ce710447a3e4d6e1f8b1f402bf5c5b8c76e99859dcf9b75d6206192",
+        "fixtures/vendor-podscribe-prx-impression/ip-ua-headers.json": "a0e059e1f22266c8e340fe2a456c02bca64edde736f969e466c38fdb3224cb37",
+        "fixtures/vendor-podscribe-prx-impression/lookalike-key.txt": "73bad2c02df6aacc2a5e191ea663bb11ddc0ab21cba8219582f57f29d9ba5f8b",
+        "fixtures/vendor-podscribe-prx-impression/lookalike.txt": "6b0f70a1f573e131e245025e855e1335389b19f4bfb4c4e9a68df9bf0b8831a4",
+        "fixtures/vendor-podscribe-prx-impression/manifest.json": "129931b1979dca9b4b7444fc3b9deae0c7db79a7ed4a8689fcb5360cb8fe0bed",
+        "fixtures/vendor-podscribe-prx-impression/marker-in-value.txt": "24b626a1ddc44ed0435878f4c9a7ce847e0f0c83095b59c7d09db670501efd70",
+        "fixtures/vendor-podscribe-prx-impression/missing-advertiser.txt": "d5008567a6bc3f54ff82091d64f56973bf1294945a96ba2949ff3879f34f78b9",
+        "fixtures/vendor-podscribe-prx-impression/missing-cid.txt": "cd1dbd95a942a8adb58a64334572d7d7be7eb34b108f4c891dfc41a952c3d2da",
+        "fixtures/vendor-podscribe-prx-impression/missing-client.txt": "4eafd2747fe2017b973d3630735b2ba503f1da7c2426af4eba51465bc370194a",
+        "fixtures/vendor-podscribe-prx-impression/missing-clname.txt": "85c3ffe76616b5fe51265df8bd2ac811c6b32d45ea66ad20da031ddd21e3d0bf",
+        "fixtures/vendor-podscribe-prx-impression/missing-dt.txt": "817e7b9e2611dabf4ef03f04483cfd66da33bf8bf2957f0ec00569179798e275",
+        "fixtures/vendor-podscribe-prx-impression/missing-eid.txt": "a8fd3fbc9f0bc48a0641982666dcb112fe0d4122ff471c6edb8c8a00b1c6e90a",
+        "fixtures/vendor-podscribe-prx-impression/missing-event_type.txt": "d7fe50d0ba98b618fb3961b8dd03c02b2b3fb8197f01c7426aab5698ebdd98db",
+        "fixtures/vendor-podscribe-prx-impression/missing-marker.txt": "c654e16c52627517a3617a88a15e86db8b8616255814d75b2a19a23c7144f424",
+        "fixtures/vendor-podscribe-prx-impression/missing-ord.txt": "ac68c0fe147cbb3b420f2ecb841de6459d5938f46859bceeaab64d971258a2d5",
+        "fixtures/vendor-podscribe-prx-impression/missing-pub.txt": "f5b050784c3727cfeb4af2cf0ca6bf8b4ab1e306080a460ea851f27656a89613",
+        "fixtures/vendor-podscribe-prx-impression/missing-requestid.txt": "5f4eafa5428f15778dad4d7c638c7d6147a187cd68e9c76836c802f84133ee48",
+        "fixtures/vendor-podscribe-prx-impression/missing-show.txt": "4e65fe91db57fe022fc13d9497c9f9a4365b9a1a361b61892662bba478628f53",
+        "fixtures/vendor-podscribe-prx-impression/open-event-empty-creative.txt": "3058d1782f15301d0683c2f2ee1b87bd25e2b590d24cb15bf7c16cd0b72b28eb",
+        "fixtures/vendor-podscribe-prx-impression/other-host.txt": "b849c6f2361c3e907c4b2336e67b10a26ee955f662a14fb3401e7694ff4f0b0c",
+        "fixtures/vendor-podscribe-prx-impression/other-tag.txt": "9498aeb5c83292c3f7561c9dbdfadab8fb6b11c0be5317605bd800baedf71c8f",
+        "fixtures/vendor-podscribe-prx-impression/s2s-not-inferred.txt": "66f83a1d13df61d425c54af4e6c47c6e0c35c10590de7962517f4bab780f318d",
+        "fixtures/vendor-podscribe-prx-impression/same-marker-duplicates.txt": "080bb5745401415e57efedcde6bce17eb6846c1af868f86e321813a778a114b3",
+        "fixtures/vendor-podscribe-prx-impression/source-custom-creative.txt": "de926407eef93eedd70357076275627bdd49a8caeadb801f80d40f2f36352aec",
+        "fixtures/vendor-podscribe-prx-impression/source-prx-template.txt": "23784dbd6526d57b92dc475dd9b94fe718e0060219ac958feaa2a3346430d3ab",
+        "tools/reviews/round2-lane02-producer-proof.mjs": "a8184f1088dfd1f3d1eaf58117c70012df23d31a130144db139a875e2561527d"
+      },
+      "test": {
+        "harness": "crates/pixellint-core/tests/round2_source_profiles.rs",
+        "status": "Passed: 161 focused fixture cases, five existing Clipflip regressions, all five full golden/parity harness tests, offline source proof, formatting and core clippy all-targets/all-features. Full workspace suite and shared registration digests are integration-owned."
+      }
+    },
+    {
+      "id": "vendor/shareasale-legacy",
+      "vendor": "shareasale",
+      "disposition": "implemented_source_template_partial",
+      "spec_complete": false,
+      "review_date": "2026-10-25",
+      "match": {
+        "hosts": [
+          "shareasale.com"
+        ],
+        "paths": [
+          "/sale.cfm"
+        ],
+        "query_params_values": [
+          {
+            "name": "transtype",
+            "values": [
+              "sale",
+              "lead"
+            ]
+          }
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/shareasale-legacy.json",
+      "manifest_sha256": "58c80469ed632552e93487e4c4c0387e0953b5ff8c462cf19a9957e479d24284",
+      "sources_read": [
+        {
+          "url": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "ffbfb6b44072a126c4b441f5ccc245ed9f31a7c7b6a883f54dcf5685d9efec7b",
+          "scope": "shareasale-archived-pdf.raw"
+        },
+        {
+          "url": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf",
+          "accessed_on": "2026-10-25",
+          "access_result": "Pinned public source read offline. No tracking calls. Historical archive for ShareASale. Decoded/extracted companions retain separate hashes.",
+          "evidence_level": "official_template",
+          "sha256": "c3cc79674cb7a645d02128edf244e9831d3c02a5d16c17a6a05f52c21f0f9b0b",
+          "scope": "shareasale-archived-pdf.txt"
+        }
+      ],
+      "source_urls": [
+        "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "amount",
+          "contract": {
+            "name": "amount",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "regex",
+              "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+            },
+            "description": "The legacy template supplies the sale subtotal. Lead also supplies amount, including the documented 0.00 example. No sign or precision constraint is inferred."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "tracking",
+          "contract": {
+            "name": "tracking",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "The legacy order or lead identifier is opaque and may contain email-like text. No issued-ID, numeric or UUID grammar is imposed."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "merchantID",
+          "contract": {
+            "name": "merchantID",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "The template supplies the merchant identifier. Issuance, numeric spelling, length and account state remain external."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "transtype",
+          "contract": {
+            "name": "transtype",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "sale",
+                "lead"
+              ]
+            },
+            "description": "These are the two program types in this explicitly legacy sale/lead image-template profile. Other protocols are not covered."
+          }
+        },
+        {
+          "scope": "http",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET"
+              ]
+            },
+            "description": "The historical image producer uses GET. This does not describe the separately approved socket endpoint."
+          }
+        }
+      ],
+      "original_oracle_cases": 25,
+      "engine_derived_oracle_cases": 0,
+      "independent_source_cases": 3,
+      "negative_cases": 10,
+      "request_cases": 2,
+      "oracle_method": "Four aggregate invalid/missing object diagnostic layouts use engine snapshots for existing parent suppression and normalized-null behavior; per-field and source boundaries remain source-authored. Expected selectors, warnings and clean boundaries authored from pinned source before running the engine. Exact FullStory constructor expressions and Clipflip tracking function execute offline with synthetic values and intercepted fetch. Other controls use synthetic source-derived mutations; none proves server acceptance.",
+      "implemented_counts": {
+        "field_contracts": 5,
+        "cross_field_assertions": 0,
+        "body_contract_scopes": 0,
+        "http_contract_scopes": 1,
+        "query_contract_scopes": 0,
+        "bulk_query_sources": 0
+      },
+      "missing_requirements": [
+        {
+          "requirement": "All checks are producer-profile warnings. None proves remote acceptance or complete collector coverage.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf"
+        },
+        {
+          "requirement": "Only default exact hosts and reviewed routes are claimed. Configured domains and adjacent transports remain excluded.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf"
+        },
+        {
+          "requirement": "The 2010 official document establishes a historical template only. Current service availability after migration is unverified.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf"
+        },
+        {
+          "requirement": "Bare shareasale.com is the evidenced image host. q.cfm and www host are not inferred from the separate socket example.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf"
+        },
+        {
+          "requirement": "Only transtype sale or lead selects. Missing, empty, unknown or conflicting markers remain unclaimed. PPC and q.cfm are excluded.",
+          "reason": "Outside the reviewed producer profile; requires authoritative receiver documentation or external state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf"
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/shareasale-legacy.json": "58c80469ed632552e93487e4c4c0387e0953b5ff8c462cf19a9957e479d24284",
+        "crates/pixellint-core/tests/round2_source_profiles.rs": "60e0f807cf6e9021e13870d1151089c393d94aefc5875dd7b54297a50aba8178",
+        "docs/reviews/round2-shareasale-legacy-20261025.json": "a58b0cb1d566b247b82b3ff7e1c9658912a15fa6e0c6e720f52cef8a3d4d8929",
+        "fixtures/vendor-shareasale-legacy/bad-amount.txt": "893b99da2a55265f7b63635cb375ee4827fd21367c2a12d76538adbe07d4bf6e",
+        "fixtures/vendor-shareasale-legacy/bare-key-conflict.txt": "0d64969211491dc201d5f003492e4112a2734f8dc034ff22248a599f37650817",
+        "fixtures/vendor-shareasale-legacy/conflicting-program-markers.txt": "0dca86f137574eb0945d4b24efa6af9e84cf9eb0d8a292338645a68074527713",
+        "fixtures/vendor-shareasale-legacy/decoded-program-marker.txt": "625e60aca8426b05f5639a2e1488b9bf6a819b1de94ae19edd3c7f05a48e7127",
+        "fixtures/vendor-shareasale-legacy/empty-amount.txt": "7b37ab1ce041af66845f6ceec0d98df158c8ad351126c0ebbfff4ad1a8b5e5bb",
+        "fixtures/vendor-shareasale-legacy/empty-merchantid.txt": "23d3ab25bc2c37bb5497a8d67eedbe097c822241f650ad042009d744c590b30d",
+        "fixtures/vendor-shareasale-legacy/empty-tracking.txt": "3f2f727775251b9f4e110c3008175f7f6759e7651cced1df884df6984552c51a",
+        "fixtures/vendor-shareasale-legacy/empty-transtype.txt": "e2e3469636213dbfb453db683ed909c34d3624daa594a45fa352a3f5cb1c9bcc",
+        "fixtures/vendor-shareasale-legacy/extra-segment.txt": "9e55e2b666b2bdd64bbec48088b81503bfa493b762bc8ca3220cb2593e790731",
+        "fixtures/vendor-shareasale-legacy/lead-still-needs-amount.txt": "6db02e2a7e0bae010ce1bad63c4bace987c3faef1e7b3dd8ff0b0f24e8e4721a",
+        "fixtures/vendor-shareasale-legacy/lookalike.txt": "0de14309dd8fe508865e2fb25f8d4da612a7ad0639da50cbbf4c11d521e9d90b",
+        "fixtures/vendor-shareasale-legacy/manifest.json": "844429d11ab9e4d83d441c3c73ffd6e33a8f5e442431f472e9b2bcb62d931461",
+        "fixtures/vendor-shareasale-legacy/missing-amount.txt": "613116943996ab79b77fa6ae8f4633a53df95f1f7bd2f3e479726be6094ab1c2",
+        "fixtures/vendor-shareasale-legacy/missing-merchantid.txt": "5f58537dcfae0f09c08a48958a290af96ca3fdee2eac0b0a575ab4b29ecfd961",
+        "fixtures/vendor-shareasale-legacy/missing-tracking.txt": "4b81a97dd4babe0f6456116befe8a1233b5d9fe95bf77295c8428d6de1a49d29",
+        "fixtures/vendor-shareasale-legacy/missing-transtype.txt": "056d127fda11110bab2d9d28bed9e9d525ebb809e24eb48fb870b26de78d61e4",
+        "fixtures/vendor-shareasale-legacy/open-amount-and-opaque-ids.txt": "da06050391769213d1aa72473f6c9608d16b95fd89c06f24517c513e929eee72",
+        "fixtures/vendor-shareasale-legacy/ppc-not-claimed.txt": "3d7dac0103e736e5048fb5b94dbc1278301e740a8dc29fb9848f73e6344aeacc",
+        "fixtures/vendor-shareasale-legacy/same-marker-duplicates.txt": "4453448a298070cb45eada69d9f4d824cad3d291787b9ddfb80dd84e7720b23f",
+        "fixtures/vendor-shareasale-legacy/socket-not-claimed.txt": "58ab4c575636b7264fe2480d63cd368995a6ecaed4be8ad06fb23a127eecf73c",
+        "fixtures/vendor-shareasale-legacy/source-get-request.json": "f3178582b45398ffeaf65847f59e252714bb3591f212bf9cfdf7b0f8ecfc97a7",
+        "fixtures/vendor-shareasale-legacy/source-lead-template.txt": "143c843732b094f018d141cf7ff2d38d6958ceb9c58a7c2e1b8b2aa1b2d9d979",
+        "fixtures/vendor-shareasale-legacy/source-sale-template.txt": "dcbc1ff332313a28b5a6b7bc512786e6ab64a8890b703f8b4f62a8b2dd2d995d",
+        "fixtures/vendor-shareasale-legacy/unsupported-program.txt": "68846dc24add6b766c8a6d28daf0c197288c6c444c4e4faa36e8fb29f7876121",
+        "fixtures/vendor-shareasale-legacy/wrong-method.json": "59cf2db0918fa94f9360f682a696bb9422c4e897d65312af82c1a0b2f3b0a500",
+        "fixtures/vendor-shareasale-legacy/www-not-evidenced.txt": "4744fde750879f4c727e58c66f6487b4b377d6e401d76e50dd3c974f47ef5dbe",
+        "tools/reviews/round2-lane02-producer-proof.mjs": "a8184f1088dfd1f3d1eaf58117c70012df23d31a130144db139a875e2561527d"
+      },
+      "test": {
+        "harness": "crates/pixellint-core/tests/round2_source_profiles.rs",
+        "status": "Passed: 161 focused fixture cases, five existing Clipflip regressions, all five full golden/parity harness tests, offline source proof, formatting and core clippy all-targets/all-features. Full workspace suite and shared registration digests are integration-owned."
       }
     }
   ],

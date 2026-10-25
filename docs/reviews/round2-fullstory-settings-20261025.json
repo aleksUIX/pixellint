@@ -1,0 +1,75 @@
+{
+  "reviewed_at": "2026-10-25",
+  "source_level": "official_template",
+  "spec_complete": false,
+  "method": "Review pinned vendor source and historical documentation offline. Source-authored synthetic fixtures and explicit boundary controls precede engine execution. No measurement callbacks are requested.",
+  "source_paths": {
+    "fullstory-sdk.raw": "30a0e0ba101942f8371e76e42a75d7cc99ff515dd4efc78c932b13c262c3e8bf",
+    "fullstory-sdk-decoded.js": "11258843fcf3fb75f1ad6a3e12b158b773775bcac8affa5b21c1360500aacfe5",
+    "fullstory-config.raw": "eda96c9551567441a403bbd6b33f5ebe7693b40bf6942e195f862e88136b3ea9"
+  },
+  "limitations": [
+    "All checks are producer-profile warnings. None proves remote acceptance or complete collector coverage.",
+    "Only default exact hosts and reviewed routes are claimed. Configured domains and adjacent transports remain excluded."
+  ],
+  "pack_id": "vendor/fullstory-settings",
+  "documentation": "https://edge.fullstory.com/s/fs.js",
+  "implemented_scope": {
+    "id": "vendor/fullstory-settings",
+    "display_name": "FullStory default settings configuration producer",
+    "vendor": "fullstory",
+    "source_level": "official_template",
+    "docs": "https://edge.fullstory.com/s/fs.js",
+    "description": "Warning-only template checks for the pinned browser SDK default settings GET route, including rs fallback and preview. Configured or GCLB hosts, settings responses, bundle traffic and receiver acceptance remain outside this profile.",
+    "match": {
+      "hosts": [
+        "edge.fullstory.com",
+        "rs.fullstory.com"
+      ],
+      "path_patterns": [
+        "^/s/settings/[^/]*/[^/]*/web$"
+      ]
+    },
+    "path_pattern": "^/s/settings/(?<org_path>[^/]*)/(?<version_path>[^/]*)/web$",
+    "params": [
+      {
+        "name": "org_path",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "The source inserts configured orgId into this opaque path slot. This is producer completeness, not organization issuance or acceptance."
+      },
+      {
+        "name": "version_path",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "The source defaults version to v1. Nonempty future values remain open; no version enum is imposed."
+      }
+    ],
+    "http": {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "GET"
+            ]
+          },
+          "description": "The pinned settings producer uses GET, including fallback and preview requests."
+        }
+      ]
+    }
+  },
+  "fixture_manifest": "fixtures/vendor-fullstory-settings/manifest.json"
+}

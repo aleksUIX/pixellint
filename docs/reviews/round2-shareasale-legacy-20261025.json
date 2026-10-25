@@ -1,0 +1,108 @@
+{
+  "reviewed_at": "2026-10-25",
+  "source_level": "official_template",
+  "spec_complete": false,
+  "method": "Review pinned vendor source and historical documentation offline. Source-authored synthetic fixtures and explicit boundary controls precede engine execution. No measurement callbacks are requested.",
+  "source_paths": {
+    "shareasale-archived-pdf.raw": "ffbfb6b44072a126c4b441f5ccc245ed9f31a7c7b6a883f54dcf5685d9efec7b",
+    "shareasale-archived-pdf.txt": "c3cc79674cb7a645d02128edf244e9831d3c02a5d16c17a6a05f52c21f0f9b0b"
+  },
+  "limitations": [
+    "All checks are producer-profile warnings. None proves remote acceptance or complete collector coverage.",
+    "Only default exact hosts and reviewed routes are claimed. Configured domains and adjacent transports remain excluded.",
+    "The 2010 official document establishes a historical template only. Current service availability after migration is unverified.",
+    "Bare shareasale.com is the evidenced image host. q.cfm and www host are not inferred from the separate socket example."
+  ],
+  "pack_id": "vendor/shareasale-legacy",
+  "documentation": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf",
+  "implemented_scope": {
+    "id": "vendor/shareasale-legacy",
+    "display_name": "ShareASale legacy sale and lead template",
+    "vendor": "shareasale",
+    "source_level": "official_template",
+    "docs": "https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf",
+    "description": "Warning-only checks for the archived official sale.cfm image template for per-sale and per-lead programs. The document is historical; current collector support after migration is unverified. PPC programs, the separately approved q.cfm socket method, extensions, account permissions and delivery are outside this profile.",
+    "match": {
+      "hosts": [
+        "shareasale.com"
+      ],
+      "paths": [
+        "/sale.cfm"
+      ],
+      "query_params_values": [
+        {
+          "name": "transtype",
+          "values": [
+            "sale",
+            "lead"
+          ]
+        }
+      ]
+    },
+    "params": [
+      {
+        "name": "amount",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "regex",
+          "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+        },
+        "description": "The legacy template supplies the sale subtotal. Lead also supplies amount, including the documented 0.00 example. No sign or precision constraint is inferred."
+      },
+      {
+        "name": "tracking",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "The legacy order or lead identifier is opaque and may contain email-like text. No issued-ID, numeric or UUID grammar is imposed."
+      },
+      {
+        "name": "merchantID",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "non_empty"
+        },
+        "description": "The template supplies the merchant identifier. Issuance, numeric spelling, length and account state remain external."
+      },
+      {
+        "name": "transtype",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "sale",
+            "lead"
+          ]
+        },
+        "description": "These are the two program types in this explicitly legacy sale/lead image-template profile. Other protocols are not covered."
+      }
+    ],
+    "http": {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "GET"
+            ]
+          },
+          "description": "The historical image producer uses GET. This does not describe the separately approved socket endpoint."
+        }
+      ]
+    }
+  },
+  "fixture_manifest": "fixtures/vendor-shareasale-legacy/manifest.json"
+}

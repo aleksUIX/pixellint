@@ -1,7 +1,7 @@
 {
   "id": "vendor/clipflip-vast-tracking",
   "display_name": "Clipflip generated VAST tracking templates",
-  "description": "Advisory completeness checks for callbacks returned by Clipflip's public VAST tester sample. Nonempty creative and event path slots and the generated v query field are checked. Issued identifiers, accepted events, ord semantics, server rejection policy and delivery remain outside this profile.",
+  "description": "Advisory completeness checks for callbacks returned by Clipflip's public VAST tester sample. Nonempty creative and event path slots and the generated v query field are checked. Issued identifiers, accepted events, ord semantics, server rejection policy and delivery remain outside this profile. The pinned VPAID SDK overlay-click POST branch adds separately guarded JSON-envelope advisories; ordinary GET events retain their existing scope.",
   "vendor": "clipflip",
   "source_level": "official_template",
   "docs": "https://www.clipflip.video/vast-tester/",
@@ -46,5 +46,219 @@
       "fix_hint": "Preserve the original generated v field."
     }
   ],
-  "rules": []
+  "rules": [],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "severity": "warning",
+        "format_severity": "warning",
+        "allow_empty": true,
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      },
+      {
+        "name": "path",
+        "requirement": "optional",
+        "severity": "warning",
+        "format_severity": "warning",
+        "allow_empty": true,
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      },
+      {
+        "name": "content_type",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "method",
+              "values": [
+                "POST"
+              ]
+            },
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+            }
+          ]
+        },
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      },
+      {
+        "name": "body",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "json_type": "object",
+        "allow_empty": true,
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "method",
+              "values": [
+                "POST"
+              ]
+            },
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+            }
+          ]
+        },
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      },
+      {
+        "name": "body.data",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "json_type": "object",
+        "allow_empty": true,
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "method",
+              "values": [
+                "POST"
+              ]
+            },
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+            }
+          ]
+        },
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      },
+      {
+        "name": "body.data.overlayId",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "description": "The overlay branch runs for a truthy overlay identifier. The value stays opaque; no issued-ID or alphabet is imposed.",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "method",
+              "values": [
+                "POST"
+              ]
+            },
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+            }
+          ]
+        },
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      },
+      {
+        "name": "body.data.source",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "VAST"
+          ]
+        },
+        "description": "The pinned overlay producer emits VAST. This is a source-profile advisory, not a universal collector enum.",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "method",
+              "values": [
+                "POST"
+              ]
+            },
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+            }
+          ]
+        },
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      },
+      {
+        "name": "body.data.eventType",
+        "requirement": "optional",
+        "severity": "warning",
+        "format_severity": "warning",
+        "allow_empty": true,
+        "description": "The first POST serializes the caller event before later a.includes can throw. Null, number, object, empty and omitted values are possible emitted boundaries. Native types and event vocabulary remain open.",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "method",
+              "values": [
+                "POST"
+              ]
+            },
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+            }
+          ]
+        },
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      },
+      {
+        "name": "body.data.progress",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "json_type": [
+          "number",
+          "null"
+        ],
+        "description": "The producer rounds a progress ratio without clamping. Negative and greater-than-100 values remain valid. Nonfinite arithmetic serializes as null.",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_in",
+              "param": "method",
+              "values": [
+                "POST"
+              ]
+            },
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/api/vast/tracking/[^/]+/overlay-click$"
+            }
+          ]
+        },
+        "doc": "https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js"
+      }
+    ]
+  }
 }

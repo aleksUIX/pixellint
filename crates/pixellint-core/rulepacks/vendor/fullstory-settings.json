@@ -1,0 +1,57 @@
+{
+  "id": "vendor/fullstory-settings",
+  "display_name": "FullStory default settings configuration producer",
+  "vendor": "fullstory",
+  "source_level": "official_template",
+  "docs": "https://edge.fullstory.com/s/fs.js",
+  "description": "Warning-only template checks for the pinned browser SDK default settings GET route, including rs fallback and preview. Configured or GCLB hosts, settings responses, bundle traffic and receiver acceptance remain outside this profile.",
+  "match": {
+    "hosts": [
+      "edge.fullstory.com",
+      "rs.fullstory.com"
+    ],
+    "path_patterns": [
+      "^/s/settings/[^/]*/[^/]*/web$"
+    ]
+  },
+  "path_pattern": "^/s/settings/(?<org_path>[^/]*)/(?<version_path>[^/]*)/web$",
+  "params": [
+    {
+      "name": "org_path",
+      "requirement": "recommended",
+      "severity": "warning",
+      "format_severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The source inserts configured orgId into this opaque path slot. This is producer completeness, not organization issuance or acceptance."
+    },
+    {
+      "name": "version_path",
+      "requirement": "recommended",
+      "severity": "warning",
+      "format_severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The source defaults version to v1. Nonempty future values remain open; no version enum is imposed."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "description": "The pinned settings producer uses GET, including fallback and preview requests."
+      }
+    ]
+  }
+}

@@ -839,6 +839,22 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/statcounter-noscript.json"),
     ),
     (
+        "vendor/fullstory-settings",
+        include_str!("../rulepacks/vendor/fullstory-settings.json"),
+    ),
+    (
+        "vendor/fullstory-page",
+        include_str!("../rulepacks/vendor/fullstory-page.json"),
+    ),
+    (
+        "vendor/podscribe-prx-impression",
+        include_str!("../rulepacks/vendor/podscribe-prx-impression.json"),
+    ),
+    (
+        "vendor/shareasale-legacy",
+        include_str!("../rulepacks/vendor/shareasale-legacy.json"),
+    ),
+    (
         "vendor/shopify-monorail",
         include_str!("../rulepacks/vendor/shopify-monorail.json"),
     ),
