@@ -1,0 +1,101 @@
+{
+  "id": "vendor/shopify-monorail",
+  "display_name": "Shopify CLI Monorail request envelope",
+  "vendor": "shopify",
+  "source_level": "official_template",
+  "docs": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+  "description": "Advisory checks for the pinned Shopify CLI SDK envelope on its exact /v1/produce request endpoint. The SDK sends schema_id and object payload using POST and JSON MIME. Payload fields, registry membership, timestamp-header requirements and remote acceptance are outside this profile.",
+  "match": {
+    "hosts": [
+      "monorail-edge.shopifysvc.com"
+    ],
+    "paths": [
+      "/v1/produce"
+    ],
+    "artifact_kinds": [
+      "request"
+    ],
+    "json_paths": [
+      "schema_id",
+      "payload"
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "json_type": "object",
+          "requirement": "optional",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+          "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external."
+        },
+        {
+          "name": "schema_id",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+          "description": "The pinned producer emits a schema_id field. Native schema-ID types and registry acceptance remain external; numeric keys and NaN-to-null serialization are valid source boundaries."
+        },
+        {
+          "name": "payload",
+          "json_type": "object",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "warning",
+          "allow_empty": true,
+          "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+          "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external."
+        }
+      ]
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "json_type": "string",
+        "requirement": "required",
+        "severity": "warning",
+        "format_severity": "warning",
+        "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+        "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "json_type": "string",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+        "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external.",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "body",
+        "json_type": "object",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format_severity": "warning",
+        "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+        "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external."
+      }
+    ]
+  }
+}

@@ -137,7 +137,7 @@ VENDORS = {
     "klaviyo": ("Klaviyo", "martech", ["static.klaviyo.com", "a.klaviyo.com"], "vendor/klaviyo"),
     "braze": ("Braze", "martech", ["sdk.iad-01.braze.com", "js.appboycdn.com"], "vendor/braze"),
     "mailchimp": ("Mailchimp", "martech", ["chimpstatic.com", "us1.list-manage.com"], None),
-    "shopify": ("Shopify", "commerce", ["monorail-edge.shopifysvc.com", "cdn.shopify.com"], None),
+    "shopify": ("Shopify", "commerce", ["monorail-edge.shopifysvc.com", "cdn.shopify.com"], "vendor/shopify-monorail"),
     "stripe": ("Stripe", "commerce", ["m.stripe.com", "js.stripe.com"], None),
     "intercom": ("Intercom", "martech", ["api-iam.intercom.io", "widget.intercom.io"], None),
     "drift": ("Drift", "martech", ["js.driftt.com", "event.api.drift.com"], None),

@@ -306652,6 +306652,191 @@
         "harness": "rulepack_golden.rs",
         "status": "passed: 15 independent source-polarity/selection controls and all five rulepack golden tests"
       }
+    },
+    {
+      "id": "vendor/shopify-monorail",
+      "vendor": "shopify",
+      "disposition": "implemented_source_template_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "monorail-edge.shopifysvc.com"
+        ],
+        "paths": [
+          "/v1/produce"
+        ],
+        "artifact_kinds": [
+          "request"
+        ],
+        "json_paths": [
+          "schema_id",
+          "payload"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/shopify-monorail.json",
+      "manifest_sha256": "e22a56087fb708a6b2b12520e3317f2763b2d973ed7a2ac7f9398834a27bcef1",
+      "sources_read": [
+        {
+          "url": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "source_level": "official_template",
+          "sha256": "10296012acda6e71e837e1041a9a5c58eb01adf7fe78ab582276d13f3424f4ca",
+          "bytes": 10498,
+          "scope": "Pinned official SDK publishMonorailEvent and headers. Executed offline with intercepted fetch."
+        },
+        {
+          "url": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.test.ts",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "source_level": "official_template",
+          "sha256": "c778db0c39f25a8fcd2006996d07a6bb16b7c19259eae04df23e323ff5b452fa",
+          "bytes": 3748,
+          "scope": "Independent vendor tests exercise producer schemaId/payload interface."
+        }
+      ],
+      "source_urls": [
+        "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+        "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.test.ts"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "body",
+          "contract": {
+            "name": "",
+            "json_type": "object",
+            "requirement": "optional",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+            "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external."
+          }
+        },
+        {
+          "scope": "body",
+          "contract": {
+            "name": "schema_id",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+            "description": "The pinned producer emits a schema_id field. Native schema-ID types and registry acceptance remain external; numeric keys and NaN-to-null serialization are valid source boundaries."
+          }
+        },
+        {
+          "scope": "body",
+          "contract": {
+            "name": "payload",
+            "json_type": "object",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "allow_empty": true,
+            "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+            "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external."
+          }
+        },
+        {
+          "scope": "http",
+          "contract": {
+            "name": "method",
+            "json_type": "string",
+            "requirement": "required",
+            "severity": "warning",
+            "format_severity": "warning",
+            "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+            "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "POST"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "http",
+          "contract": {
+            "name": "content_type",
+            "json_type": "string",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+            "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external.",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "application/json"
+              ]
+            }
+          }
+        },
+        {
+          "scope": "http",
+          "contract": {
+            "name": "body",
+            "json_type": "object",
+            "requirement": "recommended",
+            "severity": "warning",
+            "format_severity": "warning",
+            "doc": "https://raw.githubusercontent.com/Shopify/cli/ebd7430f89e1ef65a2ae77d0ea4a09349bc337a2/packages/cli-kit/src/public/node/monorail.ts",
+            "description": "Advisory shape of the pinned Shopify CLI producer. Schema-specific payload rules and current service acceptance remain external."
+          }
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/shopify-monorail.json": "e22a56087fb708a6b2b12520e3317f2763b2d973ed7a2ac7f9398834a27bcef1",
+        "fixtures/vendor-shopify-monorail/array-envelope.txt": "44a07c4ccf75ef1408135d30803ddffc5e72e46389c0660076744cdd6af62c9c",
+        "fixtures/vendor-shopify-monorail/array-payload.txt": "9ad8c4c0a857013dcbbe8fc6017fa6b8485d925df840328d17e2ec22fb95879d",
+        "fixtures/vendor-shopify-monorail/cdn-loader-unclaimed.txt": "5b668df138651638934c6f684c777bdc073d9809d61e62ab6a9ccbd6b297c414",
+        "fixtures/vendor-shopify-monorail/hostless-body-unclaimed.txt": "ef72bdb9674817f24976a583bedfabd0ba6dc3a1a90075a15b46001ad78281da",
+        "fixtures/vendor-shopify-monorail/lookalike-unclaimed.txt": "3d59c4206736aec9bfdb83112fdca033a43da0f6f172ad9ffcd5083adc2b50fa",
+        "fixtures/vendor-shopify-monorail/manifest.json": "28fd13ed263ee76378a33693c7eb9d1c52cf6c28f286b71953df0489cdab705c",
+        "fixtures/vendor-shopify-monorail/missing-body.txt": "ecb7ee343eb74a23cc525e989fcf458c4cbd9559a58478f9f070612b2a5fe9cd",
+        "fixtures/vendor-shopify-monorail/missing-mime.txt": "0a79abe7c569d47215b9be4f0725a6e8bcf8a091ba6757ba9397ab298f054d45",
+        "fixtures/vendor-shopify-monorail/missing-payload.txt": "2fba30d371d3e22af09abc951ff7d656ea660aeabe7324c1c53a4229ca72ff33",
+        "fixtures/vendor-shopify-monorail/missing-schema.txt": "4794088d578ec6e4301097e3490798995da4cffe7d68598e520754f45d106c03",
+        "fixtures/vendor-shopify-monorail/nearby-version-unclaimed.txt": "30e516973155eaf3dba36c6ef15366a8c9a7951144fce36d548648fea0ad559f",
+        "fixtures/vendor-shopify-monorail/numeric-schema.txt": "0a7b6315afd40f2879b444a8e7ebc5c5df549976c2e016051d5d0605b66277e0",
+        "fixtures/vendor-shopify-monorail/object-schema.txt": "0505dc49c0c2ad121fb078f333416bddbb5e12fa00542ce09ed66590bc43b4cf",
+        "fixtures/vendor-shopify-monorail/official-producer-1.txt": "7f6458447e9581e45a4671d9eb7aa4c2f81266fc287dcb6c41ea7f661d5ffcbc",
+        "fixtures/vendor-shopify-monorail/official-producer-2.txt": "04ef54faf3fc2c488d42a2e980b7e52eb222e93553d3af70a5f9bbfd68939fae",
+        "fixtures/vendor-shopify-monorail/opaque-schema-empty-payload.txt": "f804ac3d8943fb3c4c50f04b0a9a50d2cb4a8b46836252922386125cf4edd9c6",
+        "fixtures/vendor-shopify-monorail/open-payload-content.txt": "afba1ac9b94dc5eb5a2b1aff59555fab92c369e2c4d4947be533bef422c8dff1",
+        "fixtures/vendor-shopify-monorail/producer-proof.json": "3bc4b6620d4f208bc87d20f14712c6f7ea4e92b174880e3e6746e8e676496c3b",
+        "fixtures/vendor-shopify-monorail/source-cases.json": "e7f1b71512e51ea7ddb6af26bee6c43d61d9c5628a7a510cd8e21c484476ee8b",
+        "fixtures/vendor-shopify-monorail/source-nan-serializes-null.txt": "6672bc16748ba1d27cbbb4051ee7bda908407714d3968e9ecc87e5aec300bc77",
+        "fixtures/vendor-shopify-monorail/trailing-slash-unclaimed.txt": "f339645254c09a3499b64aa0ac31b5a5264d8056f4253b0e2c7e7871c7e34d09",
+        "fixtures/vendor-shopify-monorail/url-only-unclaimed.txt": "fe9a41e81ce31714455c4a00e1379eb09e4f10e1f67e9f2791aee210b6262564",
+        "fixtures/vendor-shopify-monorail/wrong-method.txt": "c0894436c8cd427cce67762971c14949e3b9b7643c0c8d26ce5291885ee934f8",
+        "fixtures/vendor-shopify-monorail/wrong-mime.txt": "abd4652c550d5f1388cb1f24f97707bb537a3a31c31be2876d18dd1cfb240c10"
+      },
+      "independent_source_cases": 4,
+      "source_derived_boundary_cases": 17,
+      "diagnostic_code_order_snapshots": 21,
+      "oracle_method": "Two clean requests are serialized by actual pinned vendor code offline, with synthetic values and fetch intercepted. Other selection and clean/warning expectations are prewritten from that source before engine execution. CLI results record stable code ordering only. Independent QA additionally compiled a valid numeric schema key under strict TypeScript and reproduced its numeric wire value; numeric IDs remain accepted. Source-valid NaN serializes to null, so schema-ID native types remain open. Numeric and NaN cases are independently source-generated clean boundaries.",
+      "missing_requirements": [
+        {
+          "requirement": "Schema-ID native types, registry membership and event-specific payload fields, requiredness and accepted values",
+          "reason": "Shared SDK sends caller-defined public and sensitive payload objects. Its implementation is not an event schema registry."
+        },
+        {
+          "requirement": "Current receiver rejection, registry membership, timestamp-header requirements and server acceptance",
+          "reason": "Producer examples establish SDK serialization only. No backend calls were made."
+        },
+        {
+          "requirement": "Other Monorail endpoint versions, methods and bare URL checks",
+          "reason": "Profile selects captured requests on the pinned SDK exact /v1/produce endpoint only."
+        }
+      ],
+      "review_date": "2026-10-25",
+      "test": {
+        "harness": "rulepack_golden.rs",
+        "status": "passed: 21 prewritten source/selection controls including four actual pinned-producer captures; final golden corpus test, clippy all-targets/all-features and fmt pass. Complete workspace suite is reserved for final integration."
+      }
     }
   ],
   "previous_audit_baseline": {

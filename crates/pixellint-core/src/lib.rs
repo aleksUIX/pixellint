@@ -834,6 +834,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/statcounter-noscript",
         include_str!("../rulepacks/vendor/statcounter-noscript.json"),
     ),
+    (
+        "vendor/shopify-monorail",
+        include_str!("../rulepacks/vendor/shopify-monorail.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
