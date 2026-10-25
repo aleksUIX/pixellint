@@ -87,7 +87,7 @@ VENDORS = {
     "oracle": ("Oracle Advertising", "identity", ["tags.bluekai.com", "stags.bluekai.com"], "vendor/oracle-bluekai"),
     "salesforce": ("Salesforce", "identity", ["beacon.krxd.net", "cdn.krxd.net"], None),
     "neustar": ("TransUnion (Neustar)", "identity", ["aa.agkn.com"], None),
-    "tapad": ("Tapad", "identity", ["pixel.tapad.com"], None),
+    "tapad": ("Tapad", "identity", ["pixel.tapad.com", "tapestry.tapad.com"], "vendor/tapad-tapestry"),
     "adobe_aam": ("Adobe Audience Manager", "identity", ["cm.everesttech.net"], None),
     "adobe_ecid": ("Adobe Experience Cloud ID Service", "identity", ["dpm.demdex.net"], "vendor/adobe-ecid"),
 

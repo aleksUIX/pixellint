@@ -74,6 +74,10 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/tapad-tapestry",
+        include_str!("../rulepacks/vendor/tapad-tapestry.json"),
+    ),
+    (
         "vendor/the-trade-desk-realtime-fallback",
         include_str!("../rulepacks/vendor/the-trade-desk-realtime-fallback.json"),
     ),
