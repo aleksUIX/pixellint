@@ -306522,6 +306522,136 @@
         "fixtures/vendor-clipflip-vast-tracking/wrong-case-route.txt": "79d7e0dbd5050a194d731fca6360fb66c10f639b5af5c4beb19c225107ce381e"
       },
       "manifest_sha256": "426d8f8b4d65a41e3713456740d280aa1f9574ac080d9ddd3c71e6ffb516eb05"
+    },
+    {
+      "id": "vendor/statcounter-noscript",
+      "vendor": "statcounter",
+      "disposition": "implemented_source_template_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "c.statcounter.com"
+        ],
+        "path_patterns": [
+          "/[^/]*/0/[^/]*/1/"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/statcounter-noscript.json",
+      "manifest_sha256": "5dcfe28e2a739ded85b1a51b3972ffd02f304c70f4814100b104c2f6bd366d18",
+      "sources_read": [
+        {
+          "url": "https://statcounter.com/support/faq/281-how-do-i-enable-async-asynchronously-tracking/",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "9fec477bc8d3ed633b1706c3b8bfabe635eafb06be991d45a1a7f4152cbdd781",
+          "bytes": 27905,
+          "source_level": "official_template",
+          "scope": "Current first-party noscript image templates and optional security-checking configuration."
+        },
+        {
+          "url": "https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "593861ce9d2d1c459a0488b7844314801a3970b1b2e2ff2d98a69a2c3b1d68ce",
+          "bytes": 27689,
+          "source_level": "official_template",
+          "scope": "Current first-party noscript image templates and optional security-checking configuration."
+        },
+        {
+          "url": "https://statcounter.com/support/faq/127-what-is-the-security-code/",
+          "accessed_on": "2026-10-25",
+          "access_result": 200,
+          "sha256": "5b4d7034a563bb30e2e3643184c412beeb6b780dd9bc03293b73afd19bba2c5f",
+          "bytes": 27135,
+          "source_level": "official_template",
+          "scope": "Current first-party noscript image templates and optional security-checking configuration."
+        }
+      ],
+      "source_urls": [
+        "https://statcounter.com/support/faq/281-how-do-i-enable-async-asynchronously-tracking/",
+        "https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/",
+        "https://statcounter.com/support/faq/127-what-is-the-security-code/"
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "contract": {
+            "name": "project_id",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The published installation template requires replacing its project slot with the configured project ID. Completeness advice only; no identifier grammar or account existence is inferred.",
+            "doc": "https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/"
+          }
+        },
+        {
+          "scope": "params",
+          "contract": {
+            "name": "security_code",
+            "requirement": "optional",
+            "allow_empty": true,
+            "description": "The security code is opaque, and checking can be disabled per the vendor FAQ. No unconditional presence or hash-format restriction is applied.",
+            "doc": "https://statcounter.com/support/faq/127-what-is-the-security-code/"
+          }
+        },
+        {
+          "scope": "http",
+          "contract": {
+            "name": "method",
+            "requirement": "required",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "GET"
+              ]
+            },
+            "severity": "warning",
+            "description": "The published noscript template loads an image through its src URL. GET is template advice, not a universal collector rejection rule.",
+            "doc": "https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/"
+          }
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/statcounter-noscript.json": "5dcfe28e2a739ded85b1a51b3972ffd02f304c70f4814100b104c2f6bd366d18",
+        "fixtures/vendor-statcounter-noscript/clean-async-template.txt": "23b735f4d9c99cced3fc2eac556ec57c3e80f4543a5657fc4971a78dff53717f",
+        "fixtures/vendor-statcounter-noscript/clean-captured-get.txt": "a5810a044cb47ec43b1a02da2561e9a37c7238abe0042b73c427414e9c838c05",
+        "fixtures/vendor-statcounter-noscript/clean-disabled-security.txt": "425afe4586bad59dfe63d45ca154d5ff2c686258bb30916214bc9e96b966b8bb",
+        "fixtures/vendor-statcounter-noscript/clean-opaque-identifiers.txt": "573b9a622582204ea399e0632224b3d77693462f134a36c5d07aabaed924d0c1",
+        "fixtures/vendor-statcounter-noscript/clean-w3c-template.txt": "cd7981e715d856c1e68493364b8f1c43bf340d2fd23acd8a2a41568d3a903eaa",
+        "fixtures/vendor-statcounter-noscript/empty-project.txt": "a76775fba8980766176f58e879d5a85c004368975dad993542dbd5ff440825ff",
+        "fixtures/vendor-statcounter-noscript/legacy-http-template-keeps-core-warning.txt": "affc9aa9f7f4c51c05268f855e4aad90cac2bf72e577515e01df041690136dea",
+        "fixtures/vendor-statcounter-noscript/loader-remains-unclaimed.txt": "ab82798a14352327ee0d73351ae0b504ceb92ac6ea82a0124a940a521129b7fa",
+        "fixtures/vendor-statcounter-noscript/lookalike-host-unclaimed.txt": "7e5ba8f855e938423aa03565255ec8dbc9c12f2991343f210365612f11774483",
+        "fixtures/vendor-statcounter-noscript/manifest.json": "69a39cbc090a177d0b40ec7f99b065f829f5272ef603e68b886cfbb51df1a7d6",
+        "fixtures/vendor-statcounter-noscript/neighbor-layout-unclaimed.txt": "ccee46b8d912606bbc2f68b7ea13771cb62e4ed2fcd44ff7c7ef77385e61cebd",
+        "fixtures/vendor-statcounter-noscript/non-template-captured-method.txt": "475d16a7b81c66d911705bb6a7e7a9ef0748d9789987623b811f7708ce744d9b",
+        "fixtures/vendor-statcounter-noscript/other-collector-unclaimed.txt": "7fef6fd9e4b3ee6d87ad266c195629782aa627509243985c0e9da179e72b291d",
+        "fixtures/vendor-statcounter-noscript/query-cannot-fill-path-project.txt": "be427ece97247bff74b9b61dcfac725d3cd18ed363e2082fd943ee76ce0836f3",
+        "fixtures/vendor-statcounter-noscript/sibling-host-unclaimed.txt": "c7211bdc4035e9614b94733563d26fca68e4461611c22286767dc3c0d483f311",
+        "fixtures/vendor-statcounter-noscript/source-cases.json": "69a84629f84fcbaafafa0b1d83979cc29bcff265fe8eea683837bd9ffb9ded79",
+        "fixtures/vendor-statcounter-noscript/trailing-alias-unclaimed.txt": "4ffae30767d65a31ed3555a09e5c54710cdd4b93f7bf831064150df8c2c84b6d"
+      },
+      "independent_source_cases": 2,
+      "source_derived_boundary_cases": 13,
+      "diagnostic_code_order_snapshots": 15,
+      "oracle_method": "Vendor-profile clean/warning and selector expectations were written from primary templates before execution. Existing core HTTP warning is pinned separately, not treated as a vendor requirement. CLI output supplies diagnostic code ordering only.",
+      "missing_requirements": [
+        {
+          "requirement": "Other Statcounter collector formats and JavaScript-loader configuration",
+          "reason": "This profile is limited to the published noscript image path."
+        },
+        {
+          "requirement": "Current remote acceptance, project ownership and security-code verification",
+          "reason": "The published template cannot certify account existence or remote collection. Security checking can be disabled."
+        }
+      ],
+      "review_date": "2026-10-25",
+      "test": {
+        "harness": "rulepack_golden.rs",
+        "status": "passed: 15 independent source-polarity/selection controls and all five rulepack golden tests"
+      }
     }
   ],
   "previous_audit_baseline": {

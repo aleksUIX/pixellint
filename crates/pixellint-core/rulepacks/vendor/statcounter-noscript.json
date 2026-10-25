@@ -1,0 +1,53 @@
+{
+  "id": "vendor/statcounter-noscript",
+  "display_name": "Statcounter published noscript image template",
+  "description": "Advisory checks for the exact published c.statcounter.com noscript image path. Project-slot completeness and image GET transport follow the installation template. Security checking can be disabled, so security values remain optional and opaque. Other collector formats and script loaders are outside this profile.",
+  "vendor": "statcounter",
+  "source_level": "official_template",
+  "docs": "https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/",
+  "match": {
+    "hosts": [
+      "c.statcounter.com"
+    ],
+    "path_patterns": [
+      "/[^/]*/0/[^/]*/1/"
+    ]
+  },
+  "path_pattern": "^/(?<project_id>[^/]*)/0/(?<security_code>[^/]*)/1/$",
+  "params": [
+    {
+      "name": "project_id",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The published installation template requires replacing its project slot with the configured project ID. Completeness advice only; no identifier grammar or account existence is inferred.",
+      "doc": "https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/"
+    },
+    {
+      "name": "security_code",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "The security code is opaque, and checking can be disabled per the vendor FAQ. No unconditional presence or hash-format restriction is applied.",
+      "doc": "https://statcounter.com/support/faq/127-what-is-the-security-code/"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "required",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "severity": "warning",
+        "description": "The published noscript template loads an image through its src URL. GET is template advice, not a universal collector rejection rule.",
+        "doc": "https://statcounter.com/support/faq/304-how-can-i-make-statcounter-compliant-with-the-w3c-validator/"
+      }
+    ]
+  }
+}

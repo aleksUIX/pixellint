@@ -830,6 +830,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/clipflip-vast-tracking",
         include_str!("../rulepacks/vendor/clipflip-vast-tracking.json"),
     ),
+    (
+        "vendor/statcounter-noscript",
+        include_str!("../rulepacks/vendor/statcounter-noscript.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

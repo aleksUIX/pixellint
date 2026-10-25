@@ -128,7 +128,7 @@ VENDORS = {
     "matomo": ("Matomo", "analytics", ["cdn.matomo.cloud"], None),
     "cloudflare": ("Cloudflare Web Analytics", "analytics", ["static.cloudflareinsights.com"], "vendor/cloudflare"),
     "mouseflow": ("Mouseflow", "analytics", ["cdn.mouseflow.com"], None),
-    "statcounter": ("StatCounter", "analytics", ["www.statcounter.com", "c.statcounter.com"], None),
+    "statcounter": ("StatCounter", "analytics", ["www.statcounter.com", "c.statcounter.com"], "vendor/statcounter-noscript"),
 
     # Marketing automation, CRM, and commerce
     "hubspot": ("HubSpot", "martech", ["js.hs-scripts.com", "track.hubspot.com", "js.hs-analytics.net"], "vendor/hubspot"),
