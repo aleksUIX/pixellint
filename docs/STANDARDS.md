@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 198 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 206 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -3974,7 +3974,7 @@ Context: `{}`.
 
 ## `vendor/clipflip-vast-tracking`
 
-Advisory completeness checks for callbacks returned by Clipflip's public VAST tester sample. Nonempty creative and event path slots and the generated v query field are checked. Issued identifiers, accepted events, ord semantics, server rejection policy and delivery remain outside this profile.
+Advisory completeness checks for callbacks returned by Clipflip's public VAST tester sample. Nonempty creative and event path slots and the generated v query field are checked. Issued identifiers, accepted events, ord semantics, server rejection policy and delivery remain outside this profile. The pinned VPAID SDK overlay-click POST branch adds separately guarded JSON-envelope advisories; ordinary GET events retain their existing scope.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/clipflip-vast-tracking.json).
 
@@ -3989,6 +3989,22 @@ Path captures: `^/api/vast/tracking/(?<creative_path>[^/]*)/(?<event_path>[^/]*)
 | `creative_path` | required | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://www.clipflip.video/vast-tester/) |
 | `event_path` | required | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://www.clipflip.video/vast-tester/) |
 | `v` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://www.clipflip.video/vast-tester/) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
+| `path` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
+| `content_type` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["application/json"]},"condition":{"kind":"all","conditions":[{"kind":"value_in","param":"method","values":["POST"]},{"kind":"value_pattern","param":"path","pattern":"^/api/vast/tracking/[^/]+/overlay-click$"}]}}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
+| `body` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"object","allow_empty":true,"condition":{"kind":"all","conditions":[{"kind":"value_in","param":"method","values":["POST"]},{"kind":"value_pattern","param":"path","pattern":"^/api/vast/tracking/[^/]+/overlay-click$"}]}}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
+| `body.data` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"object","allow_empty":true,"condition":{"kind":"all","conditions":[{"kind":"value_in","param":"method","values":["POST"]},{"kind":"value_pattern","param":"path","pattern":"^/api/vast/tracking/[^/]+/overlay-click$"}]}}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
+| `body.data.overlayId` | recommended | `{"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"method","values":["POST"]},{"kind":"value_pattern","param":"path","pattern":"^/api/vast/tracking/[^/]+/overlay-click$"}]}}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
+| `body.data.source` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"string","format":{"kind":"enum","values":["VAST"]},"condition":{"kind":"all","conditions":[{"kind":"value_in","param":"method","values":["POST"]},{"kind":"value_pattern","param":"path","pattern":"^/api/vast/tracking/[^/]+/overlay-click$"}]}}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
+| `body.data.eventType` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true,"condition":{"kind":"all","conditions":[{"kind":"value_in","param":"method","values":["POST"]},{"kind":"value_pattern","param":"path","pattern":"^/api/vast/tracking/[^/]+/overlay-click$"}]}}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
+| `body.data.progress` | recommended | `{"severity":"warning","format_severity":"warning","json_type":["number","null"],"condition":{"kind":"all","conditions":[{"kind":"value_in","param":"method","values":["POST"]},{"kind":"value_pattern","param":"path","pattern":"^/api/vast/tracking/[^/]+/overlay-click$"}]}}` | [official_template](https://cdn.clipflip.video/scripts/vpaid_a25e59057a0eaa25fb6639af66de415836889f9a.js) |
 
 ## `vendor/cloudflare-rum`
 
@@ -4785,6 +4801,72 @@ Context: `{"first_index":2,"condition":{"kind":"value_in","param":"ptgt","values
 | `slau` | required | `{}` | [official_vendor](https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js) |
 | `tpos` | required | `{}` | [official_vendor](https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js) |
 | `ptgt` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js) |
+
+## `vendor/fullstory-page`
+
+Warning-only shape checks for the pinned browser SDK POST /rec/page on its default recorder host. The actual transport is text/plain containing JSON. Scrubbed and omitted privacy fields, empty key hashes and optional identity fields are preserved. Bundle encoding, custom hosts, session validity and receiver rejection policy remain external.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/fullstory-page.json).
+
+Matcher: `{"hosts":["rs.fullstory.com"],"paths":["/rec/page"],"artifact_kinds":["request"]}`.
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["POST"]}}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `content_type` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["text/plain"]}}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"object","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.OrgId` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"string"}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.CompiledVersion` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"string"}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.CompiledTimestamp` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"number"}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.SessionKeyHash` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.PageKeyHash` | recommended | `{"severity":"warning","format_severity":"warning","json_type":"string","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.Url` | optional | `{"severity":"warning","format_severity":"warning","json_type":["string","null"],"allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.Base` | optional | `{"severity":"warning","format_severity":"warning","json_type":["string","null"],"allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.Referrer` | optional | `{"severity":"warning","format_severity":"warning","json_type":["string","null"],"allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.Width` | optional | `{"severity":"warning","format_severity":"warning","json_type":["number","null"]}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.Height` | optional | `{"severity":"warning","format_severity":"warning","json_type":["number","null"]}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.ScreenWidth` | optional | `{"severity":"warning","format_severity":"warning","json_type":["number","null"]}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.ScreenHeight` | optional | `{"severity":"warning","format_severity":"warning","json_type":["number","null"]}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.PreviewMode` | optional | `{"severity":"warning","format_severity":"warning","json_type":"boolean"}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.UserId` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.SessionId` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.PageId` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.SessionUid` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.SnippetVersion` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.AppId` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.TabId` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.Preroll` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.Doctype` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `body.ReplayFlags` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+
+## `vendor/fullstory-settings`
+
+Warning-only template checks for the pinned browser SDK default settings GET route, including rs fallback and preview. Configured or GCLB hosts, settings responses, bundle traffic and receiver acceptance remain outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/fullstory-settings.json).
+
+Matcher: `{"hosts":["edge.fullstory.com","rs.fullstory.com"],"path_patterns":["^/s/settings/[^/]*/[^/]*/web$"]}`.
+
+Path captures: `^/s/settings/(?<org_path>[^/]*)/(?<version_path>[^/]*)/web$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `org_path` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+| `version_path` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["GET"]}}` | [official_template](https://edge.fullstory.com/s/fs.js) |
 
 ## `vendor/gamesight-impression`
 
@@ -7125,6 +7207,43 @@ Matcher: `{"hosts":["s1.kwai.net"],"path_contains":["/pixel/"]}`.
 | --- | --- | --- | --- |
 | `sdkid` | required | `{"format":{"kind":"non_empty"}}` | [ecosystem_reference](https://docs.qingque.cn/d/home/eZQCNZ1wBFnEpQEAMmOhfoVwI?identityId=1pTerwwOjbg) |
 | `lib` | recommended | `{"format":{"kind":"enum","values":["kwaiq"]},"format_severity":"warning"}` | [ecosystem_reference](https://docs.qingque.cn/d/home/eZQCNZ1wBFnEpQEAMmOhfoVwI?identityId=1pTerwwOjbg) |
+
+## `vendor/lemonpi-events`
+
+Advisory checks for pinned LemonPI creative-library JSON carried in e on exact content.lemonpi.io/track/event. Recognized legacy/v2 click, impression and engagement profiles only. Unknown types, versions, engagement names and identifier types stay open; receiver acceptance remains external.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/lemonpi-events.json).
+
+Matcher: `{"hosts":["content.lemonpi.io"],"paths":["/track/event"],"query_params_any":["e"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `e` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/config-provider/src/lemonpi-config-provider.ts) |
+
+### JSON contract 1
+
+Context: `{"source_param":"e","encoding":"json","encoding_severity":"warning","condition":{"kind":"not","condition":{"kind":"value_in","param":"e","values":["LEMONPI%EVENTDATA"]}}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `type` | optional | `{"allow_empty":true,"severity":"warning","format_severity":"warning"}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `version` | optional | `{"allow_empty":true,"severity":"warning","format_severity":"warning"}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `name` | optional | `{"allow_empty":true,"severity":"warning","format_severity":"warning"}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/engagement-metrics/src/dispatch-event.ts) |
+| `schema` | recommended | `{"allow_empty":false,"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["click","impression"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]},"json_type":"string","format":{"kind":"enum","values":["adset-creative"]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `adsetId` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["click","impression"]},{"kind":"not","condition":{"kind":"exists","param":"version"}}]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `creativeId` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["click","impression"]},{"kind":"not","condition":{"kind":"exists","param":"version"}}]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `adset-id` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["click"]},{"kind":"value_in","param":"version","values":["2"]}]},{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["impression"]},{"kind":"value_in","param":"version","values":["2"]}]},{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["engagement"]},{"kind":"value_in","param":"name","values":["viewability","interaction","interaction-time","interaction-click"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]}]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `creative-id` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["click"]},{"kind":"value_in","param":"version","values":["2"]}]},{"kind":"all","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["engagement"]},{"kind":"value_in","param":"name","values":["viewability","interaction","interaction-time","interaction-click"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]},{"kind":"not","condition":{"kind":"exists","param":"version"}}]}]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `impression-id` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["impression"]},{"kind":"value_in","param":"version","values":["2"]}]},{"kind":"all","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["engagement"]},{"kind":"value_in","param":"name","values":["viewability","interaction","interaction-time","interaction-click"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]},{"kind":"value_in","param":"version","values":["2"]}]}]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `advertiser-id` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["impression"]},{"kind":"value_in","param":"version","values":["2"]}]},{"kind":"all","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["engagement"]},{"kind":"value_in","param":"name","values":["viewability","interaction","interaction-time","interaction-click"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]},{"kind":"value_in","param":"version","values":["2"]}]}]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `creative-revision-id` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["impression"]},{"kind":"value_in","param":"version","values":["2"]}]},{"kind":"all","conditions":[{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["engagement"]},{"kind":"value_in","param":"name","values":["viewability","interaction","interaction-time","interaction-click"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]},{"kind":"value_in","param":"version","values":["2"]}]}]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `out` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["click"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]},"json_type":"string"}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `tracker` | optional | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["click"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]},"json_type":"string"}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `content` | optional | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["impression"]},{"kind":"value_in","param":"version","values":["2"]}]},"json_type":"object"}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `content.source` | recommended | `{"allow_empty":false,"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["impression"]},{"kind":"value_in","param":"version","values":["2"]}]},"json_type":"string","format":{"kind":"enum","values":["creative","s3","lemonpi"]}}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/interaction-handler/src/interaction-handler.ts) |
+| `data` | recommended | `{"allow_empty":true,"severity":"warning","format_severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["engagement"]},{"kind":"value_in","param":"name","values":["viewability","interaction","interaction-time","interaction-click"]},{"kind":"any","conditions":[{"kind":"not","condition":{"kind":"exists","param":"version"}},{"kind":"value_in","param":"version","values":["2"]}]}]},"json_type":"object"}` | [official_template](https://gitlab.com/greenhousecode/lemonpi/lemonpi-creative-libraries/-/raw/be7e13c5459bd899e545d5da8735ff965efede5b/packages/engagement-metrics/src/dispatch-event.ts) |
 
 ## `vendor/linkedin-conversions-api`
 
@@ -11756,6 +11875,34 @@ Context: `{}`.
 | `headers.user-agent` | required | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://plausible.io/docs/events-api) |
 | `headers.x-forwarded-for` | optional | `{"json_type":"string","format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://plausible.io/docs/events-api) |
 
+## `vendor/podscribe-prx-impression`
+
+Warning-only completeness checks for the official PRX /pxl example, selected only by exact plt=prx. Macro slots may be empty; IP and user agent may use headers. Creative names and event values stay open. This profile does not apply the unrelated /tag S2S table or prove receiver requiredness, identifier issuance or attribution.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/podscribe-prx-impression.json).
+
+Matcher: `{"hosts":["verifi.podscribe.com"],"paths":["/pxl"],"query_params_values":[{"name":"plt","values":["prx"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `advertiser` | recommended | `{"severity":"warning","format_severity":"warning"}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `cid` | recommended | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `client` | recommended | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `clname` | recommended | `{"severity":"warning","format_severity":"warning"}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `dt` | recommended | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `eid` | recommended | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `event_type` | recommended | `{"severity":"warning","format_severity":"warning"}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `ord` | recommended | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `plt` | recommended | `{"severity":"warning","format_severity":"warning"}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `pub` | recommended | `{"severity":"warning","format_severity":"warning"}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `requestId` | recommended | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `show` | recommended | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `ip` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `ua` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+| `creativeid` | optional | `{"severity":"warning","format_severity":"warning","allow_empty":true}` | [official_template](https://help.podscribe.com/measurement/2ZBnvGeWNLNMWii3CPyVig/tracking-performance-by-creative/ooTCC1X6mccM5nnSL2S1sN) |
+
 ## `vendor/posthog`
 
 Event capture requests to PostHog, as a single event or as a batch.
@@ -12575,6 +12722,34 @@ Context: `{}`.
 | `method` | optional | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
 | `content_type` | recommended | `{"format":{"kind":"enum","values":["application/x-www-form-urlencoded"]},"severity":"warning","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
 
+## `vendor/rtbhouse-gtm-tags`
+
+Warning-only completeness for the commit-pinned GTM iframe /tags producer on its three published region choices. Repeated IDs and custom tag content stay opaque. Auction impression and win callbacks are excluded.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/rtbhouse-gtm-tags.json).
+
+Matcher: `{"hosts":["ams.creativecdn.com","us.creativecdn.com","asia.creativecdn.com"],"paths":["/tags"],"query_params_values":[{"name":"type","values":["iframe"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `type` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["iframe"]}}` | [official_template](https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl) |
+| `id` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl) |
+| `su` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl) |
+| `sr` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl) |
+| `ts` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl) |
+| `ncm` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl) |
+| `cd` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://raw.githubusercontent.com/RTBHOUSE/gtm-tag-template/a0d161cf4a144ff11bdcaae218f03f27c9ca2197/template.tpl) |
+
 ## `vendor/rudderstack`
 
 HTTP Tracking API JSON on the data plane, and Pixel API GET /pixel/v1/track. Self-hosted data planes on other hosts are directory-only.
@@ -12988,6 +13163,31 @@ Context: `{}`.
 | `vendor.segment.http.authentication_required` | `{"kind":"require_any_of","groups":[["body.writeKey"],["basic_auth.username"]]}` | error | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
 | `vendor.segment.http.oauth_write_key_required` | `{"kind":"required_with","condition":{"kind":"value_in","param":"authorization_scheme","values":["bearer"]},"requires":["body.writeKey"],"when":"headers.authorization"}` | error | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
 | `vendor.segment.http.basic_colon_recommended` | `{"kind":"format","condition":{"kind":"value_in","param":"authorization_scheme","values":["basic"]},"param":"basic_auth.has_colon","format":{"kind":"enum","values":["true"]}}` | warning | [official_vendor](https://www.twilio.com/docs/segment/connections/sources/catalog/libraries/server/http-api) |
+
+## `vendor/shareasale-legacy`
+
+Warning-only checks for the archived official sale.cfm image template for per-sale and per-lead programs. The document is historical; current collector support after migration is unverified. PPC programs, the separately approved q.cfm socket method, extensions, account permissions and delivery are outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/shareasale-legacy.json).
+
+Matcher: `{"hosts":["shareasale.com"],"paths":["/sale.cfm"],"query_params_values":[{"name":"transtype","values":["sale","lead"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `amount` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"}}` | [official_template](https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf) |
+| `tracking` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf) |
+| `merchantID` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf) |
+| `transtype` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["sale","lead"]}}` | [official_template](https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["GET"]}}` | [official_template](https://web.archive.org/web/20100820151718id_/http://www.shareasale.com:80/step3.pdf) |
 
 ## `vendor/shopify-monorail`
 
@@ -14031,6 +14231,46 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://www.thetradedesk.com/assets/global/Unified-ID-Adoption-Guidelines-for-SSPs-v1.8.pdf) |
 
+## `vendor/the-trade-desk-static`
+
+Documented static pxl image-tag fields and the individually named legacy conv, envt and imp routes. Checks are warnings; account state, delivery and other Trade Desk transports remain outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/the-trade-desk-static.json).
+
+Matcher: `{"hosts":["insight.adsrvr.org"],"paths":["/track/pxl/","/track/conv/","/track/envt/","/track/imp/"]}`.
+
+Path captures: `^/track/(?<static_kind>pxl\|conv\|envt\|imp)/$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `static_kind` | optional | `{"severity":"warning"}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `adv` | required | `{"severity":"warning","format":{"kind":"non_empty"}}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `ct` | required | `{"severity":"warning","format":{"kind":"regex","pattern":"^0:[\\s\\S]+$"}}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `fmt` | required | `{"severity":"warning","format":{"kind":"enum","values":["3","4"]}}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `v` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"},"allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `vf` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `orderid` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `td_values` | optional | `{"severity":"warning","name_pattern":"^td(?:[1-9]\|10)$","max_length":64,"allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `gdpr` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `gdpr_consent` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `gpp_consent` | optional | `{"severity":"warning","format":{"kind":"gpp"},"allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `dpop` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^LDU(?:,LDU)*$"},"allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+| `dpor` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^US-[A-Z]{2}$"},"allow_empty":true}` | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.the-trade-desk-static.legacy_route` | `{"kind":"forbid_value_pattern","pattern":"^(?:conv\|envt\|imp)$","params":["static_kind"]}` | warning | [official_vendor](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://open.thetradedesk.com/provider/docsApp/GuidesProvider/measure/doc/TrackingTagsStatic) |
+
 ## `vendor/the-trade-desk`
 
 The Trade Desk legacy /track/up iframe pixels plus current SDK /track/cei initialization requests. Legacy required fields apply to /up. Initialization permits advertiser or merchant ownership and checks generated flags without claiming conversion delivery. Realtime JSON and scalar fallback events use separate packs.
@@ -14511,6 +14751,55 @@ Path captures: `/v2/notice/(?<notice_id>[^/]*)`. Captured values take precedence
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `notice_id` | required | `{"format":{"kind":"non_empty"}}` | [official_template](https://github.com/trustarc/trustarc-segment-wrapper) |
+
+## `vendor/weborama-wcm-js-impression`
+
+Warning-only producer profile for the exact tutorial host named in the official guide, /fcgi-bin/dispatch.fcgi and literal im/js markers. Other actions, loaders and the Russian host remain uncontracted.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/weborama-wcm-js-impression.json).
+
+Matcher: `{"hosts":["wcmvideotutorials.solution.weborama.fr"],"paths":["/fcgi-bin/dispatch.fcgi"],"query_params_values":[{"name":"a.A","values":["im"]},{"name":"a.hr","values":["js"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `a.A` | optional | `{"severity":"warning","format":{"kind":"enum","values":["im"]}}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.hr` | optional | `{"severity":"warning","format":{"kind":"enum","values":["js"]}}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.si` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.te` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.ra` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.agi` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `ca` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.wi` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.he` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.sh` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.sw` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.de` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.ism` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.we` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["0","1"]}}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.pn` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.puid` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.ycp` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.hd` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.did` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `a.pc` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.rst` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.rtbpp` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.rtbbp` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.pu` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `g.ru` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `gdpr_cmp_failure` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `gdpr` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+| `gdpr_consent` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://cstatic.weborama.fr/js/advertiserv2/adperf_launch_1.0.0_scrambled.js) |
 
 ## `vendor/woopra`
 
