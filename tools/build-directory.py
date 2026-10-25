@@ -162,7 +162,7 @@ VENDORS = {
     # Consent management
     "onetrust": ("OneTrust", "consent", ["cdn.cookielaw.org", "geolocation.onetrust.com"], None),
     "trustarc": ("TrustArc", "consent", ["consent.trustarc.com", "consent-st.trustarc.com"], "vendor/trustarc"),
-    "sourcepoint": ("Sourcepoint", "consent", ["cdn.privacy-mgmt.com"], None),
+    "sourcepoint": ("Sourcepoint", "consent", ["cdn.privacy-mgmt.com"], "vendor/sourcepoint-gdpr-choice"),
     "didomi": ("Didomi", "consent", ["sdk.privacy-center.org", "api.privacy-center.org"], "vendor/didomi"),
     "usercentrics": ("Usercentrics", "consent", ["app.usercentrics.eu", "web.cmp.usercentrics.eu"], None),
     "cookiebot": ("Cookiebot", "consent", ["consent.cookiebot.com", "consentcdn.cookiebot.com"], None),

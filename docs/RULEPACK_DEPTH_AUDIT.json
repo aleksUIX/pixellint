@@ -35751,7 +35751,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -313538,6 +313538,236 @@
         "fixtures/vendor-krux-amp/upstream-golden-pageview.txt": "3430333fa9ec028bf41c6f459b7bd47c4a32b9413244956ec15e3c7cc21a9005",
         "fixtures/vendor-krux-amp/wrong-source-case.txt": "6489fcfdb67238842017261bfb8e83dc0bfb674596e76fb9d7823e3f81ecdc0a",
         "docs/reviews/krux-amp-20261025.json": "19b547c0a86eb1d8add85010b0cb12f1b7d56587688273e1c482a8f2f7f5424f"
+      }
+    },
+    {
+      "id": "vendor/sourcepoint-gdpr-choice",
+      "vendor": "sourcepoint",
+      "disposition": "implemented_documented_legacy_template_partial",
+      "spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/sourcepoint-gdpr-choice.json",
+      "manifest_sha256": "222f8938d48cd2081f3f535ddb646b044528f496263efb3d9eedccd16cd9c14b",
+      "match": {
+        "hosts": [
+          "cdn.privacy-mgmt.com"
+        ],
+        "path_patterns": [
+          "/wrapper/v2/messages/choice/gdpr/[^/]+"
+        ],
+        "artifact_kinds": [
+          "request"
+        ]
+      },
+      "sources_read": [
+        {
+          "url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP",
+          "title": "Event callbacks (CMP)",
+          "read_at": "2026-10-25T21:59:12.508931+00:00",
+          "access_result": "Full primary article opened via web; direct403 separately recorded. Exact template excerpt cached with explicit transcription metadata.",
+          "template_sha256": "c39d83abb516d2a30696ecad636aefcb3278f6f749d4056a35bce2831775d113",
+          "excerpt_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round4-20261025/lane-02-sources/sourcepoint-choice-template.txt"
+        },
+        {
+          "key": "sourcepoint-callbacks",
+          "url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP",
+          "fetched_at": "2026-10-25T21:56:00.596606+00:00",
+          "error": "HTTP Error 403: Forbidden",
+          "web_access_status": "Full primary article independently opened with web tool."
+        },
+        {
+          "key": "sourcepoint-loading",
+          "url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397410707-Best-practices-Improve-message-loading",
+          "fetched_at": "2026-10-25T21:56:00.596915+00:00",
+          "error": "HTTP Error 403: Forbidden",
+          "web_access_status": "Full primary article independently opened with web tool."
+        },
+        {
+          "key": "sourcepoint-cname",
+          "url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397441043-Configure-subdomain-with-CNAME-DNS-record",
+          "fetched_at": "2026-10-25T21:56:00.596994+00:00",
+          "error": "HTTP Error 403: Forbidden",
+          "web_access_status": "Full primary article independently opened with web tool."
+        },
+        {
+          "key": "sourcepoint-sdk",
+          "url": "https://cdn.privacy-mgmt.com/unified/wrapperMessagingWithoutDetection.js",
+          "fetched_at": "2026-10-25T21:56:00.597044+00:00",
+          "status": 200,
+          "resolved_url": "https://cdn.privacy-mgmt.com/unified/wrapperMessagingWithoutDetection.js",
+          "bytes": 143862,
+          "sha256": "ed8637bc61dfdc56af42270023c828f72e9f501a7897fc071f91a3f531ecd605",
+          "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-coverage-round4-20261025/lane-02-sources/sourcepoint-sdk.source"
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "requestUUID",
+          "contract": {
+            "name": "requestUUID",
+            "requirement": "recommended",
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "The documented wire template includes the request UUID query slot. This presence advice does not impose UUID syntax, nonempty values or account validity."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "env",
+          "contract": {
+            "name": "env",
+            "requirement": "recommended",
+            "allow_empty": true,
+            "severity": "warning",
+            "source_level": "official_vendor",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "prod",
+                "stage"
+              ]
+            },
+            "description": "The exact wire example describes prod and stage as the campaign environment enum. Presence advice follows that example; empty slots, account eligibility and generic configuration env values are not receiver contracts."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "hasCsp",
+          "contract": {
+            "name": "hasCsp",
+            "requirement": "optional",
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "The article shows hasCsp=true without defining its meaning. The generic SDK helper can preserve arbitrary existing text. No Boolean, presence or always-true requirement is imposed."
+          }
+        },
+        {
+          "scope": "http.params",
+          "name": "method",
+          "contract": {
+            "name": "method",
+            "requirement": "recommended",
+            "allow_empty": false,
+            "severity": "warning",
+            "source_level": "official_vendor",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "POST"
+              ]
+            },
+            "description": "The CMP article explicitly identifies this exact wire call as POST. The advisory does not define a complete receiver method contract."
+          }
+        }
+      ],
+      "original_oracle_cases": 50,
+      "independent_template_outputs": 3,
+      "engine_derived_oracle_cases": 0,
+      "missing_requirements": [
+        {
+          "requirement": "The current SDK4.40.3 uses /v2/choice routes instead of this article route. Current receiver deployment of the article path is unverified.",
+          "reason": "Not established by the exact primary wire template or requires external integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP"
+        },
+        {
+          "requirement": "Callback fields such as message_type, choice_id and pmData do not define the request body.",
+          "reason": "Not established by the exact primary wire template or requires external integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP"
+        },
+        {
+          "requirement": "hasCsp semantics, complete requiredness, headers, body, encoding and session/account state are not documented for this exact path.",
+          "reason": "Not established by the exact primary wire template or requires external integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP"
+        },
+        {
+          "requirement": "Identifiers, future choice IDs, receiver duplicate selection and actual consent decisions remain external.",
+          "reason": "Not established by the exact primary wire template or requires external integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP"
+        },
+        {
+          "requirement": "CNAME, account CDN, non-GDPR, current SDK routes and bare URLs are not selected by this request-only profile.",
+          "reason": "Not established by the exact primary wire template or requires external integration context.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP"
+        }
+      ],
+      "test": {
+        "status": "passed four focused tests and all five golden tests",
+        "harness": "crates/pixellint-core/tests/rulepack_golden.rs",
+        "additional_harness": "crates/pixellint-core/tests/round4_lane02_sourcepoint.rs",
+        "clippy": "passed focused target with -D warnings",
+        "source_oracle": "three exact template substitutions and two distinct generic helper controls reproduced offline",
+        "full_integrated_validation": "coordinator-owned and pending"
+      },
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/sourcepoint-gdpr-choice.json": "222f8938d48cd2081f3f535ddb646b044528f496263efb3d9eedccd16cd9c14b",
+        "docs/reviews/sourcepoint-gdpr-choice-20261025.json": "c7afe08dc49abe760ce1ff47233abee876dd99a423927b25e16a029d2425c504",
+        "tools/source-oracles/round4-lane-02.mjs": "617123b7975952bf8f3cf2da88715e2c5e7c447b50222e16f040dfa4daa31755",
+        "crates/pixellint-core/tests/round4_lane02_sourcepoint.rs": "465cbe6ef7e32248eaef1d1fef62937f060225fc6831cc812c49014dd0343112",
+        "crates/pixellint-core/src/lib.rs": "b0dae699d52044c875fd5ad2a707f672427955b635764805b3f8458238e1ab07",
+        "crates/pixellint-core/rulepacks/directory.json": "d13642612847cca9836000368e866d475aaed899b441cce29b92b5239f0c7591",
+        "tools/build-directory.py": "57ee94ef9ede12cbfa2a48d2e9fe03e6efdbe9ea73cfcdc4150751f32269f6d6",
+        "fixtures/vendor-sourcepoint-gdpr-choice/account-cdn.json": "8296d2a396a21892b58c29b0c007e5b9ad7995025965a553e8f3cf765184d74f",
+        "fixtures/vendor-sourcepoint-gdpr-choice/bare-url-uncontracted.txt": "4a6f0d9ddc36a536029a338f8e2f7d7bc9e1f5f432615aed8a89812483504dea",
+        "fixtures/vendor-sourcepoint-gdpr-choice/body-cannot-supply-query.json": "ba72a40e6781897bb36130f4c151886f6ffc2af2cdb94ac449dce17d0f6e3817",
+        "fixtures/vendor-sourcepoint-gdpr-choice/choice-root.json": "c9db3dae6afc9fe363a2fa03aa9744af05670432b5978a0b46a0262e5d3fe7e1",
+        "fixtures/vendor-sourcepoint-gdpr-choice/cname-host.json": "75076e9db2790812e3aeda0544a48fa24b2ff30039348a6eb2ed7a938947df68",
+        "fixtures/vendor-sourcepoint-gdpr-choice/current-sdk-route.json": "8468653f2bc38510fef21bcaef6f756b726e52e09db7b8c110aea437d9731d4e",
+        "fixtures/vendor-sourcepoint-gdpr-choice/decoded-key-once.json": "9cac5e81bd1c4add30e010c563995faf1a451ad96214849ff458313bb5b50b97",
+        "fixtures/vendor-sourcepoint-gdpr-choice/decoded-key-twice.json": "30f74c023da5a63840806b60b854f5696e3a07046d94c4915eea4b910e922f28",
+        "fixtures/vendor-sourcepoint-gdpr-choice/decoded-value-once.json": "71ff5eaa06ae76b3952daa6a38a82f05a4960b7c507d7317f354af98ee311c7d",
+        "fixtures/vendor-sourcepoint-gdpr-choice/decoded-value-twice.json": "2c842faa0c29cc7e09f9d1495ab5a093266c63fe99160f8d007dc2271f0f01fb",
+        "fixtures/vendor-sourcepoint-gdpr-choice/empty-env.json": "1607d3409fa641a3db6d1b1029d344be761df42b898f037315eb24507083b191",
+        "fixtures/vendor-sourcepoint-gdpr-choice/empty-requestUUID.json": "290585092404c7facee8a96e5fb19c81b88c4ce3993c415d09c153f2da80cfc4",
+        "fixtures/vendor-sourcepoint-gdpr-choice/extra-segment.json": "1b2b2d717a5d73475a7a3806aa1ca2e3931c656c7496234424a178f735a7a08e",
+        "fixtures/vendor-sourcepoint-gdpr-choice/future-choice-numeric.json": "059c94bfd751fc9a5b18b2ad9ccaee58c2486e83068624821b626c0e758b089d",
+        "fixtures/vendor-sourcepoint-gdpr-choice/http-keeps-core-advice.json": "398fdd81b13f8a5ae5abec6089fed0ae6bd1d1dd8b5923b1258e1a8f099a7912",
+        "fixtures/vendor-sourcepoint-gdpr-choice/invalid-env-10.json": "0b7716d220b1e247afef985c918dc0c8e09162bb3869035242f3f74e21b5630d",
+        "fixtures/vendor-sourcepoint-gdpr-choice/invalid-env-11.json": "323e4b81a41c81654d644b442fb3955cbb20bf3bf75cb1fb23fc375c44d93789",
+        "fixtures/vendor-sourcepoint-gdpr-choice/invalid-env-8.json": "c9cebf4ec323313c91276fbb4c44c0889abea62b598b344528db790905ce0d8f",
+        "fixtures/vendor-sourcepoint-gdpr-choice/invalid-env-9.json": "7f7837f1a33c4304e11802cb53752bb0b9a67cfd02333c52d1e4aa4c2d55aca3",
+        "fixtures/vendor-sourcepoint-gdpr-choice/json-callback-uncontracted.txt": "dda7e37146451d5a633731c69411f9709a07488c96f1d76f9555e48911a153c0",
+        "fixtures/vendor-sourcepoint-gdpr-choice/loader.json": "95477aca5adcc18f95e64e6cfbb561a00695e4ae1886efb18cd618650c091848",
+        "fixtures/vendor-sourcepoint-gdpr-choice/lookalike.json": "ca08356d0fed6a1c9a3a6e05b7b38c7ea4a711129ef90c6a07c7e1b924cef08a",
+        "fixtures/vendor-sourcepoint-gdpr-choice/macro-env.json": "ce2477b583f3516d28dbb9b2dd882f9f2ac868a1996e27ec3abe724aaa36e4ea",
+        "fixtures/vendor-sourcepoint-gdpr-choice/manifest.json": "d39fc104e6b06943221c80939a157c36a5344652aeb4f7757f4526553560569c",
+        "fixtures/vendor-sourcepoint-gdpr-choice/missing-env.json": "5cb6fbad29021aa58687afedada08a64bb28d0389efb9e516abcc36cdc41e420",
+        "fixtures/vendor-sourcepoint-gdpr-choice/missing-hasCsp-is-open.json": "97501c1f56758a94de800ea21c5e133ac7ebd57fea333aceacdf99ea0b4750e4",
+        "fixtures/vendor-sourcepoint-gdpr-choice/missing-requestUUID.json": "8b27e2280d9c5e212004ddb79c7fff0d1025e83981e4099ce78de45c64404d1d",
+        "fixtures/vendor-sourcepoint-gdpr-choice/numeric-choice-zero.json": "529b93856ca6ac830795439e10e0fe6bcd8557ed1a877d53a06be28f48027d39",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-body-array.json": "421154f9ea1882c5902b428ddb0bc8ac17f548444b7144a23fb59d982b2612fd",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-body-null.json": "4d5e783df839e96cdc358dff7b3c21994d0cf4184da7478322c3c79459b52717",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-body-object.json": "a659c5b24c623ab378808b7790591ea12c9dca7da2e7cda6eaf29fc4617985de",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-body-opaque.json": "5b0c37c9bde36fce0ef8b4cbe3b581dbe8934f2fb7785dc4d56cacab592c0fc1",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-hasCsp-12.json": "b04788b772ed44c4a58662d4d90da51e51c3b37da07cb5cd4c046ab908da0afc",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-hasCsp-13.json": "a60a22f7b0374f1a6e5feb56e197527f2ef24e1a0a52a73cd0f5c599ee7e2abe",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-hasCsp-14.json": "cfca414a44db8ef4e072545d7ac6804deed75a703e9da0117d56705e6074b46d",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-requestUUID-15.json": "195058c55c40c3e238e2714077bb6fec8dd8077a779c22f14d63a7963b197bb0",
+        "fixtures/vendor-sourcepoint-gdpr-choice/open-requestUUID-16.json": "c325974c4d0297ddad51741158e9cdb28456b56b394c6af5bd07000727824f3c",
+        "fixtures/vendor-sourcepoint-gdpr-choice/other-regulation.json": "01a9834787faed5c14563f5d84614e95e23e7b8639a0e2b05a78accbe4868b4c",
+        "fixtures/vendor-sourcepoint-gdpr-choice/query-path-spoof.json": "e0bffadc18b16808452813a545044d0cc648fc7d88d6a0779b16ac8432ae5732",
+        "fixtures/vendor-sourcepoint-gdpr-choice/repeat-allowed-envs.json": "c5ee90be1724acf2bcc2a8ad234f11a6a0690d391b47e4676f6b354861cc584a",
+        "fixtures/vendor-sourcepoint-gdpr-choice/repeat-empty-env.json": "b55afe66cf44361dec300d1b1b2761f2507c8ca608b01e23d6639c017335b3d8",
+        "fixtures/vendor-sourcepoint-gdpr-choice/repeat-opaque-identifiers.json": "b3dba33ef57ed7f0423fb4a22268f5a134ed95077947adeb331b48a471afcc25",
+        "fixtures/vendor-sourcepoint-gdpr-choice/repeat-valid-and-invalid-env.json": "971f2a002fd9ea236063cd41d7720f0ce225620c19d945a2bbafc97dd3795585",
+        "fixtures/vendor-sourcepoint-gdpr-choice/source-cases.json": "64a1426546484500782036d4a172fac39c7a688691b0cc5623b76ae596e20310",
+        "fixtures/vendor-sourcepoint-gdpr-choice/source-future-choice.json": "cc393527a2629162dde203b53dc1ad8744aadd21068efcb7a26a7aabd231546d",
+        "fixtures/vendor-sourcepoint-gdpr-choice/source-prod.json": "8ef13c05502c8c2743aca1f522ef5e8e47bbcd918d55e5b9e07f1438659ce2fe",
+        "fixtures/vendor-sourcepoint-gdpr-choice/source-stage.json": "17f652348aa47f16eaabaec61f8a422d8bc394df8211a16eab2274e5917fa4ab",
+        "fixtures/vendor-sourcepoint-gdpr-choice/source-template.json": "5df4588c6b6d056beabbfe2766093f610ecc4c008894ed5a4bc42045ea2e611c",
+        "fixtures/vendor-sourcepoint-gdpr-choice/trailing-slash.json": "b2242d965ee19ef14f187c3c75aa1871d7523f485ad2ede666e992c6706f57e8",
+        "fixtures/vendor-sourcepoint-gdpr-choice/wrong-method-GET.json": "445e89628cf87dd2a9dba715b0f05cfe538639af7c011baf0b7a7278e4cad13d",
+        "fixtures/vendor-sourcepoint-gdpr-choice/wrong-method-PUT.json": "b578be33cd9752b01c8680828f60edc68d35ef1bf5cad6d29fdf820d1949b9bb",
+        "fixtures/vendor-sourcepoint-gdpr-choice/wrong-method-post.json": "7a9f3d91f8a6cc9238affa222e12d4e55c8f13c9712f8adc59562295494a5350"
       }
     }
   ],

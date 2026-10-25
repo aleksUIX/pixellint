@@ -1,0 +1,68 @@
+{
+  "id": "vendor/sourcepoint-gdpr-choice",
+  "vendor": "sourcepoint",
+  "display_name": "Sourcepoint documented GDPR choice template",
+  "source_level": "official_template",
+  "docs": "https://docs.sourcepoint.com/hc/en-us/articles/4405397484307-Event-callbacks-CMP",
+  "description": "Warning-only captured HTTP advice for the exact legacy GDPR choice route published in the CMP callback article. The current SDK uses a different route. Choice IDs and identifiers stay opaque; callback outputs, body schemas, consent state and receiver acceptance are outside this partial profile.",
+  "match": {
+    "hosts": [
+      "cdn.privacy-mgmt.com"
+    ],
+    "path_patterns": [
+      "/wrapper/v2/messages/choice/gdpr/[^/]+"
+    ],
+    "artifact_kinds": [
+      "request"
+    ]
+  },
+  "params": [
+    {
+      "name": "requestUUID",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The documented wire template includes the request UUID query slot. This presence advice does not impose UUID syntax, nonempty values or account validity."
+    },
+    {
+      "name": "env",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "prod",
+          "stage"
+        ]
+      },
+      "description": "The exact wire example describes prod and stage as the campaign environment enum. Presence advice follows that example; empty slots, account eligibility and generic configuration env values are not receiver contracts."
+    },
+    {
+      "name": "hasCsp",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The article shows hasCsp=true without defining its meaning. The generic SDK helper can preserve arbitrary existing text. No Boolean, presence or always-true requirement is imposed."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "allow_empty": false,
+        "severity": "warning",
+        "source_level": "official_vendor",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The CMP article explicitly identifies this exact wire call as POST. The advisory does not define a complete receiver method contract."
+      }
+    ]
+  }
+}
