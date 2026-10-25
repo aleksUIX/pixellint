@@ -1,0 +1,725 @@
+{
+  "source_url": "https://consent.cookiebot.com/uc.js",
+  "source_version": "// 2.140.0 - 2026-10-22T08:21:37.789Z",
+  "source_sha256": "87c526734a40916659708d6605885ed495c342cf79e0e8bdc1cb28c57d97617a",
+  "execution": "Extracted unchanged source functions and statements, synthetic script element, VM without network APIs. No script insertion, image, beacon or fetch.",
+  "sections": {
+    "getURLParam": {
+      "start_byte": 91627,
+      "end_byte": 91919,
+      "sha256": "e791190a3ca1ce8244b629e7018877267df609812ee0508f5878d4d9787f897b",
+      "literal": "this.getURLParam=function(paramName){var d=document.getElementById(this.scriptId)||this.scriptElement,urlParam=\"\";return d&&(paramName=new RegExp(\"[?&]\"+encodeURIComponent(paramName)+\"=([^&#]*)\").exec(d.src),paramName&&(urlParam=decodeURIComponent(paramName[1].replace(/\\+/g,\" \")))),urlParam}"
+    },
+    "createBannerQueryParameters": {
+      "start_byte": 44251,
+      "end_byte": 45040,
+      "sha256": "2c656327e30430155fc79e4e6399cf217e1b2ec07e6bdb42ded137ba65ea574e",
+      "literal": "createBannerQueryParameters=function(cookieConsent,ucScriptElement){return{serial:cookieConsent.getURLParam(\"cbid\")||ucScriptElement.getAttribute(\"data-cbid\")||void 0,mode:cookieConsent.getURLParam(\"mode\")||ucScriptElement.getAttribute(\"data-mode\")||void 0,culture:cookieConsent.getURLParam(\"culture\")||ucScriptElement.getAttribute(\"data-culture\")||void 0,type:cookieConsent.getURLParam(\"type\")||ucScriptElement.getAttribute(\"data-type\")||void 0,level:cookieConsent.getURLParam(\"level\")||ucScriptElement.getAttribute(\"data-level\")||void 0,domainPath:cookieConsent.getURLParam(\"path\")||ucScriptElement.getAttribute(\"data-path\")||void 0,userCountry:getDomainSearchParam(\"uc_cmp_country\")||cookieConsent.getURLParam(\"user_country\")||ucScriptElement.getAttribute(\"data-user-country\")||void 0}}"
+    },
+    "blockingmode": {
+      "start_byte": 59892,
+      "end_byte": 60032,
+      "sha256": "195aa998f6db4308fdb1ba561da71ea666649c89c8967e602259ea5e533a62c6",
+      "literal": "var px2=this.getURLParam(\"blockingmode\");px2&&\"auto\"===px2.toLowerCase()&&(this.autoblock=!0,this.computedConfiguration.blockingmode=\"auto\")"
+    },
+    "framework": {
+      "start_byte": 60430,
+      "end_byte": 60493,
+      "sha256": "d78494c820dc42ade5184c6d534d4759cd38ff2d34df8add879620e72446a2d2",
+      "literal": "var pfx=this.getURLParam(\"framework\");pfx&&(this.framework=pfx)"
+    },
+    "culture": {
+      "start_byte": 60676,
+      "end_byte": 60768,
+      "sha256": "59202a9ca083f446b95123483335841ff1a92d940d0456d42b064ae93f615a07",
+      "literal": "var puc=this.getURLParam(\"culture\");puc&&(this.userCulture=puc,this.userCultureOverride=puc)"
+    },
+    "consentmode": {
+      "start_byte": 60769,
+      "end_byte": 60912,
+      "sha256": "0bbaee6f9e13c1615850cd8991b37c9a2ab7f06eee9294844841bf2387cc4099",
+      "literal": "var pcm=this.getURLParam(\"consentmode\");pcm&&\"disabled\"===pcm.toLowerCase()&&(this.consentModeDisabled=!0,this.advertiserConsentModeEnabled=!1)"
+    },
+    "consentmode-dataredaction": {
+      "start_byte": 59335,
+      "end_byte": 59700,
+      "sha256": "44485bd88f7a39e084d7bec3e6d9933a211b176e16f7cda3b2615f0f4ec640b9",
+      "literal": "var cmdr=this.getURLParam(\"consentmode-dataredaction\")||d.getAttribute(\"data-consentmode-dataredaction\");cmdr&&(\"true\"===cmdr||\"false\"===cmdr||\"dynamic\"===cmdr?this.consentModeDataRedaction=cmdr:console.warn(\"Cookiebot: Cookiebot script attribute 'data-consentmode-dataredaction' with value '%s' is invalid. Supported values are 'true', 'false' or 'dynamic'\",cmdr))"
+    },
+    "framework-normalization": {
+      "start_byte": 62197,
+      "end_byte": 62606,
+      "sha256": "872ad0cacefcf1625de2229d22221df12f625b40fb13ac573a7767bc75b98db7",
+      "literal": "var lowercaseFramework=this.framework.toLowerCase();\"iab\"!==lowercaseFramework&&\"iab1\"!==lowercaseFramework&&\"iabv2\"!==lowercaseFramework&&\"tcfv2.2\"!==lowercaseFramework&&\"tcfv2.3\"!==lowercaseFramework&&\"tcf\"!==lowercaseFramework||(this.hasFramework=!0,this.framework=\"TCFv2.4\",this.amznConsentSignalEnabled=!1,this.computedConfiguration.framework=\"TCF\",this.computedConfiguration.amznConsentSignalEnabled=!1)"
+    }
+  },
+  "cases": [
+    {
+      "id": "omitted",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "blank-fallback",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=&level=&framework=&blockingmode=&consentmode=&consentmode-dataredaction=&culture=",
+      "attributes": {
+        "data-type": "optout",
+        "data-level": "strict",
+        "data-culture": "es",
+        "data-consentmode-dataredaction": "false"
+      },
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "es",
+        "type": "optout",
+        "level": "strict"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "false",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "type-optin",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=optin",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "type": "optin"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "type-optout",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=optout",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "type": "optout"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "type-optinout",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=optinout",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "type": "optinout"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "type-leveloptin",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=leveloptin",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "type": "leveloptin"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "type-inlineoptin",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=inlineoptin",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "type": "inlineoptin"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "type-optionaloptin",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=optionaloptin",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "type": "optionaloptin"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "level-implied",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&level=implied",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "level": "implied"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "level-strict",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&level=strict",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "level": "strict"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "framework-iab",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&framework=IAB",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "TCFv2.4",
+        "hasFramework": true,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "framework-iab1",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&framework=iab1",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "TCFv2.4",
+        "hasFramework": true,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "framework-iabv2",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&framework=IabV2",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "TCFv2.4",
+        "hasFramework": true,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "framework-tcfv2.2",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&framework=TCFv2.2",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "TCFv2.4",
+        "hasFramework": true,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "framework-tcfv2.3",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&framework=tcfv2.3",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "TCFv2.4",
+        "hasFramework": true,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "framework-tcf",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&framework=TcF",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "TCFv2.4",
+        "hasFramework": true,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "automatic-uppercase",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&blockingmode=AUTO&consentmode=DISABLED",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": true,
+        "consentModeDisabled": true,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "manual-uppercase",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&blockingmode=NONE",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "redaction-true",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&consentmode-dataredaction=true",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "true",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "redaction-false",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&consentmode-dataredaction=false",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "false",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "redaction-dynamic",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&consentmode-dataredaction=dynamic",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "culture-pt-br",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&culture=PT-BR",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "PT-BR"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": "PT-BR"
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "culture-zh-hant",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&culture=ZH-HANT",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "ZH-HANT"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": "ZH-HANT"
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "culture-haw",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&culture=haw",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "haw"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": "haw"
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "culture-x-custom",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&culture=x-custom",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "x-custom"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": "x-custom"
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "query-overrides-attribute",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=optin&level=implied&culture=EN",
+      "attributes": {
+        "data-type": "optout",
+        "data-level": "strict",
+        "data-culture": "es"
+      },
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "EN",
+        "type": "optin",
+        "level": "implied"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": "EN"
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "first-duplicate-wins",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&blockingmode=none&blockingmode=auto&culture=PT-BR&culture=ZH-HANT",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "PT-BR"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": "PT-BR"
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "valid-then-invalid-duplicate",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&blockingmode=auto&blockingmode=future",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": true,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": [
+        "vendor.cookiebot.param.blockingmode.invalid"
+      ]
+    },
+    {
+      "id": "invalid-then-valid-duplicate",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&blockingmode=future&blockingmode=auto",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": [
+        "vendor.cookiebot.param.blockingmode.invalid"
+      ]
+    },
+    {
+      "id": "bare-keys-fall-back",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type&level&blockingmode&consentmode&consentmode-dataredaction&framework&culture",
+      "attributes": {
+        "data-type": "optin",
+        "data-level": "strict",
+        "data-culture": "es"
+      },
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "es",
+        "type": "optin",
+        "level": "strict"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "encoded-key-not-read",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&%62lockingmode=auto",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "data-framework-query-not-read",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&data-framework=TCF",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [],
+      "expected_vendor_codes": []
+    },
+    {
+      "id": "unknown-pass-through",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&type=future&level=future&framework=future&blockingmode=future&consentmode=future&culture=custom",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555",
+        "culture": "custom",
+        "type": "future",
+        "level": "future"
+      },
+      "settings": {
+        "framework": "future",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": "custom"
+      },
+      "logs": [],
+      "expected_vendor_codes": [
+        "vendor.cookiebot.param.type.invalid",
+        "vendor.cookiebot.param.level.invalid",
+        "vendor.cookiebot.param.framework.invalid",
+        "vendor.cookiebot.param.blockingmode.invalid",
+        "vendor.cookiebot.param.consentmode.invalid"
+      ]
+    },
+    {
+      "id": "invalid-redaction-logs",
+      "url": "https://consent.cookiebot.com/uc.js?cbid=11111111-2222-3333-4444-555555555555&consentmode-dataredaction=TRUE",
+      "attributes": {},
+      "banner_parameters": {
+        "serial": "11111111-2222-3333-4444-555555555555"
+      },
+      "settings": {
+        "framework": "",
+        "hasFramework": false,
+        "autoblock": false,
+        "consentModeDisabled": false,
+        "consentModeDataRedaction": "dynamic",
+        "userCulture": null
+      },
+      "logs": [
+        [
+          "Cookiebot: Cookiebot script attribute 'data-consentmode-dataredaction' with value '%s' is invalid. Supported values are 'true', 'false' or 'dynamic'",
+          "TRUE"
+        ]
+      ],
+      "expected_vendor_codes": [
+        "vendor.cookiebot.param.consentmode-dataredaction.invalid"
+      ]
+    }
+  ]
+}

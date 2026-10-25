@@ -35744,7 +35744,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -67823,14 +67823,59 @@
       "id": "vendor/cookiebot",
       "vendor": "cookiebot",
       "status": "reviewed_existing_scope_with_remaining_gaps",
-      "scope": "CMP uc.js loader query identity.",
+      "scope": "Exact existing /uc.js banner loader identity plus six optional documented or SDK-defined query settings.",
       "spec_complete": false,
       "sources": [
         {
           "url": "https://www.cookiebot.com/en/developer/",
           "access": "read",
           "evidence_level": "official_vendor",
-          "notes": "Pack-cited source was opened or attempted during this audit."
+          "notes": "Script tag data attributes table lists optional dialog type, level, framework, blockingmode and consentmode. Its two-letter culture and IAB-only wording is superseded in part by current language and TCF guides."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/360006284114-Error-The-domain-is-not-authorized-to-show-the-cookie-declaration",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "Explicitly permits all data-* attributes to be carried on the same loader query without the data- prefix."
+        },
+        {
+          "url": "https://consent.cookiebot.com/uc.js",
+          "access": "HTTP200",
+          "evidence_level": "official_template",
+          "sha256": "87c526734a40916659708d6605885ed495c342cf79e0e8bdc1cb28c57d97617a",
+          "version": "// 2.140.0 - 2026-10-22T08:21:37.789Z",
+          "notes": "Exact query reading, optional/blank fallback, case-insensitive framework aliases, blockingmode and consentmode, and explicit dataredaction warning. Actual unchanged sections replayed offline."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/26365089106716-How-to-set-the-language-of-the-consent-banner-in-the-Cookiebot-Manager",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "Optional data-culture is available on both banner and declaration; configured language availability remains external."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/360004259374-What-languages-are-available-for-the-cookie-banner",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "PT-BR and ZH-HANT are published variants; languages beyond the list may be added. No closed culture grammar is imposed."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/360007652694-Cookiebot-CMP-and-the-Transparency-and-Consent-Framework-TCF",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "Current TCF guide recommends TCF. Its literal data-framework query example conflicts with the actual loader, which reads framework only. No unsupported alias is added."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/4530208762396-Cookiebot-CMP-European-CDN-solution",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "Explicit EU loader mirrors recorded for a future match-scope option. Matching hosts stay unchanged in this depth pass."
+        },
+        {
+          "url": "https://consent.cookiebot.com/00000000-0000-0000-0000-000000000000/cd.js",
+          "access": "HTTP200",
+          "evidence_level": "official_template",
+          "sha256": "a232cc5e69ea38c412a066a4f657fafa3cb5b1c94c94eb48b5a1f1ee88a97cb5",
+          "notes": "Documented all-zero placeholder source only. Confirms declaration query culture is passed through without a closed value check; no account-specific loader or follow-up request was fetched."
         }
       ],
       "sources_read": [
@@ -67838,13 +67883,64 @@
           "url": "https://www.cookiebot.com/en/developer/",
           "access": "read",
           "evidence_level": "official_vendor",
-          "notes": "Pack-cited source was opened or attempted during this audit."
+          "notes": "Script tag data attributes table lists optional dialog type, level, framework, blockingmode and consentmode. Its two-letter culture and IAB-only wording is superseded in part by current language and TCF guides."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/360006284114-Error-The-domain-is-not-authorized-to-show-the-cookie-declaration",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "Explicitly permits all data-* attributes to be carried on the same loader query without the data- prefix."
+        },
+        {
+          "url": "https://consent.cookiebot.com/uc.js",
+          "access": "HTTP200",
+          "evidence_level": "official_template",
+          "sha256": "87c526734a40916659708d6605885ed495c342cf79e0e8bdc1cb28c57d97617a",
+          "version": "// 2.140.0 - 2026-10-22T08:21:37.789Z",
+          "notes": "Exact query reading, optional/blank fallback, case-insensitive framework aliases, blockingmode and consentmode, and explicit dataredaction warning. Actual unchanged sections replayed offline."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/26365089106716-How-to-set-the-language-of-the-consent-banner-in-the-Cookiebot-Manager",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "Optional data-culture is available on both banner and declaration; configured language availability remains external."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/360004259374-What-languages-are-available-for-the-cookie-banner",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "PT-BR and ZH-HANT are published variants; languages beyond the list may be added. No closed culture grammar is imposed."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/360007652694-Cookiebot-CMP-and-the-Transparency-and-Consent-Framework-TCF",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "Current TCF guide recommends TCF. Its literal data-framework query example conflicts with the actual loader, which reads framework only. No unsupported alias is added."
+        },
+        {
+          "url": "https://support.cookiebot.com/hc/en-us/articles/4530208762396-Cookiebot-CMP-European-CDN-solution",
+          "access": "read",
+          "evidence_level": "official_vendor",
+          "notes": "Explicit EU loader mirrors recorded for a future match-scope option. Matching hosts stay unchanged in this depth pass."
+        },
+        {
+          "url": "https://consent.cookiebot.com/00000000-0000-0000-0000-000000000000/cd.js",
+          "access": "HTTP200",
+          "evidence_level": "official_template",
+          "sha256": "a232cc5e69ea38c412a066a4f657fafa3cb5b1c94c94eb48b5a1f1ee88a97cb5",
+          "notes": "Documented all-zero placeholder source only. Confirms declaration query culture is passed through without a closed value check; no account-specific loader or follow-up request was fetched."
         }
       ],
       "source_access_attempts": [],
       "vendor_rule_inventory": [
-        "cbid can be supplied on the query; generated markup can supply data-cbid instead.",
-        "Developer documentation defines consent-mode/type/level/culture/framework/blocking script attributes."
+        "Query-transfer support binds the documented optional settings to the existing uc.js endpoint.",
+        "It is the Cookiebot domain group ID. Cookiebot documents uc.js?cbid= as one install. The other install puts the same UUID in data-cbid, not the query.",
+        "Documented dialog-type override. The loader passes nonempty query values to the banner without changing case.",
+        "Documented consent-level override. The loader passes nonempty query values to the banner without changing case.",
+        "The pinned 2.140.0 loader accepts these case-insensitive framework aliases and normalizes them to its current TCF implementation. The current support guide recommends TCF; the older developer table names IAB.",
+        "Documented automatic or manual cookie blocking. The loader compares auto without case sensitivity; none and omission preserve manual behavior.",
+        "Documented Google Consent Mode disable override. The loader accepts disabled without case sensitivity. Omission preserves the configured default.",
+        "The pinned 2.140.0 loader reads this exact query key or the data-consentmode-dataredaction attribute and explicitly warns for other populated values. The accepted strings are case-sensitive."
       ],
       "contracts_mapped": [
         {
@@ -67858,40 +67954,303 @@
           "fix_hint": "For a query install, put the domain group ID on the URL as cbid=. For a tag-attribute install, data-cbid carries it instead.",
           "doc": "https://www.cookiebot.com/en/developer/",
           "surface": "params"
+        },
+        {
+          "name": "type",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "optin",
+              "optout",
+              "optinout",
+              "leveloptin",
+              "inlineoptin",
+              "optionaloptin"
+            ]
+          },
+          "description": "Documented dialog-type override. The loader passes nonempty query values to the banner without changing case.",
+          "fix_hint": "Use a documented dialog type, or omit the override to use the account or HTML configuration.",
+          "doc": "https://www.cookiebot.com/en/developer/",
+          "surface": "params"
+        },
+        {
+          "name": "level",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "implied",
+              "strict"
+            ]
+          },
+          "description": "Documented consent-level override. The loader passes nonempty query values to the banner without changing case.",
+          "fix_hint": "Use implied or strict, or omit the override to use the account or HTML configuration.",
+          "doc": "https://www.cookiebot.com/en/developer/",
+          "surface": "params"
+        },
+        {
+          "name": "framework",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "IAB",
+              "IAB1",
+              "IABV2",
+              "TCFv2.2",
+              "TCFv2.3",
+              "TCF"
+            ],
+            "case_insensitive": true
+          },
+          "description": "The pinned 2.140.0 loader accepts these case-insensitive framework aliases and normalizes them to its current TCF implementation. The current support guide recommends TCF; the older developer table names IAB.",
+          "fix_hint": "Use framework=TCF for the current documented integration, or a supported legacy alias. HTML data-framework remains a separate carrier.",
+          "doc": "https://consent.cookiebot.com/uc.js",
+          "source_level": "official_template",
+          "surface": "params"
+        },
+        {
+          "name": "blockingmode",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "auto",
+              "none"
+            ],
+            "case_insensitive": true
+          },
+          "description": "Documented automatic or manual cookie blocking. The loader compares auto without case sensitivity; none and omission preserve manual behavior.",
+          "fix_hint": "Use auto for automatic blocking or none for manual markup, or carry the setting in data-blockingmode.",
+          "doc": "https://www.cookiebot.com/en/developer/",
+          "surface": "params"
+        },
+        {
+          "name": "consentmode",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "disabled"
+            ],
+            "case_insensitive": true
+          },
+          "description": "Documented Google Consent Mode disable override. The loader accepts disabled without case sensitivity. Omission preserves the configured default.",
+          "fix_hint": "Use disabled to disable Google Consent Mode, or omit this override.",
+          "doc": "https://www.cookiebot.com/en/developer/",
+          "surface": "params"
+        },
+        {
+          "name": "consentmode-dataredaction",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false",
+              "dynamic"
+            ]
+          },
+          "description": "The pinned 2.140.0 loader reads this exact query key or the data-consentmode-dataredaction attribute and explicitly warns for other populated values. The accepted strings are case-sensitive.",
+          "fix_hint": "Use true, false or dynamic, or omit the override to retain the configured value.",
+          "doc": "https://consent.cookiebot.com/uc.js",
+          "source_level": "official_template",
+          "surface": "params"
         }
       ],
       "assertions_mapped": [],
-      "added_checks": [],
+      "added_checks": [
+        "type",
+        "level",
+        "framework",
+        "blockingmode",
+        "consentmode",
+        "consentmode-dataredaction"
+      ],
       "missing_requirements": [
         {
-          "requirement": "data-cbid and data-type/type-level/culture/framework/blockingmode",
+          "requirement": "Settings carried only in HTML are not visible in URL artifacts; all new query contracts are optional.",
           "category": "input_context",
           "locally_checkable": false,
-          "reason": "The published configuration lives in HTML attributes, outside URL-only artifacts.",
-          "next_action": "Validate with the required runtime/account/HTML context."
+          "reason": "Settings carried only in HTML are not visible in URL artifacts; all new query contracts are optional.",
+          "next_action": "Preserve the boundary or validate using the required external context."
         },
         {
-          "requirement": "Consent lifecycle callbacks and script blocking",
-          "category": "external_state",
+          "requirement": "Empty query values are ignored or fall back to attributes by the source, so all six new contracts allow empty values.",
+          "category": "source_scope",
           "locally_checkable": false,
-          "reason": "Requires browser execution and site integration.",
-          "next_action": "Validate with the required runtime/account/HTML context."
+          "reason": "Empty query values are ignored or fall back to attributes by the source, so all six new contracts allow empty values.",
+          "next_action": "Preserve the boundary or validate using the required external context."
+        },
+        {
+          "requirement": "The SDK reads the first literal value-bearing query key. The engine checks all submitted decoded pairs. An invalid duplicate may therefore receive advisory feedback although the SDK ignores that occurrence; ordering controls record both cases.",
+          "category": "source_scope",
+          "locally_checkable": false,
+          "reason": "The SDK reads the first literal value-bearing query key. The engine checks all submitted decoded pairs. An invalid duplicate may therefore receive advisory feedback although the SDK ignores that occurrence; ordering controls record both cases.",
+          "next_action": "Preserve the boundary or validate using the required external context."
+        },
+        {
+          "requirement": "The engine decodes query keys while the SDK matches literal key names. Encoded-name controls document that difference. No claim of identical SDK parsing is made.",
+          "category": "source_scope",
+          "locally_checkable": false,
+          "reason": "The engine decodes query keys while the SDK matches literal key names. Encoded-name controls document that difference. No claim of identical SDK parsing is made.",
+          "next_action": "Preserve the boundary or validate using the required external context."
+        },
+        {
+          "requirement": "Bare query keys are omitted by the preserved legacy extractor and are not treated as populated overrides.",
+          "category": "source_scope",
+          "locally_checkable": false,
+          "reason": "Bare query keys are omitted by the preserved legacy extractor and are not treated as populated overrides.",
+          "next_action": "Preserve the boundary or validate using the required external context."
+        },
+        {
+          "requirement": "Culture remains open, including PT-BR, ZH-HANT, three-letter/custom strings and future configured variants. Availability and rendering require account context.",
+          "category": "input_context",
+          "locally_checkable": false,
+          "reason": "Culture remains open, including PT-BR, ZH-HANT, three-letter/custom strings and future configured variants. Availability and rendering require account context.",
+          "next_action": "Preserve the boundary or validate using the required external context."
+        },
+        {
+          "requirement": "Type and level are passed through by the loader. Their findings are advice from the documented setting table, not receiver rejection or proof the SDK blocks unknown strings.",
+          "category": "source_scope",
+          "locally_checkable": false,
+          "reason": "Type and level are passed through by the loader. Their findings are advice from the documented setting table, not receiver rejection or proof the SDK blocks unknown strings.",
+          "next_action": "Preserve the boundary or validate using the required external context."
+        },
+        {
+          "requirement": "Framework aliases describe the pinned loader, not every future framework. The data-framework query typo in the TCF guide is not treated as a working alias.",
+          "category": "source_scope",
+          "locally_checkable": false,
+          "reason": "Framework aliases describe the pinned loader, not every future framework. The data-framework query typo in the TCF guide is not treated as a working alias.",
+          "next_action": "Preserve the boundary or validate using the required external context."
+        },
+        {
+          "requirement": "No consent lifecycle, legal compliance, account authorization, HTML blocking implementation or declaration rendering contract is inferred.",
+          "category": "input_context",
+          "locally_checkable": false,
+          "reason": "No consent lifecycle, legal compliance, account authorization, HTML blocking implementation or declaration rendering contract is inferred.",
+          "next_action": "Preserve the boundary or validate using the required external context."
         }
       ],
       "tests": {
-        "manifest": "pixellint/fixtures/vendor-cookiebot/manifest.json",
-        "cases": 4,
+        "manifest": "fixtures/vendor-cookiebot/manifest.json",
+        "cases": 49,
         "baseline_cases": 4,
-        "new_cases": 0,
-        "positive_cases": 1,
-        "negative_or_warning_cases": 3,
-        "new_fixture_ids": [],
-        "boundary_fixture_ids": [],
+        "new_cases": 45,
+        "positive_cases": 33,
+        "negative_or_warning_cases": 16,
+        "new_fixture_ids": [
+          "sdk-omitted",
+          "sdk-blank-fallback",
+          "sdk-type-optin",
+          "sdk-type-optout",
+          "sdk-type-optinout",
+          "sdk-type-leveloptin",
+          "sdk-type-inlineoptin",
+          "sdk-type-optionaloptin",
+          "sdk-level-implied",
+          "sdk-level-strict",
+          "sdk-framework-iab",
+          "sdk-framework-iab1",
+          "sdk-framework-iabv2",
+          "sdk-framework-tcfv2.2",
+          "sdk-framework-tcfv2.3",
+          "sdk-framework-tcf",
+          "sdk-automatic-uppercase",
+          "sdk-manual-uppercase",
+          "sdk-redaction-true",
+          "sdk-redaction-false",
+          "sdk-redaction-dynamic",
+          "sdk-culture-pt-br",
+          "sdk-culture-zh-hant",
+          "sdk-culture-haw",
+          "sdk-culture-x-custom",
+          "sdk-query-overrides-attribute",
+          "sdk-first-duplicate-wins",
+          "sdk-valid-then-invalid-duplicate",
+          "sdk-invalid-then-valid-duplicate",
+          "sdk-bare-keys-fall-back",
+          "sdk-encoded-key-not-read",
+          "sdk-data-framework-query-not-read",
+          "sdk-unknown-pass-through",
+          "sdk-invalid-redaction-logs",
+          "invalid-type",
+          "invalid-level",
+          "invalid-framework",
+          "invalid-blockingmode",
+          "invalid-consentmode",
+          "invalid-consentmode-dataredaction",
+          "lookalike-host-control",
+          "declaration-settings-control",
+          "nested-prefix-route-control",
+          "trailing-route-control",
+          "similar-filename-control"
+        ],
+        "boundary_fixture_ids": [
+          "sdk-omitted",
+          "sdk-blank-fallback",
+          "sdk-type-optin",
+          "sdk-type-optout",
+          "sdk-type-optinout",
+          "sdk-type-leveloptin",
+          "sdk-type-inlineoptin",
+          "sdk-type-optionaloptin",
+          "sdk-level-implied",
+          "sdk-level-strict",
+          "sdk-framework-iab",
+          "sdk-framework-iab1",
+          "sdk-framework-iabv2",
+          "sdk-framework-tcfv2.2",
+          "sdk-framework-tcfv2.3",
+          "sdk-framework-tcf",
+          "sdk-automatic-uppercase",
+          "sdk-manual-uppercase",
+          "sdk-redaction-true",
+          "sdk-redaction-false",
+          "sdk-redaction-dynamic",
+          "sdk-culture-pt-br",
+          "sdk-culture-zh-hant",
+          "sdk-culture-haw",
+          "sdk-culture-x-custom",
+          "sdk-query-overrides-attribute",
+          "sdk-first-duplicate-wins",
+          "sdk-valid-then-invalid-duplicate",
+          "sdk-invalid-then-valid-duplicate",
+          "sdk-bare-keys-fall-back",
+          "sdk-encoded-key-not-read",
+          "sdk-data-framework-query-not-read",
+          "sdk-unknown-pass-through",
+          "sdk-invalid-redaction-logs",
+          "invalid-type",
+          "invalid-level",
+          "invalid-framework",
+          "invalid-blockingmode",
+          "invalid-consentmode",
+          "invalid-consentmode-dataredaction",
+          "lookalike-host-control",
+          "declaration-settings-control",
+          "nested-prefix-route-control",
+          "trailing-route-control",
+          "similar-filename-control"
+        ],
         "verification_status": "passed",
-        "verification_method": "Native published API, one compiled Engine, deterministic reference timestamp1791392400",
+        "verification_method": "34 pinned SDK source boundary outputs and eight literal section hashes reproduced offline; focused Rust2/2 and golden target5/5 passed, plus Clippy/fmt. Shared generated inventory is coordinator-owned.",
         "reference_time_unix_seconds": 1791392400,
-        "manifest_sha256": "999a4d8cf2bba2940ee2e23cf41751e437b97979ab99412033b90608bf2aedff",
-        "fixture_manifest_sha256": "706ba88383a59761664bf208ca6ff659489d8076e7be6a4ebbba593e81d66d30",
+        "manifest_sha256": "ebd378413ce6be5acb95bd7e4f29908e704ffe101dccc7fab93ead9cebbd205f",
+        "fixture_manifest_sha256": "0ca91c69d3572da192cccd7f62c9439a509f7bd262b57b37de780170c9dc7114",
         "artifacts": [
           {
             "id": "clean-cbid",
@@ -67920,13 +68279,328 @@
             "kind": "url",
             "sha256": "3d2e61802415ec7a97fd401ff7d0fa22e863d6aa3bbba977fbc3738ff8457704",
             "is_new": false
+          },
+          {
+            "id": "sdk-omitted",
+            "fixture": "sdk-omitted.txt",
+            "kind": "url",
+            "sha256": "3f28a51c75f2cd8986d654627e5a5cc752cc265b9087abf3ce70f7713a859e36",
+            "is_new": true
+          },
+          {
+            "id": "sdk-blank-fallback",
+            "fixture": "sdk-blank-fallback.txt",
+            "kind": "url",
+            "sha256": "de3fc74f394950fda395188154537fa8af1fac031fbc8f4f3ef3fd6b31fc5890",
+            "is_new": true
+          },
+          {
+            "id": "sdk-type-optin",
+            "fixture": "sdk-type-optin.txt",
+            "kind": "url",
+            "sha256": "81a223d0626f010366f1a38c5fc5d77d67b4eee0ee00b960f8d64403b02e8386",
+            "is_new": true
+          },
+          {
+            "id": "sdk-type-optout",
+            "fixture": "sdk-type-optout.txt",
+            "kind": "url",
+            "sha256": "3861c88b84a38b238193b4ba632989cf7cd4bd52e2b40eb83345fada734e7ac9",
+            "is_new": true
+          },
+          {
+            "id": "sdk-type-optinout",
+            "fixture": "sdk-type-optinout.txt",
+            "kind": "url",
+            "sha256": "b98ca1d49710c0d9258ac9fb6125bc7cfca9c0586c1415dfec77c1708470bc46",
+            "is_new": true
+          },
+          {
+            "id": "sdk-type-leveloptin",
+            "fixture": "sdk-type-leveloptin.txt",
+            "kind": "url",
+            "sha256": "d1345effe6365016ea5055b2cd3e9375d84a928dd16c1eb986951334b20139c0",
+            "is_new": true
+          },
+          {
+            "id": "sdk-type-inlineoptin",
+            "fixture": "sdk-type-inlineoptin.txt",
+            "kind": "url",
+            "sha256": "ddab7c0a947089ccfac5ef8bef010fd7d7782670070b5666c5a233f27eba066c",
+            "is_new": true
+          },
+          {
+            "id": "sdk-type-optionaloptin",
+            "fixture": "sdk-type-optionaloptin.txt",
+            "kind": "url",
+            "sha256": "3451e14f31668e105f3cd5f0976869df5cd4924dd2b9eb4705242be97849f7ef",
+            "is_new": true
+          },
+          {
+            "id": "sdk-level-implied",
+            "fixture": "sdk-level-implied.txt",
+            "kind": "url",
+            "sha256": "86598c3f64fd1dd929b85fbaff76c0be37c573c38d2081197969fb752b6d56ac",
+            "is_new": true
+          },
+          {
+            "id": "sdk-level-strict",
+            "fixture": "sdk-level-strict.txt",
+            "kind": "url",
+            "sha256": "cc09259e81c2443f7233f72a3c61b7999eee744df1316be219d329c016a750a4",
+            "is_new": true
+          },
+          {
+            "id": "sdk-framework-iab",
+            "fixture": "sdk-framework-iab.txt",
+            "kind": "url",
+            "sha256": "a7d78c720eedd9113b226d45877b700e3605c9b0570621b6a7d198160f91302c",
+            "is_new": true
+          },
+          {
+            "id": "sdk-framework-iab1",
+            "fixture": "sdk-framework-iab1.txt",
+            "kind": "url",
+            "sha256": "63ff6bab58840af99368831689eef7a0d8d6f479f0661fa93076a54330f663b0",
+            "is_new": true
+          },
+          {
+            "id": "sdk-framework-iabv2",
+            "fixture": "sdk-framework-iabv2.txt",
+            "kind": "url",
+            "sha256": "063931153b860039ada1a808b2af8bde8092f1ad9d2b8e41013e9a8680595f82",
+            "is_new": true
+          },
+          {
+            "id": "sdk-framework-tcfv2.2",
+            "fixture": "sdk-framework-tcfv2.2.txt",
+            "kind": "url",
+            "sha256": "61adfe6e4c3aa10c0e4058b20f0148570ef9f1f604137e2369a6cac90c495e4f",
+            "is_new": true
+          },
+          {
+            "id": "sdk-framework-tcfv2.3",
+            "fixture": "sdk-framework-tcfv2.3.txt",
+            "kind": "url",
+            "sha256": "b046cf91dd3a20e6b5a5f84c9223946f4399bd280a4e0e7fe1ead09516c857e6",
+            "is_new": true
+          },
+          {
+            "id": "sdk-framework-tcf",
+            "fixture": "sdk-framework-tcf.txt",
+            "kind": "url",
+            "sha256": "e1bb10c774c7aeac12d09c348505c924e6d22ee63b495e857a378ff4a85fbd89",
+            "is_new": true
+          },
+          {
+            "id": "sdk-automatic-uppercase",
+            "fixture": "sdk-automatic-uppercase.txt",
+            "kind": "url",
+            "sha256": "e96affede48059a9ebc0cc3a3eb3fceadb8eb571b887f3360dc1ec9687c100b9",
+            "is_new": true
+          },
+          {
+            "id": "sdk-manual-uppercase",
+            "fixture": "sdk-manual-uppercase.txt",
+            "kind": "url",
+            "sha256": "f4bfe4ab1fc91b424f1e7c286771d95ea1f3f74008b38c1859a4ab67b1a350b4",
+            "is_new": true
+          },
+          {
+            "id": "sdk-redaction-true",
+            "fixture": "sdk-redaction-true.txt",
+            "kind": "url",
+            "sha256": "834d89e1a5870901b99019b7d391ca4390f84f382bc21eabd2563998010bef06",
+            "is_new": true
+          },
+          {
+            "id": "sdk-redaction-false",
+            "fixture": "sdk-redaction-false.txt",
+            "kind": "url",
+            "sha256": "1eda43d50eb3c02b60d3127b5e225dc8e6b289f26e6faed96cf46969d92161ea",
+            "is_new": true
+          },
+          {
+            "id": "sdk-redaction-dynamic",
+            "fixture": "sdk-redaction-dynamic.txt",
+            "kind": "url",
+            "sha256": "355f565a1e3941d71e3bd2e3081b54d841fb1e505c391d330e6f987ec948ba9a",
+            "is_new": true
+          },
+          {
+            "id": "sdk-culture-pt-br",
+            "fixture": "sdk-culture-pt-br.txt",
+            "kind": "url",
+            "sha256": "fc7e335382d9820de54be199e3841603a83b131d5a3cff0b3307894d09108ce9",
+            "is_new": true
+          },
+          {
+            "id": "sdk-culture-zh-hant",
+            "fixture": "sdk-culture-zh-hant.txt",
+            "kind": "url",
+            "sha256": "dd29cc90e3bcde9fb7cebd46b03c39ad33a4d90376d49d3765586d6aec439210",
+            "is_new": true
+          },
+          {
+            "id": "sdk-culture-haw",
+            "fixture": "sdk-culture-haw.txt",
+            "kind": "url",
+            "sha256": "cdb64ed88d99fe1fc933fbfb5ff10096bcb3b01479f2d25f32197ae01010fc1c",
+            "is_new": true
+          },
+          {
+            "id": "sdk-culture-x-custom",
+            "fixture": "sdk-culture-x-custom.txt",
+            "kind": "url",
+            "sha256": "b250218afae161f98efdf4ef2db1c712bec6c978c2144d7c513f1603da988b7e",
+            "is_new": true
+          },
+          {
+            "id": "sdk-query-overrides-attribute",
+            "fixture": "sdk-query-overrides-attribute.txt",
+            "kind": "url",
+            "sha256": "1a4784e403aeb0a04faa24806e50ecc07d82bd9dcc2c6110d25918d12cf8afff",
+            "is_new": true
+          },
+          {
+            "id": "sdk-first-duplicate-wins",
+            "fixture": "sdk-first-duplicate-wins.txt",
+            "kind": "url",
+            "sha256": "2a096e78abef584e3814e13e9ed0dfb3f58004ab6245d4420f292cd0f467746d",
+            "is_new": true
+          },
+          {
+            "id": "sdk-valid-then-invalid-duplicate",
+            "fixture": "sdk-valid-then-invalid-duplicate.txt",
+            "kind": "url",
+            "sha256": "ba1ecadbc34b1f24df06dd7ed776212dfd09daa7a1f36aa42ffddd8c5b3a8a4e",
+            "is_new": true
+          },
+          {
+            "id": "sdk-invalid-then-valid-duplicate",
+            "fixture": "sdk-invalid-then-valid-duplicate.txt",
+            "kind": "url",
+            "sha256": "5048f82d78de5c0093a57d8ef87c3761d630e0be1860ebd3b5c91321ceebf8fc",
+            "is_new": true
+          },
+          {
+            "id": "sdk-bare-keys-fall-back",
+            "fixture": "sdk-bare-keys-fall-back.txt",
+            "kind": "url",
+            "sha256": "7ff0290fa804690996e0b5c22220356a7b688fa1f8b558cf2c612679c64d6f9d",
+            "is_new": true
+          },
+          {
+            "id": "sdk-encoded-key-not-read",
+            "fixture": "sdk-encoded-key-not-read.txt",
+            "kind": "url",
+            "sha256": "de04eeb26df69725b15797f1f324714c8f9ba07a0181b608ffaffcb969cb13b9",
+            "is_new": true
+          },
+          {
+            "id": "sdk-data-framework-query-not-read",
+            "fixture": "sdk-data-framework-query-not-read.txt",
+            "kind": "url",
+            "sha256": "db3b3cca5e13af396c1ebd7b72329ba1f94cc3a3167fcc342ed94fcdf03360fa",
+            "is_new": true
+          },
+          {
+            "id": "sdk-unknown-pass-through",
+            "fixture": "sdk-unknown-pass-through.txt",
+            "kind": "url",
+            "sha256": "baeaf57ad850b48bb918acb6ee7ce8206896b1f70f8941da7deae887c82873ae",
+            "is_new": true
+          },
+          {
+            "id": "sdk-invalid-redaction-logs",
+            "fixture": "sdk-invalid-redaction-logs.txt",
+            "kind": "url",
+            "sha256": "3f5291fb23d448e8b728d8cf535a80fac7c8dbca0e996389ae8123f3c32d0e6f",
+            "is_new": true
+          },
+          {
+            "id": "invalid-type",
+            "fixture": "invalid-type.txt",
+            "kind": "url",
+            "sha256": "96b24f5ba38de073db7e6cfe97e126dcad21eb0665be4df0e3d6057ceb4d4f37",
+            "is_new": true
+          },
+          {
+            "id": "invalid-level",
+            "fixture": "invalid-level.txt",
+            "kind": "url",
+            "sha256": "b44545ad3755b0439c77903f47627a86f61919107308459bd2ffa5bbe8715b5c",
+            "is_new": true
+          },
+          {
+            "id": "invalid-framework",
+            "fixture": "invalid-framework.txt",
+            "kind": "url",
+            "sha256": "5ab43415d944dfd45a3ad18d2827fd14acbd47dd311f1b579e75dbe06c3834dc",
+            "is_new": true
+          },
+          {
+            "id": "invalid-blockingmode",
+            "fixture": "invalid-blockingmode.txt",
+            "kind": "url",
+            "sha256": "52eb3245fb3f75f7fe09fee5d242853fd86417a7eaf8f7607cc0808673bcf944",
+            "is_new": true
+          },
+          {
+            "id": "invalid-consentmode",
+            "fixture": "invalid-consentmode.txt",
+            "kind": "url",
+            "sha256": "f9b34cb922f2913143a5158ce2e3064d8da09ff2ca76d750c2f780f256dcfcb0",
+            "is_new": true
+          },
+          {
+            "id": "invalid-consentmode-dataredaction",
+            "fixture": "invalid-consentmode-dataredaction.txt",
+            "kind": "url",
+            "sha256": "3f0b66a681f9f30ef230ef8657f7e5768be9cf1c3e51fac972217583aee0c784",
+            "is_new": true
+          },
+          {
+            "id": "lookalike-host-control",
+            "fixture": "lookalike-host-control.txt",
+            "kind": "url",
+            "sha256": "bf33e0764c9d888a30c91d540c29e49ab63275d3447a197cd667f6e9b251d84f",
+            "is_new": true
+          },
+          {
+            "id": "declaration-settings-control",
+            "fixture": "declaration-settings-control.txt",
+            "kind": "url",
+            "sha256": "4de5c7a1a63a7d7d91268e807fc2b5b437df33caa98b914936ced792062e3ad3",
+            "is_new": true
+          },
+          {
+            "id": "nested-prefix-route-control",
+            "fixture": "nested-prefix-route-control.txt",
+            "kind": "url",
+            "sha256": "b06db2adf806128bba715c2a90facb81a7a0e25c920150e86e625d7f4b2067e0",
+            "is_new": true
+          },
+          {
+            "id": "trailing-route-control",
+            "fixture": "trailing-route-control.txt",
+            "kind": "url",
+            "sha256": "078869a13328394b3bf88f2210666afe3103b280abab23ec49c6ad84b80c22cc",
+            "is_new": true
+          },
+          {
+            "id": "similar-filename-control",
+            "fixture": "similar-filename-control.txt",
+            "kind": "url",
+            "sha256": "53404ad963aa0bdc0f967a1b3891022ef18cd70023026049b74d1bc4c1a130d3",
+            "is_new": true
           }
         ]
       },
       "review_assignment": "endpoints",
-      "manifest_sha256": "999a4d8cf2bba2940ee2e23cf41751e437b97979ab99412033b90608bf2aedff",
+      "manifest_sha256": "ebd378413ce6be5acb95bd7e4f29908e704ffe101dccc7fab93ead9cebbd205f",
       "implemented_counts": {
-        "field_contracts": 1,
+        "field_contracts": 7,
         "cross_field_assertions": 0,
         "body_contract_scopes": 0,
         "http_contract_scopes": 0,
@@ -67934,26 +68608,76 @@
         "bulk_query_sources": 0
       },
       "reviewed_fixture_counts": {
-        "transport_goldens": 4
+        "transport_goldens": 49,
+        "source_replay_cases": 34
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/cookiebot.json": "999a4d8cf2bba2940ee2e23cf41751e437b97979ab99412033b90608bf2aedff",
-        "fixtures/vendor-cookiebot/manifest.json": "706ba88383a59761664bf208ca6ff659489d8076e7be6a4ebbba593e81d66d30",
-        "fixtures/vendor-cookiebot/clean-cbid.txt": "d74cbac3d223936e13da69844dc6cbf3fe76bb7d060c68220ff92a5ab0ab6dad",
+        "crates/pixellint-core/rulepacks/vendor/cookiebot.json": "ebd378413ce6be5acb95bd7e4f29908e704ffe101dccc7fab93ead9cebbd205f",
+        "crates/pixellint-core/tests/cookiebot_query_settings.rs": "b28791c56f2704d520b0ef698a3434f981d95d18a5b8d43497c974948e78d73e",
         "fixtures/vendor-cookiebot/clean-attribute.txt": "c63a41effa03cad22e87f66e115525091855d2a12c27e306cafacf4ed4c1d9cb",
+        "fixtures/vendor-cookiebot/clean-cbid.txt": "d74cbac3d223936e13da69844dc6cbf3fe76bb7d060c68220ff92a5ab0ab6dad",
+        "fixtures/vendor-cookiebot/declaration-settings-control.txt": "4de5c7a1a63a7d7d91268e807fc2b5b437df33caa98b914936ced792062e3ad3",
         "fixtures/vendor-cookiebot/empty-cbid.txt": "6b80dad1941cc31def8a67151d5b3e411d905e305103e4f3f8cee1284084c1ef",
-        "fixtures/vendor-cookiebot/invalid-cbid.txt": "3d2e61802415ec7a97fd401ff7d0fa22e863d6aa3bbba977fbc3738ff8457704"
+        "fixtures/vendor-cookiebot/invalid-blockingmode.txt": "52eb3245fb3f75f7fe09fee5d242853fd86417a7eaf8f7607cc0808673bcf944",
+        "fixtures/vendor-cookiebot/invalid-cbid.txt": "3d2e61802415ec7a97fd401ff7d0fa22e863d6aa3bbba977fbc3738ff8457704",
+        "fixtures/vendor-cookiebot/invalid-consentmode-dataredaction.txt": "3f0b66a681f9f30ef230ef8657f7e5768be9cf1c3e51fac972217583aee0c784",
+        "fixtures/vendor-cookiebot/invalid-consentmode.txt": "f9b34cb922f2913143a5158ce2e3064d8da09ff2ca76d750c2f780f256dcfcb0",
+        "fixtures/vendor-cookiebot/invalid-framework.txt": "5ab43415d944dfd45a3ad18d2827fd14acbd47dd311f1b579e75dbe06c3834dc",
+        "fixtures/vendor-cookiebot/invalid-level.txt": "b44545ad3755b0439c77903f47627a86f61919107308459bd2ffa5bbe8715b5c",
+        "fixtures/vendor-cookiebot/invalid-type.txt": "96b24f5ba38de073db7e6cfe97e126dcad21eb0665be4df0e3d6057ceb4d4f37",
+        "fixtures/vendor-cookiebot/lookalike-host-control.txt": "bf33e0764c9d888a30c91d540c29e49ab63275d3447a197cd667f6e9b251d84f",
+        "fixtures/vendor-cookiebot/manifest.json": "0ca91c69d3572da192cccd7f62c9439a509f7bd262b57b37de780170c9dc7114",
+        "fixtures/vendor-cookiebot/nested-prefix-route-control.txt": "b06db2adf806128bba715c2a90facb81a7a0e25c920150e86e625d7f4b2067e0",
+        "fixtures/vendor-cookiebot/sdk-automatic-uppercase.txt": "e96affede48059a9ebc0cc3a3eb3fceadb8eb571b887f3360dc1ec9687c100b9",
+        "fixtures/vendor-cookiebot/sdk-bare-keys-fall-back.txt": "7ff0290fa804690996e0b5c22220356a7b688fa1f8b558cf2c612679c64d6f9d",
+        "fixtures/vendor-cookiebot/sdk-blank-fallback.txt": "de3fc74f394950fda395188154537fa8af1fac031fbc8f4f3ef3fd6b31fc5890",
+        "fixtures/vendor-cookiebot/sdk-culture-haw.txt": "cdb64ed88d99fe1fc933fbfb5ff10096bcb3b01479f2d25f32197ae01010fc1c",
+        "fixtures/vendor-cookiebot/sdk-culture-pt-br.txt": "fc7e335382d9820de54be199e3841603a83b131d5a3cff0b3307894d09108ce9",
+        "fixtures/vendor-cookiebot/sdk-culture-x-custom.txt": "b250218afae161f98efdf4ef2db1c712bec6c978c2144d7c513f1603da988b7e",
+        "fixtures/vendor-cookiebot/sdk-culture-zh-hant.txt": "dd29cc90e3bcde9fb7cebd46b03c39ad33a4d90376d49d3765586d6aec439210",
+        "fixtures/vendor-cookiebot/sdk-data-framework-query-not-read.txt": "db3b3cca5e13af396c1ebd7b72329ba1f94cc3a3167fcc342ed94fcdf03360fa",
+        "fixtures/vendor-cookiebot/sdk-encoded-key-not-read.txt": "de04eeb26df69725b15797f1f324714c8f9ba07a0181b608ffaffcb969cb13b9",
+        "fixtures/vendor-cookiebot/sdk-first-duplicate-wins.txt": "2a096e78abef584e3814e13e9ed0dfb3f58004ab6245d4420f292cd0f467746d",
+        "fixtures/vendor-cookiebot/sdk-framework-iab.txt": "a7d78c720eedd9113b226d45877b700e3605c9b0570621b6a7d198160f91302c",
+        "fixtures/vendor-cookiebot/sdk-framework-iab1.txt": "63ff6bab58840af99368831689eef7a0d8d6f479f0661fa93076a54330f663b0",
+        "fixtures/vendor-cookiebot/sdk-framework-iabv2.txt": "063931153b860039ada1a808b2af8bde8092f1ad9d2b8e41013e9a8680595f82",
+        "fixtures/vendor-cookiebot/sdk-framework-tcf.txt": "e1bb10c774c7aeac12d09c348505c924e6d22ee63b495e857a378ff4a85fbd89",
+        "fixtures/vendor-cookiebot/sdk-framework-tcfv2.2.txt": "61adfe6e4c3aa10c0e4058b20f0148570ef9f1f604137e2369a6cac90c495e4f",
+        "fixtures/vendor-cookiebot/sdk-framework-tcfv2.3.txt": "b046cf91dd3a20e6b5a5f84c9223946f4399bd280a4e0e7fe1ead09516c857e6",
+        "fixtures/vendor-cookiebot/sdk-invalid-redaction-logs.txt": "3f5291fb23d448e8b728d8cf535a80fac7c8dbca0e996389ae8123f3c32d0e6f",
+        "fixtures/vendor-cookiebot/sdk-invalid-then-valid-duplicate.txt": "5048f82d78de5c0093a57d8ef87c3761d630e0be1860ebd3b5c91321ceebf8fc",
+        "fixtures/vendor-cookiebot/sdk-level-implied.txt": "86598c3f64fd1dd929b85fbaff76c0be37c573c38d2081197969fb752b6d56ac",
+        "fixtures/vendor-cookiebot/sdk-level-strict.txt": "cc09259e81c2443f7233f72a3c61b7999eee744df1316be219d329c016a750a4",
+        "fixtures/vendor-cookiebot/sdk-manual-uppercase.txt": "f4bfe4ab1fc91b424f1e7c286771d95ea1f3f74008b38c1859a4ab67b1a350b4",
+        "fixtures/vendor-cookiebot/sdk-omitted.txt": "3f28a51c75f2cd8986d654627e5a5cc752cc265b9087abf3ce70f7713a859e36",
+        "fixtures/vendor-cookiebot/sdk-query-overrides-attribute.txt": "1a4784e403aeb0a04faa24806e50ecc07d82bd9dcc2c6110d25918d12cf8afff",
+        "fixtures/vendor-cookiebot/sdk-redaction-dynamic.txt": "355f565a1e3941d71e3bd2e3081b54d841fb1e505c391d330e6f987ec948ba9a",
+        "fixtures/vendor-cookiebot/sdk-redaction-false.txt": "1eda43d50eb3c02b60d3127b5e225dc8e6b289f26e6faed96cf46969d92161ea",
+        "fixtures/vendor-cookiebot/sdk-redaction-true.txt": "834d89e1a5870901b99019b7d391ca4390f84f382bc21eabd2563998010bef06",
+        "fixtures/vendor-cookiebot/sdk-type-inlineoptin.txt": "ddab7c0a947089ccfac5ef8bef010fd7d7782670070b5666c5a233f27eba066c",
+        "fixtures/vendor-cookiebot/sdk-type-leveloptin.txt": "d1345effe6365016ea5055b2cd3e9375d84a928dd16c1eb986951334b20139c0",
+        "fixtures/vendor-cookiebot/sdk-type-optin.txt": "81a223d0626f010366f1a38c5fc5d77d67b4eee0ee00b960f8d64403b02e8386",
+        "fixtures/vendor-cookiebot/sdk-type-optinout.txt": "b98ca1d49710c0d9258ac9fb6125bc7cfca9c0586c1415dfec77c1708470bc46",
+        "fixtures/vendor-cookiebot/sdk-type-optionaloptin.txt": "3451e14f31668e105f3cd5f0976869df5cd4924dd2b9eb4705242be97849f7ef",
+        "fixtures/vendor-cookiebot/sdk-type-optout.txt": "3861c88b84a38b238193b4ba632989cf7cd4bd52e2b40eb83345fada734e7ac9",
+        "fixtures/vendor-cookiebot/sdk-unknown-pass-through.txt": "baeaf57ad850b48bb918acb6ee7ce8206896b1f70f8941da7deae887c82873ae",
+        "fixtures/vendor-cookiebot/sdk-valid-then-invalid-duplicate.txt": "ba1ecadbc34b1f24df06dd7ed776212dfd09daa7a1f36aa42ffddd8c5b3a8a4e",
+        "fixtures/vendor-cookiebot/similar-filename-control.txt": "53404ad963aa0bdc0f967a1b3891022ef18cd70023026049b74d1bc4c1a130d3",
+        "fixtures/vendor-cookiebot/source-boundaries.json": "481ba34a25e4b2e75393b17ea02a797f865b37962588ebf045cbd58c0f2cabf9",
+        "fixtures/vendor-cookiebot/source-replay.mjs": "4840f33446fdbef867abd0c00dbcaec04136723bfb11a0e6fd3e0b135b03799f",
+        "fixtures/vendor-cookiebot/source-review.json": "ead7e14315e7b9b309e3f3f0ef9bd223267348959dac68126cc4131897951fd9",
+        "fixtures/vendor-cookiebot/trailing-route-control.txt": "078869a13328394b3bf88f2210666afe3103b280abab23ec49c6ad84b80c22cc"
       },
       "prior_status": "reviewed_loader_only",
-      "disposition": "Retained existing contracts after reopening the canonical source. Detailed baseline inventory is carried forward; no new hard transport restriction was supported for the current matched surface in this bounded pass.",
+      "disposition": "Deepened the existing banner loader with six optional advisory setting checks, preserving blank fallback, case-insensitive SDK aliases and open culture. No new pack or endpoint family.",
       "baseline_review_date": "2026-10-07",
       "baseline_added_checks": [],
       "current_match": {
         "hosts": [
           "consent.cookiebot.com"
         ],
-        "path_contains": [
-          "uc.js"
+        "paths": [
+          "/uc.js"
         ]
       },
       "current_body_specs": [],
@@ -67968,12 +68692,12 @@
           "scope": "Canonical public source reopened; the detailed 2026-10-07 inventory is carried forward unless this pass records a new contract."
         }
       ],
-      "manifest_changed_this_session": false,
-      "session_review_date": "2026-10-08",
-      "session_reviewed": false,
-      "implementation_changed_this_round": false,
+      "manifest_changed_this_session": true,
+      "session_review_date": "2026-10-25",
+      "session_reviewed": true,
+      "implementation_changed_this_round": true,
       "manifest_path": "crates/pixellint-core/rulepacks/vendor/cookiebot.json",
-      "manifest_changed_this_round": false,
+      "manifest_changed_this_round": true,
       "round_metadata_history": [
         {
           "version": "0.34.0",
@@ -67981,7 +68705,149 @@
           "implementation_changed_this_round": false,
           "manifest_changed_this_round": false
         }
-      ]
+      ],
+      "depth_assessment_20261025": {
+        "pack_id": "vendor/cookiebot",
+        "checked_on": "2026-10-25",
+        "scope": "Exact existing /uc.js banner loader identity plus six optional documented or SDK-defined query settings.",
+        "spec_complete": false,
+        "sources": [
+          {
+            "url": "https://www.cookiebot.com/en/developer/",
+            "access": "read",
+            "evidence_level": "official_vendor",
+            "notes": "Script tag data attributes table lists optional dialog type, level, framework, blockingmode and consentmode. Its two-letter culture and IAB-only wording is superseded in part by current language and TCF guides."
+          },
+          {
+            "url": "https://support.cookiebot.com/hc/en-us/articles/360006284114-Error-The-domain-is-not-authorized-to-show-the-cookie-declaration",
+            "access": "read",
+            "evidence_level": "official_vendor",
+            "notes": "Explicitly permits all data-* attributes to be carried on the same loader query without the data- prefix."
+          },
+          {
+            "url": "https://consent.cookiebot.com/uc.js",
+            "access": "HTTP200",
+            "evidence_level": "official_template",
+            "sha256": "87c526734a40916659708d6605885ed495c342cf79e0e8bdc1cb28c57d97617a",
+            "version": "// 2.140.0 - 2026-10-22T08:21:37.789Z",
+            "notes": "Exact query reading, optional/blank fallback, case-insensitive framework aliases, blockingmode and consentmode, and explicit dataredaction warning. Actual unchanged sections replayed offline."
+          },
+          {
+            "url": "https://support.cookiebot.com/hc/en-us/articles/26365089106716-How-to-set-the-language-of-the-consent-banner-in-the-Cookiebot-Manager",
+            "access": "read",
+            "evidence_level": "official_vendor",
+            "notes": "Optional data-culture is available on both banner and declaration; configured language availability remains external."
+          },
+          {
+            "url": "https://support.cookiebot.com/hc/en-us/articles/360004259374-What-languages-are-available-for-the-cookie-banner",
+            "access": "read",
+            "evidence_level": "official_vendor",
+            "notes": "PT-BR and ZH-HANT are published variants; languages beyond the list may be added. No closed culture grammar is imposed."
+          },
+          {
+            "url": "https://support.cookiebot.com/hc/en-us/articles/360007652694-Cookiebot-CMP-and-the-Transparency-and-Consent-Framework-TCF",
+            "access": "read",
+            "evidence_level": "official_vendor",
+            "notes": "Current TCF guide recommends TCF. Its literal data-framework query example conflicts with the actual loader, which reads framework only. No unsupported alias is added."
+          },
+          {
+            "url": "https://support.cookiebot.com/hc/en-us/articles/4530208762396-Cookiebot-CMP-European-CDN-solution",
+            "access": "read",
+            "evidence_level": "official_vendor",
+            "notes": "Explicit EU loader mirrors recorded for a future match-scope option. Matching hosts stay unchanged in this depth pass."
+          },
+          {
+            "url": "https://consent.cookiebot.com/00000000-0000-0000-0000-000000000000/cd.js",
+            "access": "HTTP200",
+            "evidence_level": "official_template",
+            "sha256": "a232cc5e69ea38c412a066a4f657fafa3cb5b1c94c94eb48b5a1f1ee88a97cb5",
+            "notes": "Documented all-zero placeholder source only. Confirms declaration query culture is passed through without a closed value check; no account-specific loader or follow-up request was fetched."
+          }
+        ],
+        "source_cache": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/sources/creative",
+        "source_replay_cases": 34,
+        "changed_field_contracts": [
+          "type",
+          "level",
+          "framework",
+          "blockingmode",
+          "consentmode",
+          "consentmode-dataredaction"
+        ],
+        "additional_gaps_closed": [
+          "HTML-only setting gap is closed only for the officially supported query carriers."
+        ],
+        "limitations": [
+          "Settings carried only in HTML are not visible in URL artifacts; all new query contracts are optional.",
+          "Empty query values are ignored or fall back to attributes by the source, so all six new contracts allow empty values.",
+          "The SDK reads the first literal value-bearing query key. The engine checks all submitted decoded pairs. An invalid duplicate may therefore receive advisory feedback although the SDK ignores that occurrence; ordering controls record both cases.",
+          "The engine decodes query keys while the SDK matches literal key names. Encoded-name controls document that difference. No claim of identical SDK parsing is made.",
+          "Bare query keys are omitted by the preserved legacy extractor and are not treated as populated overrides.",
+          "Culture remains open, including PT-BR, ZH-HANT, three-letter/custom strings and future configured variants. Availability and rendering require account context.",
+          "Type and level are passed through by the loader. Their findings are advice from the documented setting table, not receiver rejection or proof the SDK blocks unknown strings.",
+          "Framework aliases describe the pinned loader, not every future framework. The data-framework query typo in the TCF guide is not treated as a working alias.",
+          "No consent lifecycle, legal compliance, account authorization, HTML blocking implementation or declaration rendering contract is inferred."
+        ],
+        "negative_controls": [
+          "lookalike host",
+          "declaration endpoint",
+          "bare keys",
+          "blank fallback",
+          "both duplicate orders",
+          "encoded query name",
+          "case folding",
+          "documented regional and custom culture strings",
+          "/prefix/uc.js",
+          "/uc.js/extra",
+          "/notuc.js"
+        ],
+        "other_pack_assessments": [
+          {
+            "id": "vendor/cookiebot-declaration",
+            "disposition": "No manifest change. Public source passes culture through and cannot justify a safe closed culture rule."
+          },
+          {
+            "id": "vendor/nielsen",
+            "disposition": "No cfg deepening. New checklist example is Android/cert-host scope and cannot justify universal Browser SDK field rules; conflicting dcrcert example and current closed enum are handed to coordinator."
+          }
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            {
+              "command": "node fixtures/vendor-cookiebot/source-replay.mjs <pinned-cookiebot-uc.js> <temporary-output.json>",
+              "outcome": "34 outputs and eight literal extracted source sections reproduced exactly after excluding prewritten engine expectation annotations."
+            },
+            {
+              "command": "cargo test -p pixellint-core --test cookiebot_query_settings",
+              "outcome": "2 passed"
+            },
+            {
+              "command": "cargo test -p pixellint-core --test rulepack_golden",
+              "outcome": "5 passed, complete golden corpus and independent selection check"
+            },
+            {
+              "command": "cargo clippy -p pixellint-core --test cookiebot_query_settings -- -D warnings",
+              "outcome": "passed"
+            },
+            {
+              "command": "cargo fmt --all --check",
+              "outcome": "passed"
+            },
+            {
+              "command": "git diff --check",
+              "outcome": "passed"
+            },
+            {
+              "command": "cargo test -p pixellint-core --test rulepack_golden --test cookiebot_query_settings, then golden rerun after fixture expectation correction",
+              "outcome": "Exact-path final source checks2/2 and golden target5/5 passed. Initial near-route fixture expected core only; corrected expected plugin set to core+directory. Expected no_rulepack_coverage info and zero setting warnings were unchanged."
+            }
+          ],
+          "pending_integration": "Coordinator owns one final workspace suite and generated global reference inventory."
+        },
+        "selection_change": "Changed the previous uc.js substring selector to the exact documented /uc.js path. /prefix/uc.js, /uc.js/extra and /notuc.js retain directory attribution but receive no banner-setting checks.",
+        "independent_review": "Independent QA verified all34source outputs and eight exact SDK section byte ranges/literals/hashes; six setting contracts cleared."
+      }
     },
     {
       "id": "vendor/cookiebot-declaration",

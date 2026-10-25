@@ -1,0 +1,142 @@
+{
+  "pack_id": "vendor/cookiebot",
+  "checked_on": "2026-10-25",
+  "scope": "Exact existing /uc.js banner loader identity plus six optional documented or SDK-defined query settings.",
+  "spec_complete": false,
+  "sources": [
+    {
+      "url": "https://www.cookiebot.com/en/developer/",
+      "access": "read",
+      "evidence_level": "official_vendor",
+      "notes": "Script tag data attributes table lists optional dialog type, level, framework, blockingmode and consentmode. Its two-letter culture and IAB-only wording is superseded in part by current language and TCF guides."
+    },
+    {
+      "url": "https://support.cookiebot.com/hc/en-us/articles/360006284114-Error-The-domain-is-not-authorized-to-show-the-cookie-declaration",
+      "access": "read",
+      "evidence_level": "official_vendor",
+      "notes": "Explicitly permits all data-* attributes to be carried on the same loader query without the data- prefix."
+    },
+    {
+      "url": "https://consent.cookiebot.com/uc.js",
+      "access": "HTTP200",
+      "evidence_level": "official_template",
+      "sha256": "87c526734a40916659708d6605885ed495c342cf79e0e8bdc1cb28c57d97617a",
+      "version": "// 2.140.0 - 2026-10-22T08:21:37.789Z",
+      "notes": "Exact query reading, optional/blank fallback, case-insensitive framework aliases, blockingmode and consentmode, and explicit dataredaction warning. Actual unchanged sections replayed offline."
+    },
+    {
+      "url": "https://support.cookiebot.com/hc/en-us/articles/26365089106716-How-to-set-the-language-of-the-consent-banner-in-the-Cookiebot-Manager",
+      "access": "read",
+      "evidence_level": "official_vendor",
+      "notes": "Optional data-culture is available on both banner and declaration; configured language availability remains external."
+    },
+    {
+      "url": "https://support.cookiebot.com/hc/en-us/articles/360004259374-What-languages-are-available-for-the-cookie-banner",
+      "access": "read",
+      "evidence_level": "official_vendor",
+      "notes": "PT-BR and ZH-HANT are published variants; languages beyond the list may be added. No closed culture grammar is imposed."
+    },
+    {
+      "url": "https://support.cookiebot.com/hc/en-us/articles/360007652694-Cookiebot-CMP-and-the-Transparency-and-Consent-Framework-TCF",
+      "access": "read",
+      "evidence_level": "official_vendor",
+      "notes": "Current TCF guide recommends TCF. Its literal data-framework query example conflicts with the actual loader, which reads framework only. No unsupported alias is added."
+    },
+    {
+      "url": "https://support.cookiebot.com/hc/en-us/articles/4530208762396-Cookiebot-CMP-European-CDN-solution",
+      "access": "read",
+      "evidence_level": "official_vendor",
+      "notes": "Explicit EU loader mirrors recorded for a future match-scope option. Matching hosts stay unchanged in this depth pass."
+    },
+    {
+      "url": "https://consent.cookiebot.com/00000000-0000-0000-0000-000000000000/cd.js",
+      "access": "HTTP200",
+      "evidence_level": "official_template",
+      "sha256": "a232cc5e69ea38c412a066a4f657fafa3cb5b1c94c94eb48b5a1f1ee88a97cb5",
+      "notes": "Documented all-zero placeholder source only. Confirms declaration query culture is passed through without a closed value check; no account-specific loader or follow-up request was fetched."
+    }
+  ],
+  "source_cache": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/sources/creative",
+  "source_replay_cases": 34,
+  "changed_field_contracts": [
+    "type",
+    "level",
+    "framework",
+    "blockingmode",
+    "consentmode",
+    "consentmode-dataredaction"
+  ],
+  "additional_gaps_closed": [
+    "HTML-only setting gap is closed only for the officially supported query carriers."
+  ],
+  "limitations": [
+    "Settings carried only in HTML are not visible in URL artifacts; all new query contracts are optional.",
+    "Empty query values are ignored or fall back to attributes by the source, so all six new contracts allow empty values.",
+    "The SDK reads the first literal value-bearing query key. The engine checks all submitted decoded pairs. An invalid duplicate may therefore receive advisory feedback although the SDK ignores that occurrence; ordering controls record both cases.",
+    "The engine decodes query keys while the SDK matches literal key names. Encoded-name controls document that difference. No claim of identical SDK parsing is made.",
+    "Bare query keys are omitted by the preserved legacy extractor and are not treated as populated overrides.",
+    "Culture remains open, including PT-BR, ZH-HANT, three-letter/custom strings and future configured variants. Availability and rendering require account context.",
+    "Type and level are passed through by the loader. Their findings are advice from the documented setting table, not receiver rejection or proof the SDK blocks unknown strings.",
+    "Framework aliases describe the pinned loader, not every future framework. The data-framework query typo in the TCF guide is not treated as a working alias.",
+    "No consent lifecycle, legal compliance, account authorization, HTML blocking implementation or declaration rendering contract is inferred."
+  ],
+  "negative_controls": [
+    "lookalike host",
+    "declaration endpoint",
+    "bare keys",
+    "blank fallback",
+    "both duplicate orders",
+    "encoded query name",
+    "case folding",
+    "documented regional and custom culture strings",
+    "/prefix/uc.js",
+    "/uc.js/extra",
+    "/notuc.js"
+  ],
+  "other_pack_assessments": [
+    {
+      "id": "vendor/cookiebot-declaration",
+      "disposition": "No manifest change. Public source passes culture through and cannot justify a safe closed culture rule."
+    },
+    {
+      "id": "vendor/nielsen",
+      "disposition": "No cfg deepening. New checklist example is Android/cert-host scope and cannot justify universal Browser SDK field rules; conflicting dcrcert example and current closed enum are handed to coordinator."
+    }
+  ],
+  "validation": {
+    "status": "passed",
+    "checks": [
+      {
+        "command": "node fixtures/vendor-cookiebot/source-replay.mjs <pinned-cookiebot-uc.js> <temporary-output.json>",
+        "outcome": "34 outputs and eight literal extracted source sections reproduced exactly after excluding prewritten engine expectation annotations."
+      },
+      {
+        "command": "cargo test -p pixellint-core --test cookiebot_query_settings",
+        "outcome": "2 passed"
+      },
+      {
+        "command": "cargo test -p pixellint-core --test rulepack_golden",
+        "outcome": "5 passed, complete golden corpus and independent selection check"
+      },
+      {
+        "command": "cargo clippy -p pixellint-core --test cookiebot_query_settings -- -D warnings",
+        "outcome": "passed"
+      },
+      {
+        "command": "cargo fmt --all --check",
+        "outcome": "passed"
+      },
+      {
+        "command": "git diff --check",
+        "outcome": "passed"
+      },
+      {
+        "command": "cargo test -p pixellint-core --test rulepack_golden --test cookiebot_query_settings, then golden rerun after fixture expectation correction",
+        "outcome": "Exact-path final source checks2/2 and golden target5/5 passed. Initial near-route fixture expected core only; corrected expected plugin set to core+directory. Expected no_rulepack_coverage info and zero setting warnings were unchanged."
+      }
+    ],
+    "pending_integration": "Coordinator owns one final workspace suite and generated global reference inventory."
+  },
+  "selection_change": "Changed the previous uc.js substring selector to the exact documented /uc.js path. /prefix/uc.js, /uc.js/extra and /notuc.js retain directory attribution but receive no banner-setting checks.",
+  "independent_review": "Independent QA verified all34source outputs and eight exact SDK section byte ranges/literals/hashes; six setting contracts cleared."
+}

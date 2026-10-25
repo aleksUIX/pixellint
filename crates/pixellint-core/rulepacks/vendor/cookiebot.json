@@ -2,12 +2,16 @@
   "id": "vendor/cookiebot",
   "display_name": "Cookiebot CMP banner",
   "vendor": "cookiebot",
-  "description": "Cookiebot CMP banner on consent.cookiebot.com/uc.js. Cookiebot documents cbid on the query as uc.js?cbid=, or in data-cbid on the script tag. The Cookie Declaration loader is vendor/cookiebot-declaration.",
+  "description": "Cookiebot CMP uc.js loader identity and optional query settings. Official support permits data attributes to be moved to query parameters without the data- prefix. Settings may remain on the HTML tag. Culture and account/runtime configuration stay external; declaration rendering is vendor/cookiebot-declaration.",
   "source_level": "official_vendor",
   "docs": "https://www.cookiebot.com/en/developer/",
   "match": {
-    "hosts": ["consent.cookiebot.com"],
-    "path_contains": ["uc.js"]
+    "hosts": [
+      "consent.cookiebot.com"
+    ],
+    "paths": [
+      "/uc.js"
+    ]
   },
   "params": [
     {
@@ -20,6 +24,115 @@
       "description": "It is the Cookiebot domain group ID. Cookiebot documents uc.js?cbid= as one install. The other install puts the same UUID in data-cbid, not the query.",
       "fix_hint": "For a query install, put the domain group ID on the URL as cbid=. For a tag-attribute install, data-cbid carries it instead.",
       "doc": "https://www.cookiebot.com/en/developer/"
+    },
+    {
+      "name": "type",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "optin",
+          "optout",
+          "optinout",
+          "leveloptin",
+          "inlineoptin",
+          "optionaloptin"
+        ]
+      },
+      "description": "Documented dialog-type override. The loader passes nonempty query values to the banner without changing case.",
+      "fix_hint": "Use a documented dialog type, or omit the override to use the account or HTML configuration.",
+      "doc": "https://www.cookiebot.com/en/developer/"
+    },
+    {
+      "name": "level",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "implied",
+          "strict"
+        ]
+      },
+      "description": "Documented consent-level override. The loader passes nonempty query values to the banner without changing case.",
+      "fix_hint": "Use implied or strict, or omit the override to use the account or HTML configuration.",
+      "doc": "https://www.cookiebot.com/en/developer/"
+    },
+    {
+      "name": "framework",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "IAB",
+          "IAB1",
+          "IABV2",
+          "TCFv2.2",
+          "TCFv2.3",
+          "TCF"
+        ],
+        "case_insensitive": true
+      },
+      "description": "The pinned 2.140.0 loader accepts these case-insensitive framework aliases and normalizes them to its current TCF implementation. The current support guide recommends TCF; the older developer table names IAB.",
+      "fix_hint": "Use framework=TCF for the current documented integration, or a supported legacy alias. HTML data-framework remains a separate carrier.",
+      "doc": "https://consent.cookiebot.com/uc.js",
+      "source_level": "official_template"
+    },
+    {
+      "name": "blockingmode",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "auto",
+          "none"
+        ],
+        "case_insensitive": true
+      },
+      "description": "Documented automatic or manual cookie blocking. The loader compares auto without case sensitivity; none and omission preserve manual behavior.",
+      "fix_hint": "Use auto for automatic blocking or none for manual markup, or carry the setting in data-blockingmode.",
+      "doc": "https://www.cookiebot.com/en/developer/"
+    },
+    {
+      "name": "consentmode",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "disabled"
+        ],
+        "case_insensitive": true
+      },
+      "description": "Documented Google Consent Mode disable override. The loader accepts disabled without case sensitivity. Omission preserves the configured default.",
+      "fix_hint": "Use disabled to disable Google Consent Mode, or omit this override.",
+      "doc": "https://www.cookiebot.com/en/developer/"
+    },
+    {
+      "name": "consentmode-dataredaction",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false",
+          "dynamic"
+        ]
+      },
+      "description": "The pinned 2.140.0 loader reads this exact query key or the data-consentmode-dataredaction attribute and explicitly warns for other populated values. The accepted strings are case-sensitive.",
+      "fix_hint": "Use true, false or dynamic, or omit the override to retain the configured value.",
+      "doc": "https://consent.cookiebot.com/uc.js",
+      "source_level": "official_template"
     }
   ],
   "rules": []
