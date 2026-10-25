@@ -294084,14 +294084,14 @@
         "fixtures/vendor-adxspace-pixel/empty-token.txt": "02fbe8442b7ff324fc62bfc13366860d67efbbfe23f70e962e5c7b57d12ace52",
         "fixtures/vendor-adxspace-pixel/host-lookalike-uncovered.txt": "5553014dc5a42e3e8a43ad62a68bf1ee672ca5994ad7c5849663fc0373e2ba37",
         "fixtures/vendor-adxspace-pixel/literal-plus-cachebuster-stub.txt": "3d0a9284763defd8f391821d33d7ef3b941a96f61e106ead7a420a996212f620",
-        "fixtures/vendor-adxspace-pixel/manifest.json": "d7bd86203fc4e007271a4d186478749a32ee717285379521b6ebd5e4f84566c1",
+        "fixtures/vendor-adxspace-pixel/manifest.json": "0bc0b564698eb10ebd44f5cc6f8e50a2fef2c66858e64ef1f1691ac59cf6ba2a",
         "fixtures/vendor-adxspace-pixel/neighbor-pixel-route-uncovered.txt": "8ac1f1dd1c4d3f241d3c689dc45cfbad02282eef32089b1ac40a0ef7009993e5",
         "fixtures/vendor-adxspace-pixel/omitted-cachebuster-allowed.txt": "05b54b04689cdfde64d58f219e2b9ba7571d50bcf2ff59078f45bc47aa346b58",
         "fixtures/vendor-adxspace-pixel/percent-encoded-cachebuster-stub.txt": "9d6ff072408a3b338d4feaa663c01d67ec64fc0bc0f55b4061b7f7728006f036",
         "fixtures/vendor-adxspace-pixel/pixel-suffix-route-uncovered.txt": "dde6a7c17331feb1873d4646313602e025cc27d28df853e8a9eeff31b775beb5",
         "fixtures/vendor-adxspace-pixel/published-cachebuster-stub.txt": "ad602eb6eaa801c95a146083aceb9bf2b9d508374539d075c9c6ff9222e80e19",
         "fixtures/vendor-adxspace-pixel/query-cannot-repair-path-token.txt": "a1a589c12981de9e1c291a7f22f8e796f53f1478d4bcfcc91ee9af37cb4fae45",
-        "fixtures/vendor-adxspace-pixel/source-cases.json": "78f6b42586448dbc20fc4730e49fb0e515c06939388378724809710ff918e465",
+        "fixtures/vendor-adxspace-pixel/source-cases.json": "e5bed971d1bba89caa5a16ee912d01931dc85157d7660fbf420357d5beed84a2",
         "fixtures/vendor-adxspace-pixel/stub-lowercase-allowed.txt": "4e20bb5f79f0ba042927cdf715a7c5eabdb3bdaa9bf6dbf88827eb9a6846e499",
         "fixtures/vendor-adxspace-pixel/stub-other-field-allowed.txt": "a8a056250d26ae1ae1284de33b1317cdddc66b77657da8da619d24eb26113586",
         "fixtures/vendor-adxspace-pixel/stub-substring-allowed.txt": "111ceef554b59cb6eb694f737def8ef7121c6e30596149c8fd335ebc3b87febe",
@@ -294121,8 +294121,8 @@
       "manifest_changed_this_round": false,
       "missing_requirements": [
         {
-          "requirement": "The reported /tracking/ and /vast/pixel/ video routes lack a published field contract.",
-          "reason": "The reported /tracking/ and /vast/pixel/ video routes lack a published field contract.",
+          "requirement": "Complete vendor field/rejection contracts for video callbacks remain unavailable.",
+          "reason": "The separate vendor/adxspace-vast-tracking pack now covers exact public-producer templates with completeness warnings. It does not establish a complete collector contract, and this counting-pixel pack remains limited to its own route.",
           "classification": "source_or_external_context",
           "locally_checkable": false
         },
@@ -294147,7 +294147,12 @@
           "manifest_changed_this_round": true,
           "scope": "Preserved inherited flags before normalizing the 0.44 round to its three reviewed builtin owners."
         }
-      ]
+      ],
+      "coverage_routing_review_20261025": {
+        "scope": "Existing counting-pixel pack unchanged. A separate exact producer-backed VAST pack now handles the existing tracking fixture and warns when its generated s field is missing.",
+        "source": "https://wiki.00px.com.br/en/technologies/vast4",
+        "new_pack": "vendor/adxspace-vast-tracking"
+      }
     },
     {
       "id": "vendor/adctv-tracker",
@@ -304917,6 +304922,363 @@
         "docs/reviews/pixel-collectors-052.json": "ec7971de0b61bd46b645b08b91bdf9121fd7df0bf0f32089d79bb8e971a59db9",
         "crates/pixellint-core/tests/pixel_collectors_052.rs": "a12279d8cd7b81c667c7e158562570b9c564394c4d5df10c05f697a84b767e45"
       }
+    },
+    {
+      "id": "vendor/adxspace-vast-tracking",
+      "vendor": "adxspace",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "00px.net"
+        ],
+        "path_patterns": [
+          "^/tracking/[^/]*/[^/]*$",
+          "^/vast/pixel/[^/]*/e\\.gif$"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/adxspace-vast-tracking.json",
+      "source_urls": [
+        "https://wiki.00px.com.br/en/technologies/vast4",
+        "https://00px.net/vast/4/eyJjciI6MTIzNTUyLCJjYSI6NTE3MiwicGwiOjkyMjA5fQ==/vast.xml?skip=05"
+      ],
+      "sources_read": [
+        {
+          "url": "https://wiki.00px.com.br/en/technologies/vast4",
+          "read_on": "2026-10-25",
+          "access_result": "read",
+          "evidence_level": "official_template",
+          "scope": "Vendor-published VAST ad request example."
+        },
+        {
+          "url": "https://00px.net/vast/4/eyJjciI6MTIzNTUyLCJjYSI6NTE3MiwicGwiOjkyMjA5fQ==/vast.xml?skip=05",
+          "read_on": "2026-10-25",
+          "access_result": "retrieved and parsed without requesting callbacks",
+          "sha256": "5ca8f6d2832abcc43709677daf96d4239bd92b9f2f413cced719a0ce265d4175",
+          "bytes": 6269,
+          "evidence_level": "official_template",
+          "scope": "Exact generated tracking, error and impression callback templates."
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "tag_token",
+          "contract": {
+            "name": "tag_token",
+            "requirement": "required",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The published VAST example emits a nonempty opaque path slot before the event path or e.gif. This is a template-completeness advisory, not a token encoding or vendor rejection contract.",
+            "fix_hint": "Preserve the generated path slot from the original 00px callback template."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "event_path",
+          "contract": {
+            "name": "event_path",
+            "requirement": "required",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "Tracking callbacks include a nonempty event path. The impression template ends in e.gif. No closed event vocabulary or event-to-VAST mapping is inferred.",
+            "fix_hint": "Preserve the generated callback path without removing its final component."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "s",
+          "contract": {
+            "name": "s",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "Every reviewed callback from the published VAST example retains a nonempty opaque s query field, including error callbacks. Its meaning, encoding, authenticity and server rejection behavior are unverified.",
+            "fix_hint": "Preserve the generated s field from the original callback. Do not invent or re-sign its value."
+          }
+        }
+      ],
+      "independent_source_cases": 6,
+      "original_oracle_cases": 26,
+      "engine_derived_oracle_cases": 0,
+      "negative_cases": 9,
+      "request_cases": 1,
+      "test": {
+        "harness": "crates/pixellint-core/tests/adxspace_vast_template.rs",
+        "status": "targeted endpoint and complete golden corpus checks passed; clippy and formatting passed; final full workspace suite belongs to integration",
+        "expected_results": "Independently authored source-template and selection controls. No engine-generated or customer-derived acceptance oracle."
+      },
+      "implemented_counts": {
+        "field_contracts": 3,
+        "cross_field_assertions": 0,
+        "body_contract_scopes": 0,
+        "http_contract_scopes": 0,
+        "query_contract_scopes": 0,
+        "bulk_query_sources": 0
+      },
+      "missing_requirements": [
+        {
+          "requirement": "Published collector rejection contract",
+          "reason": "The public producer supplies generated templates, not a complete collector field/rejection specification or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://wiki.00px.com.br/en/technologies/vast4"
+        },
+        {
+          "requirement": "Opaque token issuance, authenticity and session attribution",
+          "reason": "The public producer supplies generated templates, not a complete collector field/rejection specification or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://wiki.00px.com.br/en/technologies/vast4"
+        },
+        {
+          "requirement": "Field semantics and conditions for t, v1, f, error and unreviewed variants",
+          "reason": "The public producer supplies generated templates, not a complete collector field/rejection specification or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://wiki.00px.com.br/en/technologies/vast4"
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/adxspace-vast-tracking.json": "19054511ec9b794b58d15cfde516df5b18298cc73b59ea756819a2cd90f559c2",
+        "docs/reviews/adxspace-vast-template-20261025.json": "cc7107b539b48c3a392f2a5b945cb2b345562382fefd74fc6e9eaf111df68fc1",
+        "crates/pixellint-core/tests/adxspace_vast_template.rs": "fc0b750c4c725fc97dedbb5a74f880c544acb99f34ea65787f79d74491d8bc68",
+        "fixtures/vendor-adxspace-vast-tracking/future-event-name.txt": "2389225652e2ec3a018129ce9cb3c418fe33e6d645d9998ef70aca1eb561eec2",
+        "fixtures/vendor-adxspace-vast-tracking/lookalike-host.txt": "52661305b7fdaf66bf96f7a3f1b45838457e865fcfd9463a8bcce4fa11964ba6",
+        "fixtures/vendor-adxspace-vast-tracking/query-cannot-repair-token.txt": "c70988df73df405f07fd0616ba05215d5c7d6cb5e1de135bc8235908cb4a4023",
+        "fixtures/vendor-adxspace-vast-tracking/missing-event-component.txt": "e0693e4bcfeb1b5d6c23a05c9b7316a67de1bee1d6d9a1e3c1227e78c73508ce",
+        "fixtures/vendor-adxspace-vast-tracking/empty-tracking-token.txt": "1f076c9b437f732c0a197b0a7a02a734ffb64ddcdcac2ed3b5ea0045683ed2e4",
+        "fixtures/vendor-adxspace-vast-tracking/separate-ad-request.txt": "f303be9bec352b64c5c59a8ddd8f0fd032950a5cab80821b6435d04a9431db4a",
+        "fixtures/vendor-adxspace-vast-tracking/source-impression-template.txt": "db524b3c68292c73328a0684c678a030632fd3d6c65a90ea4a58e1414ed4861b",
+        "fixtures/vendor-adxspace-vast-tracking/unreviewed-subdomain.txt": "528813f9a011ac917ff0a02d46643751897bf3a7038e364a6afddd8411d41b63",
+        "fixtures/vendor-adxspace-vast-tracking/extra-impression-segment.txt": "1f862ab83b57e133da5c87aa9380a36b3283113c9323a73fd5faa816ef7a6098",
+        "fixtures/vendor-adxspace-vast-tracking/preserve-core-gdpr-error.txt": "13c131569f9345efdd0cb9cf958ea0ba5b3c8b95bb063b59ee5ced0807e21368",
+        "fixtures/vendor-adxspace-vast-tracking/query-cannot-repair-event.txt": "7446bfc39423610c5518782a423d7a454bbf99c3a3c9151fb5ce09cb09f3aaee",
+        "fixtures/vendor-adxspace-vast-tracking/empty-impression-token.txt": "ca5190f1ff4570f1772296520502639bd7ce1480ea662a1753892f88a34d0269",
+        "fixtures/vendor-adxspace-vast-tracking/optional-query-fields-can-be-empty.txt": "54a4e07b771910b1b403f61af66ba133a14fb6a4b5976ddc6a26d92f3e48fbe8",
+        "fixtures/vendor-adxspace-vast-tracking/empty-event-path.txt": "ed6bc883be0e3428cefff3a5c7de1ef96453c1d425d7d1936f2e825d2b7c480f",
+        "fixtures/vendor-adxspace-vast-tracking/source-quartile-template.txt": "3bbb406279da59019c9dad6cd5004d1fb4e64292b9c2585f255af3e4138d5dbb",
+        "fixtures/vendor-adxspace-vast-tracking/opaque-tokens-have-no-inferred-alphabet.txt": "e10e9a9d74774a6a38cfa0efcf5663bc648ad88a70075ca902d27d566124ada2",
+        "fixtures/vendor-adxspace-vast-tracking/separate-click-route.txt": "3713ae4766f7475e972408e3f16adfec765897fd70d83e4cfbe6a51896cd5645",
+        "fixtures/vendor-adxspace-vast-tracking/source-start-template.txt": "384364545056a451f8ac7eeba6eb2a269ce2623bbf15e5983912787cdf8be00f",
+        "fixtures/vendor-adxspace-vast-tracking/manifest.json": "87e35a25cc9e7792794dd13acbb0bc49289ac28208524e17516baabe9b36581b",
+        "fixtures/vendor-adxspace-vast-tracking/empty-s.txt": "5eb8e5e5d0c94dfa0a48d10f085b22f1a0075db628c1918924fbf7e3061fc13d",
+        "fixtures/vendor-adxspace-vast-tracking/source-vast-template.txt": "4ac955e149b0bcb1e3204a3a2aab8bb4f349f5d8ad21e789cfee231dfdaf1386",
+        "fixtures/vendor-adxspace-vast-tracking/source-error-template.txt": "a03749dcee2d550e08c6d89976743a5134f10b13494afb87e6fb15fdde80b53e",
+        "fixtures/vendor-adxspace-vast-tracking/unreviewed-impression-suffix.txt": "ee78620028e088258746e8e3ac3f3cd6d3efce54ea924f214d28954a1508507a",
+        "fixtures/vendor-adxspace-vast-tracking/extra-tracking-segment.txt": "dedd8323493b1cd4790af30884903b0fd7cabf091a275675db7ee97fbb5e11cc",
+        "fixtures/vendor-adxspace-vast-tracking/missing-s.txt": "153bb9ad2aac670f52b06380c823c1708626395a9edc41426e4cc4a44f97c0a4",
+        "fixtures/vendor-adxspace-vast-tracking/source-request-template.json": "072c1440bbfb650fa720b8a9f451a49b7b8d8bdce7ea316a6b58654068e67808",
+        "fixtures/vendor-adxspace-vast-tracking/existing-counting-pixel-remains-separate.txt": "97a71d44dacb66e6d02a8c3cb7f7b70148268080c50b5486c9a0c6b1ae10504f"
+      },
+      "manifest_sha256": "19054511ec9b794b58d15cfde516df5b18298cc73b59ea756819a2cd90f559c2"
+    },
+    {
+      "id": "vendor/freewheel-callback",
+      "vendor": "freewheel",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "match": {
+        "host_suffixes": [
+          "v.fwmrm.net"
+        ],
+        "paths": [
+          "/ad/l/1"
+        ],
+        "query_params_any": [
+          "cn",
+          "et"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/freewheel-callback.json",
+      "source_urls": [
+        "https://vi.freewheel.tv/static/api_docs/html5/",
+        "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+        "https://demo.v.fwmrm.net/ad/g/1?nw=96749&prof=96749%3Aglobal-js-gallery-desktop&caid=fw_gallery_video&csid=fw_gallery_site_section&vdur=500&asnw=96749&ssnw=96749&vprn=123456789&pvrn=123456789&flag=%2Bslcb%2Bqtcb%2Bvicb%2Bemcr&resp=vast4;GALLERY_DEVICE=DESKTOP;slid=Preroll_1&slau=preroll&ptgt=a&tpos=0;",
+        "https://mssl.fwmrm.net/libs/adm/7.20.0/AdManager.js"
+      ],
+      "sources_read": [
+        {
+          "url": "https://vi.freewheel.tv/static/api_docs/html5/",
+          "scope": "AdManager.setServer configures a distributor network server. Its example uses g1.v.fwmrm.net/ad/g/1. getEventCallbackUrls exposes FreeWheel event callbacks.",
+          "read_on": "2026-10-25",
+          "access_result": "read or retrieved without firing callbacks"
+        },
+        {
+          "url": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+          "sha256": "4900ee5ac4d1bd6ceec58cde88578404745972e24e12ebdfd3785c455de2de09",
+          "scope": "generateTypeBRequestUrl preserves the configured fwmrm.net network host. EventCallback.parse receives the server URL; EventCallback.getUrl writes cn and et independently of that network hostname. No callback event enum is asserted.",
+          "read_on": "2026-10-25",
+          "access_result": "read or retrieved without firing callbacks"
+        },
+        {
+          "url": "https://vi.freewheel.tv/static/gallery/javascript/player.js",
+          "sha256": "c40ac28d379fe55b3120931b0b8a84088bd620eda554efcb2db398869c065e68",
+          "scope": "First-party gallery explicitly configures demo.v.fwmrm.net, network 96749, gallery profile, video asset and site section.",
+          "read_on": "2026-10-25",
+          "access_result": "read or retrieved without firing callbacks"
+        },
+        {
+          "url": "https://demo.v.fwmrm.net/ad/g/1?nw=96749&prof=96749%3Aglobal-js-gallery-desktop&caid=fw_gallery_video&csid=fw_gallery_site_section&vdur=500&asnw=96749&ssnw=96749&vprn=123456789&pvrn=123456789&flag=%2Bslcb%2Bqtcb%2Bvicb%2Bemcr&resp=vast4;GALLERY_DEVICE=DESKTOP;slid=Preroll_1&slau=preroll&ptgt=a&tpos=0;",
+          "sha256": "571143ddf30b26fbc8a51fab84a1ec04c1d53fb2025e51de4ab679dbdba9d771",
+          "bytes": 2624,
+          "scope": "Derived from the published gallery settings using the public SDK request layout. Response emits seven exact /ad/l/1 templates with cn, et and nonempty s. No callback is requested.",
+          "read_on": "2026-10-25",
+          "access_result": "read or retrieved without firing callbacks"
+        },
+        {
+          "url": "https://mssl.fwmrm.net/libs/adm/7.20.0/AdManager.js",
+          "sha256": "f6961a447d057ab58c8f3dc24f8a6a80bda9e9ee13a86b398a0a580faff286d8",
+          "bytes": 465054,
+          "scope": "Exact SDK version linked by the current official gallery. Its configurable network-host request construction and EventCallback.getUrl cn/et behavior confirm the same explicit callback profile as SDK 6.55.0.",
+          "read_on": "2026-10-25",
+          "access_result": "retrieved and inspected without executing SDK code"
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "cn",
+          "contract": {
+            "name": "cn",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+            "description": "EventCallback.getUrl retains an event name in cn and the public gallery VAST templates populate it. This is a source-template completeness advisory. New event names are not rejected."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "et",
+          "contract": {
+            "name": "et",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+            "description": "EventCallback.getUrl writes the event-type field and the public gallery response emits it. Its value vocabulary is not closed by this profile."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "s",
+          "contract": {
+            "name": "s",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The reviewed public gallery callbacks retain this nonempty opaque field. Presence is observed template completeness, not a signature-validity, delivery or vendor mandatory-field claim."
+          }
+        }
+      ],
+      "independent_source_cases": 6,
+      "original_oracle_cases": 26,
+      "engine_derived_oracle_cases": 0,
+      "negative_cases": 9,
+      "request_cases": 1,
+      "test": {
+        "harness": "crates/pixellint-core/tests/freewheel_callback_template.rs",
+        "status": "targeted endpoint and complete golden corpus checks passed; clippy and formatting passed; final full workspace suite belongs to integration",
+        "expected_results": "Independent producer-template and selector controls. No customer-derived acceptance oracle."
+      },
+      "implemented_counts": {
+        "field_contracts": 3,
+        "cross_field_assertions": 0,
+        "body_contract_scopes": 0,
+        "http_contract_scopes": 0,
+        "query_contract_scopes": 0,
+        "bulk_query_sources": 0
+      },
+      "missing_requirements": [
+        {
+          "requirement": "No mandatory-field or server rejection claim",
+          "reason": "Current producer and SDK evidence establish only the explicit cn/et callback template; they do not publish a complete collector contract or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "requirement": "No closed cn or et vocabulary",
+          "reason": "Current producer and SDK evidence establish only the explicit cn/et callback template; they do not publish a complete collector contract or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "requirement": "No signature/identifier type, encoding or numeric timestamp grammar",
+          "reason": "Current producer and SDK evidence establish only the explicit cn/et callback template; they do not publish a complete collector contract or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "requirement": "The s-only callback representation remains outside this profile",
+          "reason": "Current producer and SDK evidence establish only the explicit cn/et callback template; they do not publish a complete collector contract or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "requirement": "No ad/g/ request contracts copied into the callback pack",
+          "reason": "Current producer and SDK evidence establish only the explicit cn/et callback template; they do not publish a complete collector contract or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://vi.freewheel.tv/static/api_docs/html5/"
+        },
+        {
+          "requirement": "No validation of private extra fields, issued tokens or session state",
+          "reason": "Current producer and SDK evidence establish only the explicit cn/et callback template; they do not publish a complete collector contract or issued-token/session state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://vi.freewheel.tv/static/api_docs/html5/"
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/freewheel-callback.json": "03404c5905c11e006a22c2c379f1d5ee91291fbd503a45b8a290f6e7c33616ea",
+        "docs/reviews/freewheel-callback-template-20261025.json": "2272de958e22ce16035d2bd4ba44bf25dfc3a5fdb847773ce475cef29b47bc95",
+        "crates/pixellint-core/tests/freewheel_callback_template.rs": "db874bfcd14b4ec1eaa731db8729cfc3e945c5de343df96a9d7138d392441b12",
+        "fixtures/vendor-freewheel-callback/source-error.txt": "5a30ca32949df234d0cae76cccd4cf9b80d30a717f53cf403ca557d90b1f2fff",
+        "fixtures/vendor-freewheel-callback/open-event-and-type-vocabularies.txt": "470fbd3147cab948df709fab48ad21256814eac027f95095584ad0ea3692fc8b",
+        "fixtures/vendor-freewheel-callback/all-present-but-empty.txt": "53a234c65afce0b1eac97193e6c4d38f68928658a3c9992d409db6cdd39b853e",
+        "fixtures/vendor-freewheel-callback/source-captured-request.json": "4359cb617cb23881fd7a49c7c12ab2dd5e9f064ecd0250347fe6394242c2c864",
+        "fixtures/vendor-freewheel-callback/wrong-semicolon-delimiter.txt": "a73ffec029c5c6682bc3fba64b82a6f99294be8bb614150e5c94215dd3eed663",
+        "fixtures/vendor-freewheel-callback/empty-cn.txt": "a123f07e4038e136142560493fda32ad63358bb6e4abdb88712cb2c60e11c22e",
+        "fixtures/vendor-freewheel-callback/host-lookalike-excluded.txt": "1aa68c70536339eaccf04ff4c38b0dd33ca5e67d30566a749f0f2cbb783cf6e7",
+        "fixtures/vendor-freewheel-callback/missing-profile-keys-excluded.txt": "84776bc5c920293ebbb541ce4eeeaea8182c86a7a92d88bdb6d42e0bf318f400",
+        "fixtures/vendor-freewheel-callback/encoded-query-key.txt": "badda1d0b2a291acfa373599e2f5c4d9bdea307f6d59c6e3cd6ed183cda1bd36",
+        "fixtures/vendor-freewheel-callback/opaque-identifiers-unconstrained.txt": "6c3f88a3e22ec8b875abef591fa10bde147bcfbb7ceff857f63e1472156c1b43",
+        "fixtures/vendor-freewheel-callback/fragment-profile-excluded.txt": "6c99658f6b811d1abaafc4496232bc8c823c4c286aa1bc13b4befe3724d1fa2a",
+        "fixtures/vendor-freewheel-callback/missing-et.txt": "96cdf6110d567a8d9aac3dd1ace025dfd2ce280cff71ff788b248aacb7dd519a",
+        "fixtures/vendor-freewheel-callback/neighbor-route-excluded.txt": "581ae998340f8430c89739ba878ae718b44793353b44dc7272f9e5c417b73bff",
+        "fixtures/vendor-freewheel-callback/query-name-prefix-excluded.txt": "1998c7cfe97378000615d22f78127c16b9c1936f918de7988f83e1f4155454b3",
+        "fixtures/vendor-freewheel-callback/source-quartile.txt": "7077614afd583854d13c181cc4ec334c086792e64b3e0a834f1021bf72ba17b3",
+        "fixtures/vendor-freewheel-callback/source-impression.txt": "788148f68770cf77ce8112186ed60fc0e9c243e27153461b75212f16dc6ca327",
+        "fixtures/vendor-freewheel-callback/source-demo-network.txt": "d33d9694e5ab0d47f00ee16a1e9f598b917c175beedebc3a5c7a84f49df3ce55",
+        "fixtures/vendor-freewheel-callback/opaque-s-only-transport-excluded.txt": "7729253fb944534ef5043cae595e9d9ef03c36abd73362d0b750aa846ea5cf04",
+        "fixtures/vendor-freewheel-callback/empty-et.txt": "7935843453f322a08e2ba2238dc38ce7a83bf52da2679d5c65cd7b036f2e117b",
+        "fixtures/vendor-freewheel-callback/manifest.json": "41d751d98ca98453b2dd3cd0d58a1069c8a4e34c167cd23771b464682dc36ede",
+        "fixtures/vendor-freewheel-callback/empty-s.txt": "78dd655efa751978e36d960b44934bb077d7c4361997f466d510062a6cd19194",
+        "fixtures/vendor-freewheel-callback/source-vast-template.txt": "342f8bc503cc18346bba5597b125ba1d3d3f424864da18902d805098673d4ac9",
+        "fixtures/vendor-freewheel-callback/missing-cn.txt": "b7746eca331c2cdd14f3794546b9630ba3919bc4edb356f845b89b6f1394753c",
+        "fixtures/vendor-freewheel-callback/missing-s.txt": "71c61489bc6abfe9e9bb2f7125bfe6d2a4521235268655bacb171b4bbded3215",
+        "fixtures/vendor-freewheel-callback/trailing-slash-excluded.txt": "480b1d4bd50867f3ba08a04527925efd7ac0e49175a2acbd1df76435b98e61c5",
+        "fixtures/vendor-freewheel-callback/extra-path-segment-excluded.txt": "e5b4e6371c59cb62a6de28c9420c5fcc05620c9def022c3b5babfcb9c7570d1e",
+        "fixtures/vendor-freewheel-callback/semicolon-only-profile-excluded.txt": "532d6c2537fd539cfab7857958a4046a08f114071891cffe98c9cf193200ff46"
+      },
+      "manifest_sha256": "03404c5905c11e006a22c2c379f1d5ee91291fbd503a45b8a290f6e7c33616ea"
     }
   ],
   "previous_audit_baseline": {

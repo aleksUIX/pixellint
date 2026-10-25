@@ -1,0 +1,67 @@
+{
+  "reviewed_at": "2026-10-25",
+  "pack_id": "vendor/adxspace-vast-tracking",
+  "source_level": "official_template",
+  "spec_complete": false,
+  "documentation": "https://wiki.00px.com.br/en/technologies/vast4",
+  "producer": {
+    "url": "https://00px.net/vast/4/eyJjciI6MTIzNTUyLCJjYSI6NTE3MiwicGwiOjkyMjA5fQ==/vast.xml?skip=05",
+    "bytes": 6269,
+    "sha256": "5ca8f6d2832abcc43709677daf96d4239bd92b9f2f413cced719a0ce265d4175"
+  },
+  "method": "Retrieve the exact public VAST example published in the vendor documentation, parse callback strings locally, and never request those callbacks. Fixtures replace all generated values with authored synthetic values.",
+  "observed_templates": [
+    {
+      "element": "Error",
+      "path": "/tracking/{opaque-tag-token}/errors",
+      "query_fields": [
+        "error",
+        "s"
+      ]
+    },
+    {
+      "element": "Tracking",
+      "path": "/tracking/{opaque-tag-token}/{open-event-path}",
+      "query_fields": [
+        "t",
+        "s",
+        "v1"
+      ]
+    },
+    {
+      "element": "Impression",
+      "path": "/vast/pixel/{opaque-tag-token}/e.gif",
+      "query_fields": [
+        "t",
+        "f",
+        "s",
+        "v1"
+      ]
+    }
+  ],
+  "implemented_advisories": [
+    "Nonempty generated tag path slot",
+    "Nonempty generated event path component",
+    "Nonempty generated s query field, recommended presence"
+  ],
+  "explicit_nonrequirements": [
+    "No token decoding, base64 grammar, JSON schema or identifier type",
+    "No closed event vocabulary or event-to-VAST mapping",
+    "No required t, v1, f or error field",
+    "No cachebuster type or signature/authenticity check",
+    "No error-level destination requirements or server rejection claim"
+  ],
+  "boundaries": [
+    "Only exact 00px.net",
+    "Two-component tracking callback routes",
+    "Only e.gif impression callback suffix",
+    "Counting-pixel, ad-request, click, CDN, lookalike and extra-segment routes remain separate"
+  ],
+  "remaining_requirements": [
+    "Published collector rejection contract",
+    "Opaque token issuance, authenticity and session attribution",
+    "Field semantics and conditions for t, v1, f, error and unreviewed variants"
+  ],
+  "fixture_manifest": "fixtures/vendor-adxspace-vast-tracking/manifest.json",
+  "tests": "crates/pixellint-core/tests/adxspace_vast_template.rs"
+}

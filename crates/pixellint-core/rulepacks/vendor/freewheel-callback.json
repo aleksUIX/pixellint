@@ -1,0 +1,52 @@
+{
+  "id": "vendor/freewheel-callback",
+  "display_name": "FreeWheel SDK callback template",
+  "vendor": "freewheel",
+  "source_level": "official_template",
+  "docs": "https://vi.freewheel.tv/static/api_docs/html5/",
+  "description": "Template-completeness advisories for the explicit cn/et callback profile on the exact MRM /ad/l/1 route. The public SDK and gallery producer establish these fields on network-host callbacks. Opaque s-only transports remain outside this profile; event vocabularies, issued-token validity and session attribution are not verified.",
+  "match": {
+    "host_suffixes": [
+      "v.fwmrm.net"
+    ],
+    "paths": [
+      "/ad/l/1"
+    ],
+    "query_params_any": [
+      "cn",
+      "et"
+    ]
+  },
+  "params": [
+    {
+      "name": "cn",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+      "description": "EventCallback.getUrl retains an event name in cn and the public gallery VAST templates populate it. This is a source-template completeness advisory. New event names are not rejected."
+    },
+    {
+      "name": "et",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "doc": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+      "description": "EventCallback.getUrl writes the event-type field and the public gallery response emits it. Its value vocabulary is not closed by this profile."
+    },
+    {
+      "name": "s",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The reviewed public gallery callbacks retain this nonempty opaque field. Presence is observed template completeness, not a signature-validity, delivery or vendor mandatory-field claim."
+    }
+  ],
+  "rules": []
+}

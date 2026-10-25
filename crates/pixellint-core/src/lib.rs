@@ -799,6 +799,14 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/adxspace-pixel.json"),
     ),
     (
+        "vendor/adxspace-vast-tracking",
+        include_str!("../rulepacks/vendor/adxspace-vast-tracking.json"),
+    ),
+    (
+        "vendor/freewheel-callback",
+        include_str!("../rulepacks/vendor/freewheel-callback.json"),
+    ),
+    (
         "vendor/adctv-tracker",
         include_str!("../rulepacks/vendor/adctv-tracker.json"),
     ),

@@ -1,0 +1,51 @@
+{
+  "id": "vendor/adxspace-vast-tracking",
+  "display_name": "00px generated VAST tracking templates",
+  "description": "Advisory completeness checks for the tracking and impression callback templates returned by the vendor-published VAST 4 example. Opaque path slots and the generated s field are checked only for emptiness or omission. Token validity, event acceptance, signatures, session state and private variants remain outside this profile.",
+  "vendor": "adxspace",
+  "source_level": "official_template",
+  "docs": "https://wiki.00px.com.br/en/technologies/vast4",
+  "match": {
+    "hosts": [
+      "00px.net"
+    ],
+    "path_patterns": [
+      "^/tracking/[^/]*/[^/]*$",
+      "^/vast/pixel/[^/]*/e\\.gif$"
+    ]
+  },
+  "path_pattern": "^/(?:tracking|vast/pixel)/(?<tag_token>[^/]*)/(?<event_path>[^/]*)$",
+  "params": [
+    {
+      "name": "tag_token",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The published VAST example emits a nonempty opaque path slot before the event path or e.gif. This is a template-completeness advisory, not a token encoding or vendor rejection contract.",
+      "fix_hint": "Preserve the generated path slot from the original 00px callback template."
+    },
+    {
+      "name": "event_path",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Tracking callbacks include a nonempty event path. The impression template ends in e.gif. No closed event vocabulary or event-to-VAST mapping is inferred.",
+      "fix_hint": "Preserve the generated callback path without removing its final component."
+    },
+    {
+      "name": "s",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "Every reviewed callback from the published VAST example retains a nonempty opaque s query field, including error callbacks. Its meaning, encoding, authenticity and server rejection behavior are unverified.",
+      "fix_hint": "Preserve the generated s field from the original callback. Do not invent or re-sign its value."
+    }
+  ],
+  "rules": []
+}

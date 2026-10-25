@@ -1,0 +1,62 @@
+{
+  "reviewed_at": "2026-10-25",
+  "pack_id": "vendor/freewheel-callback",
+  "source_level": "official_template",
+  "spec_complete": false,
+  "sources": [
+    {
+      "url": "https://vi.freewheel.tv/static/api_docs/html5/",
+      "scope": "AdManager.setServer configures a distributor network server. Its example uses g1.v.fwmrm.net/ad/g/1. getEventCallbackUrls exposes FreeWheel event callbacks."
+    },
+    {
+      "url": "https://mssl.fwmrm.net/libs/adm/6.55.0/AdManager.js",
+      "sha256": "4900ee5ac4d1bd6ceec58cde88578404745972e24e12ebdfd3785c455de2de09",
+      "scope": "generateTypeBRequestUrl preserves the configured fwmrm.net network host. EventCallback.parse receives the server URL; EventCallback.getUrl writes cn and et independently of that network hostname. No callback event enum is asserted."
+    },
+    {
+      "url": "https://vi.freewheel.tv/static/gallery/javascript/player.js",
+      "sha256": "c40ac28d379fe55b3120931b0b8a84088bd620eda554efcb2db398869c065e68",
+      "scope": "First-party gallery explicitly configures demo.v.fwmrm.net, network 96749, gallery profile, video asset and site section."
+    },
+    {
+      "url": "https://demo.v.fwmrm.net/ad/g/1?nw=96749&prof=96749%3Aglobal-js-gallery-desktop&caid=fw_gallery_video&csid=fw_gallery_site_section&vdur=500&asnw=96749&ssnw=96749&vprn=123456789&pvrn=123456789&flag=%2Bslcb%2Bqtcb%2Bvicb%2Bemcr&resp=vast4;GALLERY_DEVICE=DESKTOP;slid=Preroll_1&slau=preroll&ptgt=a&tpos=0;",
+      "sha256": "571143ddf30b26fbc8a51fab84a1ec04c1d53fb2025e51de4ab679dbdba9d771",
+      "bytes": 2624,
+      "scope": "Derived from the published gallery settings using the public SDK request layout. Response emits seven exact /ad/l/1 templates with cn, et and nonempty s. No callback is requested."
+    },
+    {
+      "url": "https://mssl.fwmrm.net/libs/adm/7.20.0/AdManager.js",
+      "sha256": "f6961a447d057ab58c8f3dc24f8a6a80bda9e9ee13a86b398a0a580faff286d8",
+      "bytes": 465054,
+      "scope": "Exact SDK version linked by the current official gallery. Its configurable network-host request construction and EventCallback.getUrl cn/et behavior confirm the same explicit callback profile as SDK 6.55.0."
+    }
+  ],
+  "scope_reasoning": "The SDK callback constructor works from the server-supplied callback URL for each configured MRM network; it does not hardcode the demo hostname. The API example and gallery establish the v.fwmrm.net network-host family. This profile narrows that family to the exact demonstrated /ad/l/1 route and explicit cn/et query profile.",
+  "selection": {
+    "host_suffixes": [
+      "v.fwmrm.net"
+    ],
+    "paths": [
+      "/ad/l/1"
+    ],
+    "query_params_any": [
+      "cn",
+      "et"
+    ]
+  },
+  "implemented_advisories": [
+    "Recommended nonempty cn and et in the explicit SDK callback profile",
+    "Recommended nonempty opaque s as emitted by the independent gallery producer"
+  ],
+  "explicit_limits": [
+    "No mandatory-field or server rejection claim",
+    "No closed cn or et vocabulary",
+    "No signature/identifier type, encoding or numeric timestamp grammar",
+    "The s-only callback representation remains outside this profile",
+    "No ad/g/ request contracts copied into the callback pack",
+    "No validation of private extra fields, issued tokens or session state"
+  ],
+  "baseline_scope": "51 retained rows have an explicit cn/et profile. Another 92 rows use only s and remain uncontracted. Final coverage gain must be measured by integrated replay.",
+  "fixture_manifest": "fixtures/vendor-freewheel-callback/manifest.json",
+  "tests": "crates/pixellint-core/tests/freewheel_callback_template.rs"
+}
