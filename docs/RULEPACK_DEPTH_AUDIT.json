@@ -306368,6 +306368,160 @@
           "cargo test -p pixellint-core --test rulepack_golden golden_corpus_matches_expected_findings --offline"
         ]
       }
+    },
+    {
+      "id": "vendor/clipflip-vast-tracking",
+      "vendor": "clipflip",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "match": {
+        "hosts": [
+          "app.clipflip.video"
+        ],
+        "path_patterns": [
+          "^/api/vast/tracking/[^/]*/[^/]*$"
+        ]
+      },
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/clipflip-vast-tracking.json",
+      "source_urls": [
+        "https://www.clipflip.video/vast-tester/",
+        "https://app.clipflip.video/api/vast/dbsWPSt7xIdY2xePBhrD?v=3_0"
+      ],
+      "sources_read": [
+        {
+          "url": "https://www.clipflip.video/vast-tester/",
+          "read_on": "2026-10-25",
+          "access_result": "retrieved public HTML without executing its scripts",
+          "sha256": "e9c38f2a01330fba5da16c0e06097739b271fe27b9dcd3bdc266a309c18f17bb",
+          "evidence_level": "official_vendor",
+          "scope": "First-party tester publishes exact sample request on app.clipflip.video."
+        },
+        {
+          "url": "https://app.clipflip.video/api/vast/dbsWPSt7xIdY2xePBhrD?v=3_0",
+          "read_on": "2026-10-25",
+          "access_result": "retrieved sample XML and parsed without firing callbacks",
+          "sha256": "cecc2cf0db6da3a8462c93cb79a1783a74b2ef45dc59ead9196139347f560055",
+          "bytes": 43831,
+          "evidence_level": "official_template",
+          "scope": "Exact callback path slots, nonempty v, and impression-only ord observation."
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "creative_path",
+          "contract": {
+            "name": "creative_path",
+            "requirement": "required",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The public sample emits a nonempty opaque creative path slot. This warning checks template completeness and does not establish an issued-ID format or server rejection rule.",
+            "fix_hint": "Preserve the generated creative path component from the original callback."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "event_path",
+          "contract": {
+            "name": "event_path",
+            "requirement": "required",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "The public sample emits a nonempty event path component. Event values remain open; no closed event list or VAST mapping is imposed.",
+            "fix_hint": "Preserve the generated event path component from the original callback."
+          }
+        },
+        {
+          "scope": "params",
+          "name": "v",
+          "contract": {
+            "name": "v",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "All reviewed impression, event, click and error callbacks retain a nonempty v query field. Presence is observed producer-template completeness, not a vendor mandatory-field or delivery guarantee. No version enumeration is inferred.",
+            "fix_hint": "Preserve the original generated v field."
+          }
+        }
+      ],
+      "independent_source_cases": 6,
+      "original_oracle_cases": 24,
+      "engine_derived_oracle_cases": 0,
+      "negative_cases": 8,
+      "request_cases": 1,
+      "test": {
+        "harness": "crates/pixellint-core/tests/clipflip_vast_template.rs",
+        "status": "Five targeted endpoint tests and full golden corpus passed. Formatting and clippy passed. Full workspace suite deferred to final integration.",
+        "expected_results": "Source-authored completeness and boundary controls, independent of captured customer values."
+      },
+      "implemented_counts": {
+        "field_contracts": 3,
+        "cross_field_assertions": 0,
+        "body_contract_scopes": 0,
+        "http_contract_scopes": 0,
+        "query_contract_scopes": 0,
+        "bulk_query_sources": 0
+      },
+      "missing_requirements": [
+        {
+          "requirement": "Collector rejection policy and conditional field semantics",
+          "reason": "The reviewed public producer demonstrates emitted templates, not a complete collector specification or server state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://www.clipflip.video/vast-tester/"
+        },
+        {
+          "requirement": "Creative issuance, attribution and delivery verification",
+          "reason": "The reviewed public producer demonstrates emitted templates, not a complete collector specification or server state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://www.clipflip.video/vast-tester/"
+        },
+        {
+          "requirement": "ord semantics, supported version values and private transport variants",
+          "reason": "The reviewed public producer demonstrates emitted templates, not a complete collector specification or server state.",
+          "classification": "source_or_external_context",
+          "locally_checkable": false,
+          "source_url": "https://www.clipflip.video/vast-tester/"
+        }
+      ],
+      "reviewed_artifacts": {
+        "crates/pixellint-core/rulepacks/vendor/clipflip-vast-tracking.json": "426d8f8b4d65a41e3713456740d280aa1f9574ac080d9ddd3c71e6ffb516eb05",
+        "crates/pixellint-core/tests/clipflip_vast_template.rs": "3492ee8067c5c64dd682427abf76e9e6673e1841be290ae5cb034cb60687c81c",
+        "docs/reviews/clipflip-vast-template-20261025.json": "669d837f193a526249f8225dc396df0fa7f182f5150080f8c444249ab97c3130",
+        "fixtures/vendor-clipflip-vast-tracking/cdn-host.txt": "448a51a6d88534fc3c724f33ec5df3ab1ab4d84da7d5de267511e782785403fa",
+        "fixtures/vendor-clipflip-vast-tracking/empty-creative-path.txt": "a4749f89bd32a5dbbe43af9d082890f219c8df4fc3fd3d5a315e0d8f0c223f72",
+        "fixtures/vendor-clipflip-vast-tracking/empty-event-path.txt": "70df2a5f76049df6d8e1142727873460c621588aaf1e3a9089d3bf3f8b3f94fa",
+        "fixtures/vendor-clipflip-vast-tracking/empty-v.txt": "ef55d4ce05b247bc05510c7c7e5802deb439087591f500b8a6257c753689e0cf",
+        "fixtures/vendor-clipflip-vast-tracking/extra-path-segment.txt": "2ab0f133b94460b1f93e94d460293ec0a5155c50ffaed428b72ad6b037e88ecd",
+        "fixtures/vendor-clipflip-vast-tracking/lookalike-host.txt": "eada7ae95c27f124a0edb71b63f856594e5ddaa3fe324d6c1d6548eb75090f3b",
+        "fixtures/vendor-clipflip-vast-tracking/manifest.json": "34597f889626b36998417e4e0d432c556e7f4ee8801d4f8f6dcadd2692a9f84a",
+        "fixtures/vendor-clipflip-vast-tracking/missing-event-component.txt": "1e29fc8102a1d79918039e1e07df0c35f6579dbe7d480b766569aa12cf378546",
+        "fixtures/vendor-clipflip-vast-tracking/missing-v.txt": "ed99a42f352d97fada46ee933d7271cd8112035c4d9a95d8a43a333cdbc334a9",
+        "fixtures/vendor-clipflip-vast-tracking/open-event-and-version.txt": "ee831a2f9a5d02bf44046673e4784bec9ae1af53d58ba9f325dc4a6b42e8e6cf",
+        "fixtures/vendor-clipflip-vast-tracking/ord-empty-unconstrained.txt": "ea72ef075e4729f831d592f8930cc1f7a6e8872e52bc20dc2586a4e882955a98",
+        "fixtures/vendor-clipflip-vast-tracking/ord-not-required.txt": "bb26f0d6a173ad61bbcd84980c678e88b62c0067a5e5b71b925389daffee2bdd",
+        "fixtures/vendor-clipflip-vast-tracking/other-app-route.txt": "eb9cd63ee0869a19471af2de5d2dc62899def5f9ab6ddf91a782aefe50acd7b7",
+        "fixtures/vendor-clipflip-vast-tracking/preserve-core-gdpr-error.txt": "b89fbf4c78e6b73b73f94020da3a992ba417fb70987691c7e02403b3d8827544",
+        "fixtures/vendor-clipflip-vast-tracking/producer-endpoint.txt": "3e3babcd3cac12717e2d2e051f2f72c4f57c74a90de8c567c0b6beb432881926",
+        "fixtures/vendor-clipflip-vast-tracking/query-cannot-repair-creative.txt": "a1215cc456b2a3114190d427df6316f5870a7293f8603ba391a017822f3e0918",
+        "fixtures/vendor-clipflip-vast-tracking/query-cannot-repair-event.txt": "a27998d940d656882b363da3ad0768b6d30b622cc2b6ff96fd10c78594334eaa",
+        "fixtures/vendor-clipflip-vast-tracking/source-click-template.txt": "34ec21bd0af8020707640833d3875e16c9f8587dcd949f11340e8df11d556a31",
+        "fixtures/vendor-clipflip-vast-tracking/source-error-template.txt": "368b6fe2b27c5b877088489df0333c618bfb0b99da457b2ed21dc97cae9b4845",
+        "fixtures/vendor-clipflip-vast-tracking/source-event-template.txt": "0e219842d97eac7e2da1b91ddd8353f2e729b06087af70eda05dd1982b60e36b",
+        "fixtures/vendor-clipflip-vast-tracking/source-impression-template.txt": "35e9fff97842c9074a44eb1fc676c73d3775390e044d6bde262fa5991923b823",
+        "fixtures/vendor-clipflip-vast-tracking/source-request-input.json": "ec74d8d1ff5273b5a48d63ed79864e80a9526e9ab9a4d046206e58418881f7bf",
+        "fixtures/vendor-clipflip-vast-tracking/source-vast-input.txt": "ddd16414020c948e1e2a76d40532441d992e42b56492b86f9d8f29eeb00ddbeb",
+        "fixtures/vendor-clipflip-vast-tracking/unconfigured-sibling.txt": "c952fd76175ccf8f7539919e7a1ed53c5f06ac08e2783ac9232945f4730c39cf",
+        "fixtures/vendor-clipflip-vast-tracking/wrong-case-route.txt": "79d7e0dbd5050a194d731fca6360fb66c10f639b5af5c4beb19c225107ce381e"
+      },
+      "manifest_sha256": "426d8f8b4d65a41e3713456740d280aa1f9574ac080d9ddd3c71e6ffb516eb05"
     }
   ],
   "previous_audit_baseline": {

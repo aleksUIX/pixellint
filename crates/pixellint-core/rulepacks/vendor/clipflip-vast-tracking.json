@@ -1,0 +1,50 @@
+{
+  "id": "vendor/clipflip-vast-tracking",
+  "display_name": "Clipflip generated VAST tracking templates",
+  "description": "Advisory completeness checks for callbacks returned by Clipflip's public VAST tester sample. Nonempty creative and event path slots and the generated v query field are checked. Issued identifiers, accepted events, ord semantics, server rejection policy and delivery remain outside this profile.",
+  "vendor": "clipflip",
+  "source_level": "official_template",
+  "docs": "https://www.clipflip.video/vast-tester/",
+  "match": {
+    "hosts": [
+      "app.clipflip.video"
+    ],
+    "path_patterns": [
+      "^/api/vast/tracking/[^/]*/[^/]*$"
+    ]
+  },
+  "path_pattern": "^/api/vast/tracking/(?<creative_path>[^/]*)/(?<event_path>[^/]*)$",
+  "params": [
+    {
+      "name": "creative_path",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The public sample emits a nonempty opaque creative path slot. This warning checks template completeness and does not establish an issued-ID format or server rejection rule.",
+      "fix_hint": "Preserve the generated creative path component from the original callback."
+    },
+    {
+      "name": "event_path",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "The public sample emits a nonempty event path component. Event values remain open; no closed event list or VAST mapping is imposed.",
+      "fix_hint": "Preserve the generated event path component from the original callback."
+    },
+    {
+      "name": "v",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "description": "All reviewed impression, event, click and error callbacks retain a nonempty v query field. Presence is observed producer-template completeness, not a vendor mandatory-field or delivery guarantee. No version enumeration is inferred.",
+      "fix_hint": "Preserve the original generated v field."
+    }
+  ],
+  "rules": []
+}

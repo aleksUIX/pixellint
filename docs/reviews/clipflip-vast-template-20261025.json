@@ -1,0 +1,50 @@
+{
+  "reviewed_at": "2026-10-25",
+  "pack_id": "vendor/clipflip-vast-tracking",
+  "source_level": "official_template",
+  "spec_complete": false,
+  "documentation": "https://www.clipflip.video/vast-tester/",
+  "documentation_sha256": "e9c38f2a01330fba5da16c0e06097739b271fe27b9dcd3bdc266a309c18f17bb",
+  "producer": {
+    "url": "https://app.clipflip.video/api/vast/dbsWPSt7xIdY2xePBhrD?v=3_0",
+    "sha256": "cecc2cf0db6da3a8462c93cb79a1783a74b2ef45dc59ead9196139347f560055",
+    "bytes": 43831
+  },
+  "method": "Read the first-party tester HTML and retrieve its published sample XML. Parse callback strings without requesting them. Fixtures use authored synthetic path slots and values, not captured customer payloads.",
+  "observed_templates": [
+    {
+      "elements": [
+        "Error",
+        "Tracking",
+        "ClickTracking"
+      ],
+      "path": "/api/vast/tracking/{opaque-creative-id}/{open-event}",
+      "query_fields": [
+        "v"
+      ]
+    },
+    {
+      "elements": [
+        "Impression"
+      ],
+      "path": "/api/vast/tracking/{opaque-creative-id}/impression",
+      "query_fields": [
+        "v",
+        "ord"
+      ]
+    }
+  ],
+  "implemented_advisories": [
+    "Nonempty creative path slot",
+    "Nonempty event path slot",
+    "Recommended nonempty v query field"
+  ],
+  "limitations": [
+    "v presence reflects producer-template completeness, not vendor mandatory-field or delivery policy.",
+    "No ord requiredness or grammar, version enumeration, issued-ID format or closed event vocabulary.",
+    "Only exact app.clipflip.video and two-component callback path; producer, extra segments, CDN, siblings and lookalikes are excluded.",
+    "Server rejection behavior, creative issuance, signature validation, session state and unreviewed transport variants remain unverified."
+  ],
+  "fixture_manifest": "fixtures/vendor-clipflip-vast-tracking/manifest.json",
+  "tests": "crates/pixellint-core/tests/clipflip_vast_template.rs"
+}

@@ -158,6 +158,9 @@ VENDORS = {
     "didomi": ("Didomi", "consent", ["sdk.privacy-center.org", "api.privacy-center.org"], "vendor/didomi"),
     "usercentrics": ("Usercentrics", "consent", ["app.usercentrics.eu", "web.cmp.usercentrics.eu"], None),
     "cookiebot": ("Cookiebot", "consent", ["consent.cookiebot.com", "consentcdn.cookiebot.com"], None),
+    "audiostack": ("AudioStack", "video", ["vast.audiostack.ai", "track.audiostack.ai"], None),
+    "nativo": ("Nativo", "native", ["jadserve.postrelease.com"], None),
+    "clipflip": ("Clipflip", "video", ["app.clipflip.video"], "vendor/clipflip-vast-tracking"),
 }
 
 

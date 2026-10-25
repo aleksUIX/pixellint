@@ -1,0 +1,47 @@
+{
+  "reviewed_at": "2026-10-25",
+  "decision": "Directory attribution only for two AudioStack configured roots and one Nativo configured root. No endpoint contract or vendor rulepack is added.",
+  "privacy": "Sources are public first-party pages. Tests use synthetic paths and values. Captured customer URLs and opaque names are excluded.",
+  "entries": [
+    {
+      "vendor": "audiostack",
+      "display_name": "AudioStack",
+      "hosts": [
+        "track.audiostack.ai",
+        "vast.audiostack.ai"
+      ],
+      "source": "https://audiostack.ai/legal/privacy-policy",
+      "source_location": "Section 12, VAST Ad Serving and Tracking",
+      "source_sha256": "65905407a13ee603981aefcdf4550cca65097b899c25edc614f57192aea8228b",
+      "supported_claim": "AudioStack explicitly identifies these service hosts and names Aflorithmic Labs LTD as operator.",
+      "unsupported_claim": "No collector path, query requiredness, value grammar, signature verification or delivery guarantee is established.",
+      "dns_resolves": {
+        "track.audiostack.ai": true,
+        "vast.audiostack.ai": true
+      }
+    },
+    {
+      "vendor": "nativo",
+      "display_name": "Nativo",
+      "hosts": [
+        "jadserve.postrelease.com"
+      ],
+      "source": "https://support.nativo.com/en/articles/11995686-ad-serving-response",
+      "source_location": "Example ad-serving responses and tracking URLs",
+      "source_sha256": "070072e89c8fe76a47e496bb64c849a940233db208a6894759ab6eb31fb74036",
+      "corroborating_sources": [
+        "https://support.nativo.com/en/articles/11143928-metadata-integration",
+        "https://support.nativo.com/en/articles/11143850-google-amp-integration",
+        "https://support.nativo.com/en/articles/11995379-tracking-parameters"
+      ],
+      "supported_claim": "Nativo publishes jadserve.postrelease.com as its serving and tracking host.",
+      "unsupported_claim": "Native examples do not establish private VAST ntv_* requiredness, event enums, ID grammar or ord constraints.",
+      "dns_resolves": {
+        "jadserve.postrelease.com": true
+      }
+    }
+  ],
+  "matching_scope": "The configured roots use the existing directory rule: exact root and child subdomains. Parent domains, lookalikes and staging-* siblings are not configured. No global matcher behavior changes.",
+  "coverage": "recognized_uncontracted with core checks. No vendor_checked gain.",
+  "tests": "crates/pixellint-core/tests/audiostack_nativo_directory.rs"
+}

@@ -240,3 +240,25 @@ The RZR Global and rtactivate endpoints remain unattributed. The supplied
 Index attribution for `idxgm.rtactivate.com` is unconfirmed. The reviewed
 sources and remaining endpoint schemas are recorded in
 [the tracker review](reviews/vast-tracker-depth/programmatic.json).
+
+## AudioStack and Nativo service attribution
+
+The configured AudioStack roots `vast.audiostack.ai` and
+`track.audiostack.ai` are explicitly named in
+[AudioStack’s privacy policy, section 12](https://audiostack.ai/legal/privacy-policy).
+Nativo publishes `jadserve.postrelease.com` in its
+[ad-serving response documentation](https://support.nativo.com/en/articles/11995686-ad-serving-response).
+These entries identify the service operator and retain core-only validation.
+They add no query requirements or vendor validation claim. The existing root
+and child-subdomain matching behavior applies. Parent domains, lookalikes
+and `staging-*` siblings remain outside the configured roots.
+
+The source digests and limitations are recorded in
+[the attribution review](reviews/audiostack-nativo-directory-20261025.json).
+
+Clipflip’s [public VAST tester](https://www.clipflip.video/vast-tester/)
+publishes an ad request and callbacks on `app.clipflip.video`. Its configured
+root points to `vendor/clipflip-vast-tracking`. Only the exact reviewed
+callback route receives that pack’s advisory checks. Other paths retain
+directory attribution and core checks. See the
+[template review](reviews/clipflip-vast-template-20261025.json).

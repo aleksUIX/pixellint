@@ -826,6 +826,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/top-mail-counter",
         include_str!("../rulepacks/vendor/top-mail-counter.json"),
     ),
+    (
+        "vendor/clipflip-vast-tracking",
+        include_str!("../rulepacks/vendor/clipflip-vast-tracking.json"),
+    ),
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
