@@ -1,10 +1,10 @@
 {
   "id": "vendor/yandex-watch",
   "display_name": "Yandex Metrica watch counter",
-  "description": "Yandex Metrica browser counter hits to mc.yandex.ru/watch/{counter_id}. Measurement Protocol /collect is vendor/yandex-metrica.",
+  "description": "Yandex watch counter identity plus optional pinned-runtime advice for page-url, charset and JSON site-info. Runtime fields are guarded by browser-info presence; counter-only image hits remain supported. Query, form and bodyless transports retain their source behavior. Receiver law, session state and arbitrary custom data stay open.",
   "vendor": "yandex",
-  "source_level": "official_vendor",
-  "docs": "https://yandex.com/support/metrica/en/code/install-counter-csp",
+  "source_level": "official_template",
+  "docs": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/params/params.ts",
   "path_pattern": "/watch/(?<counter_id>[^/?]*)",
   "match": {
     "hosts": [
@@ -24,8 +24,75 @@
       },
       "description": "It is the numeric Metrica tag ID. Yandex documents the counter as `/watch/{counter_id}`.",
       "fix_hint": "Put the tag ID from the Metrica interface in the path as `/watch/{id}`.",
-      "doc": "https://yandex.com/support/metrica/en/code/install-counter-csp"
+      "doc": "https://yandex.com/support/metrica/en/code/install-counter-csp",
+      "source_level": "official_vendor"
+    },
+    {
+      "name": "browser-info",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Nonempty browser-info gates the optional runtime defaults. It is a profile hint, not proof of producer identity, a closed flag grammar or a required noscript field.",
+      "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/sender/default/query/watchAPI.ts"
+    },
+    {
+      "name": "page-url",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "max_utf16_length": 2048,
+      "condition": {
+        "kind": "present",
+        "param": "browser-info"
+      },
+      "description": "Pinned prepareUrl uses String.slice with a 2048 UTF-16-unit cap, or 512 on IE. The broad 2048 cap uses exact code-unit counting but cannot enforce the lower IE cap without browser context. Custom schemes and empty values remain open.",
+      "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/prepareUrl/prepareUrl.ts"
+    },
+    {
+      "name": "charset",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "present",
+        "param": "browser-info"
+      },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "utf-8"
+        ]
+      },
+      "description": "Optional default-producer advice: senderWatchInfo emits utf-8. This does not establish receiver-wide encoding law, field requiredness or restrictions on custom middleware.",
+      "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/senderWatchInfo/senderWatchInfo.ts"
+    },
+    {
+      "name": "site-info",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Optional serialized JSON visit parameters can arrive in URL or form fallback fields. All JSON root types and arbitrary custom members remain open. Blank, macro and cross-carrier ambiguity follow existing input behavior.",
+      "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/params/params.ts"
     }
   ],
-  "rules": []
+  "rules": [],
+  "body": {
+    "source_param": "site-info",
+    "encoding": "json",
+    "encoding_severity": "warning",
+    "condition": {
+      "kind": "present",
+      "param": "browser-info"
+    },
+    "params": [
+      {
+        "name": "",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "description": "Decode JSON syntax only. No root type, custom-member schema, null ban or scalar format is imposed.",
+        "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/params/params.ts"
+      }
+    ]
+  }
 }

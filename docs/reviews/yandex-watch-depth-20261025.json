@@ -1,0 +1,177 @@
+{
+  "id": "vendor/yandex-watch",
+  "reviewed_at": "2026-10-25T22:48:26.596783+00:00",
+  "spec_complete": false,
+  "git_commit": "47a80d0f0f8278fbb32309b5444b801eda99556e",
+  "source_level": "official_template",
+  "counter_identity_evidence": "Existing numeric counter rule retained with explicit official_vendor level and CSP guide citation.",
+  "match": {
+    "hosts": [
+      "mc.yandex.ru",
+      "mc.yandex.com"
+    ],
+    "path_prefixes": [
+      "/watch/"
+    ]
+  },
+  "implemented_runtime_fields": [
+    {
+      "name": "browser-info",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Nonempty browser-info gates the optional runtime defaults. It is a profile hint, not proof of producer identity, a closed flag grammar or a required noscript field.",
+      "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/sender/default/query/watchAPI.ts"
+    },
+    {
+      "name": "page-url",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "max_utf16_length": 2048,
+      "condition": {
+        "kind": "present",
+        "param": "browser-info"
+      },
+      "description": "Pinned prepareUrl uses String.slice with a 2048 UTF-16-unit cap, or 512 on IE. The broad 2048 cap uses exact code-unit counting but cannot enforce the lower IE cap without browser context. Custom schemes and empty values remain open.",
+      "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/prepareUrl/prepareUrl.ts"
+    },
+    {
+      "name": "charset",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "present",
+        "param": "browser-info"
+      },
+      "format": {
+        "kind": "enum",
+        "values": [
+          "utf-8"
+        ]
+      },
+      "description": "Optional default-producer advice: senderWatchInfo emits utf-8. This does not establish receiver-wide encoding law, field requiredness or restrictions on custom middleware.",
+      "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/senderWatchInfo/senderWatchInfo.ts"
+    },
+    {
+      "name": "site-info",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Optional serialized JSON visit parameters can arrive in URL or form fallback fields. All JSON root types and arbitrary custom members remain open. Blank, macro and cross-carrier ambiguity follow existing input behavior.",
+      "doc": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/params/params.ts"
+    }
+  ],
+  "json_decoder": "Existing encoded-body JsonDocument reader. Generic serde_json scalar JSON format is intentionally not used because JS lone-surrogate escapes are valid source output.",
+  "source_oracle": {
+    "script": "tools/source-oracles/yandex-watch-depth-20261025.mjs",
+    "cases": 18,
+    "engine_derived": false,
+    "network_calls": 0,
+    "scope": "Unchanged source modules transpiled offline with stubbed generic browser primitives. No full SDK initialization or receiver test."
+  },
+  "sources_read": [
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/senderWatchInfo/senderWatchInfo.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/middleware/senderWatchInfo/senderWatchInfo.ts",
+      "sha256": "ebcce587d6a3952294fcf15f3bf122b4f13bc1745131362e06db92ba496cc2a6",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/prepareUrl/prepareUrl.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/middleware/prepareUrl/prepareUrl.ts",
+      "sha256": "89c3730e9b4518283685e8e61719b6912d4927a7a864d879640d1321d88c1906",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/middleware/params/params.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/middleware/params/params.ts",
+      "sha256": "63bc9037195a44702ba4ba38d913dbc99e42b93558ba2a00408b0cb266132957",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/utils/browserInfo/browserInfo.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/utils/browserInfo/browserInfo.ts",
+      "sha256": "ea960e0115065c41cc90ff82b41fb5cbe568623253061c4f4f34a7dd5dff6ea0",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/utils/flagsStorage/flagsStorage.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/utils/flagsStorage/flagsStorage.ts",
+      "sha256": "e5c0f0186ff519fb243ec0c802a8f12d22f96567cf52a43c3a43018e5a350908",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/utils/json/json.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/utils/json/json.ts",
+      "sha256": "e32dfec355fb1bff2abfd2b3d9d821f570aad05ef11cb089cc6f058fe8a92ea1",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/utils/querystring/querystring.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/utils/querystring/querystring.ts",
+      "sha256": "9c281074a5874893e67f0ea50b25a1b58d70fced69a44c9b279541ed9d5ad956",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/utils/querystring/safeEncodeURI.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/utils/querystring/safeEncodeURI.ts",
+      "sha256": "59f67d30f89d9534364579968f858ffdd095d934a6eff9a4111c7749b1ad5206",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/sender/default/default.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/sender/default/default.ts",
+      "sha256": "c75ed73422883734678196a8f6352f462038b4bcd80550a976feb7955c1f9e32",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/sender/default/const.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/sender/default/const.ts",
+      "sha256": "55a60020071bc731ca832cc16475ec3260b0f5c32847bdaf2f27b1ee00f44fca",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/sender/default/query/watchAPI.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/sender/default/query/watchAPI.ts",
+      "sha256": "d8fdda5084a13606263661f0a6580762b7be5002f4a37095075dc985f64eca2c",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/transport/watchModes.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/transport/watchModes.ts",
+      "sha256": "7b3e74b70d9261e9c8d9cde8a77125f7cb44d247cba517431a08292842d387fb",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    },
+    {
+      "url": "https://github.com/yandex/metrica-tag/blob/47a80d0f0f8278fbb32309b5444b801eda99556e/src/transport/beacon/beacon.ts",
+      "local_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/src/transport/beacon/beacon.ts",
+      "sha256": "02a4b9ee877546bdb9673f9f1f711af4474020e3db1b32afa2e07e12428b6bb3",
+      "access_result": "Read exact commit-pinned official source and executed selected unchanged modules offline."
+    }
+  ],
+  "assignment_trace": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-20261025/lane-02-sources/assignment-trace.json",
+  "unimplemented_or_external_requirements": [
+    "Runtime defaults are optional source-profile advice, not complete receiver law. browser-info is only a nonempty gate, not proof of SDK identity. Counter-only noscript requests remain outside runtime checks.",
+    "The page-url cap counts UTF-16 units exactly; 2048 is a conservative common cap across unknown browser contexts. The tighter512-unit IE branch requires browser context.",
+    "All JSON roots, custom members, lone-surrogate escapes and native nonfinite-to-null coercions remain open; no business schema is inferred.",
+    "Existing form fallback gives URL carriers precedence. Cross-carrier body fields shadowed by URL names are not independently inspected; receiver duplicate selection is unknown. Duplicates within the selected carrier remain checked.",
+    "Legacy bare URL keys are omitted and empty encoded sources skipped. Macro-looking invalid JSON is deferred by the existing shared reader.",
+    "Site-info may be deferred to a later request, form-encoded, or moved into URL by image/JSONP/beacon. No mandatory body, method, MIME or beacon-only flag law is inferred.",
+    "Browser-info flags/title parsing, current deployment equivalence, other Metrica hosts, collect/Measurement Protocol and user/session/account truth remain outside this change."
+  ],
+  "validation_status": "passed focused, full golden, targeted clippy and source oracle checks",
+  "existing_cases_preserved": 4,
+  "new_golden_cases": 59,
+  "validation": {
+    "focused_tests": 4,
+    "golden_tests": 5,
+    "old_golden_cases_preserved": 4,
+    "new_golden_cases": 59,
+    "source_captures": 18,
+    "clippy": "passed focused target with -D warnings",
+    "full_integrated_validation": "coordinator-owned and pending"
+  },
+  "length_counting_note": "Uses existing max_utf16_length, exactly matching JS code-unit counting.2048 remains a conservative common cap without context for the tighter512IE branch."
+}
