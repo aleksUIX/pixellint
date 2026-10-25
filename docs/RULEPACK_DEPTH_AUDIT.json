@@ -29785,6 +29785,22 @@
           "retrieved_on": "2026-10-21",
           "snapshot_sha256": "c6dd90160acfe9cf3462f9fc12782e5bc49738991976c503096382c36016d544",
           "snapshot_kind": "original downloaded bytes"
+        },
+        {
+          "url": "https://amplitude.com/docs/apis/analytics/group-identify.md",
+          "final_url": "https://amplitude.com/docs/apis/analytics/group-identify.md",
+          "title": "Group Identify API",
+          "primary_level": "official_vendor",
+          "access_status": 200,
+          "fetched_at": "2026-10-25T23:03:07.046151+00:00",
+          "sha256": "76a4f2e10032019f97623316fd9298ba230fd1420f7a3894eab632053c548f50",
+          "bytes": 3633,
+          "cache_path": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-sources/amplitude-group-identify.md",
+          "endpoint_scope": "/groupidentify",
+          "supports": [
+            "Every $add child name is matched with a dotall any-key regex, including empty and multiline names. Numeric value semantics and existing custom-name acceptance scope are unchanged."
+          ],
+          "does_not_support": "Receiver duplicate policy, opaque identifiers, request byte counting, Group Identify operation-mixing or unset-sentinel transfer, or complete endpoint coverage."
         }
       ],
       "contracts_mapped": {
@@ -29915,10 +29931,10 @@
               },
               {
                 "name": "group_properties.$add.number",
-                "description": "The vendor documents `group_properties.$add.number` in the request contract.",
+                "description": "Every immediate property value in $add is numeric. This applies the documented operation semantics to arbitrary JSON member names, including empty names and line breaks.",
                 "doc": "https://amplitude.com/docs/apis/analytics/group-identify",
                 "json_type": "number",
-                "name_pattern": "^.+$",
+                "name_pattern": "(?s)^.*$",
                 "name_pattern_parent": "group_properties.$add",
                 "allow_empty": true
               }
@@ -30174,12 +30190,14 @@
         }
       ],
       "corrected_checks": [
-        "1024 identifications/request and individual direct dictionary bound are mapped. The per-object property bound does not certify the1024request-wide property maximum. The5type/10 group rule is expressly per event and is not enforced across GroupIdentify records."
+        "1024 identifications/request and individual direct dictionary bound are mapped. The per-object property bound does not certify the1024request-wide property maximum. The5type/10 group rule is expressly per event and is not enforced across GroupIdentify records.",
+        "Every $add child name is matched with a dotall any-key regex, including empty and multiline names. Numeric value semantics and existing custom-name acceptance scope are unchanged."
       ],
       "missing_requirements": [
         "Exact /groupidentify on api2.amplitude.com and api.eu.amplitude.com only. Other hosts, including the analytics UI, remain uncontracted rather than inheriting the full amplitude.com suffix.",
         "Each supported operation map is bounded at1024properties, a necessary consequence of the published request budget. This does not enforce the aggregate across operations or rows; multiple individually small maps can still exceed the total.",
-        "The published1MB request size does not resolve byte units or serialized accounting. No guessed limit is introduced. Group/account configuration, credential validity, rate limits, future-event attribution and receiver acceptance remain external."
+        "The published1MB request size does not resolve byte units or serialized accounting. No guessed limit is introduced. Group/account configuration, credential validity, rate limits, future-event attribution and receiver acceptance remain external.",
+        "Existing JSON extraction resolves repeated concrete member paths to the last scalar; earlier raw duplicate values are not independently checked. The controls preserve this limit, not a vendor receiver duplicate policy."
       ],
       "tests": [
         {
@@ -30207,6 +30225,13 @@
             "native_json_is_not_form_transport",
             "form_identification_json_invalid"
           ]
+        },
+        {
+          "kind": "source_backed_depth_round2_boundary_cases",
+          "count": 22,
+          "fixture": "fixtures/vendor-amplitude-group-identify/source-cases-depth2.json",
+          "test": "crates/pixellint-core/tests/amplitude_identify_depth_round2.rs",
+          "status": "passing"
         }
       ],
       "spec_complete": false,
@@ -30238,7 +30263,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "f407a97b3fff8980f16cbd83eaa9cea6daf47a6413a19ddf508905a3eb1cf23a",
+      "manifest_sha256": "0c26503d3648d7be428c49ca3b354d5c42e0a2e0e37e2261d1189313234529b8",
       "fixture_sha256": {
         "fixtures/vendor-amplitude-group-identify/clean-group.txt": "b1f58c4b71e15604474127f38c6c3d665862d8d9dcf1128b77b0e2cbca82b2f6",
         "fixtures/vendor-amplitude-group-identify/empty-identification.txt": "d469f793c3c820a07130195ba9d97c4652f35fcab25f62548630ef2eea43204d",
@@ -30248,11 +30273,12 @@
         "fixtures/vendor-amplitude-group-identify/spec-cases.json": "2843501f0b02ffee853db413c4ce9fe8d394cb3cf49c75ff471c5a44853b0cb1"
       },
       "selection_contract": {
-        "host_suffixes": [
-          "amplitude.com"
-        ],
         "paths": [
           "/groupidentify"
+        ],
+        "hosts": [
+          "api2.amplitude.com",
+          "api.eu.amplitude.com"
         ]
       },
       "shared_core_contracts": [
@@ -30284,13 +30310,15 @@
         "transport_goldens": 3,
         "source_cases": 5,
         "session_source_cases": 4,
-        "automatic_http_routing_examples": 1
+        "automatic_http_routing_examples": 1,
+        "depth_round2_source_cases": 22,
+        "current_transport_goldens": 42
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/amplitude-group-identify.json": "f407a97b3fff8980f16cbd83eaa9cea6daf47a6413a19ddf508905a3eb1cf23a",
+        "crates/pixellint-core/rulepacks/vendor/amplitude-group-identify.json": "0c26503d3648d7be428c49ca3b354d5c42e0a2e0e37e2261d1189313234529b8",
         "fixtures/vendor-amplitude-group-identify/clean-group.txt": "b1f58c4b71e15604474127f38c6c3d665862d8d9dcf1128b77b0e2cbca82b2f6",
         "fixtures/vendor-amplitude-group-identify/empty-identification.txt": "d469f793c3c820a07130195ba9d97c4652f35fcab25f62548630ef2eea43204d",
-        "fixtures/vendor-amplitude-group-identify/manifest.json": "1ea161ebdf76fd6461b06eb2125d0c4c693945036f5ad6eaab357e813c721361",
+        "fixtures/vendor-amplitude-group-identify/manifest.json": "cbeaaae66f73a021635aca47469b83901e9b2ecaa46c96a1951a4716abc63af2",
         "fixtures/vendor-amplitude-group-identify/missing-api-key.txt": "e979a473a7565b3b6dba35d6b4d90391d635f058b1ea9a85035fcdf1b83f3df6",
         "fixtures/vendor-amplitude-group-identify/session-depth-cases.json": "0e2a7fee26b9751d68d16519fa96751fab72d87c121bbc4a7b44bf6c3bce1e02",
         "fixtures/vendor-amplitude-group-identify/spec-cases.json": "2843501f0b02ffee853db413c4ce9fe8d394cb3cf49c75ff471c5a44853b0cb1",
@@ -30316,7 +30344,32 @@
         "crates/pixellint-core/src/manifest.rs": "2213daadc3393bd932dbccc2ee87e0b29ac0439fdf31f86f2c6660bb3077e98c",
         "crates/pixellint-core/src/lib.rs": "fc5ca7cb520dc0880590a32a9a08f454799c20295b0816245df4cce253f42235",
         "docs/RULEPACK_SCHEMA.md": "a239ec2d98b8ba1fa7022d5a248d83374cfcffedeba6b2a610c0b8eb8cbff749",
-        "crates/pixellint-core/tests/analytics_depth.rs": "b54dd89112be43a15e8689d478389db4cb2fb7bc68d0ecd38e9528cc120f0804"
+        "crates/pixellint-core/tests/analytics_depth.rs": "b54dd89112be43a15e8689d478389db4cb2fb7bc68d0ecd38e9528cc120f0804",
+        "crates/pixellint-core/tests/amplitude_identify_depth_round2.rs": "a05e41b740b717bd1cd7c9aba196100bbd47c2ae3443a0345dc530c4bc0d7a7f",
+        "docs/reviews/amplitude-identify-depth-round2-20261025.json": "246cc0c94e86743772fd2894b206d1015628d33f34bbfa1654c6f452350afddb",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-empty-operation-object.txt": "bf43df73359b899a6b17940db98962e13d2b7a6fe9f47bb54e1126ca98386422",
+        "fixtures/vendor-amplitude-group-identify/depth2-raw-duplicate-add-valid-last.txt": "04aa0c85ce4a4f999ed043632afdfd571b74296bce9b24257eb0d94a276f947d",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-all-key-names-valid.request.json": "934efd794692c05994ccf810edf6adf0532d03cdb8cfe76508bc6af79ae2f412",
+        "fixtures/vendor-amplitude-group-identify/depth2-future-operation-with-known-map-open.txt": "5bae227d4681cda832fac8e1c15758229408b3b13ccd6539fb57a556e57fc4df",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-key-string-invalid-0.txt": "03fab090b9d6b42f6ab046c17500d6c90f368b9b0067dbf027967f5949820452",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-key-string-invalid-1.txt": "9c8abec63111c38286351ed0d971f12037275ee334fd41980fbc0b144ccefb40",
+        "fixtures/vendor-amplitude-group-identify/depth2-group-unset-sentinel-not-inferred.txt": "ed24b8744d25b7f014795c34b2ba969e3fd6b61a83fe692a175b5813ce1dc89f",
+        "fixtures/vendor-amplitude-group-identify/depth2-official-group-form.request.json": "c05a21cacb0407d8a34964314f6955805979b0fed00d5bd972bf62dfd5f75ad4",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-key-string-invalid-2.txt": "c57f288805109cf6f3574d3703c302ebe16df1465f7e1eba85556aa98678eada",
+        "fixtures/vendor-amplitude-group-identify/depth2-group-mixing-policy-not-inferred.txt": "f458ce962051dde0366218803c2de411c372b3352abbc7bd808ef01612070589",
+        "fixtures/vendor-amplitude-group-identify/source-cases-depth2.json": "55757908f45d9099c1450bc5a412aebe46d75a954b59b40e116e879af948d5ab",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-special-key-invalid-2.txt": "2b700910d9cc59dcd287367288a34af2ce3b80df2bb127c7ce713c9709dffb77",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-key-valid-1.txt": "f33e471e22cc739ef2397dc0ffa012c9ed2906850e3434d82eec1476e4f22a50",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-key-valid-0.txt": "812bb240f334c3b0a13ba486ca2d2b30d6ec4e834d0d4af4fffef52f4e3ab14d",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-special-key-invalid-3.txt": "6de9ffcd5e502edaf23be6d3034a1cdc2d38fedaa023847e482d1d3480a480ba",
+        "fixtures/vendor-amplitude-group-identify/depth2-direct-custom-native-values-open.txt": "b426b1d2352fe6261195db30b26ee4f6d576c7b160250f2923d7de7bc069e0a0",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-key-valid-2.txt": "9f153dbeb591368b195a8134c0aa62ed9a351498ca998390ee5c1ffe80acbeaf",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-special-key-invalid-1.txt": "ebd90463fbbacf4922a608ad47872732da3f0c42526093aa022d1cd264262232",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-special-key-invalid-0.txt": "505baf612082f492117b72508f85c709adf8d028eb80774c3ff715e4ac218817",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-special-key-invalid-4.txt": "51de0bfffc332b1ec6f27697e87a0e197ae0a5f93dc8eef1cba8ce11807f10f3",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-special-key-invalid-5.txt": "e0e78f8d5bac3974ebfb6f893f3b22f52ae704f5beae708f8e2a6ab0f97436d4",
+        "fixtures/vendor-amplitude-group-identify/depth2-numeric-second-row-invalid.request.json": "b2fb8a3f061af83d786fd79f54ee18264c51893a24bb93a5edfd3c693886e343",
+        "fixtures/vendor-amplitude-group-identify/depth2-raw-duplicate-add-invalid-last.txt": "8ec994dc218cb00ac9be8112a806f6fdd5fc68f8d44326cf6a41bbeca7b839e1"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -30404,7 +30457,141 @@
         "https://amplitude.com/docs/apis/analytics/group-identify.md"
       ],
       "golden_cases": 20,
-      "collector_followup": "docs/reviews/pixel-collectors-058.json"
+      "collector_followup": "docs/reviews/pixel-collectors-058.json",
+      "depth_round2_20261025": {
+        "id": "vendor/amplitude-group-identify",
+        "manifest_path": "crates/pixellint-core/rulepacks/vendor/amplitude-group-identify.json",
+        "manifest_sha256": "0c26503d3648d7be428c49ca3b354d5c42e0a2e0e37e2261d1189313234529b8",
+        "match": {
+          "paths": [
+            "/groupidentify"
+          ],
+          "hosts": [
+            "api2.amplitude.com",
+            "api.eu.amplitude.com"
+          ]
+        },
+        "new_source_cases": 22,
+        "new_case_categories": {
+          "official": 1,
+          "numeric": 14,
+          "mixing": 4,
+          "transport": 3
+        },
+        "total_golden_cases": 42,
+        "new_contracts": [],
+        "corrected_contracts": [
+          "Every $add child name is matched with a dotall any-key regex, including empty and multiline names. Numeric value semantics and existing custom-name acceptance scope are unchanged."
+        ],
+        "residuals": [
+          "Group Identify aggregate 1024-property accounting does not define operation-container versus leaf counts or repeated-key accounting. Existing per-map bounds remain necessary-only checks.",
+          "Group Identify documentation says 1 mb without resolving byte units and raw-versus-serialized accounting. No request byte limit is added.",
+          "No Identify operation-mixing or unset-sentinel restriction is transferred to Group Identify.",
+          "Account credentials, Accounts entitlement, user state, rate limits and eventual receiver acceptance require external context.",
+          "Unknown future operation-like names beginning with $ remain open wherever the baseline left them open. Custom property values outside constrained operations remain open."
+        ],
+        "validation": {
+          "checked_at": "2026-10-25T23:13:46.454804+00:00",
+          "focused": {
+            "command": [
+              "cargo",
+              "test",
+              "-p",
+              "pixellint-core",
+              "--test",
+              "amplitude_identify_depth_round2"
+            ],
+            "status": "passed",
+            "tests": 7,
+            "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-focused.log"
+          },
+          "golden_and_existing_regressions": {
+            "command": [
+              "cargo",
+              "test",
+              "-p",
+              "pixellint-core",
+              "--test",
+              "rulepack_golden",
+              "--test",
+              "analytics_depth",
+              "--test",
+              "depth_034_multipart_contracts",
+              "--test",
+              "pixel_collectors_058"
+            ],
+            "status": "passed",
+            "golden_tests": 5,
+            "existing_regression_tests": 15,
+            "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-golden-and-existing-regressions.log"
+          },
+          "additional_checks": [
+            {
+              "name": "clippy",
+              "command": [
+                "cargo",
+                "clippy",
+                "-p",
+                "pixellint-core",
+                "--test",
+                "amplitude_identify_depth_round2",
+                "--test",
+                "analytics_depth",
+                "--test",
+                "depth_034_multipart_contracts",
+                "--test",
+                "pixel_collectors_058",
+                "--test",
+                "rulepack_golden",
+                "--",
+                "-D",
+                "warnings"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 2.45,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-clippy.log",
+              "status": "passed"
+            },
+            {
+              "name": "fmt",
+              "command": [
+                "cargo",
+                "fmt",
+                "--all",
+                "--check"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.458,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-fmt.log",
+              "status": "passed"
+            },
+            {
+              "name": "review-freshness",
+              "command": [
+                "python3",
+                "tools/check-rulepack-depth.py"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.664,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-review-freshness.log",
+              "status": "passed"
+            },
+            {
+              "name": "diff-check",
+              "command": [
+                "git",
+                "diff",
+                "--check"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.216,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-diff-check.log",
+              "status": "passed"
+            }
+          ],
+          "audit_preservation": "All global metadata and all 212 unrelated pack entries unchanged."
+        }
+      }
     },
     {
       "id": "vendor/amplitude-identify",
@@ -30424,6 +30611,25 @@
           "url": "https://www.rfc-editor.org/rfc/rfc2046",
           "access": "read",
           "scope": "Boundary syntax, length limit, quoted parameters, CRLF and closing delimiters, preamble and epilogue."
+        },
+        {
+          "url": "https://amplitude.com/docs/apis/analytics/identify.md",
+          "final_url": "https://amplitude.com/docs/apis/analytics/identify.md",
+          "title": "Identify API",
+          "primary_level": "official_vendor",
+          "access_status": 200,
+          "fetched_at": "2026-10-25T23:03:06.599520+00:00",
+          "sha256": "382f7181526a5043d2f98ba592ff36a65884fd5da096f7bcabefb22a8a3b4a4a",
+          "bytes": 9753,
+          "cache_path": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-sources/amplitude-identify.md",
+          "endpoint_scope": "/identify",
+          "supports": [
+            "Each present $unset child has native JSON string type and exactly the literal value \"-\". The operation remains optional; an empty operation dictionary remains open.",
+            "Every $add child name is matched with a dotall any-key regex, including empty and multiline names. Numeric value semantics and existing custom-name acceptance scope are unchanged.",
+            "Existing operation-mixing prohibition now covers empty and multiline direct custom names. Unknown operation-like names beginning with $ remain open.",
+            "Selector now uses exactly api2.amplitude.com and api.eu.amplitude.com on /identify, as explicitly documented. The previous amplitude.com suffix lacked an endpoint-specific source binding. Existing directory rows and ownership are unchanged; no legacy retirement is claimed."
+          ],
+          "does_not_support": "Receiver duplicate policy, opaque identifiers, request byte counting, Group Identify operation-mixing or unset-sentinel transfer, or complete endpoint coverage."
         }
       ],
       "contracts_mapped": [
@@ -31697,9 +31903,42 @@
               ]
             }
           }
+        },
+        {
+          "transport_scope": "body[1]",
+          "body_context": {
+            "source_param": "identification",
+            "encoding": "json",
+            "scope": [
+              "[]",
+              ""
+            ]
+          },
+          "field": "user_properties.$unset.value",
+          "source": "https://amplitude.com/docs/apis/analytics/identify#clear-a-user-property-with-unset",
+          "checks": {
+            "name": "user_properties.$unset.value",
+            "name_pattern": "(?s)^.*$",
+            "name_pattern_parent": "user_properties.$unset",
+            "json_type": "string",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "-"
+              ]
+            },
+            "description": "Amplitude explicitly requires the string \"-\" as the value of every property to clear with $unset. Property names remain unconstrained.",
+            "fix_hint": "Set every $unset property value to the string \"-\".",
+            "doc": "https://amplitude.com/docs/apis/analytics/identify#clear-a-user-property-with-unset",
+            "severity": "error"
+          }
         }
       ],
-      "corrected_checks": [],
+      "corrected_checks": [
+        "Every $add child name is matched with a dotall any-key regex, including empty and multiline names. Numeric value semantics and existing custom-name acceptance scope are unchanged.",
+        "Existing operation-mixing prohibition now covers empty and multiline direct custom names. Unknown operation-like names beginning with $ remain open.",
+        "Selector now uses exactly api2.amplitude.com and api.eu.amplitude.com on /identify, as explicitly documented. The previous amplitude.com suffix lacked an endpoint-specific source binding. Existing directory rows and ownership are unchanged; no legacy retirement is claimed."
+      ],
       "missing_requirements": [
         {
           "requirement": "Accounts entitlement, throttling, future-event semantics",
@@ -31726,6 +31965,15 @@
           "locally_checkable": true,
           "source": "https://www.rfc-editor.org/rfc/rfc7578",
           "reason": "Text envelope cannot establish original binary octets. Bounded4MiB/1024parts/16KiBheaders decoder leaves unsupported captures informative and suppresses unobserved missing-value findings."
+        },
+        {
+          "requirement": "Raw duplicate JSON member observations",
+          "applicability": "Repeated decoded member paths inside an identification JSON value",
+          "reason": "Existing JSON fields resolve to the last scalar per concrete path. Earlier duplicate values are not independently validated. Raw JSON controls pin this existing behavior without claiming receiver duplicate selection.",
+          "gap_kind": "input_decoding",
+          "status": "remaining",
+          "locally_checkable": true,
+          "source": "https://amplitude.com/docs/apis/analytics/identify"
         }
       ],
       "tests": [
@@ -31755,6 +32003,13 @@
             "form_identification_json_invalid",
             "get_query_transport"
           ]
+        },
+        {
+          "kind": "source_backed_depth_round2_boundary_cases",
+          "count": 77,
+          "fixture": "fixtures/vendor-amplitude-identify/source-cases-depth2.json",
+          "test": "crates/pixellint-core/tests/amplitude_identify_depth_round2.rs",
+          "status": "passing"
         }
       ],
       "spec_complete": false,
@@ -31832,10 +32087,11 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "245a9cae825d0078a61efa0507aa859fb5a39f15952b228fde0a1488f98b2343",
+      "manifest_sha256": "1b0aca9b0133e411d13cb343e80e038edf4ad16ce8f56874c33dbb721d04b258",
       "selection_contract": {
-        "host_suffixes": [
-          "amplitude.com"
+        "hosts": [
+          "api2.amplitude.com",
+          "api.eu.amplitude.com"
         ],
         "paths": [
           "/identify"
@@ -31859,7 +32115,7 @@
       "review_assignment": "analytics",
       "vendor": "amplitude",
       "implemented_counts": {
-        "field_contracts": 38,
+        "field_contracts": 39,
         "cross_field_assertions": 1,
         "body_contract_scopes": 2,
         "http_contract_scopes": 1,
@@ -31870,16 +32126,18 @@
         "transport_goldens": 3,
         "source_cases": 14,
         "session_source_cases": 5,
-        "automatic_http_routing_examples": 2
+        "automatic_http_routing_examples": 2,
+        "depth_round2_source_cases": 77,
+        "current_transport_goldens": 80
       },
       "reviewed_artifacts": {
         "fixtures/vendor-amplitude-identify/clean-identify.txt": "5a57d33ae46544b1185e208093d807b1be2f93bcb2cb8fdb9c9e02565b62bafa",
         "fixtures/vendor-amplitude-identify/empty-identification.txt": "0343b137e6c695dde40cc8442bdba70f65008e3e7f116e804f1a36b65983a6e3",
-        "fixtures/vendor-amplitude-identify/manifest.json": "b34180e9ae2dbae63febeed2ad5f0b5e659d6aaa76f5c789d873a94bda41507b",
+        "fixtures/vendor-amplitude-identify/manifest.json": "332a1f5821f1b8ea760a0daf3e450be197a32ea871b9b75c359f904cf5529393",
         "fixtures/vendor-amplitude-identify/missing-api-key.txt": "4375caf75970f39982fcc13f19f7497129092510f41dffe490a0bee6638ce6f1",
         "fixtures/vendor-amplitude-identify/session-depth-cases.json": "1ad826527c11d8a6906551d8b630606f80e26c34d6e22f8280a3d54a833e3c90",
         "fixtures/vendor-amplitude-identify/spec-cases.json": "bd29819cfbd01261a97d19823c898ba3c5f97405c4ec91ebeb7d1ddd750774e0",
-        "crates/pixellint-core/rulepacks/vendor/amplitude-identify.json": "245a9cae825d0078a61efa0507aa859fb5a39f15952b228fde0a1488f98b2343",
+        "crates/pixellint-core/rulepacks/vendor/amplitude-identify.json": "1b0aca9b0133e411d13cb343e80e038edf4ad16ce8f56874c33dbb721d04b258",
         "crates/pixellint-core/src/multipart.rs": "1d72cd9a8fb6afc9fedc7b6270e371bbaaf652fc57ecd9b19a7de196e6d3f196",
         "crates/pixellint-core/src/http.rs": "7e174bf6e78bd86531eb45a5e970497ed65521b0c0ba6e2b1ee6a881cb27b4d3",
         "crates/pixellint-core/src/prepare.rs": "140d375478f8795f2cc93dc1e8ec09af32120cddef7b12a5925aadbaf8675d0b",
@@ -31916,7 +32174,87 @@
         "fixtures/vendor-amplitude-identify/depth-034-multipart-default-ascii-unavailable.request.json": "4f4755044f23b4e6e03aaeb4902269f336753dc07dbcfd7290f5badfb31bcd92",
         "fixtures/vendor-amplitude-identify/depth-034-multipart-repeated-content-type-unavailable.request.json": "c2312db9247e6166144111c8c3f35ad5da32c82b8ab294951676037a7c105967",
         "fixtures/vendor-amplitude-identify/depth-034-multipart-explicit-utf8-overrides-default-ascii.request.json": "fb75825f4a08c115979a9df89db87b3bbb5f0ab417e62fcd8fc4a39cb0f21926",
-        "fixtures/vendor-amplitude-identify/depth-034-multipart-repeated-default-charset-unavailable.request.json": "f185f0aa61573bd9a7a06b9060ac1ef55c04bed3de80e601fffdbafe011cb07f"
+        "fixtures/vendor-amplitude-identify/depth-034-multipart-repeated-default-charset-unavailable.request.json": "f185f0aa61573bd9a7a06b9060ac1ef55c04bed3de80e601fffdbafe011cb07f",
+        "crates/pixellint-core/tests/amplitude_identify_depth_round2.rs": "a05e41b740b717bd1cd7c9aba196100bbd47c2ae3443a0345dc530c4bc0d7a7f",
+        "docs/reviews/amplitude-identify-depth-round2-20261025.json": "246cc0c94e86743772fd2894b206d1015628d33f34bbfa1654c6f452350afddb",
+        "fixtures/vendor-amplitude-identify/depth2-unset-special-key-invalid-4.txt": "ebfcd35d11f891db4fdbecc56ae39a9c0f19fd0c18ba04e69e2bad877ab04471",
+        "fixtures/vendor-amplitude-identify/depth2-unset-multipart-second-row-invalid.request.json": "08c636db489e4336f3e9bcc0fec29977d71129eb3e5538bfe39fc4fe13d90d3d",
+        "fixtures/vendor-amplitude-identify/depth2-unset-special-key-invalid-5.txt": "1b4c12971a8d0bc5508c1e922132010078f361439feadfa2aa829fac2a176c3d",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-setOnce-special-key.txt": "1b2930881150dd327bc298514518c6cc2e4e74bbd83ca503ef48b82ea5fb4b27",
+        "fixtures/vendor-amplitude-identify/depth2-unset-multipart-valid.request.json": "5773b2d3aa1066e1dadb39a135d2dd84421428544604e4d69408436d6b94d89e",
+        "fixtures/vendor-amplitude-identify/depth2-raw-duplicate-unset-invalid-last.txt": "0624afee94e5e3a13df2f68b41c55ee512fa0ac2e217b14c09027f11793d122a",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-empty-operation-object.txt": "3459752482dbb968295ac02921409c8a6b5936e10bfdbe4387277885e8f5d9a4",
+        "fixtures/vendor-amplitude-identify/depth2-selection-path-suffix.txt": "cd8b0ca41af55dfd84659a5dcd962f3d74ed14c2bb495317417d4e8a85993f45",
+        "fixtures/vendor-amplitude-identify/depth2-unset-empty.txt": "8bae5bb71530c0368f0cf998aa5226d5d74bbde02d324d26963e3bc2acb809b7",
+        "fixtures/vendor-amplitude-identify/depth2-unset-special-key-invalid-2.txt": "b4a26ec6bcc34dee4ee581cbc209f5c8fa35ce0237a315457d706c5246701e97",
+        "fixtures/vendor-amplitude-identify/depth2-unset-special-key-invalid-3.txt": "7106a2efe064e8863da6ab59df4474d9013b74c2e650dde3cb0a25ff7b1f4dbd",
+        "fixtures/vendor-amplitude-identify/depth2-unset-form-second-row-invalid.request.json": "2b319e362f73ef632a200047f709e91f8b31212f0a2953a48191e35e1abcb8e3",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-add-special-key.txt": "45ea61f0a81c608a594da6daa3b56a84554b946b1f5c66fe01916e17b2c5dbbe",
+        "fixtures/vendor-amplitude-identify/depth2-unset-batch-first-and-last-invalid.request.json": "bb9d09a30d56d063a119d68842de72db582ce2a5ac54aa67a4d499b4ce8a62d1",
+        "fixtures/vendor-amplitude-identify/depth2-unset-special-key-invalid-1.txt": "de002ea5b116a2e6e800555c5ff9ea941f1a41a41081f2c85c9fbc459ff6e7f4",
+        "fixtures/vendor-amplitude-identify/depth2-unset-special-key-invalid-0.txt": "85ce38a4f50e07b2ce5a1d2e695a764ee45caf34fbb81c7a61c032c9bc621be4",
+        "fixtures/vendor-amplitude-identify/depth2-raw-duplicate-unset-valid-last.txt": "b0370cec2c6d0fefa5ba3d750a4f923cccb5f809655854ce7f9d0043ac679522",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-preInsert-special-key.txt": "a702222812d71ee6c86073b22f3a63cbf21c623db690f2e0aac3f8a784b38af3",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-prepend-special-key.txt": "b553d1499dd6e37e0b4be0e5631d8bc74166cae7468c720c021d0e32f0813764",
+        "fixtures/vendor-amplitude-identify/depth2-unset-empty-operation-object.txt": "f24447a5f946d43adc6eced6a24d804175ba9c0e4c69f101e69e5b531b1106b2",
+        "fixtures/vendor-amplitude-identify/depth2-unset-number-negative.txt": "52a77e8043aa9acbd94404e54b16468df675dd1ce97211e88364bea12e5730b2",
+        "fixtures/vendor-amplitude-identify/depth2-duplicate-query-identification.request.json": "c0a9048197d5c37e89567122989d1bb7fd64d09b2fee8de835c85aac07f629f6",
+        "fixtures/vendor-amplitude-identify/depth2-raw-duplicate-add-valid-last.txt": "63564c75014809d59e25ea97229ba2ee93685242d61696ef09835df57df625da",
+        "fixtures/vendor-amplitude-identify/depth2-query-valid-body-invalid.request.json": "4106f7455411e71906295834cb6211a08d98de480a6830f7185617a6dcd9a733",
+        "fixtures/vendor-amplitude-identify/depth2-unset-empty-object.txt": "dbc6768a43795601968ef4c37218e1eb134403bd969de6946f0bc90d66072137",
+        "fixtures/vendor-amplitude-identify/depth2-unset-object-with-sentinel.txt": "f681cda501880e2f45c85a4bd1278d145cead17a15bc70b2fa19d4f40379af23",
+        "fixtures/vendor-amplitude-identify/depth2-selection-unpublished-sibling.txt": "0064140203a9ff7818d6bb26ff4dd1851f9736e98e9c30a62a15c9ed48d8fbb7",
+        "fixtures/vendor-amplitude-identify/depth2-unset-get-valid.request.json": "9331e85433c8d2477ad1c1ff7a3a53b5cdacbf4945f894605e68c910663b52f6",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-all-key-names-valid.request.json": "97a66fac75e9db6ea0138f3c02bb2be4b460c23c528206091f9007675ecec12f",
+        "fixtures/vendor-amplitude-identify/depth2-unset-arbitrary-key-names.request.json": "15dc25dbaa534dbe553df7b8ea17da2203427a654f65cb43cfb021715c681e4d",
+        "fixtures/vendor-amplitude-identify/depth2-unset-get-second-row-invalid.request.json": "4e1c241f3a7d8f7845613b61397472dcf01e5f8eaa4b7a2c859e75f1e5c3d630",
+        "fixtures/vendor-amplitude-identify/depth2-future-operation-with-known-map-open.txt": "2d5e88479d785a6efa265b3406be46629fc7770d0ad4464bacf5dca1f5f5fee4",
+        "fixtures/vendor-amplitude-identify/depth2-selection-path-trailing-slash.txt": "419f6d1cadc22564310819d4d497fba4f67c850dd3672075efd278081bb45f1a",
+        "fixtures/vendor-amplitude-identify/depth2-official-operation-map-get.request.json": "c4c6f459caf8f2e5acf449e5920f23850cf1ced6d99f28b1035fde1fd89e98dd",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-key-string-invalid-0.txt": "ed8aecc9999056c76150fde0f41db445e0e9b0b08acd2b8ef404591b8e24d777",
+        "fixtures/vendor-amplitude-identify/depth2-duplicate-form-identification.request.json": "314a0168eebe2853a258d23c5b031c92fb7d247187fd390a06daa5bf3985cd18",
+        "fixtures/vendor-amplitude-identify/depth2-selection-analytics-ui.txt": "d5781ab70079bb2d66dcc4b81dac0c27090dc64976aa341c785e705b5551b5dc",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-key-string-invalid-1.txt": "9e90c4c1d88036842f3b008b70bbdd7f200d68dda9c04c34db093aa023c45ef8",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-set-special-key.txt": "15617b4733db9d52a984b78892ce76c04dc3d8ecfbaaa7596762f09c2762d002",
+        "fixtures/vendor-amplitude-identify/depth2-selection-host-lookalike.txt": "da51878d80a7400884adc3757b817d9018b93ee9f34ef71c878d41a8a0372d8d",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-key-string-invalid-2.txt": "7b5c4605f6692320a35527f260d2782c115c0bee09f9a586df921ed410817162",
+        "fixtures/vendor-amplitude-identify/depth2-unset-null.txt": "26fcf532c87c5b37d28cd2e949c53b55bf478aacf44da1d812d6bc55f33289bc",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-postInsert-special-key.txt": "e07fa32fed8c263e1dbe0ba5735f1f8b173e6e3a02d171320c2331a178d0b616",
+        "fixtures/vendor-amplitude-identify/source-cases-depth2.json": "2c646a1d573a4ebb72520862a29d82d0506fcda78e21f89b6dac01750abd79de",
+        "fixtures/vendor-amplitude-identify/depth2-unset-number-zero.txt": "3bfb241292c0a46503db29d38e6267610ad637cb88116c7c906ef7923fd117b1",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-special-key-invalid-2.txt": "43b88e450d68cf79d73c02c958e66259015823fd8c95f5f04dd33f7db538013b",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-key-valid-1.txt": "14737f85444894694da1279c92608ff4f0b34d76fef39f7b3aa9baa85a50b978",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-key-valid-0.txt": "7b90695ed064ade68d1afdec6dd156fc1fb2288c4b3763c64fad12e1b6b779f8",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-special-key-invalid-3.txt": "df253ba292f855d549d57b5052e105b0b3bd9291646f72b3dba6a4b60f8241c5",
+        "fixtures/vendor-amplitude-identify/depth2-official-unset-form.request.json": "5256fa1780065f6d0b8d8083ca8ec8a1183eae2d814704cda1a76eaf48ec6c01",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-unset-special-key.txt": "a049e4b56ba9373030e2e6ab9a5069ac6d04f5e682d2896a632551c66d35c06c",
+        "fixtures/vendor-amplitude-identify/depth2-direct-custom-native-values-open.txt": "9a9cfe54cf9c46893ce115da4d7e979899cc5a3d0fac880b02c477fb6a079642",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-key-valid-2.txt": "f4a93fb40d286a6141f8265c73c56fff9ed9e1fb2eeb3c134583e1d69a596324",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-special-key-invalid-1.txt": "522e89eef9bda7ed438591b104f9ac348607341002c64f5c2691b6f4c0e37506",
+        "fixtures/vendor-amplitude-identify/depth2-selection-legacy-api.txt": "8e1928ce9d68ba25fedfe3ff403af5c3f37674478a91284aba2f67ccd40a79b2",
+        "fixtures/vendor-amplitude-identify/depth2-selection-ingestion-subdomain.txt": "c7a2d1a02bf4072ff46c358b605fbb641228d8379a09639d180c3733e89de0bb",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-special-key-invalid-0.txt": "abc0bd7df93e18477fb1db649f247ad59f0251ec34faad022b9e081e5ddd6163",
+        "fixtures/vendor-amplitude-identify/depth2-unset-optional-absent.txt": "b5b6daa503e5ece761f159c89d80c844617e0b6631981bfc10d30990e507ced2",
+        "fixtures/vendor-amplitude-identify/depth2-unset-empty-array.txt": "f6007fbef13fcf90d07dfbc1169d333f6abfa66de3e2d32ca2ebdbb5b87eb3f2",
+        "fixtures/vendor-amplitude-identify/depth2-selection-cdn.txt": "c8bccda6660774ef5e8e0fd351794a75d9e7e74175087fc992e4b0376bf61812",
+        "fixtures/vendor-amplitude-identify/depth2-direct-key-without-operations-1.txt": "397255c329c92ddb3b570c73c9dfd31637dcc0c72d91a4dc24c9774b5488d0f3",
+        "fixtures/vendor-amplitude-identify/depth2-unset-double-dash.txt": "b27aef68ffed6c1d0b47e4680feb009ad31e704bd8eff270da72f2b7efa86ffb",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-special-key-invalid-4.txt": "2408e5836325738cd0d1ceb6c42670ffb1caea72b61d1fe73843e048588ef17e",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-special-key-invalid-5.txt": "1acd6f31168dacef012c270dd3417719219e7fba6dd5cd05ace2373a182c5a39",
+        "fixtures/vendor-amplitude-identify/depth2-direct-key-without-operations-0.txt": "68a30d4661911d5343a579b059388ebb809834b66604ddddfc42d5e57c3fb923",
+        "fixtures/vendor-amplitude-identify/depth2-direct-key-without-operations-2.txt": "0766967d1576603a00d8c7b115ec347ef146728b0ea25fb7a49e41f79a6bc9ec",
+        "fixtures/vendor-amplitude-identify/depth2-unset-space-before.txt": "c2c1a10f0167fbf33422b4ac059d7da753539b1d4c4c6a2d67a6b65c475b61e5",
+        "fixtures/vendor-amplitude-identify/depth2-unset-form-valid.request.json": "4519d8d759e0ea5aa5d72b395644bb9be216d82312d558421f3cbad557377b9e",
+        "fixtures/vendor-amplitude-identify/depth2-unset-array-of-sentinel.txt": "8a07c30e2dbfd4e0ec300e439178232cb925995068949a178f84caf9235f757a",
+        "fixtures/vendor-amplitude-identify/depth2-numeric-second-row-invalid.request.json": "cd766a1c54a3f4f691cf90303f838c2f76ee370e84f7ff92155a146c1adddc19",
+        "fixtures/vendor-amplitude-identify/depth2-query-invalid-body-valid.request.json": "b3d0adf7090376e212c9fab72de36514a6f2d9e943ca265613b66fc82463babc",
+        "fixtures/vendor-amplitude-identify/depth2-unset-unicode-minus.txt": "383d5a263fe7b9c3a7f4e03c0639b1e9f226b34bd9c5bf202e40ff92347dc94d",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-remove-special-key.txt": "00dbe278da9074e65e264478c43ddaec4083b3f8fd0c90dab218b39042d893a8",
+        "fixtures/vendor-amplitude-identify/depth2-raw-duplicate-add-invalid-last.txt": "bde85a4c8e367e2e5f4b549519b027f8c9c4582f747f4f4eac2776f159c7d0f0",
+        "fixtures/vendor-amplitude-identify/depth2-unset-true.txt": "b16617274f02c7950c34d5defcd37a5ac7ea79a0049c3a0d3120a17ff83c1187",
+        "fixtures/vendor-amplitude-identify/depth2-mixing-append-special-key.txt": "749dfbb39f1b5e01e4f7690917b65fbc5529130fa620bfc607257f8f88f17e5c",
+        "fixtures/vendor-amplitude-identify/depth2-official-basic-form.request.json": "cada846ae0b4c435c098f811999c91dc9e3115877568e2a05fa5e258f8355fa7",
+        "fixtures/vendor-amplitude-identify/depth2-unset-space-after.txt": "3bc9972c38560765df1fc40e18abe3f04edc62a80d556bce7faee5c8afe03de6"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -33591,8 +33929,9 @@
       ],
       "manifest_path": "crates/pixellint-core/rulepacks/vendor/amplitude-identify.json",
       "current_match": {
-        "host_suffixes": [
-          "amplitude.com"
+        "hosts": [
+          "api2.amplitude.com",
+          "api.eu.amplitude.com"
         ],
         "paths": [
           "/identify"
@@ -33809,10 +34148,10 @@
             },
             {
               "name": "user_properties.$add.number",
-              "description": "The vendor documents `user_properties.$add.number` in the request contract.",
+              "description": "Every immediate property value in $add is numeric. This applies the documented operation semantics to arbitrary JSON member names, including empty names and line breaks.",
               "doc": "https://amplitude.com/docs/apis/analytics/identify",
               "json_type": "number",
-              "name_pattern": "^.+$",
+              "name_pattern": "(?s)^.*$",
               "name_pattern_parent": "user_properties.$add",
               "allow_empty": true
             },
@@ -33833,7 +34172,7 @@
             },
             {
               "name": "direct_property",
-              "name_pattern": "^[^$].*$",
+              "name_pattern": "(?s)^(?:[^$].*|)$",
               "name_pattern_parent": "user_properties",
               "requirement": "forbidden",
               "condition": {
@@ -33877,8 +34216,24 @@
                   }
                 ]
               },
-              "description": "When any operation is used, direct properties must be placed inside $set.",
+              "description": "When any known operation is used, direct properties must be placed inside $set. The guard includes empty and multiline custom names, while leaving unknown operation-like names beginning with $ open.",
               "doc": "https://amplitude.com/docs/apis/analytics/identify"
+            },
+            {
+              "name": "user_properties.$unset.value",
+              "name_pattern": "(?s)^.*$",
+              "name_pattern_parent": "user_properties.$unset",
+              "json_type": "string",
+              "format": {
+                "kind": "enum",
+                "values": [
+                  "-"
+                ]
+              },
+              "description": "Amplitude explicitly requires the string \"-\" as the value of every property to clear with $unset. Property names remain unconstrained.",
+              "fix_hint": "Set every $unset property value to the string \"-\".",
+              "doc": "https://amplitude.com/docs/apis/analytics/identify#clear-a-user-property-with-unset",
+              "severity": "error"
             }
           ],
           "rules": [
@@ -33992,6 +34347,146 @@
           "crates/pixellint-core/tests/directory_observed_routes.rs",
           "crates/pixellint-core/tests/uncontracted_verification_routes.rs"
         ]
+      },
+      "depth_round2_20261025": {
+        "id": "vendor/amplitude-identify",
+        "manifest_path": "crates/pixellint-core/rulepacks/vendor/amplitude-identify.json",
+        "manifest_sha256": "1b0aca9b0133e411d13cb343e80e038edf4ad16ce8f56874c33dbb721d04b258",
+        "match": {
+          "hosts": [
+            "api2.amplitude.com",
+            "api.eu.amplitude.com"
+          ],
+          "paths": [
+            "/identify"
+          ]
+        },
+        "new_source_cases": 77,
+        "new_case_categories": {
+          "official": 3,
+          "unset": 22,
+          "numeric": 14,
+          "mixing": 14,
+          "transport": 16,
+          "selection": 8
+        },
+        "total_golden_cases": 80,
+        "new_contracts": [
+          "Each present $unset child has native JSON string type and exactly the literal value \"-\". The operation remains optional; an empty operation dictionary remains open."
+        ],
+        "corrected_contracts": [
+          "Every $add child name is matched with a dotall any-key regex, including empty and multiline names. Numeric value semantics and existing custom-name acceptance scope are unchanged.",
+          "Existing operation-mixing prohibition now covers empty and multiline direct custom names. Unknown operation-like names beginning with $ remain open.",
+          "Selector now uses exactly api2.amplitude.com and api.eu.amplitude.com on /identify, as explicitly documented. The previous amplitude.com suffix lacked an endpoint-specific source binding. Existing directory rows and ownership are unchanged; no legacy retirement is claimed."
+        ],
+        "residuals": [
+          "Group Identify aggregate 1024-property accounting does not define operation-container versus leaf counts or repeated-key accounting. Existing per-map bounds remain necessary-only checks.",
+          "Group Identify documentation says 1 mb without resolving byte units and raw-versus-serialized accounting. No request byte limit is added.",
+          "No Identify operation-mixing or unset-sentinel restriction is transferred to Group Identify.",
+          "Account credentials, Accounts entitlement, user state, rate limits and eventual receiver acceptance require external context.",
+          "Unknown future operation-like names beginning with $ remain open wherever the baseline left them open. Custom property values outside constrained operations remain open."
+        ],
+        "validation": {
+          "checked_at": "2026-10-25T23:13:46.454804+00:00",
+          "focused": {
+            "command": [
+              "cargo",
+              "test",
+              "-p",
+              "pixellint-core",
+              "--test",
+              "amplitude_identify_depth_round2"
+            ],
+            "status": "passed",
+            "tests": 7,
+            "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-focused.log"
+          },
+          "golden_and_existing_regressions": {
+            "command": [
+              "cargo",
+              "test",
+              "-p",
+              "pixellint-core",
+              "--test",
+              "rulepack_golden",
+              "--test",
+              "analytics_depth",
+              "--test",
+              "depth_034_multipart_contracts",
+              "--test",
+              "pixel_collectors_058"
+            ],
+            "status": "passed",
+            "golden_tests": 5,
+            "existing_regression_tests": 15,
+            "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-golden-and-existing-regressions.log"
+          },
+          "additional_checks": [
+            {
+              "name": "clippy",
+              "command": [
+                "cargo",
+                "clippy",
+                "-p",
+                "pixellint-core",
+                "--test",
+                "amplitude_identify_depth_round2",
+                "--test",
+                "analytics_depth",
+                "--test",
+                "depth_034_multipart_contracts",
+                "--test",
+                "pixel_collectors_058",
+                "--test",
+                "rulepack_golden",
+                "--",
+                "-D",
+                "warnings"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 2.45,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-clippy.log",
+              "status": "passed"
+            },
+            {
+              "name": "fmt",
+              "command": [
+                "cargo",
+                "fmt",
+                "--all",
+                "--check"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.458,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-fmt.log",
+              "status": "passed"
+            },
+            {
+              "name": "review-freshness",
+              "command": [
+                "python3",
+                "tools/check-rulepack-depth.py"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.664,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-review-freshness.log",
+              "status": "passed"
+            },
+            {
+              "name": "diff-check",
+              "command": [
+                "git",
+                "diff",
+                "--check"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.216,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-diff-check.log",
+              "status": "passed"
+            }
+          ],
+          "audit_preservation": "All global metadata and all 212 unrelated pack entries unchanged."
+        }
       }
     },
     {

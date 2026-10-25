@@ -2,12 +2,13 @@
   "id": "vendor/amplitude-identify",
   "display_name": "Amplitude Identify API",
   "vendor": "amplitude",
-  "description": "Amplitude Identify API on /identify. Amplitude documents api_key and identification as required, on the query for GET or as form fields for POST. HTTP V2 events are vendor/amplitude. Group identify is vendor/amplitude-group-identify.",
+  "description": "Amplitude Identify API on exact /identify at the documented US and EU ingestion hosts. Amplitude documents api_key and identification as required, on the query for GET or as form fields for POST. HTTP V2 events are vendor/amplitude. Group identify is vendor/amplitude-group-identify.",
   "source_level": "official_vendor",
   "docs": "https://amplitude.com/docs/apis/analytics/identify",
   "match": {
-    "host_suffixes": [
-      "amplitude.com"
+    "hosts": [
+      "api2.amplitude.com",
+      "api.eu.amplitude.com"
     ],
     "paths": [
       "/identify"
@@ -247,10 +248,10 @@
         },
         {
           "name": "user_properties.$add.number",
-          "description": "The vendor documents `user_properties.$add.number` in the request contract.",
+          "description": "Every immediate property value in $add is numeric. This applies the documented operation semantics to arbitrary JSON member names, including empty names and line breaks.",
           "doc": "https://amplitude.com/docs/apis/analytics/identify",
           "json_type": "number",
-          "name_pattern": "^.+$",
+          "name_pattern": "(?s)^.*$",
           "name_pattern_parent": "user_properties.$add",
           "allow_empty": true
         },
@@ -271,7 +272,7 @@
         },
         {
           "name": "direct_property",
-          "name_pattern": "^[^$].*$",
+          "name_pattern": "(?s)^(?:[^$].*|)$",
           "name_pattern_parent": "user_properties",
           "requirement": "forbidden",
           "condition": {
@@ -315,8 +316,24 @@
               }
             ]
           },
-          "description": "When any operation is used, direct properties must be placed inside $set.",
+          "description": "When any known operation is used, direct properties must be placed inside $set. The guard includes empty and multiline custom names, while leaving unknown operation-like names beginning with $ open.",
           "doc": "https://amplitude.com/docs/apis/analytics/identify"
+        },
+        {
+          "name": "user_properties.$unset.value",
+          "name_pattern": "(?s)^.*$",
+          "name_pattern_parent": "user_properties.$unset",
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "-"
+            ]
+          },
+          "description": "Amplitude explicitly requires the string \"-\" as the value of every property to clear with $unset. Property names remain unconstrained.",
+          "fix_hint": "Set every $unset property value to the string \"-\".",
+          "doc": "https://amplitude.com/docs/apis/analytics/identify#clear-a-user-property-with-unset",
+          "severity": "error"
         }
       ],
       "rules": [

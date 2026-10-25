@@ -1,0 +1,220 @@
+{
+  "reviewed_at": "2026-10-25T23:13:46.454804+00:00",
+  "owner": "lane02",
+  "spec_complete": false,
+  "scope": "Same-endpoint declarative corrections to existing Amplitude Identify and Group Identify packs. No ingestion requests, core algorithms, new endpoint families or aggregate byte/property guesses.",
+  "sources_read": [
+    {
+      "url": "https://amplitude.com/docs/apis/analytics/identify.md",
+      "final_url": "https://amplitude.com/docs/apis/analytics/identify.md",
+      "title": "Identify API",
+      "primary_level": "official_vendor",
+      "access_status": 200,
+      "fetched_at": "2026-10-25T23:03:06.599520+00:00",
+      "sha256": "382f7181526a5043d2f98ba592ff36a65884fd5da096f7bcabefb22a8a3b4a4a",
+      "bytes": 9753,
+      "cache_path": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-sources/amplitude-identify.md",
+      "endpoint_scope": "/identify"
+    },
+    {
+      "url": "https://amplitude.com/docs/apis/analytics/group-identify.md",
+      "final_url": "https://amplitude.com/docs/apis/analytics/group-identify.md",
+      "title": "Group Identify API",
+      "primary_level": "official_vendor",
+      "access_status": 200,
+      "fetched_at": "2026-10-25T23:03:07.046151+00:00",
+      "sha256": "76a4f2e10032019f97623316fd9298ba230fd1420f7a3894eab632053c548f50",
+      "bytes": 3633,
+      "cache_path": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-sources/amplitude-group-identify.md",
+      "endpoint_scope": "/groupidentify"
+    }
+  ],
+  "source_policy": "Current official endpoint prose establishes the new Identify sentinel and exact ingestion host scope. Numeric key matching applies existing operation semantics to arbitrary member names. Positive vendor examples and independently authored boundary expectations preceded engine validation.",
+  "capture_reader_limits": [
+    "URL identification names take precedence over the same form-body name in existing fallback extraction. Repeated URL/form pairs within the selected carrier remain separately observable.",
+    "The existing JSON reader resolves duplicate concrete member paths to the last scalar. Earlier duplicate JSON values are not checked independently. This does not establish receiver duplicate policy.",
+    "Unresolved macro values retain existing scalar-check deferral. Fine-grained target offsets may be unavailable after complete-capture query remapping; field evidence remains available."
+  ],
+  "remaining_gaps": [
+    "Group Identify aggregate 1024-property accounting does not define operation-container versus leaf counts or repeated-key accounting. Existing per-map bounds remain necessary-only checks.",
+    "Group Identify documentation says 1 mb without resolving byte units and raw-versus-serialized accounting. No request byte limit is added.",
+    "No Identify operation-mixing or unset-sentinel restriction is transferred to Group Identify.",
+    "Account credentials, Accounts entitlement, user state, rate limits and eventual receiver acceptance require external context.",
+    "Unknown future operation-like names beginning with $ remain open wherever the baseline left them open. Custom property values outside constrained operations remain open."
+  ],
+  "packs": [
+    {
+      "id": "vendor/amplitude-identify",
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/amplitude-identify.json",
+      "manifest_sha256": "1b0aca9b0133e411d13cb343e80e038edf4ad16ce8f56874c33dbb721d04b258",
+      "match": {
+        "hosts": [
+          "api2.amplitude.com",
+          "api.eu.amplitude.com"
+        ],
+        "paths": [
+          "/identify"
+        ]
+      },
+      "new_source_cases": 77,
+      "new_case_categories": {
+        "official": 3,
+        "unset": 22,
+        "numeric": 14,
+        "mixing": 14,
+        "transport": 16,
+        "selection": 8
+      },
+      "total_golden_cases": 80,
+      "new_contracts": [
+        "Each present $unset child has native JSON string type and exactly the literal value \"-\". The operation remains optional; an empty operation dictionary remains open."
+      ],
+      "corrected_contracts": [
+        "Every $add child name is matched with a dotall any-key regex, including empty and multiline names. Numeric value semantics and existing custom-name acceptance scope are unchanged.",
+        "Existing operation-mixing prohibition now covers empty and multiline direct custom names. Unknown operation-like names beginning with $ remain open.",
+        "Selector now uses exactly api2.amplitude.com and api.eu.amplitude.com on /identify, as explicitly documented. The previous amplitude.com suffix lacked an endpoint-specific source binding. Existing directory rows and ownership are unchanged; no legacy retirement is claimed."
+      ],
+      "residuals": [
+        "Group Identify aggregate 1024-property accounting does not define operation-container versus leaf counts or repeated-key accounting. Existing per-map bounds remain necessary-only checks.",
+        "Group Identify documentation says 1 mb without resolving byte units and raw-versus-serialized accounting. No request byte limit is added.",
+        "No Identify operation-mixing or unset-sentinel restriction is transferred to Group Identify.",
+        "Account credentials, Accounts entitlement, user state, rate limits and eventual receiver acceptance require external context.",
+        "Unknown future operation-like names beginning with $ remain open wherever the baseline left them open. Custom property values outside constrained operations remain open."
+      ]
+    },
+    {
+      "id": "vendor/amplitude-group-identify",
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/amplitude-group-identify.json",
+      "manifest_sha256": "0c26503d3648d7be428c49ca3b354d5c42e0a2e0e37e2261d1189313234529b8",
+      "match": {
+        "paths": [
+          "/groupidentify"
+        ],
+        "hosts": [
+          "api2.amplitude.com",
+          "api.eu.amplitude.com"
+        ]
+      },
+      "new_source_cases": 22,
+      "new_case_categories": {
+        "official": 1,
+        "numeric": 14,
+        "mixing": 4,
+        "transport": 3
+      },
+      "total_golden_cases": 42,
+      "new_contracts": [],
+      "corrected_contracts": [
+        "Every $add child name is matched with a dotall any-key regex, including empty and multiline names. Numeric value semantics and existing custom-name acceptance scope are unchanged."
+      ],
+      "residuals": [
+        "Group Identify aggregate 1024-property accounting does not define operation-container versus leaf counts or repeated-key accounting. Existing per-map bounds remain necessary-only checks.",
+        "Group Identify documentation says 1 mb without resolving byte units and raw-versus-serialized accounting. No request byte limit is added.",
+        "No Identify operation-mixing or unset-sentinel restriction is transferred to Group Identify.",
+        "Account credentials, Accounts entitlement, user state, rate limits and eventual receiver acceptance require external context.",
+        "Unknown future operation-like names beginning with $ remain open wherever the baseline left them open. Custom property values outside constrained operations remain open."
+      ]
+    }
+  ],
+  "validation": {
+    "checked_at": "2026-10-25T23:13:46.454804+00:00",
+    "focused": {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "pixellint-core",
+        "--test",
+        "amplitude_identify_depth_round2"
+      ],
+      "status": "passed",
+      "tests": 7,
+      "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-focused.log"
+    },
+    "golden_and_existing_regressions": {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "pixellint-core",
+        "--test",
+        "rulepack_golden",
+        "--test",
+        "analytics_depth",
+        "--test",
+        "depth_034_multipart_contracts",
+        "--test",
+        "pixel_collectors_058"
+      ],
+      "status": "passed",
+      "golden_tests": 5,
+      "existing_regression_tests": 15,
+      "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-golden-and-existing-regressions.log"
+    },
+    "additional_checks": [
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "-p",
+          "pixellint-core",
+          "--test",
+          "amplitude_identify_depth_round2",
+          "--test",
+          "analytics_depth",
+          "--test",
+          "depth_034_multipart_contracts",
+          "--test",
+          "pixel_collectors_058",
+          "--test",
+          "rulepack_golden",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.45,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-clippy.log",
+        "status": "passed"
+      },
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.458,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-fmt.log",
+        "status": "passed"
+      },
+      {
+        "name": "review-freshness",
+        "command": [
+          "python3",
+          "tools/check-rulepack-depth.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.664,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-review-freshness.log",
+        "status": "passed"
+      },
+      {
+        "name": "diff-check",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.216,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round2-20261025/lane-02-diff-check.log",
+        "status": "passed"
+      }
+    ],
+    "audit_preservation": "All global metadata and all 212 unrelated pack entries unchanged."
+  }
+}
