@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 206 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 211 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -189,6 +189,28 @@ Matcher: `{"host_suffixes":["adform.net"],"path_prefixes":["/videoad","/C/","/ad
 | `C` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners) |
 | `cpdir` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners) |
 | `urlappend` | optional | `{"format":{"kind":"regex","pattern":"^[?&].+"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/9739143043345-Overview-of-Supported-Ad-Serving-Macros) |
+
+## `vendor/adglare-native-events`
+
+Advisory native event POST and captured entity-presence checks on the independently published try.engine.adglare.net host at exact /event. Populated data query carriers use a separate generic loader fallback and are excluded. Tokens, MIME and body encoding remain opaque; /event/{token}, other tenants, native ad requests and current receiver acceptance are outside this profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/adglare-native-events.json).
+
+Matcher: `{"hosts":["try.engine.adglare.net"],"paths":["/event"],"query_params_none":["data"],"artifact_kinds":["request"]}`.
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"allow_empty":false,"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://www.adglare.com/user-guide/native-ads) |
+| `body_encoding` | optional | `{"allow_empty":true,"severity":"warning","format_severity":"warning"}` | [official_vendor](https://www.adglare.com/user-guide/native-ads) |
+| `entity_body_bytes` | optional | `{"allow_empty":true,"severity":"warning","format_severity":"warning","minimum":1}` | [official_vendor](https://www.adglare.com/user-guide/native-ads) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.adglare-native-events.http.payload_absent` | `{"kind":"forbid_value_pattern","params":["body_encoding"],"pattern":"^none$"}` | warning | [official_vendor](https://www.adglare.com/user-guide/native-ads) |
 
 ## `vendor/adjust`
 
@@ -1425,6 +1447,61 @@ Context: `{}`.
 | `body.event` | required | `{"json_type":"object","condition":{"kind":"value_pattern","param":"path","pattern":"/v2/interact$"}}` | [official_vendor](https://developer.adobe.com/data-collection-apis/docs/endpoints/interact/) |
 | `body.events` | required | `{"json_type":"array","condition":{"kind":"value_pattern","param":"path","pattern":"/(?:v[12]/collect\|v1/interact)$"},"min_items":1}` | [official_vendor](https://developer.adobe.com/data-collection-apis/docs/endpoints/collect/) |
 | `body.consent` | required | `{"json_type":"array","min_items":1,"condition":{"kind":"value_pattern","param":"path","pattern":"/v1/privacy/set-consent$"}}` | [official_vendor](https://github.com/adobe/alloy/blob/87b5173f53398a4ad0294fe93cd9fdd6b0643fbd/packages/core/src/components/Consent/validateSetConsentOptions.js) |
+
+## `vendor/adriver-vast-counter`
+
+Warning-only completeness and known event-pair consistency for the documented bt=76 VAST-counter profile. Other banner types, ad serving, click URLs and receiver acceptance remain outside this pack.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/adriver-vast-counter.json).
+
+Matcher: `{"hosts":["ad.adriver.ru","ev.adriver.ru"],"paths":["/cgi-bin/event.cgi"],"query_params_values":[{"name":"bt","values":["76"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `bt` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `sid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `ad` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `pid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `bid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `bn` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `type` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `custom` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `rnd` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `tuid` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/partners/avito-ad) |
+| `exss` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.adriver.ru/partners/avito-ad) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.adriver-vast-counter.event.type_0.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["0"],"param":"custom","value":"Impression","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["0"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_1.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["1"],"param":"custom","value":"creativeView","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["1"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_2.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["2"],"param":"custom","value":"start","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["2"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_3.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["3"],"param":"custom","value":"midpoint","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["3"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_4.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["4"],"param":"custom","value":"firstQuartile","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["4"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_5.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["5"],"param":"custom","value":"thirdQuartile","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["5"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_6.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["6"],"param":"custom","value":"complete","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["6"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_7.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["7"],"param":"custom","value":"mute","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["7"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_8.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["8"],"param":"custom","value":"unmute","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["8"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_9.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["9"],"param":"custom","value":"pause","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["9"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_10.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["10"],"param":"custom","value":"rewind","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["10"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_11.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["11"],"param":"custom","value":"resume","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["11"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_12.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["12"],"param":"custom","value":"expand","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["12"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_13.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["13"],"param":"custom","value":"collapse","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["13"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_14.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["14"],"param":"custom","value":"acceptInvitation","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["14"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_15.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["15"],"param":"custom","value":"close","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["15"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_16.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["16"],"param":"custom","value":"fullscreen","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["16"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_17.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["17"],"param":"custom","value":"exitFullscreen","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["17"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_18.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["18"],"param":"custom","value":"skip","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["18"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+| `vendor.adriver-vast-counter.event.type_19.custom_mismatch` | `{"kind":"value_when","when":"type","equals":["19"],"param":"custom","value":"progress","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["type"],"values":["19"]},{"kind":"all_values_in","params":["custom"],"values":["Impression","creativeView","start","midpoint","firstQuartile","thirdQuartile","complete","mute","unmute","pause","rewind","resume","expand","collapse","acceptInvitation","close","fullscreen","exitFullscreen","skip","progress"]}]}}` | warning | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://www.adriver.ru/doc/audit/adriver-counters/VAST-counter/) |
 
 ## `vendor/adroll-image`
 
@@ -2691,6 +2768,27 @@ Context: `{}`.
 | `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
 | `content_type` | required | `{"json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
 | `body` | required | `{"json_type":"object"}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
+
+## `vendor/aniview-default-track`
+
+Advisory transport checks for captured requests on the pinned SDK default track1.aniview.com/track endpoint. The producer emits GET or POST, and an object body containing e uses POST. Image queries, opaque strings and buffered arrays retain their source behavior. No field grammar, event enum, MIME, receiver acceptance or track4/avh equivalence is inferred.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/aniview-default-track.json).
+
+Matcher: `{"hosts":["track1.aniview.com"],"paths":["/track"],"artifact_kinds":["request"]}`.
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"allow_empty":false,"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["GET","POST"]}}` | [official_template](https://player.aniview.com/script/ad-manager/stable/umd/ad-manager.js) |
+| `body.e` | optional | `{"allow_empty":true,"severity":"warning","format_severity":"warning"}` | [official_template](https://player.aniview.com/script/ad-manager/stable/umd/ad-manager.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.aniview-default-track.http.payload_requires_post` | `{"kind":"value_when","when":"method","equals":["GET"],"param":"method","value":"POST","condition":{"kind":"exists","param":"body.e"}}` | warning | [official_template](https://player.aniview.com/script/ad-manager/stable/umd/ad-manager.js) |
 
 ## `vendor/appsflyer-impression`
 
@@ -6227,6 +6325,23 @@ Path captures: `/(?<hub_id>[0-9]+)\.js`. Captured values take precedence over qu
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `hub_id` | required | `{"format":{"kind":"integer"}}` | [official_template](https://developers.hubspot.com/docs/api-reference/latest/account/settings/tracking-code/overview) |
+
+## `vendor/hybrid-dss-pixel`
+
+Advisory checks for the exact documented DSS trackapi2 pixel template and visitor-ID prose. Management authentication, entity requirements, dsa-eu and SSP collectors are excluded.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/hybrid-dss-pixel.json).
+
+Matcher: `{"hosts":["dss.hybrid.ai"],"paths":["/pixel/trackapi2"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pid` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://hybrid.ai/hybrid-api/) |
+| `txid` | recommended | `{"severity":"warning","format":{"kind":"hex","length":20}}` | [official_vendor](https://hybrid.ai/hybrid-api/) |
+| `evt` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://hybrid.ai/hybrid-api/) |
+| `cnt` | optional | `{"severity":"warning","allow_empty":true}` | [official_template](https://hybrid.ai/hybrid-api/) |
 
 ## `vendor/ias-display-pixel`
 
@@ -12721,6 +12836,58 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `method` | optional | `{"format":{"kind":"enum","values":["GET","POST"]},"severity":"warning"}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
 | `content_type` | recommended | `{"format":{"kind":"enum","values":["application/x-www-form-urlencoded"]},"severity":"warning","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_template](https://www.redditstatic.com/ads/pixel.js) |
+
+## `vendor/remerge-event`
+
+Exact documented event and BI forwarding GET endpoint. Scoped warning checks preserve open identity applicability and metadata strings; regional creative and video callbacks are excluded.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/remerge-event.json).
+
+Matcher: `{"hosts":["remerge.events"],"paths":["/event"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `app_id` | required | `{"severity":"warning"}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `event` | required | `{"severity":"warning"}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `partner` | required | `{"severity":"warning"}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `key` | required | `{"severity":"warning"}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `ts` | optional | `{"severity":"warning","format":{"kind":"integer","min_digits":10,"max_digits":10},"allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `idfa` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"},"allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `aaid` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"},"allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `idfv` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `data` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `non_app_event` | optional | `{"severity":"warning","format":{"kind":"enum","values":["true","false"]},"allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6055918247580-BI-Data-Forwarding) |
+| `country` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[A-Za-z]{2}$"},"allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `currency` | optional | `{"severity":"warning","format":{"kind":"regex","pattern":"^[A-Za-z]{3}$"},"allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `device_name` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `os_name` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `os_version` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `app_version` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `user` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `revenue` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `revenue_float` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `operator` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `zipcode` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `city` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `country_subdivision` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `partner_device_id` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `ip` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `language` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+| `sdk` | optional | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.remerge-event.https_required` | `{"kind":"require_https"}` | warning | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"severity":"warning","format":{"kind":"enum","values":["GET"]}}` | [official_vendor](https://help.remerge.io/hc/en-us/articles/6078711583260-Event-Data-Forwarding) |
 
 ## `vendor/rtbhouse-gtm-tags`
 
