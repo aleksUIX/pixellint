@@ -1,0 +1,529 @@
+{
+  "id": "vendor/iqm-segment-open",
+  "reviewed_at": "2026-10-26T19:30:42.865086+00:00",
+  "spec_complete": false,
+  "source_level": "official_template",
+  "match": {
+    "hosts": [
+      "postback.iqm.com"
+    ],
+    "paths": [
+      "/open"
+    ],
+    "query_params_values": [
+      {
+        "name": "pid",
+        "values": [
+          "segment"
+        ]
+      }
+    ]
+  },
+  "field_inventory": [
+    {
+      "name": "pixel_id",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The Segment configuration declares a pixel_id setting and appends it to the query. This is sender completeness advice. Identifier grammar, blank-slot acceptance and account validity remain unestablished.",
+      "fix_hint": "Compare with the Pixel ID configured in the Segment IQM destination; preserve the original provisioned value."
+    }
+  ],
+  "source_inventory": {
+    "url": [
+      {
+        "name": "pixel_id",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "description": "The Segment configuration declares a pixel_id setting and appends it to the query. This is sender completeness advice. Identifier grammar, blank-slot acceptance and account validity remain unestablished.",
+        "fix_hint": "Compare with the Pixel ID configured in the Segment IQM destination; preserve the original provisioned value."
+      }
+    ],
+    "http": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST",
+            "DELETE"
+          ]
+        },
+        "description": "The pinned postEvent action uses POST and the deletion hook uses DELETE. Other methods differ from this sender profile; receiver acceptance is not asserted.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      },
+      {
+        "name": "content_type",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "description": "Both pinned operations declare application/json. This checks source transport consistency, not a universal receiver media-type rule.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      {
+        "name": "query.pixel_id",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "description": "The source places pixel_id in the URL query. A body or form field cannot satisfy that emitted query slot. Values and duplicate arbitration stay open.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      },
+      {
+        "name": "body",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The postEvent sender serializes its mapped payload object, including {} when no optional data is mapped. DELETE payload shape is not constrained.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      {
+        "name": "body.data",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The postEvent action declares optional object data. Omission and {} are native alternatives. Nested keys and values remain open. Mapped null/empty values can be removed by the framework before serialization; no receiver null policy is claimed.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      }
+    ],
+    "selection_markers": [
+      {
+        "name": "pid",
+        "values": [
+          "segment"
+        ]
+      }
+    ],
+    "unvalidated_published_fields": [
+      "Explicit HOST header mapping",
+      "DELETE payload structure",
+      "Pixel ID account validity"
+    ]
+  },
+  "rules": [],
+  "transport": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST",
+            "DELETE"
+          ]
+        },
+        "description": "The pinned postEvent action uses POST and the deletion hook uses DELETE. Other methods differ from this sender profile; receiver acceptance is not asserted.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      },
+      {
+        "name": "content_type",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "description": "Both pinned operations declare application/json. This checks source transport consistency, not a universal receiver media-type rule.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      {
+        "name": "query.pixel_id",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "description": "The source places pixel_id in the URL query. A body or form field cannot satisfy that emitted query slot. Values and duplicate arbitration stay open.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      },
+      {
+        "name": "body",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The postEvent sender serializes its mapped payload object, including {} when no optional data is mapped. DELETE payload shape is not constrained.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      {
+        "name": "body.data",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The postEvent action declares optional object data. Omission and {} are native alternatives. Nested keys and values remain open. Mapped null/empty values can be removed by the framework before serialization; no receiver null policy is claimed.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      }
+    ]
+  },
+  "source_receipts": [
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts",
+      "path": "packages/destination-actions/src/destinations/iqm/index.ts",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:48.912463+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-index.ts",
+      "sha256": "e870bceaafe82eb357f3fed693c0be7ab44511fb6bf4670dcc7674ac11a84e71",
+      "bytes": 1231,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts",
+      "path": "packages/destination-actions/src/destinations/iqm/postEvent/index.ts",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:48.912792+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-postEvent-index.ts",
+      "sha256": "04ab8d55934ed71abc881be8545763c15834f4bb3b2d88438b10c447f155b745",
+      "bytes": 866,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/generated-types.ts",
+      "path": "packages/destination-actions/src/destinations/iqm/generated-types.ts",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:48.912868+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-generated-types.ts",
+      "sha256": "50ad31405a99391794217a3760796d33907ef784e6bd3941ecad3b9cc0281d01",
+      "bytes": 150,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/generated-types.ts",
+      "path": "packages/destination-actions/src/destinations/iqm/postEvent/generated-types.ts",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:48.912923+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-postEvent-generated-types.ts",
+      "sha256": "83f36c60552d3a39d61ef96c515b017f02f50f3cff2355315f083767128627e0",
+      "bytes": 159,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/metadata.json",
+      "path": "packages/destination-actions/src/destinations/iqm/metadata.json",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:49.144851+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-metadata.json",
+      "sha256": "80dad2b25ab09d9bcee93975190281efd492456f4dc254962b982cc556bac510",
+      "bytes": 1859,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/__tests__/index.test.ts",
+      "path": "packages/destination-actions/src/destinations/iqm/__tests__/index.test.ts",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:49.151758+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-__tests__-index.test.ts",
+      "sha256": "15e83be35f9168dc50414b20048bb2f6f9691e0f250d9e18f119fbbbd9b4ca69",
+      "bytes": 608,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/__tests__/snapshot.test.ts",
+      "path": "packages/destination-actions/src/destinations/iqm/__tests__/snapshot.test.ts",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:49.161080+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-__tests__-snapshot.test.ts",
+      "sha256": "dfd7e56aba2e5b8e110f7e4c6c770bd979cba2d62f21eee34ccd78b5b774f995",
+      "bytes": 2391,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/__tests__/index.test.ts",
+      "path": "packages/destination-actions/src/destinations/iqm/postEvent/__tests__/index.test.ts",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:49.161989+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-postEvent-__tests__-index.test.ts",
+      "sha256": "ddd35bf5ad3be35d623da5cd10faa175e60cdb8b82420c854fdf9ee3ee031cfe",
+      "bytes": 808,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/__tests__/snapshot.test.ts",
+      "path": "packages/destination-actions/src/destinations/iqm/postEvent/__tests__/snapshot.test.ts",
+      "repository": "segmentio/action-destinations",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "checked_at": "2026-10-26T19:16:49.364230+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-postEvent-__tests__-snapshot.test.ts",
+      "sha256": "fc114da58d6c501b6407821f8e03d68d062d255a07e05c3b40072038ce543229",
+      "bytes": 2177,
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/core/src/schema-validation.ts",
+      "path": "packages/core/src/schema-validation.ts",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "repository": "segmentio/action-destinations",
+      "checked_at": "2026-10-26T19:17:47.737489+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-framework-packages-core-src-schema-validation.ts",
+      "status": 200,
+      "bytes": 2668,
+      "sha256": "e32179f838e2091dcd3894f4cab6fa2143412c40804d69eb636fed53b888cd72"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/core/src/remove-empty-values.ts",
+      "path": "packages/core/src/remove-empty-values.ts",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "repository": "segmentio/action-destinations",
+      "checked_at": "2026-10-26T19:17:47.737671+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-framework-packages-core-src-remove-empty-values.ts",
+      "status": 200,
+      "bytes": 1537,
+      "sha256": "5ce4268bbf0e51bed7923143e8f622c8a0afad9132fbf797bc71ba2c420b4679"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/__tests__/__snapshots__/snapshot.test.ts.snap",
+      "path": "packages/destination-actions/src/destinations/iqm/postEvent/__tests__/__snapshots__/snapshot.test.ts.snap",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "repository": "segmentio/action-destinations",
+      "checked_at": "2026-10-26T19:17:47.737719+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-framework-packages-destination-actions-src-destinations-iqm-postEvent-__tests__-__snapshots__-snapshot.test.ts.snap",
+      "status": 200,
+      "bytes": 294,
+      "sha256": "e1a9f07831d32ae033c81165ac3064ad7a8bd407864f1062cd3373f1e28a8640"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/segmentio/action-destinations/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/__tests__/__snapshots__/snapshot.test.ts.snap",
+      "path": "packages/destination-actions/src/destinations/iqm/__tests__/__snapshots__/snapshot.test.ts.snap",
+      "commit": "d07282a306790c0457c403cc7eb1d006b6a4189f",
+      "repository": "segmentio/action-destinations",
+      "checked_at": "2026-10-26T19:17:47.737755+00:00",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-account-deep/iqm-framework-packages-destination-actions-src-destinations-iqm-__tests__-__snapshots__-snapshot.test.ts.snap",
+      "status": 200,
+      "bytes": 323,
+      "sha256": "761ec5c6419717b378379a5b5ebb8e691d76e79274865cfe984242e33a909d95"
+    }
+  ],
+  "contracts_mapped": [
+    {
+      "scope": "params",
+      "name": "pixel_id",
+      "contract": {
+        "name": "pixel_id",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "description": "The Segment configuration declares a pixel_id setting and appends it to the query. This is sender completeness advice. Identifier grammar, blank-slot acceptance and account validity remain unestablished.",
+        "fix_hint": "Compare with the Pixel ID configured in the Segment IQM destination; preserve the original provisioned value."
+      },
+      "sources": [
+        "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      ]
+    },
+    {
+      "scope": "http.params",
+      "name": "method",
+      "contract": {
+        "name": "method",
+        "requirement": "optional",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST",
+            "DELETE"
+          ]
+        },
+        "description": "The pinned postEvent action uses POST and the deletion hook uses DELETE. Other methods differ from this sender profile; receiver acceptance is not asserted.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      },
+      "sources": [
+        "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      ]
+    },
+    {
+      "scope": "http.params",
+      "name": "content_type",
+      "contract": {
+        "name": "content_type",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "description": "Both pinned operations declare application/json. This checks source transport consistency, not a universal receiver media-type rule.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      "sources": [
+        "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      ]
+    },
+    {
+      "scope": "http.params",
+      "name": "query.pixel_id",
+      "contract": {
+        "name": "query.pixel_id",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "description": "The source places pixel_id in the URL query. A body or form field cannot satisfy that emitted query slot. Values and duplicate arbitration stay open.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      },
+      "sources": [
+        "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      ]
+    },
+    {
+      "scope": "http.params",
+      "name": "body",
+      "contract": {
+        "name": "body",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The postEvent sender serializes its mapped payload object, including {} when no optional data is mapped. DELETE payload shape is not constrained.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      "sources": [
+        "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      ]
+    },
+    {
+      "scope": "http.params",
+      "name": "body.data",
+      "contract": {
+        "name": "body.data",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The postEvent action declares optional object data. Omission and {} are native alternatives. Nested keys and values remain open. Mapped null/empty values can be removed by the framework before serialization; no receiver null policy is claimed.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      "sources": [
+        "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      ]
+    }
+  ],
+  "missing_requirements": [
+    "Only the exact /open pid=segment source profile is selected. The retained /api/v1/iqm and /video routes remain unimplemented.",
+    "Pixel-ID grammar, empty-value receiver behavior, account validity and receiver duplicate arbitration remain unvalidated.",
+    "DELETE payload shape remains open. POST custom nested fields and values remain open.",
+    "Source-profile warnings do not establish receiver-wide mandatory fields, accepted methods or media types.",
+    "The source sets an explicit HOST header. HTTP authority/header mapping is not treated as a universal capture requirement."
+  ],
+  "reviewed_artifacts": {
+    "fixtures/vendor-iqm-segment-open/post-open-native-custom-data.json": "b5e4e3a83f8580c6209917eef992b6f0ced4e75268d39b99afeda48765eea47a",
+    "fixtures/vendor-iqm-segment-open/post-body-string.json": "020870fa4e52a411cb5cd5c3784be20485df8fb109613b967b0c418e0833ae82",
+    "fixtures/vendor-iqm-segment-open/source-delete-object.json": "c92220a932eb2ad9db0cacdec9191c857ca560d6e3cb191b2f798a2e5421c956",
+    "fixtures/vendor-iqm-segment-open/source-all-fields.json": "007c26d949097eeef7d9978566cefa765f8bc0a5708babfbf795a6db801715e3",
+    "fixtures/vendor-iqm-segment-open/duplicate-query-pixel-open.json": "f5d12ca118e96b98b75150f6c19ed8687559c7dcc23d62f8b7f74715bda2d712",
+    "fixtures/vendor-iqm-segment-open/delete-open-null.json": "c68147120d494b99c5f48cf27e9c509683848c500d0fb2c054a4048ac20920a5",
+    "fixtures/vendor-iqm-segment-open/post-data-array.json": "f25d239e4a38b8ae5daab8e7f1ef6c63a3fe29aeb8b3dfa2ab0469d8bfdf7e3c",
+    "fixtures/vendor-iqm-segment-open/post-data-string.json": "8192dd61e1e6fae705de483573ae7cb5fe3c80c8154437fd2cc12fcf95f9afe6",
+    "fixtures/vendor-iqm-segment-open/url-only-missing-pixel.txt": "8b538018d100b33853fcb23db13fc8c6f48408bc4f0d4598712d9c45c6b57916",
+    "fixtures/vendor-iqm-segment-open/source-required-fields.json": "64861296e8bd457a0d51b0fc25a36d2165355e49de52aff046a00efa93395eb8",
+    "fixtures/vendor-iqm-segment-open/exclude-conflicting-markers.txt": "8e93a108e6cb98bf37511ca3c7089e106bb72809461675ddb634f1a9b37484ed",
+    "fixtures/vendor-iqm-segment-open/json-mime-with-charset.json": "8e4274b58114bbe8c22b1fa01d4d04317f4de45f1ede80d47e75a0f978b066b1",
+    "fixtures/vendor-iqm-segment-open/different-json-mime.json": "671633e12ced54c81e5b3424540e3d5905014627415c680c4667aea3374654d5",
+    "fixtures/vendor-iqm-segment-open/delete-open-scalar.json": "2eeddd043d70722f031a9f65a174ba3be0ac614012fa9da9d1589f124168dfed",
+    "fixtures/vendor-iqm-segment-open/exclude-retained-postback-route.txt": "20f88df45cf1843b6ada89762d55d0f27d25ffd6a783993c84d6962b62b0ff63",
+    "fixtures/vendor-iqm-segment-open/exclude-sibling-host.txt": "f9792f93aed6949aba52ec45bdd78fec57fd54df703422c5badaf90942b67847",
+    "fixtures/vendor-iqm-segment-open/exclude-trailing-slash.txt": "83b560c2d2881dbf063b918d77cf4b2a1ee13aefee841ba2e28de0066c1f7d86",
+    "fixtures/vendor-iqm-segment-open/exclude-lookalike-host.txt": "bf686a701e29fdd34c9d72d1fb6de72356056d41a56ca386fb40a324097e1d27",
+    "fixtures/vendor-iqm-segment-open/post-empty-data-object.json": "5cfbde77959e670075dccaa51974fad12156996f469a897cb18fe0f158937e22",
+    "fixtures/vendor-iqm-segment-open/missing-query-pixel.json": "2363f200f09fc1eb9c954fc7ec9327b558b0a016375f4c875f006bc5b7e2adb6",
+    "fixtures/vendor-iqm-segment-open/post-data-boolean.json": "f91b7f752b29080f0ee6084113e1b990ad39c324d4224430038c982d41d7eda8",
+    "fixtures/vendor-iqm-segment-open/unexpected-method.json": "0da207f0531b548e6cb4622168b3beadcb2d137b7e7c7220827e37ffa971e593",
+    "fixtures/vendor-iqm-segment-open/post-body-absent.json": "ff69a16579bbe918d5daff9348697f53ba891fdbb802148f5b661c420f8d421d",
+    "fixtures/vendor-iqm-segment-open/url-only-source-profile.txt": "4fb6d3ae5f0460339258bdd3cd2dcdac3d2d7efb8a6fb8eacf87485b1792cdb4",
+    "fixtures/vendor-iqm-segment-open/source-replay.mjs": "f2fe51f4525881011c723f03bd9e820dd2055301f1068b0634235add578e6c8b",
+    "fixtures/vendor-iqm-segment-open/manifest.json": "99b76066e1afbd3c77760552828a7ad38c2e651482204777275d8fe04f46c2e1",
+    "fixtures/vendor-iqm-segment-open/delete-body-absent-open.json": "ffd5630cd4a2baa0ec0c269cb2dbfa2a317947d9fcb4e713d63a9360271df8ca",
+    "fixtures/vendor-iqm-segment-open/source-receipts.json": "990251a5ea9eb91748cb341cfa4568f8983002c0e2bc25f7f8c347cb9b99db59",
+    "fixtures/vendor-iqm-segment-open/post-data-null.json": "b548f60b7ab01b0d7b7ecc6c12e854c05032fe00e045e7720da0a610b87c9b64",
+    "fixtures/vendor-iqm-segment-open/missing-json-mime.json": "b05b0d78e1c63486fdd14c4669ff69971d58da1ba7ac0fc108b5a4eed63bc33d",
+    "fixtures/vendor-iqm-segment-open/blank-query-pixel-open.json": "208125425481b44c98ba26929f9d2f16691d94ab6af56a0978bd742532cb433d",
+    "fixtures/vendor-iqm-segment-open/delete-data-type-open.json": "ab9f6a10456050cfaabdf2eb35f0b5ee042658bcd3ec9d8f02844852f4d56fd5",
+    "fixtures/vendor-iqm-segment-open/post-data-number.json": "8bd6e1d92249ff2ddacd00b2e35f2594c15c9e1f4d6f37db6c10caa107b1426f",
+    "fixtures/vendor-iqm-segment-open/exclude-no-partner-marker.txt": "3c401b852b392ec8c83d7fb4cdda5c4a4238ef17d51ee41d8ea8c1b6227eb2e6",
+    "fixtures/vendor-iqm-segment-open/post-body-null.json": "84d1a2fc02ff5969a013ae9bcb312381b3e7e355c2648cb35a4a74d891950b46",
+    "fixtures/vendor-iqm-segment-open/delete-open-array.json": "a8639627caf64e511ea7d0f4580c4707910454e8a6fddbb32add744cd1d3b352",
+    "fixtures/vendor-iqm-segment-open/exclude-video-route.txt": "3cf7870c0769b563848729393f7aa8b6958a0ed3520f19eebf2dcc8ba4e3db37",
+    "fixtures/vendor-iqm-segment-open/post-body-array.json": "bb8bff476ea908595eccb37ba121cc549816984f725fce3cf0538b75641ae3b4",
+    "fixtures/vendor-iqm-segment-open/exclude-other-partner.txt": "fb93bbefd68488e9d0a6f021f0e2d007e9f713ef3493c8b130b089ac139231a5",
+    "fixtures/vendor-iqm-segment-open/body-pixel-cannot-fill-query.json": "4bf450351877235e7c1a930ca9fd1a6d5aeb0bba6a9746467ee0bb31c7ad737c"
+  },
+  "notes": [
+    "Source action definitions, generated types and independent upstream snapshot tests were read.",
+    "POST optional data omission is preserved; the required-fields snapshot serializes {}.",
+    "The optional object data shape is checked only on POST. Unknown DELETE JSON types remain open.",
+    "The offline replay reads externally cached pinned source files, verifies their digests and uses a request stub. It does not execute a network sender.",
+    "No retained private query values, payloads or sample IDs were read or copied.",
+    "Observed retained coverage gain for this adjacent profile is0.",
+    "An omitted POST body is a known empty entity in the request normalization; its non-object diagnostic is expected. DELETE absence remains unvalidated."
+  ],
+  "validation": {
+    "golden_cases": 37,
+    "golden_suite_tests": 5,
+    "golden_suite_passed": true,
+    "offline_source_requests": 3,
+    "offline_source_replay_passed": true,
+    "rust_format_check_passed": true,
+    "network_requests_during_replay": 0
+  }
+}

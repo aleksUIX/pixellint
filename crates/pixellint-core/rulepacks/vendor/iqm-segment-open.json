@@ -1,0 +1,108 @@
+{
+  "id": "vendor/iqm-segment-open",
+  "display_name": "IQM Segment open sender profile",
+  "vendor": "iqm",
+  "description": "Partial warning-only checks for the pinned Segment IQM sender on /open?pid=segment. Query pixel completeness, source HTTP operations, JSON MIME and the POST object/data envelope are checked. DELETE payloads and custom data remain open. This does not contract /api/v1/iqm, /video or other IQM integrations.",
+  "source_level": "official_template",
+  "docs": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts",
+  "match": {
+    "hosts": [
+      "postback.iqm.com"
+    ],
+    "paths": [
+      "/open"
+    ],
+    "query_params_values": [
+      {
+        "name": "pid",
+        "values": [
+          "segment"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "pixel_id",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The Segment configuration declares a pixel_id setting and appends it to the query. This is sender completeness advice. Identifier grammar, blank-slot acceptance and account validity remain unestablished.",
+      "fix_hint": "Compare with the Pixel ID configured in the Segment IQM destination; preserve the original provisioned value."
+    }
+  ],
+  "http_url_presence_overrides": [
+    "pixel_id"
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST",
+            "DELETE"
+          ]
+        },
+        "description": "The pinned postEvent action uses POST and the deletion hook uses DELETE. Other methods differ from this sender profile; receiver acceptance is not asserted.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      },
+      {
+        "name": "content_type",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        },
+        "description": "Both pinned operations declare application/json. This checks source transport consistency, not a universal receiver media-type rule.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      {
+        "name": "query.pixel_id",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "description": "The source places pixel_id in the URL query. A body or form field cannot satisfy that emitted query slot. Values and duplicate arbitration stay open.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts"
+      },
+      {
+        "name": "body",
+        "requirement": "recommended",
+        "allow_empty": true,
+        "severity": "warning",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The postEvent sender serializes its mapped payload object, including {} when no optional data is mapped. DELETE payload shape is not constrained.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      },
+      {
+        "name": "body.data",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "json_type": "object",
+        "condition": {
+          "kind": "value_in",
+          "param": "method",
+          "values": [
+            "POST"
+          ]
+        },
+        "description": "The postEvent action declares optional object data. Omission and {} are native alternatives. Nested keys and values remain open. Mapped null/empty values can be removed by the framework before serialization; no receiver null policy is claimed.",
+        "doc": "https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts"
+      }
+    ]
+  }
+}

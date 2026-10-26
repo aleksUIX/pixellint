@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 225 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 226 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -7091,6 +7091,32 @@ Path captures: `/widget/(?<app_id>[^/]+)`. Captured values take precedence over 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `app_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.intercom.com/installing-intercom/web/installation) |
+
+## `vendor/iqm-segment-open`
+
+Partial warning-only checks for the pinned Segment IQM sender on /open?pid=segment. Query pixel completeness, source HTTP operations, JSON MIME and the POST object/data envelope are checked. DELETE payloads and custom data remain open. This does not contract /api/v1/iqm, /video or other IQM integrations.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/iqm-segment-open.json).
+
+Matcher: `{"hosts":["postback.iqm.com"],"paths":["/open"],"query_params_values":[{"name":"pid","values":["segment"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pixel_id` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"severity":"warning","format":{"kind":"enum","values":["POST","DELETE"]}}` | [official_template](https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts) |
+| `content_type` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["application/json"]}}` | [official_template](https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts) |
+| `query.pixel_id` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/index.ts) |
+| `body` | recommended | `{"allow_empty":true,"severity":"warning","json_type":"object","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_template](https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts) |
+| `body.data` | optional | `{"allow_empty":true,"severity":"warning","json_type":"object","condition":{"kind":"value_in","param":"method","values":["POST"]}}` | [official_template](https://github.com/segmentio/action-destinations/blob/d07282a306790c0457c403cc7eb1d006b6a4189f/packages/destination-actions/src/destinations/iqm/postEvent/index.ts) |
 
 ## `vendor/iqm`
 
