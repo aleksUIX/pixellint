@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 214 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 220 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -4028,6 +4028,41 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://static.chartbeat.com/js/chartbeat.js) |
 
+## `vendor/cint-lucid-pixel`
+
+Documented Cint/Lucid campaign image pixels, default reporting metadata and explicit GDPR consent profile. ID spelling, optional video/custom data and account acceptance remain open where public sources do not define them.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/cint-lucid-pixel.json).
+
+Matcher: `{"hosts":["tracker.samplicio.us"],"path_patterns":["/tracker/[^/]*/pixel\\.(?:gif\|giff\|png)"]}`.
+
+Path captures: `\A/tracker/(?<campaign_id>[^/]*)/pixel\.(?:gif\|giff\|png)\z`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `campaign_id` | required | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `sid` | recommended | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `pid` | recommended | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `crid` | recommended | `{"severity":"warning","allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `cachebuster` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/360051178952-Setting-Up-3rd-Party-Measurement-Lucid) |
+| `idfa` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `video_action` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `video_completion` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `c1` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `c2` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `c3` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `c4` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `c5` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/lucid-media-measurement-terminology) |
+| `gdpr` | optional | `{"allow_empty":true}` | [official_vendor](https://help.cint.com/docs/iab-transparency-consent-framework-22-faq) |
+| `gdpr_consent` | optional | `{"allow_empty":true,"format":{"kind":"tcf"},"severity":"warning"}` | [official_vendor](https://help.cint.com/docs/iab-transparency-consent-framework-22-faq) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.cint-lucid-pixel.gdpr_consent_expected` | `{"kind":"require_any_of","condition":{"kind":"all_values_in","params":["gdpr"],"values":["1"]},"groups":[["gdpr_consent"]],"allow_empty":false}` | warning | [official_vendor](https://help.cint.com/docs/iab-transparency-consent-framework-22-faq) |
+| `vendor.cint-lucid-pixel.tcf_consent_profile` | `{"kind":"tcf_consent","param":"gdpr_consent","vendor_id":508,"purpose_ids":[1,7,8,9],"condition":{"kind":"all_values_in","params":["gdpr"],"values":["1"]}}` | warning | [official_vendor](https://help.cint.com/docs/iab-transparency-consent-framework-22-faq) |
+
 ## `vendor/cj`
 
 CJ exact /u conversion pixels and METHOD=S2S postbacks. The S2S profile checks click identity, optional receipt-time defaults, currency, discounts and complete indexed item groups through 100. Legacy image requirements remain separate from S2S requiredness. Universal Tag and GraphQL are outside this pack.
@@ -4599,6 +4634,32 @@ Path captures: `/include/(?<cache_bust>[0-9]+)/(?<embed_id>[^/]*)\.js`. Captured
 | --- | --- | --- | --- |
 | `embed_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://devdocs.drift.com/docs/installation) |
 | `cache_bust` | required | `{"format":{"kind":"integer"},"multiple_of":300000}` | [official_template](https://devdocs.drift.com/docs/installation) |
+
+## `vendor/dynata-pixel`
+
+Published Dynata/Research Now measurement templates on the exact beacon route. Shared metadata completeness is advisory; identifier grammar, optional carriers, platform headers and receiver acceptance require external context.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/dynata-pixel.json).
+
+Matcher: `{"hosts":["tag.researchnow.com"],"paths":["/t/beacon"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `pr` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11148296-managing-third-party-trackers) |
+| `adn` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11148296-managing-third-party-trackers) |
+| `ca` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11148296-managing-third-party-trackers) |
+| `si` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11148296-managing-third-party-trackers) |
+| `pl` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11148296-managing-third-party-trackers) |
+| `cr` | recommended | `{"severity":"warning","allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11148296-managing-third-party-trackers) |
+| `did` | optional | `{"allow_empty":true}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/12202690055309-Setting-Up-3rd-Party-Measurement-Dynata) |
+| `ord` | optional | `{"allow_empty":true}` | [official_template](https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking) |
+| `tt` | optional | `{"allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11148296-managing-third-party-trackers) |
+| `a` | optional | `{"allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11148296-managing-third-party-trackers) |
+| `gdpr` | optional | `{"allow_empty":true}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/12202690055309-Setting-Up-3rd-Party-Measurement-Dynata) |
+| `gdpr_consent` | optional | `{"allow_empty":true}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/12202690055309-Setting-Up-3rd-Party-Measurement-Dynata) |
+| `us_privacy` | optional | `{"allow_empty":true}` | [official_template](https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking) |
 
 ## `vendor/flashtalking-ftrack`
 
@@ -7073,6 +7134,23 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `method` | optional | `{"severity":"warning","allow_empty":true,"format":{"kind":"enum","values":["GET"]}}` | [official_vendor](https://developer.ispot.tv/sites/default/files/Impression%20Pixel%20Implementation%20Guide_0.pdf) |
 
+## `vendor/kadam-cookie-sync`
+
+Template completeness advice for the documented SSP and DSP cookie-matching routes. Partner and user IDs stay opaque. Redirect configuration, callback ownership, duplicate selection, cookie state and receiver acceptance remain external. Complete HTTP captures retain the engine's existing URL-query and form-body merge; this profile does not prove query-only carriage or form transport support.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/kadam-cookie-sync.json).
+
+Matcher: `{"hosts":["s.uuidksinc.net","d.uuidksinc.net"],"path_patterns":["/match/[^/]*/"]}`.
+
+Path captures: `^/match/(?<partner_id>[^/]*)/$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `partner_id` | recommended | `{"severity":"warning"}` | [official_template](https://help.kadam.net/en/articles/16532646-cookie-matching) |
+| `remote_uid` | recommended | `{"severity":"warning"}` | [official_template](https://help.kadam.net/en/articles/16532646-cookie-matching) |
+
 ## `vendor/kantar`
 
 Kantar InsightExpress measurement tags on secure.insightexpressai.com/adServer/adServerESI.aspx. Generated tags put bannerID on the query. ART19 documents that shape. Other Kantar paths are not contracted.
@@ -8098,6 +8176,34 @@ Matcher: `{"hosts":["pixel.mathtag.com"],"path_prefixes":["/event/js","/event/im
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.mediamath.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"}` | error | [official_vendor](https://apidocs.mediamath.com/guides/mobile-pixel-sdk) |
+
+## `vendor/mediascope-counter`
+
+Published V13a image templates and the pinned tcounter.js producer on the exact counter host. Account and section naming advice follows the official guide. URI-delimiter overrides, other versions, locale variants, account assignment and backend acceptance remain outside this partial profile.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/mediascope-counter.json).
+
+Matcher: `{"hosts":["www.tns-counter.ru"],"path_patterns":["/V13a\\*\\*(?:\\*\\*\|[^*]*\\*R(?:>\|%3[eE]).*\\*)[^*/]*/ru/UTF-8/tmsec=[^/]*/[^/]*"]}`.
+
+Path captures: `^/V13a\*\*(?<param1>[^*]*)\*(?:R(?:>\|%3[eE])(?<referrer>.*))?\*(?<account>[^*/]*)/ru/UTF-8/tmsec=(?<tmsec>[^/]*)/(?<random>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `account` | recommended | `{"severity":"warning","format":{"kind":"regex","pattern":"\\A[a-z0-9_]+\\z"}}` | [official_vendor](https://metrix.mediascope.net/help/#tmsec) |
+| `tmsec` | recommended | `{"severity":"warning","format":{"kind":"regex","pattern":"\\A[a-z0-9]+_[a-z0-9-]+\\z"}}` | [official_vendor](https://metrix.mediascope.net/help/#tmsec) |
+| `param1` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.tns-counter.ru/tcounter.js) |
+| `referrer` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.tns-counter.ru/tcounter.js) |
+| `random` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"regex","pattern":"\\A(?:0\|[1-9][0-9]{0,8}\|1000000000)\\z"}}` | [official_template](https://metrix.mediascope.net/help/) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["GET"]}}` | [official_template](https://metrix.mediascope.net/help/) |
 
 ## `vendor/meta-conversions-api`
 
@@ -12023,6 +12129,63 @@ Context: `{"scope":"body.requests[]"}`.
 | --- | --- | --- | --- |
 | `(current scope)` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://developers.piwik.pro/reference/get_ppms-php) |
 
+## `vendor/pixalate-analytics`
+
+Partial advisory macro guidance for exact adrta.com/i. Published requirements describe measurement quality and onboarding templates, not complete receiver rejection policy. SDK wire constants bind mapped fields. Custom fields, opaque identifiers, unknown supply types, optional node tails and receiver acceptance remain open.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/pixalate-analytics.json).
+
+Matcher: `{"hosts":["adrta.com"],"paths":["/i"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `clid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.pixalate.com/knowledgebase/passing-the-supply-chain-object-via-analytics) |
+| `paid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.pixalate.com/knowledgebase/passing-the-supply-chain-object-via-analytics) |
+| `kv24` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.pixalate.com/knowledgebase/faq-analytics) |
+| `kv3` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv4` | recommended | `{"allow_empty":true,"severity":"warning","format":{"kind":"ip_chain"}}` | [official_vendor](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv11` | recommended | `{"allow_empty":true,"severity":"warning","format":{"kind":"regex","pattern":"(?s)^.{16,}$"}}` | [official_vendor](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv12` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv27` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv2` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all_values_in","params":["kv24"],"values":["Desktop","Desktop_Video","Desktop_Native","Mobile_Web","Mobile_Web_Video","Mobile_Web_Native"]}}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv18` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv32` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv55` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"regex","pattern":"(?s)^[0-9]+\\.[0-9]+,[01]!.*$"}}` | [official_vendor](https://www.pixalate.com/knowledgebase/passing-the-supply-chain-object-via-analytics) |
+| `avid` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `caid` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `plid` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `publisherId` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `siteId` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `lineItemId` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv7` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv10` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv26` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `cb` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `priceBid` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `pricePaid` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv1` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv15` | recommended | `{"allow_empty":true,"severity":"info"}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv25` | recommended | `{"allow_empty":true,"severity":"info","condition":{"kind":"all_values_in","params":["kv24"],"values":["InApp","InApp_Video","Mobile_InApp","Mobile_InApp_Video","Mobile_InApp_Native"]}}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv28` | recommended | `{"allow_empty":true,"severity":"info","condition":{"kind":"all_values_in","params":["kv24"],"values":["InApp","InApp_Video","Mobile_InApp","Mobile_InApp_Video","Mobile_InApp_Native"]}}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv23` | recommended | `{"allow_empty":true,"severity":"info","condition":{"kind":"all_values_in","params":["kv24"],"values":["InApp","InApp_Video","Mobile_InApp","Mobile_InApp_Video","Mobile_InApp_Native"]}}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv9` | recommended | `{"allow_empty":true,"severity":"info","condition":{"kind":"all_values_in","params":["kv24"],"values":["Desktop_Video","Mobile_Web_Video","Mobile_InApp_Video","InApp_Video","Email_Video"]}}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv13` | recommended | `{"allow_empty":true,"severity":"info","condition":{"kind":"all_values_in","params":["kv24"],"values":["Desktop_Video","Mobile_Web_Video","Mobile_InApp_Video","InApp_Video","Email_Video"]}}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+| `kv44` | recommended | `{"allow_empty":true,"severity":"info","condition":{"kind":"all_values_in","params":["kv24"],"values":["Desktop_Video","Mobile_Web_Video","Mobile_InApp_Video","InApp_Video","Email_Video"]}}` | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.pixalate-analytics.app_identifier.advisory` | `{"kind":"require_any_of","groups":[["kv18"],["kv32"]],"allow_empty":true,"condition":{"kind":"all_values_in","params":["kv24"],"values":["InApp","InApp_Video","Mobile_InApp","Mobile_InApp_Video","Mobile_InApp_Native"]}}` | warning | [official_template](https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"severity":"warning","format":{"kind":"enum","values":["GET","POST"]}}` | [official_vendor](https://www.pixalate.com/knowledgebase/faq-analytics) |
+
 ## `vendor/plausible`
 
 Plausible Events API on exact /api/event. Published API contracts are supplemented by advisory checks from a pinned public parser. Account eligibility and receiver acceptance remain external.
@@ -15061,6 +15224,27 @@ Path captures: `/v2/notice/(?<notice_id>[^/]*)`. Captured values take precedence
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `notice_id` | required | `{"format":{"kind":"non_empty"}}` | [official_template](https://github.com/trustarc/trustarc-segment-wrapper) |
+
+## `vendor/videoamp-impression`
+
+Partial warning-only advice for the exact impression route shown by MetaRouter and PRX. Common template slots and supplied IP syntax are checked. MetaRouter mappings do not define universal receiver requiredness; opaque IDs, cachebuster values, custom fields, transport and duplicate selection remain open.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/videoamp-impression.json).
+
+Matcher: `{"hosts":["b.videoamp.com"],"path_patterns":["/d2/[^/]*/[^/]*/impression"]}`.
+
+Path captures: `^/d2/(?<url_id>[^/]*)/(?<path_vpxid>[^/]*)/impression$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `url_id` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://metarouter.readme.io/docs/videoamp) |
+| `path_vpxid` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://metarouter.readme.io/docs/videoamp) |
+| `vpxid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://metarouter.readme.io/docs/videoamp) |
+| `bwb` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://metarouter.readme.io/docs/videoamp) |
+| `cb` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://metarouter.readme.io/docs/videoamp) |
+| `ip` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"ip"}}` | [official_template](https://metarouter.readme.io/docs/videoamp) |
 
 ## `vendor/weborama-wcm-js-impression`
 
