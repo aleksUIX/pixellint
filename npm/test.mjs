@@ -357,7 +357,8 @@ for (const entry of [{validate}, cjs]) {
   ]) assert.ok(entry.validate(url).reports.flatMap(r => r.violations).some(v => v.code === finding));
 }
 
-// Source-backed profile fixtures must retain their behavior in both WASM entry points.
+// Source-backed fixtures run through both batch APIs, with single-artifact
+// controls for each profile. Reuse one engine per clock for the larger corpus.
 const addedProfileSlugs = [
   "tealium-collect", "customerio-track", "teads-conversions-api",
   "mparticle-events", "mparticle-bulk-events", "mparticle-historical-events",
@@ -365,29 +366,63 @@ const addedProfileSlugs = [
   "iqm-segment-open", "mobkoi-engagement", "pubmatic-vpaid-error",
 ];
 let addedProfileCases = 0;
-for (const entry of [{ validate }, cjs]) {
+const profileFixtureGroups = new Map();
+const profileFixtureExpected = new Map();
+for (const slug of addedProfileSlugs) {
+  const root = new URL(`../fixtures/vendor-${slug}/`, import.meta.url);
+  const cases = JSON.parse(readFileSync(new URL("manifest.json", root), "utf8"));
+  for (const fixture of cases) {
+    const label = `${slug}/${fixture.id}`;
+    const artifact = readFileSync(new URL(fixture.fixture, root), "utf8");
+    profileFixtureExpected.set(label, { fixture, artifact });
+    const time = fixture.reference_time ?? 1792886400;
+    if (!profileFixtureGroups.has(time)) profileFixtureGroups.set(time, []);
+    profileFixtureGroups.get(time).push({
+      artifact_kind: fixture.kind, artifact,
+      expansion_state: fixture.expansion_state ?? "unknown",
+      occurrences: [{ context_label: label }],
+    });
+  }
+}
+function assertProfileReports(reports, fixture, label) {
+  const violations = reports.flatMap(report => report.violations);
+  assert.deepEqual(reports.map(report => report.plugin_id), fixture.expected_plugins, `${label}: selected packs`);
+  assert.deepEqual(violations.map(finding => finding.code), fixture.expected_codes, `${label}: findings`);
+  for (const [severity, expected] of [["error", fixture.expected_errors], ["warning", fixture.expected_warnings], ["info", fixture.expected_infos]]) {
+    assert.equal(violations.filter(finding => finding.severity === severity).length, expected, `${label}: ${severity} count`);
+  }
+}
+for (const entry of [{ validate, validateMany }, cjs]) {
+  const observed = new Set();
+  for (const [time, artifacts] of profileFixtureGroups) {
+    const clock = Date.now;
+    try {
+      Date.now = () => time * 1000;
+      const result = entry.validateMany({ document_kind: "profile-fixtures", artifacts });
+      for (const artifact of result.artifacts) {
+        for (const occurrence of artifact.occurrences) {
+          const label = occurrence.context_label;
+          assert.ok(profileFixtureExpected.has(label), `${label}: known fixture`);
+          assert.ok(!observed.has(label), `${label}: checked once`);
+          observed.add(label);
+          assertProfileReports(artifact.reports, profileFixtureExpected.get(label).fixture, label);
+          addedProfileCases++;
+        }
+      }
+    } finally { Date.now = clock; }
+  }
+  assert.equal(observed.size, profileFixtureExpected.size, "every fixture survives document aggregation");
   for (const slug of addedProfileSlugs) {
-    const root = new URL(`../fixtures/vendor-${slug}/`, import.meta.url);
-    const cases = JSON.parse(readFileSync(new URL("manifest.json", root), "utf8"));
-    for (const fixture of cases) {
+    const rows = [...profileFixtureExpected].filter(([label]) => label.startsWith(`${slug}/`));
+    const controls = [rows.find(([, row]) => row.fixture.expected_codes.length === 0), rows.find(([, row]) => row.fixture.expected_errors > 0)].filter(Boolean);
+    for (const [label, { fixture, artifact }] of controls) {
       const clock = Date.now;
       try {
-        if (fixture.reference_time !== undefined) Date.now = () => fixture.reference_time * 1000;
-        const artifact = readFileSync(new URL(fixture.fixture, root), "utf8");
-        const result = entry.validate(artifact, { kind: fixture.kind, state: fixture.expansion_state ?? "unknown" });
-        const label = `${slug}/${fixture.id}`;
-        const violations = result.reports.flatMap(report => report.violations);
-        assert.deepEqual(result.reports.map(report => report.plugin_id), fixture.expected_plugins, `${label}: selected packs`);
-        assert.deepEqual(violations.map(finding => finding.code), fixture.expected_codes, `${label}: findings`);
-        for (const [severity, expected] of [["error", fixture.expected_errors], ["warning", fixture.expected_warnings], ["info", fixture.expected_infos]]) {
-          assert.equal(violations.filter(finding => finding.severity === severity).length, expected, `${label}: ${severity} count`);
-        }
-        addedProfileCases++;
-      } finally {
-        Date.now = clock;
-      }
+        Date.now = () => (fixture.reference_time ?? 1792886400) * 1000;
+        assertProfileReports(entry.validate(artifact, { kind: fixture.kind, state: fixture.expansion_state ?? "unknown" }).reports, fixture, `${label}: single artifact`);
+      } finally { Date.now = clock; }
     }
   }
 }
-assert.equal(addedProfileCases, 2366, "all 1183 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 2368, "all 1184 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);

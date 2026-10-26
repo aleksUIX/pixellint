@@ -4622,7 +4622,7 @@ Customer.io Track v1 events endpoint and locally checkable payload contracts.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/customerio-track.json).
 
-Matcher: `{"hosts":["track.customer.io","track-eu.customer.io"],"paths":["/api/v1/events"],"path_patterns":["/api/v1/customers/[^/]+/events"],"json_paths":[{"any_of":["anonymous_id","id"]},"name"]}`.
+Matcher: `{"hosts":["track.customer.io","track-eu.customer.io"],"paths":["/api/v1/events"],"path_patterns":["/api/v1/customers/[^/]+/events"],"json_paths":[{"any_of":["anonymous_id","id"]},"name"],"artifact_kinds":["url","vast","postback","request","unknown"]}`.
 
 ### JSON contract 1
 
