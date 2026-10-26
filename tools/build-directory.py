@@ -85,7 +85,7 @@ VENDORS = {
     "criteo": ("Criteo", "programmatic", ["sslwidget.criteo.com", "static.criteo.net", "gum.criteo.com", "dis.criteo.com", "widget.criteo.com", "dynamic.criteo.com", "d.us.criteo.com", "d.eu.criteo.com"], "vendor/criteo"),
     "adform": ("Adform", "programmatic", ["a1.adform.net", "a2.adform.net", "asia.adform.net", "track.adform.net", "s1.adform.net", "s2.adform.net", "server.adform.net"], "vendor/adform"),
     "xandr": ("Xandr", "programmatic", ["ib.adnxs.com", "secure.adnxs.com", "acdn.adnxs.com", "sspx-router.adnxs.com"], "vendor/xandr"),
-    "pubmatic": ("PubMatic", "programmatic", ["ads.pubmatic.com", "image6.pubmatic.com", "simage2.pubmatic.com"], None),
+    "pubmatic": ("PubMatic", "programmatic", ["ads.pubmatic.com", "image6.pubmatic.com", "simage2.pubmatic.com", "st.pubmatic.com"], "vendor/pubmatic-vpaid-error"),
     "magnite": ("Magnite", "programmatic", ["pixel.rubiconproject.com", "eus.rubiconproject.com", "fastlane.rubiconproject.com"], None),
     "openx": ("OpenX", "programmatic", ["us-ads.openx.net", "rtb.openx.net"], None),
     "indexexchange": ("Index Exchange", "programmatic", ["js-sec.indexww.com", "htlb.casalemedia.com", "a6111.casalemedia.com", "a6124.casalemedia.com", "k8s1-event-tracker-va.lb.indexww.com"], None),

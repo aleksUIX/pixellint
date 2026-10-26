@@ -1,0 +1,222 @@
+{
+  "id": "vendor/pubmatic-vpaid-error",
+  "display_name": "PubMatic VPAID error-notice sender",
+  "vendor": "pubmatic",
+  "source_level": "official_template",
+  "docs": "https://vpaid.pubmatic.com/ads/video/PMAdMgr.js",
+  "description": "Pinned PMAdMgr.js error-builder advice on exact st.pubmatic.com/track, selected only with operId=7 and a vadsId key. Other operations, older notices without that marker and adjacent services remain uncovered.",
+  "match": {
+    "hosts": [
+      "st.pubmatic.com"
+    ],
+    "paths": [
+      "/track"
+    ],
+    "query_params_values": [
+      {
+        "name": "operId",
+        "values": [
+          "7"
+        ]
+      }
+    ],
+    "query_params_any": [
+      "vadsId"
+    ]
+  },
+  "params": [
+    {
+      "name": "operId",
+      "description": "The inspected error URL builder emits operation 7. The matching marker scopes this producer profile and does not define other operation meanings.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "7"
+        ]
+      }
+    },
+    {
+      "name": "p",
+      "description": "Publisher reference is appended unconditionally. Zero, blank, sentinel and opaque values remain accepted; no account or ID-format law is inferred.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "s",
+      "description": "Site reference is appended unconditionally. This producer advisory checks key presence without an inferred ID grammar.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "a",
+      "description": "Ad reference is appended unconditionally. Native zero and blank inputs remain valid producer outputs.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "ts",
+      "description": "Math.round(new Date().valueOf()/1000) produces a signed decimal seconds value. Preserve zero and negative values without a freshness, digit-width or account-clock claim.",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+$"
+      }
+    },
+    {
+      "name": "wa",
+      "description": "The builder appends its caller-provided network reference. This remains opaque, including zero and numeric strings.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "vadsId",
+      "description": "The current builder always appends adServingId, whose native default is the string -1 and which may be blank. Presence is the current source-profile discriminator; older notices without it remain unclaimed.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "wc",
+      "description": "A campaign reference is appended when the caller network loosely equals 243. Presence advice is restricted to the canonical wire spelling 243; equivalent numeric strings remain accepted without exhaustive JavaScript coercion claims.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "wa"
+        ],
+        "values": [
+          "243"
+        ]
+      }
+    },
+    {
+      "name": "e",
+      "description": "A truthy explicit event argument selects this carrier. Event values stay open, including string 0 and future event codes.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "er",
+      "description": "Without a truthy explicit event, the builder emits the ERRORCODE macro. Literal vendor error codes and future encodings remain open.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "crId",
+      "description": "Truthy creative reference copied from configuration. Numeric zero is omitted while string 0 is retained; no grammar or requiredness is inferred.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "ucrid",
+      "description": "Truthy universal creative reference copied without a local scalar contract.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "impid",
+      "description": "Truthy impression reference copied without an ID-format or equality rule.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "advertiser_id",
+      "description": "Truthy advertiser reference copied without inferred numeric or account requirements.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "ecpm",
+      "description": "Truthy configuration value copied directly. Numeric zero may be omitted while string 0 is retained; no numeric format or currency law is inferred.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "pmc",
+      "description": "The publisher-consent value is omitted for native numeric -1, while string -1 is retained. This is not an IAB consent alias and no enum or permission policy is inferred.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "isAk",
+      "description": "The inspected builder appends only native numeric 0,1 or 2, which serialize to these exact strings. Absence remains allowed for other source configuration types.",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "0",
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "name": "vc",
+      "description": "The inspected image dispatcher appends its video-client marker 2. Keep optional and open because a pre-dispatch template omits it and other clients remain external context.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    }
+  ],
+  "rules": [
+    {
+      "kind": "require_any_of",
+      "code": "vendor.pubmatic-vpaid-error.error_carrier_missing",
+      "groups": [
+        [
+          "e"
+        ],
+        [
+          "er"
+        ]
+      ],
+      "allow_empty": true,
+      "severity": "warning",
+      "message": "The inspected error builder emits an e key or an er key. Preserve the carrier from the originating sender; no event/error value or exclusivity law is inferred."
+    },
+    {
+      "kind": "require_https",
+      "code": "vendor.pubmatic-vpaid-error.https_source_profile",
+      "severity": "warning",
+      "message": "The inspected PMAdMgr error builder constructs an HTTPS tracker URL. This is a producer-profile advisory."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "The inspected dispatcher creates an img element and sets its src, producing a GET capture. No body, content-type or header requirement is inferred.",
+        "requirement": "required",
+        "allow_empty": false,
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        }
+      }
+    ]
+  }
+}

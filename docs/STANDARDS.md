@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 224 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 225 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -12798,6 +12798,50 @@ Context: `{"scope":["properties.$exception_list[].stacktrace.frames[]","batch[].
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.posthog.body.frame_needs_platform` | `{"kind":"require_any_of","groups":[["platform"]],"condition":{"kind":"all","conditions":[{"kind":"any","conditions":[{"kind":"value_in","param":"stacktrace_type","values":["raw"]},{"kind":"not","condition":{"kind":"exists","param":"stacktrace_type"}}]},{"kind":"any","conditions":[{"kind":"exists","param":"platform"},{"kind":"not","condition":{"kind":"any","conditions":[{"kind":"exists","param":"abs_path"},{"kind":"exists","param":"context_line"},{"kind":"exists","param":"module"},{"kind":"exists","param":"pre_context"},{"kind":"exists","param":"post_context"}]}}]}]}}` | error | [official_vendor](https://raw.githubusercontent.com/PostHog/posthog/master/rust/cymbal/src/modes/processing/normalization.rs) |
+
+## `vendor/pubmatic-vpaid-error`
+
+Pinned PMAdMgr.js error-builder advice on exact st.pubmatic.com/track, selected only with operId=7 and a vadsId key. Other operations, older notices without that marker and adjacent services remain uncovered.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/pubmatic-vpaid-error.json).
+
+Matcher: `{"hosts":["st.pubmatic.com"],"paths":["/track"],"query_params_values":[{"name":"operId","values":["7"]}],"query_params_any":["vadsId"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `operId` | recommended | `{"allow_empty":true,"severity":"warning","format":{"kind":"enum","values":["7"]}}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `p` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `s` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `a` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `ts` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^-?[0-9]+$"}}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `wa` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `vadsId` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `wc` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all_values_in","params":["wa"],"values":["243"]}}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `e` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `er` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `crId` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `ucrid` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `impid` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `advertiser_id` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `ecpm` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `pmc` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `isAk` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["0","1","2"]}}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `vc` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.pubmatic-vpaid-error.error_carrier_missing` | `{"kind":"require_any_of","groups":[["e"],["er"]],"allow_empty":true}` | warning | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+| `vendor.pubmatic-vpaid-error.https_source_profile` | `{"kind":"require_https"}` | warning | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["GET"]}}` | [official_template](https://vpaid.pubmatic.com/ads/video/PMAdMgr.js) |
 
 ## `vendor/quantcast-conversions-api`
 
