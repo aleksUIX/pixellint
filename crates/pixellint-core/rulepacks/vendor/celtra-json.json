@@ -1,0 +1,122 @@
+{
+  "id": "vendor/celtra-json",
+  "vendor": "celtra",
+  "display_name": "Celtra JSON event and redirect source profile",
+  "source_level": "official_template",
+  "docs": "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1",
+  "description": "Source-scoped warning checks for Celtra /json/ browser-base64 UTF-8 event and redirect envelopes. Checks encoding, container shapes and common runtime metadata when instantiation is supplied. Caller overrides, blank values, empty batches, legacy fields and custom data remain open. Pixel and collect transports are excluded.",
+  "match": {
+    "hosts": [
+      "track.celtra.com"
+    ],
+    "path_patterns": [
+      "/json/.*"
+    ]
+  },
+  "path_pattern": "^/json/(?<celtra_payload>.*)$",
+  "params": [
+    {
+      "name": "celtra_payload",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The first-party sender appends nonempty browser btoa output for UTF-8 JSON after /json/. Capture the entire remainder, including raw plus, slash and padding. Query or form fields cannot supply an empty physical path slot.",
+      "fix_hint": "Compare the physical path with the original sender output; preserve its encoded bytes."
+    }
+  ],
+  "body": [
+    {
+      "source_param": "celtra_payload",
+      "encoding": "base64_json",
+      "encoding_severity": "warning",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "json_type": "object",
+          "allow_empty": true,
+          "severity": "warning",
+          "description": "The source pixel and redirect helpers wrap their payload in an object. Unknown object properties remain accepted."
+        },
+        {
+          "name": "events",
+          "requirement": "recommended",
+          "json_type": "array",
+          "allow_empty": true,
+          "severity": "warning",
+          "description": "Both published helpers emit an events array. Empty arrays are native for redirect and empty-batch cases; no per-batch maximum is inferred from the runtime session event counter."
+        },
+        {
+          "name": "pixels",
+          "requirement": "optional",
+          "json_type": "array",
+          "allow_empty": true,
+          "severity": "warning",
+          "description": "The redirect helper carries its pending pixel URLs in an array. The ordinary event helper omits this field. Values, URL schemes and receiver behavior remain open."
+        }
+      ]
+    },
+    {
+      "source_param": "celtra_payload",
+      "encoding": "base64_json",
+      "encoding_severity": "warning",
+      "scope": "events[]",
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "json_type": "object",
+          "allow_empty": true,
+          "severity": "warning",
+          "description": "TrackingCenter creates plain event objects and shallow-merges caller fields. Arbitrary event properties and overridden native values remain accepted."
+        },
+        {
+          "name": "instantiation",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "description": "This source-generated runtime carrier selects default-completeness advice. No type, numeric grammar or missing-field requirement is imposed on the marker itself."
+        },
+        {
+          "name": "sessionId",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "condition": {
+            "kind": "exists",
+            "param": "instantiation"
+          },
+          "description": "When the runtime instantiation carrier is supplied, compare this common TrackingCenter default with the source-produced event. Its value remains unrestricted because the sender permits caller overrides.",
+          "fix_hint": "Compare the event with the originating Celtra runtime. This is producer-completeness advice, not a receiver rejection rule."
+        },
+        {
+          "name": "index",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "condition": {
+            "kind": "exists",
+            "param": "instantiation"
+          },
+          "description": "When the runtime instantiation carrier is supplied, compare this common TrackingCenter default with the source-produced event. Its value remains unrestricted because the sender permits caller overrides.",
+          "fix_hint": "Compare the event with the originating Celtra runtime. This is producer-completeness advice, not a receiver rejection rule."
+        },
+        {
+          "name": "clientTimestamp",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "condition": {
+            "kind": "exists",
+            "param": "instantiation"
+          },
+          "description": "When the runtime instantiation carrier is supplied, compare this common TrackingCenter default with the source-produced event. Its value remains unrestricted because the sender permits caller overrides.",
+          "fix_hint": "Compare the event with the originating Celtra runtime. This is producer-completeness advice, not a receiver rejection rule."
+        }
+      ]
+    }
+  ]
+}

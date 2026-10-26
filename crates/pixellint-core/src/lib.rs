@@ -74,6 +74,10 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/celtra-json",
+        include_str!("../rulepacks/vendor/celtra-json.json"),
+    ),
+    (
         "vendor/iqm-segment-open",
         include_str!("../rulepacks/vendor/iqm-segment-open.json"),
     ),

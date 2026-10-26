@@ -4017,7 +4017,7 @@ impl ManifestRulePack {
 
                 Some(RawParam::query(
                     Cow::Owned(name.to_string()),
-                    decode_param_value(capture.as_str()),
+                    decode_path_param_value(capture.as_str()),
                     path_start + capture.start(),
                     path_start + capture.end(),
                 ))
@@ -7881,13 +7881,27 @@ fn decode_param_value(value: &str) -> Cow<'_, str> {
     }
 }
 
+/// Path captures use URI percent-decoding, where a literal plus is data.
+/// Preserve macro spelling as for query values, without form-style plus folding.
+fn decode_path_param_value(value: &str) -> Cow<'_, str> {
+    if contains_macro(value) {
+        Cow::Borrowed(value)
+    } else {
+        percent_decode_component(value, false)
+    }
+}
+
 /// Minimal percent-decoding for parameter names and values. `+` is decoded as a
 /// space because form-encoded pixel payloads are common.
 fn percent_decode(value: &str) -> Cow<'_, str> {
+    percent_decode_component(value, true)
+}
+
+fn percent_decode_component(value: &str, plus_as_space: bool) -> Cow<'_, str> {
     if !value
         .as_bytes()
         .iter()
-        .any(|&byte| byte == b'%' || byte == b'+')
+        .any(|&byte| byte == b'%' || (plus_as_space && byte == b'+'))
     {
         return Cow::Borrowed(value);
     }
@@ -7913,7 +7927,7 @@ fn percent_decode(value: &str) -> Cow<'_, str> {
                     }
                 }
             }
-            b'+' => {
+            b'+' if plus_as_space => {
                 decoded.push(b' ');
                 index += 1;
             }
@@ -8489,6 +8503,39 @@ mod tests {
         // A path that does not match the pattern leaves the parameter missing.
         let report = pack.validate(&request("https://px.example.com/conversion?ev=PageView"));
         assert_eq!(codes(&report), vec!["vendor.test.param.id.missing"]);
+    }
+
+    #[test]
+    fn path_capture_plus_is_data_and_percent_decoding_runs_once() {
+        let manifest = r#"{
+            "id":"vendor/path-capture-decoding",
+            "display_name":"Path capture decoding",
+            "description":"Path and query transport regression.",
+            "source_level":"official_template",
+            "docs":"https://url.spec.whatwg.org/",
+            "match":{"hosts":["example.test"],"path_prefixes":["/pixel/"]},
+            "path_pattern":"^/pixel/(?<payload>.*)$",
+            "params":[{"name":"payload","requirement":"optional"}]
+        }"#;
+        let pack = ManifestRulePack::from_json(manifest).unwrap();
+        for (path, expected) in [
+            ("A+B/C==", "A+B/C=="),
+            (
+                "A+B/C==&next=value;comma,colon:at@",
+                "A+B/C==&next=value;comma,colon:at@",
+            ),
+            ("A%26B%3DC%3F", "A&B=C?"),
+            ("A%2BB%2FC%3D%3D", "A+B/C=="),
+            ("A%252BB%252FC%253D", "A%2BB%2FC%3D"),
+            ("%%CACHEBUSTER%%+[%ADID%]", "%%CACHEBUSTER%%+[%ADID%]"),
+        ] {
+            let artifact = format!("https://example.test/pixel/{path}?payload=spoof");
+            let captured = pack.extract_path_params(&artifact);
+            assert_eq!(captured.len(), 1);
+            assert_eq!(captured[0].value, expected);
+            assert_eq!(&artifact[captured[0].start..captured[0].end], path);
+        }
+        assert_eq!(decode_param_value("A+B%2FC%3D"), "A B/C=");
     }
 
     #[test]

@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 226 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 227 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -3986,6 +3986,44 @@ Context: `{}`.
 | `content_type` | recommended | `{"json_type":"string","format":{"kind":"enum","values":["application/json"]},"severity":"warning","format_severity":"warning"}` | [official_vendor](https://developers.brevo.com/docs/track-custom-events-rest) |
 | `body` | required | `{"json_type":"object"}` | [official_vendor](https://developers.brevo.com/docs/track-custom-events-rest) |
 | `headers.ma-key` | required | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://tracker-doc.brevo.com/docs/getting-started-1) |
+
+## `vendor/celtra-json`
+
+Source-scoped warning checks for Celtra /json/ browser-base64 UTF-8 event and redirect envelopes. Checks encoding, container shapes and common runtime metadata when instantiation is supplied. Caller overrides, blank values, empty batches, legacy fields and custom data remain open. Pixel and collect transports are excluded.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/celtra-json.json).
+
+Matcher: `{"hosts":["track.celtra.com"],"path_patterns":["/json/.*"]}`.
+
+Path captures: `^/json/(?<celtra_payload>.*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `celtra_payload` | optional | `{"allow_empty":false,"severity":"warning","format":{"kind":"non_empty"}}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
+
+### JSON contract 1
+
+Context: `{"source_param":"celtra_payload","encoding":"base64_json","encoding_severity":"warning"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","allow_empty":true,"severity":"warning"}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
+| `events` | recommended | `{"json_type":"array","allow_empty":true,"severity":"warning"}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
+| `pixels` | optional | `{"json_type":"array","allow_empty":true,"severity":"warning"}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
+
+### JSON contract 2
+
+Context: `{"source_param":"celtra_payload","encoding":"base64_json","encoding_severity":"warning","scope":"events[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","allow_empty":true,"severity":"warning"}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
+| `instantiation` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
+| `sessionId` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"exists","param":"instantiation"}}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
+| `index` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"exists","param":"instantiation"}}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
+| `clientTimestamp` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"exists","param":"instantiation"}}` | [official_template](https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1) |
 
 ## `vendor/chartbeat`
 

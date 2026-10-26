@@ -12,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 # vendor slug -> (display name, category, [hosts], rulepack or None)
 VENDORS = {
+    "celtra": ("Celtra", "video", ["celtra.com"], "vendor/celtra-json"),
     "exoclick": ("ExoClick", "video", ["s.magsrv.com"], "vendor/exoclick-vast"),
     "mobkoi": ("Mobkoi", "measurement", ["events.mobkoi.com"], "vendor/mobkoi-engagement"),
     "artsai": ("Artsai", "measurement", ["arttrk.com", "data.adxcel-ec2.com"], "vendor/artsai-impression"),

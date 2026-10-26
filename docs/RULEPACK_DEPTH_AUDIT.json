@@ -181,6 +181,265 @@
   ],
   "packs": [
     {
+      "id": "vendor/celtra-json",
+      "vendor": "celtra",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/celtra-json.json",
+      "manifest_sha256": "77ec5d1b263b717f77b313c2fb71a39e8d2ae39836ab39c12a0341a78a6187e8",
+      "match": {
+        "hosts": [
+          "track.celtra.com"
+        ],
+        "path_patterns": [
+          "/json/.*"
+        ]
+      },
+      "sources_read": [
+        {
+          "key": "homam-step3-raw",
+          "url": "https://raw.githubusercontent.com/homam/mraid-test/e0ee6996452dce95c03aa627ca0db5ebfaa3ab3f/celtra-re/step-3-raw.js",
+          "fetched_at": "2026-10-26T19:09:47.973755+00:00",
+          "status": 200,
+          "final_url": "https://raw.githubusercontent.com/homam/mraid-test/e0ee6996452dce95c03aa627ca0db5ebfaa3ab3f/celtra-re/step-3-raw.js",
+          "bytes": 590165,
+          "sha256": "364f36370602368167095a5f509d589544444ad9e04282eba3fc9e8ec682d446",
+          "cache_file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-celtra-deep/homam-step3-raw.js",
+          "scope": "Pinned historical GitHub copy corroborates the legacy envelope branch; no copied asset is promoted to vendor receiver law."
+        },
+        {
+          "key": "celtra-official-compiled",
+          "url": "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1",
+          "fetched_at": "2026-10-26T19:09:47.974111+00:00",
+          "status": 200,
+          "final_url": "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1",
+          "bytes": 576120,
+          "sha256": "827458a89d2ac8dd14c46997ee39535f35f275be2aca51b765eb201267dcfc6c",
+          "cache_file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-celtra-deep/celtra-official-compiled.js",
+          "scope": "First-party static compiled JavaScript; retrieved current source bytes are pinned by SHA256. The v query does not prove historical version selection."
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "scope": "params",
+          "name": "celtra_payload",
+          "contract": {
+            "name": "celtra_payload",
+            "requirement": "optional",
+            "allow_empty": false,
+            "severity": "warning",
+            "format": {
+              "kind": "non_empty"
+            },
+            "description": "The first-party sender appends nonempty browser btoa output for UTF-8 JSON after /json/. Capture the entire remainder, including raw plus, slash and padding. Query or form fields cannot supply an empty physical path slot.",
+            "fix_hint": "Compare the physical path with the original sender output; preserve its encoded bytes."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        },
+        {
+          "scope": "body:envelope",
+          "name": "",
+          "contract": {
+            "name": "",
+            "requirement": "optional",
+            "json_type": "object",
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "The source pixel and redirect helpers wrap their payload in an object. Unknown object properties remain accepted."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        },
+        {
+          "scope": "body:envelope",
+          "name": "events",
+          "contract": {
+            "name": "events",
+            "requirement": "recommended",
+            "json_type": "array",
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "Both published helpers emit an events array. Empty arrays are native for redirect and empty-batch cases; no per-batch maximum is inferred from the runtime session event counter."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        },
+        {
+          "scope": "body:envelope",
+          "name": "pixels",
+          "contract": {
+            "name": "pixels",
+            "requirement": "optional",
+            "json_type": "array",
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "The redirect helper carries its pending pixel URLs in an array. The ordinary event helper omits this field. Values, URL schemes and receiver behavior remain open."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        },
+        {
+          "scope": "body:events[]",
+          "name": "",
+          "contract": {
+            "name": "",
+            "requirement": "optional",
+            "json_type": "object",
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "TrackingCenter creates plain event objects and shallow-merges caller fields. Arbitrary event properties and overridden native values remain accepted."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        },
+        {
+          "scope": "body:events[]",
+          "name": "instantiation",
+          "contract": {
+            "name": "instantiation",
+            "requirement": "optional",
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "This source-generated runtime carrier selects default-completeness advice. No type, numeric grammar or missing-field requirement is imposed on the marker itself."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        },
+        {
+          "scope": "body:events[]",
+          "name": "sessionId",
+          "contract": {
+            "name": "sessionId",
+            "requirement": "recommended",
+            "allow_empty": true,
+            "severity": "warning",
+            "condition": {
+              "kind": "exists",
+              "param": "instantiation"
+            },
+            "description": "When the runtime instantiation carrier is supplied, compare this common TrackingCenter default with the source-produced event. Its value remains unrestricted because the sender permits caller overrides.",
+            "fix_hint": "Compare the event with the originating Celtra runtime. This is producer-completeness advice, not a receiver rejection rule."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        },
+        {
+          "scope": "body:events[]",
+          "name": "index",
+          "contract": {
+            "name": "index",
+            "requirement": "recommended",
+            "allow_empty": true,
+            "severity": "warning",
+            "condition": {
+              "kind": "exists",
+              "param": "instantiation"
+            },
+            "description": "When the runtime instantiation carrier is supplied, compare this common TrackingCenter default with the source-produced event. Its value remains unrestricted because the sender permits caller overrides.",
+            "fix_hint": "Compare the event with the originating Celtra runtime. This is producer-completeness advice, not a receiver rejection rule."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        },
+        {
+          "scope": "body:events[]",
+          "name": "clientTimestamp",
+          "contract": {
+            "name": "clientTimestamp",
+            "requirement": "recommended",
+            "allow_empty": true,
+            "severity": "warning",
+            "condition": {
+              "kind": "exists",
+              "param": "instantiation"
+            },
+            "description": "When the runtime instantiation carrier is supplied, compare this common TrackingCenter default with the source-produced event. Its value remains unrestricted because the sender permits caller overrides.",
+            "fix_hint": "Compare the event with the originating Celtra runtime. This is producer-completeness advice, not a receiver rejection rule."
+          },
+          "sources": [
+            "https://cache-ssl.celtra.com/api/creatives/4635ae75/compiled/web.js?v=8-f374ba190d-moatvideo&secure=1"
+          ]
+        }
+      ],
+      "reviewed_artifacts": {
+        "fixtures/vendor-celtra-json/arbitrary-future-envelope-fields.txt": "f2e7283273df2549668c3d43ef43f1df185ff0fefe5c8f307efd29c27ee3fa8c",
+        "fixtures/vendor-celtra-json/source-legacy-cookie-redirect.txt": "0610f0b925b50ae585d369810d51f36f15524eed046a1511df52bef10742a318",
+        "fixtures/vendor-celtra-json/empty-pixels-and-events.txt": "0fa52774f13666052b70224c3b3709cbc694e103d9327b43df95b84e1e73fa31",
+        "fixtures/vendor-celtra-json/session-counter-is-not-batch-bound.txt": "530588202b280f1e792485b12bad7a6641104b34c6b61d6fb995f12401a22ce8",
+        "fixtures/vendor-celtra-json/source-legacy-event.txt": "3a375ae2cdc3c82ec69ce717c3cab6ac4d721be25710001d1612d78c846d1758",
+        "fixtures/vendor-celtra-json/source-native-field-overrides.txt": "ba44ea1e0ea038b7b045e92205c9a82a83abb30e474d1525bf82e99d34ad34f9",
+        "fixtures/vendor-celtra-json/whole-source-macro.txt": "07a05c363a3aa5ff28255f6aac9b26105bcfdae8e0589892af0a869e87c9cc80",
+        "fixtures/vendor-celtra-json/missing-runtime-index.txt": "1eb9626a3445de98b83577148abcf7d50cf7a37e8c9814eb0db3d58f085b5d56",
+        "fixtures/vendor-celtra-json/final-batch-record-is-checked.txt": "9b7efd1be7dea43bb8b2180af9f021158f7869c3a264c41e6734d18e7979af78",
+        "fixtures/vendor-celtra-json/query-cannot-fill-physical-slot.txt": "4729b6c67255fc8c0b06b4e8ba555e1d5c18214f600f8ee87e931e62fa2e9532",
+        "fixtures/vendor-celtra-json/server-event-without-runtime-marker.txt": "8c80130b0119a86afa8105bcba17be631f699db6272d972aa302485c9c43bffc",
+        "fixtures/vendor-celtra-json/empty-physical-slot.txt": "0d3801aeb52e713ef6d889407a14c0c37bd0097e183385ea163d0d0817a9969b",
+        "fixtures/vendor-celtra-json/event-name-unclosed-and-optional.txt": "7a5cded6baeb312abdf6e9a6406e115c6f20916bed1642c6069bf964a38de3ea",
+        "fixtures/vendor-celtra-json/malformed-base64.txt": "3d2da8168cb9015db5c65087c0c6c99aa96494df38187e1051aa0afa2a874c7d",
+        "fixtures/vendor-celtra-json/one-uri-encoding-layer.txt": "6488fb909026c39dda053f923d0f2ece67d947a449780301bd1db440fd4aaa4f",
+        "fixtures/vendor-celtra-json/checksum-and-appended-fields-open.txt": "586c0f1ec998f1ae228a54935ecb6706cc16da06f8eda356dfe2ec5921f84779",
+        "fixtures/vendor-celtra-json/source-modern-redirect-function.txt": "796de828616e36d59cbce55ae90624121b52eb7f942092b8decf50783541ddbd",
+        "fixtures/vendor-celtra-json/source-unicode-plus-slash.txt": "b6bdd8e488ec36c94c37c8ae0b1a71e1463b1bf1aee1395f4ef8ad1670790e36",
+        "fixtures/vendor-celtra-json/double-uri-encoding-stays-invalid.txt": "cf87ed6b48e7371fbcc6ae1fa15c4b054a408f2c147b7144142f263434050afb",
+        "fixtures/vendor-celtra-json/empty-envelope-template-advice.txt": "3ebd31fa56631264eb77fd38f645f7cf01f015cf996debe4192a967142f177db",
+        "fixtures/vendor-celtra-json/capture-PUT.json": "819bb4d35128a86b32007eca8c5b202cad6852182d6ee3928c830881db5fa3b6",
+        "fixtures/vendor-celtra-json/source-modern-empty-batch.txt": "8bdb9eb5aee9499c43e86c614df0277faa10ebaea81638ce1b04b61074de0c98",
+        "fixtures/vendor-celtra-json/events-string.txt": "a6ad0205b10a761238b99e58fa62661dc82ec28cbbfe1113492642223a8e35d7",
+        "fixtures/vendor-celtra-json/exclude-query-path-spoof.txt": "5f10085598438f7ddb88ac79459995b22c41b626cece2493be393e0a6e6b861e",
+        "fixtures/vendor-celtra-json/source-modern-query-appendage.txt": "1a225669a608bb938629c9e7369a6032515b9e5fcda0bfe8de5596d1aca33928",
+        "fixtures/vendor-celtra-json/exclude-sibling-host.txt": "df70a93ad9c8461c0ca9118ff6020bec175bfd9e24d2dda7a792f4fa45db792a",
+        "fixtures/vendor-celtra-json/capture-GET.json": "bded9d7b224eea726e68230d5b02a7df8eb784ad9a1a120007d35c47999bc60c",
+        "fixtures/vendor-celtra-json/exclude-lookalike-host.txt": "1da9e2c7cc023f7651222ffb4895a13d0b59bd7f6aea702617ba2f96eccd17a0",
+        "fixtures/vendor-celtra-json/checksum-omitted.txt": "860080ce44521d1aa00120e396f6cff6d8c871024ed579cc828d08bd42b48100",
+        "fixtures/vendor-celtra-json/malformed-json.txt": "8349134faa8312cd4336559908cb2a1fc9280533606cf394304302288f51f8d3",
+        "fixtures/vendor-celtra-json/missing-runtime-clientTimestamp.txt": "b0e5906032dc1af79009a69d47e426e6076c9e4ff727fb25a4c0aa085b62bcef",
+        "fixtures/vendor-celtra-json/exclude-pixel-route.txt": "945090541babca7499d59a829c7e2f3db305ec8b16059b9ad12dfb2c327934f2",
+        "fixtures/vendor-celtra-json/exclude-collect-route.txt": "460d0824045dd836d8b3e7134721f432526ee11a3a663eed3b3237ca73461134",
+        "fixtures/vendor-celtra-json/missing-runtime-sessionId.txt": "86b682f33cccc6a0a3ea932dd09ef1c47edd7058c5fbf7d1d04b0b51a375f150",
+        "fixtures/vendor-celtra-json/exclude-missing-json-slash.txt": "252805f6a263d2e5f929a80fdf2fc09f7d861a89d18d4b486c8c0953b5f25fd0",
+        "fixtures/vendor-celtra-json/exclude-case-path.txt": "1899fadccb9a60348a7be1cc105042564f22d92ec726731008e327c041003bc0",
+        "fixtures/vendor-celtra-json/unpadded-compatible-base64.txt": "2b66df1906c24d487b7cd8a7ad71505e4896cc0f783c6aa95cb690c90344cea5",
+        "fixtures/vendor-celtra-json/manifest.json": "9ca6459e76ac3add19632e0e27056b473a9d7850e5ed7d25c4250542b435027c",
+        "fixtures/vendor-celtra-json/envelope-array.txt": "8cf7803e32740fa5e0272229c2b40be58f0d63db0a8f3f2f73bdf060156698c3",
+        "fixtures/vendor-celtra-json/source-modern-empty-redirect.txt": "f9eb66227a7b6fb51e59be93570117aa59ccf49162e364b9ad471e0f26d3d2e2",
+        "fixtures/vendor-celtra-json/form-cannot-repair-invalid-physical-path.json": "055b815f298366535859c612d16aedfb67dc519726327dc6e643d7c5cf2cdace",
+        "fixtures/vendor-celtra-json/event-record-string.txt": "d42ce1806a64a132d86e8a9bef926093e356fd978d22dcf85b9ae75fbf89790c",
+        "fixtures/vendor-celtra-json/source-modern-event.txt": "7a17c3a0fcd9ee56b2238bfa057f0f04c292a4536b4a951ed452a71bf000a9b1",
+        "fixtures/vendor-celtra-json/capture-POST.json": "b56cb80e50a4936c41c291d3b5769e8f20390cdfe59bdd3b10d60a7b9ea31cc1",
+        "fixtures/vendor-celtra-json/runtime-marker-omitted.txt": "b7c8b8bd6134bf15a77a816976df398d8ac6d295b35dea060b484029769fc332",
+        "fixtures/vendor-celtra-json/form-cannot-repair-empty-physical-path.json": "5f806e5d4f1d017de7e94e80239039ecc2ad6f0f2583f0d8a952b0200e2c504c",
+        "fixtures/vendor-celtra-json/events-null.txt": "add6a70ab0aa9109cbce08efafac3f45b49670f96c032e59a62d9b655594971a",
+        "fixtures/vendor-celtra-json/event-record-null.txt": "b96001f682b07b3f8a904c9aadcc235fcf9bd7a10fc71aa720555ff068b321f7",
+        "fixtures/vendor-celtra-json/pixels-string.txt": "0ce58865ebeed4c67d50d9c3f8b1856daef81efe0912d16615b8c63dfbec7426",
+        "crates/pixellint-core/src/manifest.rs": "086d44460ecc728cd843cbf70f7f4dd19f7b588b5733370a73a1476eaf7f0deb",
+        "docs/reviews/31host-celtra-json-20261026.json": "f6623caf288645377c49bad1f6f8d29a61e721322b8e314923f23318e3bf90b6"
+      },
+      "missing_requirements": [
+        "Pixel.gif logger/query profile remains outside this pack; the copied conversionEvents POST sender is a different profile.",
+        "The /collect beacon fallback is not selected by this URL-encoded envelope pack.",
+        "No scalar type, ID grammar, event-name enum, stream enum or per-batch event limit is inferred for caller-overridable fields.",
+        "Checksum presence, checksum equality, duplicate arbitration and arbitrary appended query semantics are not validated.",
+        "Source-scoped shape and metadata advice do not certify all proprietary receiver variants. The retained private tokens were not decoded to create these rules."
+      ],
+      "source_review_file": "docs/reviews/31host-celtra-json-20261026.json",
+      "fixture_coverage": {
+        "cases": 48,
+        "source_sender_cases": 9,
+        "source_oracle_sha256": "7b946f3c1820cf64d6ff6a0c45499c7a97edddbe4bcc7ef27ebc3b5a94c836cc",
+        "network_calls": 0,
+        "retained_tokens_decoded": 0
+      }
+    },
+    {
       "id": "vendor/iqm-segment-open",
       "vendor": "iqm",
       "disposition": "implemented_source_scoped_partial",
