@@ -1,0 +1,163 @@
+{
+  "id": "vendor/kadam-cookie-sync",
+  "reviewed_at": "2026-10-26T02:48:07.755555+00:00",
+  "spec_complete": false,
+  "source_level": "official_template",
+  "manifest_path": "crates/pixellint-core/rulepacks/vendor/kadam-cookie-sync.json",
+  "manifest_sha256": "e0827bcfcdad0dba6608cc320b997dfca39dc13c0676bac6ec32c2bc8457369b",
+  "match": {
+    "hosts": [
+      "s.uuidksinc.net",
+      "d.uuidksinc.net"
+    ],
+    "path_patterns": [
+      "/match/[^/]*/"
+    ]
+  },
+  "path_pattern": "^/match/(?<partner_id>[^/]*)/$",
+  "sources_read": [
+    {
+      "url": "https://help.kadam.net/en/articles/16532646-cookie-matching",
+      "title": "Kadam Cookie matching",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/kadam-opened-primary.json",
+      "sha256": "77d656bd86ff24f11b2244de94eeb814339c12beb9ea072efca1daff34cc0c2c",
+      "evidence": "Exact s.uuidksinc.net and d.uuidksinc.net /match/{partner}/ templates with remote_uid. English SSP first-row placeholder typo is not converted into a grammar.",
+      "scope": "official_template"
+    },
+    {
+      "url": "https://help.kadam.net/ru/articles/16532646-cookie-matching",
+      "title": "Kadam Cookie matching Russian article",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/kadam-opened-primary.json",
+      "sha256": "77d656bd86ff24f11b2244de94eeb814339c12beb9ea072efca1daff34cc0c2c",
+      "evidence": "Corroborates opaque SSP and DSP partner/user slots and integration roles.",
+      "scope": "official_template"
+    },
+    {
+      "url": "https://help.kadam.net/en/articles/16532645-openrtb-feed-integration-dsp",
+      "title": "Kadam OpenRTB Feed integration DSP",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/kadam-opened-primary.json",
+      "sha256": "77d656bd86ff24f11b2244de94eeb814339c12beb9ea072efca1daff34cc0c2c",
+      "evidence": "Related guide links matching setup. Bid/Feed user fields are adjacent endpoints and are not imported.",
+      "scope": "adjacent_docs"
+    },
+    {
+      "url": "https://help.kadam.net/en/articles/16549968-openrtb-feed-integration-ssp",
+      "title": "Kadam OpenRTB Feed integration SSP",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/kadam-opened-primary.json",
+      "sha256": "77d656bd86ff24f11b2244de94eeb814339c12beb9ea072efca1daff34cc0c2c",
+      "evidence": "Related guide links matching setup. No additional locally verifiable sync query law established.",
+      "scope": "adjacent_docs"
+    },
+    {
+      "url": "https://wiki.kadam.net/en/index.php?title=Cookie_matching",
+      "title": "Legacy Kadam matching table",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/kadam-legacy-opened.json",
+      "sha256": "486f9a73168907b46f099560f3bd75d51a76c40c0e2b3e8608124d6b373b3abd",
+      "evidence": "Legacy primary table corroborates the same two routes and opaque placeholders. Original HTTP requests403, opened-page extraction is labeled.",
+      "scope": "official_template"
+    },
+    {
+      "url": "https://wiki.kadam.net/index.php?title=RTB_setting",
+      "title": "Legacy Kadam RTB setting",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/kadam-legacy-opened.json",
+      "sha256": "486f9a73168907b46f099560f3bd75d51a76c40c0e2b3e8608124d6b373b3abd",
+      "evidence": "Synchronization redirect/cookie behavior depends on partner configuration. No additional exact matching-slot schema.",
+      "scope": "adjacent_docs"
+    }
+  ],
+  "contracts_mapped": [
+    {
+      "scope": "params",
+      "name": "partner_id",
+      "contract": {
+        "name": "partner_id",
+        "requirement": "recommended",
+        "severity": "warning",
+        "description": "The official SSP and DSP templates place the provisioned partner ID in this physical path slot. Nonempty presence is template advice. No numeric, UUID, length, allocation or decoded-ID grammar is documented."
+      }
+    },
+    {
+      "scope": "params",
+      "name": "remote_uid",
+      "contract": {
+        "name": "remote_uid",
+        "requirement": "recommended",
+        "severity": "warning",
+        "description": "Both official matching templates substitute the partner's user ID in remote_uid. Nonempty presence is template advice. Values and extras remain opaque. Ordinary engine extraction also accepts a form-body carrier in a complete capture; no query-only or receiver acceptance claim is made."
+      }
+    }
+  ],
+  "field_interpretation": {
+    "partner_id": "Opaque provisioned SSP/DSP identifier in the physical path; nonempty template advice only.",
+    "remote_uid": "Opaque partner user identifier; nonempty template advice only. Query/form merge, bare keys and duplicate behavior stay explicit."
+  },
+  "source_native_oracle": {
+    "literal_templates": 2,
+    "static_substitutions": 14,
+    "network_calls": 0,
+    "execution": "Pinned primary-table extraction and literal placeholder substitution only; not an SDK claim"
+  },
+  "source_case_count": 85,
+  "engine_derived_vendor_oracle_cases": 0,
+  "core_baseline_receipt": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-core-baseline.json",
+  "missing_requirements": [
+    {
+      "requirement": "Ordinary engine extraction merges URL query and captured form body. A form-only remote_uid satisfies this template presence check; query-only enforcement and form transport support are not established. JSON and plain-text bodies do not supply it.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "extractor_limit",
+      "locally_checkable": false,
+      "source_url": "https://help.kadam.net/en/articles/16532646-cookie-matching"
+    },
+    {
+      "requirement": "The literal URI route preserves one raw partner slot. Encoded slashes, plus characters, percent nesting, query/fragment delimiters and server normalization can change its receiver interpretation. No decoded-ID grammar or universal path parser is claimed.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "source_boundary",
+      "locally_checkable": false,
+      "source_url": "https://help.kadam.net/en/articles/16532646-cookie-matching"
+    },
+    {
+      "requirement": "Partner/user identifier alphabets, lengths, assignments, empty acceptance and backend duplicate selection are not published. Every concrete submitted value receives local completeness advice without first/last selection claims; legacy bare keys without equals are omitted.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "source_boundary",
+      "locally_checkable": false,
+      "source_url": "https://help.kadam.net/en/articles/16532646-cookie-matching"
+    },
+    {
+      "requirement": "Redirect/callback ownership, match-table keeper, response status, cookie state, consent, browser restrictions, integration activation and actual synchronization depend on external configuration.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "external_context",
+      "locally_checkable": false,
+      "source_url": "https://help.kadam.net/en/articles/16532646-cookie-matching"
+    },
+    {
+      "requirement": "No universal method, headers, body, CORS or authentication law follows from the literal pixel URLs. Bid/Feed fields and r.uuidksinc.net retargeting are distinct endpoints and remain excluded.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "source_boundary",
+      "locally_checkable": false,
+      "source_url": "https://help.kadam.net/en/articles/16532646-cookie-matching"
+    },
+    {
+      "requirement": "No public executable sync producer was found in the inspected primary indexes/guides. The oracle verifies literal table templates and static substitutions, not native SDK behavior or receiver acceptance.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "source_availability",
+      "locally_checkable": false,
+      "source_url": "https://help.kadam.net/en/articles/16532646-cookie-matching"
+    }
+  ],
+  "public_scope": "Checks the documented SSP and DSP matching routes for populated partner and user ID slots.",
+  "public_limitations": "IDs stay opaque. Query/form extraction, redirects, cookie state and receiver acceptance remain partial.",
+  "playground_example": {
+    "kind": "url",
+    "artifact": "https://s.uuidksinc.net/match/partner-synthetic/",
+    "label": "Matching template is missing the partner user ID slot"
+  },
+  "tests": {
+    "focused_harness": "crates/pixellint-core/tests/mediascope_kadam_templates.rs",
+    "focused_tests": 5,
+    "source_and_core_directory_golden_cases": 85,
+    "status": "passed all five focused tests including 186 complete core/directory/vendor golden cases; source oracles reproduced offline",
+    "full_integrated_validation": "coordinator-owned and pending",
+    "clippy": "passed focused target with -D warnings",
+    "fmt": "passed cargo fmt --all --check"
+  }
+}

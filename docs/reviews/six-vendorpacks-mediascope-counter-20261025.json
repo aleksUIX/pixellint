@@ -1,0 +1,203 @@
+{
+  "id": "vendor/mediascope-counter",
+  "reviewed_at": "2026-10-26T02:48:07.755555+00:00",
+  "spec_complete": false,
+  "source_level": "official_template",
+  "manifest_path": "crates/pixellint-core/rulepacks/vendor/mediascope-counter.json",
+  "manifest_sha256": "38ae94f5341fe6878b172ea383458a8bbf138c4df9f6bca4dedb7d6d3f2a2dea",
+  "match": {
+    "hosts": [
+      "www.tns-counter.ru"
+    ],
+    "path_patterns": [
+      "/V13a\\*\\*(?:\\*\\*|[^*]*\\*R(?:>|%3[eE]).*\\*)[^*/]*/ru/UTF-8/tmsec=[^/]*/[^/]*"
+    ]
+  },
+  "path_pattern": "^/V13a\\*\\*(?<param1>[^*]*)\\*(?:R(?:>|%3[eE])(?<referrer>.*))?\\*(?<account>[^*/]*)/ru/UTF-8/tmsec=(?<tmsec>[^/]*)/(?<random>[^/]*)$",
+  "sources_read": [
+    {
+      "url": "https://metrix.mediascope.net/help/",
+      "title": "Mediascope counter installation help",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/mediascope-help.html",
+      "sha256": "aae8693233b38c5d22576c74dc08beed60604d3d32d2e310eacec843cd6cc754",
+      "evidence": "All image/layout branches and the explicit account/section naming rules.",
+      "scope": "official_vendor naming and official_template wire examples"
+    },
+    {
+      "url": "https://www.tns-counter.ru/tcounter.js",
+      "title": "Current public TNS counter producer",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/tcounter.js",
+      "sha256": "92a82d0233445685062df7115e244b34f3e71657d0c80f54cce716b5952eb8dc",
+      "evidence": "Full unchanged 552-byte producer executed offline with Image.src interception.",
+      "scope": "official_template producer behavior"
+    },
+    {
+      "url": "https://www.tns-counter.ru/policy.html",
+      "title": "TNS counter privacy policy",
+      "cache_file": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-sources/tns-policy.html",
+      "sha256": "95054ce2c6c4d941c8d770aa28b26752e1995cd1391e73fc62e8f2307bad650f",
+      "evidence": "Counter ownership context only. No field-law transfer.",
+      "scope": "ownership"
+    }
+  ],
+  "contracts_mapped": [
+    {
+      "scope": "params",
+      "name": "account",
+      "contract": {
+        "name": "account",
+        "requirement": "recommended",
+        "severity": "warning",
+        "source_level": "official_vendor",
+        "doc": "https://metrix.mediascope.net/help/#tmsec",
+        "format": {
+          "kind": "regex",
+          "pattern": "\\A[a-z0-9_]+\\z"
+        },
+        "description": "The guide permits lowercase Latin letters, digits and underscore in account names. This checks the physically extracted slot, not account assignment or receiver parsing of injected delimiters."
+      }
+    },
+    {
+      "scope": "params",
+      "name": "tmsec",
+      "contract": {
+        "name": "tmsec",
+        "requirement": "recommended",
+        "severity": "warning",
+        "source_level": "official_vendor",
+        "doc": "https://metrix.mediascope.net/help/#tmsec",
+        "format": {
+          "kind": "regex",
+          "pattern": "\\A[a-z0-9]+_[a-z0-9-]+\\z"
+        },
+        "description": "The guide defines two nonempty section parts separated by one underscore: lowercase Latin letters and digits on the left; the same plus hyphen on the right. It states that nonconforming sections are not counted. Other path layouts remain unvalidated."
+      }
+    },
+    {
+      "scope": "params",
+      "name": "param1",
+      "contract": {
+        "name": "param1",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "doc": "https://www.tns-counter.ru/tcounter.js",
+        "description": "The current public producer forwards this optional opaque prefix slot with a truthy override or empty fallback. No format or receiver-wide requiredness is inferred."
+      }
+    },
+    {
+      "scope": "params",
+      "name": "referrer",
+      "contract": {
+        "name": "referrer",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "doc": "https://www.tns-counter.ru/tcounter.js",
+        "description": "The producer escapes stars only for document.referrer, while explicit truthy referrers are forwarded unchanged. Empty and opaque values remain open. Query or fragment delimiters can hide later path slots and leave the request outside this profile."
+      }
+    },
+    {
+      "scope": "params",
+      "name": "random",
+      "contract": {
+        "name": "random",
+        "requirement": "optional",
+        "allow_empty": true,
+        "severity": "warning",
+        "format": {
+          "kind": "regex",
+          "pattern": "\\A(?:0|[1-9][0-9]{0,8}|1000000000)\\z"
+        },
+        "description": "The published JavaScript appends Math.round(Math.random()*1E9); Flash examples use a smaller range. The no-script image leaves this suffix empty. This is producer-shape advice, not a receiver quota."
+      }
+    },
+    {
+      "scope": "http.params",
+      "name": "method",
+      "contract": {
+        "name": "method",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "description": "Published image templates and the pinned Image.src producer issue GET requests. This warning does not establish a receiver-wide method or body contract."
+      }
+    }
+  ],
+  "field_interpretation": {
+    "account": "Lowercase Latin letters, digits and underscore; no assigned-ID validation or length cap.",
+    "tmsec": "Two nonempty parts separated by one underscore; left lowercase Latin/digits, right lowercase Latin/digits/hyphen.",
+    "param1": "Open optional source prefix; truthy fourth hit argument overrides option, otherwise empty fallback.",
+    "referrer": "Open optional referrer. Default document referrer escapes stars; explicit truthy third hit argument is unescaped.",
+    "random": "Optional empty no-script suffix or canonical Math.round decimal output from 0 through 1000000000; Flash examples are a subset. A regex preserves allow_empty because numeric bounds run before the generic empty check.",
+    "http.method": "GET advice from Image.src and image tags only."
+  },
+  "source_native_oracle": {
+    "scenarios": 46,
+    "captures": 42,
+    "network_calls": 0,
+    "execution": "Full pinned SDK and unchanged guide standard expression; no source rewriting",
+    "autohit_omission_controls": 4
+  },
+  "source_case_count": 101,
+  "engine_derived_vendor_oracle_cases": 0,
+  "core_baseline_receipt": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-six-vendorpacks-20261025/lane-03-core-baseline.json",
+  "missing_requirements": [
+    {
+      "requirement": "URI delimiters and extra stars in unescaped caller/configuration values can change physical routing or hide later slots in query/fragment. Only structurally intact published layouts are selected. No universal receiver path grammar is established.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "source_boundary",
+      "locally_checkable": false,
+      "source_url": "https://metrix.mediascope.net/help/"
+    },
+    {
+      "requirement": "The current SDK uses TNS.TnsCounter while the guide uses Mediascope.TnsCounter. The guide URL argument is unused in the fetched SDK. No alias equivalence or effective page-URL check is invented.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "producer_drift",
+      "locally_checkable": false,
+      "source_url": "https://metrix.mediascope.net/help/"
+    },
+    {
+      "requirement": "Path captures use existing once-only form-style decoding, including plus-to-space conversion. The receiver's path decoding policy is not published. Strict account/section advice treats plus as outside the documented alphabet either way; opaque prefix/referrer values get no grammar.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "extractor_limit",
+      "locally_checkable": false,
+      "source_url": "https://metrix.mediascope.net/help/"
+    },
+    {
+      "requirement": "The producer accepts arbitrary native configuration/override types and truthy fallbacks. A syntactically named account can still be unassigned. Account/section provisioning, cookie/session state, actual counting and delivery need external context.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "external_context",
+      "locally_checkable": false,
+      "source_url": "https://metrix.mediascope.net/help/"
+    },
+    {
+      "requirement": "Other V13 versions, host aliases, locales, encodings and alternative ambiguous layouts remain uncontracted. Random range and GET checks are pinned image-producer advice, not receiver quotas or a complete method/body schema.",
+      "reason": "Not established by the exact inspected primary source or intentionally outside current extraction scope.",
+      "classification": "source_boundary",
+      "locally_checkable": false,
+      "source_url": "https://metrix.mediascope.net/help/"
+    }
+  ],
+  "public_scope": "Checks documented account and section spelling, intact V13a image paths and the pinned image producer's random suffix and GET transport.",
+  "public_limitations": "Other path variants, delimiter overrides, account assignment and receiver acceptance remain unvalidated.",
+  "playground_example": {
+    "kind": "url",
+    "artifact": "https://www.tns-counter.ru/V13a****site_ru/ru/UTF-8/tmsec=Site_Main/123",
+    "label": "Section name violates the published lowercase naming rule"
+  },
+  "tests": {
+    "focused_harness": "crates/pixellint-core/tests/mediascope_kadam_templates.rs",
+    "focused_tests": 5,
+    "source_and_core_directory_golden_cases": 101,
+    "status": "passed all five focused tests including 186 complete core/directory/vendor golden cases; source oracles reproduced offline",
+    "full_integrated_validation": "coordinator-owned and pending",
+    "clippy": "passed focused target with -D warnings",
+    "fmt": "passed cargo fmt --all --check"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "vendor/kadam-cookie-sync",
+  "vendor": "kadam",
+  "display_name": "Kadam documented cookie matching",
+  "source_level": "official_template",
+  "docs": "https://help.kadam.net/en/articles/16532646-cookie-matching",
+  "description": "Template completeness advice for the documented SSP and DSP cookie-matching routes. Partner and user IDs stay opaque. Redirect configuration, callback ownership, duplicate selection, cookie state and receiver acceptance remain external. Complete HTTP captures retain the engine's existing URL-query and form-body merge; this profile does not prove query-only carriage or form transport support.",
+  "match": {
+    "hosts": [
+      "s.uuidksinc.net",
+      "d.uuidksinc.net"
+    ],
+    "path_patterns": [
+      "/match/[^/]*/"
+    ]
+  },
+  "path_pattern": "^/match/(?<partner_id>[^/]*)/$",
+  "params": [
+    {
+      "name": "partner_id",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "The official SSP and DSP templates place the provisioned partner ID in this physical path slot. Nonempty presence is template advice. No numeric, UUID, length, allocation or decoded-ID grammar is documented."
+    },
+    {
+      "name": "remote_uid",
+      "requirement": "recommended",
+      "severity": "warning",
+      "description": "Both official matching templates substitute the partner's user ID in remote_uid. Nonempty presence is template advice. Values and extras remain opaque. Ordinary engine extraction also accepts a form-body carrier in a complete capture; no query-only or receiver acceptance claim is made."
+    }
+  ]
+}

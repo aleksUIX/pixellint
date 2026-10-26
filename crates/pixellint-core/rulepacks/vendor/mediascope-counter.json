@@ -1,0 +1,86 @@
+{
+  "id": "vendor/mediascope-counter",
+  "vendor": "mediascope",
+  "display_name": "Mediascope V13a counter templates",
+  "source_level": "official_template",
+  "docs": "https://metrix.mediascope.net/help/",
+  "description": "Published V13a image templates and the pinned tcounter.js producer on the exact counter host. Account and section naming advice follows the official guide. URI-delimiter overrides, other versions, locale variants, account assignment and backend acceptance remain outside this partial profile.",
+  "match": {
+    "hosts": [
+      "www.tns-counter.ru"
+    ],
+    "path_patterns": [
+      "/V13a\\*\\*(?:\\*\\*|[^*]*\\*R(?:>|%3[eE]).*\\*)[^*/]*/ru/UTF-8/tmsec=[^/]*/[^/]*"
+    ]
+  },
+  "path_pattern": "^/V13a\\*\\*(?<param1>[^*]*)\\*(?:R(?:>|%3[eE])(?<referrer>.*))?\\*(?<account>[^*/]*)/ru/UTF-8/tmsec=(?<tmsec>[^/]*)/(?<random>[^/]*)$",
+  "params": [
+    {
+      "name": "account",
+      "requirement": "recommended",
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://metrix.mediascope.net/help/#tmsec",
+      "format": {
+        "kind": "regex",
+        "pattern": "\\A[a-z0-9_]+\\z"
+      },
+      "description": "The guide permits lowercase Latin letters, digits and underscore in account names. This checks the physically extracted slot, not account assignment or receiver parsing of injected delimiters."
+    },
+    {
+      "name": "tmsec",
+      "requirement": "recommended",
+      "severity": "warning",
+      "source_level": "official_vendor",
+      "doc": "https://metrix.mediascope.net/help/#tmsec",
+      "format": {
+        "kind": "regex",
+        "pattern": "\\A[a-z0-9]+_[a-z0-9-]+\\z"
+      },
+      "description": "The guide defines two nonempty section parts separated by one underscore: lowercase Latin letters and digits on the left; the same plus hyphen on the right. It states that nonconforming sections are not counted. Other path layouts remain unvalidated."
+    },
+    {
+      "name": "param1",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.tns-counter.ru/tcounter.js",
+      "description": "The current public producer forwards this optional opaque prefix slot with a truthy override or empty fallback. No format or receiver-wide requiredness is inferred."
+    },
+    {
+      "name": "referrer",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "doc": "https://www.tns-counter.ru/tcounter.js",
+      "description": "The producer escapes stars only for document.referrer, while explicit truthy referrers are forwarded unchanged. Empty and opaque values remain open. Query or fragment delimiters can hide later path slots and leave the request outside this profile."
+    },
+    {
+      "name": "random",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "regex",
+        "pattern": "\\A(?:0|[1-9][0-9]{0,8}|1000000000)\\z"
+      },
+      "description": "The published JavaScript appends Math.round(Math.random()*1E9); Flash examples use a smaller range. The no-script image leaves this suffix empty. This is producer-shape advice, not a receiver quota."
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET"
+          ]
+        },
+        "description": "Published image templates and the pinned Image.src producer issue GET requests. This warning does not establish a receiver-wide method or body contract."
+      }
+    ]
+  }
+}
