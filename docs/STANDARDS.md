@@ -4718,13 +4718,13 @@ Matcher: `{"hosts":["tag.researchnow.com"],"paths":["/t/beacon"]}`.
 
 ## `vendor/exoclick-vast`
 
-Warning-level completeness advice for documented VAST callback templates on the current default syndication host. Opaque data, identifier formats, unlisted actions/events, cimp.php and receiver-wide requirements remain open.
+Warning-level action, zone and progress completeness advice for documented vregister templates on the current default syndication host. Opaque data/d/dg carriers, click.php, cimp.php, identifier formats and receiver-wide requirements remain uncontracted.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/exoclick-vast.json).
 
-Matcher: `{"hosts":["s.magsrv.com"],"paths":["/vregister.php","/click.php"]}`.
+Matcher: `{"hosts":["s.magsrv.com"],"paths":["/vregister.php"]}`.
 
-Path captures: `^/(?<callback_route>vregister\.php\|click\.php)$`. Captured values take precedence over query keys with the same name.
+Path captures: `^/(?<callback_route>vregister\.php)$`. Captured values take precedence over query keys with the same name.
 
 ### URL parameters
 
@@ -4734,7 +4734,7 @@ Path captures: `^/(?<callback_route>vregister\.php\|click\.php)$`. Captured valu
 | `a` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
 | `tracking_event` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vimp"]}]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
 | `idzone` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vimp"]},{"kind":"all_values_in","params":["tracking_event"],"values":["impression"]}]},{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vview"]},{"kind":"all_values_in","params":["tracking_event"],"values":["progress"]}]},{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vview"]},{"kind":"exists","param":"errorcode"},{"kind":"not","condition":{"kind":"exists","param":"tracking_event"}}]}]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
-| `data` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vimp"]},{"kind":"all_values_in","params":["tracking_event"],"values":["impression"]}]},{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vview"]},{"kind":"all_values_in","params":["tracking_event"],"values":["progress"]}]},{"kind":"all_values_in","params":["callback_route"],"values":["click.php"]}]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
+| `data` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
 | `progress` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vview"]},{"kind":"all_values_in","params":["tracking_event"],"values":["progress"]}]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
 | `errorcode` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
 

@@ -1097,19 +1097,18 @@
     {
       "id": "vendor/exoclick-vast",
       "vendor": "exoclick",
-      "reviewed_at": "2026-10-26T19:08:07.598601+00:00",
+      "reviewed_at": "2026-10-26T20:02:36.913578+00:00",
       "disposition": "implemented_source_scoped_partial",
       "spec_complete": false,
       "full_vendor_spec_complete": false,
       "manifest_path": "crates/pixellint-core/rulepacks/vendor/exoclick-vast.json",
-      "manifest_sha256": "4f0454c96202ee3df682b334293fe6c0cdf4febf962b65897bfe9d694515d12b",
+      "manifest_sha256": "4df8c4fe4966dd21576543a728cf191819cd6a2c8fb496bdf9eaccb2045d0d50",
       "match": {
         "hosts": [
           "s.magsrv.com"
         ],
         "paths": [
-          "/vregister.php",
-          "/click.php"
+          "/vregister.php"
         ]
       },
       "source_level": "official_template",
@@ -1314,88 +1313,10 @@
         },
         {
           "name": "data",
-          "description": "The documented impression, progress and click templates carry opaque data. The error template legitimately omits it. This check does not decode, type, measure or reject blank token values.",
-          "requirement": "recommended",
+          "description": "The published VAST examples show an opaque data carrier but do not establish its requiredness or a universal receiver schema. Its absence stays valid. No equivalence with d or dg, token format, emptiness or payload meaning is inferred.",
+          "requirement": "optional",
           "allow_empty": true,
-          "severity": "warning",
-          "condition": {
-            "kind": "any",
-            "conditions": [
-              {
-                "kind": "all",
-                "conditions": [
-                  {
-                    "kind": "all_values_in",
-                    "params": [
-                      "callback_route"
-                    ],
-                    "values": [
-                      "vregister.php"
-                    ]
-                  },
-                  {
-                    "kind": "all_values_in",
-                    "params": [
-                      "a"
-                    ],
-                    "values": [
-                      "vimp"
-                    ]
-                  },
-                  {
-                    "kind": "all_values_in",
-                    "params": [
-                      "tracking_event"
-                    ],
-                    "values": [
-                      "impression"
-                    ]
-                  }
-                ]
-              },
-              {
-                "kind": "all",
-                "conditions": [
-                  {
-                    "kind": "all_values_in",
-                    "params": [
-                      "callback_route"
-                    ],
-                    "values": [
-                      "vregister.php"
-                    ]
-                  },
-                  {
-                    "kind": "all_values_in",
-                    "params": [
-                      "a"
-                    ],
-                    "values": [
-                      "vview"
-                    ]
-                  },
-                  {
-                    "kind": "all_values_in",
-                    "params": [
-                      "tracking_event"
-                    ],
-                    "values": [
-                      "progress"
-                    ]
-                  }
-                ]
-              },
-              {
-                "kind": "all_values_in",
-                "params": [
-                  "callback_route"
-                ],
-                "values": [
-                  "click.php"
-                ]
-              }
-            ]
-          }
+          "severity": "warning"
         },
         {
           "name": "progress",
@@ -1446,13 +1367,14 @@
       ],
       "cross_field_rules_mapped": [],
       "http_contracts_mapped": null,
-      "implemented_scope": "Warning-level completeness advice for documented VAST callback templates on the current default syndication host. Opaque data, identifier formats, unlisted actions/events, cimp.php and receiver-wide requirements remain open.",
+      "implemented_scope": "Warning-level action, zone and progress completeness advice for documented vregister templates on the current default syndication host. Opaque data/d/dg carriers, click.php, cimp.php, identifier formats and receiver-wide requirements remain uncontracted.",
       "missing_requirements": [
-        "Public templates establish scoped presence advice, not receiver-wide mandatory fields or accepted native types.",
+        "Public registration examples support scoped action/zone/progress presence advice, not universal receiver mandatory fields or accepted native types.",
+        "The example data carrier has no established requiredness. d/dg meanings, aliases, token grammar, payload format and presence remain uncontracted.",
         "The source-bound default syndication host does not establish universal equivalence for other adserver aliases or runtimes.",
-        "No closed action/event enum, identifier grammar, opaque-token grammar, duplicate rule or transport requirement is inferred.",
-        "The current ad-provider source binds the default service host but contains no VAST callback constructor.",
-        "The cimp.php route and every other endpoint remain unimplemented."
+        "No closed action/event enum, identifier grammar, duplicate rule or transport requirement is inferred.",
+        "No exact vregister field constructor was identified in the inspected current ad-provider source.",
+        "click.php and cimp.php have no executable source-grounded field contract and are excluded from automatic selection."
       ],
       "native_alternatives": [
         "All uncontracted fields remain open.",
@@ -1460,8 +1382,10 @@
       ],
       "source_oracle": "Independent vendor VAST guide examples, current default-host binding and synthetic omission/scope mutations.",
       "reviewed_artifacts": {
-        "fixtures/vendor-exoclick-vast/README.md": "c62ca6585432cd9a24214b74bf43c200b953acdab0eb219dd0f64667f20cb55d",
-        "fixtures/vendor-exoclick-vast/captured-request.json": "6208f7ee145c86cc60af0424c2cff6093fb89107b0a444e1e3b42a213b6a7700",
+        "fixtures/vendor-exoclick-vast/README.md": "c4162097ce0c1a5eb111f3b3e620e9bfd91d0f72e2cce630db28b6ddb75a519d",
+        "fixtures/vendor-exoclick-vast/captured-click-remains-uncontracted.json": "6208f7ee145c86cc60af0424c2cff6093fb89107b0a444e1e3b42a213b6a7700",
+        "fixtures/vendor-exoclick-vast/carrier-free-impression.txt": "41134a8fcd9e1a5344d7bc25a274f45063cffd8815465d34c524280e83fa91ae",
+        "fixtures/vendor-exoclick-vast/carrier-free-progress.txt": "19b1b940dd46cc3e43c6749de390abdd31de3e277b9e6f5c1bcb61a8d7b45aa7",
         "fixtures/vendor-exoclick-vast/conflicting-action-open.txt": "1afda539a73eb5c6635d8bb34f612e8b169defe3ef656903cfa81438ec1ef922",
         "fixtures/vendor-exoclick-vast/conflicting-event-open.txt": "3a8d373931975941ae240ba5cb078c237135622e50a88ccae297d974e4a2d074",
         "fixtures/vendor-exoclick-vast/custom-action-open.txt": "3a06936fd502223e8fd564ceff3ca08aa8b08ee295e0387e46f5ff8498f79a59",
@@ -1469,9 +1393,8 @@
         "fixtures/vendor-exoclick-vast/error-does-not-require-data.txt": "d689822bc80c4cfbad15d1531bb2aa2485eef465a1273d5e1e23cd6463f60d62",
         "fixtures/vendor-exoclick-vast/literal-custom-error-open.txt": "246c492087ffb0e3512ad55c81befebc53d413b3a2bb63bee32839d15180ad71",
         "fixtures/vendor-exoclick-vast/lookalike-host.txt": "bac19694f0c0127c587ef440666e8c66e29d17d8c5712061dffa20a8f9d2bcb1",
-        "fixtures/vendor-exoclick-vast/manifest.json": "fa22d904a127da12fc67a00cc93ab9b3696a4fcfdc2bdac1fb2d43656d8b98ba",
+        "fixtures/vendor-exoclick-vast/manifest.json": "d63036f72e5727d5cd8036a044402a53845e792164d962507528d98ca5e7adcc",
         "fixtures/vendor-exoclick-vast/missing-action.txt": "12c010266a2da3571b73b277a96aa189da6345a03c74350bae039b953ca2e0e5",
-        "fixtures/vendor-exoclick-vast/missing-data.txt": "7993b0b7a0491a5a2bac991219503319d9915fef0a90e9224c8e6f87fdec12aa",
         "fixtures/vendor-exoclick-vast/missing-event.txt": "59558dd1fb3d03c0d91bb7557ae695573158750d14e13841dbe572f13894ff8c",
         "fixtures/vendor-exoclick-vast/missing-progress.txt": "07ef4f7e535b45870c969c3bc201c2acaa29064d6ec05deec1647d2e71469623",
         "fixtures/vendor-exoclick-vast/missing-zone.txt": "0f67ae0f545a883579afefd50aea2eed21da7bcc14e3780141f7d4c118123822",
@@ -1480,18 +1403,37 @@
         "fixtures/vendor-exoclick-vast/opaque-fields-open.txt": "5bbf4774ab6969f507f1b8c8b674ee657028ca7f28475451a089fcfd532fbc0d",
         "fixtures/vendor-exoclick-vast/path-cannot-be-spoofed.txt": "41b40e631251a7601164779e7b86633e2cbff0da53e42e00d02012b7c0b0ba0b",
         "fixtures/vendor-exoclick-vast/percentage-progress-open.txt": "174f5fdd09c732e2be12f50bab8effd8de7bb0752dcfba2e5640e00eea44e115",
-        "fixtures/vendor-exoclick-vast/repeated-identical-carriers.txt": "20b0ea532177d418ef5122fffd5e6f6713a12c6ff58e7de9b47d5c4f358a25d4",
-        "fixtures/vendor-exoclick-vast/source-click.txt": "64da993dac81d4398a7938740fff33f12fa902cf29d999c24913752784727aae",
+        "fixtures/vendor-exoclick-vast/source-click-remains-uncontracted.txt": "64da993dac81d4398a7938740fff33f12fa902cf29d999c24913752784727aae",
         "fixtures/vendor-exoclick-vast/source-error-template.txt": "f189f7810635e6a24b98a198c8e1d3715995a47671dea472414d436a81d85c86",
         "fixtures/vendor-exoclick-vast/source-impression.txt": "8fae9e37aab877bf943116bd9c49155d45ebc6d99726c7a8f36b1e166bffaac7",
         "fixtures/vendor-exoclick-vast/source-progress.txt": "55844b027563b48f78f2d65d95818cdc9e68203d98599c9aeb2d95964b4ad851",
         "fixtures/vendor-exoclick-vast/trailing-slash.txt": "e3a3e83b1f61a6ab218a84575e230669c4ba551daa23a4a7e2049aecb0022b59",
+        "fixtures/vendor-exoclick-vast/uncontracted-click-d-carrier.txt": "5d1c63c61e9ceaec6b2495a763fc69674acc82a603d3b7aac0b6cead7e28f684",
+        "fixtures/vendor-exoclick-vast/uncontracted-click-repeated-carrier.txt": "20b0ea532177d418ef5122fffd5e6f6713a12c6ff58e7de9b47d5c4f358a25d4",
+        "fixtures/vendor-exoclick-vast/uncontracted-click-without-carrier.txt": "7993b0b7a0491a5a2bac991219503319d9915fef0a90e9224c8e6f87fdec12aa",
         "fixtures/vendor-exoclick-vast/uncovered-cimp.txt": "ae983fb6c81731246669227d5c37efa5843f1b2d3579e776da8d901b22d21e90",
-        "fixtures/vendor-exoclick-vast/uncovered-tag.txt": "8b4b7a39083106549e7a994d7a28cb43e98ca6431d9e19f2e60a6ecd355c0f7e"
+        "fixtures/vendor-exoclick-vast/uncovered-tag.txt": "8b4b7a39083106549e7a994d7a28cb43e98ca6431d9e19f2e60a6ecd355c0f7e",
+        "fixtures/vendor-exoclick-vast/unverified-dg-error-field-open.txt": "cf24b879e7dfce896f087a4001fa30f0fbd6ecbebc484b6166f0ea825c2239ba",
+        "fixtures/vendor-exoclick-vast/unverified-extra-carriers-open.txt": "96f9b70b3b839d23221637a5dc375214e7b5d0e86a9c5592dfd4e6d3d20a725f"
       },
       "validated_checks": [
         "Golden corpus passes, including documented omission alternatives and all negative scope cases."
-      ]
+      ],
+      "carrier_deferral_review": {
+        "reason": "The data field is shown in a template rather than a receiver requirement. No authoritative matching alternate-carrier producer was recovered.",
+        "automatic_paths": [
+          "/vregister.php"
+        ],
+        "data_presence": "optional",
+        "unverified_carriers": [
+          "d",
+          "dg"
+        ],
+        "click_scope": "excluded to avoid recognition-only coverage",
+        "synthetic_regression_cases": 5,
+        "field_contract_delta": 0,
+        "golden_case_delta": 5
+      }
     },
     {
       "id": "vendor/mobkoi-engagement",
@@ -330672,7 +330614,7 @@
       "vendor/mobkoi-engagement"
     ],
     "spec_complete": false,
-    "golden_cases": 73,
+    "golden_cases": 78,
     "source_oracle_captures": 10,
     "collector_requests": 0,
     "remaining_gaps_recorded": true,
@@ -331194,5 +331136,20 @@
       }
     ],
     "validation_status": "Pending full integrated native and WASM checks."
+  },
+  "exoclick_opaque_carrier_deferral_20261026": {
+    "reason": "The data field is shown in a template rather than a receiver requirement. No authoritative matching alternate-carrier producer was recovered.",
+    "automatic_paths": [
+      "/vregister.php"
+    ],
+    "data_presence": "optional",
+    "unverified_carriers": [
+      "d",
+      "dg"
+    ],
+    "click_scope": "excluded to avoid recognition-only coverage",
+    "synthetic_regression_cases": 5,
+    "field_contract_delta": 0,
+    "golden_case_delta": 5
   }
 }

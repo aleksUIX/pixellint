@@ -1,20 +1,19 @@
 {
   "id": "vendor/exoclick-vast",
-  "display_name": "ExoClick documented VAST callback templates",
+  "display_name": "ExoClick documented VAST registration templates",
   "vendor": "exoclick",
   "source_level": "official_template",
   "docs": "https://docs.exoclick.com/publishers/vast/vast-tag.md",
-  "description": "Warning-level completeness advice for documented VAST callback templates on the current default syndication host. Opaque data, identifier formats, unlisted actions/events, cimp.php and receiver-wide requirements remain open.",
+  "description": "Warning-level action, zone and progress completeness advice for documented vregister templates on the current default syndication host. Opaque data/d/dg carriers, click.php, cimp.php, identifier formats and receiver-wide requirements remain uncontracted.",
   "match": {
     "hosts": [
       "s.magsrv.com"
     ],
     "paths": [
-      "/vregister.php",
-      "/click.php"
+      "/vregister.php"
     ]
   },
-  "path_pattern": "^/(?<callback_route>vregister\\.php|click\\.php)$",
+  "path_pattern": "^/(?<callback_route>vregister\\.php)$",
   "params": [
     {
       "name": "callback_route",
@@ -181,88 +180,10 @@
     },
     {
       "name": "data",
-      "description": "The documented impression, progress and click templates carry opaque data. The error template legitimately omits it. This check does not decode, type, measure or reject blank token values.",
-      "requirement": "recommended",
+      "description": "The published VAST examples show an opaque data carrier but do not establish its requiredness or a universal receiver schema. Its absence stays valid. No equivalence with d or dg, token format, emptiness or payload meaning is inferred.",
+      "requirement": "optional",
       "allow_empty": true,
-      "severity": "warning",
-      "condition": {
-        "kind": "any",
-        "conditions": [
-          {
-            "kind": "all",
-            "conditions": [
-              {
-                "kind": "all_values_in",
-                "params": [
-                  "callback_route"
-                ],
-                "values": [
-                  "vregister.php"
-                ]
-              },
-              {
-                "kind": "all_values_in",
-                "params": [
-                  "a"
-                ],
-                "values": [
-                  "vimp"
-                ]
-              },
-              {
-                "kind": "all_values_in",
-                "params": [
-                  "tracking_event"
-                ],
-                "values": [
-                  "impression"
-                ]
-              }
-            ]
-          },
-          {
-            "kind": "all",
-            "conditions": [
-              {
-                "kind": "all_values_in",
-                "params": [
-                  "callback_route"
-                ],
-                "values": [
-                  "vregister.php"
-                ]
-              },
-              {
-                "kind": "all_values_in",
-                "params": [
-                  "a"
-                ],
-                "values": [
-                  "vview"
-                ]
-              },
-              {
-                "kind": "all_values_in",
-                "params": [
-                  "tracking_event"
-                ],
-                "values": [
-                  "progress"
-                ]
-              }
-            ]
-          },
-          {
-            "kind": "all_values_in",
-            "params": [
-              "callback_route"
-            ],
-            "values": [
-              "click.php"
-            ]
-          }
-        ]
-      }
+      "severity": "warning"
     },
     {
       "name": "progress",
