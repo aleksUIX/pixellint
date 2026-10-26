@@ -1,0 +1,178 @@
+{
+  "id": "vendor/cint-lucid-pixel",
+  "display_name": "Cint Lucid measurement pixel",
+  "vendor": "cint-lucid",
+  "source_level": "official_vendor",
+  "docs": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+  "description": "Documented Cint/Lucid campaign image pixels, default reporting metadata and explicit GDPR consent profile. ID spelling, optional video/custom data and account acceptance remain open where public sources do not define them.",
+  "match": {
+    "hosts": [
+      "tracker.samplicio.us"
+    ],
+    "path_patterns": [
+      "/tracker/[^/]*/pixel\\.(?:gif|giff|png)"
+    ]
+  },
+  "path_pattern": "\\A/tracker/(?<campaign_id>[^/]*)/pixel\\.(?:gif|giff|png)\\z",
+  "params": [
+    {
+      "name": "campaign_id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "The documented route carries the supplied Lucid campaign ID. Verify that the configured campaign is present; no identifier alphabet or length is inferred."
+    },
+    {
+      "name": "sid",
+      "requirement": "recommended",
+      "severity": "warning",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "The published default pixel includes this site or publisher reporting field. Missing metadata limits reporting granularity; supplied values remain opaque and account mapping needs external context."
+    },
+    {
+      "name": "pid",
+      "requirement": "recommended",
+      "severity": "warning",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "The published default pixel includes this placement reporting field. Missing metadata limits reporting granularity; supplied values remain opaque and account mapping needs external context."
+    },
+    {
+      "name": "crid",
+      "requirement": "recommended",
+      "severity": "warning",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "The published default pixel includes this creative reporting field. Missing metadata limits reporting granularity; supplied values remain opaque and account mapping needs external context."
+    },
+    {
+      "name": "cachebuster",
+      "requirement": "recommended",
+      "format": {
+        "kind": "non_empty"
+      },
+      "severity": "warning",
+      "doc": "https://art19.zendesk.com/hc/en-us/articles/360051178952-Setting-Up-3rd-Party-Measurement-Lucid",
+      "source_level": "official_template",
+      "description": "The published Lucid image template supplies cachebuster, and Cint implementation guidance recommends the platform cache-buster macro. A single request cannot prove randomness, freshness or uniqueness."
+    },
+    {
+      "name": "idfa",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "Optional mobile advertising identifier. Public guidance does not define an identifier alphabet, length or universal presence."
+    },
+    {
+      "name": "video_action",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "Optional video action. Published start, stop, skip and complete values are examples, so custom action names remain open."
+    },
+    {
+      "name": "video_completion",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "Optional viewed amount expressed as time or percentage. No exclusive unit, numeric grammar or universal 0-to-100 bound is inferred."
+    },
+    {
+      "name": "c1",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "Optional custom campaign data. Values, including empty and encoded text, remain opaque."
+    },
+    {
+      "name": "c2",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "Optional custom campaign data. Values, including empty and encoded text, remain opaque."
+    },
+    {
+      "name": "c3",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "Optional custom campaign data. Values, including empty and encoded text, remain opaque."
+    },
+    {
+      "name": "c4",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "Optional custom campaign data. Values, including empty and encoded text, remain opaque."
+    },
+    {
+      "name": "c5",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/lucid-media-measurement-terminology",
+      "description": "Optional custom campaign data. Values, including empty and encoded text, remain opaque."
+    },
+    {
+      "name": "gdpr",
+      "allow_empty": true,
+      "doc": "https://help.cint.com/docs/iab-transparency-consent-framework-22-faq",
+      "description": "Explicit GDPR applicability signal. Destination consent advice is scoped to observed values that are all literal 1; absence, other values and unresolved macros do not establish jurisdiction."
+    },
+    {
+      "name": "gdpr_consent",
+      "allow_empty": true,
+      "format": {
+        "kind": "tcf"
+      },
+      "severity": "warning",
+      "doc": "https://help.cint.com/docs/iab-transparency-consent-framework-22-faq",
+      "description": "Supplied consent is structurally inspected as TCF v2. Local decoding does not establish jurisdiction, current GVL applicability, account acceptance or every TCF 2.2 policy obligation."
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.cint-lucid-pixel.gdpr_consent_expected",
+      "kind": "require_any_of",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "gdpr"
+        ],
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "doc": "https://help.cint.com/docs/iab-transparency-consent-framework-22-faq",
+      "message": "The documented Lucid measurement profile expects consent when GDPR applicability is explicitly 1.",
+      "fix_hint": "Provide the applicable TCF consent signal or verify the upstream partner and collection context.",
+      "groups": [
+        [
+          "gdpr_consent"
+        ]
+      ],
+      "allow_empty": false
+    },
+    {
+      "code": "vendor.cint-lucid-pixel.tcf_consent_profile",
+      "kind": "tcf_consent",
+      "param": "gdpr_consent",
+      "vendor_id": 508,
+      "purpose_ids": [
+        1,
+        7,
+        8,
+        9
+      ],
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "gdpr"
+        ],
+        "values": [
+          "1"
+        ]
+      },
+      "severity": "warning",
+      "doc": "https://help.cint.com/docs/iab-transparency-consent-framework-22-faq",
+      "message": "The documented Lucid TCF profile expects vendor 508 and purpose consents 1, 7, 8 and 9.",
+      "fix_hint": "Verify the supplied consent with the publisher/CMP and the deployed Lucid integration."
+    }
+  ]
+}

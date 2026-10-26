@@ -1,0 +1,171 @@
+{
+  "reference_package": "@iabtcf/core@1.5.6",
+  "execution": "Unchanged official reference package, TCString.encode and TCString.decode, local synthetic GVL; no network or vendor receiver",
+  "limits": [
+    "Synthetic CMP and GVL metadata do not prove current vendor registration, policy compliance or receiver acceptance.",
+    "These are standard consent codec fixtures, not captures from a Cint or Dynata SDK."
+  ],
+  "cases": [
+    {
+      "id": "all-required",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAIOAAAAAAAwID-QAQD-AAAAA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": true,
+        "vendor734": false,
+        "purposeConsents": [
+          1,
+          7,
+          8,
+          9
+        ],
+        "purposeLegitimateInterests": [],
+        "vendor508LegitimateInterest": false
+      },
+      "expected_profile_satisfied": true
+    },
+    {
+      "id": "missing-vendor",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAIOAAAAAAAwIAAAAAAAA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": false,
+        "vendor734": false,
+        "purposeConsents": [
+          1,
+          7,
+          8,
+          9
+        ],
+        "purposeLegitimateInterests": [],
+        "vendor508LegitimateInterest": false
+      },
+      "expected_profile_satisfied": false
+    },
+    {
+      "id": "other-vendor",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAIOAAAAAAAwIFvQAQFvAAAAA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": false,
+        "vendor734": true,
+        "purposeConsents": [
+          1,
+          7,
+          8,
+          9
+        ],
+        "purposeLegitimateInterests": [],
+        "vendor508LegitimateInterest": false
+      },
+      "expected_profile_satisfied": false
+    },
+    {
+      "id": "missing-purpose-1",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAAOAAAAAAAwID-QAQD-AAAAA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": true,
+        "vendor734": false,
+        "purposeConsents": [
+          7,
+          8,
+          9
+        ],
+        "purposeLegitimateInterests": [],
+        "vendor508LegitimateInterest": false
+      },
+      "expected_profile_satisfied": false
+    },
+    {
+      "id": "missing-purpose-7",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAIGAAAAAAAwID-QAQD-AAAAA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": true,
+        "vendor734": false,
+        "purposeConsents": [
+          1,
+          8,
+          9
+        ],
+        "purposeLegitimateInterests": [],
+        "vendor508LegitimateInterest": false
+      },
+      "expected_profile_satisfied": false
+    },
+    {
+      "id": "missing-purpose-8",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAIKAAAAAAAwID-QAQD-AAAAA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": true,
+        "vendor734": false,
+        "purposeConsents": [
+          1,
+          7,
+          9
+        ],
+        "purposeLegitimateInterests": [],
+        "vendor508LegitimateInterest": false
+      },
+      "expected_profile_satisfied": false
+    },
+    {
+      "id": "missing-purpose-9",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAIMAAAAAAAwID-QAQD-AAAAA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": true,
+        "vendor734": false,
+        "purposeConsents": [
+          1,
+          7,
+          8
+        ],
+        "purposeLegitimateInterests": [],
+        "vendor508LegitimateInterest": false
+      },
+      "expected_profile_satisfied": false
+    },
+    {
+      "id": "legitimate-interest-only",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAAAAAAOAAAwIAAAH8gAgH8AA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": false,
+        "vendor734": false,
+        "purposeConsents": [],
+        "purposeLegitimateInterests": [
+          7,
+          8,
+          9
+        ],
+        "vendor508LegitimateInterest": true
+      },
+      "expected_profile_satisfied": false
+    },
+    {
+      "id": "unrelated-consents",
+      "signal": "CQspMEAQspMEAAqABAENAqEgAHAAAAAAAAwIFvQAQFvAAAAA.IFvQAgD-ALeA",
+      "decoded": {
+        "version": 2,
+        "policyVersion": 4,
+        "vendor508": false,
+        "vendor734": true,
+        "purposeConsents": [],
+        "purposeLegitimateInterests": [],
+        "vendor508LegitimateInterest": false
+      },
+      "expected_profile_satisfied": false
+    }
+  ]
+}
