@@ -12,6 +12,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 # vendor slug -> (display name, category, [hosts], rulepack or None)
 VENDORS = {
+    # Public pixel and cookie-matching sources bind these exact host roots.
+    "cint-lucid": ("Cint / Lucid", "measurement", ["tracker.samplicio.us"], "vendor/cint-lucid-pixel"),
+    "dynata": ("Dynata", "measurement", ["tag.researchnow.com"], "vendor/dynata-pixel"),
+    "pixalate": ("Pixalate", "measurement", ["adrta.com"], "vendor/pixalate-analytics"),
+    "videoamp": ("VideoAmp", "measurement", ["b.videoamp.com"], "vendor/videoamp-impression"),
+    "mediascope": ("Mediascope", "measurement", ["www.tns-counter.ru"], "vendor/mediascope-counter"),
+    "kadam": ("Kadam", "identity", ["d.uuidksinc.net", "s.uuidksinc.net"], "vendor/kadam-cookie-sync"),
     # Official event-forwarding and pixel templates bind these exact host roots.
     "remerge": ("Remerge", "mobile", ["remerge.events"], "vendor/remerge-event"),
     "hybrid": ("Hybrid Adtech", "programmatic", ["dss.hybrid.ai"], "vendor/hybrid-dss-pixel"),

@@ -74,6 +74,30 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/cint-lucid-pixel",
+        include_str!("../rulepacks/vendor/cint-lucid-pixel.json"),
+    ),
+    (
+        "vendor/dynata-pixel",
+        include_str!("../rulepacks/vendor/dynata-pixel.json"),
+    ),
+    (
+        "vendor/pixalate-analytics",
+        include_str!("../rulepacks/vendor/pixalate-analytics.json"),
+    ),
+    (
+        "vendor/videoamp-impression",
+        include_str!("../rulepacks/vendor/videoamp-impression.json"),
+    ),
+    (
+        "vendor/mediascope-counter",
+        include_str!("../rulepacks/vendor/mediascope-counter.json"),
+    ),
+    (
+        "vendor/kadam-cookie-sync",
+        include_str!("../rulepacks/vendor/kadam-cookie-sync.json"),
+    ),
+    (
         "vendor/sourcepoint-gdpr-choice",
         include_str!("../rulepacks/vendor/sourcepoint-gdpr-choice.json"),
     ),
