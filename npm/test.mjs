@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 220, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 227, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -356,3 +356,36 @@ for (const entry of [{validate}, cjs]) {
     ["https://ping.chartbeat.net/ping?h=example.test&g=123&p=/a&d=example.test&t=opaque&R=1&W=1&I=0", "vendor.chartbeat.activity_flags_conflict"],
   ]) assert.ok(entry.validate(url).reports.flatMap(r => r.violations).some(v => v.code === finding));
 }
+
+// Source-backed profile fixtures must retain their behavior in both WASM entry points.
+const addedProfileSlugs = [
+  "artsai-impression", "celtra-json", "exoclick-vast", "extreme-reach-cp-imp",
+  "iqm-segment-open", "mobkoi-engagement", "pubmatic-vpaid-error",
+];
+let addedProfileCases = 0;
+for (const entry of [{ validate }, cjs]) {
+  for (const slug of addedProfileSlugs) {
+    const root = new URL(`../fixtures/vendor-${slug}/`, import.meta.url);
+    const cases = JSON.parse(readFileSync(new URL("manifest.json", root), "utf8"));
+    for (const fixture of cases) {
+      const clock = Date.now;
+      try {
+        if (fixture.reference_time !== undefined) Date.now = () => fixture.reference_time * 1000;
+        const artifact = readFileSync(new URL(fixture.fixture, root), "utf8");
+        const result = entry.validate(artifact, { kind: fixture.kind, state: fixture.expansion_state ?? "unknown" });
+        const label = `${slug}/${fixture.id}`;
+        const violations = result.reports.flatMap(report => report.violations);
+        assert.deepEqual(result.reports.map(report => report.plugin_id), fixture.expected_plugins, `${label}: selected packs`);
+        assert.deepEqual(violations.map(finding => finding.code), fixture.expected_codes, `${label}: findings`);
+        for (const [severity, expected] of [["error", fixture.expected_errors], ["warning", fixture.expected_warnings], ["info", fixture.expected_infos]]) {
+          assert.equal(violations.filter(finding => finding.severity === severity).length, expected, `${label}: ${severity} count`);
+        }
+        addedProfileCases++;
+      } finally {
+        Date.now = clock;
+      }
+    }
+  }
+}
+assert.equal(addedProfileCases, 544, "all 272 profile cases run through both package entry points");
+console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);
