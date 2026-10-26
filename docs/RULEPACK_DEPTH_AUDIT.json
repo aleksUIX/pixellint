@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_date": "2026-10-26",
-  "status": "building_local_candidate",
+  "status": "tested_local_source_candidate",
   "coverage_claim": "Four existing packs receive deeper constraints and source-backed corrections. Endpoint selectors and directory bytes are unchanged. The prior 6938/11295 vendor-checked sample result is not increased by this depth work.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
@@ -40,7 +40,7 @@
   },
   "current": {
     "version": "0.70.0",
-    "candidate_status": "building_local_candidate",
+    "candidate_status": "tested_local_source_candidate",
     "review_date": "2026-10-26",
     "packs": 233,
     "vendors": 133,
@@ -72,8 +72,154 @@
   },
   "verification": {
     "candidate_version": "0.70.0",
-    "status": "pending_full_validation",
-    "baseline_commit": "3397a2b1071c12f91bc50bc8492912ed5c4fc80f"
+    "status": "passed_local_candidate",
+    "validation_source_sha": "015160a6142fc2cc10a3828a2de781c25d6c85f5",
+    "native_checks": {
+      "source_sha": "015160a6142fc2cc10a3828a2de781c25d6c85f5",
+      "checks": [
+        {
+          "check": "workspace",
+          "command": [
+            "cargo",
+            "test",
+            "--workspace",
+            "--locked",
+            "--no-fail-fast"
+          ],
+          "exit_code": 0,
+          "seconds": 230.241,
+          "passed": 832,
+          "failed": 0
+        },
+        {
+          "check": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--all-targets",
+            "--all-features",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "seconds": 4.263
+        },
+        {
+          "check": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.51
+        },
+        {
+          "check": "depth",
+          "command": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "tools/check-rulepack-depth.py"
+          ],
+          "exit_code": 0,
+          "seconds": 2.066
+        },
+        {
+          "check": "reference",
+          "command": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "tools/update-rulepack-reference.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.087
+        },
+        {
+          "check": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.073
+        }
+      ],
+      "all_completed": true,
+      "all_passed": true
+    },
+    "runtime_checks": {
+      "source_sha": "015160a6142fc2cc10a3828a2de781c25d6c85f5",
+      "checks": [
+        {
+          "check": "wasm-build",
+          "command": [
+            "wasm-pack",
+            "build",
+            "crates/pixellint-wasm",
+            "--mode",
+            "no-install",
+            "--target",
+            "nodejs",
+            "--out-dir",
+            "../../npm/wasm",
+            "--out-name",
+            "pixellint"
+          ],
+          "exit_code": 0,
+          "seconds": 19.703
+        },
+        {
+          "check": "node22",
+          "command": [
+            "/usr/local/bin/node",
+            "npm/test.mjs"
+          ],
+          "exit_code": 0,
+          "seconds": 30.611
+        },
+        {
+          "check": "node20",
+          "command": [
+            "/private/tmp/pixellint-qa-node20-20261025/node-v20.20.2-darwin-arm64/bin/node",
+            "npm/test.mjs"
+          ],
+          "exit_code": 0,
+          "seconds": 29.295
+        }
+      ],
+      "all_completed": true,
+      "all_passed": true
+    },
+    "workspace_tests": {
+      "check": "workspace",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked",
+        "--no-fail-fast"
+      ],
+      "exit_code": 0,
+      "seconds": 230.241,
+      "passed": 832,
+      "failed": 0
+    },
+    "wasm_sha256": "870a3683088438951558b75baa01c7159ac9575ebee72870d19f559ece49f36d",
+    "new_fixture_cases": 1282,
+    "independent_primary_schema_cases": 1224,
+    "unchanged_other_manifests": 229,
+    "endpoint_selectors_unchanged": true,
+    "directory_byte_identical": true,
+    "engine_source_unchanged": true,
+    "retained_corpus_claim": {
+      "checked": 6938,
+      "total": 11295,
+      "percent": 61.42540947321824,
+      "note": "Previous measured inventory. This depth-only change preserves all endpoint selectors and makes no reach increase claim."
+    }
   },
   "shared_protocol_limits": [
     {
@@ -378267,6 +378413,7 @@
     "endpoint_selectors_unchanged": true,
     "directory_unchanged": true,
     "unsupported_reference_sibling_enums_removed": true,
-    "completeness": "Partial receiver coverage; all published input event branches reviewed without inventing enum-only branch schemas."
+    "completeness": "Partial receiver coverage; all published input event branches reviewed without inventing enum-only branch schemas.",
+    "validation_status": "passed_local_candidate"
   }
 }
