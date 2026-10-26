@@ -1020,13 +1020,16 @@ pub enum RequestQueryEncoding {
     UrlQuery,
 }
 
-/// A namespace evaluated once per selected semicolon-separated query group.
+/// A namespace evaluated independently for each selected query or path group.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct QuerySpec {
-    /// Query semicolon groups by default, or independent bracketed path items.
+    /// Query semicolon groups by default, path items, or opt-in indexed keys.
     #[serde(default)]
     pub source: QuerySource,
+    /// Literal collection prefix for opt-in prefix[index][field] URL keys.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub key_prefix: Option<String>,
     /// Read these declared logical parameters from outside all path items.
     #[serde(default)]
     pub global_params: Vec<String>,
@@ -1055,6 +1058,7 @@ pub enum QuerySource {
     #[default]
     QuerySemicolon,
     PathItems,
+    IndexedQuery,
 }
 
 /// One body contract, or several at different levels of the same payload.
@@ -1416,14 +1420,38 @@ struct Scope<'a> {
     complete_http_request: bool,
     /// The payload being read, when this scope is a body rather than a URL.
     body: Option<BodyScope<'a>>,
-    query: Option<QuerySpan>,
+    query: Option<QuerySpan<'a>>,
 }
 
 #[derive(Clone, Copy)]
-struct QuerySpan {
+struct QuerySpan<'a> {
     index: usize,
     start: usize,
     end: usize,
+    physical_row: Option<&'a str>,
+    anchor_name: Option<&'a str>,
+}
+
+struct ScopedQueryGroup<'a> {
+    index: usize,
+    start: usize,
+    end: usize,
+    physical_row: Option<String>,
+    anchor_name: Option<String>,
+    params: Vec<RawParam<'a>>,
+}
+
+impl<'a> From<crate::query_segments::QuerySegment<'a>> for ScopedQueryGroup<'a> {
+    fn from(group: crate::query_segments::QuerySegment<'a>) -> Self {
+        Self {
+            index: group.index,
+            start: group.start,
+            end: group.end,
+            physical_row: None,
+            anchor_name: None,
+            params: group.params,
+        }
+    }
 }
 
 /// The document and the element a body scope is evaluating.
@@ -1435,7 +1463,10 @@ struct BodyScope<'a> {
 impl Scope<'_> {
     fn field(&self, name: &str) -> String {
         if let Some(query) = self.query {
-            return format!("{}[{}].{name}", self.code_segment, query.index);
+            return match query.physical_row {
+                Some(row) => format!("{}.{row}[{name}]", self.code_segment),
+                None => format!("{}[{}].{name}", self.code_segment, query.index),
+            };
         }
         match &self.body {
             None => format!("param.{name}"),
@@ -1452,7 +1483,10 @@ impl Scope<'_> {
                 } else {
                     ViolationTargetComponent::QueryParam
                 },
-                name: Some(format!("{}[{}]", self.code_segment, query.index)),
+                name: Some(query.anchor_name.map_or_else(
+                    || format!("{}[{}]", self.code_segment, query.index),
+                    str::to_string,
+                )),
                 value: None,
                 start: query.start,
                 end: query.end,
@@ -2362,9 +2396,41 @@ impl ManifestRulePack {
                     reason: "last_index must not precede first_index".to_string(),
                 });
             }
+            if spec.source == QuerySource::IndexedQuery {
+                if spec
+                    .key_prefix
+                    .as_ref()
+                    .is_none_or(|prefix| prefix.is_empty() || prefix.contains(['[', ']']))
+                {
+                    return Err(ManifestError::InvalidConstraint {
+                        pack_id,
+                        name: "key_prefix".to_string(),
+                        reason:
+                            "indexed_query requires a nonempty literal key_prefix without brackets"
+                                .to_string(),
+                    });
+                }
+                if spec.first_index != 0
+                    || spec.last_index.is_some()
+                    || !spec.global_params.is_empty()
+                {
+                    return Err(ManifestError::InvalidConstraint {
+                        pack_id,
+                        name: "query_scopes".to_string(),
+                        reason: "indexed_query does not accept first_index, last_index or global_params filters".to_string(),
+                    });
+                }
+            } else if spec.key_prefix.is_some() {
+                return Err(ManifestError::InvalidConstraint {
+                    pack_id,
+                    name: "key_prefix".to_string(),
+                    reason: "key_prefix requires indexed_query source".to_string(),
+                });
+            }
             let expected_style = match spec.source {
                 QuerySource::QuerySemicolon => ParamStyle::QuerySemicolon,
                 QuerySource::PathItems => ParamStyle::ColonPath,
+                QuerySource::IndexedQuery => ParamStyle::Query,
             };
             if manifest.param_style != expected_style {
                 return Err(ManifestError::InvalidConstraint {
@@ -3651,16 +3717,28 @@ impl ManifestRulePack {
             let code_segment = match query.spec.source {
                 QuerySource::QuerySemicolon => "query",
                 QuerySource::PathItems => "path_items",
+                QuerySource::IndexedQuery => "indexed_query",
             };
-            let mut segments = match query.spec.source {
+            let mut segments: Vec<ScopedQueryGroup<'_>> = match query.spec.source {
                 QuerySource::QuerySemicolon => crate::query_segments::query_segments(
                     prepared.trimmed(),
                     query.spec.first_index,
+                )
+                .into_iter()
+                .map(ScopedQueryGroup::from)
+                .collect(),
+                QuerySource::IndexedQuery => indexed_query_groups(
+                    prepared.trimmed(),
+                    query
+                        .spec
+                        .key_prefix
+                        .as_deref()
+                        .expect("validated key_prefix"),
                 ),
                 QuerySource::PathItems => {
                     match crate::path_items::path_items(prepared.trimmed(), query.spec.first_index)
                     {
-                        Ok(groups) => groups,
+                        Ok(groups) => groups.into_iter().map(ScopedQueryGroup::from).collect(),
                         Err((start, end)) => {
                             violations.push(Violation {
                                 code: format!("{}.path_items.malformed", self.code_prefix),
@@ -3742,6 +3820,8 @@ impl ManifestRulePack {
                         index: segment.index,
                         start: segment.start,
                         end: segment.end,
+                        physical_row: segment.physical_row.as_deref(),
+                        anchor_name: segment.anchor_name.as_deref(),
                     }),
                 };
                 for compiled in &query.params {
@@ -7206,7 +7286,7 @@ pub(crate) struct RawParam<'a> {
     /// reported as if it were a query parameter.
     pub(crate) component: ViolationTargetComponent,
     /// The concrete location for a body field, such as `data[1].event_name`.
-    /// Query parameters have no need for it and leave it empty.
+    /// Aliased indexed-query fields retain their original decoded wire key here.
     pub(crate) location: Option<String>,
     /// Whether the value is an object or an array. Vendors accept several of
     /// these fields as either a scalar or a list of them, so a value contract
@@ -7551,6 +7631,61 @@ fn whole_url_target(artifact: &str) -> ViolationTarget {
         start: 0,
         end: artifact.len(),
     }
+}
+
+/// Opt-in URL-only groups preserve every pair, including bare keys. Numeric
+/// index spellings are lexical labels, never parsed, bounded or canonicalized.
+fn indexed_query_groups<'a>(artifact: &'a str, prefix: &str) -> Vec<ScopedQueryGroup<'a>> {
+    let end = artifact.find('#').unwrap_or(artifact.len());
+    let Some(mut cursor) = artifact[..end].find('?').map(|offset| offset + 1) else {
+        return Vec::new();
+    };
+    let mut positions = BTreeMap::<String, usize>::new();
+    let mut groups: Vec<ScopedQueryGroup<'a>> = Vec::new();
+    while cursor < end {
+        let pair_end = artifact[cursor..end]
+            .find('&')
+            .map_or(end, |offset| cursor + offset);
+        let pair = &artifact[cursor..pair_end];
+        if !pair.is_empty() {
+            let (raw_name, raw_value) = pair.split_once('=').unwrap_or((pair, ""));
+            let physical_name = percent_decode(raw_name);
+            if let Some(rest) = physical_name
+                .strip_prefix(prefix)
+                .and_then(|rest| rest.strip_prefix('['))
+                && let Some((index, leaf)) = rest.split_once("][")
+                && !index.is_empty()
+                && index.bytes().all(|byte| byte.is_ascii_digit())
+                && let Some(field) = leaf.strip_suffix(']')
+                && !field.is_empty()
+                && !field.contains(['[', ']'])
+            {
+                let field = field.to_string();
+                let physical_row = format!("{prefix}[{index}]");
+                let position = if let Some(position) = positions.get(index) {
+                    *position
+                } else {
+                    let position = groups.len();
+                    positions.insert(index.to_string(), position);
+                    groups.push(ScopedQueryGroup {
+                        index: position,
+                        start: cursor,
+                        end: pair_end,
+                        physical_row: Some(physical_row),
+                        anchor_name: Some(physical_name.to_string()),
+                        params: Vec::new(),
+                    });
+                    position
+                };
+                let mut param =
+                    RawParam::query(field, decode_param_value(raw_value), cursor, pair_end);
+                param.location = Some(physical_name.into_owned());
+                groups[position].params.push(param);
+            }
+        }
+        cursor = pair_end + 1;
+    }
+    groups
 }
 
 /// Splits the raw artifact into parameters, keeping byte offsets into the
@@ -8927,6 +9062,22 @@ mod body_tests {
         assert_eq!(
             codes(&report),
             vec!["vendor.both.body.access_token.missing"]
+        );
+    }
+}
+
+#[cfg(test)]
+mod indexed_query_metadata_tests {
+    use super::QuerySpec;
+
+    #[test]
+    fn absent_indexed_prefix_does_not_change_legacy_serialized_scope_metadata() {
+        let scope: QuerySpec = serde_json::from_str(r#"{"params":[]}"#).unwrap();
+        assert!(
+            serde_json::to_value(scope)
+                .unwrap()
+                .get("key_prefix")
+                .is_none()
         );
     }
 }

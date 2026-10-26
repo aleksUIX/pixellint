@@ -1,0 +1,218 @@
+{
+  "id": "vendor/gamesight-impression",
+  "owner": "lane02",
+  "reviewed_at": "2026-10-26T00:30:10.641841+00:00",
+  "spec_complete": false,
+  "scope": "One opt-in indexed URL query source and warning-level org-scope owner advice on the existing impression profile.",
+  "production_hashes": {
+    "crates/pixellint-core/src/manifest.rs": "62f2c86289b1de4d2d4bde98f2322b9db3c685425d3b7f13c34cb987b87459cd",
+    "docs/RULEPACK_SCHEMA.md": "22290664c4d27fd2f715d320534b87608280af0946f57bbd6b586e0ee07e7444"
+  },
+  "primary_source_chain": [
+    {
+      "url": "https://docs.gamesight.io/docs/network-integration-guide",
+      "supports": "Published exact gsght.com/imgp/{tracker} impression route.",
+      "does_not_support": "Other hosts/routes, account-issued ID grammar or receiver acceptance."
+    },
+    {
+      "url": "https://docs.gamesight.io/docs/tracker-url-parameters",
+      "supports": "External IDs can be supplied as click/impression URL parameters. The table names xid[][scope_type] and scope_id and links the common External IDs contract. Complete examples use explicit index0/1.",
+      "does_not_support": "Literal empty-index row pairing, index limits, contiguity or identifier/type closure."
+    },
+    {
+      "url": "https://docs.gamesight.io/reference/measurement-api-console-identifiers#cross-game-ids",
+      "supports": "Cross-game IDs require org scope and an Organization ID supplied as scope_id. Applied only as same-row advice after binding through the URL parameter guide.",
+      "does_not_support": "Impression auth, native event body requirements, guaranteed rejection, account validity or a new identity grammar."
+    }
+  ],
+  "source_receipt": {
+    "retrieved_at": "2026-10-26T00:04:59.038618+00:00",
+    "kind": "Opened official pages through web text extraction, not original downloaded bytes. Direct .md fetches returned HTTP 403.",
+    "sha256": "b3c854f96c56fae22b86daff0f267856c9c39e7fad3ba75ec5f036792078eb20",
+    "cache": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-sources/opened-source-extraction.txt",
+    "sources": [
+      "https://docs.gamesight.io/docs/tracker-url-parameters",
+      "https://docs.gamesight.io/reference/measurement-api-console-identifiers",
+      "https://docs.gamesight.io/docs/network-integration-guide"
+    ],
+    "network_scope": "Documentation only. No collector requests."
+  },
+  "core_contract": {
+    "source": "indexed_query",
+    "key_prefix": "Required nonempty literal prefix without brackets; illegal on legacy sources.",
+    "index": "Nonempty ASCII digits preserved lexically, including 0, 00, gaps and arbitrarily large spellings. No integer conversion, bound or contiguity.",
+    "leaf": "One nonempty decoded field name without brackets. Other layouts are outside this source.",
+    "carrier": "URL query only; bare, blank and duplicate pairs retained with normal one-pass name/value decoding. No form fallback, fragments, nested query decoding or second percent decoding.",
+    "conditions": "Existing scope-local params/rules/conditions. No cross-row or global borrowing. First/last/global filters are rejected; first_index remains default zero.",
+    "targets": "Existing pair spans and original decoded physical keys are retained internally. A missing field anchors only the first actual pair in its row, never a min/max range across interleaved records. Complete HTTP handling retains its existing normalized-target clearing policy.",
+    "legacy": "Legacy extraction, semicolon groups, path items and ordinary indexed_param_groups are unchanged. Absent key_prefix is not serialized."
+  },
+  "implemented_advice": [
+    {
+      "source": "indexed_query",
+      "key_prefix": "xid",
+      "params": [
+        {
+          "name": "scope_type",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "description": "Row-local discriminator only. Existing URL-family checks retain the published scope options. Mixed, blank and macro discriminator observations do not activate the org dependency.",
+          "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+        },
+        {
+          "name": "scope_id",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format": {
+            "kind": "non_empty"
+          },
+          "condition": {
+            "kind": "all_values_in",
+            "params": [
+              "scope_type"
+            ],
+            "values": [
+              "org"
+            ]
+          },
+          "description": "The linked common External IDs guide asks for scope_type=org and the Organization ID as scope_id for cross-game sharing. This is a local advisory for explicit numeric indexed URL rows, with no identifier grammar or receiver rejection claim.",
+          "fix_hint": "Supply the organization ID in scope_id for this same indexed External ID.",
+          "doc": "https://docs.gamesight.io/reference/measurement-api-console-identifiers#cross-game-ids"
+        }
+      ]
+    }
+  ],
+  "retained_constraints": "Existing six URL field contracts, host/path selection, macro handling and source severities are unchanged.",
+  "fixture_counts": {
+    "new_cases": 59,
+    "prior_goldens": 16,
+    "total_goldens": 75,
+    "categories": {
+      "official": 3,
+      "dependency": 15,
+      "duplicates": 6,
+      "macros": 4,
+      "decoding": 10,
+      "indexes": 4,
+      "unindexed": 3,
+      "spans": 2,
+      "transport": 8,
+      "selection": 4
+    }
+  },
+  "test_scope": [
+    "Eight generic mechanism groups cover indexes, local guards, bare/blank/duplicate/macro fields, once-only decoding, fragments/nested text, interleaved original spans, HTTP URL-only behavior and invalid schema options.",
+    "Four Gamesight source groups cover59new golden cases; three original impression tests remain.",
+    "A core unit test verifies absent key_prefix does not change legacy serialized scope metadata."
+  ],
+  "remaining_gaps": [
+    "Literal xid[] pairing is not established by the table notation and remains deferred.",
+    "No id/type requiredness, opaque ID grammar, hashing correctness, scope_id account validity or other per-index dependency is inferred.",
+    "Missing/empty scope_id advice is activated only when all observed scope_type values in that lexical row are literal org. Conflicting, blank, bare or macro observations defer it.",
+    "Custom domains, cost amount/currency/window semantics, tracker state, account ownership and receiver acceptance remain external.",
+    "Existing core VAST unknown-bracket and ignored-fragment diagnostics are preserved in fixture expectations."
+  ],
+  "validation": {
+    "checked_at": "2026-10-26T00:30:10.641841+00:00",
+    "status": "author_checks_passed_shared_pin_transitions_pending_root",
+    "rust_tests_passed": 379,
+    "core_unit_tests": 273,
+    "legacy_constraint_tests": 86,
+    "focused_integration_tests": 15,
+    "golden_tests": 5,
+    "commands": [
+      {
+        "name": "native-golden",
+        "command": [
+          "cargo",
+          "test",
+          "-p",
+          "pixellint-core",
+          "--lib",
+          "--test",
+          "manifest_constraints",
+          "--test",
+          "manifest_indexed_query",
+          "--test",
+          "gamesight_indexed_depth",
+          "--test",
+          "gamesight_impression_contract",
+          "--test",
+          "rulepack_golden"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 45.365,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-native-golden.log"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "-p",
+          "pixellint-core",
+          "--lib",
+          "--test",
+          "manifest_constraints",
+          "--test",
+          "manifest_indexed_query",
+          "--test",
+          "gamesight_indexed_depth",
+          "--test",
+          "gamesight_impression_contract",
+          "--test",
+          "rulepack_golden",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 6.428,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-clippy.log"
+      },
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.545,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-fmt.log"
+      },
+      {
+        "name": "review-freshness",
+        "command": [
+          "python3",
+          "tools/check-rulepack-depth.py"
+        ],
+        "exit_code": 1,
+        "elapsed_seconds": 1.672,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-review-freshness.log"
+      },
+      {
+        "name": "diff-check",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.277,
+        "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-diff-check.log"
+      }
+    ],
+    "shared_pin_transitions": {
+      "status": "pending",
+      "count": 43,
+      "owner": "root",
+      "receipt": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-pending-shared-pins.json"
+    },
+    "independent_review": "Core/schema and Gamesight source boundaries reviewed without findings. Exact production hashes approved in the QA ledger.",
+    "legacy_diagnostics": "Original Gamesight tests and the complete golden corpus pass. Existing core fragment and VAST bracket findings are preserved in new expectations."
+  },
+  "shared_review_hashes": "Root owns the independently approved shared manifest.rs/schema pin transitions. This author updates only the Gamesight audit entry."
+}

@@ -309805,7 +309805,7 @@
       "id": "vendor/gamesight-impression",
       "vendor": "gamesight",
       "status": "reviewed_narrow_impression_scope",
-      "scope": "Exact gsght.com /imgp impression route, with advisory parameter checks. Click and custom-domain routes remain outside selection.",
+      "scope": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.",
       "spec_complete": false,
       "sources_read": [
         {
@@ -309828,45 +309828,156 @@
           "retrieved_at": "2026-10-25",
           "access": "HTTP 200",
           "scope": "Custom-domain boundary; no automatic ownership detection"
+        },
+        {
+          "url": "https://docs.gamesight.io/reference/measurement-api-console-identifiers#cross-game-ids",
+          "binding_url": "https://docs.gamesight.io/docs/tracker-url-parameters",
+          "retrieved_at": "2026-10-26T00:04:59.038618+00:00",
+          "access": "Read reopened primary pages through web text extraction. Original .md download returned HTTP 403.",
+          "snapshot_kind": "Combined opened-page text extraction, not original HTTP bytes",
+          "snapshot_sha256": "b3c854f96c56fae22b86daff0f267856c9c39e7fad3ba75ec5f036792078eb20",
+          "cache": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-sources/opened-source-extraction.txt"
         }
       ],
       "vendor_rule_inventory": [
         "Opaque tracker slot advisory.",
         "Published cost, hash and scope choices.",
-        "Warnings for click-only options."
+        "Warnings for click-only options.",
+        "Same-row organization owner advice when every explicit indexed scope_type value is literal org. Unindexed pairing and all identity grammars remain open."
       ],
-      "contracts_mapped": [
-        {
-          "name": "tracker_id",
-          "surface": "params",
-          "source": "https://docs.gamesight.io/docs/network-integration-guide"
+      "contracts_mapped": {
+        "id": "vendor/gamesight-impression",
+        "display_name": "Gamesight impression tracker",
+        "description": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.",
+        "vendor": "gamesight",
+        "source_level": "official_vendor",
+        "docs": "https://docs.gamesight.io/docs/tracker-url-parameters",
+        "path_pattern": "^/imgp/(?<tracker_id>[^/]*)$",
+        "match": {
+          "hosts": [
+            "gsght.com"
+          ],
+          "paths": [
+            "/imgp",
+            "/imgp/"
+          ],
+          "path_patterns": [
+            "/imgp/[^/]+"
+          ],
+          "artifact_kinds": [
+            "url",
+            "vast",
+            "postback",
+            "request"
+          ]
         },
-        {
-          "name": "cost_model",
-          "surface": "params",
-          "source": "https://docs.gamesight.io/docs/tracker-url-parameters"
-        },
-        {
-          "name": "external_hash_mode",
-          "surface": "params",
-          "source": "https://docs.gamesight.io/docs/tracker-url-parameters"
-        },
-        {
-          "name": "external_scope_type",
-          "surface": "params",
-          "source": "https://docs.gamesight.io/docs/tracker-url-parameters"
-        },
-        {
-          "name": "attribution_window",
-          "surface": "params",
-          "source": "https://docs.gamesight.io/docs/tracker-url-parameters"
-        },
-        {
-          "name": "destination_url",
-          "surface": "params",
-          "source": "https://docs.gamesight.io/docs/tracker-url-parameters"
-        }
-      ],
+        "params": [
+          {
+            "name": "tracker_id",
+            "requirement": "recommended",
+            "format": {
+              "kind": "non_empty"
+            },
+            "severity": "warning",
+            "description": "Retain the opaque tracker slot from the published impression template.",
+            "doc": "https://docs.gamesight.io/docs/network-integration-guide",
+            "source_level": "official_template"
+          },
+          {
+            "name": "cost_model",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "CPM",
+                "CPC"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "Published cost options; no server rejection claim."
+          },
+          {
+            "name": "external_hash_mode",
+            "name_pattern": "^xid\\[[0-9]*\\]\\[sha256\\]$",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "client",
+                "server"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "Documented hashing modes, with unset values left open."
+          },
+          {
+            "name": "external_scope_type",
+            "name_pattern": "^xid\\[[0-9]*\\]\\[scope_type\\]$",
+            "requirement": "optional",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "game",
+                "org"
+              ]
+            },
+            "allow_empty": true,
+            "severity": "warning",
+            "description": "Documented identity scope options."
+          },
+          {
+            "name": "attribution_window",
+            "requirement": "forbidden",
+            "severity": "warning",
+            "description": "This option applies to click links."
+          },
+          {
+            "name": "destination_url",
+            "requirement": "forbidden",
+            "severity": "warning",
+            "description": "Redirect overrides apply to click links."
+          }
+        ],
+        "rules": [],
+        "query_scopes": [
+          {
+            "source": "indexed_query",
+            "key_prefix": "xid",
+            "params": [
+              {
+                "name": "scope_type",
+                "requirement": "optional",
+                "allow_empty": true,
+                "severity": "warning",
+                "description": "Row-local discriminator only. Existing URL-family checks retain the published scope options. Mixed, blank and macro discriminator observations do not activate the org dependency.",
+                "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+              },
+              {
+                "name": "scope_id",
+                "requirement": "recommended",
+                "severity": "warning",
+                "format": {
+                  "kind": "non_empty"
+                },
+                "condition": {
+                  "kind": "all_values_in",
+                  "params": [
+                    "scope_type"
+                  ],
+                  "values": [
+                    "org"
+                  ]
+                },
+                "description": "The linked common External IDs guide asks for scope_type=org and the Organization ID as scope_id for cross-game sharing. This is a local advisory for explicit numeric indexed URL rows, with no identifier grammar or receiver rejection claim.",
+                "fix_hint": "Supply the organization ID in scope_id for this same indexed External ID.",
+                "doc": "https://docs.gamesight.io/reference/measurement-api-console-identifiers#cross-game-ids"
+              }
+            ]
+          }
+        ]
+      },
       "missing_requirements": [
         {
           "requirement": "Hierarchy and reporting strings; arbitrary custom identity types.",
@@ -309883,16 +309994,23 @@
           "next_action": "Obtain an exact additional source or required runtime context."
         },
         {
-          "requirement": "Identity formats, hash correctness, per-index dependencies, tracker validity and account state.",
+          "requirement": "Identity formats, hash correctness, remaining per-index dependencies beyond the scoped org owner advice, literal unindexed row pairing, tracker validity and account state.",
           "category": "unsupported_or_external_context",
           "locally_checkable": false,
           "reason": "Published scope is incomplete for a local assertion.",
           "next_action": "Obtain an exact additional source or required runtime context."
+        },
+        {
+          "requirement": "Unindexed and ambiguous duplicate row semantics",
+          "category": "source_or_external_context",
+          "locally_checkable": false,
+          "reason": "The table uses [] notation while complete URL examples use explicit numeric indexes. No receiver empty-index or duplicate-selection policy is inferred.",
+          "next_action": "Obtain explicit primary wire semantics before pairing unindexed fields or choosing among conflicting duplicate scope values."
         }
       ],
-      "manifest_sha256": "359c7f3e1776398b1d44e23ba5c598a151b202f675ae2e35b81d53880b2d1e87",
+      "manifest_sha256": "87ce63d4f4aa8251722240dd6c6531d665bd1aa3d5332e92c29f7d47a1c0e907",
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/gamesight-impression.json": "359c7f3e1776398b1d44e23ba5c598a151b202f675ae2e35b81d53880b2d1e87",
+        "crates/pixellint-core/rulepacks/vendor/gamesight-impression.json": "87ce63d4f4aa8251722240dd6c6531d665bd1aa3d5332e92c29f7d47a1c0e907",
         "docs/reviews/gamesight-impression-20261025.json": "bfc265803be17d692779cc11c07a566a034954157ff5b4165d92ca0e9f80bd40",
         "fixtures/vendor-gamesight-impression/all-indexed-hash-modes.txt": "63f79ffded9325ff835ed2c7ede942bce44a3c31081f104bb166e1aba88ecbb7",
         "fixtures/vendor-gamesight-impression/clean-external-id-example.txt": "faeef76cdcc8b35c6808e0b91672f7da9131acf356d8e2ede8cd1081ca3a06e3",
@@ -309902,7 +310020,7 @@
         "fixtures/vendor-gamesight-impression/click-only-window.txt": "54e51d3e86b1bdd5696aa012a77ed6badae1c3a949519ba15e39ef38294813e7",
         "fixtures/vendor-gamesight-impression/empty-tracker.txt": "f35aed49387b671fe101c9de4d62d9d0e8ad4ae0149dc14d143e9ddc95750ddb",
         "fixtures/vendor-gamesight-impression/encoded-parameter-names.txt": "4bba9ee9aa50a416d5257d91d40c030d269366d587adc403d6755f98a234eea2",
-        "fixtures/vendor-gamesight-impression/manifest.json": "99b079a8f32b3f4d9cbe85536fdf75a1a8052c40ede1800622f81cb22cbb404c",
+        "fixtures/vendor-gamesight-impression/manifest.json": "66b9b453a35c90baa94e918948412fba7e16a8258d4ce3bdf8ce6d008c77773e",
         "fixtures/vendor-gamesight-impression/missing-tracker.txt": "0bee100b7e7fcd2e454a03c23230dc56533b1b17397ce49685ca8c4cfe0d729f",
         "fixtures/vendor-gamesight-impression/repeated-hash-values.txt": "791b898bb19118eb526094742691bf55e43756a8302ecb2084d0a18bcef73d8f",
         "fixtures/vendor-gamesight-impression/unconstrained-opaque-identities.txt": "e178da2f96bee47fb9745f3477ce8c99b3b5f574ad3f2fc964d3ce48a2c5ebd0",
@@ -309911,7 +310029,72 @@
         "fixtures/vendor-gamesight-impression/unsupported-cost-model.txt": "7f5cddd4a65ae79bdfb98285e6789e38049ee0c78428ebe1a9dc919c561d4bc3",
         "fixtures/vendor-gamesight-impression/unsupported-hash-mode.txt": "4cd673c4b9eabf8b73aa780bbec7508a5ebc7f0dfd5ccc15879e364112ba3364",
         "fixtures/vendor-gamesight-impression/unsupported-scope-type.txt": "ffde5cc5bb197d81caf0721a9253fb26d7164a795b1009d5a962877b97ab5969",
-        "crates/pixellint-core/tests/gamesight_impression_contract.rs": "b7b6146ee47f1463dbaa7471046833947844654923207dc68e04f48ea30752df"
+        "crates/pixellint-core/tests/gamesight_impression_contract.rs": "b7b6146ee47f1463dbaa7471046833947844654923207dc68e04f48ea30752df",
+        "crates/pixellint-core/src/manifest.rs": "62f2c86289b1de4d2d4bde98f2322b9db3c685425d3b7f13c34cb987b87459cd",
+        "docs/RULEPACK_SCHEMA.md": "22290664c4d27fd2f715d320534b87608280af0946f57bbd6b586e0ee07e7444",
+        "crates/pixellint-core/tests/manifest_indexed_query.rs": "16ce11ab3dcd85cde7153a98734615c55305941f02373417a84513ee7534f9ea",
+        "crates/pixellint-core/tests/gamesight_indexed_depth.rs": "d7daa3a4b497279386708e386dfd279d219cffaf4b8e9a7d385e177070bdf5e5",
+        "docs/reviews/gamesight-indexed-depth-20261025.json": "3c4d77bff4a12444abea952267cf5d6448224c4fc1860119b45517384efea463",
+        "fixtures/vendor-gamesight-impression/depth4-unindexed-owner-not-indexed.txt": "5b1cf35eabea5ecd14bc08729a58223bc30b336babff6cf550f565f578a7f88f",
+        "fixtures/vendor-gamesight-impression/depth4-other-collection-not-owner.txt": "ebe63f4ad714ec3c6fec15f76db9c93e90edf52c5f99503baad9fc6a891e0854",
+        "fixtures/vendor-gamesight-impression/depth4-request-missing.request.json": "d4c2959c480e6214e15f7e30391c91428be56139b9465a4a9add29e1efced910",
+        "fixtures/vendor-gamesight-impression/depth4-post-body-owner-not-query.request.json": "4138b6946911979f61adca0891c2d37c22273256c257a4d30cc185b8af8946a7",
+        "fixtures/vendor-gamesight-impression/depth4-duplicate-blank.txt": "bb287cfcf2fb0b66a09bfb26adc51c824ed23ea0bea5e0514ddc534619ab01f2",
+        "fixtures/vendor-gamesight-impression/depth4-selection-click.txt": "628ea42582169ac9a4da4cc1fbc38dad419afd99f9c0dcfe8f01814c4a21feda",
+        "fixtures/vendor-gamesight-impression/depth4-field-case.txt": "9af5c182b2cd00ca2ab8687b6b5be1dca67429046589b1397e1193f6e58252a3",
+        "fixtures/vendor-gamesight-impression/depth4-duplicate-org.txt": "9eb43d311a3c5a3da6cf1aad796eab763a13e2f2190ae3f78c89a17680599690",
+        "fixtures/vendor-gamesight-impression/depth4-org-complete.txt": "14238d3ba09faa493b1972034182d8777fff9f58c751aa0866db7efc1490097a",
+        "fixtures/vendor-gamesight-impression/depth4-encoded-name-and-value.txt": "9cc64319ebb6b4bfab2bc0d1bbf259e52081a0febc9c2670ec56381ef73de982",
+        "fixtures/vendor-gamesight-impression/depth4-fragment-only.txt": "1c60315a1f8328d8dfc0416e874a88313a8b5a16c07f165df7b40d406c4a848e",
+        "fixtures/vendor-gamesight-impression/depth4-mixed-org-macro.txt": "9aaa2975e293bb5790f6e1d77209415ec218c4ae6a0379009414e377e33bae7b",
+        "fixtures/vendor-gamesight-impression/depth4-unindexed-deferred.txt": "cb33c70c737d9344108970b3a3ae1084d38ce6ceb5d320601e2fef92eec1cecf",
+        "fixtures/vendor-gamesight-impression/depth4-request-complete.request.json": "81dc6a692caf68e5c65e0581216878a766b512624c2039c77878dc7921337c1b",
+        "fixtures/vendor-gamesight-impression/depth4-org-missing.txt": "af0f8de671e7f1480e4b57b0c1268e9a55ac467f7c6d9d0cd11b91a2e2003743",
+        "fixtures/vendor-gamesight-impression/depth4-official-single.txt": "fef5763bd50bfde71d425d747b51809b8d85a2cb918b7618b02777b5ef12cf1b",
+        "fixtures/vendor-gamesight-impression/depth4-double-encoded-value.txt": "92db992294a8d5e17f6e754ccd709d698f7f648852c15612244ac58412df1994",
+        "fixtures/vendor-gamesight-impression/depth4-double-encoded-name.txt": "c2527ac5588d99031fc7f3782b0257a40db90e177fe512530559abd5d72b02fc",
+        "fixtures/vendor-gamesight-impression/depth4-scope-bare.txt": "01b83dcdea613687bdadc7b2bb5d67ee08daf4c0db490f66ea5a054278fd8911",
+        "fixtures/vendor-gamesight-impression/depth4-org-bare-owner.txt": "cf0b03e9a72746ed8ca06f7250aef14a3d7a68701254a5f8653b6df287aca2ea",
+        "fixtures/vendor-gamesight-impression/depth4-selection-custom-domain.txt": "ba9bf435d15aaaf34e893795fec21e66d12eeb2e860d9efb39040a60dc5bd742",
+        "fixtures/vendor-gamesight-impression/depth4-global-owner-not-row.txt": "939a813d56a22821fd0ae67dc85b939c33c79b2e9f68fab1790122d7c050ff06",
+        "fixtures/vendor-gamesight-impression/depth4-empty-field.txt": "bd5fa5f803a55b2080114aedc7d5e219862c2c6bdf228eed6a1c880ac96c3ed8",
+        "fixtures/vendor-gamesight-impression/depth4-other-row-not-owner.txt": "cfa5e207e1ef0342d948d215745ff5c482b86f62c81e961790808eb556ac93da",
+        "fixtures/vendor-gamesight-impression/depth4-official-multiple.txt": "db3f15d5862f641c338f2198c15dbd3b4992b625d9e4804f4c9a7d920248f699",
+        "fixtures/vendor-gamesight-impression/depth4-row-zero-vs-leading-zero.txt": "74b71a1c06815bfc1f156f1a6b58e84fbb5b5268c3b6cde7e2a99e82a5a112ff",
+        "fixtures/vendor-gamesight-impression/depth4-multibyte-and-opaque-owner.txt": "51096099701b69b1e18651b278da274cae0013ad4df4bdf2ede6b67e1d384701",
+        "fixtures/vendor-gamesight-impression/depth4-one-complete-one-missing.txt": "853df664d9b47d90dac48fba9b8033eadff7ba60a49a2471fd28259cd800e105",
+        "fixtures/vendor-gamesight-impression/depth4-scope-absent.txt": "a5aecb34bdfbe86d65dfb83501123f3a8b6a8b875cf59e9ad5212e5e5bb46804",
+        "fixtures/vendor-gamesight-impression/depth4-vast-complete.txt": "2e3ad044816e5542f6b0e13081dd70a5574ed0e2ffcb42d9695149fc75059968",
+        "fixtures/vendor-gamesight-impression/depth4-nested-field.txt": "631c455b1196cd12ace84fa169a39d2e8caca8a0cf5e47c54b245b3533eb5f72",
+        "fixtures/vendor-gamesight-impression/depth4-macro-only-scope.txt": "f914dd6c58fbaf85b0bb3228fb704643099de07dfd1eff6c923c42118601e790",
+        "fixtures/vendor-gamesight-impression/depth4-index-7.txt": "523cb4b5bec4bb2c3d5fc277fb21329713422b52d159cac534fbdebf7e491b9e",
+        "fixtures/vendor-gamesight-impression/depth4-two-blank-owners.txt": "f207b0030be064d162053048f6b97abf30b69c236b8dd5444e79290383022b49",
+        "fixtures/vendor-gamesight-impression/depth4-conflict-game.txt": "0e97f906884afcff16f4d9e941159059a37bceb054081033456b2768bc40bbaf",
+        "fixtures/vendor-gamesight-impression/depth4-owner-macro.txt": "04aa5e6e495f93c4a39662d502f701bf8a93fe2167dd111519b320fa45c492da",
+        "fixtures/vendor-gamesight-impression/depth4-duplicate-owners-observed.txt": "21ecaac272da48f39c61efea2967ad75c6fc8d8b3fa6252746d855ead84bef85",
+        "fixtures/vendor-gamesight-impression/depth4-nested-query-value.txt": "22d7a752a3fbe722da6721c492b8bb00dc0ebb8af4fa801e6b7fe156540f1ba5",
+        "fixtures/vendor-gamesight-impression/depth4-custom-id-and-type-open.txt": "02c638a8d77d074f92bd45ec913b69b7fdf6712d2975447a39e770c5ef7843a5",
+        "fixtures/vendor-gamesight-impression/depth4-vast-missing.txt": "af0f8de671e7f1480e4b57b0c1268e9a55ac467f7c6d9d0cd11b91a2e2003743",
+        "fixtures/vendor-gamesight-impression/depth4-multiple-missing-rows.txt": "a559c27580a44e8e3916ce0a44471fcecb13038c4c860b404335844905ab9b71",
+        "fixtures/vendor-gamesight-impression/depth4-official-hash-options.txt": "2995d35e4b559ba54e1a880c32726fa23e43a7bfac458484cdfc22b85b2756d2",
+        "fixtures/vendor-gamesight-impression/depth4-duplicate-bare.txt": "38f3bf83267cc5782e95d22b2ff61b023fd5df3482bb9a95b26891c2fc2caffa",
+        "fixtures/vendor-gamesight-impression/depth4-postback-complete.txt": "2e3ad044816e5542f6b0e13081dd70a5574ed0e2ffcb42d9695149fc75059968",
+        "fixtures/vendor-gamesight-impression/depth4-post-body-scope-not-query.request.json": "0d310e80ba570f5ff99127a69683950c9d2dcd5dd9120d7756db0a4b8331704c",
+        "fixtures/vendor-gamesight-impression/depth4-org-blank.txt": "fe1147cbafc3327375346bef3f0f6db3c747516577247dd3bb6e14e2813ce20c",
+        "fixtures/vendor-gamesight-impression/depth4-encoded-owner.txt": "08550f9090071c0a4c7fd8e7130f9500c052e704f8a1cf540063d38f2ca16a61",
+        "fixtures/vendor-gamesight-impression/depth4-interleaved-missing-row.txt": "8a6c86a98e12869802f9b38156f9fb9ca762e1decacdb9905864acaf910e0835",
+        "fixtures/vendor-gamesight-impression/depth4-scope-blank.txt": "46316ba785f300f7b12bf2a180d5e2db1d232c7d2c8c644b2125ecf4ac1055ec",
+        "fixtures/vendor-gamesight-impression/depth4-prefix-case.txt": "0efd5d737783bb6005db97dc391316774fac41eb6abed0f72ecf7e3ff3545365",
+        "fixtures/vendor-gamesight-impression/depth4-unindexed-rows-not-paired.txt": "0d21b892c6dc88b4190a622ce67cc87fcfbf75f5394471ce4f4372692ca716c9",
+        "fixtures/vendor-gamesight-impression/source-cases-depth4.json": "902175b62528bf62fac3ba56e9949a71d1d195de70823a73ca3b3f2fa5ffd983",
+        "fixtures/vendor-gamesight-impression/depth4-index-999999999999999999999999999999999999999999999999999999.txt": "e17dc55422a48b8c434ada1baa77241845781e47751ddf0cea836e84b99ae0d7",
+        "fixtures/vendor-gamesight-impression/depth4-macro-index.txt": "40c2fb932bcdfbab3a6ce69cfaf24860215ea4ec7cbc82be326a88b89190e576",
+        "fixtures/vendor-gamesight-impression/depth4-selection-nearby.txt": "001c9f14e7ab1c51bf067f79a2aeef57917fdd8dfd7640df940f7905d51731fd",
+        "fixtures/vendor-gamesight-impression/depth4-game-owner-optional.txt": "50781b17309c896532e630569c2601699dbda3e8e6ef2c9b9521248dd603016b",
+        "fixtures/vendor-gamesight-impression/depth4-selection-host-child.txt": "a9a618ab1eb4fcf2867eaa3c8489058469e0d5bbf6e02ac3461460550359625d",
+        "fixtures/vendor-gamesight-impression/depth4-postback-missing.txt": "af0f8de671e7f1480e4b57b0c1268e9a55ac467f7c6d9d0cd11b91a2e2003743",
+        "fixtures/vendor-gamesight-impression/depth4-index-1000000.txt": "0d619280510c8ef90759cf3b48399923cb7f4ea794a453d1225f4fbd313ae84f",
+        "fixtures/vendor-gamesight-impression/depth4-index-00.txt": "ff5ee83c1c083b5409e35fdb8cd8662091ed3f7b5530fbe8aea24609983ca34c"
       },
       "tests": {
         "fixture_directory": "fixtures/vendor-gamesight-impression",
@@ -309920,7 +310103,140 @@
         "commands": [
           "cargo test -p pixellint-core --test gamesight_impression_contract --test top_mail_counter_profile --offline",
           "cargo test -p pixellint-core --test rulepack_golden golden_corpus_matches_expected_findings --offline"
-        ]
+        ],
+        "depth_round4_20261025": {
+          "kind": "source_backed_indexed_scope_depth",
+          "count": 59,
+          "fixture": "fixtures/vendor-gamesight-impression/source-cases-depth4.json",
+          "tests": [
+            "crates/pixellint-core/tests/manifest_indexed_query.rs",
+            "crates/pixellint-core/tests/gamesight_indexed_depth.rs"
+          ],
+          "status": "passing"
+        }
+      },
+      "depth_round4_20261025": {
+        "review": "docs/reviews/gamesight-indexed-depth-20261025.json",
+        "indexed_dependency": "warning-level org=>same-row scope_id presence/nonempty with all-values literal guard",
+        "fixture_counts": {
+          "new_cases": 59,
+          "prior_goldens": 16,
+          "total_goldens": 75,
+          "categories": {
+            "official": 3,
+            "dependency": 15,
+            "duplicates": 6,
+            "macros": 4,
+            "decoding": 10,
+            "indexes": 4,
+            "unindexed": 3,
+            "spans": 2,
+            "transport": 8,
+            "selection": 4
+          }
+        },
+        "core_source": "indexed_query opt-in; legacy mechanisms unchanged",
+        "validation": {
+          "checked_at": "2026-10-26T00:30:10.641841+00:00",
+          "status": "author_checks_passed_shared_pin_transitions_pending_root",
+          "rust_tests_passed": 379,
+          "core_unit_tests": 273,
+          "legacy_constraint_tests": 86,
+          "focused_integration_tests": 15,
+          "golden_tests": 5,
+          "commands": [
+            {
+              "name": "native-golden",
+              "command": [
+                "cargo",
+                "test",
+                "-p",
+                "pixellint-core",
+                "--lib",
+                "--test",
+                "manifest_constraints",
+                "--test",
+                "manifest_indexed_query",
+                "--test",
+                "gamesight_indexed_depth",
+                "--test",
+                "gamesight_impression_contract",
+                "--test",
+                "rulepack_golden"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 45.365,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-native-golden.log"
+            },
+            {
+              "name": "clippy",
+              "command": [
+                "cargo",
+                "clippy",
+                "-p",
+                "pixellint-core",
+                "--lib",
+                "--test",
+                "manifest_constraints",
+                "--test",
+                "manifest_indexed_query",
+                "--test",
+                "gamesight_indexed_depth",
+                "--test",
+                "gamesight_impression_contract",
+                "--test",
+                "rulepack_golden",
+                "--",
+                "-D",
+                "warnings"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 6.428,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-clippy.log"
+            },
+            {
+              "name": "fmt",
+              "command": [
+                "cargo",
+                "fmt",
+                "--all",
+                "--check"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.545,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-fmt.log"
+            },
+            {
+              "name": "review-freshness",
+              "command": [
+                "python3",
+                "tools/check-rulepack-depth.py"
+              ],
+              "exit_code": 1,
+              "elapsed_seconds": 1.672,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-review-freshness.log"
+            },
+            {
+              "name": "diff-check",
+              "command": [
+                "git",
+                "diff",
+                "--check"
+              ],
+              "exit_code": 0,
+              "elapsed_seconds": 0.277,
+              "log": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-diff-check.log"
+            }
+          ],
+          "shared_pin_transitions": {
+            "status": "pending",
+            "count": 43,
+            "owner": "root",
+            "receipt": "/Users/aleks/Documents/workspace/vast-master/output/pixellint-depth-round4-20261025/lane-02-pending-shared-pins.json"
+          },
+          "independent_review": "Core/schema and Gamesight source boundaries reviewed without findings. Exact production hashes approved in the QA ledger.",
+          "legacy_diagnostics": "Original Gamesight tests and the complete golden corpus pass. Existing core fragment and VAST bracket findings are preserved in new expectations."
+        }
       }
     },
     {

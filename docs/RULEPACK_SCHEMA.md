@@ -431,6 +431,49 @@ the field contract's citation and severity. Empty values and macros are skipped.
 Findings retain original byte spans and use fields such as `query[2].slau`.
 Missing fields point at their own group.
 
+### Indexed URL query groups
+
+`source: "indexed_query"` opts into independent `key_prefix[index][field]`
+URL query namespaces. It requires `param_style: "query"` and a nonempty literal
+`key_prefix` without brackets. Each decoded key must match that complete shape:
+a nonempty ASCII digit index and one nonempty field name without brackets.
+The index remains an exact lexical label. Zero, leading zeros, gaps and large
+indices have no implicit limit or normalization. Literal `prefix[][field]`
+and other layouts remain outside this source.
+
+```json
+{
+  "source": "indexed_query",
+  "key_prefix": "xid",
+  "params": [
+    {"name": "scope_type", "allow_empty": true},
+    {
+      "name": "scope_id",
+      "requirement": "recommended",
+      "severity": "warning",
+      "condition": {"kind": "all_values_in", "params": ["scope_type"], "values": ["org"]}
+    }
+  ]
+}
+```
+
+Fields, rules and conditions use the same logical namespace within each row.
+Other rows and ungrouped parameters cannot satisfy them. Repeated values are
+retained, including bare keys as empty values. `all_values_in` can defer a
+conditional requirement when a discriminator has conflicting, blank or macro
+occurrences. Names and values use the normal one-pass decoders; fragments,
+nested query strings, form bodies and a second decoding layer are excluded.
+
+This source rejects `first_index`, `last_index` and `global_params` filters;
+`first_index` must remain its default zero. `key_prefix` is illegal on legacy
+sources. Existing semicolon, path-item and ordinary parameter readers are
+unchanged. Populated findings retain the full decoded physical key and original
+pair span. A missing field anchors the first actual pair in its own row, even
+when fields from different rows are interleaved. Field labels include the
+physical row, for example `indexed_query.xid[00][scope_id]`. Complete HTTP
+capture handling retains its existing policy of clearing normalized targets
+while keeping field labels and citations.
+
 ## `body`
 
 Endpoints that carry their events in a JSON request body contract them here.

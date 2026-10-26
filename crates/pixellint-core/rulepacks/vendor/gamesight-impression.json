@@ -1,7 +1,7 @@
 {
   "id": "vendor/gamesight-impression",
   "display_name": "Gamesight impression tracker",
-  "description": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Opaque IDs, custom domains, receiver acceptance and external identity relationships remain outside this profile.",
+  "description": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.",
   "vendor": "gamesight",
   "source_level": "official_vendor",
   "docs": "https://docs.gamesight.io/docs/tracker-url-parameters",
@@ -93,5 +93,41 @@
       "description": "Redirect overrides apply to click links."
     }
   ],
-  "rules": []
+  "rules": [],
+  "query_scopes": [
+    {
+      "source": "indexed_query",
+      "key_prefix": "xid",
+      "params": [
+        {
+          "name": "scope_type",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning",
+          "description": "Row-local discriminator only. Existing URL-family checks retain the published scope options. Mixed, blank and macro discriminator observations do not activate the org dependency.",
+          "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+        },
+        {
+          "name": "scope_id",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format": {
+            "kind": "non_empty"
+          },
+          "condition": {
+            "kind": "all_values_in",
+            "params": [
+              "scope_type"
+            ],
+            "values": [
+              "org"
+            ]
+          },
+          "description": "The linked common External IDs guide asks for scope_type=org and the Organization ID as scope_id for cross-game sharing. This is a local advisory for explicit numeric indexed URL rows, with no identifier grammar or receiver rejection claim.",
+          "fix_hint": "Supply the organization ID in scope_id for this same indexed External ID.",
+          "doc": "https://docs.gamesight.io/reference/measurement-api-console-identifiers#cross-game-ids"
+        }
+      ]
+    }
+  ]
 }
