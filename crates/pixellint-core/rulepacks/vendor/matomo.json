@@ -1417,7 +1417,10 @@
         {
           "name": "",
           "json_type": "object",
-          "doc": "https://developer.matomo.org/api-reference/tracking-api"
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "severity": "info",
+          "description": "This profile validates canonical object slot maps. Alternative native containers are unvalidated here; the pinned PHP processor can retain entries from root arrays. This shape advice does not establish receiver rejection.",
+          "fix_hint": "Use the documented object slot map for mapped validation, or verify the alternative against the deployed processor."
         },
         {
           "name": "invalid_slots",
@@ -1425,25 +1428,31 @@
           "name_pattern_parent": "",
           "requirement": "forbidden",
           "doc": "https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/",
-          "description": "A custom variable slot uses a positive numeric index. The default slot count is configurable."
+          "description": "Canonical slot maps use positive decimal spelling. The pinned PHP processor casts keys before checking configured slots and can retain noncanonical spellings; this is formatting advice, not receiver rejection.",
+          "severity": "warning",
+          "source_level": "heuristic",
+          "fix_hint": "Prefer canonical positive decimal slot keys. Confirm actual cast and configured slot behavior on the deployed version."
         },
         {
           "name": "variable_slots",
           "name_pattern": "(?s)^.+$",
           "name_pattern_parent": "",
           "json_type": "array",
-          "min_items": 2,
-          "max_items": 2,
           "doc": "https://developer.matomo.org/api-reference/tracking-api",
-          "description": "Each custom variable slot is a two-element name/value array."
+          "description": "This profile validates array tuples. Alternative containers are unvalidated here; the pinned PHP processor can retain two-member objects with keys 0 and 1. This shape advice does not establish receiver rejection.",
+          "severity": "info",
+          "fix_hint": "Use the documented name/value array for mapped validation, or verify the alternative against the deployed processor."
         },
         {
           "name": "*[]",
-          "json_type": "string",
-          "max_length": 200,
-          "doc": "https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "doc": "https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php",
           "allow_empty": true,
-          "description": "Each custom variable name and value is a string of at most 200 characters. Empty strings can remove a variable."
+          "description": "The pinned CustomVariables 5.0.6 and 6.0.0 processors accept string or numeric names and values. Other native components cause that tuple to be ignored. Numeric-to-string coercion remains outside this profile.",
+          "severity": "warning"
         }
       ]
     },
@@ -1454,7 +1463,10 @@
         {
           "name": "",
           "json_type": "object",
-          "doc": "https://developer.matomo.org/api-reference/tracking-api"
+          "doc": "https://developer.matomo.org/api-reference/tracking-api",
+          "severity": "info",
+          "description": "This profile validates canonical object slot maps. Alternative native containers are unvalidated here; the pinned PHP processor can retain entries from root arrays. This shape advice does not establish receiver rejection.",
+          "fix_hint": "Use the documented object slot map for mapped validation, or verify the alternative against the deployed processor."
         },
         {
           "name": "invalid_slots",
@@ -1462,25 +1474,31 @@
           "name_pattern_parent": "",
           "requirement": "forbidden",
           "doc": "https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/",
-          "description": "A custom variable slot uses a positive numeric index. The default slot count is configurable."
+          "description": "Canonical slot maps use positive decimal spelling. The pinned PHP processor casts keys before checking configured slots and can retain noncanonical spellings; this is formatting advice, not receiver rejection.",
+          "severity": "warning",
+          "source_level": "heuristic",
+          "fix_hint": "Prefer canonical positive decimal slot keys. Confirm actual cast and configured slot behavior on the deployed version."
         },
         {
           "name": "variable_slots",
           "name_pattern": "(?s)^.+$",
           "name_pattern_parent": "",
           "json_type": "array",
-          "min_items": 2,
-          "max_items": 2,
           "doc": "https://developer.matomo.org/api-reference/tracking-api",
-          "description": "Each custom variable slot is a two-element name/value array."
+          "description": "This profile validates array tuples. Alternative containers are unvalidated here; the pinned PHP processor can retain two-member objects with keys 0 and 1. This shape advice does not establish receiver rejection.",
+          "severity": "info",
+          "fix_hint": "Use the documented name/value array for mapped validation, or verify the alternative against the deployed processor."
         },
         {
           "name": "*[]",
-          "json_type": "string",
-          "max_length": 200,
-          "doc": "https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/",
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "doc": "https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php",
           "allow_empty": true,
-          "description": "Each custom variable name and value is a string of at most 200 characters. Empty strings can remove a variable."
+          "description": "The pinned CustomVariables 5.0.6 and 6.0.0 processors accept string or numeric names and values. Other native components cause that tuple to be ignored. Numeric-to-string coercion remains outside this profile.",
+          "severity": "warning"
         }
       ]
     },
@@ -1716,6 +1734,98 @@
         }
       ],
       "rules": []
+    },
+    {
+      "source_param": "_cvar",
+      "encoding": "json",
+      "scope": "*",
+      "params": [
+        {
+          "name": "",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "array"
+          },
+          "json_type": "array",
+          "min_items": 2,
+          "max_items": 2,
+          "severity": "warning",
+          "doc": "https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php",
+          "description": "The pinned processor ignores array tuples whose element count is not two. This is tuple-level advice, not a claim that the complete tracking request is rejected."
+        }
+      ]
+    },
+    {
+      "source_param": "_cvar",
+      "encoding": "json",
+      "scope": "*[]",
+      "params": [
+        {
+          "name": "",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "string"
+          },
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?s)\\A[\\x00\\x09-\\x0B\\x0D\\x20]*.{0,200}[\\x00\\x09-\\x0B\\x0D\\x20]*\\z"
+          },
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php",
+          "description": "The pinned processor trims the PHP default bytes NUL, TAB, LF, VT, CR and SPACE, then truncates at 200 characters. This advisory flags longer trimmed strings under the reviewed UTF-8 mbstring context, not receiver rejection. Numeric formatting and other runtime encodings remain external.",
+          "fix_hint": "Keep the string within 200 characters after PHP default-byte trimming, or account for deployed normalization and truncation."
+        }
+      ]
+    },
+    {
+      "source_param": "cvar",
+      "encoding": "json",
+      "scope": "*",
+      "params": [
+        {
+          "name": "",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "array"
+          },
+          "json_type": "array",
+          "min_items": 2,
+          "max_items": 2,
+          "severity": "warning",
+          "doc": "https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php",
+          "description": "The pinned processor ignores array tuples whose element count is not two. This is tuple-level advice, not a claim that the complete tracking request is rejected."
+        }
+      ]
+    },
+    {
+      "source_param": "cvar",
+      "encoding": "json",
+      "scope": "*[]",
+      "params": [
+        {
+          "name": "",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "string"
+          },
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?s)\\A[\\x00\\x09-\\x0B\\x0D\\x20]*.{0,200}[\\x00\\x09-\\x0B\\x0D\\x20]*\\z"
+          },
+          "allow_empty": true,
+          "severity": "warning",
+          "doc": "https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php",
+          "description": "The pinned processor trims the PHP default bytes NUL, TAB, LF, VT, CR and SPACE, then truncates at 200 characters. This advisory flags longer trimmed strings under the reviewed UTF-8 mbstring context, not receiver rejection. Numeric formatting and other runtime encodings remain external.",
+          "fix_hint": "Keep the string within 200 characters after PHP default-byte trimming, or account for deployed normalization and truncation."
+        }
+      ]
     }
   ],
   "http": [
