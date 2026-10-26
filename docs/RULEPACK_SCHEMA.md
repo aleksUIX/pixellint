@@ -347,7 +347,7 @@ rule names must also appear in `params`.
 | `equal_split_lengths` | `params`, `separator` | populated delimited lists contain different numbers of records; missing optional lists and macros are skipped |
 | `equal_occurrences` | `params` | repeated field families have different occurrence counts, including empty and macro positions |
 | `max_occurrences` | `param`, `max_occurrences`, optional `bare_url_only` | the submitted field exceeds its occurrence bound; empty and macro values count, query names are percent-decoded, and bare query keys without an equals sign count too; `bare_url_only: true` excludes body scopes and URL scopes supplied by complete HTTP captures |
-| `time_window` | `param`, `unit`, optional `fallback_param`, `max_age_seconds`, `max_future_seconds` | the effective timestamp falls outside inclusive age or future bounds relative to the shared validation clock |
+| `time_window` | `param`, `unit`, optional `fallback_param`, `min_age_seconds`, `max_age_seconds`, `max_future_seconds` | the effective timestamp falls outside inclusive minimum age, maximum age or future bounds relative to the shared validation clock |
 
 The indexed-group rule uses contracted family prefixes such as ITEM, AMT and QTY. Define those fields with name patterns such as `^ITEM[0-9]+$`. Optional families join an existing required group. Repeated query values do not create extra item rows, and nonnumeric suffixes stay outside this rule. Prefixes end before the numeric index.
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.69.0 (local candidate)
+
+- Add Tealium Collect, Customer.io Track, Teads CAPI and three mParticle event endpoint profiles.
+- Check native payload types, required fields, conditional conversions, every batch element and captured transport.
+- Add inclusive minimum timestamp age for mParticle historical events. Keep conflicting Teads sender profiles advisory.
+- Preserve the existing retained-corpus coverage claim. These additions have no matching requests in that corpus.
+
 ## 0.58.0
 
 - Deepen Plausible with source-scoped advice for native property aliases, UTF-8 property value bounds, engagement metrics, revenue objects and JSON-encoded long revenue. Preserve alias precedence, signed and scientific amounts, empty referrers and clamped scroll depth.

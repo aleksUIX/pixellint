@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 227, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 233, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -359,6 +359,8 @@ for (const entry of [{validate}, cjs]) {
 
 // Source-backed profile fixtures must retain their behavior in both WASM entry points.
 const addedProfileSlugs = [
+  "tealium-collect", "customerio-track", "teads-conversions-api",
+  "mparticle-events", "mparticle-bulk-events", "mparticle-historical-events",
   "artsai-impression", "celtra-json", "exoclick-vast", "extreme-reach-cp-imp",
   "iqm-segment-open", "mobkoi-engagement", "pubmatic-vpaid-error",
 ];
@@ -387,5 +389,5 @@ for (const entry of [{ validate }, cjs]) {
     }
   }
 }
-assert.equal(addedProfileCases, 554, "all 277 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 2366, "all 1183 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);

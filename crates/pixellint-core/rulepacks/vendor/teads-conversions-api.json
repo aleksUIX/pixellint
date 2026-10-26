@@ -1,0 +1,320 @@
+{
+  "id": "vendor/teads-conversions-api",
+  "display_name": "Teads Conversions API",
+  "vendor": "teads",
+  "docs": "https://developers.teads.tv/docs/advertisers/tam/capi/parameters",
+  "source_level": "official_vendor",
+  "description": "Teads Conversions API endpoint and locally checkable payload contracts.",
+  "match": {
+    "hosts": [
+      "ca.teads.tv"
+    ],
+    "paths": [
+      "/v1/event",
+      "/v1/test/event"
+    ],
+    "json_paths": [
+      "buyer_pixel_id",
+      "click_id",
+      "action"
+    ]
+  },
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "object"
+        },
+        {
+          "name": "action",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "pageView",
+              "timeSpent",
+              "conversion"
+            ]
+          }
+        },
+        {
+          "name": "click_id",
+          "requirement": "required",
+          "allow_empty": false,
+          "json_type": "string"
+        },
+        {
+          "name": "buyer_pixel_id",
+          "requirement": "required",
+          "allow_empty": false,
+          "json_type": [
+            "string",
+            "integer"
+          ],
+          "description": "The official sender emits a string while direct examples use a number."
+        },
+        {
+          "name": "event_source_url",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "url"
+          }
+        },
+        {
+          "name": "user_session_id",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string"
+        },
+        {
+          "name": "event_time",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "integer",
+          "description": "Direct docs say seconds and reception-time override. The official GTM template emits milliseconds; no unit or age rejection is inferred."
+        },
+        {
+          "name": "conversion_type",
+          "requirement": "optional",
+          "allow_empty": false,
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "^\\S+$"
+          }
+        },
+        {
+          "name": "conversion_name",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "max_length": 100,
+          "doc": "https://developers.teads.tv/docs/advertisers/tam/capi/parameters"
+        },
+        {
+          "name": "conversion_params",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "object"
+        },
+        {
+          "name": "conversion_params.price",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": [
+            "number",
+            "string"
+          ],
+          "description": "Docs specify a number; the official configurable sender also serializes string prices.",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+          }
+        },
+        {
+          "name": "conversion_params.currency",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "currency"
+          },
+          "format_severity": "warning"
+        },
+        {
+          "name": "conversion_params.name",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "max_length": 100
+        },
+        {
+          "name": "privacy",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "object"
+        },
+        {
+          "name": "privacy.consent_granted",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "boolean"
+        },
+        {
+          "name": "privacy.gdpr_applies",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "json_type": "boolean"
+        },
+        {
+          "name": "privacy.tcf_consent_string",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "tcf"
+          }
+        },
+        {
+          "name": "privacy.us_privacy",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "us_privacy"
+          }
+        },
+        {
+          "name": "privacy.gpp_string",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "gpp"
+          }
+        },
+        {
+          "name": "privacy.opt_out",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "boolean"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.teads-conversions-api.conversion_type_required",
+          "kind": "required_when_value",
+          "message": "Conversion actions require conversion_type.",
+          "severity": "error",
+          "when": "action",
+          "equals": [
+            "conversion"
+          ],
+          "requires": [
+            "conversion_type"
+          ]
+        },
+        {
+          "code": "vendor.teads-conversions-api.conversion_label_required",
+          "kind": "require_any_of",
+          "message": "Conversion actions need conversion_name or the backward-compatible conversion_params.name.",
+          "severity": "error",
+          "groups": [
+            [
+              "conversion_name"
+            ],
+            [
+              "conversion_params.name"
+            ]
+          ],
+          "condition": {
+            "kind": "value_in",
+            "param": "action",
+            "values": [
+              "conversion"
+            ]
+          }
+        },
+        {
+          "code": "vendor.teads-conversions-api.consent_denied",
+          "kind": "forbid_value_pattern",
+          "message": "Teads rejects events with consent_granted=false.",
+          "severity": "error",
+          "params": [
+            "privacy.consent_granted"
+          ],
+          "pattern": "^false$"
+        },
+        {
+          "code": "vendor.teads-conversions-api.opted_out",
+          "kind": "forbid_value_pattern",
+          "message": "Teads rejects events with opt_out=true.",
+          "severity": "error",
+          "params": [
+            "privacy.opt_out"
+          ],
+          "pattern": "^true$"
+        },
+        {
+          "code": "vendor.teads-conversions-api.tcf_required",
+          "kind": "required_when_value",
+          "message": "GDPR-applicable events require a TCF consent string.",
+          "severity": "error",
+          "when": "privacy.gdpr_applies",
+          "equals": [
+            "true"
+          ],
+          "requires": [
+            "privacy.tcf_consent_string"
+          ]
+        }
+      ]
+    }
+  ],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST"
+            ]
+          }
+        },
+        {
+          "name": "content_type",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "application/json"
+            ]
+          }
+        },
+        {
+          "name": "body",
+          "requirement": "required",
+          "allow_empty": true
+        },
+        {
+          "name": "headers.authorization",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "regex",
+            "pattern": "(?i)^(?:Token|Bearer) +[^\\s]+$"
+          },
+          "doc": "https://developers.teads.tv/docs/advertisers/tam/capi/getting-started"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.teads-conversions-api.http.auth_profile_conflict",
+          "kind": "forbid_value_pattern",
+          "message": "Direct docs specify Token authorization; the official GTM template uses Bearer. Confirm the intended integration profile.",
+          "severity": "info",
+          "params": [
+            "headers.authorization"
+          ],
+          "pattern": "(?i)^Bearer ",
+          "doc": "https://developers.teads.tv/docs/advertisers/tam/capi/getting-started"
+        }
+      ]
+    }
+  ]
+}

@@ -12,6 +12,10 @@ from concurrent.futures import ThreadPoolExecutor
 
 # vendor slug -> (display name, category, [hosts], rulepack or None)
 VENDORS = {
+    'tealium': ('Tealium', 'analytics', ['collect.tealiumiq.com'], 'vendor/tealium-collect'),
+    'mparticle': ('mParticle', 'analytics', ['s2s.mparticle.com', 's2s.us1.mparticle.com', 's2s.us2.mparticle.com', 's2s.eu1.mparticle.com', 's2s.au1.mparticle.com'], 'vendor/mparticle-events'),
+    'customerio': ('Customer.io', 'analytics', ['track.customer.io', 'track-eu.customer.io'], 'vendor/customerio-track'),
+    'teads': ('Teads', 'measurement', ['ca.teads.tv'], 'vendor/teads-conversions-api'),
     "celtra": ("Celtra", "video", ["celtra.com"], "vendor/celtra-json"),
     "exoclick": ("ExoClick", "video", ["s.magsrv.com"], "vendor/exoclick-vast"),
     "mobkoi": ("Mobkoi", "measurement", ["events.mobkoi.com"], "vendor/mobkoi-engagement"),

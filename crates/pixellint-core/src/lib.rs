@@ -74,6 +74,30 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/tealium-collect",
+        include_str!("../rulepacks/vendor/tealium-collect.json"),
+    ),
+    (
+        "vendor/customerio-track",
+        include_str!("../rulepacks/vendor/customerio-track.json"),
+    ),
+    (
+        "vendor/teads-conversions-api",
+        include_str!("../rulepacks/vendor/teads-conversions-api.json"),
+    ),
+    (
+        "vendor/mparticle-events",
+        include_str!("../rulepacks/vendor/mparticle-events.json"),
+    ),
+    (
+        "vendor/mparticle-bulk-events",
+        include_str!("../rulepacks/vendor/mparticle-bulk-events.json"),
+    ),
+    (
+        "vendor/mparticle-historical-events",
+        include_str!("../rulepacks/vendor/mparticle-historical-events.json"),
+    ),
+    (
         "vendor/celtra-json",
         include_str!("../rulepacks/vendor/celtra-json.json"),
     ),

@@ -1,0 +1,305 @@
+{
+  "id": "vendor/tealium-collect",
+  "display_name": "Tealium Collect HTTP API v1",
+  "vendor": "tealium",
+  "docs": "https://docs.tealium.com/platforms/http-api/endpoint/",
+  "source_level": "official_vendor",
+  "description": "Tealium Collect HTTP API v1 endpoint and locally checkable payload contracts.",
+  "match": {
+    "hosts": [
+      "collect.tealiumiq.com"
+    ],
+    "paths": [
+      "/event"
+    ],
+    "json_paths": [
+      {
+        "any_of": [
+          "tealium_account",
+          "tealium_profile"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "tealium_account",
+      "requirement": "required",
+      "allow_empty": false
+    },
+    {
+      "name": "tealium_profile",
+      "requirement": "required",
+      "allow_empty": false
+    },
+    {
+      "name": "tealium_event",
+      "requirement": "recommended",
+      "allow_empty": false
+    },
+    {
+      "name": "tealium_datasource",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "tealium_trace_id",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "tealium_visitor_id",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "AudienceStream needs visitor context; known IDs and anonymous GUIDs are alternatives. No universal GUID requirement is inferred."
+    },
+    {
+      "name": "tealium_override_tapid",
+      "requirement": "optional",
+      "allow_empty": true
+    },
+    {
+      "name": "tealium_skip_3rd_party_vid_cookies",
+      "requirement": "optional",
+      "allow_empty": true,
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "name": "tealium_delete_3rd_party_vid_cookies",
+      "requirement": "optional",
+      "allow_empty": true,
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      }
+    }
+  ],
+  "http_url_presence_overrides": [
+    "tealium_account",
+    "tealium_profile",
+    "tealium_event"
+  ],
+  "body": [
+    {
+      "params": [
+        {
+          "name": "",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "object"
+        },
+        {
+          "name": "tealium_account",
+          "requirement": "required",
+          "allow_empty": false,
+          "json_type": "string"
+        },
+        {
+          "name": "tealium_profile",
+          "requirement": "required",
+          "allow_empty": false,
+          "json_type": "string"
+        },
+        {
+          "name": "tealium_event",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "json_type": "string"
+        },
+        {
+          "name": "tealium_datasource",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string"
+        },
+        {
+          "name": "tealium_trace_id",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string"
+        },
+        {
+          "name": "tealium_visitor_id",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "description": "AudienceStream needs visitor context; known IDs and anonymous GUIDs are alternatives. No universal GUID requirement is inferred."
+        },
+        {
+          "name": "tealium_override_tapid",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string"
+        },
+        {
+          "name": "tealium_skip_3rd_party_vid_cookies",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "boolean"
+        },
+        {
+          "name": "tealium_delete_3rd_party_vid_cookies",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "boolean"
+        },
+        {
+          "name": "custom_keys",
+          "name_pattern": ".*",
+          "name_pattern_parent": "",
+          "allow_empty": true,
+          "key_pattern": "^[^.]*$",
+          "doc": "https://docs.tealium.com/platforms/http-api/endpoint/",
+          "description": "The endpoint documents rejection of JSON keys containing a period. This checks top-level event attribute keys."
+        }
+      ]
+    }
+  ],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "method",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "GET",
+              "POST"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "condition": {
+        "kind": "value_in",
+        "param": "method",
+        "values": [
+          "GET"
+        ]
+      },
+      "params": [
+        {
+          "name": "method",
+          "requirement": "optional",
+          "allow_empty": true
+        },
+        {
+          "name": "query.tealium_account",
+          "requirement": "required",
+          "allow_empty": false,
+          "json_type": "string"
+        },
+        {
+          "name": "query.tealium_profile",
+          "requirement": "required",
+          "allow_empty": false,
+          "json_type": "string"
+        },
+        {
+          "name": "query.tealium_event",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "json_type": "string"
+        },
+        {
+          "name": "query.tealium_datasource",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string"
+        },
+        {
+          "name": "query.tealium_trace_id",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string"
+        },
+        {
+          "name": "query.tealium_visitor_id",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "description": "AudienceStream needs visitor context; known IDs and anonymous GUIDs are alternatives. No universal GUID requirement is inferred."
+        },
+        {
+          "name": "query.tealium_override_tapid",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string"
+        },
+        {
+          "name": "query.tealium_skip_3rd_party_vid_cookies",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          }
+        },
+        {
+          "name": "query.tealium_delete_3rd_party_vid_cookies",
+          "requirement": "optional",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "condition": {
+        "kind": "value_in",
+        "param": "method",
+        "values": [
+          "POST"
+        ]
+      },
+      "params": [
+        {
+          "name": "method",
+          "requirement": "optional",
+          "allow_empty": true
+        },
+        {
+          "name": "content_type",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "string",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "application/json"
+            ]
+          }
+        },
+        {
+          "name": "body",
+          "requirement": "required",
+          "allow_empty": true,
+          "json_type": "object"
+        }
+      ]
+    }
+  ]
+}

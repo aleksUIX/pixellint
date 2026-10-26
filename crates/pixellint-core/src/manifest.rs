@@ -613,6 +613,8 @@ pub enum Assertion {
         #[serde(default)]
         max_age_seconds: Option<u64>,
         #[serde(default)]
+        min_age_seconds: Option<u64>,
+        #[serde(default)]
         max_future_seconds: Option<u64>,
     },
 }
@@ -2029,15 +2031,31 @@ fn compile_rules(
         }
         if let Assertion::TimeWindow {
             max_age_seconds,
+            min_age_seconds,
             max_future_seconds,
             ..
         } = &rule.assertion
-            && (max_age_seconds.is_none() && max_future_seconds.is_none())
+            && (max_age_seconds.is_none()
+                && min_age_seconds.is_none()
+                && max_future_seconds.is_none())
         {
             return Err(ManifestError::InvalidConstraint {
                 pack_id: pack_id.to_string(),
                 name: rule.code.clone(),
                 reason: "time_window requires an age or future bound".to_string(),
+            });
+        }
+        if let Assertion::TimeWindow {
+            min_age_seconds: Some(minimum),
+            max_age_seconds: Some(maximum),
+            ..
+        } = &rule.assertion
+            && minimum > maximum
+        {
+            return Err(ManifestError::InvalidConstraint {
+                pack_id: pack_id.to_string(),
+                name: rule.code.clone(),
+                reason: "minimum age exceeds maximum age".to_string(),
             });
         }
         if let Assertion::EqualSplitLengths { params, separator } = &rule.assertion
@@ -5786,6 +5804,7 @@ impl ManifestRulePack {
                 fallback_param,
                 unit,
                 max_age_seconds,
+                min_age_seconds,
                 max_future_seconds,
             } => {
                 let effective_param = if params
@@ -5822,7 +5841,12 @@ impl ManifestRulePack {
                                 compare_numeric_text(candidate.value.as_ref(), &bound)
                                     .is_none_or(|order| order == std::cmp::Ordering::Greater)
                             });
-                            return too_old || too_new;
+                            let too_recent = min_age_seconds.is_some_and(|age| {
+                                let bound = ((reference - i128::from(age)) * 1_000_000).to_string();
+                                compare_numeric_text(candidate.value.as_ref(), &bound)
+                                    .is_none_or(|order| order == std::cmp::Ordering::Greater)
+                            });
+                            return too_old || too_new || too_recent;
                         }
                         let Some(time) =
                             crate::timestamp::timestamp_millis(candidate.value.as_ref(), *unit)
@@ -5837,7 +5861,8 @@ impl ManifestRulePack {
                         };
                         let delta =
                             i128::from(time) - i128::from(scope.reference_time_unix_seconds) * 1000;
-                        max_age_seconds.is_some_and(|age| delta < -(i128::from(age) * 1000))
+                        min_age_seconds.is_some_and(|age| delta > -(i128::from(age) * 1000))
+                            || max_age_seconds.is_some_and(|age| delta < -(i128::from(age) * 1000))
                             || max_future_seconds
                                 .is_some_and(|future| delta > i128::from(future) * 1000)
                     })
