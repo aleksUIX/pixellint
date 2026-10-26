@@ -1,0 +1,423 @@
+{
+  "id": "vendor/pixalate-analytics",
+  "vendor": "pixalate",
+  "display_name": "Pixalate analytics pixel advice",
+  "source_level": "official_template",
+  "docs": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1",
+  "description": "Partial advisory macro guidance for exact adrta.com/i. Published requirements describe measurement quality and onboarding templates, not complete receiver rejection policy. SDK wire constants bind mapped fields. Custom fields, opaque identifiers, unknown supply types, optional node tails and receiver acceptance remain open.",
+  "match": {
+    "hosts": [
+      "adrta.com"
+    ],
+    "paths": [
+      "/i"
+    ]
+  },
+  "params": [
+    {
+      "name": "clid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The published 1x1 template includes the assigned client ID. This is presence advice only; blank template slots and identifier syntax remain open.",
+      "doc": "https://www.pixalate.com/knowledgebase/passing-the-supply-chain-object-via-analytics"
+    },
+    {
+      "name": "paid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The assigned platform ID appears in the 1x1 template. This advice does not validate account issuance, partner IDs or onboarding state.",
+      "doc": "https://www.pixalate.com/knowledgebase/passing-the-supply-chain-object-via-analytics"
+    },
+    {
+      "name": "kv24",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The documented supply-type slot is recommended for measurement context. FAQ examples are not a closed enum; official SDK InApp/InApp_Video values and future values remain accepted.",
+      "doc": "https://www.pixalate.com/knowledgebase/faq-analytics"
+    },
+    {
+      "name": "kv3",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The public macro guide calls for a user ID. The SDK maps USER_ID to kv3. Missing data can reduce IVT detection; this warning is not a universal receiver-requiredness or identifier-format claim."
+    },
+    {
+      "name": "kv4",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The public macro guide requests the user IP, including forwarded client IPs. The SDK maps USER_IP to kv4. Each populated comma-separated IP literal is checked; private ranges, privacy omission and header transport remain open.",
+      "source_level": "official_vendor",
+      "format": {
+        "kind": "ip_chain"
+      }
+    },
+    {
+      "name": "kv11",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The public macro guide documents a minimum of 16 characters for the impression/auction ID. SDK IMPRESSION_ID maps to kv11. Alphanumeric content is preferred, not required; Unicode length is counted as characters and blank slots are retained.",
+      "source_level": "official_vendor",
+      "format": {
+        "kind": "regex",
+        "pattern": "(?s)^.{16,}$"
+      }
+    },
+    {
+      "name": "kv12",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The public guide requests an ad-slot placement ID, mapped to kv12 by the SDK. Presence advice cannot prove per-placement uniqueness or impose an ID grammar."
+    },
+    {
+      "name": "kv27",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public guide recommends the device user-agent macro, mapped to kv27 by the SDK. Presence advice does not validate UA syntax or assert that headers are receiver-equivalent."
+    },
+    {
+      "name": "kv2",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The guide requests the page URL for known desktop/mobile-web supply types. Unknown, absent, mixed or unresolved parsed supply values defer this contextual presence advice. URL syntax and page ownership remain open.",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "kv24"
+        ],
+        "values": [
+          "Desktop",
+          "Desktop_Video",
+          "Desktop_Native",
+          "Mobile_Web",
+          "Mobile_Web_Video",
+          "Mobile_Web_Native"
+        ]
+      }
+    },
+    {
+      "name": "kv18",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "App or bundle ID carrier published by the macro guide and SDK. It participates only in the known in-app presence alternative; values and store validation stay opaque."
+    },
+    {
+      "name": "kv32",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "When separate app/bundle macros exist the guide assigns app ID to kv32. It is an alternative presence carrier, not a numeric or package-name contract."
+    },
+    {
+      "name": "kv55",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Optional serialized SupplyChain. The linked IAB format begins major.minor,complete! with complete 0 or 1. Only that safe header is checked after normal query decoding. Escaped node commas/bangs, omitted optional tails, extension serialization, node identity and future values stay open.",
+      "doc": "https://www.pixalate.com/knowledgebase/passing-the-supply-chain-object-via-analytics",
+      "source_level": "official_vendor",
+      "format": {
+        "kind": "regex",
+        "pattern": "(?s)^[0-9]+\\.[0-9]+,[01]!.*$"
+      }
+    },
+    {
+      "name": "avid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the advertiser ID for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "caid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the campaign ID for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "plid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the creative ID for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "publisherId",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the publisher ID for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "siteId",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the site ID for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "lineItemId",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the line item ID for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv7",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the seller ID for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv10",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the ISP for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv26",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the device OS for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "cb",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the cachebuster for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "priceBid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the bid price for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "pricePaid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the clear price for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv1",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the creative size for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv15",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "description": "The public macro guide recommends the geographic region for reporting quality, and the official SDK binds this wire name. Optional informational completeness advice only: absence is not receiver rejection; values, native SDK overrides and custom mappings remain opaque.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv25",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "kv24"
+        ],
+        "values": [
+          "InApp",
+          "InApp_Video",
+          "Mobile_InApp",
+          "Mobile_InApp_Video",
+          "Mobile_InApp_Native"
+        ]
+      },
+      "description": "The public macro guide recommends app name in app environments. This informational advice runs only for known in-app supply labels; availability and opaque values remain open.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv28",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "kv24"
+        ],
+        "values": [
+          "InApp",
+          "InApp_Video",
+          "Mobile_InApp",
+          "Mobile_InApp_Video",
+          "Mobile_InApp_Native"
+        ]
+      },
+      "description": "The public macro guide recommends device make/model in app environments. This informational advice runs only for known in-app supply labels; availability and opaque values remain open.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv23",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "kv24"
+        ],
+        "values": [
+          "InApp",
+          "InApp_Video",
+          "Mobile_InApp",
+          "Mobile_InApp_Video",
+          "Mobile_InApp_Native"
+        ]
+      },
+      "description": "The public macro guide recommends carrier ID in app environments. This informational advice runs only for known in-app supply labels; availability and opaque values remain open.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv9",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "kv24"
+        ],
+        "values": [
+          "Desktop_Video",
+          "Mobile_Web_Video",
+          "Mobile_InApp_Video",
+          "InApp_Video",
+          "Email_Video"
+        ]
+      },
+      "description": "The public video macro profile includes video length, bound to this wire key by the SDK. Known video supply labels enable informational completeness advice only. No duration unit, event enum, native type or hardcoded player state is inferred.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv13",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "kv24"
+        ],
+        "values": [
+          "Desktop_Video",
+          "Mobile_Web_Video",
+          "Mobile_InApp_Video",
+          "InApp_Video",
+          "Email_Video"
+        ]
+      },
+      "description": "The public video macro profile includes content ID, bound to this wire key by the SDK. Known video supply labels enable informational completeness advice only. No duration unit, event enum, native type or hardcoded player state is inferred.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    },
+    {
+      "name": "kv44",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "info",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "kv24"
+        ],
+        "values": [
+          "Desktop_Video",
+          "Mobile_Web_Video",
+          "Mobile_InApp_Video",
+          "InApp_Video",
+          "Email_Video"
+        ]
+      },
+      "description": "The public video macro profile includes video play status, bound to this wire key by the SDK. Known video supply labels enable informational completeness advice only. No duration unit, event enum, native type or hardcoded player state is inferred.",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.pixalate-analytics.app_identifier.advisory",
+      "kind": "require_any_of",
+      "groups": [
+        [
+          "kv18"
+        ],
+        [
+          "kv32"
+        ]
+      ],
+      "allow_empty": true,
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "kv24"
+        ],
+        "values": [
+          "InApp",
+          "InApp_Video",
+          "Mobile_InApp",
+          "Mobile_InApp_Video",
+          "Mobile_InApp_Native"
+        ]
+      },
+      "severity": "warning",
+      "message": "The published in-app macro profile includes an app or bundle ID carrier (kv18 or kv32).",
+      "source_level": "official_template",
+      "doc": "https://www.pixalate.com/knowledgebase/mapping-macros-against-pixalate-key-value-parameters-1"
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "requirement": "optional",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        },
+        "source_level": "official_vendor",
+        "doc": "https://www.pixalate.com/knowledgebase/faq-analytics",
+        "description": "Pixalate explicitly documents both GET and POST for tags. The public material does not define a body schema, MIME restriction or the full receiver method policy."
+      }
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "vendor/videoamp-impression",
+  "vendor": "videoamp",
+  "display_name": "VideoAmp impression producer advice",
+  "source_level": "official_template",
+  "docs": "https://metarouter.readme.io/docs/videoamp",
+  "description": "Partial warning-only advice for the exact impression route shown by MetaRouter and PRX. Common template slots and supplied IP syntax are checked. MetaRouter mappings do not define universal receiver requiredness; opaque IDs, cachebuster values, custom fields, transport and duplicate selection remain open.",
+  "match": {
+    "hosts": [
+      "b.videoamp.com"
+    ],
+    "path_patterns": [
+      "/d2/[^/]*/[^/]*/impression"
+    ]
+  },
+  "params": [
+    {
+      "name": "url_id",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The published impression route reserves a nonempty provisioned URL_ID path slot. Check only physical slot emptiness, without UUID, alphanumeric, account or equality claims."
+    },
+    {
+      "name": "path_vpxid",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The published impression route reserves a nonempty provisioned VPXID path slot. Query/form fields cannot fill this slot. Values and path/query consistency remain opaque."
+    },
+    {
+      "name": "vpxid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "The provisioned query ID appears in both published producer templates. Presence advice only: identifier grammar, empty values and equality with the opaque path slot remain unvalidated."
+    },
+    {
+      "name": "bwb",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Provisioned tag setting included in both producer templates. Presence advice does not infer numeric type, batch meaning, bounds or account validity."
+    },
+    {
+      "name": "cb",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Both templates include a cachebuster slot. MetaRouter maps timestamp while PRX uses randomstr, so populated values stay opaque and no numeric, date or freshness rule is imposed."
+    },
+    {
+      "name": "ip",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "MetaRouter maps context.ip to an IP-address string. Check only submitted populated literals. IP absence is permitted: PRX requires separate data-sharing context, and MetaRouter matching advice is not universal receiver requiredness.",
+      "format": {
+        "kind": "ip"
+      }
+    }
+  ],
+  "path_pattern": "^/d2/(?<url_id>[^/]*)/(?<path_vpxid>[^/]*)/impression$"
+}
