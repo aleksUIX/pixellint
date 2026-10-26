@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.70.0 (local candidate)
+
+- Deepen all three existing mParticle event profiles with published session, push, lifecycle, crash, profile, identity and attribute event contracts.
+- Check nested crash breadcrumbs in their own array slots and preserve required nullable fields and open source containers.
+- Add Remerge monetary-number sanity advice, literal IP checks and current or historical ISO currency advice. Existing identity applicability and metadata alternatives remain open.
+- Keep the registry at 233 packs and 133 vendors. Receiver completeness and increased retained-sample coverage are not claimed.
+
 ## 0.69.0 (local candidate)
 
 - Add Tealium Collect, Customer.io Track, Teads CAPI and three mParticle event endpoint profiles.

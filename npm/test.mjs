@@ -364,6 +364,7 @@ const addedProfileSlugs = [
   "mparticle-events", "mparticle-bulk-events", "mparticle-historical-events",
   "artsai-impression", "celtra-json", "exoclick-vast", "extreme-reach-cp-imp",
   "iqm-segment-open", "mobkoi-engagement", "pubmatic-vpaid-error",
+  "remerge-event",
 ];
 let addedProfileCases = 0;
 const profileFixtureGroups = new Map();
@@ -414,7 +415,7 @@ for (const entry of [{ validate, validateMany }, cjs]) {
   assert.equal(observed.size, profileFixtureExpected.size, "every fixture survives document aggregation");
   for (const slug of addedProfileSlugs) {
     const rows = [...profileFixtureExpected].filter(([label]) => label.startsWith(`${slug}/`));
-    const controls = [rows.find(([, row]) => row.fixture.expected_codes.length === 0), rows.find(([, row]) => row.fixture.expected_errors > 0)].filter(Boolean);
+    const controls = [rows.find(([, row]) => row.fixture.expected_codes.length === 0), rows.find(([, row]) => row.fixture.expected_errors + row.fixture.expected_warnings > 0)].filter(Boolean);
     for (const [label, { fixture, artifact }] of controls) {
       const clock = Date.now;
       try {
@@ -424,5 +425,5 @@ for (const entry of [{ validate, validateMany }, cjs]) {
     }
   }
 }
-assert.equal(addedProfileCases, 2368, "all 1184 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 5024, "all 2512 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);

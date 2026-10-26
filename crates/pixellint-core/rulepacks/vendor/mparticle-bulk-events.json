@@ -4,7 +4,7 @@
   "vendor": "mparticle",
   "docs": "https://docs.mparticle.com/developers/apis/json-reference/",
   "source_level": "official_vendor",
-  "description": "mParticle bulk events endpoint and locally checkable payload contracts.",
+  "description": "Captured bulk mParticle v2 events. Published input-schema event branches receive native payload checks; endpoint context and source-defined nullable alternatives remain explicit.",
   "match": {
     "hosts": [
       "s2s.mparticle.com",
@@ -1295,27 +1295,8 @@
             "integer",
             "number"
           ],
-          "description": "Native type and requirement from the public inbound Events API JSON schema.",
+          "description": "The published Draft 7 schema references the flexible String definition. Sibling enum/default keywords are ignored under that declared dialect; receiver restrictions require separate evidence.",
           "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "IOS",
-              "Android",
-              "WindowsPhone",
-              "MobileWeb",
-              "UnityIOS",
-              "UnityAndroid",
-              "Desktop",
-              "TVOS",
-              "Roku",
-              "OutOfBand",
-              "Alexa",
-              "SmartTV",
-              "FireTV",
-              "Xbox"
-            ]
-          },
           "condition": {
             "kind": "all",
             "conditions": [
@@ -3776,21 +3757,8 @@
             "integer",
             "number"
           ],
-          "description": "Native type and requirement from the public inbound Events API JSON schema.",
+          "description": "The published Draft 7 schema references the flexible String definition. Sibling enum/default keywords are ignored under that declared dialect; receiver restrictions require separate evidence.",
           "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "portrait",
-              "portrait_upside_down",
-              "landscape",
-              "LandscapeLeft",
-              "LandscapeRight",
-              "FaceUp",
-              "FaceDown",
-              "Square"
-            ]
-          },
           "condition": {
             "kind": "all",
             "conditions": [
@@ -3818,21 +3786,8 @@
             "integer",
             "number"
           ],
-          "description": "Native type and requirement from the public inbound Events API JSON schema.",
+          "description": "The published Draft 7 schema references the flexible String definition. Sibling enum/default keywords are ignored under that declared dialect; receiver restrictions require separate evidence.",
           "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
-          "format": {
-            "kind": "enum",
-            "values": [
-              "portrait",
-              "portrait_upside_down",
-              "landscape",
-              "LandscapeLeft",
-              "LandscapeRight",
-              "FaceUp",
-              "FaceDown",
-              "Square"
-            ]
-          },
           "condition": {
             "kind": "all",
             "conditions": [
@@ -6992,6 +6947,4273 @@
           },
           "name_pattern": ".*",
           "name_pattern_parent": "data.custom_flags"
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.session_duration_ms",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "session_end"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.breadcrumbs",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "array",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.breadcrumbs[]",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": "object",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.breadcrumbs",
+                "json_type": "array"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.class_name",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.severity",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.message",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.stack_trace",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.exception_handled",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.topmost_context",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.pl_crash_report_file_base64",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.ios_image_base_address",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.ios_image_size",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.session_number",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[].data.breadcrumbs[]",
+      "params": [
+        {
+          "name": "__parent_event_type",
+          "allow_empty": true,
+          "ancestor_path": {
+            "levels": 3,
+            "path": "event_type"
+          }
+        },
+        {
+          "name": "",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "__parent_event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.timestamp_unixtime_ms",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.event_id",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.source_message_id",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": "string",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.session_id",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.session_uuid",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null"
+          ],
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.session_start_unixtime_ms",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.event_start_unixtime_ms",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.custom_attributes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "object",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member_data_custom_attributes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          },
+          "name_pattern": ".*",
+          "name_pattern_parent": "data.custom_attributes"
+        },
+        {
+          "name": "data.location",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.latitude",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.longitude",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.accuracy",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.dma_code",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.country_code",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.region_code",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.postal_code",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.location_source",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.location.city_name",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.location",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.time_since_start_ms",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.battery_level",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.data_connection_type",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.data_connection_type_detail",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.gps_state",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.total_system_memory_usage_bytes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.disk_space_free_bytes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.external_disk_space_free_bytes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.cpu",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.system_memory_available_bytes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.system_memory_low",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.system_memory_threshold_bytes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.application_memory_available_bytes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.application_memory_max_bytes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.application_memory_total_bytes",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.device_orientation",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.device_current_state.status_bar_orientation",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.device_current_state",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.is_goal_defined",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.lifetime_value_change",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "number",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.lifetime_value_attribute_name",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.data_connection_type",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.event_num",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.view_controller",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.is_main_thread",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.canonical_name",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.event_system_notification_info",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.event_system_notification_info.type",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "gdpr_change"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all",
+                    "conditions": [
+                      {
+                        "kind": "value_in",
+                        "param": "__parent_event_type",
+                        "values": [
+                          "crash_report"
+                        ]
+                      },
+                      {
+                        "kind": "json_type",
+                        "param": "",
+                        "json_type": "object"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.event_system_notification_info",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.session_number",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.label",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": "string",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "__parent_event_type",
+                    "values": [
+                      "crash_report"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event_type",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "breadcrumb"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "__parent_event_type",
+                "values": [
+                  "crash_report"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.is_opted_out",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "opt_out"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.register",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_registration"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.registration_token",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": "string",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_registration"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.successfully_closed",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "application_state_transition"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.is_first_run",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "application_state_transition"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.is_upgrade",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "application_state_transition"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.push_notification_payload",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "application_state_transition"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.launch_referral",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "application_state_transition"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.application_transition_type",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "application_initialized",
+              "application_exit",
+              "application_background",
+              "application_foreground"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "application_state_transition"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.push_message_token",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_message"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.push_message_type",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "sent",
+              "received",
+              "action"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_message"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.message",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_message"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.network",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_message"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.push_notification_payload",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_message"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.application_state",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_message"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.action_identifier",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_message"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.push_message_behavior",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "push_message"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.http_verb",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": "string",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "network_performance"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.url",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": "string",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "network_performance"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.time_elapsed",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "network_performance"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.bytes_in",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "network_performance"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.bytes_out",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "network_performance"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.response_code",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "network_performance"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.data",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "network_performance"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.session_number",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "breadcrumb"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.label",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": "string",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "breadcrumb"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.previous_mpid",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "profile"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.current_mpid",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "profile"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.profile_event_type",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "signup",
+              "login",
+              "logout",
+              "update",
+              "delete"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "profile"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.user_attribute_name",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": "string",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "user_attribute_change"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.new",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number",
+            "array"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "user_attribute_change"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.new[]",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_attribute_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.new",
+                "json_type": "array"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.old",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number",
+            "array"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "user_attribute_change"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.old[]",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_attribute_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.old",
+                "json_type": "array"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.deleted",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "user_attribute_change"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.is_new_attribute",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "user_attribute_change"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scope": "[].events[]",
+      "params": [
+        {
+          "name": "event_type",
+          "allow_empty": true
+        },
+        {
+          "name": "data",
+          "allow_empty": true
+        },
+        {
+          "name": "data.new",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "user_identity_change"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.new.identity_type",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "other",
+              "customer_id",
+              "facebook",
+              "twitter",
+              "google",
+              "microsoft",
+              "yahoo",
+              "email",
+              "alias",
+              "facebook_custom_audience_id",
+              "other_id_2",
+              "other_id_3",
+              "other_id_4",
+              "other_id_5",
+              "other_id_6",
+              "other_id_7",
+              "other_id_8",
+              "other_id_9",
+              "other_id_10",
+              "mobile_number",
+              "phone_number_2",
+              "phone_number_3"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_identity_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.new",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.new.identity",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_identity_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.new",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.new.timestamp_unixtime_ms",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_identity_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.new",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.new.created_this_batch",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_identity_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.new",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.old",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "event_type",
+                "values": [
+                  "user_identity_change"
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.old.identity_type",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string"
+          ],
+          "format": {
+            "kind": "enum",
+            "values": [
+              "other",
+              "customer_id",
+              "facebook",
+              "twitter",
+              "google",
+              "microsoft",
+              "yahoo",
+              "email",
+              "alias",
+              "facebook_custom_audience_id",
+              "other_id_2",
+              "other_id_3",
+              "other_id_4",
+              "other_id_5",
+              "other_id_6",
+              "other_id_7",
+              "other_id_8",
+              "other_id_9",
+              "other_id_10",
+              "mobile_number",
+              "phone_number_2",
+              "phone_number_3"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_identity_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.old",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.old.identity",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "string",
+            "null",
+            "boolean",
+            "integer",
+            "number"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_identity_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.old",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.old.timestamp_unixtime_ms",
+          "requirement": "required",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "integer",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_identity_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.old",
+                "json_type": "object"
+              }
+            ]
+          }
+        },
+        {
+          "name": "data.old.created_this_batch",
+          "requirement": "optional",
+          "allow_empty": true,
+          "doc": "https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json",
+          "description": "Published input-schema native type, enum and key-presence requirement. Untyped source containers are not assigned an invented native type.",
+          "json_type": [
+            "boolean",
+            "null"
+          ],
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "value_in",
+                    "param": "event_type",
+                    "values": [
+                      "user_identity_change"
+                    ]
+                  },
+                  {
+                    "kind": "json_type",
+                    "param": "data",
+                    "json_type": "object"
+                  }
+                ]
+              },
+              {
+                "kind": "json_type",
+                "param": "data.old",
+                "json_type": "object"
+              }
+            ]
+          }
         }
       ]
     }

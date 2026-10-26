@@ -116,10 +116,11 @@
       "name": "currency",
       "requirement": "optional",
       "severity": "warning",
-      "description": "Optional ISO 4217 currency-code shape only. Account currency, registry dates and value conversion remain external.",
+      "description": "Optional advice for current or historical ISO 4217 assignment. Case is not restricted and no currency/value conversion or account configuration is inferred.",
       "format": {
-        "kind": "regex",
-        "pattern": "^[A-Za-z]{3}$"
+        "kind": "currency",
+        "allow_historical": true,
+        "case_insensitive": true
       },
       "allow_empty": true
     },
@@ -162,15 +163,25 @@
       "name": "revenue",
       "requirement": "optional",
       "severity": "warning",
-      "description": "Optional Revenue in micro currency units; no sign, range or exact scalar grammar is established.",
-      "allow_empty": true
+      "description": "Optional monetary-number sanity advice. The guide documents monetary units but not the complete receiver lexer; signed, fractional, leading-zero and exponent forms remain accepted. No value conversion or relationship between the two carriers is inferred.",
+      "allow_empty": true,
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "source_level": "heuristic"
     },
     {
       "name": "revenue_float",
       "requirement": "optional",
       "severity": "warning",
-      "description": "Optional Alternative revenue notation; no sign, range or mutual-exclusion rule is imposed.",
-      "allow_empty": true
+      "description": "Optional monetary-number sanity advice. The guide documents monetary units but not the complete receiver lexer; signed, fractional, leading-zero and exponent forms remain accepted. No value conversion or relationship between the two carriers is inferred.",
+      "allow_empty": true,
+      "format": {
+        "kind": "regex",
+        "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+      },
+      "source_level": "heuristic"
     },
     {
       "name": "operator",
@@ -211,8 +222,11 @@
       "name": "ip",
       "requirement": "optional",
       "severity": "warning",
-      "description": "Optional IP address; receiver family and representation rules remain open.",
-      "allow_empty": true
+      "description": "Optional IPv4 or IPv6 literal syntax advice. Address ownership, forwarding provenance and collection acceptance remain external.",
+      "allow_empty": true,
+      "format": {
+        "kind": "ip"
+      }
     },
     {
       "name": "language",

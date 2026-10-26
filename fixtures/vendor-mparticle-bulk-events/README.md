@@ -1,12 +1,12 @@
-# mParticle bulk events uses a bounded source profile.
+# The mParticle bulk events profile has a bounded source contract.
 
-mParticle bulk events endpoint and locally checkable payload contracts.
+Typed contracts for the 17 published input event branches, per-record crash breadcrumb scopes, and correction of unsupported $ref sibling-enum errors. Source-defined nullable and untyped alternatives remain accepted.
 
-269 fixtures cover source examples, native alternatives, mutations and scope controls. A fixture count is not a percentage of vendor specification coverage.
+This round adds 409 cases. Prior fixture expectations are retained.
 
-- The primary inbound JSON Schema takes precedence over the older OpenAPI where native types and defaults disagree. Custom attribution is additionally preserved from the public JSON reference; unknown environment values remain advisory.
-- The typed inventory covers batch metadata, common event data and the custom, screen and commerce branches. Other event-specific data contracts remain partial.
-- Endpoint captures select single, bulk and historical profiles. Generic standalone JSON cannot identify the intended endpoint and is not automatically claimed.
-- The 128kb batch-size unit is ambiguous and per-user batch identity requires account context. No guessed size conversion or user-equality rule is imposed.
-- Historical docs specify a bulk array but show one object. Both are inspected; the object receives an information advisory. Every historical event requires a timestamp at least 72 hours old.
-- Closed-key enforcement, all receiver transformations, identity resolution, deduplication history, credentials, forwarding and retention state remain unvalidated.
+- The input schema publishes 17 event branches. Three reuse common event data without additional branch fields. pre_attribution and push_reaction are enum-only values without a complete input branch; their event-specific payloads remain uncontracted.
+- Draft 7 ignores siblings of $ref. Optional OS/orientation, push application_state and push_message_behavior sibling enums are not promoted to receiver rejection rules. A version-specific receiver contract would be needed to tighten them.
+- Source containers without an explicit native type retain source-permitted scalar or null alternatives. Descendant properties are checked only when the submitted value is an object.
+- Closed-key policies, source-only annotations, duplicate raw keys, account identity resolution, credentials and receiver transformations remain outside this profile.
+- The 128kb batch unit is ambiguous. Historical bulk docs still conflict with a single-object example. Existing explicit profile advice and the 72-hour top-level event window are retained.
+- Nested crash breadcrumbs are checked per element under their own crash parent. They are not assigned an undocumented independent historical timestamp requirement.
