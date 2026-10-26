@@ -74,6 +74,14 @@ pub const BUILTIN_VENDOR_DIRECTORY: &str = include_str!("../rulepacks/directory.
 /// their own packs. Nothing about a first-party pack is privileged.
 pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
+        "vendor/extreme-reach-cp-imp",
+        include_str!("../rulepacks/vendor/extreme-reach-cp-imp.json"),
+    ),
+    (
+        "vendor/artsai-impression",
+        include_str!("../rulepacks/vendor/artsai-impression.json"),
+    ),
+    (
         "vendor/cint-lucid-pixel",
         include_str!("../rulepacks/vendor/cint-lucid-pixel.json"),
     ),

@@ -12,6 +12,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 # vendor slug -> (display name, category, [hosts], rulepack or None)
 VENDORS = {
+    "artsai": ("Artsai", "measurement", ["arttrk.com", "data.adxcel-ec2.com"], "vendor/artsai-impression"),
+    "extremereach": ("Extreme Reach", "video", ["extremereach.io"], "vendor/extreme-reach-cp-imp"),
     # Public pixel and cookie-matching sources bind these exact host roots.
     "cint-lucid": ("Cint / Lucid", "measurement", ["tracker.samplicio.us"], "vendor/cint-lucid-pixel"),
     "dynata": ("Dynata", "measurement", ["tag.researchnow.com"], "vendor/dynata-pixel"),

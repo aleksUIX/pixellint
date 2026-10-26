@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 220 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 222 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -3385,6 +3385,23 @@ Context: `{}`.
 | `headers.authentication` | required | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-post) |
 | `url` | required | `{"json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-post) |
 
+## `vendor/artsai-impression`
+
+Partial warning-only advice for the tag=imp1 impression profile published by PRX and ART19. Common template slots and supplied IP syntax are checked. PRX-only context, ART19 headers, identifier formats, opaque message contents and receiver-wide requiredness remain open.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/artsai-impression.json).
+
+Matcher: `{"hosts":["arttrk.com","data.adxcel-ec2.com"],"paths":["/pixel/"],"query_params_values":[{"name":"tag","values":["imp1"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `ad_log` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking) |
+| `msg` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking) |
+| `pixid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking) |
+| `ip` | optional | `{"allow_empty":true,"severity":"warning","format":{"kind":"ip"}}` | [official_template](https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking) |
+
 ## `vendor/awin-basket`
 
 Awin product-level tracking requests on www.awin1.com/basket.php and zenaps.com/basket.php. Each product_line is one AW:P row. Conversion pixels stay vendor/awin. The MasterTag stays vendor/awin-mastertag.
@@ -4660,6 +4677,22 @@ Matcher: `{"hosts":["tag.researchnow.com"],"paths":["/t/beacon"]}`.
 | `gdpr` | optional | `{"allow_empty":true}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/12202690055309-Setting-Up-3rd-Party-Measurement-Dynata) |
 | `gdpr_consent` | optional | `{"allow_empty":true}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/12202690055309-Setting-Up-3rd-Party-Measurement-Dynata) |
 | `us_privacy` | optional | `{"allow_empty":true}` | [official_template](https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking) |
+
+## `vendor/extreme-reach-cp-imp`
+
+Partial warning-only completeness advice for the exact cp-imp endpoint published by ART19. It compares common provisioned template slots, preserves empty and opaque values, and does not claim receiver-wide requiredness or coverage of duration, error, click, safety or skip callbacks.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/extreme-reach-cp-imp.json).
+
+Matcher: `{"hosts":["beacons.extremereach.io"],"paths":["/cp-imp"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `cid` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/360056140072-Setting-Up-3rd-Party-Measurement-Extreme-Reach) |
+| `creative_id` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/360056140072-Setting-Up-3rd-Party-Measurement-Extreme-Reach) |
+| `line_item` | recommended | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/360056140072-Setting-Up-3rd-Party-Measurement-Extreme-Reach) |
 
 ## `vendor/flashtalking-ftrack`
 

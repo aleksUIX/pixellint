@@ -1,0 +1,62 @@
+{
+  "id": "vendor/artsai-impression",
+  "vendor": "artsai",
+  "display_name": "Artsai imp1 template advice",
+  "source_level": "official_template",
+  "docs": "https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking",
+  "description": "Partial warning-only advice for the tag=imp1 impression profile published by PRX and ART19. Common template slots and supplied IP syntax are checked. PRX-only context, ART19 headers, identifier formats, opaque message contents and receiver-wide requiredness remain open.",
+  "match": {
+    "hosts": [
+      "arttrk.com",
+      "data.adxcel-ec2.com"
+    ],
+    "paths": [
+      "/pixel/"
+    ],
+    "query_params_values": [
+      {
+        "name": "tag",
+        "values": [
+          "imp1"
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "ad_log",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Both published impression templates include this provisioned account/tag slot. This is template completeness advice, with no identifier alphabet, grammar, token parsing or receiver-requiredness claim.",
+      "fix_hint": "Compare with the provisioned tag and the cited producer template. Other integrations can intentionally differ."
+    },
+    {
+      "name": "msg",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Both published impression templates include this provisioned message slot. This is template completeness advice, with no identifier alphabet, grammar, token parsing or receiver-requiredness claim.",
+      "fix_hint": "Compare with the provisioned tag and the cited producer template. Other integrations can intentionally differ."
+    },
+    {
+      "name": "pixid",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "description": "Both published impression templates include this provisioned pixel identifier slot. This is template completeness advice, with no identifier alphabet, grammar, token parsing or receiver-requiredness claim.",
+      "fix_hint": "Compare with the provisioned tag and the cited producer template. Other integrations can intentionally differ."
+    },
+    {
+      "name": "ip",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning",
+      "format": {
+        "kind": "ip"
+      },
+      "description": "PRX maps its IP-address macro into this query slot. Check supplied populated literals only. ART19 forwards IP through headers instead, so query absence and empty template slots remain accepted.",
+      "fix_hint": "Compare the supplied value with the original integration tag. Preserve consent-driven omissions and do not substitute a header chain into a single-address query slot."
+    }
+  ]
+}
