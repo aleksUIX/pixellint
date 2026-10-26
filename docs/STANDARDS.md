@@ -4975,7 +4975,7 @@ Context: `{}`.
 
 ## `vendor/gamesight-impression`
 
-Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Opaque IDs, custom domains, receiver acceptance and external identity relationships remain outside this profile.
+Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/gamesight-impression.json).
 
@@ -4993,6 +4993,15 @@ Path captures: `^/imgp/(?<tracker_id>[^/]*)$`. Captured values take precedence o
 | `external_scope_type` | optional | `{"name_pattern":"^xid\\[[0-9]*\\]\\[scope_type\\]$","format":{"kind":"enum","values":["game","org"]},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 | `attribution_window` | forbidden | `{"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 | `destination_url` | forbidden | `{"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+
+### Query group contract 1
+
+Context: `{"source":"indexed_query","key_prefix":"xid"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `scope_type` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `scope_id` | recommended | `{"severity":"warning","format":{"kind":"non_empty"},"condition":{"kind":"all_values_in","params":["scope_type"],"values":["org"]}}` | [official_vendor](https://docs.gamesight.io/reference/measurement-api-console-identifiers#cross-game-ids) |
 
 ## `vendor/google-activeview`
 
@@ -7904,10 +7913,10 @@ Context: `{"source_param":"_cvar","encoding":"json"}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `invalid_slots` | forbidden | `{"name_pattern":"^(?:$\|0\|[^1-9].*\|[1-9][0-9]*[^0-9].*)$","name_pattern_parent":""}` | [official_vendor](https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/) |
-| `variable_slots` | optional | `{"name_pattern":"(?s)^.+$","name_pattern_parent":"","json_type":"array","min_items":2,"max_items":2}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `*[]` | optional | `{"json_type":"string","max_length":200,"allow_empty":true}` | [official_vendor](https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/) |
+| `(current scope)` | optional | `{"json_type":"object","severity":"info"}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `invalid_slots` | forbidden | `{"name_pattern":"^(?:$\|0\|[^1-9].*\|[1-9][0-9]*[^0-9].*)$","name_pattern_parent":"","severity":"warning"}` | [heuristic](https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/) |
+| `variable_slots` | optional | `{"name_pattern":"(?s)^.+$","name_pattern_parent":"","json_type":"array","severity":"info"}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `*[]` | optional | `{"json_type":["string","number"],"allow_empty":true,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php) |
 
 ### JSON contract 2
 
@@ -7915,10 +7924,10 @@ Context: `{"source_param":"cvar","encoding":"json"}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `invalid_slots` | forbidden | `{"name_pattern":"^(?:$\|0\|[^1-9].*\|[1-9][0-9]*[^0-9].*)$","name_pattern_parent":""}` | [official_vendor](https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/) |
-| `variable_slots` | optional | `{"name_pattern":"(?s)^.+$","name_pattern_parent":"","json_type":"array","min_items":2,"max_items":2}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
-| `*[]` | optional | `{"json_type":"string","max_length":200,"allow_empty":true}` | [official_vendor](https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/) |
+| `(current scope)` | optional | `{"json_type":"object","severity":"info"}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `invalid_slots` | forbidden | `{"name_pattern":"^(?:$\|0\|[^1-9].*\|[1-9][0-9]*[^0-9].*)$","name_pattern_parent":"","severity":"warning"}` | [heuristic](https://matomo.org/faq/how-to/guide-to-using-custom-variables-deprecated/) |
+| `variable_slots` | optional | `{"name_pattern":"(?s)^.+$","name_pattern_parent":"","json_type":"array","severity":"info"}` | [official_vendor](https://developer.matomo.org/api-reference/tracking-api) |
+| `*[]` | optional | `{"json_type":["string","number"],"allow_empty":true,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php) |
 
 ### JSON contract 3
 
@@ -7983,6 +7992,38 @@ Context: `{"source_param":"uadata","scope":"fullVersionList[]"}`.
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://wicg.github.io/ua-client-hints/) |
 | `brand` | required | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://wicg.github.io/ua-client-hints/) |
 | `version` | required | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://wicg.github.io/ua-client-hints/) |
+
+### JSON contract 8
+
+Context: `{"source_param":"_cvar","encoding":"json","scope":"*"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"condition":{"kind":"json_type","param":"","json_type":"array"},"json_type":"array","min_items":2,"max_items":2,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php) |
+
+### JSON contract 9
+
+Context: `{"source_param":"_cvar","encoding":"json","scope":"*[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"condition":{"kind":"json_type","param":"","json_type":"string"},"json_type":"string","format":{"kind":"regex","pattern":"(?s)\\A[\\x00\\x09-\\x0B\\x0D\\x20]*.{0,200}[\\x00\\x09-\\x0B\\x0D\\x20]*\\z"},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php) |
+
+### JSON contract 10
+
+Context: `{"source_param":"cvar","encoding":"json","scope":"*"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"condition":{"kind":"json_type","param":"","json_type":"array"},"json_type":"array","min_items":2,"max_items":2,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php) |
+
+### JSON contract 11
+
+Context: `{"source_param":"cvar","encoding":"json","scope":"*[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"condition":{"kind":"json_type","param":"","json_type":"string"},"json_type":"string","format":{"kind":"regex","pattern":"(?s)\\A[\\x00\\x09-\\x0B\\x0D\\x20]*.{0,200}[\\x00\\x09-\\x0B\\x0D\\x20]*\\z"},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/matomo-org/plugin-CustomVariables/6ae495b4cdf5406564cfbc93120264a93dc8fb02/Tracker/CustomVariablesRequestProcessor.php) |
 
 Bulk query sources: `[{"source_field":"body.requests[]","inherited_params":{"token_auth":"body.token_auth"},"encoding":"url_query","inherited_overrides":true,"native_map":"matomo_php8","check_chronological_order":true}]`.
 
