@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 222 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 224 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -4677,6 +4677,28 @@ Matcher: `{"hosts":["tag.researchnow.com"],"paths":["/t/beacon"]}`.
 | `gdpr` | optional | `{"allow_empty":true}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/12202690055309-Setting-Up-3rd-Party-Measurement-Dynata) |
 | `gdpr_consent` | optional | `{"allow_empty":true}` | [official_template](https://art19.zendesk.com/hc/en-us/articles/12202690055309-Setting-Up-3rd-Party-Measurement-Dynata) |
 | `us_privacy` | optional | `{"allow_empty":true}` | [official_template](https://help.prx.org/hc/en-us/articles/7653096583451-Third-Party-Ad-Tracking) |
+
+## `vendor/exoclick-vast`
+
+Warning-level completeness advice for documented VAST callback templates on the current default syndication host. Opaque data, identifier formats, unlisted actions/events, cimp.php and receiver-wide requirements remain open.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/exoclick-vast.json).
+
+Matcher: `{"hosts":["s.magsrv.com"],"paths":["/vregister.php","/click.php"]}`.
+
+Path captures: `^/(?<callback_route>vregister\.php\|click\.php)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `callback_route` | optional | `{"allow_empty":false,"severity":"warning"}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
+| `a` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
+| `tracking_event` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vimp"]}]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
+| `idzone` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vimp"]},{"kind":"all_values_in","params":["tracking_event"],"values":["impression"]}]},{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vview"]},{"kind":"all_values_in","params":["tracking_event"],"values":["progress"]}]},{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vview"]},{"kind":"exists","param":"errorcode"},{"kind":"not","condition":{"kind":"exists","param":"tracking_event"}}]}]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
+| `data` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"any","conditions":[{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vimp"]},{"kind":"all_values_in","params":["tracking_event"],"values":["impression"]}]},{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vview"]},{"kind":"all_values_in","params":["tracking_event"],"values":["progress"]}]},{"kind":"all_values_in","params":["callback_route"],"values":["click.php"]}]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
+| `progress` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"all_values_in","params":["callback_route"],"values":["vregister.php"]},{"kind":"all_values_in","params":["a"],"values":["vview"]},{"kind":"all_values_in","params":["tracking_event"],"values":["progress"]}]}}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
+| `errorcode` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://docs.exoclick.com/publishers/vast/vast-tag.md) |
 
 ## `vendor/extreme-reach-cp-imp`
 
@@ -10655,6 +10677,37 @@ Context: `{}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `method` | optional | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+
+## `vendor/mobkoi-engagement`
+
+Advisory checks for the inspected Mobkoi landing-tag 1.0.0 query sender on three exact engagement routes. The separate VAST impression, click and video collectors remain uncovered.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/mobkoi-engagement.json).
+
+Matcher: `{"hosts":["events.mobkoi.com"],"paths":["/track/engagement_session_start","/track/engagement_page_in_view","/track/engagement_buffer_flush"]}`.
+
+Path captures: `^/track/(?<sdk_event>engagement_session_start\|engagement_page_in_view\|engagement_buffer_flush)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `sdk_event` | optional | `{"allow_empty":false,"severity":"warning"}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
+| `deid` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^-?[0-9a-z]+$"}}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
+| `iid` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
+| `asp` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"url"},"condition":{"kind":"all_values_in","params":["sdk_event"],"values":["engagement_page_in_view"]}}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
+| `isl` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["true","false"]},"condition":{"kind":"all_values_in","params":["sdk_event"],"values":["engagement_page_in_view"]}}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
+| `rt` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["initial_load","tab_return","spa_history_change"]},"condition":{"kind":"all_values_in","params":["sdk_event"],"values":["engagement_page_in_view"]}}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
+| `top` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:e[+-]?[0-9]+)?$"},"condition":{"kind":"all_values_in","params":["sdk_event"],"values":["engagement_buffer_flush"]}}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
+| `sr` | recommended | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["focus_lost","click_outside","page_close"]},"condition":{"kind":"all_values_in","params":["sdk_event"],"values":["engagement_buffer_flush"]}}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"allow_empty":false,"severity":"warning","format":{"kind":"enum","values":["POST"]}}` | [official_template](https://one-tag.mobkoi.com/tag.min.js) |
 
 ## `vendor/mouseflow`
 

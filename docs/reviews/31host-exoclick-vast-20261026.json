@@ -1,0 +1,399 @@
+{
+  "id": "vendor/exoclick-vast",
+  "vendor": "exoclick",
+  "reviewed_at": "2026-10-26T19:08:07.598601+00:00",
+  "disposition": "implemented_source_scoped_partial",
+  "spec_complete": false,
+  "full_vendor_spec_complete": false,
+  "manifest_path": "crates/pixellint-core/rulepacks/vendor/exoclick-vast.json",
+  "manifest_sha256": "4f0454c96202ee3df682b334293fe6c0cdf4febf962b65897bfe9d694515d12b",
+  "match": {
+    "hosts": [
+      "s.magsrv.com"
+    ],
+    "paths": [
+      "/vregister.php",
+      "/click.php"
+    ]
+  },
+  "source_level": "official_template",
+  "sources_read": [
+    {
+      "key": "exoclick-vast",
+      "url": "https://docs.exoclick.com/publishers/vast/vast-tag.md",
+      "fetched_at": "2026-10-26T18:51:40Z",
+      "status": 200,
+      "final_url": "https://docs.exoclick.com/publishers/vast/vast-tag.md",
+      "content_type": "text/markdown; charset=utf-8",
+      "bytes": 27381,
+      "sha256": "2831c80af0df4a8d9e9d8b9a602f736d15123fc9ddbcb6ebada2cef86fec121f",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-public-b/exoclick-vast"
+    },
+    {
+      "key": "exoclick-full",
+      "url": "https://docs.exoclick.com/llms-full.txt",
+      "fetched_at": "2026-10-26T18:52:55Z",
+      "status": 200,
+      "final_url": "https://docs.exoclick.com/llms-full.txt",
+      "content_type": "text/markdown; charset=utf-8",
+      "bytes": 922127,
+      "sha256": "df0f01b5853dedcf690eef4113541223d1e31718ad899ba582f1ccb72ab53176",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-public-b/exoclick-full"
+    },
+    {
+      "key": "exoclick-adprovider.js",
+      "url": "https://a.magsrv.com/ad-provider.js",
+      "fetched_at": "2026-10-26T18:56:53Z",
+      "status": 200,
+      "final_url": "https://a.magsrv.com/ad-provider.js",
+      "content_type": "application/javascript",
+      "bytes": 224688,
+      "sha256": "e6249bfa888ca87f0ea1af3953b48e4ed0d0157ed5ba7bdb3bc40ec64cfeaa8f",
+      "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-public-b/exoclick-adprovider.js"
+    }
+  ],
+  "contracts_mapped": [
+    {
+      "name": "callback_route",
+      "description": "Path-derived callback branch; a query name cannot supply this route.",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning"
+    },
+    {
+      "name": "a",
+      "description": "The documented vregister callback templates include an action. Unlisted literal actions remain accepted.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "callback_route"
+        ],
+        "values": [
+          "vregister.php"
+        ]
+      }
+    },
+    {
+      "name": "tracking_event",
+      "description": "The documented vimp impression template includes tracking_event. Unlisted event values remain accepted, and the error template does not need this carrier.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "callback_route"
+            ],
+            "values": [
+              "vregister.php"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "a"
+            ],
+            "values": [
+              "vimp"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "idzone",
+      "description": "The documented impression, progress and error templates carry a provisioned zone reference. Advise on presence only in those recognizable branches; no digit, nonempty or account-validity rule is inferred.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "callback_route"
+                ],
+                "values": [
+                  "vregister.php"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "a"
+                ],
+                "values": [
+                  "vimp"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "tracking_event"
+                ],
+                "values": [
+                  "impression"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "callback_route"
+                ],
+                "values": [
+                  "vregister.php"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "a"
+                ],
+                "values": [
+                  "vview"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "tracking_event"
+                ],
+                "values": [
+                  "progress"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "callback_route"
+                ],
+                "values": [
+                  "vregister.php"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "a"
+                ],
+                "values": [
+                  "vview"
+                ]
+              },
+              {
+                "kind": "exists",
+                "param": "errorcode"
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "exists",
+                  "param": "tracking_event"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "data",
+      "description": "The documented impression, progress and click templates carry opaque data. The error template legitimately omits it. This check does not decode, type, measure or reject blank token values.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "callback_route"
+                ],
+                "values": [
+                  "vregister.php"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "a"
+                ],
+                "values": [
+                  "vimp"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "tracking_event"
+                ],
+                "values": [
+                  "impression"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "callback_route"
+                ],
+                "values": [
+                  "vregister.php"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "a"
+                ],
+                "values": [
+                  "vview"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "tracking_event"
+                ],
+                "values": [
+                  "progress"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "callback_route"
+            ],
+            "values": [
+              "click.php"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "progress",
+      "description": "The documented progress callback copies its offset. Advise on key presence only, retaining percentages, absolute offsets and unknown future encodings without inferred receiver format rules.",
+      "requirement": "recommended",
+      "allow_empty": true,
+      "severity": "warning",
+      "condition": {
+        "kind": "all",
+        "conditions": [
+          {
+            "kind": "all_values_in",
+            "params": [
+              "callback_route"
+            ],
+            "values": [
+              "vregister.php"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "a"
+            ],
+            "values": [
+              "vview"
+            ]
+          },
+          {
+            "kind": "all_values_in",
+            "params": [
+              "tracking_event"
+            ],
+            "values": [
+              "progress"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "errorcode",
+      "description": "The error template carries the VAST error-code macro. Its literal format, custom extensions, duplicate handling and requiredness on other vview branches are not inferred.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    }
+  ],
+  "cross_field_rules_mapped": [],
+  "http_contracts_mapped": null,
+  "implemented_scope": "Warning-level completeness advice for documented VAST callback templates on the current default syndication host. Opaque data, identifier formats, unlisted actions/events, cimp.php and receiver-wide requirements remain open.",
+  "missing_requirements": [
+    "Public templates establish scoped presence advice, not receiver-wide mandatory fields or accepted native types.",
+    "The source-bound default syndication host does not establish universal equivalence for other adserver aliases or runtimes.",
+    "No closed action/event enum, identifier grammar, opaque-token grammar, duplicate rule or transport requirement is inferred.",
+    "The current ad-provider source binds the default service host but contains no VAST callback constructor.",
+    "The cimp.php route and every other endpoint remain unimplemented."
+  ],
+  "native_alternatives": [
+    "All uncontracted fields remain open.",
+    "Duplicate carriers are not assigned inferred receiver selection laws."
+  ],
+  "source_oracle": "Independent vendor VAST guide examples, current default-host binding and synthetic omission/scope mutations.",
+  "reviewed_artifacts": {
+    "fixtures/vendor-exoclick-vast/README.md": "c62ca6585432cd9a24214b74bf43c200b953acdab0eb219dd0f64667f20cb55d",
+    "fixtures/vendor-exoclick-vast/captured-request.json": "6208f7ee145c86cc60af0424c2cff6093fb89107b0a444e1e3b42a213b6a7700",
+    "fixtures/vendor-exoclick-vast/conflicting-action-open.txt": "1afda539a73eb5c6635d8bb34f612e8b169defe3ef656903cfa81438ec1ef922",
+    "fixtures/vendor-exoclick-vast/conflicting-event-open.txt": "3a8d373931975941ae240ba5cb078c237135622e50a88ccae297d974e4a2d074",
+    "fixtures/vendor-exoclick-vast/custom-action-open.txt": "3a06936fd502223e8fd564ceff3ca08aa8b08ee295e0387e46f5ff8498f79a59",
+    "fixtures/vendor-exoclick-vast/custom-event-open.txt": "40ece5dc150606ec77a514986add1cd8146ccf9167869375e14bf1cda1dca5b4",
+    "fixtures/vendor-exoclick-vast/error-does-not-require-data.txt": "d689822bc80c4cfbad15d1531bb2aa2485eef465a1273d5e1e23cd6463f60d62",
+    "fixtures/vendor-exoclick-vast/literal-custom-error-open.txt": "246c492087ffb0e3512ad55c81befebc53d413b3a2bb63bee32839d15180ad71",
+    "fixtures/vendor-exoclick-vast/lookalike-host.txt": "bac19694f0c0127c587ef440666e8c66e29d17d8c5712061dffa20a8f9d2bcb1",
+    "fixtures/vendor-exoclick-vast/manifest.json": "fa22d904a127da12fc67a00cc93ab9b3696a4fcfdc2bdac1fb2d43656d8b98ba",
+    "fixtures/vendor-exoclick-vast/missing-action.txt": "12c010266a2da3571b73b277a96aa189da6345a03c74350bae039b953ca2e0e5",
+    "fixtures/vendor-exoclick-vast/missing-data.txt": "7993b0b7a0491a5a2bac991219503319d9915fef0a90e9224c8e6f87fdec12aa",
+    "fixtures/vendor-exoclick-vast/missing-event.txt": "59558dd1fb3d03c0d91bb7557ae695573158750d14e13841dbe572f13894ff8c",
+    "fixtures/vendor-exoclick-vast/missing-progress.txt": "07ef4f7e535b45870c969c3bc201c2acaa29064d6ec05deec1647d2e71469623",
+    "fixtures/vendor-exoclick-vast/missing-zone.txt": "0f67ae0f545a883579afefd50aea2eed21da7bcc14e3780141f7d4c118123822",
+    "fixtures/vendor-exoclick-vast/native-empty-carriers.txt": "ca672099356572d2255dee59bbb1e1a0403c751e78317250ba8cb01b0847f8d0",
+    "fixtures/vendor-exoclick-vast/nearby-route.txt": "78b426514ba848baadb33f735aa49ab70b2d1cce895a36c8595c2232a04b2556",
+    "fixtures/vendor-exoclick-vast/opaque-fields-open.txt": "5bbf4774ab6969f507f1b8c8b674ee657028ca7f28475451a089fcfd532fbc0d",
+    "fixtures/vendor-exoclick-vast/path-cannot-be-spoofed.txt": "41b40e631251a7601164779e7b86633e2cbff0da53e42e00d02012b7c0b0ba0b",
+    "fixtures/vendor-exoclick-vast/percentage-progress-open.txt": "174f5fdd09c732e2be12f50bab8effd8de7bb0752dcfba2e5640e00eea44e115",
+    "fixtures/vendor-exoclick-vast/repeated-identical-carriers.txt": "20b0ea532177d418ef5122fffd5e6f6713a12c6ff58e7de9b47d5c4f358a25d4",
+    "fixtures/vendor-exoclick-vast/source-click.txt": "64da993dac81d4398a7938740fff33f12fa902cf29d999c24913752784727aae",
+    "fixtures/vendor-exoclick-vast/source-error-template.txt": "f189f7810635e6a24b98a198c8e1d3715995a47671dea472414d436a81d85c86",
+    "fixtures/vendor-exoclick-vast/source-impression.txt": "8fae9e37aab877bf943116bd9c49155d45ebc6d99726c7a8f36b1e166bffaac7",
+    "fixtures/vendor-exoclick-vast/source-progress.txt": "55844b027563b48f78f2d65d95818cdc9e68203d98599c9aeb2d95964b4ad851",
+    "fixtures/vendor-exoclick-vast/trailing-slash.txt": "e3a3e83b1f61a6ab218a84575e230669c4ba551daa23a4a7e2049aecb0022b59",
+    "fixtures/vendor-exoclick-vast/uncovered-cimp.txt": "ae983fb6c81731246669227d5c37efa5843f1b2d3579e776da8d901b22d21e90",
+    "fixtures/vendor-exoclick-vast/uncovered-tag.txt": "8b4b7a39083106549e7a994d7a28cb43e98ca6431d9e19f2e60a6ecd355c0f7e"
+  },
+  "validated_checks": [
+    "Golden corpus passes, including documented omission alternatives and all negative scope cases."
+  ]
+}

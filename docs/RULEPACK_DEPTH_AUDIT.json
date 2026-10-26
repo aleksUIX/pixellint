@@ -181,6 +181,675 @@
   ],
   "packs": [
     {
+      "id": "vendor/exoclick-vast",
+      "vendor": "exoclick",
+      "reviewed_at": "2026-10-26T19:08:07.598601+00:00",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "full_vendor_spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/exoclick-vast.json",
+      "manifest_sha256": "4f0454c96202ee3df682b334293fe6c0cdf4febf962b65897bfe9d694515d12b",
+      "match": {
+        "hosts": [
+          "s.magsrv.com"
+        ],
+        "paths": [
+          "/vregister.php",
+          "/click.php"
+        ]
+      },
+      "source_level": "official_template",
+      "sources_read": [
+        {
+          "key": "exoclick-vast",
+          "url": "https://docs.exoclick.com/publishers/vast/vast-tag.md",
+          "fetched_at": "2026-10-26T18:51:40Z",
+          "status": 200,
+          "final_url": "https://docs.exoclick.com/publishers/vast/vast-tag.md",
+          "content_type": "text/markdown; charset=utf-8",
+          "bytes": 27381,
+          "sha256": "2831c80af0df4a8d9e9d8b9a602f736d15123fc9ddbcb6ebada2cef86fec121f",
+          "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-public-b/exoclick-vast"
+        },
+        {
+          "key": "exoclick-full",
+          "url": "https://docs.exoclick.com/llms-full.txt",
+          "fetched_at": "2026-10-26T18:52:55Z",
+          "status": 200,
+          "final_url": "https://docs.exoclick.com/llms-full.txt",
+          "content_type": "text/markdown; charset=utf-8",
+          "bytes": 922127,
+          "sha256": "df0f01b5853dedcf690eef4113541223d1e31718ad899ba582f1ccb72ab53176",
+          "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-public-b/exoclick-full"
+        },
+        {
+          "key": "exoclick-adprovider.js",
+          "url": "https://a.magsrv.com/ad-provider.js",
+          "fetched_at": "2026-10-26T18:56:53Z",
+          "status": 200,
+          "final_url": "https://a.magsrv.com/ad-provider.js",
+          "content_type": "application/javascript",
+          "bytes": 224688,
+          "sha256": "e6249bfa888ca87f0ea1af3953b48e4ed0d0157ed5ba7bdb3bc40ec64cfeaa8f",
+          "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-public-b/exoclick-adprovider.js"
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "name": "callback_route",
+          "description": "Path-derived callback branch; a query name cannot supply this route.",
+          "requirement": "optional",
+          "allow_empty": false,
+          "severity": "warning"
+        },
+        {
+          "name": "a",
+          "description": "The documented vregister callback templates include an action. Unlisted literal actions remain accepted.",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "condition": {
+            "kind": "all_values_in",
+            "params": [
+              "callback_route"
+            ],
+            "values": [
+              "vregister.php"
+            ]
+          }
+        },
+        {
+          "name": "tracking_event",
+          "description": "The documented vimp impression template includes tracking_event. Unlisted event values remain accepted, and the error template does not need this carrier.",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "callback_route"
+                ],
+                "values": [
+                  "vregister.php"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "a"
+                ],
+                "values": [
+                  "vimp"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "idzone",
+          "description": "The documented impression, progress and error templates carry a provisioned zone reference. Advise on presence only in those recognizable branches; no digit, nonempty or account-validity rule is inferred.",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "callback_route"
+                    ],
+                    "values": [
+                      "vregister.php"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "a"
+                    ],
+                    "values": [
+                      "vimp"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "tracking_event"
+                    ],
+                    "values": [
+                      "impression"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "callback_route"
+                    ],
+                    "values": [
+                      "vregister.php"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "a"
+                    ],
+                    "values": [
+                      "vview"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "tracking_event"
+                    ],
+                    "values": [
+                      "progress"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "callback_route"
+                    ],
+                    "values": [
+                      "vregister.php"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "a"
+                    ],
+                    "values": [
+                      "vview"
+                    ]
+                  },
+                  {
+                    "kind": "exists",
+                    "param": "errorcode"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "exists",
+                      "param": "tracking_event"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "data",
+          "description": "The documented impression, progress and click templates carry opaque data. The error template legitimately omits it. This check does not decode, type, measure or reject blank token values.",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "condition": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "callback_route"
+                    ],
+                    "values": [
+                      "vregister.php"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "a"
+                    ],
+                    "values": [
+                      "vimp"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "tracking_event"
+                    ],
+                    "values": [
+                      "impression"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "callback_route"
+                    ],
+                    "values": [
+                      "vregister.php"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "a"
+                    ],
+                    "values": [
+                      "vview"
+                    ]
+                  },
+                  {
+                    "kind": "all_values_in",
+                    "params": [
+                      "tracking_event"
+                    ],
+                    "values": [
+                      "progress"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "callback_route"
+                ],
+                "values": [
+                  "click.php"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "progress",
+          "description": "The documented progress callback copies its offset. Advise on key presence only, retaining percentages, absolute offsets and unknown future encodings without inferred receiver format rules.",
+          "requirement": "recommended",
+          "allow_empty": true,
+          "severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "callback_route"
+                ],
+                "values": [
+                  "vregister.php"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "a"
+                ],
+                "values": [
+                  "vview"
+                ]
+              },
+              {
+                "kind": "all_values_in",
+                "params": [
+                  "tracking_event"
+                ],
+                "values": [
+                  "progress"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "errorcode",
+          "description": "The error template carries the VAST error-code macro. Its literal format, custom extensions, duplicate handling and requiredness on other vview branches are not inferred.",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning"
+        }
+      ],
+      "cross_field_rules_mapped": [],
+      "http_contracts_mapped": null,
+      "implemented_scope": "Warning-level completeness advice for documented VAST callback templates on the current default syndication host. Opaque data, identifier formats, unlisted actions/events, cimp.php and receiver-wide requirements remain open.",
+      "missing_requirements": [
+        "Public templates establish scoped presence advice, not receiver-wide mandatory fields or accepted native types.",
+        "The source-bound default syndication host does not establish universal equivalence for other adserver aliases or runtimes.",
+        "No closed action/event enum, identifier grammar, opaque-token grammar, duplicate rule or transport requirement is inferred.",
+        "The current ad-provider source binds the default service host but contains no VAST callback constructor.",
+        "The cimp.php route and every other endpoint remain unimplemented."
+      ],
+      "native_alternatives": [
+        "All uncontracted fields remain open.",
+        "Duplicate carriers are not assigned inferred receiver selection laws."
+      ],
+      "source_oracle": "Independent vendor VAST guide examples, current default-host binding and synthetic omission/scope mutations.",
+      "reviewed_artifacts": {
+        "fixtures/vendor-exoclick-vast/README.md": "c62ca6585432cd9a24214b74bf43c200b953acdab0eb219dd0f64667f20cb55d",
+        "fixtures/vendor-exoclick-vast/captured-request.json": "6208f7ee145c86cc60af0424c2cff6093fb89107b0a444e1e3b42a213b6a7700",
+        "fixtures/vendor-exoclick-vast/conflicting-action-open.txt": "1afda539a73eb5c6635d8bb34f612e8b169defe3ef656903cfa81438ec1ef922",
+        "fixtures/vendor-exoclick-vast/conflicting-event-open.txt": "3a8d373931975941ae240ba5cb078c237135622e50a88ccae297d974e4a2d074",
+        "fixtures/vendor-exoclick-vast/custom-action-open.txt": "3a06936fd502223e8fd564ceff3ca08aa8b08ee295e0387e46f5ff8498f79a59",
+        "fixtures/vendor-exoclick-vast/custom-event-open.txt": "40ece5dc150606ec77a514986add1cd8146ccf9167869375e14bf1cda1dca5b4",
+        "fixtures/vendor-exoclick-vast/error-does-not-require-data.txt": "d689822bc80c4cfbad15d1531bb2aa2485eef465a1273d5e1e23cd6463f60d62",
+        "fixtures/vendor-exoclick-vast/literal-custom-error-open.txt": "246c492087ffb0e3512ad55c81befebc53d413b3a2bb63bee32839d15180ad71",
+        "fixtures/vendor-exoclick-vast/lookalike-host.txt": "bac19694f0c0127c587ef440666e8c66e29d17d8c5712061dffa20a8f9d2bcb1",
+        "fixtures/vendor-exoclick-vast/manifest.json": "fa22d904a127da12fc67a00cc93ab9b3696a4fcfdc2bdac1fb2d43656d8b98ba",
+        "fixtures/vendor-exoclick-vast/missing-action.txt": "12c010266a2da3571b73b277a96aa189da6345a03c74350bae039b953ca2e0e5",
+        "fixtures/vendor-exoclick-vast/missing-data.txt": "7993b0b7a0491a5a2bac991219503319d9915fef0a90e9224c8e6f87fdec12aa",
+        "fixtures/vendor-exoclick-vast/missing-event.txt": "59558dd1fb3d03c0d91bb7557ae695573158750d14e13841dbe572f13894ff8c",
+        "fixtures/vendor-exoclick-vast/missing-progress.txt": "07ef4f7e535b45870c969c3bc201c2acaa29064d6ec05deec1647d2e71469623",
+        "fixtures/vendor-exoclick-vast/missing-zone.txt": "0f67ae0f545a883579afefd50aea2eed21da7bcc14e3780141f7d4c118123822",
+        "fixtures/vendor-exoclick-vast/native-empty-carriers.txt": "ca672099356572d2255dee59bbb1e1a0403c751e78317250ba8cb01b0847f8d0",
+        "fixtures/vendor-exoclick-vast/nearby-route.txt": "78b426514ba848baadb33f735aa49ab70b2d1cce895a36c8595c2232a04b2556",
+        "fixtures/vendor-exoclick-vast/opaque-fields-open.txt": "5bbf4774ab6969f507f1b8c8b674ee657028ca7f28475451a089fcfd532fbc0d",
+        "fixtures/vendor-exoclick-vast/path-cannot-be-spoofed.txt": "41b40e631251a7601164779e7b86633e2cbff0da53e42e00d02012b7c0b0ba0b",
+        "fixtures/vendor-exoclick-vast/percentage-progress-open.txt": "174f5fdd09c732e2be12f50bab8effd8de7bb0752dcfba2e5640e00eea44e115",
+        "fixtures/vendor-exoclick-vast/repeated-identical-carriers.txt": "20b0ea532177d418ef5122fffd5e6f6713a12c6ff58e7de9b47d5c4f358a25d4",
+        "fixtures/vendor-exoclick-vast/source-click.txt": "64da993dac81d4398a7938740fff33f12fa902cf29d999c24913752784727aae",
+        "fixtures/vendor-exoclick-vast/source-error-template.txt": "f189f7810635e6a24b98a198c8e1d3715995a47671dea472414d436a81d85c86",
+        "fixtures/vendor-exoclick-vast/source-impression.txt": "8fae9e37aab877bf943116bd9c49155d45ebc6d99726c7a8f36b1e166bffaac7",
+        "fixtures/vendor-exoclick-vast/source-progress.txt": "55844b027563b48f78f2d65d95818cdc9e68203d98599c9aeb2d95964b4ad851",
+        "fixtures/vendor-exoclick-vast/trailing-slash.txt": "e3a3e83b1f61a6ab218a84575e230669c4ba551daa23a4a7e2049aecb0022b59",
+        "fixtures/vendor-exoclick-vast/uncovered-cimp.txt": "ae983fb6c81731246669227d5c37efa5843f1b2d3579e776da8d901b22d21e90",
+        "fixtures/vendor-exoclick-vast/uncovered-tag.txt": "8b4b7a39083106549e7a994d7a28cb43e98ca6431d9e19f2e60a6ecd355c0f7e"
+      },
+      "validated_checks": [
+        "Golden corpus passes, including documented omission alternatives and all negative scope cases."
+      ]
+    },
+    {
+      "id": "vendor/mobkoi-engagement",
+      "vendor": "mobkoi",
+      "reviewed_at": "2026-10-26T19:08:07.592811+00:00",
+      "disposition": "implemented_source_scoped_partial",
+      "spec_complete": false,
+      "full_vendor_spec_complete": false,
+      "manifest_path": "crates/pixellint-core/rulepacks/vendor/mobkoi-engagement.json",
+      "manifest_sha256": "7c598d41f0ab0d0de10ccd3384324ffc0b56620ca623878f75a989d88698dd84",
+      "match": {
+        "hosts": [
+          "events.mobkoi.com"
+        ],
+        "paths": [
+          "/track/engagement_session_start",
+          "/track/engagement_page_in_view",
+          "/track/engagement_buffer_flush"
+        ]
+      },
+      "source_level": "official_template",
+      "sources_read": [
+        {
+          "key": "mobkoi-llms",
+          "url": "https://mobkoi.gitbook.io/docs/llms-full.txt",
+          "fetched_at": "2026-10-26T18:51:40Z",
+          "status": 200,
+          "final_url": "https://mobkoi.gitbook.io/docs/llms-full.txt",
+          "content_type": "text/markdown; charset=utf-8",
+          "bytes": 28761,
+          "sha256": "aa4fdbc798123b5449064ab3d6887ff189744184be90be8da7cb79e3e396e055",
+          "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-public-b/mobkoi-llms"
+        },
+        {
+          "key": "mobkoi-onetag.js",
+          "url": "https://one-tag.mobkoi.com/tag.min.js",
+          "fetched_at": "2026-10-26T18:52:55Z",
+          "status": 200,
+          "final_url": "https://one-tag.mobkoi.com/tag.min.js",
+          "content_type": "text/javascript; charset=utf-8",
+          "bytes": 4470,
+          "sha256": "4f71000675249c21f048bc79e8915f78bd55cf033edb813cde7129b460180892",
+          "file": "/Volumes/1TExpansion/adtech-oss/output/pixellint-31host-packs-20261026/sources-public-b/mobkoi-onetag.js"
+        }
+      ],
+      "contracts_mapped": [
+        {
+          "name": "sdk_event",
+          "description": "Path-derived sender branch. A query parameter cannot change the selected path branch.",
+          "requirement": "optional",
+          "allow_empty": false,
+          "severity": "warning"
+        },
+        {
+          "name": "deid",
+          "description": "The inspected sender emits Date.now().toString(36) plus a base36 random suffix. This is a producer spelling check, without uniqueness, length, timestamp recovery or receiver acceptance claims.",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9a-z]+$"
+          }
+        },
+        {
+          "name": "iid",
+          "description": "Opaque impression reference copied from mbiid or session storage. The serializer omits null/undefined values, and this pack does not invent receiver-side presence, value or account rules.",
+          "requirement": "optional",
+          "allow_empty": true,
+          "severity": "warning"
+        },
+        {
+          "name": "asp",
+          "description": "Page-in-view sender copies location.href. Check a submitted absolute URL without requiring HTTPS, stripping query data or narrowing the scheme.",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "severity": "warning",
+          "format": {
+            "kind": "url"
+          },
+          "condition": {
+            "kind": "all_values_in",
+            "params": [
+              "sdk_event"
+            ],
+            "values": [
+              "engagement_page_in_view"
+            ]
+          }
+        },
+        {
+          "name": "isl",
+          "description": "The page-in-view sender serializes its Boolean landing flag as true or false. Other events do not inherit this field contract.",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "true",
+              "false"
+            ]
+          },
+          "condition": {
+            "kind": "all_values_in",
+            "params": [
+              "sdk_event"
+            ],
+            "values": [
+              "engagement_page_in_view"
+            ]
+          }
+        },
+        {
+          "name": "rt",
+          "description": "The inspected page-in-view sender has three internal route branches. This is a version-scoped producer advisory rather than a closed receiver-wide event vocabulary.",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "initial_load",
+              "tab_return",
+              "spa_history_change"
+            ]
+          },
+          "condition": {
+            "kind": "all_values_in",
+            "params": [
+              "sdk_event"
+            ],
+            "values": [
+              "engagement_page_in_view"
+            ]
+          }
+        },
+        {
+          "name": "top",
+          "description": "The buffer sender serializes accumulated Date.now differences in milliseconds. Preserve zero, negative clock changes and exponent notation; do not impose a positivity, integer precision or session-duration bound.",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "severity": "warning",
+          "format": {
+            "kind": "regex",
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:e[+-]?[0-9]+)?$"
+          },
+          "condition": {
+            "kind": "all_values_in",
+            "params": [
+              "sdk_event"
+            ],
+            "values": [
+              "engagement_buffer_flush"
+            ]
+          }
+        },
+        {
+          "name": "sr",
+          "description": "The inspected buffer sender has three internal flush reasons. The advisory applies only to this source profile.",
+          "requirement": "recommended",
+          "allow_empty": false,
+          "severity": "warning",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "focus_lost",
+              "click_outside",
+              "page_close"
+            ]
+          },
+          "condition": {
+            "kind": "all_values_in",
+            "params": [
+              "sdk_event"
+            ],
+            "values": [
+              "engagement_buffer_flush"
+            ]
+          }
+        }
+      ],
+      "cross_field_rules_mapped": [],
+      "http_contracts_mapped": {
+        "params": [
+          {
+            "name": "method",
+            "description": "Both navigator.sendBeacon(url) and the fallback fetch(url,{method:POST,keepalive:true}) use POST. No content-type, body, header or credentials requirement is inferred.",
+            "requirement": "required",
+            "allow_empty": false,
+            "severity": "warning",
+            "format": {
+              "kind": "enum",
+              "values": [
+                "POST"
+              ]
+            }
+          }
+        ]
+      },
+      "implemented_scope": "Advisory checks for the inspected Mobkoi landing-tag 1.0.0 query sender on three exact engagement routes. The separate VAST impression, click and video collectors remain uncovered.",
+      "missing_requirements": [
+        "No published receiver-wide schema, duplicate-selection policy or remote response acceptance contract.",
+        "SDK source is version 1.0.0 with no version discriminator carried on the wire; findings remain sender-profile advisories.",
+        "The retained impression/video/click VAST branches have no recovered matching contract and are not selected.",
+        "Configured endpointBase may point elsewhere; no sibling, regional or arbitrary configured host is attributed automatically.",
+        "No identifier validity, uniqueness, timestamp recovery, session-state, consent permission, header or body requirement is inferred."
+      ],
+      "native_alternatives": [
+        "All uncontracted fields remain open.",
+        "Duplicate carriers are not assigned inferred receiver selection laws."
+      ],
+      "source_oracle": "fixtures/vendor-mobkoi-engagement/source-oracle.json",
+      "reviewed_artifacts": {
+        "fixtures/vendor-mobkoi-engagement/README.md": "d22f609cb388c507a84dae7e2f2c50d68e684e9fd3a100bd4c888c1719488d83",
+        "fixtures/vendor-mobkoi-engagement/bad-event-id.txt": "483b28c32dfc41a82e821ba8df926742b2255dbab3808bc6ce2fb401c5d152d6",
+        "fixtures/vendor-mobkoi-engagement/bad-landing-flag.txt": "e2c4b028e4747f2776b4c101622f266421936665c4ad7b558155822def3c63e7",
+        "fixtures/vendor-mobkoi-engagement/bad-page-url.txt": "f2f4f82acdaa9ddbf84dc06efc8c64ff1fff1653bd0a39b08ed3fc3a8a1fb413",
+        "fixtures/vendor-mobkoi-engagement/bad-reason.txt": "dedc42915b8923114186be78d480292d0b2ad43277f7e1f690a455c2eeb90b8b",
+        "fixtures/vendor-mobkoi-engagement/bad-route.txt": "cb37fbc2ee1c680cc68b3645b38e09f2b9cb9a920186bd95c6825fdee5cc1021",
+        "fixtures/vendor-mobkoi-engagement/bad-time.txt": "1f40f43f4672b7816779eb964323ae94dc0efb36a8cacc1dad23001eaec150e3",
+        "fixtures/vendor-mobkoi-engagement/blank-iid.txt": "b54fa9b27a66503500855bda31528d0986709847b5969af8ecacb51270f7719a",
+        "fixtures/vendor-mobkoi-engagement/clean-beacon-request.json": "c1192e25a8258db0d4834a0bbc70cbb4848e659107fc0134013457af1a4c0e31",
+        "fixtures/vendor-mobkoi-engagement/clean-buffer.txt": "aa3ed2bc9b22095ec10b293a61b263453758f72ed6253cb6ab4053519a3cdd95",
+        "fixtures/vendor-mobkoi-engagement/clean-fallback-request.json": "7330616736090b8678e902cdb3323282c68cef095a38bfdd7b1ba59720c25d4c",
+        "fixtures/vendor-mobkoi-engagement/clean-page.txt": "61b607cdc5550d13ddaec0cec7fd79e3b32c252c09b5fc4641dfbac1e42c662c",
+        "fixtures/vendor-mobkoi-engagement/clean-session.txt": "f8c3e6354461266bee16b567d947920e57c70a892960e35bbb27a7707c95dc3b",
+        "fixtures/vendor-mobkoi-engagement/configured-other-host.txt": "d21e13eeeae2834014e712a42f1f096489599de1720c93fd08ab503b876eb381",
+        "fixtures/vendor-mobkoi-engagement/exponent-counter.txt": "a9cc3cc97f941ff834440c03423aa4e053b3a1f4529f7a20170b0694d2b814ab",
+        "fixtures/vendor-mobkoi-engagement/file-location.txt": "894835cdcbb1c843d018ca9645c688d4b1e7ebc9fba304963bd08d280aa175df",
+        "fixtures/vendor-mobkoi-engagement/flush-click_outside.txt": "d35f7195838ae251734a5e311b19af5a8a399f51fd93f44d4f1f02b3ed17afe1",
+        "fixtures/vendor-mobkoi-engagement/flush-page_close.txt": "3d3f6191eebad4a9aba010a74a7313edc73b098bafffcfc7c6cd70c1c631671c",
+        "fixtures/vendor-mobkoi-engagement/future-route.txt": "fbea703bc3c4c694c62dee63a8483393723123314771ab78c2968159f2bd5a41",
+        "fixtures/vendor-mobkoi-engagement/literal-request-privacy-remains-core.txt": "115ed5f7d0f329438d2d68a425a58e6bbe76196b7fb1e20db9db5afd3ed215d7",
+        "fixtures/vendor-mobkoi-engagement/lookalike-host.txt": "a021f81acc0d28fcf6c5b254bd35d12a0911d3033611d24da463ea105ecad2fc",
+        "fixtures/vendor-mobkoi-engagement/manifest.json": "cd4218d2e51e0938a501ac1ab825521b6b8e8b633e4eda0dff8bb5fad275d1e2",
+        "fixtures/vendor-mobkoi-engagement/missing-asp.txt": "bb6f492cd83982bb1e11f69beb0b1ccff25830ed922fb5b3a2a82e0ef5b3d402",
+        "fixtures/vendor-mobkoi-engagement/missing-deid.txt": "eb234551b8688c959fd6fc8d9525cd3fb67031d6cfc953e375193d6a7453d741",
+        "fixtures/vendor-mobkoi-engagement/missing-isl.txt": "8a74c7557ac0624bece0376e428c9108d2ae0473fb0db20bdc958faf36e910d0",
+        "fixtures/vendor-mobkoi-engagement/missing-rt.txt": "38fd9ddac98fba071fbd8290d5aa1ef631bafc6578a594834e2ff45d392a1ae3",
+        "fixtures/vendor-mobkoi-engagement/missing-sr.txt": "c09d1069cf33d6274e9c4c3b4535b32658ed2a0cc4b28e6dfad27751f841ee26",
+        "fixtures/vendor-mobkoi-engagement/missing-top.txt": "5f83b32457fa22aef51dc26cb1dba6d5136efe0382348ba247aa01ad341aff4e",
+        "fixtures/vendor-mobkoi-engagement/negative-counter.txt": "c26586ed50c1f738d51b678f73e5ab3ff06b58002607ead82b269581c5cea6e9",
+        "fixtures/vendor-mobkoi-engagement/omitted-iid.txt": "fbafbf66a5a58421ea3450da1be779d92ff3e617e2502f968d36d7d6dbf045fc",
+        "fixtures/vendor-mobkoi-engagement/opaque-iid.txt": "9f2a8bf0b41a288523e1f26794599c594612da76d6582a4dff21dd30a1e08a41",
+        "fixtures/vendor-mobkoi-engagement/path-cannot-be-spoofed.txt": "b068b5bd08aaa274bc8d71b96353a04e30401a9c20bc4f759e3a431ec612b6f8",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-1.json": "2799cad1485f8d1497b3b20e8fde9748ee6f6ac8bd62521108e8562bbff94391",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-10.json": "8d39ea1b4cb8d3d560ffd2fc57e78d9c170b176b8506c67373f53d5c6db80a5d",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-2.json": "8d39ea1b4cb8d3d560ffd2fc57e78d9c170b176b8506c67373f53d5c6db80a5d",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-3.json": "f48103141131676c1230f0ba4368c2efd518551d57ca193d8ee0acc8eb7e1629",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-4.json": "518e3a8638add8e66bcf7eb81c4e567c64bfce5212b525a08ba8dd794079baa9",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-5.json": "84b452fa7d0291e49acb842a31b64088158af1c691e8ad367ea65c95eb7e20f0",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-6.json": "5550cae53424759e4660334c74907d1e671b6d827a336d4d459713f2832fa8f9",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-7.json": "c440c6c4c6b70f72f196042d04a4a79461c5d4eec8944911105409d7cc844656",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-8.json": "18e8cd690d2c34beb6b1220dc5cb76ead267b7c16af999cb92bc37c4c9468f13",
+        "fixtures/vendor-mobkoi-engagement/sdk-oracle-9.json": "2799cad1485f8d1497b3b20e8fde9748ee6f6ac8bd62521108e8562bbff94391",
+        "fixtures/vendor-mobkoi-engagement/session-does-not-inherit-page-fields.txt": "63417abe62dbf9e0e5edae9c89d219c7016a63b894229584cf008d1d809278a4",
+        "fixtures/vendor-mobkoi-engagement/source-oracle.json": "8f3118de23777903165f34fb2020f4db3021cc34a427d52b6196d38384c57bd0",
+        "fixtures/vendor-mobkoi-engagement/source-replay.mjs": "88cbb6ff4d50cd7435b6d5f70875580801778e17dd93b3cca22c51cb6f52396a",
+        "fixtures/vendor-mobkoi-engagement/spa-change.txt": "80bdb4cf256c88248cb13b095b611b1b2df3427abe1e7990348674e30f5f7e12",
+        "fixtures/vendor-mobkoi-engagement/tab-return.txt": "07f51460ed71962a76db2bbb81a670348ac7df9a92bcca4ecf1c96ff676aec52",
+        "fixtures/vendor-mobkoi-engagement/trailing-slash.txt": "f7e3354b5d86cb933d9fa8c226208558ba0e0b9dec65b7b28040d4b5bcbbb1dd",
+        "fixtures/vendor-mobkoi-engagement/uncovered-vast-route.txt": "7782366309b829e59a147086c27106abfa8b93426bd9530001876dc1a948e56a",
+        "fixtures/vendor-mobkoi-engagement/wrong-method.json": "fa28c8f7f13d731c53761b4be863f4fa594681a1dd517bb6a60bd16166ba74bb",
+        "fixtures/vendor-mobkoi-engagement/zero-counter.txt": "601f92fa103e20b9b052c0967aed3636f2446748dbbf3096f71ce2f0d44c18e5"
+      },
+      "validated_checks": [
+        "Golden corpus passes with all source-derived and negative-scope cases.",
+        "Mobkoi source replay intercepts every network API and makes 0 external calls."
+      ]
+    },
+    {
       "id": "vendor/adcanvas-csc",
       "vendor": "adcanvas",
       "review_status": "source_scoped_implemented_partial",
@@ -36221,7 +36890,7 @@
             "reason": "Specific3k order limit implemented. The general2k statement describes raw-data truncation, not universal server rejection."
           },
           {
-            "requirement": "USD-equivalent revenue aggregate reporting range ±1000000",
+            "requirement": "USD-equivalent revenue aggregate reporting range \u00b11000000",
             "disposition": "external_exchange_rate",
             "reason": "The source includes raw report values beyond the range. Exact USD-equivalent output uses historical hourly FX and app settings."
           },
@@ -329082,5 +329751,17 @@
       "input_bytes_and_finding_multisets_preserved": true,
       "production_changes": 0
     }
+  },
+  "backfill_31_hosts_public_b_20261026": {
+    "source_scoped_packs": [
+      "vendor/exoclick-vast",
+      "vendor/mobkoi-engagement"
+    ],
+    "spec_complete": false,
+    "golden_cases": 73,
+    "source_oracle_captures": 10,
+    "collector_requests": 0,
+    "remaining_gaps_recorded": true,
+    "source_review_note": "Manifest and fixture digests are current. Integration coordinator refreshes shared registry artifact digests and aggregate counts."
   }
 }

@@ -12,6 +12,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 # vendor slug -> (display name, category, [hosts], rulepack or None)
 VENDORS = {
+    "exoclick": ("ExoClick", "video", ["s.magsrv.com"], "vendor/exoclick-vast"),
+    "mobkoi": ("Mobkoi", "measurement", ["events.mobkoi.com"], "vendor/mobkoi-engagement"),
     "artsai": ("Artsai", "measurement", ["arttrk.com", "data.adxcel-ec2.com"], "vendor/artsai-impression"),
     "extremereach": ("Extreme Reach", "video", ["extremereach.io"], "vendor/extreme-reach-cp-imp"),
     # Public pixel and cookie-matching sources bind these exact host roots.

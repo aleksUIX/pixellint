@@ -1,0 +1,173 @@
+{
+  "id": "vendor/mobkoi-engagement",
+  "display_name": "Mobkoi landing-tag engagement sender",
+  "vendor": "mobkoi",
+  "source_level": "official_template",
+  "docs": "https://one-tag.mobkoi.com/tag.min.js",
+  "description": "Advisory checks for the inspected Mobkoi landing-tag 1.0.0 query sender on three exact engagement routes. The separate VAST impression, click and video collectors remain uncovered.",
+  "match": {
+    "hosts": [
+      "events.mobkoi.com"
+    ],
+    "paths": [
+      "/track/engagement_session_start",
+      "/track/engagement_page_in_view",
+      "/track/engagement_buffer_flush"
+    ]
+  },
+  "path_pattern": "^/track/(?<sdk_event>engagement_session_start|engagement_page_in_view|engagement_buffer_flush)$",
+  "params": [
+    {
+      "name": "sdk_event",
+      "description": "Path-derived sender branch. A query parameter cannot change the selected path branch.",
+      "requirement": "optional",
+      "allow_empty": false,
+      "severity": "warning"
+    },
+    {
+      "name": "deid",
+      "description": "The inspected sender emits Date.now().toString(36) plus a base36 random suffix. This is a producer spelling check, without uniqueness, length, timestamp recovery or receiver acceptance claims.",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9a-z]+$"
+      }
+    },
+    {
+      "name": "iid",
+      "description": "Opaque impression reference copied from mbiid or session storage. The serializer omits null/undefined values, and this pack does not invent receiver-side presence, value or account rules.",
+      "requirement": "optional",
+      "allow_empty": true,
+      "severity": "warning"
+    },
+    {
+      "name": "asp",
+      "description": "Page-in-view sender copies location.href. Check a submitted absolute URL without requiring HTTPS, stripping query data or narrowing the scheme.",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "url"
+      },
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "sdk_event"
+        ],
+        "values": [
+          "engagement_page_in_view"
+        ]
+      }
+    },
+    {
+      "name": "isl",
+      "description": "The page-in-view sender serializes its Boolean landing flag as true or false. Other events do not inherit this field contract.",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "true",
+          "false"
+        ]
+      },
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "sdk_event"
+        ],
+        "values": [
+          "engagement_page_in_view"
+        ]
+      }
+    },
+    {
+      "name": "rt",
+      "description": "The inspected page-in-view sender has three internal route branches. This is a version-scoped producer advisory rather than a closed receiver-wide event vocabulary.",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "initial_load",
+          "tab_return",
+          "spa_history_change"
+        ]
+      },
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "sdk_event"
+        ],
+        "values": [
+          "engagement_page_in_view"
+        ]
+      }
+    },
+    {
+      "name": "top",
+      "description": "The buffer sender serializes accumulated Date.now differences in milliseconds. Preserve zero, negative clock changes and exponent notation; do not impose a positivity, integer precision or session-duration bound.",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "regex",
+        "pattern": "^-?[0-9]+(?:\\.[0-9]+)?(?:e[+-]?[0-9]+)?$"
+      },
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "sdk_event"
+        ],
+        "values": [
+          "engagement_buffer_flush"
+        ]
+      }
+    },
+    {
+      "name": "sr",
+      "description": "The inspected buffer sender has three internal flush reasons. The advisory applies only to this source profile.",
+      "requirement": "recommended",
+      "allow_empty": false,
+      "severity": "warning",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "focus_lost",
+          "click_outside",
+          "page_close"
+        ]
+      },
+      "condition": {
+        "kind": "all_values_in",
+        "params": [
+          "sdk_event"
+        ],
+        "values": [
+          "engagement_buffer_flush"
+        ]
+      }
+    }
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "description": "Both navigator.sendBeacon(url) and the fallback fetch(url,{method:POST,keepalive:true}) use POST. No content-type, body, header or credentials requirement is inferred.",
+        "requirement": "required",
+        "allow_empty": false,
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      }
+    ]
+  }
+}
