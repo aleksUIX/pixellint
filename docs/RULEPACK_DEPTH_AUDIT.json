@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_date": "2026-10-26",
-  "status": "building_local_candidate",
+  "status": "tested_local_source_candidate",
   "coverage_claim": "Four additional vendor families in six endpoint profiles. No matching endpoint requests in the retained corpus; the previously verified 6938/11295 checked count is unchanged. Receiver completeness is not claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
@@ -40,7 +40,7 @@
   },
   "current": {
     "version": "0.69.0",
-    "candidate_status": "building_local_candidate",
+    "candidate_status": "tested_local_source_candidate",
     "review_date": "2026-10-26",
     "packs": 233,
     "vendors": 133,
@@ -71,8 +71,148 @@
   },
   "verification": {
     "candidate_version": "0.69.0",
-    "status": "pending_full_validation",
-    "baseline_commit": "c7bd7a662b6f5a4b778396d5042ed7a821bd4259"
+    "status": "passed_local_candidate",
+    "validation_source_sha": "1e57516b3140c49c8394d36f001f1c36f108addd",
+    "workspace_tests": {
+      "source_sha": "1e57516b3140c49c8394d36f001f1c36f108addd",
+      "exit_code": 0,
+      "passed": 832,
+      "failed": 0,
+      "seconds": 227.704
+    },
+    "native_checks": {
+      "source_sha": "1e57516b3140c49c8394d36f001f1c36f108addd",
+      "checks": [
+        {
+          "check": "corrected-targets",
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "-p",
+            "pixellint",
+            "--test",
+            "cli",
+            "-p",
+            "pixellint-core",
+            "--test",
+            "rulepack_golden"
+          ],
+          "exit_code": 0,
+          "seconds": 57.657
+        },
+        {
+          "check": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--all-targets",
+            "--all-features",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "seconds": 5.072
+        },
+        {
+          "check": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.571
+        },
+        {
+          "check": "depth",
+          "command": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "tools/check-rulepack-depth.py"
+          ],
+          "exit_code": 0,
+          "seconds": 1.702
+        },
+        {
+          "check": "reference",
+          "command": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "tools/update-rulepack-reference.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.095
+        },
+        {
+          "check": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.082
+        }
+      ],
+      "all_passed": true,
+      "all_completed": true
+    },
+    "runtime_checks": {
+      "source_sha": "1e57516b3140c49c8394d36f001f1c36f108addd",
+      "checks": [
+        {
+          "check": "wasm-build",
+          "command": [
+            "wasm-pack",
+            "build",
+            "crates/pixellint-wasm",
+            "--mode",
+            "no-install",
+            "--target",
+            "nodejs",
+            "--out-dir",
+            "../../npm/wasm",
+            "--out-name",
+            "pixellint"
+          ],
+          "exit_code": 0,
+          "seconds": 16.275
+        },
+        {
+          "check": "node22",
+          "command": [
+            "/usr/local/bin/node",
+            "npm/test.mjs"
+          ],
+          "exit_code": 0,
+          "seconds": 23.526
+        },
+        {
+          "check": "node20",
+          "command": [
+            "/private/tmp/pixellint-qa-node20-20261025/node-v20.20.2-darwin-arm64/bin/node",
+            "npm/test.mjs"
+          ],
+          "exit_code": 0,
+          "seconds": 25.071
+        }
+      ],
+      "all_passed": true,
+      "all_completed": true
+    },
+    "wasm_sha256": "25a2971228e332cf4d0f71340ddd2167331f08b4be4756d1b19a8268cac05e8b",
+    "new_fixture_cases": 907,
+    "old_manifests_byte_identical": 227,
+    "retained_corpus_claim": {
+      "checked": 6938,
+      "total": 11295,
+      "percent": 61.42540947321824,
+      "new_matching_endpoint_requests": 0,
+      "note": "Previous verified corpus result; the next-candidate host inventory found no requests to these added endpoints. This build makes no increased corpus coverage claim."
+    }
   },
   "shared_protocol_limits": [
     {
@@ -361376,6 +361516,7 @@
     "new_rules": 7,
     "source_conflicts": "Recorded per pack; no conflict was promoted to an undocumented hard requirement.",
     "corpus_coverage_gain": 0,
-    "runtime_fixture_method": "Both npm batch entry points run every fixture, with positive and negative single-artifact controls per profile. One engine is reused per clock; case coverage is unchanged."
+    "runtime_fixture_method": "Both npm batch entry points run every fixture, with positive and negative single-artifact controls per profile. One engine is reused per clock; case coverage is unchanged.",
+    "validation_status": "passed_local_candidate"
   }
 }
