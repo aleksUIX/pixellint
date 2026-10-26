@@ -200,12 +200,11 @@ fn owned_golden_corpus() {
                 1792886400,
             )
             .unwrap();
-        let mut codes: Vec<_> = summary
+        let codes: Vec<_> = summary
             .reports
             .iter()
             .flat_map(|r| r.violations.iter().map(|v| v.code.clone()))
             .collect();
-        codes.sort();
         let expected: Vec<String> = serde_json::from_value(case["expected_codes"].clone()).unwrap();
         assert_eq!(codes, expected, "{}", case["id"]);
         for (key, severity) in [
