@@ -393,7 +393,7 @@ function assertProfileReports(reports, fixture, label) {
   if (fixture.rulepacks) reports = reports.filter(report => fixture.rulepacks.includes(report.plugin_id));
   const violations = reports.flatMap(report => report.violations);
   assert.deepEqual(reports.map(report => report.plugin_id), fixture.expected_plugins, `${label}: selected packs`);
-  assert.deepEqual(violations.map(finding => finding.code).sort(), [...fixture.expected_codes].sort(), `${label}: findings`);
+  assert.deepEqual(violations.map(finding => finding.code), fixture.expected_codes, `${label}: findings`);
   for (const [severity, expected] of [["error", fixture.expected_errors], ["warning", fixture.expected_warnings], ["info", fixture.expected_infos]]) {
     assert.equal(violations.filter(finding => finding.severity === severity).length, expected, `${label}: ${severity} count`);
   }
