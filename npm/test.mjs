@@ -371,6 +371,8 @@ const addedProfileSlugs = [
   "segment",
   "google-analytics",
   "x-conversions-api",
+  "google-ads-click-conversions",
+  "google-ads-call-conversions",
 ];
 let addedProfileCases = 0;
 const profileFixtureGroups = new Map();
@@ -433,5 +435,5 @@ for (const entry of [{ validate, validateMany }, cjs]) {
     }
   }
 }
-assert.equal(addedProfileCases, 6176, "all 3088 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 6590, "all 3295 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);

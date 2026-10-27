@@ -231,6 +231,18 @@
           "aliases": [
             "custom_variables[]"
           ]
+        },
+        {
+          "name": "consent.adPersonalization",
+          "aliases": [
+            "consent.ad_personalization"
+          ],
+          "requirement": "forbidden",
+          "null_as_missing": true,
+          "severity": "error",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent",
+          "description": "Google limits this field to OfflineUserDataJobService and UserDataService. Click and call conversion uploads cannot set it. JSON null retains ProtoJSON unset semantics.",
+          "fix_hint": "Remove adPersonalization from this conversion upload. Set supported consent fields according to the integration."
         }
       ],
       "rules": [
@@ -304,6 +316,51 @@
           "severity": "error",
           "message": "The conversion time must be after the call start time, accounting for timezone offsets.",
           "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CallConversion"
+        },
+        {
+          "code": "vendor.google-ads-call-conversions.body.conversionAction.resource_name",
+          "kind": "format",
+          "param": "conversionAction",
+          "format": {
+            "kind": "regex",
+            "pattern": "^customers/[0-9]+/conversionActions/[0-9]+$"
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "conversionAction",
+                "json_type": "string"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "conversionAction",
+                "pattern": "(?s).+"
+              }
+            ]
+          },
+          "severity": "warning",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/ConversionAction",
+          "message": "Check the canonical conversion action resource spelling: customers/{customer_id}/conversionActions/{conversion_action_id}. This advice does not check ownership, existence or equality with the upload customer; Google ignores the customer component for conversion-action lookup."
+        },
+        {
+          "code": "vendor.google-ads-call-conversions.body.currencyCode.assignment",
+          "kind": "format",
+          "param": "currencyCode",
+          "format": {
+            "kind": "currency",
+            "allow_historical": true,
+            "case_insensitive": true
+          },
+          "condition": {
+            "kind": "value_pattern",
+            "param": "currencyCode",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "severity": "warning",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/CallConversion",
+          "message": "The three-letter currency value is not assigned in the built-in current or historical ISO 4217 lists. Registry advice does not establish Google account eligibility or currency support."
         }
       ]
     },

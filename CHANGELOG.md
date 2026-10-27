@@ -2,6 +2,10 @@
 
 ## 0.58.2 (local candidate)
 
+- Deepen Google Ads click and call conversion uploads with service-specific consent restrictions, resource-name advice, and currency assignment checks.
+- Support current official X GTM sender payloads, batch structure and both authentication routes.
+- Add Tealium nested-key advice and TAPID override/deletion precedence warnings.
+
 - Check the published Segment consent preference map and RudderStack consent stamp as optional metadata, with per-record type advice and open category IDs.
 - Recommend the documented minimum GA4 location fields and honor structured user_location precedence over ip_override.
 - Preserve missing metadata, empty objects and arrays, custom provider names and endpoint ownership. Account configuration and actual consent enforcement require external context.
