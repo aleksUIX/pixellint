@@ -4,7 +4,7 @@
   "vendor": "customerio",
   "docs": "https://docs.customer.io/integrations/api/track/tag/track-events/track/",
   "source_level": "official_vendor",
-  "description": "Customer.io Track v1 events endpoint and locally checkable payload contracts.",
+  "description": "Customer.io Track v1 event captures. Check event fields and deduplication identifiers while preserving official numeric anonymous IDs, optional identity and legacy invites.",
   "match": {
     "hosts": [
       "track.customer.io",
@@ -64,10 +64,8 @@
           "requirement": "optional",
           "allow_empty": true,
           "json_type": "string",
-          "format": {
-            "kind": "regex",
-            "pattern": "^[0-7][0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{25}$"
-          }
+          "description": "Optional string event identifier. A malformed or nonuppercase ULID is replaced by the receiver, losing retry deduplication; the event is not rejected solely for this format.",
+          "doc": "https://docs.customer.io/messaging/people/events/"
         },
         {
           "name": "timestamp",
@@ -86,7 +84,12 @@
           "name": "anonymous_id",
           "requirement": "optional",
           "allow_empty": true,
-          "json_type": "string"
+          "json_type": [
+            "string",
+            "number"
+          ],
+          "doc": "https://raw.githubusercontent.com/customerio/customerio-node/4b9a980b790b937aea2a68d7d11d534c204edd13/lib/track.ts",
+          "description": "The official Node sender accepts string or number anonymous identifiers and forwards populated values unchanged. Empty, omitted and Ruby nil invite identifiers retain the documented legacy behavior. The OpenAPI string-only branch does not describe all official SDK output."
         },
         {
           "name": "data.from_address",
@@ -105,6 +108,25 @@
           "requirement": "optional",
           "allow_empty": true,
           "json_type": "string"
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.customerio-track.body.id.invalid",
+          "kind": "format",
+          "param": "id",
+          "format": {
+            "kind": "regex",
+            "pattern": "^[0-7][0-9A-HJKMNP-TV-Z]{25}$"
+          },
+          "condition": {
+            "kind": "json_type",
+            "param": "id",
+            "json_type": "string"
+          },
+          "severity": "warning",
+          "doc": "https://docs.customer.io/messaging/people/events/",
+          "message": "Use an uppercase ULID to preserve event deduplication. Customer.io replaces other string values with a new ID and can no longer identify a retry of this event. Event acceptance and deduplication are distinct."
         }
       ]
     }

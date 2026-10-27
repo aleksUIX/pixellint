@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.58.3 (local candidate)
+
+- Add combined request-object budget advice for standard Braze tracking, preserving legacy per-array limits. Exclude bulk, synchronous and status routes from the standard endpoint contract.
+- Treat malformed Customer.io event IDs as deduplication warnings. Check the documented uppercase ULID form and preserve numeric anonymous identifiers emitted by the official Node sender.
+- Add native-array aggregate assertions with scope and alias controls. Receiver policy, account limits and deduplication history remain external.
+
 ## 0.58.2
 
 - Deepen Google Ads click and call conversion uploads with service-specific consent restrictions, resource-name advice, and currency assignment checks. Preserve proto3 implicit zero defaults and null handling.

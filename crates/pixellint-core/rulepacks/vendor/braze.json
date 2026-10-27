@@ -2,16 +2,13 @@
   "id": "vendor/braze",
   "display_name": "Braze user track",
   "vendor": "braze",
-  "description": "Attribute, event, and purchase uploads to the Braze /users/track endpoint.",
+  "description": "Braze standard /users/track uploads. Combined-array budget advice preserves legacy per-array limits. Bulk, sync and status routes use separate contracts and are not selected.",
   "source_level": "official_vendor",
   "docs": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/",
   "match": {
     "host_suffixes": [
       "braze.com",
       "braze.eu"
-    ],
-    "path_contains": [
-      "/users/track"
     ],
     "json_paths": [
       {
@@ -28,6 +25,9 @@
           "events[].phone"
         ]
       }
+    ],
+    "paths": [
+      "/users/track"
     ]
   },
   "body": [
@@ -37,21 +37,21 @@
           "name": "attributes",
           "json_type": "array",
           "max_items": 75,
-          "description": "A track request contains attribute, event, or purchase objects.",
+          "description": "Each array is limited to 75 objects under the documented standard and legacy profiles. Current standard contracts additionally limit the combined request to 75; legacy contracts can allow 225 across three arrays.",
           "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
         },
         {
           "name": "events",
           "json_type": "array",
           "max_items": 75,
-          "description": "A track request contains attribute, event, or purchase objects.",
+          "description": "Each array is limited to 75 objects under the documented standard and legacy profiles. Current standard contracts additionally limit the combined request to 75; legacy contracts can allow 225 across three arrays.",
           "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
         },
         {
           "name": "purchases",
           "json_type": "array",
           "max_items": 75,
-          "description": "A track request contains attribute, event, or purchase objects.",
+          "description": "Each array is limited to 75 objects under the documented standard and legacy profiles. Current standard contracts additionally limit the combined request to 75; legacy contracts can allow 225 across three arrays.",
           "doc": "https://www.braze.com/docs/api/endpoints/user_data/post_user_track/"
         },
         {
@@ -79,7 +79,21 @@
           "json_type": "object"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.braze.body.combined_object_limit",
+          "kind": "max_total_array_items",
+          "params": [
+            "attributes",
+            "events",
+            "purchases"
+          ],
+          "max_items": 75,
+          "severity": "warning",
+          "doc": "https://www.braze.com/docs/api/api_limits/",
+          "message": "This request contains more than 75 objects across attributes, events and purchases. The current standard limit is combined; legacy contracts allow 75 per array. Check the workspace limit or split the batch. This advice does not establish receiver rejection."
+        }
+      ]
     },
     {
       "scope": "events[]",

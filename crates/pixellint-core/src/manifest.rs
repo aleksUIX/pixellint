@@ -591,6 +591,11 @@ pub enum Assertion {
     },
     /// Present native JSON arrays must describe the same number of records.
     EqualArrayLengths { params: Vec<String> },
+    /// Bound the combined item count of present native JSON arrays.
+    MaxTotalArrayItems {
+        params: Vec<String>,
+        max_items: usize,
+    },
     /// Literal scalar values of this object member must be unique in an array.
     UniqueArrayBy { param: String, field: String },
     /// Repeated parameter families must have the same occurrence count.
@@ -1985,6 +1990,15 @@ fn compile_rules(
                 pack_id: pack_id.to_string(),
                 name: rule.code.clone(),
                 reason: "unique_array_by requires a nonempty literal object member name".into(),
+            });
+        }
+        if let Assertion::MaxTotalArrayItems { params, .. } = &rule.assertion
+            && (params.is_empty() || params.iter().collect::<BTreeSet<_>>().len() != params.len())
+        {
+            return Err(ManifestError::InvalidConstraint {
+                pack_id: pack_id.to_string(),
+                name: rule.code.clone(),
+                reason: "max_total_array_items requires nonempty, distinct field names".into(),
             });
         }
         if let Assertion::GppFieldValues { field, values, .. } = &rule.assertion
@@ -5774,6 +5788,35 @@ impl ManifestRulePack {
                 }
                 (!duplicates.is_empty(), duplicates)
             }
+            Assertion::MaxTotalArrayItems {
+                params: names,
+                max_items,
+            } => {
+                let arrays: Vec<_> = hits_named(names)
+                    .into_iter()
+                    .filter_map(|field| {
+                        let body = scope.body.as_ref()?;
+                        let path = field.location.as_ref()?;
+                        let value = body.document.get(path)?;
+                        (value.kind == JsonValueKind::Array).then_some((field, value.len?))
+                    })
+                    .collect();
+                let total = arrays
+                    .iter()
+                    .try_fold(0usize, |total, (_, count)| total.checked_add(*count));
+                let triggered = total.is_none_or(|total| total > *max_items);
+                (
+                    triggered,
+                    if triggered {
+                        arrays
+                            .into_iter()
+                            .map(|(field, _)| field.target())
+                            .collect()
+                    } else {
+                        Vec::new()
+                    },
+                )
+            }
             Assertion::EqualArrayLengths { params: names } => {
                 let arrays: Vec<_> = hits_named(names)
                     .into_iter()
@@ -6163,7 +6206,9 @@ fn assertion_params(assertion: &Assertion) -> Vec<&String> {
             section_param,
             ..
         } => vec![param, section_param],
-        Assertion::EqualArrayLengths { params } => params.iter().collect(),
+        Assertion::EqualArrayLengths { params } | Assertion::MaxTotalArrayItems { params, .. } => {
+            params.iter().collect()
+        }
         Assertion::UniqueArrayBy { param, .. } => vec![param],
         Assertion::EqualOccurrences { params } => params.iter().collect(),
         Assertion::MaxOccurrences { param, .. } => vec![param],
@@ -6229,7 +6274,9 @@ fn assertion_params_mut(assertion: &mut Assertion) -> Vec<&mut String> {
             section_param,
             ..
         } => vec![param, section_param],
-        Assertion::EqualArrayLengths { params } => params.iter_mut().collect(),
+        Assertion::EqualArrayLengths { params } | Assertion::MaxTotalArrayItems { params, .. } => {
+            params.iter_mut().collect()
+        }
         Assertion::UniqueArrayBy { param, .. } => vec![param],
         Assertion::EqualOccurrences { params } => params.iter_mut().collect(),
         Assertion::MaxOccurrences { param, .. } => vec![param],

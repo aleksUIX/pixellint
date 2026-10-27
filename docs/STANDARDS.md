@@ -3616,11 +3616,11 @@ Context: `{}`.
 
 ## `vendor/braze`
 
-Attribute, event, and purchase uploads to the Braze /users/track endpoint.
+Braze standard /users/track uploads. Combined-array budget advice preserves legacy per-array limits. Bulk, sync and status routes use separate contracts and are not selected.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/braze.json).
 
-Matcher: `{"host_suffixes":["braze.com","braze.eu"],"path_contains":["/users/track"],"json_paths":[{"any_of":["purchases[].product_id","purchases[].currency","attributes[].external_id","attributes[].email","attributes[].braze_id","events[].external_id","events[].braze_id","events[].user_alias","events[].email","events[].phone"]}]}`.
+Matcher: `{"host_suffixes":["braze.com","braze.eu"],"json_paths":[{"any_of":["purchases[].product_id","purchases[].currency","attributes[].external_id","attributes[].email","attributes[].braze_id","events[].external_id","events[].braze_id","events[].user_alias","events[].email","events[].phone"]}],"paths":["/users/track"]}`.
 
 ### JSON contract 1
 
@@ -3635,6 +3635,10 @@ Context: `{}`.
 | `events[]` | optional | `{"json_type":"object"}` | [official_vendor](https://www.braze.com/docs/api/endpoints/user_data/post_user_track/) |
 | `purchases[]` | optional | `{"json_type":"object"}` | [official_vendor](https://www.braze.com/docs/api/endpoints/user_data/post_user_track/) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://www.braze.com/docs/api/endpoints/user_data/post_user_track/) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.braze.body.combined_object_limit` | `{"kind":"max_total_array_items","params":["attributes","events","purchases"],"max_items":75}` | warning | [official_vendor](https://www.braze.com/docs/api/api_limits/) |
 
 ### JSON contract 2
 
@@ -4618,7 +4622,7 @@ Matcher: `{"hosts":["dynamic.criteo.com","static.criteo.net"],"path_prefixes":["
 
 ## `vendor/customerio-track`
 
-Customer.io Track v1 events endpoint and locally checkable payload contracts.
+Customer.io Track v1 event captures. Check event fields and deduplication identifiers while preserving official numeric anonymous IDs, optional identity and legacy invites.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/customerio-track.json).
 
@@ -4633,13 +4637,17 @@ Context: `{}`.
 | `(current scope)` | optional | `{"allow_empty":true,"json_type":"object"}` | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
 | `name` | required | `{"allow_empty":false,"json_type":"string","normalization":"trim","max_byte_length":100}` | [official_vendor](https://docs.customer.io/integrations/data-in/connections/classic-api/invalid-api-requests/) |
 | `data` | optional | `{"allow_empty":true,"json_type":"object","max_compact_bytes":100000}` | [official_vendor](https://docs.customer.io/integrations/data-in/connections/classic-api/invalid-api-requests/) |
-| `id` | optional | `{"allow_empty":true,"json_type":"string","format":{"kind":"regex","pattern":"^[0-7][0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{25}$"}}` | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
+| `id` | optional | `{"allow_empty":true,"json_type":"string"}` | [official_vendor](https://docs.customer.io/messaging/people/events/) |
 | `timestamp` | optional | `{"allow_empty":true,"json_type":"integer"}` | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
 | `type` | optional | `{"allow_empty":true,"json_type":"string"}` | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
-| `anonymous_id` | optional | `{"allow_empty":true,"json_type":"string"}` | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
+| `anonymous_id` | optional | `{"allow_empty":true,"json_type":["string","number"]}` | [official_vendor](https://raw.githubusercontent.com/customerio/customerio-node/4b9a980b790b937aea2a68d7d11d534c204edd13/lib/track.ts) |
 | `data.from_address` | optional | `{"allow_empty":true,"json_type":"string"}` | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
 | `data.recipient` | optional | `{"allow_empty":true,"json_type":"string"}` | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
 | `data.reply_to` | optional | `{"allow_empty":true,"json_type":"string"}` | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.customerio-track.body.id.invalid` | `{"kind":"format","param":"id","format":{"kind":"regex","pattern":"^[0-7][0-9A-HJKMNP-TV-Z]{25}$"},"condition":{"kind":"json_type","param":"id","json_type":"string"}}` | warning | [official_vendor](https://docs.customer.io/messaging/people/events/) |
 
 ### Complete HTTP contract 1
 
