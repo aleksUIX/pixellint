@@ -1,7 +1,7 @@
 {
   "id": "vendor/appsflyer-onelink-impression",
   "display_name": "AppsFlyer OneLink impression URLs",
-  "description": "OneLink long impression URLs with the full published attribution parameter table, device hash variants, redirects, viewability and cross-platform windows. Account-dependent attribution and app behavior remain contextual.",
+  "description": "OneLink long impression URLs with the published attribution fields and captured S2S User-Agent delivery and agreement advice. Account attribution, device provenance and C2S applicability remain contextual.",
   "vendor": "appsflyer",
   "source_level": "official_vendor",
   "docs": "https://support.appsflyer.com/hc/en-us/articles/208874366",
@@ -904,5 +904,72 @@
       "message": "A customized OneLink social preview uses title, description and image together.",
       "doc": "https://support.appsflyer.com/hc/en-us/articles/208874366"
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "query.af_ua",
+        "allow_empty": true,
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+        "description": "Observed decoded query value supplies S2S context. Repeated values do not establish a scalar producer profile. Existing URL fields own blank query advice."
+      },
+      {
+        "name": "headers.user-agent",
+        "allow_empty": true,
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters",
+        "description": "Observed nonempty User-Agent header supplies comparison context. Missing capture evidence is not inferred."
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.appsflyer-onelink-impression.http.user_agent_header",
+        "kind": "required_with",
+        "when": "query.af_ua",
+        "requires": [
+          "headers.user-agent"
+        ],
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "json_type",
+              "param": "query.af_ua",
+              "json_type": "string"
+            },
+            {
+              "kind": "present",
+              "param": "query.af_ua"
+            }
+          ]
+        },
+        "severity": "warning",
+        "message": "AppsFlyer documents sending S2S af_ua in both the URL and User-Agent header.",
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+      },
+      {
+        "code": "vendor.appsflyer-onelink-impression.http.user_agent_agreement",
+        "kind": "equal_values",
+        "left": "query.af_ua",
+        "right": "headers.user-agent",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "json_type",
+              "param": "query.af_ua",
+              "json_type": "string"
+            },
+            {
+              "kind": "json_type",
+              "param": "headers.user-agent",
+              "json_type": "string"
+            }
+          ]
+        },
+        "severity": "warning",
+        "message": "The decoded S2S af_ua and captured User-Agent should be identical.",
+        "doc": "https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters"
+      }
+    ]
+  }
 }

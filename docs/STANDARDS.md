@@ -2925,7 +2925,7 @@ Context: `{}`.
 
 ## `vendor/appsflyer-onelink-impression`
 
-OneLink long impression URLs with the full published attribution parameter table, device hash variants, redirects, viewability and cross-platform windows. Account-dependent attribution and app behavior remain contextual.
+OneLink long impression URLs with the published attribution fields and captured S2S User-Agent delivery and agreement advice. Account attribution, device provenance and C2S applicability remain contextual.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/appsflyer-onelink-impression.json).
 
@@ -3050,6 +3050,20 @@ Path captures: `^/(?<template_id>[^/?]+)$`. Captured values take precedence over
 | `vendor.appsflyer-onelink-impression.af_og_title_preview_fields` | `{"kind":"required_with","when":"af_og_title","requires":["af_og_description","af_og_image"]}` | warning | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/208874366) |
 | `vendor.appsflyer-onelink-impression.af_og_description_preview_fields` | `{"kind":"required_with","when":"af_og_description","requires":["af_og_title","af_og_image"]}` | warning | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/208874366) |
 | `vendor.appsflyer-onelink-impression.af_og_image_preview_fields` | `{"kind":"required_with","when":"af_og_image","requires":["af_og_title","af_og_description"]}` | warning | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/208874366) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `query.af_ua` | optional | `{"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters) |
+| `headers.user-agent` | optional | `{"allow_empty":true}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.appsflyer-onelink-impression.http.user_agent_header` | `{"kind":"required_with","when":"query.af_ua","requires":["headers.user-agent"],"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"query.af_ua","json_type":"string"},{"kind":"present","param":"query.af_ua"}]}}` | warning | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters) |
+| `vendor.appsflyer-onelink-impression.http.user_agent_agreement` | `{"kind":"equal_values","left":"query.af_ua","right":"headers.user-agent","condition":{"kind":"all","conditions":[{"kind":"json_type","param":"query.af_ua","json_type":"string"},{"kind":"json_type","param":"headers.user-agent","json_type":"string"}]}}` | warning | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/207447163-About-link-structure-and-parameters) |
 
 ## `vendor/appsflyer-web-event`
 
@@ -14919,19 +14933,19 @@ Context: `{}`.
 
 ## `vendor/reddit-conversions-api`
 
-Server-to-server conversion events posted to ads-api.reddit.com CAPI v3.
+Reddit CAPI v3 events with official OpenAPI envelope, batch and numeric bounds, seven-day age checks and captured request transport. Account permissions, deduplication history and receiver acceptance remain contextual.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/reddit-conversions-api.json).
 
-Matcher: `{"hosts":["ads-api.reddit.com"],"path_contains":["/conversion_events"],"json_paths":[{"any_of":["data.events[].event_at","data.events[].action_source","data.events[].type.tracking_type"]}]}`.
+Matcher: `{"hosts":["ads-api.reddit.com"],"json_paths":[{"any_of":["data.events[].event_at","data.events[].action_source","data.events[].type.tracking_type"]}],"path_patterns":["/api/v3/pixels/[^/]+/conversion_events"]}`.
 
-Path captures: `/api/v3/pixels/(?<pixel_id>[^/]+)/conversion_events`. Captured values take precedence over query keys with the same name.
+Path captures: `^/api/v3/pixels/(?<pixel_id>[^/]+)/conversion_events$`. Captured values take precedence over query keys with the same name.
 
 ### URL parameters
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `pixel_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
+| `pixel_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
 
 ### JSON contract 1
 
@@ -14939,10 +14953,11 @@ Context: `{}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `data` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `data.events` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `data.events[]` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
+| `data` | required | `{"json_type":"object","condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `data.events` | required | `{"json_type":"array","min_items":1,"condition":{"kind":"json_type","param":"data","json_type":"object"},"max_items":1000}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `data.events[]` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `data.test_id` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
 
 ### JSON contract 2
 
@@ -14950,54 +14965,79 @@ Context: `{"scope":"data.events[]"}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `event_at` | required | `{"format":{"kind":"integer","min_digits":13,"max_digits":13},"json_type":"integer"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/migration) |
+| `event_at` | required | `{"format":{"kind":"integer","min_digits":13,"max_digits":13},"json_type":"integer"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/migration) |
 | `action_source` | required | `{"format":{"kind":"enum","values":["WEBSITE","APP","PHYSICAL_STORE","OTHER"]},"json_type":"string"}` | [official_vendor](https://business.reddithelp.com/s/article/Conversions-API) |
-| `type.tracking_type` | required | `{"format":{"kind":"enum","values":["PAGE_VISIT","VIEW_CONTENT","SEARCH","ADD_TO_CART","ADD_TO_WISHLIST","PURCHASE","LEAD","SIGN_UP","CUSTOM"]},"format_severity":"warning","json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `click_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `event_source_url` | optional | `{"format":{"kind":"url"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `type.custom_event_name` | optional | `{"format":{"kind":"regex","pattern":"^.{1,64}$"},"max_length":64}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.currency` | optional | `{"format":{"kind":"currency","case_insensitive":true}}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.value` | optional | `{"json_type":"number"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.conversion_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.item_count` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.products[].id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.products[].name` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.products[].category` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.products[].quantity` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.products[].item_price` | optional | `{"json_type":"number"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.email` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.phone_number` | optional | `{"format":{"kind":"regex","pattern":"^(?:[a-f0-9]{64}\|\\+[1-9][0-9]{1,14})$"},"json_type":"string","format_severity":"warning"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.uuid` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.external_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.idfa` | optional | `{"format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}\|[a-f0-9]{64})$"},"json_type":"string","format_severity":"warning"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.aaid` | optional | `{"format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}\|[a-f0-9]{64})$"},"json_type":"string","format_severity":"warning"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.ip_address` | optional | `{"format":{"kind":"ip"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.user_agent` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.screen_dimensions.width` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.screen_dimensions.height` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.data_processing_options.modes[]` | optional | `{"format":{"kind":"enum","values":["LDU"]},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.data_processing_options.country` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{2}$"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.data_processing_options.region` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `type` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.screen_dimensions` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.data_processing_options` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.products` | optional | `{"json_type":"array"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `metadata.products[]` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `user.data_processing_options.modes` | optional | `{"json_type":"array"}` | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
+| `type.tracking_type` | required | `{"format":{"kind":"enum","values":["PAGE_VISIT","VIEW_CONTENT","SEARCH","ADD_TO_CART","ADD_TO_WISHLIST","PURCHASE","LEAD","SIGN_UP","CUSTOM"]},"format_severity":"warning","json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `click_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `event_source_url` | optional | `{"format":{"kind":"url"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `type.custom_event_name` | optional | `{"format":{"kind":"regex","pattern":"(?s)^.{1,64}$"},"max_length":64,"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `metadata.currency` | optional | `{"format":{"kind":"currency","case_insensitive":true}}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `metadata.value` | optional | `{"json_type":"number","minimum":0}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `metadata.conversion_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `metadata.item_count` | optional | `{"format":{"kind":"integer"},"json_type":"integer","minimum":0}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `metadata.products[].id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `metadata.products[].name` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `metadata.products[].category` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `metadata.products[].quantity` | optional | `{"format":{"kind":"integer"},"json_type":"integer","minimum":0}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `metadata.products[].item_price` | optional | `{"json_type":"number","minimum":0}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `user.email` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.phone_number` | optional | `{"format":{"kind":"regex","pattern":"^(?:[a-f0-9]{64}\|\\+[1-9][0-9]{1,14})$"},"json_type":"string","format_severity":"warning"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.uuid` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.external_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.idfa` | optional | `{"format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}\|[a-f0-9]{64})$"},"json_type":"string","format_severity":"warning"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.aaid` | optional | `{"format":{"kind":"regex","pattern":"^(?:[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}\|[a-f0-9]{64})$"},"json_type":"string","format_severity":"warning"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.ip_address` | optional | `{"format":{"kind":"ip"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.user_agent` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.screen_dimensions.width` | optional | `{"format":{"kind":"integer"},"json_type":"integer","minimum":0,"maximum":32767}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `user.screen_dimensions.height` | optional | `{"format":{"kind":"integer"},"json_type":"integer","minimum":0,"maximum":32767}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `user.data_processing_options.modes[]` | optional | `{"format":{"kind":"enum","values":["LDU"]},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.data_processing_options.country` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{2}$"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.data_processing_options.region` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `type` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `metadata` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.screen_dimensions` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.data_processing_options` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `metadata.products` | optional | `{"json_type":"array"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `metadata.products[]` | optional | `{"json_type":"object"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `user.data_processing_options.modes` | optional | `{"json_type":"array"}` | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `referrer_url` | optional | `{"json_type":"string","format":{"kind":"url"}}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `metadata.order_id` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
-| `vendor.reddit-conversions-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user.ip_address","user.user_agent"]}` | error | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `vendor.reddit-conversions-api.body.match_key_required` | `{"kind":"require_one_of","params":["click_id","user.email","user.phone_number","user.uuid","user.external_id","user.ip_address","user.idfa","user.aaid"]}` | warning | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `vendor.reddit-conversions-api.body.website_requires_source_url` | `{"kind":"required_when_value","when":"action_source","equals":["WEBSITE"],"requires":["event_source_url"]}` | warning | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `vendor.reddit-conversions-api.body.custom_requires_name` | `{"kind":"required_when_value","when":"type.tracking_type","equals":["CUSTOM"],"requires":["type.custom_event_name"]}` | error | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `vendor.reddit-conversions-api.body.purchase_requires_value` | `{"kind":"required_when_value","when":"type.tracking_type","equals":["PURCHASE"],"requires":["metadata.value"]}` | warning | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `vendor.reddit-conversions-api.body.ldu_requires_country` | `{"kind":"required_when_value","when":"user.data_processing_options.modes[]","equals":["LDU"],"requires":["user.data_processing_options.country"]}` | error | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `vendor.reddit-conversions-api.body.custom_name_reserved` | `{"kind":"forbid_value_pattern","params":["type.custom_event_name"],"pattern":"^(?:PAGE_VISIT\|VIEW_CONTENT\|SEARCH\|ADD_TO_CART\|ADD_TO_WISHLIST\|PURCHASE\|LEAD\|SIGN_UP)$","condition":{"kind":"value_in","param":"type.tracking_type","values":["CUSTOM"]}}` | error | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
-| `vendor.reddit-conversions-api.body.placeholder_advertising_id` | `{"kind":"forbid_value_pattern","params":["user.idfa","user.aaid"],"pattern":"^00000000-0000-0000-0000-000000000000$"}` | warning | [official_vendor](https://ads-api-reddit.netlify.app/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user.ip_address","user.user_agent"]}` | error | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.match_key_required` | `{"kind":"require_one_of","params":["click_id","user.email","user.phone_number","user.uuid","user.external_id","user.ip_address","user.idfa","user.aaid"]}` | warning | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.website_requires_source_url` | `{"kind":"required_when_value","when":"action_source","equals":["WEBSITE"],"requires":["event_source_url"]}` | warning | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.custom_requires_name` | `{"kind":"required_when_value","when":"type.tracking_type","equals":["CUSTOM"],"requires":["type.custom_event_name"]}` | error | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.purchase_requires_value` | `{"kind":"required_when_value","when":"type.tracking_type","equals":["PURCHASE"],"requires":["metadata.value"]}` | warning | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.ldu_requires_country` | `{"kind":"required_when_value","when":"user.data_processing_options.modes[]","equals":["LDU"],"requires":["user.data_processing_options.country"]}` | error | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.custom_name_reserved` | `{"kind":"forbid_value_pattern","params":["type.custom_event_name"],"pattern":"^(?:PAGE_VISIT\|VIEW_CONTENT\|SEARCH\|ADD_TO_CART\|ADD_TO_WISHLIST\|PURCHASE\|LEAD\|SIGN_UP)$","condition":{"kind":"value_in","param":"type.tracking_type","values":["CUSTOM"]}}` | warning | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `vendor.reddit-conversions-api.body.placeholder_advertising_id` | `{"kind":"forbid_value_pattern","params":["user.idfa","user.aaid"],"pattern":"^00000000-0000-0000-0000-000000000000$"}` | warning | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.event_age` | `{"kind":"time_window","param":"event_at","unit":"milliseconds","max_age_seconds":604800,"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"event_at","json_type":"integer"},{"kind":"value_pattern","param":"event_at","pattern":"^[0-9]{13}$"}]}}` | error | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.order_id_truncated` | `{"kind":"format","param":"metadata.order_id","format":{"kind":"regex","pattern":"(?s)^.{0,100}$"},"condition":{"kind":"json_type","param":"metadata.order_id","json_type":"string"}}` | warning | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+
+### JSON contract 3
+
+Context: `{"scope":"data.events[].metadata.products[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"allow_empty":true}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `id` | required | `{"allow_empty":true,"condition":{"kind":"json_type","param":"","json_type":"object"}}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `content_type` | required | `{"severity":"error","json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `headers.authorization` | required | `{"severity":"error","json_type":"string","format":{"kind":"regex","pattern":"(?i)^[ \\t]*Bearer[ \\t]+[^\\s]+[ \\t]*$"}}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `body_encoding` | required | `{"severity":"error","format":{"kind":"enum","values":["json"]},"condition":{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["unsupported"]}},{"kind":"any","conditions":[{"kind":"value_in","param":"body_encoding","values":["none"]},{"kind":"value_in","param":"content_type","values":["application/json"]}]}]}}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
+| `url` | optional | `{"severity":"warning","json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
 
 ## `vendor/reddit`
 

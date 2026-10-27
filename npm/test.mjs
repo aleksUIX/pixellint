@@ -376,6 +376,8 @@ const addedProfileSlugs = [
   "braze",
   "yahoo-conversions-api",
   "tiktok-events-api",
+  "reddit-conversions-api",
+  "appsflyer-onelink-impression",
 ];
 let addedProfileCases = 0;
 const profileFixtureGroups = new Map();
@@ -445,5 +447,5 @@ for (const entry of [{ validate, validateMany }, cjs]) {
     }
   }
 }
-assert.equal(addedProfileCases, 7534, "all 3767 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 8316, "all 4158 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);
