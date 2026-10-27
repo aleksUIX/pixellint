@@ -370,6 +370,7 @@ const addedProfileSlugs = [
   "rudderstack",
   "segment",
   "google-analytics",
+  "x-conversions-api",
 ];
 let addedProfileCases = 0;
 const profileFixtureGroups = new Map();
@@ -432,5 +433,5 @@ for (const entry of [{ validate, validateMany }, cjs]) {
     }
   }
 }
-assert.equal(addedProfileCases, 5932, "all 2966 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 6176, "all 3088 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);

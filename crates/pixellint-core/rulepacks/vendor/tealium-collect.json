@@ -161,6 +161,53 @@
           "doc": "https://docs.tealium.com/platforms/http-api/endpoint/",
           "description": "The endpoint documents rejection of JSON keys containing a period. This checks top-level event attribute keys."
         }
+      ],
+      "rules": [
+        {
+          "code": "vendor.tealium-collect.cookie_delete_overridden",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "tealium_delete_3rd_party_vid_cookies"
+          ],
+          "pattern": "^true$",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "tealium_override_tapid",
+                "json_type": "string"
+              },
+              {
+                "kind": "present",
+                "param": "tealium_override_tapid"
+              },
+              {
+                "kind": "json_type",
+                "param": "tealium_delete_3rd_party_vid_cookies",
+                "json_type": "boolean"
+              }
+            ]
+          },
+          "severity": "warning",
+          "message": "A populated tealium_override_tapid prevents deletion of the TAPID cookie. The delete flag does not establish that the cookie will be removed.",
+          "doc": "https://docs.tealium.com/platforms/http-api/endpoint/"
+        }
+      ]
+    },
+    {
+      "scope": "**",
+      "params": [
+        {
+          "name": "nested_custom_keys",
+          "name_pattern": ".*",
+          "name_pattern_parent": "",
+          "allow_empty": true,
+          "key_pattern": "^[^.]*$",
+          "severity": "warning",
+          "doc": "https://docs.tealium.com/platforms/http-api/endpoint/",
+          "description": "The source warns against literal periods in JSON keys. Extend that advice to supplied nested object members, including objects in arrays. No nested flattening or receiver storage model is inferred."
+        }
       ]
     }
   ],
@@ -264,6 +311,24 @@
               "false"
             ]
           }
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.tealium-collect.http.cookie_delete_overridden",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "query.tealium_delete_3rd_party_vid_cookies"
+          ],
+          "pattern": "^true$",
+          "condition": {
+            "kind": "value_pattern",
+            "param": "query.tealium_override_tapid",
+            "pattern": "(?s).+"
+          },
+          "severity": "warning",
+          "message": "A populated tealium_override_tapid prevents deletion of the TAPID cookie. The delete flag does not establish that the cookie will be removed.",
+          "doc": "https://docs.tealium.com/platforms/http-api/endpoint/"
         }
       ]
     },

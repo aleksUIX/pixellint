@@ -1,0 +1,190 @@
+{
+  "method": "Execute unmodified pinned official sender JavaScript in Node vm with deterministic mocked GTM capabilities. No SDK container or receiver execution.",
+  "source_sha256": "09a0dca138ddac75a5fa23b9e3f2d273e9bb2c29edcf436773c07f2732449fbd",
+  "cases": [
+    {
+      "id": "configured-event",
+      "request": {
+        "url": "https://ads-api.x.com/12/measurement/conversions/synthetic-pixel",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Pixel-Token": "synthetic-token"
+        },
+        "body": "{\"conversions\":[{\"conversion_timestamp\":1792886400000,\"identifiers\":[{\"twclid\":\"synthetic-click\"}],\"event_id\":\"synthetic-event\",\"value\":19.99,\"price_currency\":\"USD\",\"contents\":[{\"content_id\":\"sku-1\",\"content_name\":\"Blue shoes\",\"content_price\":19.99,\"num_items\":1}],\"number_items\":1}]}"
+      },
+      "body": {
+        "conversions": [
+          {
+            "conversion_timestamp": 1792886400000,
+            "identifiers": [
+              {
+                "twclid": "synthetic-click"
+              }
+            ],
+            "event_id": "synthetic-event",
+            "value": 19.99,
+            "price_currency": "USD",
+            "contents": [
+              {
+                "content_id": "sku-1",
+                "content_name": "Blue shoes",
+                "content_price": 19.99,
+                "num_items": 1
+              }
+            ],
+            "number_items": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "fallback-event-name",
+      "request": {
+        "url": "https://ads-api.x.com/12/measurement/conversions/synthetic-pixel",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Pixel-Token": "synthetic-token"
+        },
+        "body": "{\"conversions\":[{\"conversion_timestamp\":1792886400000,\"identifiers\":[{\"twclid\":\"synthetic-click\"}],\"event_name\":\"gtm_purchase\"}]}"
+      },
+      "body": {
+        "conversions": [
+          {
+            "conversion_timestamp": 1792886400000,
+            "identifiers": [
+              {
+                "twclid": "synthetic-click"
+              }
+            ],
+            "event_name": "gtm_purchase"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pixel-cookie",
+      "request": {
+        "url": "https://ads-api.x.com/12/measurement/conversions/synthetic-pixel",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Pixel-Token": "synthetic-token"
+        },
+        "body": "{\"conversions\":[{\"conversion_timestamp\":1792886400000,\"identifiers\":[{\"twpid\":\"synthetic-pixel-cookie\"}],\"event_name\":\"gtm_purchase\"}]}"
+      },
+      "body": {
+        "conversions": [
+          {
+            "conversion_timestamp": 1792886400000,
+            "identifiers": [
+              {
+                "twpid": "synthetic-pixel-cookie"
+              }
+            ],
+            "event_name": "gtm_purchase"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negative-revenue",
+      "request": {
+        "url": "https://ads-api.x.com/12/measurement/conversions/synthetic-pixel",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Pixel-Token": "synthetic-token"
+        },
+        "body": "{\"conversions\":[{\"conversion_timestamp\":1792886400000,\"identifiers\":[{\"twclid\":\"synthetic-click\"}],\"event_name\":\"gtm_refund\",\"value\":-19.99,\"contents\":[{\"content_id\":\"refund\",\"content_price\":-19.99,\"num_items\":1}],\"number_items\":1}]}"
+      },
+      "body": {
+        "conversions": [
+          {
+            "conversion_timestamp": 1792886400000,
+            "identifiers": [
+              {
+                "twclid": "synthetic-click"
+              }
+            ],
+            "event_name": "gtm_refund",
+            "value": -19.99,
+            "contents": [
+              {
+                "content_id": "refund",
+                "content_price": -19.99,
+                "num_items": 1
+              }
+            ],
+            "number_items": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "exponent-revenue",
+      "request": {
+        "url": "https://ads-api.x.com/12/measurement/conversions/synthetic-pixel",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Pixel-Token": "synthetic-token"
+        },
+        "body": "{\"conversions\":[{\"conversion_timestamp\":1792886400000,\"identifiers\":[{\"twclid\":\"synthetic-click\"}],\"event_name\":\"gtm_purchase\",\"value\":1e+21,\"contents\":[{\"content_id\":\"large\",\"content_price\":1e+21,\"num_items\":1}],\"number_items\":1}]}"
+      },
+      "body": {
+        "conversions": [
+          {
+            "conversion_timestamp": 1792886400000,
+            "identifiers": [
+              {
+                "twclid": "synthetic-click"
+              }
+            ],
+            "event_name": "gtm_purchase",
+            "value": 1e+21,
+            "contents": [
+              {
+                "content_id": "large",
+                "content_price": 1e+21,
+                "num_items": 1
+              }
+            ],
+            "number_items": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "hashing-and-page",
+      "request": {
+        "url": "https://ads-api.x.com/12/measurement/conversions/synthetic-pixel",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Pixel-Token": "synthetic-token"
+        },
+        "body": "{\"conversions\":[{\"conversion_timestamp\":1792886400000,\"identifiers\":[{\"twclid\":\"synthetic-click\",\"hashed_email\":\"31c5543c1734d25c7206f5fd591525d0295bec6fe84ff82f946a34fe970a1e66\",\"hashed_phone_number\":\"cb6880e416769253645cb9c6b8989154bf66a56a77fc14c81fb1019663cbb928\",\"ip_address\":\"203.0.113.5\",\"user_agent\":\"Synthetic browser\"}],\"event_name\":\"gtm_lead\",\"event_source_url\":\"https://example.com/lead?twclid=synthetic-click\"}]}"
+      },
+      "body": {
+        "conversions": [
+          {
+            "conversion_timestamp": 1792886400000,
+            "identifiers": [
+              {
+                "twclid": "synthetic-click",
+                "hashed_email": "31c5543c1734d25c7206f5fd591525d0295bec6fe84ff82f946a34fe970a1e66",
+                "hashed_phone_number": "cb6880e416769253645cb9c6b8989154bf66a56a77fc14c81fb1019663cbb928",
+                "ip_address": "203.0.113.5",
+                "user_agent": "Synthetic browser"
+              }
+            ],
+            "event_name": "gtm_lead",
+            "event_source_url": "https://example.com/lead?twclid=synthetic-click"
+          }
+        ]
+      }
+    }
+  ]
+}

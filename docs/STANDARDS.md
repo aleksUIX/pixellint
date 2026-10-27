@@ -16513,6 +16513,18 @@ Context: `{}`.
 | `tealium_delete_3rd_party_vid_cookies` | optional | `{"allow_empty":true,"json_type":"boolean"}` | [official_vendor](https://docs.tealium.com/platforms/http-api/endpoint/) |
 | `custom_keys` | optional | `{"name_pattern":".*","name_pattern_parent":"","allow_empty":true,"key_pattern":"^[^.]*$"}` | [official_vendor](https://docs.tealium.com/platforms/http-api/endpoint/) |
 
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.tealium-collect.cookie_delete_overridden` | `{"kind":"forbid_value_pattern","params":["tealium_delete_3rd_party_vid_cookies"],"pattern":"^true$","condition":{"kind":"all","conditions":[{"kind":"json_type","param":"tealium_override_tapid","json_type":"string"},{"kind":"present","param":"tealium_override_tapid"},{"kind":"json_type","param":"tealium_delete_3rd_party_vid_cookies","json_type":"boolean"}]}}` | warning | [official_vendor](https://docs.tealium.com/platforms/http-api/endpoint/) |
+
+### JSON contract 2
+
+Context: `{"scope":"**"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `nested_custom_keys` | optional | `{"name_pattern":".*","name_pattern_parent":"","allow_empty":true,"key_pattern":"^[^.]*$","severity":"warning"}` | [official_vendor](https://docs.tealium.com/platforms/http-api/endpoint/) |
+
 ### Complete HTTP contract 1
 
 Context: `{}`.
@@ -16537,6 +16549,10 @@ Context: `{"condition":{"kind":"value_in","param":"method","values":["GET"]}}`.
 | `query.tealium_override_tapid` | optional | `{"allow_empty":true,"json_type":"string"}` | [official_vendor](https://docs.tealium.com/platforms/http-api/endpoint/) |
 | `query.tealium_skip_3rd_party_vid_cookies` | optional | `{"allow_empty":true,"json_type":"string","format":{"kind":"enum","values":["true","false"]}}` | [official_vendor](https://docs.tealium.com/platforms/http-api/endpoint/) |
 | `query.tealium_delete_3rd_party_vid_cookies` | optional | `{"allow_empty":true,"json_type":"string","format":{"kind":"enum","values":["true","false"]}}` | [official_vendor](https://docs.tealium.com/platforms/http-api/endpoint/) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.tealium-collect.http.cookie_delete_overridden` | `{"kind":"forbid_value_pattern","params":["query.tealium_delete_3rd_party_vid_cookies"],"pattern":"^true$","condition":{"kind":"value_pattern","param":"query.tealium_override_tapid","pattern":"(?s).+"}}` | warning | [official_vendor](https://docs.tealium.com/platforms/http-api/endpoint/) |
 
 ### Complete HTTP contract 3
 
@@ -17457,11 +17473,11 @@ Context: `{}`.
 
 ## `vendor/x-conversions-api`
 
-Website conversion events posted to the X Ads measurement conversions endpoint.
+X web conversion batches, including the documented direct API and pinned official GTM sender. Alternative event and timestamp fields are supported per conversion. Sender-profile advice does not establish receiver acceptance.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/x-conversions-api.json).
 
-Matcher: `{"hosts":["ads-api.twitter.com","ads-api.x.com"],"path_contains":["/measurement/conversions/"],"json_paths":[{"any_of":["conversions[].conversion_time","conversions[].event_id"]}]}`.
+Matcher: `{"hosts":["ads-api.twitter.com","ads-api.x.com"],"path_contains":["/measurement/conversions/"],"json_paths":[{"any_of":["conversions[].conversion_time","conversions[].event_id","conversions[].conversion_timestamp"]}]}`.
 
 Path captures: `/[0-9]+/measurement/conversions/(?<pixel_id>[^/?]+)`. Captured values take precedence over query keys with the same name.
 
@@ -17469,38 +17485,105 @@ Path captures: `/[0-9]+/measurement/conversions/(?<pixel_id>[^/?]+)`. Captured v
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `pixel_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
+| `pixel_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
 
 ### JSON contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `(current scope)` | optional | `{"json_type":"object","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `conversions` | required | `{"allow_empty":true,"json_type":"array"}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+
+### JSON contract 2
 
 Context: `{"scope":"conversions[]"}`.
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `conversion_time` | required | `{"format":{"kind":"regex","pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `event_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `conversion_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `identifiers[].twclid` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `identifiers[].hashed_email` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `identifiers[].hashed_phone_number` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `identifiers[].ip_address` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `identifiers[].user_agent` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `price_currency` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{3}$"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `value` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `number_items` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `description` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `contents[].content_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `contents[].content_name` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `contents[].content_type` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `contents[].content_price` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `contents[].num_items` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `contents[].content_group_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
+| `conversion_time` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `event_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `conversion_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `identifiers[].twclid` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `identifiers[].hashed_email` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `identifiers[].hashed_phone_number` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `identifiers[].ip_address` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `identifiers[].user_agent` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `price_currency` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{3}$"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `value` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://raw.githubusercontent.com/twitter/x-ads-conversion-api-gtm-template/b54fdd1baac33fa2772e0081c6d5380dd85d54ab/template.tpl) |
+| `number_items` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `description` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `contents[].content_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `contents[].content_name` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `contents[].content_type` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `contents[].content_price` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"}}` | [official_vendor](https://raw.githubusercontent.com/twitter/x-ads-conversion-api-gtm-template/b54fdd1baac33fa2772e0081c6d5380dd85d54ab/template.tpl) |
+| `contents[].num_items` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `contents[].content_group_id` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `(current scope)` | optional | `{"json_type":"object","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `conversion_timestamp` | optional | `{"json_type":"integer","allow_empty":true,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/twitter/x-ads-conversion-api-gtm-template/b54fdd1baac33fa2772e0081c6d5380dd85d54ab/template.tpl) |
+| `event_name` | optional | `{"json_type":"string","allow_empty":false,"severity":"warning"}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/gtm-server-side) |
+| `event_source_url` | optional | `{"json_type":"string","allow_empty":true,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/twitter/x-ads-conversion-api-gtm-template/b54fdd1baac33fa2772e0081c6d5380dd85d54ab/template.tpl) |
+| `identifiers` | optional | `{"json_type":"array","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `identifiers[]` | optional | `{"json_type":"object","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `identifiers[].twpid` | optional | `{"json_type":"string","allow_empty":true,"severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/twitter/x-ads-conversion-api-gtm-template/b54fdd1baac33fa2772e0081c6d5380dd85d54ab/template.tpl) |
+| `contents` | optional | `{"json_type":"array","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `contents[]` | optional | `{"json_type":"object","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
-| `vendor.x-conversions-api.body.identifier_required` | `{"kind":"require_one_of","params":["identifiers[].twclid","identifiers[].hashed_email","identifiers[].hashed_phone_number"]}` | error | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `vendor.x-conversions-api.body.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"}` | error | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
-| `vendor.x-conversions-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["identifiers[].ip_address","identifiers[].user_agent"]}` | error | [official_vendor](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions) |
+| `vendor.x-conversions-api.body.identifier_required` | `{"kind":"require_one_of","params":["identifiers[].twclid","identifiers[].hashed_email","identifiers[].hashed_phone_number","identifiers[].twpid"],"condition":{"kind":"not","condition":{"kind":"all","conditions":[{"kind":"present","param":"identifiers[].ip_address"},{"kind":"present","param":"identifiers[].user_agent"}]}}}` | error | [official_vendor](https://docs.x.com/x-ads-api/measurement/gtm-server-side) |
+| `vendor.x-conversions-api.body.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"}` | error | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `vendor.x-conversions-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["identifiers[].ip_address","identifiers[].user_agent"]}` | error | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `vendor.x-conversions-api.body.ip_user_agent_only` | `{"kind":"require_one_of","params":["identifiers[].twclid","identifiers[].twpid","identifiers[].hashed_email","identifiers[].hashed_phone_number"],"condition":{"kind":"all","conditions":[{"kind":"present","param":"identifiers[].ip_address"},{"kind":"present","param":"identifiers[].user_agent"}]}}` | warning | [official_vendor](https://docs.x.com/x-ads-api/measurement/gtm-server-side) |
+
+### JSON contract 3
+
+Context: `{"scope":"conversions[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `conversion_time` | required | `{"condition":{"kind":"not","condition":{"kind":"exists","param":"conversion_timestamp"}}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `conversion_timestamp` | optional | `{"allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+
+### JSON contract 4
+
+Context: `{"scope":"conversions[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `event_id` | required | `{"condition":{"kind":"not","condition":{"kind":"exists","param":"event_name"}}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/gtm-server-side) |
+| `event_name` | optional | `{"allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+
+### JSON contract 5
+
+Context: `{"scope":"conversions[]"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `conversion_time` | optional | `{"json_type":"string","allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `event_id` | optional | `{"json_type":"string","allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.x-conversions-api.body.conversion_time.calendar` | `{"kind":"format","param":"conversion_time","format":{"kind":"datetime","require_timezone":true,"allow_space_separator":true},"condition":{"kind":"json_type","param":"conversion_time","json_type":"string"}}` | warning | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+
+### Complete HTTP contract 1
+
+Context: `{"condition":{"kind":"value_pattern","param":"path","pattern":"^/[0-9]+/measurement/conversions/[^/]+$"}}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `path` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `method` | required | `{"format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `content_type` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `body` | required | `{"allow_empty":true,"json_type":"object"}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `headers.authorization` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/web-conversions) |
+| `headers.x-pixel-token` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.x.com/x-ads-api/measurement/gtm-server-side) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.x-conversions-api.http.authentication` | `{"kind":"require_any_of","groups":[["headers.authorization"],["headers.x-pixel-token"]]}` | warning | [official_vendor](https://docs.x.com/x-ads-api/measurement/gtm-server-side) |
 
 ## `vendor/x`
 
