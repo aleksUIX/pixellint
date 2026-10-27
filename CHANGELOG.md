@@ -1,27 +1,15 @@
 # Changelog
 
-## 0.71.0 (local candidate)
+## 0.58.1
 
-- Deepen captured modern PostHog requests with documented POST and entity-presence checks, preserving legacy and preflight scope.
-- Validate Intercom rich-link URL syntax, accept case-insensitive HTTP schemes and add clearly labeled monetary currency advice.
-- Add per-record page/screen name advice for RudderStack's explicit HTTP profile without applying a universal SDK requirement.
-- Keep endpoint selectors and registry ownership unchanged. Receiver acceptance and additional sample reach are not claimed.
-
-- Update the independent selection oracle for the existing capture availability envelope.
-
-## 0.70.0 (local candidate)
-
-- Deepen all three existing mParticle event profiles with published session, push, lifecycle, crash, profile, identity and attribute event contracts.
-- Check nested crash breadcrumbs in their own array slots and preserve required nullable fields and open source containers.
-- Add Remerge monetary-number sanity advice, literal IP checks and current or historical ISO currency advice. Existing identity applicability and metadata alternatives remain open.
-- Keep the registry at 233 packs and 133 vendors. Receiver completeness and increased retained-sample coverage are not claimed.
-
-## 0.69.0 (local candidate)
-
-- Add Tealium Collect, Customer.io Track, Teads CAPI and three mParticle event endpoint profiles.
-- Check native payload types, required fields, conditional conversions, every batch element and captured transport.
-- Add inclusive minimum timestamp age for mParticle historical events. Keep conflicting Teads sender profiles advisory.
-- Preserve the existing retained-corpus coverage claim. These additions have no matching requests in that corpus.
+- Add 44 endpoint rulepacks across 37 additional vendor IDs. The registry now contains 233 vendor packs across 133 vendor IDs.
+- Add scoped coverage for vendor-published tracking templates, public SDK producers, Tealium Collect, Customer.io Track, Teads CAPI and three mParticle Events API profiles.
+- Deepen 11 existing packs, including analytics operation maps, consent fields, nested metadata and captured request transport.
+- Expand mParticle event branches and per-record crash breadcrumbs. Follow Draft 7 reference semantics when an adjacent enum is ignored by the published schema.
+- Check modern PostHog POST requests and event entities. Accept uppercase HTTP schemes in Intercom rich links and add scoped URL and monetary currency advice.
+- Keep RudderStack page/screen name advice within its explicit HTTP producer profile. Preserve SDK differences, unavailable captures, legacy variants and open custom fields.
+- Add a declared inclusive historical timestamp boundary and keep endpoint ownership and local source limitations explicit.
+- Extend the independent selection test for strict captures with availability metadata and keep fixture filenames portable across filesystems.
 
 ## 0.58.0
 
