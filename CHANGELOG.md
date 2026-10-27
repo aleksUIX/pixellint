@@ -1,20 +1,18 @@
 # Changelog
 
-## 0.58.3 (local candidate)
+## 0.59.0 (2026-10-26)
 
-- Deepen Nextdoor CAPI captures with POST checks and advisory Bearer, MIME, JSON entity and HTTPS contracts. Preserve legacy payload policy and document defects in the official integration example.
-- Deepen Snapchat CAPI v3 captures with transport and envelope advice. Preserve its documented validation route and query-token authentication. Bound both packs to their published routes and retain unavailable evidence.
+- Deepen eight existing packs with 544 new golden fixtures. The inventory remains 233 packs across 133 vendor IDs.
+- Add a combined 75-object budget recommendation for standard Braze tracking. Preserve legacy per-array limits and exclude bulk, synchronous and status endpoints.
+- Treat malformed Customer.io event IDs as deduplication warnings and preserve numeric anonymous identifiers emitted by the official sender.
+- Add source-scoped transport and credential checks for Yahoo, legacy TikTok, Reddit, Nextdoor and Snapchat conversion captures. Preserve unavailable evidence and documented endpoint boundaries.
+- Reconcile Reddit CAPI v3 with its official schema: 1,000-event batches, seven-day event age, metadata bounds, product IDs and optional test, referrer and order fields. Accept all UTF-8 custom names and make the standard-name recommendation advisory.
+- Check S2S User-Agent delivery and agreement in AppsFlyer OneLink impression captures. Preserve browser links, macros and repeated values.
+- Preserve Snapchat's documented validation route and query-token authentication. Record the syntax and legacy-payload defects in Nextdoor's public integration example.
 
-- Deepen Reddit CAPI v3 with the official schema envelope, 1,000-event batch ceiling, seven-day event age, test and order identifiers, referrers, numeric bounds and per-product IDs. Add captured transport checks and constrain the pack to its documented endpoint.
-- Accept all UTF-8 custom-name characters and treat Reddit's standard-name recommendation as advice. Preserve the original native type findings when adding required product IDs.
-- Deepen AppsFlyer OneLink impression captures with advisory S2S User-Agent delivery and decoded value agreement. Preserve browser links, macros, repeated values and unavailable capture evidence.
+### Rust API compatibility
 
-- Deepen Yahoo CAPI captures with documented POST checks and advisory OAuth, MIME, JSON entity and HTTPS contracts. Preserve historical authentication enforcement uncertainty.
-- Deepen TikTok legacy captures with pinned official sender transport and track-versus-batch envelope advice. Bound both owners to their documented route families and preserve unavailable captures.
-
-- Add combined request-object budget advice for standard Braze tracking, preserving legacy per-array limits. Exclude bulk, synchronous and status routes from the standard endpoint contract.
-- Treat malformed Customer.io event IDs as deduplication warnings. Check the documented uppercase ULID form and preserve numeric anonymous identifiers emitted by the official Node sender.
-- Add native-array aggregate assertions with scope and alias controls. Receiver policy, account limits and deduplication history remain external.
+- Add the public `Assertion::MaxTotalArrayItems` variant for scoped native-array budgets. Rust consumers exhaustively matching `Assertion` must handle the new variant. This release uses a new minor version for that API change.
 
 ## 0.58.2
 
