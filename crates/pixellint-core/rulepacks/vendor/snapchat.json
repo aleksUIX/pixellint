@@ -1,7 +1,7 @@
 {
   "id": "vendor/snapchat",
   "display_name": "Snapchat Conversions API",
-  "description": "Server-side event requests to the Snapchat Conversions API v3 events endpoint, including the JSON event payload.",
+  "description": "Snapchat CAPI v3 event and validation routes with captured POST, JSON entity and envelope advice. Query-token authentication and existing legacy body unions are preserved. Account state and receiver acceptance remain contextual.",
   "vendor": "snapchat",
   "source_level": "official_vendor",
   "docs": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
@@ -9,15 +9,15 @@
     "hosts": [
       "tr.snapchat.com"
     ],
-    "path_contains": [
-      "/events"
-    ],
     "json_paths": [
       "data[].event_name",
       {
         "path": "data[].action_source",
         "excludes": "^(email|website|app|phone_call|chat|physical_store|system_generated|business_messaging|other|web|app_android|app_ios|offline)$"
       }
+    ],
+    "path_patterns": [
+      "/v3/[^/]+/events(?:/validate)?"
     ]
   },
   "params": [
@@ -1448,5 +1448,125 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI",
+        "description": "The published conversion operation uses POST.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI",
+        "description": "The official producer sends application/json. MIME variations receive advice without inventing an exhaustive receiver contract.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI",
+        "description": "The published conversion profile sends a JSON entity. Unsupported compressed bodies and unavailable capture evidence remain unknown.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "json"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "value_in",
+                "param": "body_encoding",
+                "values": [
+                  "unsupported"
+                ]
+              }
+            },
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "body_encoding",
+                  "values": [
+                    "none"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "content_type",
+                  "values": [
+                    "application/json"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "url",
+        "doc": "https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI",
+        "description": "The published conversion endpoint uses HTTPS. This is transport advice, without a receiver redirect claim.",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "url",
+          "require_https": true
+        }
+      },
+      {
+        "name": "body",
+        "allow_empty": true,
+        "doc": "https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI",
+        "description": "Parsed request body supplies the object guard. Existing body contracts retain supplied native type checks."
+      },
+      {
+        "name": "body.data",
+        "requirement": "recommended",
+        "severity": "warning",
+        "doc": "https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI",
+        "description": "The v3 request envelope uses a root data array. A missing member on captured objects receives advice while legacy bare JSON retains its existing compatibility behavior.",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "json_type",
+              "param": "body",
+              "json_type": "object"
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "exists",
+                "param": "body.data"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "rules": []
+  }
 }

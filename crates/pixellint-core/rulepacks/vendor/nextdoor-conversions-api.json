@@ -1,16 +1,13 @@
 {
   "id": "vendor/nextdoor-conversions-api",
   "display_name": "Nextdoor Conversions API",
-  "description": "Server-side conversion events posted to ads.nextdoor.com/v2/api/conversions/track.",
+  "description": "Nextdoor CAPI v2 conversion events with captured POST and advisory Bearer, JSON entity, MIME and HTTPS checks. Existing privacy, legacy field and attribution policy conflicts remain explicit.",
   "vendor": "nextdoor",
   "source_level": "official_vendor",
   "docs": "https://developer.nextdoor.com/reference/conversions-track",
   "match": {
     "hosts": [
       "ads.nextdoor.com"
-    ],
-    "path_prefixes": [
-      "/v2/api/conversions/track"
     ],
     "json_paths": [
       {
@@ -21,6 +18,9 @@
         ]
       },
       "customer"
+    ],
+    "paths": [
+      "/v2/api/conversions/track"
     ]
   },
   "body": [
@@ -921,5 +921,107 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://developer.nextdoor.com/reference/conversion-getting-started",
+        "description": "The published conversion operation uses POST.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://developer.nextdoor.com/reference/conversion-getting-started",
+        "description": "The official producer sends application/json. MIME variations receive advice without inventing an exhaustive receiver contract.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "headers.authorization",
+        "doc": "https://developer.nextdoor.com/reference/conversion-getting-started",
+        "description": "The official Nextdoor integration example sends a Bearer access token in Authorization. Carrier advice does not verify token validity, permissions or issuance.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "(?i)^[ \\t]*Bearer[ \\t]+[^\\s]+[ \\t]*$"
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://developer.nextdoor.com/reference/conversion-getting-started",
+        "description": "The published conversion profile sends a JSON entity. Unsupported compressed bodies and unavailable capture evidence remain unknown.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "json"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "value_in",
+                "param": "body_encoding",
+                "values": [
+                  "unsupported"
+                ]
+              }
+            },
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "body_encoding",
+                  "values": [
+                    "none"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "content_type",
+                  "values": [
+                    "application/json"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "url",
+        "doc": "https://developer.nextdoor.com/reference/conversion-getting-started",
+        "description": "The published conversion endpoint uses HTTPS. This is transport advice, without a receiver redirect claim.",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "url",
+          "require_https": true
+        }
+      }
+    ],
+    "rules": []
+  }
 }

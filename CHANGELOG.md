@@ -2,6 +2,9 @@
 
 ## 0.58.3 (local candidate)
 
+- Deepen Nextdoor CAPI captures with POST checks and advisory Bearer, MIME, JSON entity and HTTPS contracts. Preserve legacy payload policy and document defects in the official integration example.
+- Deepen Snapchat CAPI v3 captures with transport and envelope advice. Preserve its documented validation route and query-token authentication. Bound both packs to their published routes and retain unavailable evidence.
+
 - Deepen Reddit CAPI v3 with the official schema envelope, 1,000-event batch ceiling, seven-day event age, test and order identifiers, referrers, numeric bounds and per-product IDs. Add captured transport checks and constrain the pack to its documented endpoint.
 - Accept all UTF-8 custom-name characters and treat Reddit's standard-name recommendation as advice. Preserve the original native type findings when adding required product IDs.
 - Deepen AppsFlyer OneLink impression captures with advisory S2S User-Agent delivery and decoded value agreement. Preserve browser links, macros, repeated values and unavailable capture evidence.

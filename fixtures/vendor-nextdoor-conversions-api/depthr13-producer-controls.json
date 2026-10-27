@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "controls": 2,
+  "intercepted_requests": 1,
+  "pretransport_errors": 1,
+  "source": "Official Nextdoor Python integration example with only its malformed URL literal repaired, executed with an intercepted requests.request module.",
+  "original_parse_error": {
+    "type": "SyntaxError",
+    "line": 4,
+    "message": "invalid syntax"
+  },
+  "source_patch": {
+    "before": "url = \"<https://ads.nextdoor.com/v2/api/conversions/track\">",
+    "after": "url = \"https://ads.nextdoor.com/v2/api/conversions/track\""
+  },
+  "normalized_capture": {
+    "url": "https://ads.nextdoor.com/v2/api/conversions/track",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <token>"
+    },
+    "body": "{\"client_id\": \"5316447586\", \"event_name\": \"{{event_name}}\", \"event_time\": \"{{event_time}}\", \"event_id\": \"12304\", \"action_source\": \"{{action_source}}\", \"customer\": {\"email\": \"{{email_hash}}\", \"phone_number\": \"{{phone_hash}}\"}}"
+  },
+  "limits": [
+    "No network or real token.",
+    "The original published example does not parse. The one-line URL presentation repair is recorded and all other source statements remain unchanged.",
+    "The older example omits data_source_id and uses deprecated event_time and client_id. Its transport is checked separately from those known payload differences."
+  ]
+}

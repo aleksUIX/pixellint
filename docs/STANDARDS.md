@@ -12570,11 +12570,11 @@ Context: `{}`.
 
 ## `vendor/nextdoor-conversions-api`
 
-Server-side conversion events posted to ads.nextdoor.com/v2/api/conversions/track.
+Nextdoor CAPI v2 conversion events with captured POST and advisory Bearer, JSON entity, MIME and HTTPS checks. Existing privacy, legacy field and attribution policy conflicts remain explicit.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/nextdoor-conversions-api.json).
 
-Matcher: `{"hosts":["ads.nextdoor.com"],"path_prefixes":["/v2/api/conversions/track"],"json_paths":[{"any_of":["data_source_id","event_time_epoch","event_name"]},"customer"]}`.
+Matcher: `{"hosts":["ads.nextdoor.com"],"json_paths":[{"any_of":["data_source_id","event_time_epoch","event_name"]},"customer"],"paths":["/v2/api/conversions/track"]}`.
 
 ### JSON contract 1
 
@@ -12666,6 +12666,18 @@ Context: `{}`.
 | `vendor.nextdoor-conversions-api.body.dob_calendar` | `{"kind":"format","param":"customer.date_of_birth","format":{"kind":"datetime","allow_date_only":true,"allow_basic":true},"condition":{"kind":"value_pattern","param":"customer.date_of_birth","pattern":"^[0-9]{8}$"}}` | error | [official_vendor](https://developer.nextdoor.com/reference/conversion-data-types) |
 | `vendor.nextdoor-conversions-api.body.submission_delay_recommended` | `{"kind":"time_window","param":"event_time_epoch","unit":"seconds","max_age_seconds":3600}` | warning | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
 | `vendor.nextdoor-conversions-api.body.legacy_submission_delay_recommended` | `{"kind":"time_window","param":"event_time","unit":"datetime","max_age_seconds":3600,"condition":{"kind":"not","condition":{"kind":"exists","param":"event_time_epoch"}}}` | warning | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
+| `content_type` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
+| `headers.authorization` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"regex","pattern":"(?i)^[ \\t]*Bearer[ \\t]+[^\\s]+[ \\t]*$"}}` | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
+| `body_encoding` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["json"]},"condition":{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["unsupported"]}},{"kind":"any","conditions":[{"kind":"value_in","param":"body_encoding","values":["none"]},{"kind":"value_in","param":"content_type","values":["application/json"]}]}]}}` | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
+| `url` | optional | `{"severity":"warning","json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://developer.nextdoor.com/reference/conversion-getting-started) |
 
 ## `vendor/nextdoor-pixel`
 
@@ -15823,11 +15835,11 @@ Context: `{}`.
 
 ## `vendor/snapchat`
 
-Server-side event requests to the Snapchat Conversions API v3 events endpoint, including the JSON event payload.
+Snapchat CAPI v3 event and validation routes with captured POST, JSON entity and envelope advice. Query-token authentication and existing legacy body unions are preserved. Account state and receiver acceptance remain contextual.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/snapchat.json).
 
-Matcher: `{"hosts":["tr.snapchat.com"],"path_contains":["/events"],"json_paths":["data[].event_name",{"path":"data[].action_source","excludes":"^(email\|website\|app\|phone_call\|chat\|physical_store\|system_generated\|business_messaging\|other\|web\|app_android\|app_ios\|offline)$"}]}`.
+Matcher: `{"hosts":["tr.snapchat.com"],"json_paths":["data[].event_name",{"path":"data[].action_source","excludes":"^(email\|website\|app\|phone_call\|chat\|physical_store\|system_generated\|business_messaging\|other\|web\|app_android\|app_ios\|offline)$"}],"path_patterns":["/v3/[^/]+/events(?:/validate)?"]}`.
 
 ### URL parameters
 
@@ -15989,6 +16001,19 @@ Context: `{"scope":["data[]",""]}`.
 | `vendor.snapchat.body.event_time_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds_or_milliseconds","max_age_seconds":604800}` | error | [official_vendor](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI) |
 | `vendor.snapchat.body.ios_extinfo_app_id` | `{"kind":"format_when","when":"app_data.extinfo[0]","equals":["i2"],"param":"app_data.app_id","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
 | `vendor.snapchat.body.app_requires_app_id` | `{"kind":"required_when_value","when":"action_source","equals":["MOBILE_APP"],"requires":["app_data.app_id"]}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI) |
+| `content_type` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI) |
+| `body_encoding` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["json"]},"condition":{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["unsupported"]}},{"kind":"any","conditions":[{"kind":"value_in","param":"body_encoding","values":["none"]},{"kind":"value_in","param":"content_type","values":["application/json"]}]}]}}` | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI) |
+| `url` | optional | `{"severity":"warning","json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI) |
+| `body` | optional | `{"allow_empty":true}` | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI) |
+| `body.data` | recommended | `{"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"json_type","param":"body","json_type":"object"},{"kind":"not","condition":{"kind":"exists","param":"body.data"}}]}}` | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/UsingTheAPI) |
 
 ## `vendor/sourcepoint-gdpr-choice`
 
