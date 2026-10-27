@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_date": "2026-10-26",
-  "status": "building_local_candidate",
+  "status": "tested_local_source_candidate",
   "coverage_claim": "Two existing Google conversion upload packs gain service-specific checks and resource or currency advice. Endpoint selectors, vendor directory and Rust engine source are unchanged. No new stored-sample reach measurement is claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
@@ -40,7 +40,7 @@
   },
   "current": {
     "version": "0.58.2",
-    "candidate_status": "building_local_candidate",
+    "candidate_status": "tested_local_source_candidate",
     "review_date": "2026-10-26",
     "packs": 233,
     "vendors": 133,
@@ -57,7 +57,7 @@
     "new_golden_cases": 218,
     "changed_fixture_cases": 191,
     "new_field_contracts": 2,
-    "new_cross_field_assertions": 8,
+    "new_cross_field_assertions": 0,
     "remaining_requirement_entries": 941,
     "remaining_requirements_note": "Overlapping open requirements and fixture counts do not establish a percentage of vendor specification coverage.",
     "session_assertions": 2,
@@ -66,7 +66,8 @@
     "new_presence_recommendations": 0,
     "precedence_corrections": 0,
     "new_service_restrictions": 2,
-    "new_supplementary_cases": 1
+    "new_supplementary_cases": 1,
+    "new_assertions": 8
   },
   "review_assignments": {
     "google_ias_adctv": "Official templates and IAS guidance",
@@ -75,9 +76,138 @@
     "integration": "Host-bound path expressions, retained core privacy and distribution parity"
   },
   "verification": {
-    "status": "pending_full_validation",
     "candidate_version": "0.58.2",
-    "implicit_proto3_defaults_preserved": true
+    "status": "passed_local_candidate",
+    "validation_source_sha": "92924a3ed65dfd1d0598473cc40034a93fbf7d07",
+    "native_checks": {
+      "source_sha": "92924a3ed65dfd1d0598473cc40034a93fbf7d07",
+      "checks": [
+        {
+          "check": "workspace",
+          "command": [
+            "cargo",
+            "test",
+            "--workspace",
+            "--locked",
+            "--no-fail-fast"
+          ],
+          "exit_code": 0,
+          "seconds": 371.083,
+          "passed": 832,
+          "failed": 0
+        },
+        {
+          "check": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--all-targets",
+            "--all-features",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "seconds": 6.402
+        },
+        {
+          "check": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.648
+        },
+        {
+          "check": "depth",
+          "command": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "tools/check-rulepack-depth.py"
+          ],
+          "exit_code": 0,
+          "seconds": 2.241
+        },
+        {
+          "check": "reference",
+          "command": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "tools/update-rulepack-reference.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.089
+        },
+        {
+          "check": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.076
+        }
+      ],
+      "all_completed": true,
+      "all_passed": true
+    },
+    "runtime_checks": {
+      "source_sha": "92924a3ed65dfd1d0598473cc40034a93fbf7d07",
+      "checks": [
+        {
+          "check": "wasm-build",
+          "command": [
+            "wasm-pack",
+            "build",
+            "crates/pixellint-wasm",
+            "--mode",
+            "no-install",
+            "--target",
+            "nodejs",
+            "--out-dir",
+            "../../npm/wasm",
+            "--out-name",
+            "pixellint"
+          ],
+          "exit_code": 0,
+          "seconds": 23.859
+        },
+        {
+          "check": "node22",
+          "command": [
+            "/usr/local/bin/node",
+            "npm/test.mjs"
+          ],
+          "exit_code": 0,
+          "seconds": 38.307
+        },
+        {
+          "check": "node20",
+          "command": [
+            "/private/tmp/pixellint-qa-node20-20261025/node-v20.20.2-darwin-arm64/bin/node",
+            "npm/test.mjs"
+          ],
+          "exit_code": 0,
+          "seconds": 36.745
+        }
+      ],
+      "all_completed": true,
+      "all_passed": true
+    },
+    "wasm_sha256": "e196cf799bbe4b9b4ded4ae4050fac4a7baa830b7435382f66900a3aac33ff39",
+    "new_fixture_cases": 218,
+    "prior_golden_expectations_changed": 0,
+    "supplementary_example_corrections": 1,
+    "new_supplementary_cases": 1,
+    "implicit_proto3_defaults_preserved": true,
+    "unchanged_other_manifests": 231,
+    "host_and_path_selectors_unchanged": true,
+    "new_bare_json_discriminators": 0,
+    "engine_source_unchanged": true
   },
   "shared_protocol_limits": [
     {
@@ -383272,7 +383402,7 @@
     "engine_source_unchanged": true,
     "supplementary_example_corrections": 1,
     "new_supplementary_cases": 1,
-    "validation_status": "pending_full_validation",
+    "validation_status": "passed_local_candidate",
     "new_string_enum_checks": 2,
     "implicit_proto3_defaults_preserved": true
   }
