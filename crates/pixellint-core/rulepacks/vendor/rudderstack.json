@@ -1118,6 +1118,50 @@
           "doc": "https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/"
         }
       ]
+    },
+    {
+      "scope": [
+        "batch[]",
+        ""
+      ],
+      "params": [
+        {
+          "name": "type",
+          "allow_empty": true
+        },
+        {
+          "name": "context.library.name",
+          "allow_empty": true
+        },
+        {
+          "name": "name",
+          "allow_empty": true,
+          "requirement": "recommended",
+          "severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_in",
+                "param": "type",
+                "values": [
+                  "page",
+                  "screen"
+                ]
+              },
+              {
+                "kind": "value_in",
+                "param": "context.library.name",
+                "values": [
+                  "http"
+                ]
+              }
+            ]
+          },
+          "doc": "https://www.rudderstack.com/docs/api/http-api/",
+          "description": "The documented HTTP page/screen profile supplies a name. SDK-specific optionality varies, so absence is advisory rather than a rejection rule."
+        }
+      ]
     }
   ],
   "path_pattern": "(?<pixel_api>/pixel/v1/track)",
@@ -1342,6 +1386,46 @@
           "pattern": "^/v1/batch/?$"
         },
         "min_items": 1
+      },
+      {
+        "name": "body.type",
+        "allow_empty": true
+      },
+      {
+        "name": "body.context.library.name",
+        "allow_empty": true
+      },
+      {
+        "name": "body.name",
+        "allow_empty": true,
+        "requirement": "recommended",
+        "severity": "warning",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/v1/(?:page|screen)/?$"
+            },
+            {
+              "kind": "value_in",
+              "param": "body.context.library.name",
+              "values": [
+                "http"
+              ]
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "exists",
+                "param": "body.type"
+              }
+            }
+          ]
+        },
+        "doc": "https://www.rudderstack.com/docs/api/http-api/",
+        "description": "Infer the documented HTTP page/screen operation from the endpoint when type is absent. Explicit type advice is owned by the body profile to avoid duplicate findings."
       }
     ],
     "rules": [

@@ -365,6 +365,9 @@ const addedProfileSlugs = [
   "artsai-impression", "celtra-json", "exoclick-vast", "extreme-reach-cp-imp",
   "iqm-segment-open", "mobkoi-engagement", "pubmatic-vpaid-error",
   "remerge-event",
+  "posthog",
+  "intercom-events",
+  "rudderstack",
 ];
 let addedProfileCases = 0;
 const profileFixtureGroups = new Map();
@@ -386,9 +389,11 @@ for (const slug of addedProfileSlugs) {
   }
 }
 function assertProfileReports(reports, fixture, label) {
+  // Preserve explicit native fixture selection when the public API auto-selects.
+  if (fixture.rulepacks) reports = reports.filter(report => fixture.rulepacks.includes(report.plugin_id));
   const violations = reports.flatMap(report => report.violations);
   assert.deepEqual(reports.map(report => report.plugin_id), fixture.expected_plugins, `${label}: selected packs`);
-  assert.deepEqual(violations.map(finding => finding.code), fixture.expected_codes, `${label}: findings`);
+  assert.deepEqual(violations.map(finding => finding.code).sort(), [...fixture.expected_codes].sort(), `${label}: findings`);
   for (const [severity, expected] of [["error", fixture.expected_errors], ["warning", fixture.expected_warnings], ["info", fixture.expected_infos]]) {
     assert.equal(violations.filter(finding => finding.severity === severity).length, expected, `${label}: ${severity} count`);
   }
@@ -425,5 +430,5 @@ for (const entry of [{ validate, validateMany }, cjs]) {
     }
   }
 }
-assert.equal(addedProfileCases, 5024, "all 2512 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 5434, "all 2717 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);

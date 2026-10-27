@@ -6856,5 +6856,89 @@
         }
       ]
     }
+  ],
+  "http": [
+    {
+      "params": [
+        {
+          "name": "path",
+          "allow_empty": true
+        },
+        {
+          "name": "method",
+          "allow_empty": true
+        },
+        {
+          "name": "body",
+          "allow_empty": true
+        }
+      ],
+      "rules": [
+        {
+          "code": "vendor.posthog.http.modern_post_required",
+          "kind": "format",
+          "param": "method",
+          "format": {
+            "kind": "enum",
+            "values": [
+              "POST"
+            ]
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_pattern",
+                "param": "path",
+                "pattern": "^/(?:i/v0/e|batch)/?$"
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "value_in",
+                  "param": "method",
+                  "values": [
+                    "OPTIONS"
+                  ]
+                }
+              }
+            ]
+          },
+          "severity": "error",
+          "doc": "https://posthog.com/docs/api/capture",
+          "message": "The modern /i/v0/e and /batch event ingestion operations are documented as POST-only.",
+          "fix_hint": "Submit the event using POST. OPTIONS/preflight authorization is outside this event-method check."
+        },
+        {
+          "code": "vendor.posthog.http.event_entity_required",
+          "kind": "require_any_of",
+          "groups": [
+            [
+              "body"
+            ]
+          ],
+          "severity": "error",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "value_pattern",
+                "param": "path",
+                "pattern": "^/(?:i/v0/e|batch)/?$"
+              },
+              {
+                "kind": "value_in",
+                "param": "method",
+                "values": [
+                  "POST"
+                ]
+              }
+            ]
+          },
+          "doc": "https://posthog.com/docs/api/capture",
+          "message": "The documented modern POST operation needs a populated event entity. Explicitly unavailable or undecodable captures defer this body-dependent check."
+        }
+      ]
+    }
   ]
 }

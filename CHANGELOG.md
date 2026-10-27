@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.71.0 (local candidate)
+
+- Deepen captured modern PostHog requests with documented POST and entity-presence checks, preserving legacy and preflight scope.
+- Validate Intercom rich-link URL syntax, accept case-insensitive HTTP schemes and add clearly labeled monetary currency advice.
+- Add per-record page/screen name advice for RudderStack's explicit HTTP profile without applying a universal SDK requirement.
+- Keep endpoint selectors and registry ownership unchanged. Receiver acceptance and additional sample reach are not claimed.
+
 ## 0.70.0 (local candidate)
 
 - Deepen all three existing mParticle event profiles with published session, push, lifecycle, crash, profile, identity and attribute event contracts.

@@ -1,0 +1,154 @@
+{
+  "method": "Independent Node WHATWG URL parser. Syntax classification only, without requests to vendor endpoints.",
+  "source": "https://url.spec.whatwg.org/",
+  "node": "v22.16.0",
+  "checked": 24,
+  "accepted": 16,
+  "rejected": 8,
+  "cases": [
+    {
+      "id": "depth071-link-https",
+      "value": "https://example.org/ab1de.html",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-http",
+      "value": "http://example.org/path?q=a#b",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-uppercase-http",
+      "value": "HTTP://example.org/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-mixed-case-https",
+      "value": "hTtPs://example.org/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-uppercase-https",
+      "value": "HTTPS://example.org/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-port-zero",
+      "value": "http://example.org:0/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-port-maximum",
+      "value": "https://example.org:65535/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-default-port",
+      "value": "https://example.org:443/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-ipv4",
+      "value": "https://192.0.2.7/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-ipv6",
+      "value": "https://[2001:db8::1]/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-ipv6-port",
+      "value": "https://[2001:db8::1]:443/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-unicode-host",
+      "value": "https://bücher.example/a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-unicode-path",
+      "value": "https://example.org/文档",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-percent-path",
+      "value": "https://example.org/a%20b",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-query-only",
+      "value": "https://example.org?q=a",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-fragment",
+      "value": "https://example.org/#fragment",
+      "expected_valid": true,
+      "node_url_valid": true
+    },
+    {
+      "id": "depth071-link-port-overflow",
+      "value": "https://example.org:65536/a",
+      "expected_valid": false,
+      "node_url_valid": false
+    },
+    {
+      "id": "depth071-link-negative-port",
+      "value": "http://example.org:-1/a",
+      "expected_valid": false,
+      "node_url_valid": false
+    },
+    {
+      "id": "depth071-link-alphabetic-port",
+      "value": "https://example.org:abc/a",
+      "expected_valid": false,
+      "node_url_valid": false
+    },
+    {
+      "id": "depth071-link-missing-ipv6-close",
+      "value": "https://[2001:db8::1/a",
+      "expected_valid": false,
+      "node_url_valid": false
+    },
+    {
+      "id": "depth071-link-invalid-ipv6",
+      "value": "https://[2001:db8:::1]/a",
+      "expected_valid": false,
+      "node_url_valid": false
+    },
+    {
+      "id": "depth071-link-invalid-ipv4",
+      "value": "http://256.1.1.1/a",
+      "expected_valid": false,
+      "node_url_valid": false
+    },
+    {
+      "id": "depth071-link-encoded-host-space",
+      "value": "https://exa%20mple.org/a",
+      "expected_valid": false,
+      "node_url_valid": false
+    },
+    {
+      "id": "depth071-link-forbidden-host-character",
+      "value": "http://exa<mple.org/a",
+      "expected_valid": false,
+      "node_url_valid": false
+    }
+  ]
+}

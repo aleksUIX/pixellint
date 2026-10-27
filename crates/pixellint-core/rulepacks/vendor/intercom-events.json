@@ -168,9 +168,10 @@
           "json_type": "string",
           "format": {
             "kind": "regex",
-            "pattern": "^https?://[^\\s/?#]+(?:[/?#].*)?$"
+            "pattern": "(?i)^https?://[^\\s/?#]+(?:[/?#].*)?$"
           },
-          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent"
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "description": "Rich links use HTTP or HTTPS URIs. Scheme spelling is case-insensitive."
         },
         {
           "name": "value",
@@ -232,6 +233,60 @@
           "message": "Object metadata must contain a rich link pair or monetary amount pair. Nested JSON metadata is unsupported.",
           "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
           "allow_empty": true
+        },
+        {
+          "code": "vendor.intercom-events.body.rich_url_syntax",
+          "kind": "format",
+          "param": "url",
+          "format": {
+            "kind": "url"
+          },
+          "severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "url",
+                "json_type": "string"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "url",
+                "pattern": "(?i)^https?://"
+              }
+            ]
+          },
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "message": "The rich-link value does not parse as an absolute HTTP(S) URL. Check its host, IP literal and port."
+        },
+        {
+          "code": "vendor.intercom-events.body.currency_assignment",
+          "kind": "format",
+          "param": "currency",
+          "format": {
+            "kind": "currency",
+            "allow_historical": true,
+            "case_insensitive": true
+          },
+          "severity": "warning",
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "exists",
+                "param": "amount"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "currency",
+                "pattern": "^[A-Za-z]{3}$"
+              }
+            ]
+          },
+          "doc": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent",
+          "source_level": "heuristic",
+          "message": "This monetary currency is not assigned in the built-in current or historical ISO 4217 registry. Verify whether the value is intentional."
         }
       ]
     }

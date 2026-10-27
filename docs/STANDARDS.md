@@ -7132,7 +7132,7 @@ Context: `{"scope":"metadata.*"}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `(current scope)` | optional | `{"json_type":["string","number","object"],"format_severity":"warning","allow_empty":true}` | [official_vendor](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
-| `url` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^https?://[^\\s/?#]+(?:[/?#].*)?$"}}` | [official_vendor](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
+| `url` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"(?i)^https?://[^\\s/?#]+(?:[/?#].*)?$"}}` | [official_vendor](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
 | `value` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
 | `amount` | optional | `{"json_type":"integer","minimum":1}` | [official_vendor](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
 | `currency` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Za-z]{3}$"}}` | [official_vendor](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
@@ -7141,6 +7141,8 @@ Context: `{"scope":"metadata.*"}`.
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.intercom-events.body.rich_metadata_shape` | `{"kind":"require_any_of","groups":[["url","value"],["amount","currency"]],"condition":{"kind":"json_type","param":"","json_type":"object"},"allow_empty":true}` | warning | [official_vendor](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
+| `vendor.intercom-events.body.rich_url_syntax` | `{"kind":"format","param":"url","format":{"kind":"url"},"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"url","json_type":"string"},{"kind":"value_pattern","param":"url","pattern":"(?i)^https?://"}]}}` | warning | [official_vendor](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
+| `vendor.intercom-events.body.currency_assignment` | `{"kind":"format","param":"currency","format":{"kind":"currency","allow_historical":true,"case_insensitive":true},"condition":{"kind":"all","conditions":[{"kind":"exists","param":"amount"},{"kind":"value_pattern","param":"currency","pattern":"^[A-Za-z]{3}$"}]}}` | warning | [heuristic](https://developers.intercom.com/docs/references/rest-api/api.intercom.io/data-events/createdataevent) |
 
 ### Complete HTTP contract 1
 
@@ -14582,6 +14584,21 @@ Context: `{"scope":["properties.$exception_list[].stacktrace.frames[]","batch[].
 | --- | --- | --- | --- |
 | `vendor.posthog.body.frame_needs_platform` | `{"kind":"require_any_of","groups":[["platform"]],"condition":{"kind":"all","conditions":[{"kind":"any","conditions":[{"kind":"value_in","param":"stacktrace_type","values":["raw"]},{"kind":"not","condition":{"kind":"exists","param":"stacktrace_type"}}]},{"kind":"any","conditions":[{"kind":"exists","param":"platform"},{"kind":"not","condition":{"kind":"any","conditions":[{"kind":"exists","param":"abs_path"},{"kind":"exists","param":"context_line"},{"kind":"exists","param":"module"},{"kind":"exists","param":"pre_context"},{"kind":"exists","param":"post_context"}]}}]}]}}` | error | [official_vendor](https://raw.githubusercontent.com/PostHog/posthog/master/rust/cymbal/src/modes/processing/normalization.rs) |
 
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `path` | optional | `{"allow_empty":true}` | [official_vendor](https://posthog.com/docs/api/capture) |
+| `method` | optional | `{"allow_empty":true}` | [official_vendor](https://posthog.com/docs/api/capture) |
+| `body` | optional | `{"allow_empty":true}` | [official_vendor](https://posthog.com/docs/api/capture) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.posthog.http.modern_post_required` | `{"kind":"format","param":"method","format":{"kind":"enum","values":["POST"]},"condition":{"kind":"all","conditions":[{"kind":"value_pattern","param":"path","pattern":"^/(?:i/v0/e\|batch)/?$"},{"kind":"not","condition":{"kind":"value_in","param":"method","values":["OPTIONS"]}}]}}` | error | [official_vendor](https://posthog.com/docs/api/capture) |
+| `vendor.posthog.http.event_entity_required` | `{"kind":"require_any_of","groups":[["body"]],"condition":{"kind":"all","conditions":[{"kind":"value_pattern","param":"path","pattern":"^/(?:i/v0/e\|batch)/?$"},{"kind":"value_in","param":"method","values":["POST"]}]}}` | error | [official_vendor](https://posthog.com/docs/api/capture) |
+
 ## `vendor/pubmatic-vpaid-error`
 
 Pinned PMAdMgr.js error-builder advice on exact st.pubmatic.com/track, selected only with operId=7 and a vadsId key. Other operations, older notices without that marker and adjacent services remain uncovered.
@@ -15284,6 +15301,16 @@ Context: `{"scope":["batch[].context.externalId[]","context.externalId[]"]}`.
 | `id` | required | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/) |
 | `type` | required | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/) |
 
+### JSON contract 5
+
+Context: `{"scope":["batch[]",""]}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `type` | optional | `{"allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
+| `context.library.name` | optional | `{"allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
+| `name` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"type","values":["page","screen"]},{"kind":"value_in","param":"context.library.name","values":["http"]}]}}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
+
 ### Complete HTTP contract 1
 
 Context: `{}`.
@@ -15304,6 +15331,9 @@ Context: `{}`.
 | `body.groupId` | required | `{"json_type":"string","format":{"kind":"non_empty"},"condition":{"kind":"value_pattern","param":"path","pattern":"^/v1/group/?$"}}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
 | `body.previousId` | required | `{"json_type":"string","format":{"kind":"non_empty"},"condition":{"kind":"value_pattern","param":"path","pattern":"^/v1/alias/?$"}}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
 | `body.batch` | required | `{"json_type":"array","condition":{"kind":"value_pattern","param":"path","pattern":"^/v1/batch/?$"},"min_items":1}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
+| `body.type` | optional | `{"allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
+| `body.context.library.name` | optional | `{"allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
+| `body.name` | recommended | `{"allow_empty":true,"severity":"warning","condition":{"kind":"all","conditions":[{"kind":"value_pattern","param":"path","pattern":"^/v1/(?:page\|screen)/?$"},{"kind":"value_in","param":"body.context.library.name","values":["http"]},{"kind":"not","condition":{"kind":"exists","param":"body.type"}}]}}` | [official_vendor](https://www.rudderstack.com/docs/api/http-api/) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
