@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_date": "2026-10-26",
-  "status": "building_local_candidate",
+  "status": "tested_local_source_candidate",
   "coverage_claim": "Two existing packs receive deeper source-scoped checks. X adds one distinctive bare-JSON shape discriminator; endpoint host/path selectors and directory data remain unchanged. No new stored-sample reach measurement is claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
@@ -40,7 +40,7 @@
   },
   "current": {
     "version": "0.58.2",
-    "candidate_status": "building_local_candidate",
+    "candidate_status": "tested_local_source_candidate",
     "review_date": "2026-10-26",
     "packs": 233,
     "vendors": 133,
@@ -73,9 +73,160 @@
     "integration": "Host-bound path expressions, retained core privacy and distribution parity"
   },
   "verification": {
-    "status": "pending_full_validation",
     "candidate_version": "0.58.2",
-    "baseline_commit": "caeb6fd5a892dbd25ad318ee32ca23a11d43afa1"
+    "status": "passed_local_candidate",
+    "validation_source_sha": "2b0abfa7acd7e69b54ccd811a5c7a572e1f1b790",
+    "native_checks": {
+      "source_sha": "2b0abfa7acd7e69b54ccd811a5c7a572e1f1b790",
+      "checks": [
+        {
+          "check": "workspace",
+          "status": "passed_after_fixture_directory_setup",
+          "initial_attempt": {
+            "check": "workspace",
+            "command": [
+              "cargo",
+              "test",
+              "--workspace",
+              "--locked",
+              "--no-fail-fast"
+            ],
+            "exit_code": 101,
+            "seconds": 247.304,
+            "passed": 830,
+            "failed": 2
+          },
+          "cli_group_retry": {
+            "source_sha": "2b0abfa7acd7e69b54ccd811a5c7a572e1f1b790",
+            "command": [
+              "cargo",
+              "test",
+              "--locked",
+              "-p",
+              "pixellint",
+              "--test",
+              "cli"
+            ],
+            "exit_code": 0,
+            "passed": 17,
+            "failed": 0,
+            "seconds": 9.986,
+            "setup": "Created the ignored worktree target directory required by existing CLI fixtures. Compiled binaries stay in the configured shared target directory."
+          },
+          "passed": 832,
+          "failed": 0,
+          "exit_code": 0,
+          "note": "Full workspace executed all 832 tests. The only initial failures were two CLI fixture writes to a missing ignored local target directory. After creating it, the full 17-test CLI group passed. No source change was required."
+        },
+        {
+          "check": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--all-targets",
+            "--all-features",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "seconds": 4.85
+        },
+        {
+          "check": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.578
+        },
+        {
+          "check": "depth",
+          "command": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "tools/check-rulepack-depth.py"
+          ],
+          "exit_code": 0,
+          "seconds": 2.348
+        },
+        {
+          "check": "reference",
+          "command": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "tools/update-rulepack-reference.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.088
+        },
+        {
+          "check": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.073
+        }
+      ],
+      "all_completed": true,
+      "all_passed": true
+    },
+    "runtime_checks": {
+      "source_sha": "2b0abfa7acd7e69b54ccd811a5c7a572e1f1b790",
+      "checks": [
+        {
+          "check": "wasm-build",
+          "command": [
+            "wasm-pack",
+            "build",
+            "crates/pixellint-wasm",
+            "--mode",
+            "no-install",
+            "--target",
+            "nodejs",
+            "--out-dir",
+            "../../npm/wasm",
+            "--out-name",
+            "pixellint"
+          ],
+          "exit_code": 0,
+          "seconds": 24.996
+        },
+        {
+          "check": "node22",
+          "command": [
+            "/usr/local/bin/node",
+            "npm/test.mjs"
+          ],
+          "exit_code": 0,
+          "seconds": 36.328
+        },
+        {
+          "check": "node20",
+          "command": [
+            "/private/tmp/pixellint-qa-node20-20261025/node-v20.20.2-darwin-arm64/bin/node",
+            "npm/test.mjs"
+          ],
+          "exit_code": 0,
+          "seconds": 32.678
+        }
+      ],
+      "all_completed": true,
+      "all_passed": true
+    },
+    "wasm_sha256": "a80d3952deedf0b508d398b72014d6a05c5d2987024d8d89909b58d80f38ffb4",
+    "new_fixture_cases": 106,
+    "prior_expectations_changed": 1,
+    "unchanged_other_manifests": 231,
+    "host_and_path_selectors_unchanged": true,
+    "new_bare_json_discriminators": 1,
+    "engine_source_unchanged": true
   },
   "shared_protocol_limits": [
     {
@@ -381936,6 +382087,7 @@
     "published_examples": 1,
     "endpoint_host_path_selectors_unchanged": true,
     "bare_json_discriminators_added": 1,
-    "engine_source_unchanged": true
+    "engine_source_unchanged": true,
+    "validation_status": "passed_local_candidate"
   }
 }
