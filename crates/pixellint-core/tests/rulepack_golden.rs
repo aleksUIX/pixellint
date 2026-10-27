@@ -17,6 +17,46 @@ use pixellint_core::{
 };
 use serde::Deserialize;
 
+// The additive text capture format carries the same strict request fields.
+// Keep this selection oracle independent of the engine's shortlist and decoder.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CapturedTextForSelection {
+    url: String,
+    #[serde(rename = "method")]
+    _method: String,
+    #[serde(rename = "headers")]
+    _headers: pixellint_core::HttpHeaders,
+    body: Option<String>,
+    capture: pixellint_core::HttpCaptureContext,
+}
+
+fn captured_text_url(raw: &str) -> Result<String, serde_json::Error> {
+    use pixellint_core::HttpBodyAvailability::{Absent, Available};
+    let capture: CapturedTextForSelection = serde_json::from_str(raw)?;
+    let invalid_body = matches!(capture.capture.body, Some(Available)) && capture.body.is_none()
+        || matches!(capture.capture.body, Some(Absent)) && capture.body.is_some();
+    let mut names = BTreeSet::new();
+    let invalid_headers = capture
+        .capture
+        .unavailable_headers
+        .iter()
+        .chain(&capture.capture.redacted_headers)
+        .any(|name| {
+            name.is_empty()
+                || !name
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || b"!#$%&'*+-.^_`|~".contains(&byte))
+                || !names.insert(name.to_ascii_lowercase())
+        });
+    if invalid_body || invalid_headers {
+        return Err(<serde_json::Error as serde::de::Error>::custom(
+            "invalid capture availability",
+        ));
+    }
+    Ok(capture.url)
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct FixtureCase {
@@ -209,7 +249,8 @@ fn auto_mode_matches_independent_plugin_supports_and_reports() {
                                 &request.artifact,
                             )
                             .map(|capture| capture.url)
-                        });
+                        })
+                        .or_else(|_| captured_text_url(&request.artifact));
                 if let Ok(capture_url) = capture_url {
                     let url_request = ValidationRequest {
                         artifact_kind: ArtifactKind::Url,

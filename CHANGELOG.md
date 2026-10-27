@@ -7,6 +7,8 @@
 - Add per-record page/screen name advice for RudderStack's explicit HTTP profile without applying a universal SDK requirement.
 - Keep endpoint selectors and registry ownership unchanged. Receiver acceptance and additional sample reach are not claimed.
 
+- Update the independent selection oracle for the existing capture availability envelope.
+
 ## 0.70.0 (local candidate)
 
 - Deepen all three existing mParticle event profiles with published session, push, lifecycle, crash, profile, identity and attribute event contracts.
