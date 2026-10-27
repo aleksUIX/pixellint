@@ -2,16 +2,13 @@
   "id": "vendor/yahoo-conversions-api",
   "display_name": "Yahoo Conversion API",
   "vendor": "yahoo",
-  "description": "Server-side events posted to batch.datax.yahoo.com/v1/events/{pixelId}. The pixel ID rides in the path. Dot image pixels stay vendor/yahoo-dot. Product CAPI, which requires eventId, is not contracted.",
+  "description": "Standard Yahoo CAPI /v1/events/{pixelId} captures gain transport and OAuth advice. Missing pixel slots retain diagnostics. Neighboring paths and Product CAPI are outside this contract.",
   "source_level": "official_vendor",
   "docs": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
-  "path_pattern": "/v1/events/(?<pixel_id>[^/]*)",
+  "path_pattern": "\\A/v1/events/(?<pixel_id>[^/]*)\\z",
   "match": {
     "hosts": [
       "batch.datax.yahoo.com"
-    ],
-    "path_prefixes": [
-      "/v1/events"
     ],
     "json_paths": [
       "[].userData",
@@ -30,6 +27,12 @@
         "path": "data[].eventType",
         "excludes": ".+"
       }
+    ],
+    "paths": [
+      "/v1/events"
+    ],
+    "path_patterns": [
+      "/v1/events/[^/]*"
     ]
   },
   "params": [
@@ -532,5 +535,107 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+        "description": "The documented Standard CAPI operation uses POST.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+        "description": "Yahoo documents application/json and reports unsupported Content-Type. Missing MIME and alternative types receive advice without treating examples as an exhaustive receiver contract.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "headers.authorization",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+        "description": "OAuth is required in the current guide. Its historical error table notes nonenforcement in the initial release, so missing or non-Bearer captures receive advice. Token signature, lifetime and account approval remain external.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "(?i)^[ \\t]*Bearer[ \\t]+[^\\s]+[ \\t]*$"
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+        "description": "The published profile sends a JSON entity. Opaque compressed captures stay unverified; query-only alternatives mentioned by a generic error are not reinterpreted as this JSON profile.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "json"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "value_in",
+                "param": "body_encoding",
+                "values": [
+                  "unsupported"
+                ]
+              }
+            },
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "body_encoding",
+                  "values": [
+                    "none"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "content_type",
+                  "values": [
+                    "application/json"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "url",
+        "doc": "https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api",
+        "description": "The published Standard CAPI endpoint uses HTTPS. This is transport advice, not a claim about redirect or receiver behavior.",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "url",
+          "require_https": true
+        }
+      }
+    ],
+    "rules": []
+  }
 }

@@ -17120,11 +17120,11 @@ Context: `{}`.
 
 ## `vendor/tiktok-events-api`
 
-Server-to-server pixel track and batch requests to the TikTok Events API on business-api.tiktok.com. Events API 2.0 /event/track/ is vendor/tiktok-events-2.
+Legacy TikTok pixel track and batch profiles gain captured transport and route-specific envelope advice. Current official SDK v1.3 routes and the published v1.2 track profile are scoped separately from Events API 2.0.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/tiktok-events-api.json).
 
-Matcher: `{"hosts":["business-api.tiktok.com"],"path_contains":["/pixel/track","/pixel/batch"],"json_paths":[{"any_of":["pixel_code","context.user.email","context.user.phone_number","context.user.external_id"]}]}`.
+Matcher: `{"hosts":["business-api.tiktok.com"],"json_paths":[{"any_of":["pixel_code","context.user.email","context.user.phone_number","context.user.external_id"]}],"path_patterns":["/open_api/v1\\.3/pixel/(?:track\|batch)/?","/open_api/v1\\.2/pixel/track/?"]}`.
 
 ### JSON contract 1
 
@@ -17181,6 +17181,21 @@ Context: `{"scope":["batch[]",""]}`.
 | `vendor.tiktok-events-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["context.ip","context.user_agent","context.ad.callback","context.user.ttp"]}` | error | [official_vendor](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929) |
 | `vendor.tiktok-events-api.body.user_needs_an_identifier` | `{"kind":"require_one_of","params":["context.user.email","context.user.phone_number","context.user.external_id","context.user.ttp","context.ad.callback","context.ip"]}` | warning | [official_vendor](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929) |
 | `vendor.tiktok-events-api.body.complete_payment_requires_value_and_currency` | `{"kind":"required_when_value","when":"event","equals":["CompletePayment","PlaceAnOrder"],"requires":["properties.value","properties.currency"]}` | error | [official_vendor](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | optional | `{"severity":"warning","json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py) |
+| `content_type` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py) |
+| `headers.access-token` | recommended | `{"severity":"warning","normalization":"trim","allow_empty":false,"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py) |
+| `body_encoding` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["json"]},"condition":{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["unsupported"]}},{"kind":"any","conditions":[{"kind":"value_in","param":"body_encoding","values":["none"]},{"kind":"value_in","param":"content_type","values":["application/json"]}]}]}}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py) |
+| `path` | optional | `{"json_type":"string"}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py) |
+| `body` | optional | `{"allow_empty":true}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py) |
+| `body.batch` | recommended | `{"severity":"warning","allow_empty":true,"condition":{"kind":"all","conditions":[{"kind":"value_pattern","param":"path","pattern":"^/open_api/v1\\.3/pixel/batch/?$"},{"kind":"json_type","param":"body","json_type":"object"}]}}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/docs/PixelBatchBody.md) |
+| `body.event` | recommended | `{"severity":"warning","allow_empty":true,"condition":{"kind":"all","conditions":[{"kind":"value_pattern","param":"path","pattern":"^/open_api/v1\\.(?:2\|3)/pixel/track/?$"},{"kind":"json_type","param":"body","json_type":"object"}]}}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/docs/PixelTrackBody.md) |
 
 ## `vendor/tiktok`
 
@@ -17913,13 +17928,13 @@ Context: `{}`.
 
 ## `vendor/yahoo-conversions-api`
 
-Server-side events posted to batch.datax.yahoo.com/v1/events/{pixelId}. The pixel ID rides in the path. Dot image pixels stay vendor/yahoo-dot. Product CAPI, which requires eventId, is not contracted.
+Standard Yahoo CAPI /v1/events/{pixelId} captures gain transport and OAuth advice. Missing pixel slots retain diagnostics. Neighboring paths and Product CAPI are outside this contract.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/yahoo-conversions-api.json).
 
-Matcher: `{"hosts":["batch.datax.yahoo.com"],"path_prefixes":["/v1/events"],"json_paths":["[].userData",{"any_of":["[].eventName","[].eventTs","[].actionSource"]},{"path":"event_source","excludes":".+"},{"path":"data[].eventType","excludes":".+"}]}`.
+Matcher: `{"hosts":["batch.datax.yahoo.com"],"json_paths":["[].userData",{"any_of":["[].eventName","[].eventTs","[].actionSource"]},{"path":"event_source","excludes":".+"},{"path":"data[].eventType","excludes":".+"}],"paths":["/v1/events"],"path_patterns":["/v1/events/[^/]*"]}`.
 
-Path captures: `/v1/events/(?<pixel_id>[^/]*)`. Captured values take precedence over query keys with the same name.
+Path captures: `\A/v1/events/(?<pixel_id>[^/]*)\z`. Captured values take precedence over query keys with the same name.
 
 ### URL parameters
 
@@ -17993,6 +18008,18 @@ Context: `{"scope":"[]"}`.
 | `vendor.yahoo-conversions-api.body.gdpr_consent_valid` | `{"kind":"format_when","when":"privacy.privacy_type","equals":["GDPR"],"param":"privacy.consent_string","format":{"kind":"tcf"}}` | error | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
 | `vendor.yahoo-conversions-api.body.gpp_consent_valid` | `{"kind":"format_when","when":"privacy.privacy_type","equals":["GPP"],"param":"privacy.consent_string","format":{"kind":"gpp"}}` | error | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
 | `vendor.yahoo-conversions-api.body.gpp_sections_present` | `{"kind":"gpp_sections","param":"privacy.consent_string","sections":"privacy.gpp_sid","condition":{"kind":"value_in","param":"privacy.privacy_type","values":["GPP"]}}` | error | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
+| `content_type` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
+| `headers.authorization` | recommended | `{"severity":"warning","json_type":"string","format":{"kind":"regex","pattern":"(?i)^[ \\t]*Bearer[ \\t]+[^\\s]+[ \\t]*$"}}` | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
+| `body_encoding` | recommended | `{"severity":"warning","format":{"kind":"enum","values":["json"]},"condition":{"kind":"all","conditions":[{"kind":"not","condition":{"kind":"value_in","param":"body_encoding","values":["unsupported"]}},{"kind":"any","conditions":[{"kind":"value_in","param":"body_encoding","values":["none"]},{"kind":"value_in","param":"content_type","values":["application/json"]}]}]}}` | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
+| `url` | optional | `{"severity":"warning","json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://help.yahooinc.com/dsp-api/docs/standard-yahoo-conversion-api) |
 
 ## `vendor/yahoo-dot`
 

@@ -374,6 +374,8 @@ const addedProfileSlugs = [
   "google-ads-click-conversions",
   "google-ads-call-conversions",
   "braze",
+  "yahoo-conversions-api",
+  "tiktok-events-api",
 ];
 let addedProfileCases = 0;
 const profileFixtureGroups = new Map();
@@ -394,7 +396,14 @@ for (const slug of addedProfileSlugs) {
     });
   }
 }
+const publicAutoSelection = JSON.parse(readFileSync(new URL("./profile-auto-selection.json", import.meta.url), "utf8"));
+for (const label of Object.keys(publicAutoSelection)) {
+  assert.ok(profileFixtureExpected.get(label)?.fixture.rulepacks, `${label}: native fixture explicitly forces selection`);
+}
 function assertProfileReports(reports, fixture, label) {
+  const publicExpectation = publicAutoSelection[label.replace(/: single artifact$/, "")];
+  if (publicExpectation) fixture = publicExpectation;
+
   // Preserve explicit native fixture selection when the public API auto-selects.
   if (fixture.rulepacks) reports = reports.filter(report => fixture.rulepacks.includes(report.plugin_id));
   const violations = reports.flatMap(report => report.violations);
@@ -436,5 +445,5 @@ for (const entry of [{ validate, validateMany }, cjs]) {
     }
   }
 }
-assert.equal(addedProfileCases, 6972, "all 3486 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 7534, "all 3767 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);

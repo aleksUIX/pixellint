@@ -1,17 +1,13 @@
 {
   "id": "vendor/tiktok-events-api",
   "display_name": "TikTok Events API",
-  "description": "Server-to-server pixel track and batch requests to the TikTok Events API on business-api.tiktok.com. Events API 2.0 /event/track/ is vendor/tiktok-events-2.",
+  "description": "Legacy TikTok pixel track and batch profiles gain captured transport and route-specific envelope advice. Current official SDK v1.3 routes and the published v1.2 track profile are scoped separately from Events API 2.0.",
   "vendor": "tiktok",
   "source_level": "official_vendor",
   "docs": "https://ads.tiktok.com/marketing_api/docs?id=1739584855420929",
   "match": {
     "hosts": [
       "business-api.tiktok.com"
-    ],
-    "path_contains": [
-      "/pixel/track",
-      "/pixel/batch"
     ],
     "json_paths": [
       {
@@ -22,6 +18,10 @@
           "context.user.external_id"
         ]
       }
+    ],
+    "path_patterns": [
+      "/open_api/v1\\.3/pixel/(?:track|batch)/?",
+      "/open_api/v1\\.2/pixel/track/?"
     ]
   },
   "body": [
@@ -409,5 +409,155 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py",
+        "description": "The pinned official EventCallback sender uses POST. Other methods receive producer-profile advice rather than a universal receiver rejection claim.",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py",
+        "description": "The pinned sender selects application/json; MIME parameters are normalized by the capture layer.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "application/json"
+          ]
+        }
+      },
+      {
+        "name": "headers.access-token",
+        "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py",
+        "description": "The actual SDK writes its required access_token parameter into Access-Token. The generated No authorization required section describes Swagger auth settings, not the absence of this custom token header.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "normalization": "trim",
+        "allow_empty": false,
+        "json_type": "string",
+        "format": {
+          "kind": "non_empty"
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py",
+        "description": "The producer normally sends a JSON entity. Its optional body argument can emit no body, so absence is advice. Opaque encodings remain unverified.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "json"
+          ]
+        },
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "value_in",
+                "param": "body_encoding",
+                "values": [
+                  "unsupported"
+                ]
+              }
+            },
+            {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "value_in",
+                  "param": "body_encoding",
+                  "values": [
+                    "none"
+                  ]
+                },
+                {
+                  "kind": "value_in",
+                  "param": "content_type",
+                  "values": [
+                    "application/json"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "path",
+        "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py",
+        "description": "Captured normalized path supplies the track-versus-batch discriminator.",
+        "json_type": "string"
+      },
+      {
+        "name": "body",
+        "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/business_api_client/api/event_callback_api.py",
+        "description": "Parsed capture body supplies scope only; existing body contracts retain native type errors.",
+        "allow_empty": true
+      },
+      {
+        "name": "body.batch",
+        "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/docs/PixelBatchBody.md",
+        "description": "The batch model requires a batch member. Advice applies only to captured batch-route objects; existing array type and length checks retain ownership of supplied values.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "allow_empty": true,
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/open_api/v1\\.3/pixel/batch/?$"
+            },
+            {
+              "kind": "json_type",
+              "param": "body",
+              "json_type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "name": "body.event",
+        "doc": "https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/f809c396520df2d7b201a9ccc5378d822b728ed3/python_sdk/docs/PixelTrackBody.md",
+        "description": "The single-track model requires the root event member. A batch object does not establish a valid single-track envelope.",
+        "requirement": "recommended",
+        "severity": "warning",
+        "allow_empty": true,
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "value_pattern",
+              "param": "path",
+              "pattern": "^/open_api/v1\\.(?:2|3)/pixel/track/?$"
+            },
+            {
+              "kind": "json_type",
+              "param": "body",
+              "json_type": "object"
+            }
+          ]
+        }
+      }
+    ],
+    "rules": []
+  }
 }

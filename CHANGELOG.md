@@ -2,6 +2,9 @@
 
 ## 0.58.3 (local candidate)
 
+- Deepen Yahoo CAPI captures with documented POST checks and advisory OAuth, MIME, JSON entity and HTTPS contracts. Preserve historical authentication enforcement uncertainty.
+- Deepen TikTok legacy captures with pinned official sender transport and track-versus-batch envelope advice. Bound both owners to their documented route families and preserve unavailable captures.
+
 - Add combined request-object budget advice for standard Braze tracking, preserving legacy per-array limits. Exclude bulk, synchronous and status routes from the standard endpoint contract.
 - Treat malformed Customer.io event IDs as deduplication warnings. Check the documented uppercase ULID form and preserve numeric anonymous identifiers emitted by the official Node sender.
 - Add native-array aggregate assertions with scope and alias controls. Receiver policy, account limits and deduplication history remain external.
