@@ -2,7 +2,7 @@
 
 Reject service-inapplicable personalization consent while preserving supported user-data consent. Add canonical resource spelling and current or historical currency assignment advice.
 
-This round adds 93 regression cases. All 14 prior expectations are unchanged.
+This round adds 93 regression cases. All 14 prior golden expectations are unchanged. One supplementary numeric-enum example drops an unsupported personalization field; its original payload is retained as a new negative regression.
 
 - The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set it. Both ProtoJSON field spellings are checked; null retains unset semantics.
 - Resource-name checks provide canonical spelling advice. They do not check account existence, resource ownership, conversion-action eligibility, numeric range or equality with the upload customer. The conversion reference says the customer component is ignored for action lookup.
