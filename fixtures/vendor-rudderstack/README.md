@@ -1,16 +1,15 @@
 # The RudderStack HTTP and Pixel API profile has a bounded source contract.
 
-Per-record page/screen name advice for the explicit documented HTTP producer profile, with route inference and SDK scope preserved.
+Optional consent stamp, provider and allowed/denied string-list advice without inferring destination blocking.
 
-This round adds 48 synthetic cases. All 18 prior fixture expectations are retained.
+This round adds 62 regression cases. All 66 prior fixture expectations are retained.
 
-- The HTTP API page/screen table marks name required, while Ruby SDK documentation marks it optional. The new warning applies only to the explicit context.library.name=http profile, never as a universal SDK rejection rule.
-- Typed events receive body advice. Exact page/screen routes infer advice only when type is absent. This avoids duplicate findings and leaves unresolved template type or library values deferred.
-- Names and library markers remain record-local in batches. A root or sibling name or library marker cannot satisfy or activate another record.
-- Unmarked clients and SDK-specific profiles are outside the new advisory. A marked HTTP profile still needs caller confirmation if its actual producer contract differs from the documented example.
-- Source credentials, receiver enrichment, configured transformations, delivery and destination-specific requirements remain external. Existing Basic authentication and event/identity contracts are retained.
+- The documented metadata block and list element shapes produce warnings only. The mobile producer profile does not establish a universal server rejection law.
+- No universal custom-provider enum, category vocabulary, nonempty ID requirement, duplicate prohibition or cross-list disjointness is inferred. Existing clients and future providers stay open.
+- The denied list records metadata and does not alone establish blocking. SDK activation, category matching and AND/OR destination configuration require runtime state.
 
 Sources read:
 
-- https://www.rudderstack.com/docs/api/http-api/
-- https://www.rudderstack.com/docs/sources/event-streams/sdks/rudderstack-ruby-sdk/
+- https://www.rudderstack.com/docs/sources/event-streams/sdks/client-side-features/consent-management/
+- https://www.rudderstack.com/docs/sources/event-streams/sdks/client-side-features/consent-management/setup/
+- https://www.rudderstack.com/docs/releases/consent-management-mobile-sdks/

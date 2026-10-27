@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.58.2 (local candidate)
+
+- Check the published Segment consent preference map and RudderStack consent stamp as optional metadata, with per-record type advice and open category IDs.
+- Recommend the documented minimum GA4 location fields and honor structured user_location precedence over ip_override.
+- Preserve missing metadata, empty objects and arrays, custom provider names and endpoint ownership. Account configuration and actual consent enforcement require external context.
+
 ## 0.58.1
 
 - Add 44 endpoint rulepacks across 37 additional vendor IDs. The registry now contains 233 vendor packs across 133 vendor IDs.

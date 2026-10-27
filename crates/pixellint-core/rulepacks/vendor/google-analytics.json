@@ -197,10 +197,18 @@
           "format": {
             "kind": "ip"
           },
-          "description": "It is the IP address Google Analytics uses to derive geography. Google documents it as an IP, not a digest.",
+          "description": "Google ignores ip_override when a structured user_location object is supplied. Validate the IP only when that higher-priority object is absent or not established.",
           "fix_hint": "Send the visitor IP as `ip_override`, or send `user_location` instead.",
           "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
-          "json_type": "string"
+          "json_type": "string",
+          "condition": {
+            "kind": "not",
+            "condition": {
+              "kind": "json_type",
+              "param": "user_location",
+              "json_type": "object"
+            }
+          }
         },
         {
           "name": "user_location.country_id",
@@ -208,10 +216,18 @@
             "kind": "regex",
             "pattern": "^[A-Za-z]{2}$"
           },
-          "description": "It is the country in ISO 3166-1 alpha-2 form. Google documents `US` as the example.",
+          "description": "Google recommends country_id and region_id at a minimum when user_location is supplied. Missing values are advice; existing native-type and supplied-value checks remain active.",
           "fix_hint": "Send a two-letter country code such as `US`.",
           "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
-          "json_type": "string"
+          "json_type": "string",
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "error",
+          "condition": {
+            "kind": "json_type",
+            "param": "user_location",
+            "json_type": "object"
+          }
         },
         {
           "name": "user_properties.user_id",
@@ -271,12 +287,20 @@
         },
         {
           "name": "user_location.region_id",
-          "description": "The vendor documents `user_location.region_id` in the request contract.",
+          "description": "Google recommends country_id and region_id at a minimum when user_location is supplied. Missing values are advice; existing native-type and supplied-value checks remain active.",
           "doc": "https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference",
           "json_type": "string",
           "format": {
             "kind": "regex",
             "pattern": "^[A-Za-z]{2}-[A-Za-z0-9]{1,3}$"
+          },
+          "requirement": "recommended",
+          "severity": "warning",
+          "format_severity": "error",
+          "condition": {
+            "kind": "json_type",
+            "param": "user_location",
+            "json_type": "object"
           }
         },
         {

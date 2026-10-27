@@ -5819,8 +5819,8 @@ Context: `{}`.
 | `consent.ad_user_data` | optional | `{"format":{"kind":"enum","values":["GRANTED","DENIED"]},"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `consent.ad_personalization` | optional | `{"format":{"kind":"enum","values":["GRANTED","DENIED"]},"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `validation_behavior` | optional | `{"format":{"kind":"enum","values":["RELAXED","ENFORCE_RECOMMENDATIONS"]},"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
-| `ip_override` | optional | `{"format":{"kind":"ip"},"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
-| `user_location.country_id` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{2}$"},"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
+| `ip_override` | optional | `{"format":{"kind":"ip"},"json_type":"string","condition":{"kind":"not","condition":{"kind":"json_type","param":"user_location","json_type":"object"}}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
+| `user_location.country_id` | recommended | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{2}$"},"json_type":"string","severity":"warning","format_severity":"error","condition":{"kind":"json_type","param":"user_location","json_type":"object"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `user_properties.user_id` | forbidden | `{}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `app_instance_id` | optional | `{"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `events[]` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events) |
@@ -5830,7 +5830,7 @@ Context: `{}`.
 | `user_location` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events) |
 | `device` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events) |
 | `user_location.city` | optional | `{"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
-| `user_location.region_id` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Za-z]{2}-[A-Za-z0-9]{1,3}$"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
+| `user_location.region_id` | recommended | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Za-z]{2}-[A-Za-z0-9]{1,3}$"},"severity":"warning","format_severity":"error","condition":{"kind":"json_type","param":"user_location","json_type":"object"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `user_location.subcontinent_id` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9]{3}$"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `user_location.continent_id` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9]{3}$"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `device.category` | optional | `{"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
@@ -15264,6 +15264,12 @@ Context: `{"scope":["batch[]",""]}`.
 | `request_ip` | optional | `{"json_type":"string","format":{"kind":"ip"},"allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/) |
 | `context.externalId` | optional | `{"json_type":"array"}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/) |
 | `context.externalId[]` | optional | `{"json_type":"object"}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/kotlin-sdk/breaking-changes/android-java/) |
+| `context.consentManagement` | optional | `{"json_type":"object","severity":"warning"}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/client-side-features/consent-management/) |
+| `context.consentManagement.provider` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/client-side-features/consent-management/) |
+| `context.consentManagement.allowedConsentIds` | optional | `{"json_type":"array","severity":"warning"}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/client-side-features/consent-management/) |
+| `context.consentManagement.allowedConsentIds[]` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/client-side-features/consent-management/) |
+| `context.consentManagement.deniedConsentIds` | optional | `{"json_type":"array","severity":"warning"}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/client-side-features/consent-management/) |
+| `context.consentManagement.deniedConsentIds[]` | optional | `{"json_type":"string","severity":"warning","allow_empty":true}` | [official_vendor](https://www.rudderstack.com/docs/sources/event-streams/sdks/client-side-features/consent-management/) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
@@ -15483,6 +15489,9 @@ Context: `{"scope":["batch[]",""]}`.
 | `context.userAgentData.brands[]` | optional | `{"json_type":"object"}` | [official_vendor](https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts) |
 | `context.userAgentData.fullVersionList` | optional | `{"json_type":"array"}` | [official_vendor](https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts) |
 | `context.userAgentData.fullVersionList[]` | optional | `{"json_type":"object"}` | [official_vendor](https://github.com/segmentio/analytics-next/blob/master/packages/core/src/events/interfaces.ts) |
+| `context.consent` | optional | `{"json_type":"object","severity":"warning"}` | [official_vendor](https://www.twilio.com/docs/segment/privacy/consent-management/consent-in-segment-connections) |
+| `context.consent.categoryPreferences` | optional | `{"json_type":"object","severity":"warning"}` | [official_vendor](https://www.twilio.com/docs/segment/privacy/consent-management/consent-in-segment-connections) |
+| `context.consent.categoryPreferences.*` | optional | `{"json_type":"boolean","severity":"warning"}` | [official_vendor](https://www.twilio.com/docs/segment/privacy/consent-management/consent-in-segment-connections) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
