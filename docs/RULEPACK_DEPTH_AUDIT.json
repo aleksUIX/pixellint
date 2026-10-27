@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_date": "2026-10-26",
-  "status": "tested_local_source_candidate",
+  "status": "building_local_candidate",
   "coverage_claim": "Two existing Google conversion upload packs gain service-specific checks and resource or currency advice. Endpoint selectors, vendor directory and Rust engine source are unchanged. No new stored-sample reach measurement is claimed.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
@@ -40,7 +40,7 @@
   },
   "current": {
     "version": "0.58.2",
-    "candidate_status": "tested_local_source_candidate",
+    "candidate_status": "building_local_candidate",
     "review_date": "2026-10-26",
     "packs": 233,
     "vendors": 133,
@@ -54,10 +54,10 @@
     "changed_packs_this_round": 2,
     "new_packs_this_round": 0,
     "manifest_changes_this_round": 2,
-    "new_golden_cases": 186,
+    "new_golden_cases": 218,
     "changed_fixture_cases": 191,
     "new_field_contracts": 2,
-    "new_cross_field_assertions": 4,
+    "new_cross_field_assertions": 8,
     "remaining_requirement_entries": 941,
     "remaining_requirements_note": "Overlapping open requirements and fixture counts do not establish a percentage of vendor specification coverage.",
     "session_assertions": 2,
@@ -75,137 +75,9 @@
     "integration": "Host-bound path expressions, retained core privacy and distribution parity"
   },
   "verification": {
+    "status": "pending_full_validation",
     "candidate_version": "0.58.2",
-    "status": "passed_local_candidate",
-    "validation_source_sha": "5a42824549b5eaf0686fbfdec6f4b678db81cf65",
-    "native_checks": {
-      "source_sha": "5a42824549b5eaf0686fbfdec6f4b678db81cf65",
-      "checks": [
-        {
-          "check": "workspace",
-          "command": [
-            "cargo",
-            "test",
-            "--workspace",
-            "--locked",
-            "--no-fail-fast"
-          ],
-          "exit_code": 0,
-          "seconds": 249.917,
-          "passed": 832,
-          "failed": 0
-        },
-        {
-          "check": "clippy",
-          "command": [
-            "cargo",
-            "clippy",
-            "--locked",
-            "--all-targets",
-            "--all-features",
-            "--",
-            "-D",
-            "warnings"
-          ],
-          "exit_code": 0,
-          "seconds": 4.587
-        },
-        {
-          "check": "fmt",
-          "command": [
-            "cargo",
-            "fmt",
-            "--all",
-            "--check"
-          ],
-          "exit_code": 0,
-          "seconds": 0.535
-        },
-        {
-          "check": "depth",
-          "command": [
-            "/opt/homebrew/opt/python@3.14/bin/python3.14",
-            "tools/check-rulepack-depth.py"
-          ],
-          "exit_code": 0,
-          "seconds": 2.321
-        },
-        {
-          "check": "reference",
-          "command": [
-            "/opt/homebrew/opt/python@3.14/bin/python3.14",
-            "tools/update-rulepack-reference.py",
-            "--check"
-          ],
-          "exit_code": 0,
-          "seconds": 0.089
-        },
-        {
-          "check": "diff",
-          "command": [
-            "git",
-            "diff",
-            "--check"
-          ],
-          "exit_code": 0,
-          "seconds": 0.137
-        }
-      ],
-      "all_completed": true,
-      "all_passed": true
-    },
-    "runtime_checks": {
-      "source_sha": "5a42824549b5eaf0686fbfdec6f4b678db81cf65",
-      "checks": [
-        {
-          "check": "wasm-build",
-          "command": [
-            "wasm-pack",
-            "build",
-            "crates/pixellint-wasm",
-            "--mode",
-            "no-install",
-            "--target",
-            "nodejs",
-            "--out-dir",
-            "../../npm/wasm",
-            "--out-name",
-            "pixellint"
-          ],
-          "exit_code": 0,
-          "seconds": 18.829
-        },
-        {
-          "check": "node22",
-          "command": [
-            "/usr/local/bin/node",
-            "npm/test.mjs"
-          ],
-          "exit_code": 0,
-          "seconds": 80.222
-        },
-        {
-          "check": "node20",
-          "command": [
-            "/private/tmp/pixellint-qa-node20-20261025/node-v20.20.2-darwin-arm64/bin/node",
-            "npm/test.mjs"
-          ],
-          "exit_code": 0,
-          "seconds": 34.075
-        }
-      ],
-      "all_completed": true,
-      "all_passed": true
-    },
-    "wasm_sha256": "9286981158d6bc3cfa7f2dc672e1e962bdcf7814a69db7bbba63a1e8840c52c7",
-    "new_fixture_cases": 186,
-    "prior_golden_expectations_changed": 0,
-    "supplementary_example_corrections": 1,
-    "new_supplementary_cases": 1,
-    "unchanged_other_manifests": 231,
-    "host_and_path_selectors_unchanged": true,
-    "new_bare_json_discriminators": 0,
-    "engine_source_unchanged": true
+    "implicit_proto3_defaults_preserved": true
   },
   "shared_protocol_limits": [
     {
@@ -64478,7 +64350,7 @@
         "crates/pixellint-core/src/manifest.rs": "a5ab55c24056fed258e0a1f44f084050b93654b794b639c9011f71962ab22782",
         "crates/pixellint-core/src/indexed_params.rs": "59479dd7ec10895effcefec4c735bf1c873ef4d47dc938b7fe6e4b111b3c81ae",
         "docs/RULEPACK_SCHEMA.md": "dc21c4c6ca9394891ae8f176337594fa7d7cfb7a22d31f75110f7b5b2a243486",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422",
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937",
         "docs/reviews/pixel-collectors-053.json": "c0c473af1c6741b43edebe4a57c335ecc71d4cb88792e1b9cde26b98a9b09f8d",
         "crates/pixellint-core/tests/pixel_collectors_053.rs": "1bf151254194d7b7488ebeefaa1316f8704252071e3f6c44c8d59f5df708f28d",
         "fixtures/vendor-cj/depth053-000-empty-coupon.txt": "195e642fde30aad8fc5a83cfa99c9e9640134b2f68e30b0ec173bc1328427da2",
@@ -84480,6 +84352,26 @@
           "bytes": 30638,
           "sha256": "98fde2423cdb916dd59dcf5fe96222edad8fa198d865c1c83dbc464b9cc52387",
           "fetched_at": "2026-10-27T02:14:55.614652+00:00"
+        },
+        {
+          "name": "consent.proto",
+          "url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/common/consent.proto",
+          "final_url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/common/consent.proto",
+          "status": 200,
+          "bytes": 1617,
+          "mime_type": "text/plain; charset=utf-8",
+          "sha256": "dcb65d80753cdbbe907cab7041e2853b51f26e185d70e42a58d15790b4d6a42b",
+          "fetched_at": "2026-10-27T03:03:41.283529+00:00"
+        },
+        {
+          "name": "consent-status.proto",
+          "url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto",
+          "final_url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto",
+          "status": 200,
+          "bytes": 1458,
+          "mime_type": "text/plain; charset=utf-8",
+          "sha256": "64088c5cc6adbb2fd08c215726aa933a3856946726cbe6475cf8bd5d32a2031f",
+          "fetched_at": "2026-10-27T03:03:41.527137+00:00"
         }
       ],
       "contracts_mapped": [
@@ -84794,12 +84686,16 @@
             "aliases": [
               "consent.ad_personalization"
             ],
-            "requirement": "forbidden",
+            "requirement": "optional",
             "null_as_missing": true,
             "severity": "error",
             "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent",
-            "description": "Google limits this field to OfflineUserDataJobService and UserDataService. Click and call conversion uploads cannot set it. JSON null retains ProtoJSON unset semantics.",
-            "fix_hint": "Remove adPersonalization from this conversion upload. Set supported consent fields according to the integration."
+            "description": "Google limits non-default ad personalization consent to OfflineUserDataJobService and UserDataService. This proto3 enum has implicit presence: UNSPECIFIED, numeric zero and null retain default or unset behavior.",
+            "fix_hint": "Remove non-default adPersonalization from this upload; keep supported adUserData consent according to the integration.",
+            "json_type": [
+              "string",
+              "integer"
+            ]
           },
           "sources": [
             "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent"
@@ -84961,6 +84857,56 @@
           },
           "sources": [
             "https://developers.google.com/google-ads/api/reference/rpc/v25/CallConversion"
+          ]
+        },
+        {
+          "scope": "body:['conversions[]']",
+          "assertion": {
+            "code": "vendor.google-ads-call-conversions.body.consent.adPersonalization.forbidden",
+            "kind": "forbid_value_pattern",
+            "params": [
+              "consent.adPersonalization"
+            ],
+            "pattern": "^(?:UNKNOWN|GRANTED|DENIED|[-+]?(?:[0-9]*[1-9][0-9]*(?:\\.[0-9]*)?|[0-9]*\\.[0-9]*[1-9][0-9]*)(?:[eE][+-]?[0-9]+)?)$",
+            "severity": "error",
+            "message": "Non-default ad personalization consent is supported only by OfflineUserDataJobService and UserDataService. This conversion upload must leave it unspecified.",
+            "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent"
+          },
+          "sources": [
+            "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent"
+          ]
+        },
+        {
+          "scope": "body:['conversions[]']",
+          "assertion": {
+            "code": "vendor.google-ads-call-conversions.body.consent.adPersonalization.invalid",
+            "kind": "format",
+            "param": "consent.adPersonalization",
+            "format": {
+              "kind": "regex",
+              "pattern": "^(?:UNSPECIFIED|UNKNOWN|GRANTED|DENIED|[-+]?[0-9]+)$"
+            },
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "json_type",
+                  "param": "consent.adPersonalization",
+                  "json_type": "string"
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "consent.adPersonalization",
+                  "pattern": "(?s).+"
+                }
+              ]
+            },
+            "severity": "error",
+            "message": "Use an enum name or integer spelling. Unspecified zero is retained; non-default consent belongs to other services.",
+            "doc": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto"
+          },
+          "sources": [
+            "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto"
           ]
         },
         {
@@ -85514,7 +85460,7 @@
           "status": "remaining",
           "locally_checkable": false
         },
-        "The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set it. Both ProtoJSON field spellings are checked; null retains unset semantics.",
+        "The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set a non-default value. Both field spellings, implicit zero defaults and null-unset semantics are retained.",
         "Resource-name checks provide canonical spelling advice. They do not check account existence, resource ownership, conversion-action eligibility, numeric range or equality with the upload customer. The conversion reference says the customer component is ignored for action lookup.",
         "Currency assignment is advisory and accepts current and historical codes without forcing case. Both built-in code sets were independently compared with freshly fetched primary SIX XML. Account eligibility and actual Google currency support remain external.",
         "Existing ProtoJSON aliases, null handling, timestamp, value and identity checks are retained. Simultaneous duplicate aliases and raw duplicate keys retain the existing parser behavior; this round does not model receiver selection among duplicates.",
@@ -85812,7 +85758,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "f08874bb2bc11a5e4a7153071fbb381fe4a968c715290a7daff7977832d9f29e",
+      "manifest_sha256": "5b8a042ca0aa7e4f321be8d40d0bdf9d684ca84cb7cbea7c60eb9fe7f05d88eb",
       "fixture_sha256": {
         "fixtures/vendor-google-ads-call-conversions/clean-call.txt": "c95b8995a823077a6cd5e894d5f3993e9025b75e9564d6d870907fdb4dde8ce9",
         "fixtures/vendor-google-ads-call-conversions/clean-url.txt": "e932e889d7b239d695444f7b2f716afecbd1d360e994336c1509328e2b8a0bb9",
@@ -85933,7 +85879,7 @@
         "fixtures/vendor-google-ads-call-conversions/depthr9-capture-unavailable.json": "3c0e3b983b1a074981fc75c7799388f4e09ed181e447da0ac9ee950d3cb44f2c",
         "fixtures/vendor-google-ads-call-conversions/depthr9-currency-historic-mark.json": "2db8ab920cdc9e8862a68d6dd202532dcf7a35e1ebe3a0bfbff859b9ced7e3ae",
         "fixtures/vendor-google-ads-call-conversions/depthr9-null-camel-does-not-hide-snake.json": "4361a94cf715dbab98f7df47b1f6951f38eda99bdea1c94b59b9b25f14e6033e",
-        "fixtures/vendor-google-ads-call-conversions/README.md": "161fa5be9d9cb1292108a641e7e785b4e84aa7fc894558f97e6c3154e2b6f48d",
+        "fixtures/vendor-google-ads-call-conversions/README.md": "7d57ac4384b256447ff16f8471ca98875a4c6ea7928c5c30933675ea28da1ac6",
         "fixtures/vendor-google-ads-call-conversions/clean-call.txt": "c95b8995a823077a6cd5e894d5f3993e9025b75e9564d6d870907fdb4dde8ce9",
         "fixtures/vendor-google-ads-call-conversions/depthr9-supported-ad_user_data-denied.json": "457cb3ece11c86ae0f256cdd7a9d7a93eba000412d012d14f663b425f584aa77",
         "fixtures/vendor-google-ads-call-conversions/depthr9-resource-camel-customer-dashes.json": "c4fa8fb09e24a58f415300f333d23ab9e513bca85ba5784842d1a60a8e75f2cd",
@@ -85951,7 +85897,7 @@
         "fixtures/vendor-google-ads-call-conversions/depthr9-unsupported-ad_personalization-zero.json": "db79297538584f5143a29304c0dd065b80c11d25b945eb455dc0dbd2d90e33ab",
         "fixtures/vendor-google-ads-call-conversions/depthr9-later-record-forbidden-consent.json": "a3d1fba41e263273bc97da56f301eaaeb472d6da7afd199c17604fe85fe60e81",
         "fixtures/vendor-google-ads-call-conversions/invalid-caller-id.txt": "4a89e7d4e1a6a6b12db5739e61bc95eb6e05bef687d3e1b9bfeffdbe49050e48",
-        "fixtures/vendor-google-ads-call-conversions/manifest.json": "c8cd468c35eea1a53d71d389c6d428176971817dea7ade57268f87c287d72881",
+        "fixtures/vendor-google-ads-call-conversions/manifest.json": "a4a23936c9d60b7686d0efad72f31e0303b34dd5caa6b5c57cfcedb27e1681c9",
         "fixtures/vendor-google-ads-call-conversions/iso-datetime.txt": "9a9e243cda491f3ed56119d9507af4b612dfa3b9e7aa9947aa6cf7107b7e5e89",
         "fixtures/vendor-google-ads-call-conversions/depthr9-resource-snake-bare-id.json": "079236c5fe1f8afa56b0d2b3860636ed6fce238a3eb927a02ddd3e2a55afb4bc",
         "fixtures/vendor-google-ads-call-conversions/depthr9-unsupported-adPersonalization-array.json": "a66eabc69f4e35c9189803a44ca995d87e2e76905c8560788982663ad3f174c5",
@@ -85984,7 +85930,23 @@
         "fixtures/vendor-google-ads-call-conversions/depthr9-unsupported-adPersonalization-true.json": "2d5e60e0324e770e81c70b7f79bf96a576f5289596ee6142d6d695de74590897",
         "fixtures/vendor-google-ads-click-conversions/depthr9-currency-source-oracle.json": "8eeffd58c8173be2d131dfd2d366b2cb026e559f8789b1ade517582366df1468",
         "crates/pixellint-core/src/currency.rs": "dcd6eeb8d61cddac44823ebc4eae1694d9cc3fdad7848a86ed53ba5520ec603c",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422"
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-negative-zero.json": "23788810a11868092d93865051403a7dfd575de11fe414c9315cfc2e888b2aed",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-plus-zero-string.json": "ec4603f0f1cdc79aadf9cf6eccf9f229271e2b35dcaa6a81d0e11eda23309e37",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-leading-zero-string.json": "c50440bd395a449c6ff7d6d5adf875ba5533e783c63f12a5d98fa79ecf13dfb0",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-negative-zero.json": "39817283e79328d1b3d56c5f2850f560af206b2fbebe92531701ab2584e65c86",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-minus-zero-string.json": "7dc9b5dfba7984a0d5dc509681bfd3919db4ed2fc7503ce808ccaa567f652919",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-negative-one.json": "5b46e6882b3275f79c29ef5f553224c2d1c8e78fc636199adf85e867b93473af",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-numeric-two.json": "0edde1f1596d88aaed1de2362830ad964037ccc159dddccb2f8bd5491db4fd17",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-integer-two-string.json": "5d9948ca68ec439efb27364d59db3b4825360ebacff5e8011462653a6227080c",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-numeric-two.json": "0326f7a3777ea545260b9014a0a80ef7c46051fcea2948521a289b855f36e308",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-plus-zero-string.json": "896d8bb4df0343f6c79e2efcaf9fa1715b6d343a8e573f7659548ea3c3774a48",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-leading-zero-string.json": "147bbed2fa45b16f81fc214219820a27e984637f9420ab773f3b3793cca941c1",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-float-zero.json": "b98279650c20b71763bf6b42d3d71de2b0740add6c4f2dcd2022bdfd5d5a4a20",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-float-zero.json": "b7b065ad337dbdd42384b9f33792ebc450031715b93ad782aacb1f1dbb4f2e5f",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-minus-zero-string.json": "2207f7f76a2b198f7522b90a46b3f6f2ddb5811965d21ca5364d5ea60ec77a03",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-integer-two-string.json": "86f0be8db8e35a873e3c71ac688cde63676fec9608ec0cff72aab2ba7c617d84",
+        "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-negative-one.json": "c03a60f6d9fe485533d3d85f511ae12b1d8f73e0ef4ef14089777db9f2ca04a8"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -86113,11 +86075,12 @@
           "manifest_changed_this_round": false
         }
       ],
-      "implemented_scope": "Reject service-inapplicable personalization consent while preserving supported user-data consent. Add canonical resource spelling and current or historical currency assignment advice.",
+      "implemented_scope": "Reject non-default service-inapplicable personalization consent while preserving proto3 implicit zero defaults and nulls. Add resource-name and currency assignment advice.",
       "depth_round9_20261026": {
-        "new_cases": 93,
+        "new_cases": 109,
         "prior_cases_unchanged": 7,
-        "baseline": "dd56558a2d7215bb8731b3a2269d82d7e8d46cd2"
+        "baseline": "dd56558a2d7215bb8731b3a2269d82d7e8d46cd2",
+        "implicit_proto3_defaults_preserved": true
       }
     },
     {
@@ -86183,6 +86146,26 @@
           "bytes": 30638,
           "sha256": "98fde2423cdb916dd59dcf5fe96222edad8fa198d865c1c83dbc464b9cc52387",
           "fetched_at": "2026-10-27T02:14:55.614652+00:00"
+        },
+        {
+          "name": "consent.proto",
+          "url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/common/consent.proto",
+          "final_url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/common/consent.proto",
+          "status": 200,
+          "bytes": 1617,
+          "mime_type": "text/plain; charset=utf-8",
+          "sha256": "dcb65d80753cdbbe907cab7041e2853b51f26e185d70e42a58d15790b4d6a42b",
+          "fetched_at": "2026-10-27T03:03:41.283529+00:00"
+        },
+        {
+          "name": "consent-status.proto",
+          "url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto",
+          "final_url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto",
+          "status": 200,
+          "bytes": 1458,
+          "mime_type": "text/plain; charset=utf-8",
+          "sha256": "64088c5cc6adbb2fd08c215726aa933a3856946726cbe6475cf8bd5d32a2031f",
+          "fetched_at": "2026-10-27T03:03:41.527137+00:00"
         }
       ],
       "contracts_mapped": [
@@ -87138,12 +87121,16 @@
             "aliases": [
               "consent.ad_personalization"
             ],
-            "requirement": "forbidden",
+            "requirement": "optional",
             "null_as_missing": true,
             "severity": "error",
             "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent",
-            "description": "Google limits this field to OfflineUserDataJobService and UserDataService. Click and call conversion uploads cannot set it. JSON null retains ProtoJSON unset semantics.",
-            "fix_hint": "Remove adPersonalization from this conversion upload. Set supported consent fields according to the integration."
+            "description": "Google limits non-default ad personalization consent to OfflineUserDataJobService and UserDataService. This proto3 enum has implicit presence: UNSPECIFIED, numeric zero and null retain default or unset behavior.",
+            "fix_hint": "Remove non-default adPersonalization from this upload; keep supported adUserData consent according to the integration.",
+            "json_type": [
+              "string",
+              "integer"
+            ]
           },
           "sources": [
             "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent"
@@ -87402,6 +87389,56 @@
           },
           "sources": [
             "https://developers.google.com/google-ads/api/reference/rpc/v25/ClickConversion"
+          ]
+        },
+        {
+          "scope": "body:['conversions[]']",
+          "assertion": {
+            "code": "vendor.google-ads-click-conversions.body.consent.adPersonalization.forbidden",
+            "kind": "forbid_value_pattern",
+            "params": [
+              "consent.adPersonalization"
+            ],
+            "pattern": "^(?:UNKNOWN|GRANTED|DENIED|[-+]?(?:[0-9]*[1-9][0-9]*(?:\\.[0-9]*)?|[0-9]*\\.[0-9]*[1-9][0-9]*)(?:[eE][+-]?[0-9]+)?)$",
+            "severity": "error",
+            "message": "Non-default ad personalization consent is supported only by OfflineUserDataJobService and UserDataService. This conversion upload must leave it unspecified.",
+            "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent"
+          },
+          "sources": [
+            "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent"
+          ]
+        },
+        {
+          "scope": "body:['conversions[]']",
+          "assertion": {
+            "code": "vendor.google-ads-click-conversions.body.consent.adPersonalization.invalid",
+            "kind": "format",
+            "param": "consent.adPersonalization",
+            "format": {
+              "kind": "regex",
+              "pattern": "^(?:UNSPECIFIED|UNKNOWN|GRANTED|DENIED|[-+]?[0-9]+)$"
+            },
+            "condition": {
+              "kind": "all",
+              "conditions": [
+                {
+                  "kind": "json_type",
+                  "param": "consent.adPersonalization",
+                  "json_type": "string"
+                },
+                {
+                  "kind": "value_pattern",
+                  "param": "consent.adPersonalization",
+                  "pattern": "(?s).+"
+                }
+              ]
+            },
+            "severity": "error",
+            "message": "Use an enum name or integer spelling. Unspecified zero is retained; non-default consent belongs to other services.",
+            "doc": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto"
+          },
+          "sources": [
+            "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto"
           ]
         },
         {
@@ -89034,7 +89071,7 @@
           "status": "remaining",
           "locally_checkable": false
         },
-        "The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set it. Both ProtoJSON field spellings are checked; null retains unset semantics.",
+        "The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set a non-default value. Both field spellings, implicit zero defaults and null-unset semantics are retained.",
         "Resource-name checks provide canonical spelling advice. They do not check account existence, resource ownership, conversion-action eligibility, numeric range or equality with the upload customer. The conversion reference says the customer component is ignored for action lookup.",
         "Currency assignment is advisory and accepts current and historical codes without forcing case. Both built-in code sets were independently compared with freshly fetched primary SIX XML. Account eligibility and actual Google currency support remain external.",
         "Existing ProtoJSON aliases, null handling, timestamp, value and identity checks are retained. Simultaneous duplicate aliases and raw duplicate keys retain the existing parser behavior; this round does not model receiver selection among duplicates.",
@@ -89710,7 +89747,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "9ea38385327335e160e856bc0a49819e6d541f092145f3154160e812c1a19d4c",
+      "manifest_sha256": "62510c4fa28fe28a700a67c1d24ba6fb770182a91acdca3190a3c1f71416f3e9",
       "fixture_sha256": {
         "fixtures/vendor-google-ads-click-conversions/clean-cart-order.txt": "014460c5be07094ed38b9474870dbb8861bd0b460d020807a5c688318281e437",
         "fixtures/vendor-google-ads-click-conversions/clean-email.txt": "39e752adf23ad427744b2bb2298ad12cd468823ed7cac6cc47052f92d9a024b0",
@@ -89859,7 +89896,7 @@
         "fixtures/vendor-google-ads-click-conversions/depthr9-capture-unavailable.json": "03d1b9c7d7a8804b6094057f5add5fdce87792a5fd4ca7d810b71612a7115ed2",
         "fixtures/vendor-google-ads-click-conversions/depthr9-currency-historic-mark.json": "b97090ba75704bcf1281c6d2a8f1c6f1b63602cfc3ccc3f0a07814ca2d43a5a4",
         "fixtures/vendor-google-ads-click-conversions/depthr9-null-camel-does-not-hide-snake.json": "d23948efc4b1d0d0d1e6d5d09bad82b59d4897a165f6f4b36dcadc390733f7d3",
-        "fixtures/vendor-google-ads-click-conversions/README.md": "6dfddb1eacaf2bf5f03f9ff4c8780c14c8e67113ac5fb607b23d263b223dd8d3",
+        "fixtures/vendor-google-ads-click-conversions/README.md": "2f384e72ddcfb36dcb6d94b8becec4c5642278aa8f854a55b9655e0c7d23a0aa",
         "fixtures/vendor-google-ads-click-conversions/clean-cart-order.txt": "014460c5be07094ed38b9474870dbb8861bd0b460d020807a5c688318281e437",
         "fixtures/vendor-google-ads-click-conversions/depthr9-supported-ad_user_data-denied.json": "afd6a1f0b1871b9d80ab3c9b671939587ad72a0d8413fe09c91dbe30c4dd1e64",
         "fixtures/vendor-google-ads-click-conversions/depthr9-resource-camel-customer-dashes.json": "aca371da402806357e158170fc1fac483b9c0fffe54b83ad6b9a867fd6b4ac0a",
@@ -89876,7 +89913,7 @@
         "fixtures/vendor-google-ads-click-conversions/depthr9-resource-camel-other-customer.json": "07511344301cbba85deb33d3c0010f301c39257422851717570e1e8b67cd9542",
         "fixtures/vendor-google-ads-click-conversions/depthr9-unsupported-ad_personalization-zero.json": "64ccac56c24f0c8a87ceaa9413405393bbe445f65ec99e64e088c26ad26b09de",
         "fixtures/vendor-google-ads-click-conversions/depthr9-later-record-forbidden-consent.json": "8199f3a566b6ba4e6ef6c5ebd9a30afae295c443427e21f60aa4ec24e0e0ad47",
-        "fixtures/vendor-google-ads-click-conversions/manifest.json": "9e2e068b3e8be0685c3984e85601527ee30d3ce08af6c6c7071b1e0c649a8bb8",
+        "fixtures/vendor-google-ads-click-conversions/manifest.json": "221169ecc06bb71d717aa4ab8e3bcac402f6c066cc1404711ed8f86c32460a1d",
         "fixtures/vendor-google-ads-click-conversions/depthr9-resource-snake-bare-id.json": "a513a7344d55b3fc2588ef5cf795bfba5d18857fa83857bdb2a13ac4edc428e8",
         "fixtures/vendor-google-ads-click-conversions/depthr9-unsupported-adPersonalization-array.json": "473771208eb9208a5835e0c8deaec2102564249d61d7f6f45ec7fc41587676d1",
         "fixtures/vendor-google-ads-click-conversions/depthr9-currency-yen.json": "8b7054e887575ea1dfca88374d03e5969de6ecd67d0bc8a47f9aad7726433781",
@@ -89908,7 +89945,23 @@
         "fixtures/vendor-google-ads-click-conversions/depthr9-resource-snake-trailing-slash.json": "593b0082de54daec425da8b759b1b65297063a065b6307b9233dae0ac01fb9ae",
         "fixtures/vendor-google-ads-click-conversions/depthr9-unsupported-adPersonalization-true.json": "2c645b17dae1bf335fbbea5039d4ca401f49ff74de21594f1b99ab312ad797f3",
         "crates/pixellint-core/src/currency.rs": "dcd6eeb8d61cddac44823ebc4eae1694d9cc3fdad7848a86ed53ba5520ec603c",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422"
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-negative-zero.json": "c12fa15ea19a0501167ff6e4476633da1d257291366149a48e2f24e37cdf601c",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-plus-zero-string.json": "41355c3bd21d456bcde6e66cec612a6b432708ffcb09645852af1f0f1f63cc03",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-leading-zero-string.json": "211ea18cbf7c7c5e129eccaaec520043556e51e0fd425bd664fc0b6001b46589",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-negative-zero.json": "2119e6380808979d957c75decc1dd1bc707fe4905b3e52f52084da2545de00f6",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-minus-zero-string.json": "09c8dde1e8dd544641041e6eb57b9335d81cadbfe8a21c3e8cc557572545b80e",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-negative-one.json": "cebde7952846e4d9b26304105f197bc9c2c156a5c205722d1f664157fbeeb877",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-numeric-two.json": "5588312ec7e50a9c4e044d2c035b482df1319b3ae14002f0eca5ff2fe37096e4",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-integer-two-string.json": "5c0220d31aaec357f425cc57b93c1ecbddb489f305936042005dca855800aa50",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-numeric-two.json": "f2dc9b6e7f1dee2357a59ddb0d0d0111972464156363e949a5f4979a760e3c02",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-plus-zero-string.json": "99ad350fecd032a0d02b9290b5381886e3f1885640350fbf95088a5f4222a1e2",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-leading-zero-string.json": "d5a11649c72dda5051332c9e1c763407a0a18f8190c7877c4f856ef9433a3496",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-float-zero.json": "6a7930e2f3733055186846d76e6c867303b780f29a5be7b1e3c2213a71ad3502",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-float-zero.json": "2ce982b7a348d59bd0a965e2120836cb5ab2a3a459fb56fbd8d5847440035b6e",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-minus-zero-string.json": "73119ad003b72394faf2a63dcc79518acfcefd5d4b5dad35163216f7a35a15d2",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-integer-two-string.json": "96144e9a4d4d0077b8127e5f7145a719d990d192d672d88a6eb62a3412005552",
+        "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-negative-one.json": "b9210eb75356089be5b923eb189c4fa1a3e399bb35fc2d8003f27329208aedfc"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -90037,13 +90090,14 @@
           "manifest_changed_this_round": false
         }
       ],
-      "implemented_scope": "Reject service-inapplicable personalization consent while preserving supported user-data consent. Add canonical resource spelling and current or historical currency assignment advice.",
+      "implemented_scope": "Reject non-default service-inapplicable personalization consent while preserving proto3 implicit zero defaults and nulls. Add resource-name and currency assignment advice.",
       "depth_round9_20261026": {
-        "new_cases": 93,
+        "new_cases": 109,
         "prior_cases_unchanged": 14,
         "baseline": "dd56558a2d7215bb8731b3a2269d82d7e8d46cd2",
         "supplementary_example_corrections": 1,
-        "new_supplementary_cases": 1
+        "new_supplementary_cases": 1,
+        "implicit_proto3_defaults_preserved": true
       }
     },
     {
@@ -100544,7 +100598,7 @@
         "fixtures/vendor-google-analytics/session-depth-cases.json": "315eb958d6c3e335ca2c148f299848d8eedb8dc064aa090fb720f775df38a957",
         "fixtures/vendor-google-analytics/spec-cases.json": "04a100cbbc444d25b7e0860d72d7cd8cf4e3cee37579ac04fd96156fb45bd417",
         "fixtures/vendor-google-analytics/universal-analytics-id.txt": "f1bca41d0052cb3683841e1e126417786ad7a4c6cdf2ad790d3e0ba5ca745fe5",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422"
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -109809,7 +109863,7 @@
         "npm/index.mjs": "ed8d6582cf6a81b2f10490a8f998d215116a18b463367c60fd580745fd60196b",
         "npm/index.cjs": "e814973e6d7ca46d098f19bfc902a988229a9a9a0331e4767a10276e678e8373",
         "npm/index.d.ts": "ed971b90b0680acd0e2c231bcd74223e07f2b7236932bf49354863b3fce0a1a4",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422",
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937",
         "npm/sessions.test.mjs": "2934e636468d6a2549a34b886f351ccc3c1fd819a5069b93dacde1ad58c06483",
         "docs/SESSION_SCHEMA.md": "0b1cea0b2e76d0310f7823d0cc239cbe9b17c56d53b731f3c5c504c564c56dc5",
         "docs/reviews/explicit-ad-sessions.json": "fea3dde54f37824d6e6d3cfead737e27c127fa9be9a85d1be849cd15553683c3",
@@ -260511,7 +260565,7 @@
         "crates/pixellint-core/src/manifest.rs": "a5ab55c24056fed258e0a1f44f084050b93654b794b639c9011f71962ab22782",
         "crates/pixellint-core/src/indexed_params.rs": "59479dd7ec10895effcefec4c735bf1c873ef4d47dc938b7fe6e4b111b3c81ae",
         "docs/RULEPACK_SCHEMA.md": "dc21c4c6ca9394891ae8f176337594fa7d7cfb7a22d31f75110f7b5b2a243486",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422",
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937",
         "docs/reviews/pixel-collectors-053.json": "c0c473af1c6741b43edebe4a57c335ecc71d4cb88792e1b9cde26b98a9b09f8d",
         "crates/pixellint-core/tests/pixel_collectors_053.rs": "1bf151254194d7b7488ebeefaa1316f8704252071e3f6c44c8d59f5df708f28d",
         "fixtures/vendor-rakuten/depth053-000-producer-rakuten-sale-0.txt": "633f57d5bc45c1dbe82bd979959d2630adf41d664408dc3e79cea970aec357ea",
@@ -268118,7 +268172,7 @@
         "fixtures/vendor-rudderstack/missing-write-key.txt": "30c92fa0a7ade3d8c47f314088c5b636a939eae2772ec3442b348e58f40e7c85",
         "fixtures/vendor-rudderstack/session-depth-cases.json": "7eed9a66331ca51203615201800ebe03d1b5a8f11d42b39f3c4dd79f73f9946c",
         "fixtures/vendor-rudderstack/spec-cases.json": "ee80be79b113d7d2ba3cc93ca10a308760b3f7d764978b5c28500d27697bd69f",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422"
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -273188,7 +273242,7 @@
         "fixtures/vendor-segment/session-depth-cases.json": "07941b2e6d3d9f0bc768cac4fd259bb3c81555e56cb9b9b6b6c7084b89715a37",
         "fixtures/vendor-segment/spec-cases.json": "2e6c1e938ff8335f641bc9dacbe802cae1b462f2c2e3f2f99e5a7b4d38a099af",
         "fixtures/vendor-segment/tester-followup-cases.json": "4e7a45911fe92d26d5db1f8f59bf7c53f9ef5bbbbc40ab29db29a8a4fbc364c7",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422"
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -295618,7 +295672,7 @@
         "fixtures/vendor-x-conversions-api/depthr8-mixed-legacy-and-sender-batch.json": "54f069486544872e63f0a2c8c983d6e66a9080563fc71d414d0571bd1bd5db1f",
         "fixtures/vendor-x-conversions-api/invalid-num-items.txt": "87ddbef144cf3873f5a50e35c72fd3b1aaf38f9698e35aeef1e7f209f190cb12",
         "fixtures/vendor-x-conversions-api/depthr8-conversion_timestamp-zero.json": "767d4a1d10b2e71650175f968690f9f20cf3bd454ba0994a981a831ac55e4c24",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422"
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937"
       },
       "session_date": "2026-10-08",
       "session_baseline": "released_v0.32.0",
@@ -307509,7 +307563,7 @@
         "crates/pixellint-core/src/manifest.rs": "a5ab55c24056fed258e0a1f44f084050b93654b794b639c9011f71962ab22782",
         "crates/pixellint-core/src/indexed_params.rs": "59479dd7ec10895effcefec4c735bf1c873ef4d47dc938b7fe6e4b111b3c81ae",
         "docs/RULEPACK_SCHEMA.md": "dc21c4c6ca9394891ae8f176337594fa7d7cfb7a22d31f75110f7b5b2a243486",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422",
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937",
         "docs/reviews/pixel-collectors-053.json": "c0c473af1c6741b43edebe4a57c335ecc71d4cb88792e1b9cde26b98a9b09f8d",
         "crates/pixellint-core/tests/pixel_collectors_053.rs": "1bf151254194d7b7488ebeefaa1316f8704252071e3f6c44c8d59f5df708f28d",
         "fixtures/vendor-mntn-image/depth053-000-producer-mntn-page-0.txt": "befcd30df84fa82540b854598b3e485e4fef8fc3f1d1987e5bc1da24949fcb5b",
@@ -328879,7 +328933,7 @@
         "fixtures/vendor-tealium-collect/depthr8-cookie-json-empty-true.json": "4ac0ab167fd84f822276141008d56c536d41acd6a7006d12b328749d18a254c6",
         "fixtures/vendor-tealium-collect/depthr8-nested-key-two-dotted.json": "b1486c282d0a5a3cb15fa0853e693767e55689a044ba4e62db4da48f555bfc00",
         "fixtures/vendor-tealium-collect/depthr8-nested-key-literal-brackets.json": "49926450a5399318aa21a5ddb291a4c7e9ac3a9c8e022b2f5faf08c857bf4795",
-        "npm/test.mjs": "421dca0ea9efd41d3aca5148446a17dfd79bea0fea90d242790f6dfca1df2422"
+        "npm/test.mjs": "af743e2c9366c573a3c9699798e270da93867efdaa3b0f2d3b383623810d9937"
       },
       "implemented_scope": "Warn about literal periods in nested JSON member names and the documented override that prevents TAPID cookie deletion.",
       "missing_requirements": [
@@ -383007,13 +383061,13 @@
       {
         "id": "vendor/google-ads-click-conversions",
         "slug": "google-ads-click-conversions",
-        "new_cases": 93,
+        "new_cases": 109,
         "prior_cases": 14,
         "before_fields": 65,
         "after_fields": 66,
-        "scope": "Reject service-inapplicable personalization consent while preserving supported user-data consent. Add canonical resource spelling and current or historical currency assignment advice.",
+        "scope": "Reject non-default service-inapplicable personalization consent while preserving proto3 zero defaults and nulls. Add canonical resource spelling and current or historical currency assignment advice.",
         "limits": [
-          "The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set it. Both ProtoJSON field spellings are checked; null retains unset semantics.",
+          "The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set a non-default value. Both spellings, implicit zero defaults and null-unset semantics are retained.",
           "Resource-name checks provide canonical spelling advice. They do not check account existence, resource ownership, conversion-action eligibility, numeric range or equality with the upload customer. The conversion reference says the customer component is ignored for action lookup.",
           "Currency assignment is advisory and accepts current and historical codes without forcing case. Both built-in code sets were independently compared with freshly fetched primary SIX XML. Account eligibility and actual Google currency support remain external.",
           "Existing ProtoJSON aliases, null handling, timestamp, value and identity checks are retained. Simultaneous duplicate aliases and raw duplicate keys retain the existing parser behavior; this round does not model receiver selection among duplicates.",
@@ -383079,19 +383133,39 @@
             "bytes": 30638,
             "sha256": "98fde2423cdb916dd59dcf5fe96222edad8fa198d865c1c83dbc464b9cc52387",
             "fetched_at": "2026-10-27T02:14:55.614652+00:00"
+          },
+          {
+            "name": "consent.proto",
+            "url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/common/consent.proto",
+            "final_url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/common/consent.proto",
+            "status": 200,
+            "bytes": 1617,
+            "mime_type": "text/plain; charset=utf-8",
+            "sha256": "dcb65d80753cdbbe907cab7041e2853b51f26e185d70e42a58d15790b4d6a42b",
+            "fetched_at": "2026-10-27T03:03:41.283529+00:00"
+          },
+          {
+            "name": "consent-status.proto",
+            "url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto",
+            "final_url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto",
+            "status": 200,
+            "bytes": 1458,
+            "mime_type": "text/plain; charset=utf-8",
+            "sha256": "64088c5cc6adbb2fd08c215726aa933a3856946726cbe6475cf8bd5d32a2031f",
+            "fetched_at": "2026-10-27T03:03:41.527137+00:00"
           }
         ]
       },
       {
         "id": "vendor/google-ads-call-conversions",
         "slug": "google-ads-call-conversions",
-        "new_cases": 93,
+        "new_cases": 109,
         "prior_cases": 7,
         "before_fields": 26,
         "after_fields": 27,
-        "scope": "Reject service-inapplicable personalization consent while preserving supported user-data consent. Add canonical resource spelling and current or historical currency assignment advice.",
+        "scope": "Reject non-default service-inapplicable personalization consent while preserving proto3 zero defaults and nulls. Add canonical resource spelling and current or historical currency assignment advice.",
         "limits": [
-          "The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set it. Both ProtoJSON field spellings are checked; null retains unset semantics.",
+          "The current Consent reference limits ad_personalization to OfflineUserDataJobService and UserDataService. These two upload services cannot set a non-default value. Both spellings, implicit zero defaults and null-unset semantics are retained.",
           "Resource-name checks provide canonical spelling advice. They do not check account existence, resource ownership, conversion-action eligibility, numeric range or equality with the upload customer. The conversion reference says the customer component is ignored for action lookup.",
           "Currency assignment is advisory and accepts current and historical codes without forcing case. Both built-in code sets were independently compared with freshly fetched primary SIX XML. Account eligibility and actual Google currency support remain external.",
           "Existing ProtoJSON aliases, null handling, timestamp, value and identity checks are retained. Simultaneous duplicate aliases and raw duplicate keys retain the existing parser behavior; this round does not model receiver selection among duplicates.",
@@ -383157,27 +383231,49 @@
             "bytes": 30638,
             "sha256": "98fde2423cdb916dd59dcf5fe96222edad8fa198d865c1c83dbc464b9cc52387",
             "fetched_at": "2026-10-27T02:14:55.614652+00:00"
+          },
+          {
+            "name": "consent.proto",
+            "url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/common/consent.proto",
+            "final_url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/common/consent.proto",
+            "status": 200,
+            "bytes": 1617,
+            "mime_type": "text/plain; charset=utf-8",
+            "sha256": "dcb65d80753cdbbe907cab7041e2853b51f26e185d70e42a58d15790b4d6a42b",
+            "fetched_at": "2026-10-27T03:03:41.283529+00:00"
+          },
+          {
+            "name": "consent-status.proto",
+            "url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto",
+            "final_url": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto",
+            "status": 200,
+            "bytes": 1458,
+            "mime_type": "text/plain; charset=utf-8",
+            "sha256": "64088c5cc6adbb2fd08c215726aa933a3856946726cbe6475cf8bd5d32a2031f",
+            "fetched_at": "2026-10-27T03:03:41.527137+00:00"
           }
         ]
       }
     ],
-    "new_cases": 186,
-    "changed_pack_fixture_cases": 207,
+    "new_cases": 218,
+    "changed_pack_fixture_cases": 239,
     "prior_fixture_expectations_changed": [],
     "prior_fixture_expectations_unchanged": 21,
-    "runtime_fixture_cases": 3295,
-    "runtime_checks_per_node": 6590,
+    "runtime_fixture_cases": 3327,
+    "runtime_checks_per_node": 6654,
     "new_fields": 2,
     "new_body_scopes": 0,
     "new_http_scopes": 0,
     "new_service_restrictions": 2,
     "new_advisory_assertions": 4,
-    "primary_source_count": 7,
+    "primary_source_count": 9,
     "currency_source_oracle": "Current and historical code sets equal the unchanged compiled registry.",
     "endpoint_selectors_unchanged": true,
     "engine_source_unchanged": true,
     "supplementary_example_corrections": 1,
     "new_supplementary_cases": 1,
-    "validation_status": "passed_local_candidate"
+    "validation_status": "pending_full_validation",
+    "new_string_enum_checks": 2,
+    "implicit_proto3_defaults_preserved": true
   }
 }

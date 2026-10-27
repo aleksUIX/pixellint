@@ -687,12 +687,16 @@
           "aliases": [
             "consent.ad_personalization"
           ],
-          "requirement": "forbidden",
+          "requirement": "optional",
           "null_as_missing": true,
           "severity": "error",
           "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent",
-          "description": "Google limits this field to OfflineUserDataJobService and UserDataService. Click and call conversion uploads cannot set it. JSON null retains ProtoJSON unset semantics.",
-          "fix_hint": "Remove adPersonalization from this conversion upload. Set supported consent fields according to the integration."
+          "description": "Google limits non-default ad personalization consent to OfflineUserDataJobService and UserDataService. This proto3 enum has implicit presence: UNSPECIFIED, numeric zero and null retain default or unset behavior.",
+          "fix_hint": "Remove non-default adPersonalization from this upload; keep supported adUserData consent according to the integration.",
+          "json_type": [
+            "string",
+            "integer"
+          ]
         }
       ],
       "rules": [
@@ -872,6 +876,44 @@
           "severity": "warning",
           "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/ClickConversion",
           "message": "The three-letter currency value is not assigned in the built-in current or historical ISO 4217 lists. Registry advice does not establish Google account eligibility or currency support."
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.consent.adPersonalization.forbidden",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "consent.adPersonalization"
+          ],
+          "pattern": "^(?:UNKNOWN|GRANTED|DENIED|[-+]?(?:[0-9]*[1-9][0-9]*(?:\\.[0-9]*)?|[0-9]*\\.[0-9]*[1-9][0-9]*)(?:[eE][+-]?[0-9]+)?)$",
+          "severity": "error",
+          "message": "Non-default ad personalization consent is supported only by OfflineUserDataJobService and UserDataService. This conversion upload must leave it unspecified.",
+          "doc": "https://developers.google.com/google-ads/api/reference/rpc/v25/Consent"
+        },
+        {
+          "code": "vendor.google-ads-click-conversions.body.consent.adPersonalization.invalid",
+          "kind": "format",
+          "param": "consent.adPersonalization",
+          "format": {
+            "kind": "regex",
+            "pattern": "^(?:UNSPECIFIED|UNKNOWN|GRANTED|DENIED|[-+]?[0-9]+)$"
+          },
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "consent.adPersonalization",
+                "json_type": "string"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "consent.adPersonalization",
+                "pattern": "(?s).+"
+              }
+            ]
+          },
+          "severity": "error",
+          "message": "Use an enum name or integer spelling. Unspecified zero is retained; non-default consent belongs to other services.",
+          "doc": "https://raw.githubusercontent.com/googleapis/googleapis/master/google/ads/googleads/v25/enums/consent_status.proto"
         }
       ]
     },

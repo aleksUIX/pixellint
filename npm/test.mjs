@@ -435,5 +435,5 @@ for (const entry of [{ validate, validateMany }, cjs]) {
     }
   }
 }
-assert.equal(addedProfileCases, 6590, "all 3295 profile cases run through both package entry points");
+assert.equal(addedProfileCases, 6654, "all 3327 profile cases run through both package entry points");
 console.log(`Source-backed profiles: ${addedProfileCases} CJS/ESM fixture checks passed`);
