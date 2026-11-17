@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+## 0.59.1 (2026-11-17)
+
+### Changed
+
+- **`flate2` 1.1.10 → 1.1.11**: dependency update.
+
 ## 0.59.0 (2026-10-26)
 
 - Deepen eight existing packs with 544 new golden fixtures. The inventory remains 233 packs across 133 vendor IDs.
