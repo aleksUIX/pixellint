@@ -5191,7 +5191,7 @@ Context: `{}`.
 
 ## `vendor/gamesight-impression`
 
-Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. A supplied impression window is whole seconds. A supplied cost amount is a decimal, and cost currency is an ISO code. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.
+Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. A supplied impression window is whole seconds. A supplied cost amount is a decimal, and cost currency is an ISO code. Supplied hierarchy and reporting ids are nonempty. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/gamesight-impression.json).
 
@@ -5212,6 +5212,25 @@ Path captures: `^/imgp/(?<tracker_id>[^/]*)$`. Captured values take precedence o
 | `impression_attribution_window` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 | `cost_amount` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 | `cost_currency` | optional | `{"format":{"kind":"currency"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `campaign` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `campaign_name` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad_group` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad_group_name` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad_name` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad_type` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `placement` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `keyword` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `creative` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `site_id` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `sub_site_id` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `reporting_sub` | optional | `{"name_pattern":"^sub(?:10\|[1-9])$","format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_campaign` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_ad_group` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_ad` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_placement` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_creative` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_site_id` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 
 ### Query group contract 1
 
@@ -13383,7 +13402,7 @@ Path captures: `/keys/(?<site_id>[^/]+)/p\.js`. Captured values take precedence 
 
 ## `vendor/partnerize`
 
-Partnerize S2S conversion URLs on prf.hn/conversion. Root basket fields and every independently bracketed item are validated, including optional vertical metadata. Campaign configuration and attribution history remain external.
+Partnerize S2S conversion URLs on prf.hn/conversion. Root basket fields and every independently bracketed item are validated, including optional vertical metadata. Captured calls are checked as HTTPS GET or POST. Campaign configuration and attribution history remain external.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/partnerize.json).
 
@@ -13495,6 +13514,17 @@ Context: `{"source":"path_items"}`.
 | `device` | forbidden | `{}` | [official_vendor](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration) |
 | `context` | forbidden | `{}` | [official_vendor](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration) |
 | `conversion_time` | forbidden | `{}` | [official_vendor](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["GET","POST"]}}` | [official_vendor](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration) |
+| `path` | required | `{"json_type":"string","format":{"kind":"regex","pattern":"^/conversion(?:/\|$)"}}` | [official_vendor](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration) |
+| `body_encoding` | required | `{"json_type":"string","format":{"kind":"enum","values":["none"]}}` | [official_vendor](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration) |
+| `url` | required | `{"json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration) |
 
 ## `vendor/pinterest-conversions-api`
 

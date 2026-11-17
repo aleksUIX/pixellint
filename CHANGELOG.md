@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.59.3 (2026-11-17)
+
+- Check supplied Gamesight hierarchy and reporting tags as nonempty. Campaign, ad, placement, sub1 through sub10, and ad-server ids stay opaque.
+- Check captured Partnerize conversion calls as HTTPS GET or POST. Parameters stay on the `/conversion` path.
+
 ## 0.59.2 (2026-11-17)
 
 - Check Gamesight impression windows as whole seconds, cost amounts as decimals, and cost currencies as ISO codes. The checks are advisory. Macros stay unresolved.

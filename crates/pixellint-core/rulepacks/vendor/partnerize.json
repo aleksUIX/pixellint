@@ -1,7 +1,7 @@
 {
   "id": "vendor/partnerize",
   "display_name": "Partnerize conversion tracking",
-  "description": "Partnerize S2S conversion URLs on prf.hn/conversion. Root basket fields and every independently bracketed item are validated, including optional vertical metadata. Campaign configuration and attribution history remain external.",
+  "description": "Partnerize S2S conversion URLs on prf.hn/conversion. Root basket fields and every independently bracketed item are validated, including optional vertical metadata. Captured calls are checked as HTTPS GET or POST. Campaign configuration and attribution history remain external.",
   "vendor": "partnerize",
   "source_level": "official_vendor",
   "docs": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration",
@@ -677,5 +677,58 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration",
+        "description": "Partnerize accepts a secure GET or POST conversion call.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "GET",
+            "POST"
+          ]
+        }
+      },
+      {
+        "name": "path",
+        "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration",
+        "description": "Use the /conversion endpoint. Parameters continue on the path.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "regex",
+          "pattern": "^/conversion(?:/|$)"
+        }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration",
+        "description": "Conversion parameters are on the URL path, not in a request body.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "none"
+          ]
+        }
+      },
+      {
+        "name": "url",
+        "requirement": "required",
+        "json_type": "string",
+        "format": {
+          "kind": "url",
+          "require_https": true
+        },
+        "description": "The published conversion endpoint uses HTTPS.",
+        "doc": "https://help.phgsupport.com/hc/en-us/articles/360020395238-Tracking-Partnerize-Server-to-Server-S2S-Integration"
+      }
+    ]
+  }
 }

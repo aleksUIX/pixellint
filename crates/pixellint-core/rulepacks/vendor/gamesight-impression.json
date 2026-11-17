@@ -1,7 +1,7 @@
 {
   "id": "vendor/gamesight-impression",
   "display_name": "Gamesight impression tracker",
-  "description": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. A supplied impression window is whole seconds. A supplied cost amount is a decimal, and cost currency is an ISO code. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.",
+  "description": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. A supplied impression window is whole seconds. A supplied cost amount is a decimal, and cost currency is an ISO code. Supplied hierarchy and reporting ids are nonempty. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.",
   "vendor": "gamesight",
   "source_level": "official_vendor",
   "docs": "https://docs.gamesight.io/docs/tracker-url-parameters",
@@ -117,6 +117,178 @@
       "severity": "warning",
       "description": "Currency for cost_amount. The published default is USD. Account eligibility stays outside this check.",
       "fix_hint": "Set cost_currency to an ISO 4217 code such as USD.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "campaign",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published campaign id. The value is opaque. Omit the parameter when there is no campaign.",
+      "fix_hint": "Set campaign to the tracker campaign id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "campaign_name",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published campaign display name. It inherits the campaign id when omitted.",
+      "fix_hint": "Set campaign_name to the display name, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "ad_group",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published ad group id. The value is opaque.",
+      "fix_hint": "Set ad_group to the ad group id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "ad_group_name",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published ad group display name. It inherits the ad group id when omitted.",
+      "fix_hint": "Set ad_group_name to the display name, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "ad",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published ad id. The value is opaque.",
+      "fix_hint": "Set ad to the ad id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "ad_name",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published ad display name. It inherits the ad id when omitted.",
+      "fix_hint": "Set ad_name to the display name, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "ad_type",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published creative type, such as text, video, or banner. No closed list is published.",
+      "fix_hint": "Set ad_type to the creative type, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "placement",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published placement label. The value is opaque.",
+      "fix_hint": "Set placement to the page location, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "keyword",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published keyword dimension. The value is opaque.",
+      "fix_hint": "Set keyword to the keyword text, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "creative",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published creative id. The value is opaque.",
+      "fix_hint": "Set creative to the creative id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "site_id",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published site or platform id inside a network. The value is opaque.",
+      "fix_hint": "Set site_id to the site id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "sub_site_id",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published sub-site id. The value is opaque.",
+      "fix_hint": "Set sub_site_id to the sub-site id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "reporting_sub",
+      "name_pattern": "^sub(?:10|[1-9])$",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published sub1 through sub10 reporting tags. Each supplied tag is nonempty. The tag text stays opaque.",
+      "fix_hint": "Set the sub tag to a nonempty value, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "adsrv_campaign",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published third-party ad server campaign id. The value is opaque.",
+      "fix_hint": "Set adsrv_campaign to the ad server campaign id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "adsrv_ad_group",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published third-party ad server ad group id. The value is opaque.",
+      "fix_hint": "Set adsrv_ad_group to the ad server ad group id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "adsrv_ad",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published third-party ad server ad id. The value is opaque.",
+      "fix_hint": "Set adsrv_ad to the ad server ad id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "adsrv_placement",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published third-party ad server placement id. The value is opaque.",
+      "fix_hint": "Set adsrv_placement to the ad server placement id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "adsrv_creative",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published third-party ad server creative id. The value is opaque.",
+      "fix_hint": "Set adsrv_creative to the ad server creative id, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "adsrv_site_id",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "severity": "warning",
+      "description": "Published third-party ad server site id. The value is opaque.",
+      "fix_hint": "Set adsrv_site_id to the ad server site id, or omit it.",
       "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
     }
   ],
