@@ -129,4 +129,27 @@ fn query_cannot_replace_the_opaque_path_identity_and_macros_remain_deferred() {
             .flat_map(|r| &r.violations)
             .all(|v| v.code != "vendor.gamesight-impression.param.cost_model.invalid")
     );
+    let summary = engine
+        .validate(
+            &request(
+                ArtifactKind::Url,
+                "https://gsght.com/imgp/SYNTHETIC?impression_attribution_window=[WINDOW]&cost_amount={COST}&cost_currency=${CURRENCY}",
+            ),
+            &ValidationOptions::default(),
+        )
+        .unwrap();
+    for code in [
+        "vendor.gamesight-impression.param.impression_attribution_window.invalid",
+        "vendor.gamesight-impression.param.cost_amount.invalid",
+        "vendor.gamesight-impression.param.cost_currency.invalid",
+    ] {
+        assert!(
+            summary
+                .reports
+                .iter()
+                .flat_map(|r| &r.violations)
+                .all(|v| v.code != code),
+            "{code}: {summary:?}"
+        );
+    }
 }

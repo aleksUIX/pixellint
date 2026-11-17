@@ -5191,7 +5191,7 @@ Context: `{}`.
 
 ## `vendor/gamesight-impression`
 
-Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.
+Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. A supplied impression window is whole seconds. A supplied cost amount is a decimal, and cost currency is an ISO code. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/gamesight-impression.json).
 
@@ -5209,6 +5209,9 @@ Path captures: `^/imgp/(?<tracker_id>[^/]*)$`. Captured values take precedence o
 | `external_scope_type` | optional | `{"name_pattern":"^xid\\[[0-9]*\\]\\[scope_type\\]$","format":{"kind":"enum","values":["game","org"]},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 | `attribution_window` | forbidden | `{"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 | `destination_url` | forbidden | `{"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `impression_attribution_window` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `cost_amount` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `cost_currency` | optional | `{"format":{"kind":"currency"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
 
 ### Query group contract 1
 
@@ -7527,7 +7530,7 @@ Context: `{}`.
 
 ## `vendor/kochava`
 
-Server-to-server post-install events posted as JSON to control.kochava.com/track/json.
+Server-to-server post-install events posted as JSON to control.kochava.com/track/json. Captured calls are checked for HTTPS, POST, and a JSON body.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/kochava.json).
 
@@ -7594,6 +7597,18 @@ Context: `{}`.
 | `vendor.kochava.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["origination_ip","data.origination_ip","device_ua","data.device_ua"]}` | error | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
 | `vendor.kochava.body.device_ids_required` | `{"kind":"require_any_of","groups":[["kochava_device_id"],["data.device_ids.*"],["device_ids.*"]]}` | error | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
 | `vendor.kochava.body.consent_signal_alternative` | `{"kind":"require_any_of","groups":[["data.gdpr_privacy_consent.tc_string"],["data.gdpr_privacy_consent.ad_user_data","data.gdpr_privacy_consent.ad_personalization"]],"condition":{"kind":"present","param":"data.gdpr_privacy_consent"}}` | error | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["POST"]}}` | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
+| `path` | required | `{"json_type":"string","format":{"kind":"regex","pattern":"^/track/json/?$"}}` | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
+| `content_type` | required | `{"json_type":"string","format":{"kind":"enum","values":["application/json"]}}` | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
+| `body_encoding` | required | `{"json_type":"string","format":{"kind":"enum","values":["json"]}}` | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
+| `url` | required | `{"json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/) |
 
 ## `vendor/krux-amp`
 
@@ -15690,7 +15705,7 @@ Context: `{}`.
 
 ## `vendor/singular`
 
-Server-to-server EVENT requests to s2s.singular.net/api/v1/evt and /api/v2/evt, as form or query parameters. JSON bodies are not this API.
+Server-to-server EVENT requests to s2s.singular.net/api/v1/evt and /api/v2/evt, as GET query or POST form. JSON bodies are not this API. Captured calls are checked for HTTPS and that transport.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/singular.json).
 
@@ -15808,6 +15823,22 @@ Context: `{"source_param":"e","condition":{"kind":"value_in","param":"n","values
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `ad_platform` | required | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+
+### Complete HTTP contract 1
+
+Context: `{}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `method` | required | `{"json_type":"string","format":{"kind":"enum","values":["GET","POST"]}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+| `path` | required | `{"json_type":"string","format":{"kind":"regex","pattern":"^/api/v[12]/evt/?$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+| `body_encoding` | required | `{"json_type":"string","format":{"kind":"enum","values":["none","form"]}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+| `content_type` | required | `{"json_type":"string","format":{"kind":"enum","values":["application/x-www-form-urlencoded"]},"condition":{"kind":"value_in","param":"body_encoding","values":["form"]}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+| `url` | required | `{"json_type":"string","format":{"kind":"url","require_https":true}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.singular.http.form_requires_post` | `{"kind":"value_when","when":"body_encoding","equals":["form"],"param":"method","value":"POST"}` | error | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 
 ## `vendor/sixsense-pixel`
 

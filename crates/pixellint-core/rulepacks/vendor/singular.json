@@ -1,7 +1,7 @@
 {
   "id": "vendor/singular",
   "display_name": "Singular S2S EVENT",
-  "description": "Server-to-server EVENT requests to s2s.singular.net/api/v1/evt and /api/v2/evt, as form or query parameters. JSON bodies are not this API.",
+  "description": "Server-to-server EVENT requests to s2s.singular.net/api/v1/evt and /api/v2/evt, as GET query or POST form. JSON bodies are not this API. Captured calls are checked for HTTPS and that transport.",
   "vendor": "singular",
   "source_level": "official_vendor",
   "docs": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
@@ -893,5 +893,63 @@
       "rules": []
     }
   ],
-  "path_pattern": "^/api/(?P<api_version>v[12])/evt$"
+  "path_pattern": "^/api/(?P<api_version>v[12])/evt$",
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+        "description": "EVENT parameters travel on GET or POST.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "enum", "values": ["GET", "POST"] }
+      },
+      {
+        "name": "path",
+        "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+        "description": "Use the v1 or v2 EVENT route.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "regex", "pattern": "^/api/v[12]/evt/?$" }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+        "description": "Parameters are in the query or a URL-encoded form body. JSON is not this API.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "enum", "values": ["none", "form"] }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+        "description": "A submitted form body requires application/x-www-form-urlencoded.",
+        "json_type": "string",
+        "requirement": "required",
+        "format": { "kind": "enum", "values": ["application/x-www-form-urlencoded"] },
+        "condition": { "kind": "value_in", "param": "body_encoding", "values": ["form"] }
+      },
+      {
+        "name": "url",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "url", "require_https": true },
+        "description": "The published request endpoint uses HTTPS.",
+        "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
+      }
+    ],
+    "rules": [
+      {
+        "code": "vendor.singular.http.form_requires_post",
+        "kind": "value_when",
+        "severity": "error",
+        "message": "URL-encoded request bodies use POST; GET events send query parameters.",
+        "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference",
+        "when": "body_encoding",
+        "equals": ["form"],
+        "param": "method",
+        "value": "POST"
+      }
+    ]
+  }
 }

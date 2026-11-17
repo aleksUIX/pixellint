@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.59.2 (2026-11-17)
+
+- Check Gamesight impression windows as whole seconds, cost amounts as decimals, and cost currencies as ISO codes. The checks are advisory. Macros stay unresolved.
+- Check captured Kochava post-install calls for HTTPS, POST, and a JSON body on `/track/json`.
+- Check captured Singular EVENT calls as GET query or POST form on the v1 and v2 routes. A JSON body is not this API.
+
 ## 0.59.1 (2026-11-17)
 
 ### Changed

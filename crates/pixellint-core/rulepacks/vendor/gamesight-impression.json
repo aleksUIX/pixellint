@@ -1,7 +1,7 @@
 {
   "id": "vendor/gamesight-impression",
   "display_name": "Gamesight impression tracker",
-  "description": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.",
+  "description": "Advisory checks for documented Gamesight impression options on gsght.com/imgp/{tracker}. Explicit indexed External IDs carrying only literal org scope values are expected to supply an opaque organization ID in that same row. A supplied impression window is whole seconds. A supplied cost amount is a decimal, and cost currency is an ISO code. Unindexed pairing, ID grammar, custom domains, account state and receiver acceptance remain outside this partial profile.",
   "vendor": "gamesight",
   "source_level": "official_vendor",
   "docs": "https://docs.gamesight.io/docs/tracker-url-parameters",
@@ -91,6 +91,33 @@
       "requirement": "forbidden",
       "severity": "warning",
       "description": "Redirect overrides apply to click links."
+    },
+    {
+      "name": "impression_attribution_window",
+      "requirement": "optional",
+      "format": { "kind": "integer" },
+      "severity": "warning",
+      "description": "View-through window in seconds. Gamesight documents this parameter on impression tracking URLs only. No maximum is published.",
+      "fix_hint": "Set impression_attribution_window to a whole number of seconds, or omit it to inherit the tracker window.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "cost_amount",
+      "requirement": "optional",
+      "format": { "kind": "regex", "pattern": "^[0-9]+(?:\\.[0-9]+)?$" },
+      "severity": "warning",
+      "description": "Per-unit cost. The published example for a 10.00 CPM is 10.00. No upper bound is published.",
+      "fix_hint": "Set cost_amount to a decimal amount such as 10.00, or omit it.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
+    },
+    {
+      "name": "cost_currency",
+      "requirement": "optional",
+      "format": { "kind": "currency" },
+      "severity": "warning",
+      "description": "Currency for cost_amount. The published default is USD. Account eligibility stays outside this check.",
+      "fix_hint": "Set cost_currency to an ISO 4217 code such as USD.",
+      "doc": "https://docs.gamesight.io/docs/tracker-url-parameters"
     }
   ],
   "rules": [],

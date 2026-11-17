@@ -1,7 +1,7 @@
 {
   "id": "vendor/kochava",
   "display_name": "Kochava S2S events",
-  "description": "Server-to-server post-install events posted as JSON to control.kochava.com/track/json.",
+  "description": "Server-to-server post-install events posted as JSON to control.kochava.com/track/json. Captured calls are checked for HTTPS, POST, and a JSON body.",
   "vendor": "kochava",
   "source_level": "official_vendor",
   "docs": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
@@ -620,5 +620,49 @@
         }
       ]
     }
-  ]
+  ],
+  "http": {
+    "params": [
+      {
+        "name": "method",
+        "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+        "description": "The post-install article sends the payload with POST.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "enum", "values": ["POST"] }
+      },
+      {
+        "name": "path",
+        "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+        "description": "Use the /track/json endpoint.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "regex", "pattern": "^/track/json/?$" }
+      },
+      {
+        "name": "content_type",
+        "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+        "description": "The post-install article sends an application/json body.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "enum", "values": ["application/json"] }
+      },
+      {
+        "name": "body_encoding",
+        "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/",
+        "description": "The event request is encoded as JSON.",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "enum", "values": ["json"] }
+      },
+      {
+        "name": "url",
+        "requirement": "required",
+        "json_type": "string",
+        "format": { "kind": "url", "require_https": true },
+        "description": "The published request endpoint uses HTTPS.",
+        "doc": "https://support.kochava.com/articles/server-to-server-integration/185-post-install-event-setup/"
+      }
+    ]
+  }
 }
