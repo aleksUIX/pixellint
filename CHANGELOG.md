@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.59.5 (2026-11-18)
+
+- Add Rakuten click links on click.linksynergy.com/fs-bin/click. The affiliate id is 11 characters, offerid includes the link id, and type is a documented link type. A missing subid is accepted.
+- Warn when an Awin order reference is longer than 50 characters.
+- Warn when an MNTN image pixel sends only part of ga_tracking_id, ga_client_id, and shpt.
+- Reject an empty Singular idfa or aifa. Warn when andi is not 16 hex characters.
+
 ## 0.59.4 (2026-11-18)
 
 - Add Beeswax conversion tags on cnv.event.prod.bidr.io/log/cnv. buzz_key is alphanumeric.

@@ -698,6 +698,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/rakuten.json"),
     ),
     (
+        "vendor/rakuten-click",
+        include_str!("../rulepacks/vendor/rakuten-click.json"),
+    ),
+    (
         "vendor/reddit",
         include_str!("../rulepacks/vendor/reddit.json"),
     ),

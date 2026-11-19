@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 236 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 237 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -3480,7 +3480,7 @@ Matcher: `{"hosts":["www.awin1.com"],"path_prefixes":["/sread.img","/sread.php"]
 | `amount` | required | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://help.awin.com/developers/docs/fall-back-conversion-pixel) |
 | `ch` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.awin.com/developers/docs/fall-back-conversion-pixel) |
 | `parts` | required | `{"format":{"kind":"regex","pattern":"^(?:[^:\|]+:[0-9]+(?:\\.[0-9]+)?)(?:\\\|[^:\|]+:[0-9]+(?:\\.[0-9]+)?)*$"}}` | [official_vendor](https://help.awin.com/developers/docs/commission-groups) |
-| `ref` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://help.awin.com/developers/docs/fall-back-conversion-pixel) |
+| `ref` | required | `{"format":{"kind":"non_empty"},"max_length":50,"format_severity":"warning"}` | [official_vendor](https://help.awin.com/developers/docs/fall-back-conversion-pixel) |
 | `cr` | required | `{"format":{"kind":"currency","case_insensitive":false},"format_severity":"warning"}` | [official_vendor](https://help.awin.com/developers/docs/fall-back-conversion-pixel) |
 | `testmode` | optional | `{"format":{"kind":"enum","values":["0","1"]},"format_severity":"warning"}` | [official_vendor](https://help.awin.com/developers/docs/fall-back-conversion-pixel) |
 | `vc` | required | `{"allow_empty":true,"format":{"kind":"non_empty"}}` | [official_vendor](https://help.awin.com/developers/docs/parameter-guidance) |
@@ -10925,9 +10925,9 @@ Matcher: `{"hosts":["px.mountain.com"],"paths":["/sti"]}`.
 | `shpp` | optional | `{"format":{"kind":"regex","pattern":"^(?:[+-]?(?:[0-9]+(?:\\.[0-9]*)?\|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?\|null)$"},"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
 | `shps` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
 | `shpi` | optional | `{"format":{"kind":"url"},"condition":{"kind":"not","condition":{"kind":"value_in","param":"shpi","values":["null"]}},"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
-| `shpt` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
-| `ga_tracking_id` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
-| `ga_client_id` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_template](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `ga_tracking_id` | recommended | `{"severity":"warning","condition":{"kind":"any","conditions":[{"kind":"present","param":"ga_client_id"},{"kind":"present","param":"shpt"}]}}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `ga_client_id` | recommended | `{"severity":"warning","condition":{"kind":"any","conditions":[{"kind":"present","param":"ga_tracking_id"},{"kind":"present","param":"shpt"}]}}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
+| `shpt` | recommended | `{"severity":"warning","condition":{"kind":"any","conditions":[{"kind":"present","param":"ga_tracking_id"},{"kind":"present","param":"ga_client_id"}]}}` | [official_vendor](https://help.mountain.com/en/articles/7251381-install-image-pixels) |
 
 ### Complete HTTP contract 1
 
@@ -15018,6 +15018,23 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `method` | recommended | `{"format":{"kind":"enum","values":["GET"]},"severity":"warning"}` | [official_template](https://a.quora.com/qevents.js) |
 
+## `vendor/rakuten-click`
+
+Rakuten affiliate click redirect on click.linksynergy.com/fs-bin/click. The link code page publishes the affiliate id, the offer id with its link id, an optional sub-publisher id, and the link type. Conversion pixels on track.linksynergy.com/ep stay vendor/rakuten. Audience Engine u1 and u5 stay out.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/rakuten-click.json).
+
+Matcher: `{"hosts":["click.linksynergy.com"],"paths":["/fs-bin/click"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `id` | required | `{"format":{"kind":"regex","pattern":"^[A-Za-z0-9]{11}$"}}` | [official_vendor](https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code) |
+| `offerid` | required | `{"format":{"kind":"regex","pattern":"^[0-9]+\\.[0-9]+$"}}` | [official_vendor](https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code) |
+| `subid` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code) |
+| `type` | required | `{"format":{"kind":"enum","values":["1","2","3","4","5","10","13","14","15","20"]}}` | [official_vendor](https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code) |
+
 ## `vendor/rakuten`
 
 Rakuten exact /ep conversion requests with source-scoped quantity and amount lists, optional order data and official server-template markers. Zero quantity and negative discount/tax adjustment rows remain valid. Encoded SKU and name delimiters are opaque. Configured MOP, custom domains and browser loaders use other contracts.
@@ -15843,13 +15860,13 @@ Path captures: `^/api/(?P<api_version>v[12])/evt$`. Captured values take precede
 | `sdid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `cur` | optional | `{"format":{"kind":"currency","case_insensitive":false}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `amt` | optional | `{"format":{"kind":"regex","pattern":"^-?[0-9]+(?:\\.[0-9]+)?$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
-| `idfa` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+| `idfa` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"},"severity":"error"}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `idfv` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
-| `aifa` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+| `aifa` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"},"severity":"error"}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `asid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `amid` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `oaid` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
-| `andi` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
+| `andi` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{16}$"},"format_severity":"warning"}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `ve` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `ua` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |
 | `lc` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{2}_[A-Za-z]{2}$"}}` | [official_vendor](https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference) |

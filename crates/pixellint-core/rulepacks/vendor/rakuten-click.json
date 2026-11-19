@@ -1,0 +1,73 @@
+{
+  "id": "vendor/rakuten-click",
+  "display_name": "Rakuten Advertising click link",
+  "vendor": "rakuten",
+  "description": "Rakuten affiliate click redirect on click.linksynergy.com/fs-bin/click. The link code page publishes the affiliate id, the offer id with its link id, an optional sub-publisher id, and the link type. Conversion pixels on track.linksynergy.com/ep stay vendor/rakuten. Audience Engine u1 and u5 stay out.",
+  "source_level": "official_vendor",
+  "docs": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code",
+  "match": {
+    "hosts": [
+      "click.linksynergy.com"
+    ],
+    "paths": [
+      "/fs-bin/click"
+    ]
+  },
+  "params": [
+    {
+      "name": "id",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9]{11}$"
+      },
+      "description": "It is the affiliate id. Rakuten documents an 11-character alphanumeric tracking id, also called the encrypted id.",
+      "fix_hint": "Copy id from the link code in the Publisher Dashboard. It is 11 letters or digits.",
+      "doc": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code"
+    },
+    {
+      "name": "offerid",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+\\.[0-9]+$"
+      },
+      "description": "It is the numeric offer id and the numeric link id, joined with a dot. The link code page writes offerid=7097 and then .10000034.",
+      "fix_hint": "Set offerid to the offer id, a dot, and the link id, such as 7097.10000034.",
+      "doc": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code"
+    },
+    {
+      "name": "subid",
+      "requirement": "optional",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "It identifies a sub-publisher when one applies. The published example sends 0 and says no value was passed, so a missing subid is accepted.",
+      "fix_hint": "Send the sub-publisher number, or subid=0 when there is no sub-publisher.",
+      "doc": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code"
+    },
+    {
+      "name": "type",
+      "requirement": "required",
+      "format": {
+        "kind": "enum",
+        "values": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "10",
+          "13",
+          "14",
+          "15",
+          "20"
+        ]
+      },
+      "description": "It is the link type. Rakuten documents 1 email, 2 product, 3 text, 4 banner, 5 search box, 10 deep links, 13 flex links, 14 dynamic rich media, 15 product catalog, and 20 showcase.",
+      "fix_hint": "Set type to the code for this link, such as 4 for a banner or 3 for text.",
+      "doc": "https://pubhelp.rakutenadvertising.com/hc/en-us/articles/4412187768717-Link-Code"
+    }
+  ],
+  "rules": []
+}

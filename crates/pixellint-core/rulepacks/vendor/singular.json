@@ -124,8 +124,9 @@
         "kind": "regex",
         "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
       },
-      "description": "It is the iOS Identifier for Advertisers. Singular documents a UUIDv4 on EVENT V1. Omit it when unavailable. Never send an empty string.",
-      "fix_hint": "Send `idfa` as a UUID, or omit the pair.",
+      "description": "It is the iOS Identifier for Advertisers. Singular documents a UUIDv4 on EVENT V1. Omit it when unavailable. An empty string is rejected.",
+      "fix_hint": "Send `idfa` as a UUID, or omit the pair. Do not send an empty value.",
+      "severity": "error",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
     {
@@ -144,8 +145,9 @@
         "kind": "regex",
         "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
       },
-      "description": "It is the Google advertising ID. Singular documents a UUIDv4 on Google Play V1.",
-      "fix_hint": "Send `aifa` as a UUID, or omit the pair off Google Play.",
+      "description": "It is the Google advertising ID. Singular documents a UUIDv4 on Google Play V1. Omit it when unavailable. An empty string is rejected.",
+      "fix_hint": "Send `aifa` as a UUID, or omit the pair. Do not send an empty value.",
+      "severity": "error",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },
     {
@@ -180,9 +182,11 @@
     {
       "name": "andi",
       "format": {
-        "kind": "non_empty"
+        "kind": "regex",
+        "pattern": "^[0-9a-fA-F]{16}$"
       },
-      "description": "It is the Android ID. Singular documents it only when no other identifier is available and the app is not on Google Play.",
+      "format_severity": "warning",
+      "description": "It is the Android ID, a 64-bit value. Singular's example is 16 hex characters. It is allowed only when no other identifier is available and the app is not on Google Play.",
       "fix_hint": "Send `andi` only off Google Play when AIFA and ASID are unavailable.",
       "doc": "https://support.singular.net/hc/en-us/articles/31496864868635-Server-to-Server-EVENT-Endpoint-API-Reference"
     },

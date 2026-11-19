@@ -133,30 +133,48 @@
       "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
     },
     {
-      "name": "shpt",
-      "requirement": "optional",
-      "description": "Optional page title from the published analytics snippet.",
-      "allow_empty": true,
-      "severity": "warning",
-      "source_level": "official_template",
-      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
-    },
-    {
       "name": "ga_tracking_id",
-      "requirement": "optional",
-      "description": "Optional analytics identities may be a semicolon-separated list.",
-      "allow_empty": true,
+      "requirement": "recommended",
+      "description": "The Google Analytics section requires this tracking id together with ga_client_id and shpt. It may be a semicolon-separated list. A pixel that does not send any of those fields omits it.",
       "severity": "warning",
-      "source_level": "official_template",
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {"kind": "present", "param": "ga_client_id"},
+          {"kind": "present", "param": "shpt"}
+        ]
+      },
+      "source_level": "official_vendor",
       "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
     },
     {
       "name": "ga_client_id",
-      "requirement": "optional",
-      "description": "Optional analytics client identity remains opaque.",
-      "allow_empty": true,
+      "requirement": "recommended",
+      "description": "The Google Analytics section requires this client id together with ga_tracking_id and shpt. A pixel that does not send any of those fields omits it.",
       "severity": "warning",
-      "source_level": "official_template",
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {"kind": "present", "param": "ga_tracking_id"},
+          {"kind": "present", "param": "shpt"}
+        ]
+      },
+      "source_level": "official_vendor",
+      "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
+    },
+    {
+      "name": "shpt",
+      "requirement": "recommended",
+      "description": "The Google Analytics section requires the current page title together with ga_tracking_id and ga_client_id. A pixel that does not send any of those fields omits it.",
+      "severity": "warning",
+      "condition": {
+        "kind": "any",
+        "conditions": [
+          {"kind": "present", "param": "ga_tracking_id"},
+          {"kind": "present", "param": "ga_client_id"}
+        ]
+      },
+      "source_level": "official_vendor",
       "doc": "https://help.mountain.com/en/articles/7251381-install-image-pixels"
     }
   ],
