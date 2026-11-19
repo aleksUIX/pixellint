@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.59.10 (2026-11-19)
+
+- Warn when a Mixpanel user profile property name longer than 255 characters is written with $append, $remove, or $union, or listed in $unset.
+- Warn when a Mixpanel group profile property name longer than 255 characters is written with $add or $union.
+
 ## 0.59.9 (2026-11-19)
 
 - Warn when a Pinterest custom event name uses a character other than letters, digits, underscores, or hyphens. TookSurvey stays clean.

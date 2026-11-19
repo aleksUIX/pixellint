@@ -9370,15 +9370,18 @@ Context: `{"scope":"[]"}`.
 | `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$append` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_append_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$append","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_remove_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$remove","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$ip` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$time` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$ignore_time` | optional | `{"format":{"kind":"enum","values":["true","false"]},"json_type":"boolean"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
-| `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `$unset[]` | optional | `{"json_type":"string","max_length":255,"format_severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
 | `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
@@ -9410,15 +9413,18 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$append` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_append_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$append","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_remove_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$remove","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$ip` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$time` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$ignore_time` | optional | `{"format":{"kind":"enum","values":["true","false"]},"json_type":"boolean"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
-| `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `$unset[]` | optional | `{"json_type":"string","max_length":255,"format_severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
 | `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
@@ -9770,15 +9776,18 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$append` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_append_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$append","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `long_remove_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$remove","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$ip` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$time` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$ignore_time` | optional | `{"format":{"kind":"enum","values":["true","false"]},"json_type":"boolean"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
-| `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
+| `$unset[]` | optional | `{"json_type":"string","max_length":255,"format_severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
 | `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
@@ -10006,12 +10015,14 @@ Context: `{"scope":"[]"}`.
 | `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
+| `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
@@ -10041,12 +10052,14 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
+| `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
@@ -10396,12 +10409,14 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
+| `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
