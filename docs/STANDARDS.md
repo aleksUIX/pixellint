@@ -10677,6 +10677,10 @@ Context: `{"scope":"[]"}`.
 | --- | --- | --- | --- |
 | `vendor.mixpanel-import.body.placeholder_identifier` | `{"kind":"forbid_value_pattern","pattern":"^(?i)(00000000-0000-0000-0000-000000000000\|anon\|anonymous\|nil\|none\|null\|n/a\|na\|undefined\|unknown\|<nil>\|0\|-1\|true\|false\|\\[\\]\|\\{\\})$","params":["properties.distinct_id","properties.$insert_id"]}` | error | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `vendor.mixpanel-import.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["properties.ip"]}` | error | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
+| `vendor.mixpanel-import.body.event_time_future` | `{"kind":"time_window","param":"properties.time","unit":"seconds_or_milliseconds","max_future_seconds":3600}` | error | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
+| `vendor.mixpanel-import.body.event_time_overwritten` | `{"kind":"time_window","param":"properties.time","unit":"seconds_or_milliseconds","max_future_seconds":0}` | warning | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
+| `vendor.mixpanel-import.body.event_time_before_1971` | `{"kind":"forbid_value_pattern","pattern":"^(?:-[0-9]+\|[0-9]{1,7}\|[12][0-9]{7}\|30[0-9]{6}\|31[0-4][0-9]{5}\|315[0-2][0-9]{4}\|3153[0-4][0-9]{3}\|31535[0-8][0-9]{2}\|315359[0-8][0-9]\|3153599[0-9])$","params":["properties.time"],"condition":{"kind":"json_type","param":"properties.time","json_type":"integer"}}` | error | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
+| `vendor.mixpanel-import.body.event_name_truncated` | `{"kind":"forbid_value_pattern","pattern":"(?s)^.{256,}$","params":["event"],"condition":{"kind":"json_type","param":"event","json_type":"string"}}` | warning | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 
 ### JSON contract 3
 
@@ -10724,6 +10728,7 @@ Context: `{}`.
 | `basic_auth.username` | required | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `basic_auth.password` | optional | `{"json_type":"string","format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `query.project_id` | required | `{"json_type":"string","format":{"kind":"non_empty"},"condition":{"kind":"value_pattern","param":"basic_auth.password","pattern":".+"}}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
+| `headers.content-encoding` | optional | `{"json_type":"string","format":{"kind":"enum","values":["gzip"]},"format_severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 
 ## `vendor/mixpanel`
 
@@ -10783,6 +10788,7 @@ Context: `{"scope":"[]"}`.
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.mixpanel.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["properties.ip"]}` | error | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `vendor.mixpanel.body.event_time_window` | `{"kind":"time_window","param":"properties.time","unit":"seconds_or_milliseconds","max_age_seconds":432000,"max_future_seconds":0}` | warning | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 
 ### JSON contract 3
 
@@ -10821,6 +10827,7 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.mixpanel.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["properties.ip"]}` | error | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `vendor.mixpanel.body.event_time_window` | `{"kind":"time_window","param":"properties.time","unit":"seconds_or_milliseconds","max_age_seconds":432000,"max_future_seconds":0}` | warning | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 
 ### JSON contract 5
 
@@ -10923,6 +10930,7 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.mixpanel.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["properties.ip"]}` | error | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `vendor.mixpanel.body.event_time_window` | `{"kind":"time_window","param":"properties.time","unit":"seconds_or_milliseconds","max_age_seconds":432000,"max_future_seconds":0}` | warning | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 
 ### JSON contract 15
 

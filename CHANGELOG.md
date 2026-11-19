@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.59.13 (2026-11-19)
+
+- Warn when a Mixpanel /track event time is older than 5 days or in the future. A time at the check clock stays clean.
+- Reject a Mixpanel /import time before 1971-01-01, or more than 1 hour in the future. A future time inside that hour warns because Mixpanel overwrites it.
+- Warn when a Mixpanel /import Content-Encoding is not gzip.
+- Warn when a Mixpanel /import event name is longer than 255 characters.
+
 ## 0.59.12 (2026-11-19)
 
 - Warn when a Mixpanel user profile property written with $set or $set_once is an integer above 2^53. The exact bound and the same digits in a string stay clean.

@@ -318,6 +318,62 @@
           "message": "`properties.ip` looks like a SHA-256 digest, but Mixpanel documents it as an IP address, or `0` to skip GeoIP.",
           "fix_hint": "Send the raw IP address, or `0`.",
           "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "code": "vendor.mixpanel-import.body.event_time_future",
+          "kind": "time_window",
+          "param": "properties.time",
+          "unit": "seconds_or_milliseconds",
+          "max_future_seconds": 3600,
+          "severity": "error",
+          "message": "Mixpanel rejects an /import event whose time is more than 1 hour in the future.",
+          "fix_hint": "Send a time no more than 1 hour ahead of the server clock.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "code": "vendor.mixpanel-import.body.event_time_overwritten",
+          "kind": "time_window",
+          "param": "properties.time",
+          "unit": "seconds_or_milliseconds",
+          "max_future_seconds": 0,
+          "severity": "warning",
+          "message": "Mixpanel overwrites an /import time that is in the future with the current time.",
+          "fix_hint": "Send a time at or before the server clock.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "code": "vendor.mixpanel-import.body.event_time_before_1971",
+          "kind": "forbid_value_pattern",
+          "pattern": "^(?:-[0-9]+|[0-9]{1,7}|[12][0-9]{7}|30[0-9]{6}|31[0-4][0-9]{5}|315[0-2][0-9]{4}|3153[0-4][0-9]{3}|31535[0-8][0-9]{2}|315359[0-8][0-9]|3153599[0-9])$",
+          "params": [
+            "properties.time"
+          ],
+          "condition": {
+            "kind": "json_type",
+            "param": "properties.time",
+            "json_type": "integer"
+          },
+          "severity": "error",
+          "message": "Mixpanel rejects an /import event whose time is before 1971-01-01. A value it reads as seconds must be 31536000 or later.",
+          "fix_hint": "Send a time on or after 1971-01-01 UTC.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
+        },
+        {
+          "code": "vendor.mixpanel-import.body.event_name_truncated",
+          "kind": "forbid_value_pattern",
+          "pattern": "(?s)^.{256,}$",
+          "params": [
+            "event"
+          ],
+          "condition": {
+            "kind": "json_type",
+            "param": "event",
+            "json_type": "string"
+          },
+          "severity": "warning",
+          "message": "Mixpanel truncates strings longer than 255 characters, including the event name.",
+          "fix_hint": "Shorten the event name to 255 characters or fewer.",
+          "doc": "https://docs.mixpanel.com/reference/import-events"
         }
       ]
     },
@@ -510,6 +566,20 @@
           "param": "basic_auth.password",
           "pattern": ".+"
         }
+      },
+      {
+        "name": "headers.content-encoding",
+        "description": "Import documents Content-Encoding as gzip when the body is compressed. Other encodings are not in the published list.",
+        "doc": "https://docs.mixpanel.com/reference/import-events",
+        "requirement": "optional",
+        "json_type": "string",
+        "format": {
+          "kind": "enum",
+          "values": [
+            "gzip"
+          ]
+        },
+        "format_severity": "warning"
       }
     ],
     "rules": []
