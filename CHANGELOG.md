@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.59.18 (2026-11-19)
+
+- A Mixpanel batch of 2001 events reaches the vendor contract again. In-range numeric properties no longer fill the SDK body inspection budget.
+- segment.prod.bidr.io stays outside the Beeswax conversion pack. The conversion tag remains on cnv.event.prod.bidr.io.
+- Mixpanel import no longer adds a Content-Encoding warning on top of the core unsupported-encoding finding.
+- An empty AppsFlyer eventValue object is invalid again. An empty string stays valid.
+
 ## 0.59.17 (2026-11-19)
 
 - Reject a Branch event that reports revenue without an ISO currency. Revenue with USD stays clean.

@@ -6373,7 +6373,7 @@ fn compare_numbers(
 }
 
 // Normalize decimal text without rounding a JSON number through a float.
-fn decimal_parts(value: &str) -> Option<(bool, String, i64)> {
+pub(crate) fn decimal_parts(value: &str) -> Option<(bool, String, i64)> {
     let _number = value.parse::<serde_json::Number>().ok()?;
     let negative = value.starts_with('-');
     let unsigned = value.strip_prefix('-').unwrap_or(value);
@@ -6396,7 +6396,7 @@ fn decimal_parts(value: &str) -> Option<(bool, String, i64)> {
     Some((negative, stripped.to_string(), exponent))
 }
 
-fn compare_numeric_text(left: &str, right: &str) -> Option<std::cmp::Ordering> {
+pub(crate) fn compare_numeric_text(left: &str, right: &str) -> Option<std::cmp::Ordering> {
     let (left_negative, mut left_digits, left_exp) = decimal_parts(left)?;
     let (right_negative, mut right_digits, right_exp) = decimal_parts(right)?;
     if left_negative != right_negative {
@@ -6575,7 +6575,7 @@ pub(crate) fn decode_base64_bytes(value: &str) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-fn exact_multiple(value: &str, step: &serde_json::Number) -> Option<bool> {
+pub(crate) fn exact_multiple(value: &str, step: &serde_json::Number) -> Option<bool> {
     let (_, digits, exponent) = decimal_parts(value)?;
     let (_, divisor, divisor_exponent) = decimal_parts(&step.to_string())?;
     if digits == "0" {

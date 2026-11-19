@@ -3253,7 +3253,7 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `appsflyer_id` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
 | `eventName` | required | `{"format":{"kind":"regex","pattern":"^[^\"=+\\-\\s][^\\s]*$"},"json_type":"string"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview) |
-| `eventValue` | required | `{"allow_empty":true,"json_type":["string","object"]}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
+| `eventValue` | required | `{"allow_empty":true,"min_properties":1,"json_type":["string","object"]}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
 | `att` | optional | `{"format":{"kind":"enum","values":["0","1","2","3"]},"json_type":"integer"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
 | `advertising_id` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"},"json_type":"string"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
 | `idfa` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"},"json_type":"string"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
@@ -10757,7 +10757,6 @@ Context: `{}`.
 | `basic_auth.username` | required | `{"json_type":"string","format":{"kind":"non_empty"}}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `basic_auth.password` | optional | `{"json_type":"string","format":{"kind":"non_empty"},"allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `query.project_id` | required | `{"json_type":"string","format":{"kind":"non_empty"},"condition":{"kind":"value_pattern","param":"basic_auth.password","pattern":".+"}}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
-| `headers.content-encoding` | optional | `{"json_type":"string","format":{"kind":"enum","values":["gzip"]},"format_severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 
 ## `vendor/mixpanel`
 

@@ -524,7 +524,13 @@ fn proven_valid(
         "max_properties",
         "min_properties",
         "max_byte_length",
+        "min_length",
+        "max_length",
         "max_depth",
+        "minimum",
+        "maximum",
+        "multiple_of",
+        "numeric_strings",
         "condition",
         "format",
         "root_path",
@@ -568,6 +574,61 @@ fn proven_valid(
             .is_some_and(|max| field.text.len() > max as usize)
     {
         return false;
+    }
+    if contract["min_length"].is_u64() || contract["max_length"].is_u64() {
+        let applies = field.kind == JsonValueKind::String;
+        if !applies && contract.get("json_type").is_none() {
+            return false;
+        }
+        if applies {
+            let len = field.text.chars().count();
+            if contract["min_length"]
+                .as_u64()
+                .is_some_and(|min| len < min as usize)
+                || contract["max_length"]
+                    .as_u64()
+                    .is_some_and(|max| len > max as usize)
+            {
+                return false;
+            }
+        }
+    }
+    if contract.get("minimum").is_some()
+        || contract.get("maximum").is_some()
+        || contract.get("multiple_of").is_some()
+    {
+        let numeric_strings = contract["numeric_strings"] == true;
+        let applies = field.kind == JsonValueKind::Number
+            || (field.kind == JsonValueKind::String
+                && (numeric_strings
+                    || contract
+                        .get("json_type")
+                        .is_none_or(|types| !json_type_includes_number(types))));
+        if applies || contract.get("json_type").is_none() {
+            let value = field.text.as_ref();
+            if value.parse::<serde_json::Number>().is_err()
+                || crate::manifest::decimal_parts(value).is_none()
+            {
+                return false;
+            }
+            if let Some(min) = contract.get("minimum").and_then(Value::as_number)
+                && crate::manifest::compare_numeric_text(value, &min.to_string())
+                    == Some(std::cmp::Ordering::Less)
+            {
+                return false;
+            }
+            if let Some(max) = contract.get("maximum").and_then(Value::as_number)
+                && crate::manifest::compare_numeric_text(value, &max.to_string())
+                    == Some(std::cmp::Ordering::Greater)
+            {
+                return false;
+            }
+            if let Some(step) = contract.get("multiple_of").and_then(Value::as_number)
+                && crate::manifest::exact_multiple(value, step) != Some(true)
+            {
+                return false;
+            }
+        }
     }
     if matches!(field.kind, JsonValueKind::Object | JsonValueKind::Array)
         && contract["max_depth"].as_u64().is_some_and(|max| {
@@ -616,6 +677,13 @@ fn proven_valid(
         _ => false,
     }
 }
+fn json_type_includes_number(types: &Value) -> bool {
+    if let Some(items) = types.as_array() {
+        return items.iter().any(json_type_includes_number);
+    }
+    matches!(types.as_str(), Some("number" | "integer"))
+}
+
 fn type_matches(types: &Value, field: &JsonField<'_>) -> bool {
     if let Some(types) = types.as_array() {
         return types.iter().any(|kind| type_matches(kind, field));
