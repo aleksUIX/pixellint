@@ -49,6 +49,19 @@
           "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI",
           "json_type": "object"
         }
+      ],
+      "rules": [
+        {
+          "code": "vendor.snapchat.body.batch_limit",
+          "kind": "max_total_array_items",
+          "params": [
+            "data"
+          ],
+          "max_items": 2000,
+          "severity": "error",
+          "message": "Snap rejects a batch with more than 2000 events.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/JavaBusinessSDK"
+        }
       ]
     },
     {
@@ -1415,6 +1428,16 @@
           "severity": "error",
           "message": "The timestamp is outside the documented processing window.",
           "doc": "https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI"
+        },
+        {
+          "code": "vendor.snapchat.body.event_time_future",
+          "kind": "time_window",
+          "param": "event_time",
+          "unit": "seconds_or_milliseconds",
+          "max_future_seconds": 600,
+          "severity": "warning",
+          "message": "Snap still processes a timestamp up to 10 minutes in the future and warns past that. A timestamp exactly 10 minutes ahead stays clean.",
+          "doc": "https://developers.snap.com/marketing-api/Conversions-API/OfflineEvents"
         },
         {
           "code": "vendor.snapchat.body.ios_extinfo_app_id",

@@ -106,6 +106,19 @@
           "json_type": "object",
           "source_level": "official_template"
         }
+      ],
+      "rules": [
+        {
+          "code": "vendor.meta-conversions-api.body.batch_limit",
+          "kind": "max_total_array_items",
+          "params": [
+            "data"
+          ],
+          "max_items": 1000,
+          "severity": "error",
+          "message": "Meta rejects a request with more than 1000 events in data. A batch of exactly 1000 stays clean.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api"
+        }
       ]
     },
     {
@@ -836,6 +849,31 @@
         }
       ],
       "rules": [
+        {
+          "code": "vendor.meta-conversions-api.body.event_time_window",
+          "kind": "time_window",
+          "param": "event_time",
+          "unit": "seconds",
+          "max_age_seconds": 604800,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "event_time",
+                "json_type": "integer"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "event_time",
+                "pattern": "^[0-9]{10}$"
+              }
+            ]
+          },
+          "severity": "error",
+          "message": "Meta rejects the batch when event_time is more than 7 days before the event is sent. A time exactly 7 days old stays clean.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event"
+        },
         {
           "code": "vendor.meta-conversions-api.body.purchase_requires_value_and_currency",
           "kind": "required_when_value",
@@ -2605,6 +2643,31 @@
       ],
       "rules": [
         {
+          "code": "vendor.meta-conversions-api.body.event_time_window",
+          "kind": "time_window",
+          "param": "event_time",
+          "unit": "seconds",
+          "max_age_seconds": 604800,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "event_time",
+                "json_type": "integer"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "event_time",
+                "pattern": "^[0-9]{10}$"
+              }
+            ]
+          },
+          "severity": "error",
+          "message": "Meta rejects the batch when event_time is more than 7 days before the event is sent. A time exactly 7 days old stays clean.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event"
+        },
+        {
           "code": "vendor.meta-conversions-api.body.purchase_requires_value_and_currency",
           "kind": "required_when_value",
           "when": "event_name",
@@ -3455,6 +3518,31 @@
         }
       ],
       "rules": [
+        {
+          "code": "vendor.meta-conversions-api.body.event_time_window",
+          "kind": "time_window",
+          "param": "event_time",
+          "unit": "seconds",
+          "max_age_seconds": 604800,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "event_time",
+                "json_type": "integer"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "event_time",
+                "pattern": "^[0-9]{10}$"
+              }
+            ]
+          },
+          "severity": "error",
+          "message": "Meta rejects the batch when event_time is more than 7 days before the event is sent. A time exactly 7 days old stays clean.",
+          "doc": "https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event"
+        },
         {
           "code": "vendor.meta-conversions-api.body.purchase_requires_value_and_currency",
           "kind": "required_when_value",

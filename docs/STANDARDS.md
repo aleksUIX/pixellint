@@ -8555,6 +8555,10 @@ Context: `{}`.
 | `data` | optional | `{"json_type":"array","min_items":1}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
 | `data[]` | optional | `{"json_type":"object"}` | [official_template](https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/main/facebook_business/adobjects/serverside/event.py) |
 
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.meta-conversions-api.body.batch_limit` | `{"kind":"max_total_array_items","params":["data"],"max_items":1000}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api) |
+
 ### JSON contract 2
 
 Context: `{"scope":["data[]",""]}`.
@@ -8632,6 +8636,7 @@ Context: `{"scope":["data[]",""]}`.
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
+| `vendor.meta-conversions-api.body.event_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds","max_age_seconds":604800,"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"event_time","json_type":"integer"},{"kind":"value_pattern","param":"event_time","pattern":"^[0-9]{10}$"}]}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
 | `vendor.meta-conversions-api.body.purchase_requires_value_and_currency` | `{"kind":"required_when_value","when":"event_name","equals":["Purchase"],"requires":["custom_data.value","custom_data.currency"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
 | `vendor.meta-conversions-api.body.website_requires_source_url` | `{"kind":"required_when_value","when":"action_source","equals":["website"],"requires":["event_source_url"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
 | `vendor.meta-conversions-api.body.ldu_requires_country` | `{"kind":"required_when_value","when":"data_processing_options[]","equals":["LDU"],"requires":["data_processing_options_country"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
@@ -8792,6 +8797,7 @@ Context: `{"scope":"[]","source_param":"data"}`.
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
+| `vendor.meta-conversions-api.body.event_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds","max_age_seconds":604800,"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"event_time","json_type":"integer"},{"kind":"value_pattern","param":"event_time","pattern":"^[0-9]{10}$"}]}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
 | `vendor.meta-conversions-api.body.purchase_requires_value_and_currency` | `{"kind":"required_when_value","when":"event_name","equals":["Purchase"],"requires":["custom_data.value","custom_data.currency"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
 | `vendor.meta-conversions-api.body.website_requires_source_url` | `{"kind":"required_when_value","when":"action_source","equals":["website"],"requires":["event_source_url"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
 | `vendor.meta-conversions-api.body.ldu_requires_country` | `{"kind":"required_when_value","when":"data_processing_options[]","equals":["LDU"],"requires":["data_processing_options_country"],"condition":{"kind":"json_type","param":"","json_type":"object"}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
@@ -8876,6 +8882,7 @@ Context: `{"scope":"","source_param":"data","source_field":"[]"}`.
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
+| `vendor.meta-conversions-api.body.event_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds","max_age_seconds":604800,"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"event_time","json_type":"integer"},{"kind":"value_pattern","param":"event_time","pattern":"^[0-9]{10}$"}]}}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
 | `vendor.meta-conversions-api.body.purchase_requires_value_and_currency` | `{"kind":"required_when_value","when":"event_name","equals":["Purchase"],"requires":["custom_data.value","custom_data.currency"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/custom-data) |
 | `vendor.meta-conversions-api.body.website_requires_source_url` | `{"kind":"required_when_value","when":"action_source","equals":["website"],"requires":["event_source_url"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
 | `vendor.meta-conversions-api.body.ldu_requires_country` | `{"kind":"required_when_value","when":"data_processing_options[]","equals":["LDU"],"requires":["data_processing_options_country"]}` | error | [official_vendor](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event) |
@@ -11769,7 +11776,7 @@ Context: `{"scope":""}`.
 | `consent_state.ccpa` | optional | `{"allow_empty":true,"json_type":["object","null"],"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"consent_state","json_type":"object"}]}}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
 | `values_consent_state_ccpa` | optional | `{"allow_empty":true,"json_type":["object","null"],"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"consent_state","json_type":"object"}]},"name_pattern":".*","name_pattern_parent":"consent_state.ccpa"}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
 | `job_id` | optional | `{"allow_empty":true,"json_type":["string","null","boolean","integer","number"]}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
-| `events` | optional | `{"allow_empty":true,"json_type":["array","null"],"min_items":0}` | [official_vendor](https://docs.mparticle.com/developers/apis/json-reference/) |
+| `events` | optional | `{"allow_empty":true,"json_type":["array","null"],"min_items":0,"max_items":100}` | [official_vendor](https://docs.mparticle.com/developers/apis/http/) |
 | `events[]` | optional | `{"allow_empty":true,"json_type":"object"}` | [official_vendor](https://docs.mparticle.com/developers/apis/json-reference/) |
 
 ### JSON contract 3
@@ -15258,6 +15265,7 @@ Context: `{"scope":"data.events[]"}`.
 | `vendor.reddit-conversions-api.body.custom_name_reserved` | `{"kind":"forbid_value_pattern","params":["type.custom_event_name"],"pattern":"^(?:PAGE_VISIT\|VIEW_CONTENT\|SEARCH\|ADD_TO_CART\|ADD_TO_WISHLIST\|PURCHASE\|LEAD\|SIGN_UP)$","condition":{"kind":"value_in","param":"type.tracking_type","values":["CUSTOM"]}}` | warning | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
 | `vendor.reddit-conversions-api.body.placeholder_advertising_id` | `{"kind":"forbid_value_pattern","params":["user.idfa","user.aaid"],"pattern":"^00000000-0000-0000-0000-000000000000$"}` | warning | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
 | `vendor.reddit-conversions-api.body.event_age` | `{"kind":"time_window","param":"event_at","unit":"milliseconds","max_age_seconds":604800,"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"event_at","json_type":"integer"},{"kind":"value_pattern","param":"event_at","pattern":"^[0-9]{13}$"}]}}` | error | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
+| `vendor.reddit-conversions-api.body.dedup_window` | `{"kind":"time_window","param":"event_at","unit":"milliseconds","max_age_seconds":172800,"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"event_at","json_type":"integer"},{"kind":"value_pattern","param":"event_at","pattern":"^[0-9]{13}$"}]}}` | warning | [official_vendor](https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration) |
 | `vendor.reddit-conversions-api.body.order_id_truncated` | `{"kind":"format","param":"metadata.order_id","format":{"kind":"regex","pattern":"(?s)^.{0,100}$"},"condition":{"kind":"json_type","param":"metadata.order_id","json_type":"string"}}` | warning | [official_vendor](https://ads-api.reddit.com/api/v3/openapi.json) |
 
 ### JSON contract 3
@@ -16102,6 +16110,10 @@ Context: `{}`.
 | `data` | optional | `{"json_type":"array","min_items":1}` | [official_vendor](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI) |
 | `data[]` | optional | `{"json_type":"object"}` | [official_vendor](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI) |
 
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.snapchat.body.batch_limit` | `{"kind":"max_total_array_items","params":["data"],"max_items":2000}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/JavaBusinessSDK) |
+
 ### JSON contract 2
 
 Context: `{"scope":["data[]",""]}`.
@@ -16245,6 +16257,7 @@ Context: `{"scope":["data[]",""]}`.
 | `vendor.snapchat.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user_data.client_ip_address","user_data.client_user_agent","user_data.sc_click_id","user_data.sc_cookie1","user_data.madid","user_data.idfv"]}` | error | [official_vendor](https://developers.snap.com/api/marketing-api/Conversions-API/Parameters) |
 | `vendor.snapchat.body.app_requires_extinfo` | `{"kind":"required_when_value","when":"action_source","equals":["MOBILE_APP"],"requires":["app_data.extinfo"]}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
 | `vendor.snapchat.body.event_time_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds_or_milliseconds","max_age_seconds":604800}` | error | [official_vendor](https://developers.snap.com/api/marketing-api/Conversions-API/UsingTheAPI) |
+| `vendor.snapchat.body.event_time_future` | `{"kind":"time_window","param":"event_time","unit":"seconds_or_milliseconds","max_future_seconds":600}` | warning | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/OfflineEvents) |
 | `vendor.snapchat.body.ios_extinfo_app_id` | `{"kind":"format_when","when":"app_data.extinfo[0]","equals":["i2"],"param":"app_data.app_id","format":{"kind":"regex","pattern":"^[0-9]+$"}}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
 | `vendor.snapchat.body.app_requires_app_id` | `{"kind":"required_when_value","when":"action_source","equals":["MOBILE_APP"],"requires":["app_data.app_id"]}` | error | [official_vendor](https://developers.snap.com/marketing-api/Conversions-API/Parameters) |
 

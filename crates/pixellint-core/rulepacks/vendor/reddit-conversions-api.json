@@ -620,6 +620,31 @@
           "doc": "https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration"
         },
         {
+          "code": "vendor.reddit-conversions-api.body.dedup_window",
+          "kind": "time_window",
+          "param": "event_at",
+          "unit": "milliseconds",
+          "max_age_seconds": 172800,
+          "condition": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "json_type",
+                "param": "event_at",
+                "json_type": "integer"
+              },
+              {
+                "kind": "value_pattern",
+                "param": "event_at",
+                "pattern": "^[0-9]{13}$"
+              }
+            ]
+          },
+          "severity": "warning",
+          "message": "Reddit asks for events within two days so deduplication can run. An older event inside the seven-day limit is still accepted, and a timestamp exactly two days old stays clean.",
+          "doc": "https://ads-api.reddit.com/docs/v3/guides/programs/capi/direct-integration"
+        },
+        {
           "code": "vendor.reddit-conversions-api.body.order_id_truncated",
           "kind": "format",
           "param": "metadata.order_id",

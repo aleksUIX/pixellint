@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.59.15 (2026-11-19)
+
+- Reject a Snap conversion batch with more than 2000 events. A batch of exactly 2000 stays clean.
+- Warn when a Snap conversion timestamp is more than 10 minutes in the future. The event is still processed, and a timestamp exactly 10 minutes ahead stays clean.
+- Warn when a Reddit conversion is older than two days, because that is the deduplication window. The event can still be accepted inside seven days, and a timestamp exactly two days old stays clean.
+- Reject a Meta conversion batch when event_time is more than 7 days before the event is sent. A time exactly 7 days old stays clean. A 13-digit millisecond value stays the existing digit error.
+- Reject a Meta conversion request with more than 1000 events in data. A batch of exactly 1000 stays clean.
+- Reject an mParticle Events API batch with more than 100 events. A batch of exactly 100 stays clean.
+
 ## 0.59.14 (2026-11-19)
 
 - Reject a LinkedIn conversion time that is not from the past 90 days. A time at the check clock stays clean. A 10-digit second value stays the existing digit error.
