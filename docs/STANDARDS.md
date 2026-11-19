@@ -10017,10 +10017,11 @@ Context: `{"scope":"[]"}`.
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 | `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `long_remove_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$remove","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
-| `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `$unset[]` | optional | `{"json_type":"string","max_length":255,"format_severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
@@ -10054,10 +10055,11 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 | `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `long_remove_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$remove","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
-| `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `$unset[]` | optional | `{"json_type":"string","max_length":255,"format_severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
@@ -10411,10 +10413,11 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 | `long_union_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$union","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `long_remove_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$remove","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$unset` | optional | `{"json_type":"array"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$delete` | optional | `{"json_type":"string","allow_empty":true}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
-| `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
+| `$unset[]` | optional | `{"json_type":"string","max_length":255,"format_severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"^.+$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
@@ -10632,6 +10635,8 @@ Context: `{"scope":"[]"}`.
 | --- | --- | --- | --- |
 | `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `properties` | required | `{"json_type":"object","max_properties":254}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"properties","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/events-and-properties) |
+| `wide_numeric` | optional | `{"name_pattern":".*","name_pattern_parent":"properties","format_severity":"warning","json_type":["string","number","boolean","object","array","null"],"allow_empty":true,"maximum":9007199254740992}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/property-reference/data-type) |
 | `unknown_fields` | forbidden | `{"name_pattern":".*","name_pattern_parent":""}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `properties.time` | required | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `properties.distinct_id` | required | `{"allow_empty":true,"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
@@ -10739,6 +10744,8 @@ Context: `{"scope":"[]"}`.
 | --- | --- | --- | --- |
 | `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties` | required | `{"json_type":"object","max_properties":254}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"properties","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/events-and-properties) |
+| `wide_numeric` | optional | `{"name_pattern":".*","name_pattern_parent":"properties","format_severity":"warning","json_type":["string","number","boolean","object","array","null"],"allow_empty":true,"maximum":9007199254740992}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/property-reference/data-type) |
 | `unknown_fields` | forbidden | `{"name_pattern":".*","name_pattern_parent":""}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.distinct_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
@@ -10775,6 +10782,8 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | --- | --- | --- | --- |
 | `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties` | required | `{"json_type":"object","max_properties":254}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"properties","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/events-and-properties) |
+| `wide_numeric` | optional | `{"name_pattern":".*","name_pattern_parent":"properties","format_severity":"warning","json_type":["string","number","boolean","object","array","null"],"allow_empty":true,"maximum":9007199254740992}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/property-reference/data-type) |
 | `unknown_fields` | forbidden | `{"name_pattern":".*","name_pattern_parent":""}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.distinct_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
@@ -10875,6 +10884,8 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | --- | --- | --- | --- |
 | `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties` | required | `{"json_type":"object","max_properties":254}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"properties","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/events-and-properties) |
+| `wide_numeric` | optional | `{"name_pattern":".*","name_pattern_parent":"properties","format_severity":"warning","json_type":["string","number","boolean","object","array","null"],"allow_empty":true,"maximum":9007199254740992}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/property-reference/data-type) |
 | `unknown_fields` | forbidden | `{"name_pattern":".*","name_pattern_parent":""}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.distinct_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |

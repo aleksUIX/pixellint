@@ -2,7 +2,7 @@
   "schema_version": 1,
   "review_date": "2026-10-26",
   "status": "release_prepared",
-  "coverage_claim": "Mixpanel truncates a group profile property name longer than 255 characters when it is written with $union. The union list can still be valid. No receiver completeness claim.",
+  "coverage_claim": "Mixpanel warns when an imported event property is an integer above 2^53, because those values are rounded. The exact bound and the same digits in a string stay clean. No receiver completeness claim.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
     "version": "0.34.0",
@@ -191997,7 +191997,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "e84f04ee26bdbd56637352f06c6d92f7fab43a2faef440e9f6e692d0ba6bcbf6",
+      "manifest_sha256": "ff4a7078abb2c2b7132e9d5dbdafcf2686afb2af9e34ccc3206e2e4ed42028a0",
       "fixture_sha256": {
         "fixtures/vendor-mixpanel/batch-reports-every-event.txt": "d7a69fa30064274bc77c0feb3e85ae249cc5527f11203f01240abc2e711f994f",
         "fixtures/vendor-mixpanel/clean-track.txt": "724344f6d6afc348c6e17cc6cd2dcd73a7532c17e3cd6978f57e86fc6f6630af",
@@ -192010,7 +192010,9 @@
         "fixtures/vendor-mixpanel/invalid-referrer.txt": "15122586fcda12d5b4fa34fc015b962dc0a98aadf9e17d152e9cb5edc319b1c7",
         "fixtures/vendor-mixpanel/invalid-screen-height.txt": "0381fdb8bb2f19e9f218d1493bb303e4cdc1a23da31439fb05479fd92f888773",
         "fixtures/vendor-mixpanel/invalid-time.txt": "f983391546bde1d8715e043ff0ea592ba25a320abd8054853f4d7949a8884bfe",
-        "fixtures/vendor-mixpanel/manifest.json": "d46b1f18615139eb1d4eef95353b0faf3c24259c9d4186560d01a510ac62e71a",
+        "fixtures/vendor-mixpanel/manifest.json": "3fbfc0c8ee462d46a8f60d0bfe571dbe0b411a177120d4d6cde34b457f79dcc2",
+        "fixtures/vendor-mixpanel/long-property-name.txt": "1f3ae83707f4670634fc10ed8f644466be39c11dba198ddb48f0378861675183",
+        "fixtures/vendor-mixpanel/wide-numeric.txt": "488d4c7e890efb7074466a0df3bb50d8cc3f0bfc13b8ffd32c999ba503f43e9f",
         "fixtures/vendor-mixpanel/extra-event-field.txt": "8c875b46332e3e3a9171cf6e2e8916e108f0cee407c0a970f4459a98c37bd60d",
         "fixtures/vendor-mixpanel/missing-distinct-id.txt": "c756aef8d6ea3bc134c9823bdf5893b3478ffe142f2b3a4259ce2bfecde2364f",
         "fixtures/vendor-mixpanel/missing-event-name.txt": "3d627c3b88519747324adacdb7203a82499e006dc681f43e2877d10ce694b889",
@@ -192063,7 +192065,7 @@
         "automatic_http_routing_examples": 3
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/mixpanel.json": "e84f04ee26bdbd56637352f06c6d92f7fab43a2faef440e9f6e692d0ba6bcbf6",
+        "crates/pixellint-core/rulepacks/vendor/mixpanel.json": "ff4a7078abb2c2b7132e9d5dbdafcf2686afb2af9e34ccc3206e2e4ed42028a0",
         "fixtures/vendor-mixpanel/batch-reports-every-event.txt": "d7a69fa30064274bc77c0feb3e85ae249cc5527f11203f01240abc2e711f994f",
         "fixtures/vendor-mixpanel/clean-track.txt": "724344f6d6afc348c6e17cc6cd2dcd73a7532c17e3cd6978f57e86fc6f6630af",
         "fixtures/vendor-mixpanel/clean-web.txt": "1c764d459c66429176a5e1eaa441566351d53971bdcacd355927051299400bae",
@@ -192075,7 +192077,9 @@
         "fixtures/vendor-mixpanel/invalid-referrer.txt": "15122586fcda12d5b4fa34fc015b962dc0a98aadf9e17d152e9cb5edc319b1c7",
         "fixtures/vendor-mixpanel/invalid-screen-height.txt": "0381fdb8bb2f19e9f218d1493bb303e4cdc1a23da31439fb05479fd92f888773",
         "fixtures/vendor-mixpanel/invalid-time.txt": "f983391546bde1d8715e043ff0ea592ba25a320abd8054853f4d7949a8884bfe",
-        "fixtures/vendor-mixpanel/manifest.json": "d46b1f18615139eb1d4eef95353b0faf3c24259c9d4186560d01a510ac62e71a",
+        "fixtures/vendor-mixpanel/manifest.json": "3fbfc0c8ee462d46a8f60d0bfe571dbe0b411a177120d4d6cde34b457f79dcc2",
+        "fixtures/vendor-mixpanel/long-property-name.txt": "1f3ae83707f4670634fc10ed8f644466be39c11dba198ddb48f0378861675183",
+        "fixtures/vendor-mixpanel/wide-numeric.txt": "488d4c7e890efb7074466a0df3bb50d8cc3f0bfc13b8ffd32c999ba503f43e9f",
         "fixtures/vendor-mixpanel/extra-event-field.txt": "8c875b46332e3e3a9171cf6e2e8916e108f0cee407c0a970f4459a98c37bd60d",
         "fixtures/vendor-mixpanel/missing-distinct-id.txt": "c756aef8d6ea3bc134c9823bdf5893b3478ffe142f2b3a4259ce2bfecde2364f",
         "fixtures/vendor-mixpanel/missing-event-name.txt": "3d627c3b88519747324adacdb7203a82499e006dc681f43e2877d10ce694b889",
@@ -204957,13 +204961,15 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "cc7c46c004e9576be332cec58ab9b7ef51445823c4e861fca8902a86062e578a",
+      "manifest_sha256": "01fd71844b241f5b85642e554bb8e29269bddf8644727643f11c889c7db97558",
       "fixture_sha256": {
         "fixtures/vendor-mixpanel-groups/clean-set.txt": "aed8ede92900e8859fafe1a9a28948416f1b94914a2f544db96ff53def3e56e8",
         "fixtures/vendor-mixpanel-groups/clean-url.txt": "138667f384fcec0d63315901f4e7c6989ce7a2dd7dfc935213f4528651f824d8",
         "fixtures/vendor-mixpanel-groups/depth-cases.json": "d04a9e470da114960f372589c47cacf933709062da73ea612b28604e3a3ff1c2",
         "fixtures/vendor-mixpanel-groups/empty-token.txt": "47a07453d2cb17fe0a76e9a61178581a79c5bffe6435f259dbfc4f60bd118a80",
-        "fixtures/vendor-mixpanel-groups/manifest.json": "afaadf407ee570c3ae3cf73e6527b35f788e24b19af63f0929ca52da2ff83091",
+        "fixtures/vendor-mixpanel-groups/manifest.json": "fd267583be023d52ca22cf9b8f05a9017b794d8c24ab6c33cf110d2fe035363d",
+        "fixtures/vendor-mixpanel-groups/long-unset-name.txt": "b5633b82c34d7f28373ada8fc278ae6ef5f2e16bfc4c1cf5cc9b2f8d9a4c0d2c",
+        "fixtures/vendor-mixpanel-groups/long-remove-name.txt": "9005ccf0e0ba952b2bd98d5968916ba2da2705050d3471b816e53a8a7bfa41f0",
         "fixtures/vendor-mixpanel-groups/long-union-name.txt": "a85a47a88d16899fd14737dc84f35329ef38a3cc5747672fcbf939217c8bad76",
         "fixtures/vendor-mixpanel-groups/long-add-name.txt": "6c1cfc97eb159b93fabbdd75e1ee9893eb39d0bd9d75adcc716f436b4299f772",
         "fixtures/vendor-mixpanel-groups/long-property-name.txt": "6887f7da9d838b200c64352ed9b286830bf49e765d0204556acf5be6ecc4d42c",
@@ -205025,12 +205031,14 @@
         "current_transport_goldens": 76
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/mixpanel-groups.json": "cc7c46c004e9576be332cec58ab9b7ef51445823c4e861fca8902a86062e578a",
+        "crates/pixellint-core/rulepacks/vendor/mixpanel-groups.json": "01fd71844b241f5b85642e554bb8e29269bddf8644727643f11c889c7db97558",
         "fixtures/vendor-mixpanel-groups/clean-set.txt": "aed8ede92900e8859fafe1a9a28948416f1b94914a2f544db96ff53def3e56e8",
         "fixtures/vendor-mixpanel-groups/clean-url.txt": "138667f384fcec0d63315901f4e7c6989ce7a2dd7dfc935213f4528651f824d8",
         "fixtures/vendor-mixpanel-groups/depth-cases.json": "d04a9e470da114960f372589c47cacf933709062da73ea612b28604e3a3ff1c2",
         "fixtures/vendor-mixpanel-groups/empty-token.txt": "47a07453d2cb17fe0a76e9a61178581a79c5bffe6435f259dbfc4f60bd118a80",
-        "fixtures/vendor-mixpanel-groups/manifest.json": "afaadf407ee570c3ae3cf73e6527b35f788e24b19af63f0929ca52da2ff83091",
+        "fixtures/vendor-mixpanel-groups/manifest.json": "fd267583be023d52ca22cf9b8f05a9017b794d8c24ab6c33cf110d2fe035363d",
+        "fixtures/vendor-mixpanel-groups/long-unset-name.txt": "b5633b82c34d7f28373ada8fc278ae6ef5f2e16bfc4c1cf5cc9b2f8d9a4c0d2c",
+        "fixtures/vendor-mixpanel-groups/long-remove-name.txt": "9005ccf0e0ba952b2bd98d5968916ba2da2705050d3471b816e53a8a7bfa41f0",
         "fixtures/vendor-mixpanel-groups/long-union-name.txt": "a85a47a88d16899fd14737dc84f35329ef38a3cc5747672fcbf939217c8bad76",
         "fixtures/vendor-mixpanel-groups/long-add-name.txt": "6c1cfc97eb159b93fabbdd75e1ee9893eb39d0bd9d75adcc716f436b4299f772",
         "fixtures/vendor-mixpanel-groups/long-property-name.txt": "6887f7da9d838b200c64352ed9b286830bf49e765d0204556acf5be6ecc4d42c",
@@ -206602,7 +206610,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "0b86c1e79119441540a624136d256297753897dcbf2f50db478ee53224ccb170",
+      "manifest_sha256": "3bd71e1e6e4fcb8b4dc901ec652c5cc3f4524801d4a3092ab1cbee05553dcd84",
       "fixture_sha256": {
         "fixtures/vendor-mixpanel-import/clean-defaults.txt": "45ed6cd4088273c19b73527f0dc2d25625a93c9fd4891cb4c6e7bc22f62e2a6d",
         "fixtures/vendor-mixpanel-import/clean-import.txt": "92114ba92a89e8ed400cca6171566fd03c411614fa39d0ca67db8873235320c9",
@@ -206616,7 +206624,9 @@
         "fixtures/vendor-mixpanel-import/invalid-current-url.txt": "cbf023d1f867f6e25c945d4392a51c1478cdc6ca3753c1afbdb5a6037a33e1c5",
         "fixtures/vendor-mixpanel-import/invalid-insert-id.txt": "fa2da7f255fdcddfe27dfdd41ec493cd131e9c72ccca93c742ab4d19351671c4",
         "fixtures/vendor-mixpanel-import/invalid-screen-height.txt": "06f4c18d0c5e1cf89358ae148d891329395da3049654b19c219891d7782a809e",
-        "fixtures/vendor-mixpanel-import/manifest.json": "e2ba1b8c814de128963598f878479d803a9f9fcd5af90ddb89eb1669534cb6c0",
+        "fixtures/vendor-mixpanel-import/manifest.json": "bf96fc87789142314f52a079af73e03996f0f23389d6fdde5676bcc806fe2bea",
+        "fixtures/vendor-mixpanel-import/long-property-name.txt": "f4021d3cf3dd80f3ab715699b76204662c4ebd76fa5736c8f38ef09b9f6fb3c2",
+        "fixtures/vendor-mixpanel-import/wide-numeric.txt": "0fb268e7f3159bc452ae5b82dec2063c636f93e96294399053030b6034cfae79",
         "fixtures/vendor-mixpanel-import/extra-event-field.txt": "e2c0d4c7cddbca29128fb9c160d096c3ae63f99c52cab26b6a97a911f31ce869",
         "fixtures/vendor-mixpanel-import/missing-distinct-id.txt": "6d97a5ed2697c6b72d29cd4fec6d2c5e30e7abf7f0927b0bb5893933926be89d",
         "fixtures/vendor-mixpanel-import/missing-insert-id.txt": "52cb3f794c19e44079f5e5ef58675c61b2e3109063d0d4732a74426c093ee88d",
@@ -206674,7 +206684,7 @@
         "automatic_http_routing_examples": 3
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/mixpanel-import.json": "0b86c1e79119441540a624136d256297753897dcbf2f50db478ee53224ccb170",
+        "crates/pixellint-core/rulepacks/vendor/mixpanel-import.json": "3bd71e1e6e4fcb8b4dc901ec652c5cc3f4524801d4a3092ab1cbee05553dcd84",
         "fixtures/vendor-mixpanel-import/clean-defaults.txt": "45ed6cd4088273c19b73527f0dc2d25625a93c9fd4891cb4c6e7bc22f62e2a6d",
         "fixtures/vendor-mixpanel-import/clean-import.txt": "92114ba92a89e8ed400cca6171566fd03c411614fa39d0ca67db8873235320c9",
         "fixtures/vendor-mixpanel-import/clean-url.txt": "27568f295c544ad6a79d516933266a4eaf28e1d084b82fec3dfa69e3ef08a4e5",
@@ -206687,7 +206697,9 @@
         "fixtures/vendor-mixpanel-import/invalid-current-url.txt": "cbf023d1f867f6e25c945d4392a51c1478cdc6ca3753c1afbdb5a6037a33e1c5",
         "fixtures/vendor-mixpanel-import/invalid-insert-id.txt": "fa2da7f255fdcddfe27dfdd41ec493cd131e9c72ccca93c742ab4d19351671c4",
         "fixtures/vendor-mixpanel-import/invalid-screen-height.txt": "06f4c18d0c5e1cf89358ae148d891329395da3049654b19c219891d7782a809e",
-        "fixtures/vendor-mixpanel-import/manifest.json": "e2ba1b8c814de128963598f878479d803a9f9fcd5af90ddb89eb1669534cb6c0",
+        "fixtures/vendor-mixpanel-import/manifest.json": "bf96fc87789142314f52a079af73e03996f0f23389d6fdde5676bcc806fe2bea",
+        "fixtures/vendor-mixpanel-import/long-property-name.txt": "f4021d3cf3dd80f3ab715699b76204662c4ebd76fa5736c8f38ef09b9f6fb3c2",
+        "fixtures/vendor-mixpanel-import/wide-numeric.txt": "0fb268e7f3159bc452ae5b82dec2063c636f93e96294399053030b6034cfae79",
         "fixtures/vendor-mixpanel-import/extra-event-field.txt": "e2c0d4c7cddbca29128fb9c160d096c3ae63f99c52cab26b6a97a911f31ce869",
         "fixtures/vendor-mixpanel-import/missing-distinct-id.txt": "6d97a5ed2697c6b72d29cd4fec6d2c5e30e7abf7f0927b0bb5893933926be89d",
         "fixtures/vendor-mixpanel-import/missing-insert-id.txt": "52cb3f794c19e44079f5e5ef58675c61b2e3109063d0d4732a74426c093ee88d",

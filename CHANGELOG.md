@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.59.11 (2026-11-19)
+
+- Warn when a Mixpanel event property name is longer than 255 characters. The same limit applies to imported events.
+- Warn when a Mixpanel group profile property name longer than 255 characters is written with $remove or listed in $unset.
+- Warn when a Mixpanel event property is an integer above 2^53. The same limit applies to imported events. The exact bound and a string of the same digits stay clean.
+
 ## 0.59.10 (2026-11-19)
 
 - Warn when a Mixpanel user profile property name longer than 255 characters is written with $append, $remove, or $union, or listed in $unset.
