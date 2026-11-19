@@ -1,4 +1,6 @@
 //! Private, producer-specific preparation for selected built-in SDK endpoints.
+use std::collections::BTreeSet;
+
 use crate::json::{BoundedJsonError, JsonDocument, JsonField, JsonLimits, JsonValueKind};
 use crate::manifest::{RawParam, decode_base64_bytes};
 use crate::{
@@ -228,6 +230,12 @@ impl Profile {
                 // Charge each generated scope and possible finding before vendor evaluation.
                 let (paths, expansion_work) = document.expand_with_work(pattern);
                 budget.charge(0, expansion_work.checked_mul(2).ok_or(Problem::Limit)?)?;
+                let exact_names: BTreeSet<&str> = spec
+                    .fields
+                    .iter()
+                    .filter(|field| field.matcher.is_none())
+                    .flat_map(|field| field.names.iter().map(|name| name.as_str()))
+                    .collect();
                 for path in paths {
                     budget.charge(path.len(), 1)?;
                     let mut scope_name_bytes = 0usize;
@@ -243,6 +251,9 @@ impl Profile {
                             )?;
                             for parent_path in parents {
                                 for (key, value_path) in document.members(&parent_path) {
+                                    if exact_names.contains(key.as_str()) {
+                                        continue;
+                                    }
                                     let logical = crate::json::member_path(parent, &key);
                                     // The real collector retains every member before name filtering.
                                     budget.charge(

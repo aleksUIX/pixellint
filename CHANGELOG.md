@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.59.8 (2026-11-19)
+
+- Fix Mixpanel SDK batch preflight so the 2000-record track limit still reaches vendor validation after the unknown-fields check in 0.59.6.
+- Align the GA4 device.language depth case with the ISO 639-1 format guidance added in 0.59.7.
+
 ## 0.59.7 (2026-11-18)
 
 - Warn when a Mixpanel user or group property name is longer than 255 characters. The check covers names written with $set and $set_once.
