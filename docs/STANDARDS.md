@@ -190,6 +190,10 @@ Matcher: `{"host_suffixes":["adform.net"],"path_prefixes":["/videoad","/C/","/ad
 | `cpdir` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners) |
 | `urlappend` | optional | `{"format":{"kind":"regex","pattern":"^(?:[?&]\|__ADFSEP__).+"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/9739143043345-Overview-of-Supported-Ad-Serving-Macros) |
 
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.adform.param.click_index` | `{"kind":"forbid_value_pattern","params":["C"],"pattern":"^(?:0\|-.*)$"}` | warning | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners) |
+
 ## `vendor/adglare-native-events`
 
 Advisory native event POST and captured entity-presence checks on the independently published try.engine.adglare.net host at exact /event. Populated data query carriers use a separate generic loader fallback and are excluded. Tokens, MIME and body encoding remain opaque; /event/{token}, other tenants, native ad requests and current receiver acceptance are outside this profile.
@@ -5647,6 +5651,7 @@ Context: `{"scope":["conversions[]"]}`.
 | `vendor.google-ads-click-conversions.body.custom_variables_unsupported_with_user_data` | `{"kind":"mutually_exclusive","params":["customVariables","userIdentifiers"]}` | error | [official_vendor](https://developers.google.com/google-ads/api/docs/conversions/upload-offline) |
 | `vendor.google-ads-click-conversions.body.external_attribution_unsupported_with_user_data` | `{"kind":"mutually_exclusive","params":["externalAttributionData","userIdentifiers"]}` | error | [official_vendor](https://developers.google.com/google-ads/api/docs/conversions/upload-offline) |
 | `vendor.google-ads-click-conversions.body.conversionDateTime.calendar_invalid` | `{"kind":"format","param":"conversionDateTime","format":{"kind":"datetime","require_timezone":true,"allow_space_separator":true},"condition":{"kind":"value_pattern","param":"conversionDateTime","pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"}}` | error | [official_vendor](https://developers.google.com/google-ads/api/docs/conversions/upload-offline) |
+| `vendor.google-ads-click-conversions.body.conversion_time_future` | `{"kind":"time_window","param":"conversionDateTime","unit":"datetime","max_future_seconds":0,"condition":{"kind":"value_pattern","param":"conversionDateTime","pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"}}` | error | [official_vendor](https://developers.google.com/google-ads/api/docs/conversions/upload-offline) |
 | `vendor.google-ads-click-conversions.body.conversionAction.resource_name` | `{"kind":"format","param":"conversionAction","format":{"kind":"regex","pattern":"^customers/[0-9]+/conversionActions/[0-9]+$"},"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"conversionAction","json_type":"string"},{"kind":"value_pattern","param":"conversionAction","pattern":"(?s).+"}]}}` | warning | [official_vendor](https://developers.google.com/google-ads/api/reference/rpc/v25/ConversionAction) |
 | `vendor.google-ads-click-conversions.body.currencyCode.assignment` | `{"kind":"format","param":"currencyCode","format":{"kind":"currency","allow_historical":true,"case_insensitive":true},"condition":{"kind":"value_pattern","param":"currencyCode","pattern":"^[A-Za-z]{3}$"}}` | warning | [official_vendor](https://developers.google.com/google-ads/api/reference/rpc/v25/ClickConversion) |
 | `vendor.google-ads-click-conversions.body.consent.adPersonalization.forbidden` | `{"kind":"forbid_value_pattern","params":["consent.adPersonalization"],"pattern":"^(?:UNKNOWN\|GRANTED\|DENIED\|[-+]?(?:[0-9]*[1-9][0-9]*(?:\\.[0-9]*)?\|[0-9]*\\.[0-9]*[1-9][0-9]*)(?:[eE][+-]?[0-9]+)?)$"}` | error | [official_vendor](https://developers.google.com/google-ads/api/reference/rpc/v25/Consent) |
@@ -5771,6 +5776,7 @@ Context: `{"scope":["conversionAdjustments[]","conversion_adjustments[]"]}`.
 | `vendor.google-ads-conversion-adjustments.body.user_agent_enhancement_only` | `{"kind":"forbidden_when_value","when":"adjustmentType","equals":["RETRACTION","RESTATEMENT","2","3"],"params":["userAgent"]}` | error | [official_vendor](https://developers.google.com/google-ads/api/reference/rpc/v25/ConversionAdjustment) |
 | `vendor.google-ads-conversion-adjustments.body.user_agent_requires_identifiers` | `{"kind":"required_with","when":"userAgent","requires":["userIdentifiers"]}` | error | [official_vendor](https://developers.google.com/google-ads/api/reference/rpc/v25/ConversionAdjustment) |
 | `vendor.google-ads-conversion-adjustments.body.adjustmentDateTime.calendar_invalid` | `{"kind":"format","param":"adjustmentDateTime","format":{"kind":"datetime","require_timezone":true,"allow_space_separator":true},"condition":{"kind":"value_pattern","param":"adjustmentDateTime","pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"}}` | error | [official_vendor](https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments) |
+| `vendor.google-ads-conversion-adjustments.body.adjustment_time_future` | `{"kind":"time_window","param":"adjustmentDateTime","unit":"datetime","max_future_seconds":0,"condition":{"kind":"value_pattern","param":"adjustmentDateTime","pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"}}` | error | [official_vendor](https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments) |
 | `vendor.google-ads-conversion-adjustments.body.gclidDateTimePair.conversionDateTime.calendar_invalid` | `{"kind":"format","param":"gclidDateTimePair.conversionDateTime","format":{"kind":"datetime","require_timezone":true,"allow_space_separator":true},"condition":{"kind":"value_pattern","param":"gclidDateTimePair.conversionDateTime","pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$"}}` | error | [official_vendor](https://developers.google.com/google-ads/api/docs/conversions/upload-adjustments) |
 
 ### JSON contract 3
@@ -11221,7 +11227,7 @@ Context: `{"scope":"[]"}`.
 | `consent_state.ccpa` | optional | `{"allow_empty":true,"json_type":["object","null"],"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"consent_state","json_type":"object"}]}}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
 | `values_consent_state_ccpa` | optional | `{"allow_empty":true,"json_type":["object","null"],"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"consent_state","json_type":"object"}]},"name_pattern":".*","name_pattern_parent":"consent_state.ccpa"}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
 | `job_id` | optional | `{"allow_empty":true,"json_type":["string","null","boolean","integer","number"]}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
-| `events` | optional | `{"allow_empty":true,"json_type":["array","null"],"min_items":0}` | [official_vendor](https://docs.mparticle.com/developers/apis/json-reference/) |
+| `events` | optional | `{"allow_empty":true,"json_type":["array","null"],"min_items":0,"max_items":100}` | [official_vendor](https://docs.mparticle.com/developers/apis/http/) |
 | `events[]` | optional | `{"allow_empty":true,"json_type":"object"}` | [official_vendor](https://docs.mparticle.com/developers/apis/json-reference/) |
 
 ### JSON contract 3
@@ -12332,7 +12338,7 @@ Context: `{"scope":["[]",""]}`.
 | `consent_state.ccpa` | optional | `{"allow_empty":true,"json_type":["object","null"],"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"consent_state","json_type":"object"}]}}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
 | `values_consent_state_ccpa` | optional | `{"allow_empty":true,"json_type":["object","null"],"condition":{"kind":"all","conditions":[{"kind":"json_type","param":"consent_state","json_type":"object"}]},"name_pattern":".*","name_pattern_parent":"consent_state.ccpa"}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
 | `job_id` | optional | `{"allow_empty":true,"json_type":["string","null","boolean","integer","number"]}` | [official_vendor](https://docs.mparticle.com/schema/mparticle.inbound.eventsapi.schema.json) |
-| `events` | required | `{"allow_empty":true,"json_type":"array","min_items":1}` | [official_vendor](https://docs.mparticle.com/developers/apis/json-reference/) |
+| `events` | required | `{"allow_empty":true,"json_type":"array","min_items":1,"max_items":100}` | [official_vendor](https://docs.mparticle.com/developers/apis/http/) |
 | `events[]` | optional | `{"allow_empty":true,"json_type":"object"}` | [official_vendor](https://docs.mparticle.com/developers/apis/json-reference/) |
 
 ### JSON contract 3
@@ -15057,6 +15063,10 @@ Context: `{}`.
 | `conversion` | optional | `{"json_type":"object"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/main/template.tpl) |
 | `device` | optional | `{"json_type":"object"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/main/template.tpl) |
 | `user` | required | `{"json_type":"object"}` | [official_template](https://github.com/quora/quora-capi-tag/blob/main/template.tpl) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.quora-conversions-api.body.timestamp.microseconds` | `{"kind":"forbid_value_pattern","params":["conversion.timestamp"],"pattern":"^(?:[0-9]{1,15}\|[0-9]{17,})$","condition":{"kind":"json_type","param":"conversion.timestamp","json_type":"integer"}}` | warning | [official_vendor](https://github.com/quora/quora-capi-tag) |
 
 ### Complete HTTP contract 1
 

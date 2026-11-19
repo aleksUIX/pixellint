@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.59.16 (2026-11-19)
+
+- Reject an mParticle bulk batch that contains more than 100 events. A batch of exactly 100 stays clean.
+- Reject an mParticle historical batch that contains more than 100 events. A batch of exactly 100 stays clean.
+- Warn when a Quora conversion timestamp is not 16 digits, because the Conversion API tag sends microseconds. A 16-digit value stays clean.
+- Reject a Google Ads click conversion whose time is in the future. A time equal to the check clock stays clean.
+- Reject a Google Ads conversion adjustment whose time is in the future. A time equal to the check clock stays clean.
+- Warn when an Adform click index is zero or negative. Documented click indexes start at 1, and C=1 stays clean.
+
 ## 0.59.15 (2026-11-19)
 
 - Reject a Snap conversion batch with more than 2000 events. A batch of exactly 2000 stays clean.

@@ -168,7 +168,24 @@
           "source_level": "official_template"
         }
       ],
-      "rules": []
+      "rules": [
+        {
+          "code": "vendor.quora-conversions-api.body.timestamp.microseconds",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "conversion.timestamp"
+          ],
+          "pattern": "^(?:[0-9]{1,15}|[0-9]{17,})$",
+          "condition": {
+            "kind": "json_type",
+            "param": "conversion.timestamp",
+            "json_type": "integer"
+          },
+          "severity": "warning",
+          "message": "Quora's Conversion API tag sends timestamp as microseconds since epoch. A value that is not 16 digits is a different unit and will be stored far from the intended time.",
+          "doc": "https://github.com/quora/quora-capi-tag"
+        }
+      ]
     }
   ],
   "http": {
