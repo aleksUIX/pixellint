@@ -2735,6 +2735,7 @@ Context: `{"scope":"events[]"}`.
 | `plan.branch` | optional | `{"json_type":"string","max_length":1024}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
 | `plan.source` | optional | `{"json_type":"string","max_length":1024}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
 | `plan.version` | optional | `{"json_type":"string","max_length":1024}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
+| `plan_unknown_fields` | forbidden | `{"name_pattern":"(?s)^.+$","name_pattern_parent":"plan","severity":"warning"}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
 | `event_properties` | optional | `{"json_type":"object","max_depth":40}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
 | `user_properties` | optional | `{"json_type":"object","max_depth":40}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
 | `groups` | optional | `{"json_type":"object","max_properties":5,"max_member_values":10}` | [official_vendor](https://amplitude.com/docs/apis/analytics/http-v2) |
@@ -5975,7 +5976,7 @@ Context: `{}`.
 | `user_location.subcontinent_id` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9]{3}$"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `user_location.continent_id` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9]{3}$"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `device.category` | optional | `{"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
-| `device.language` | optional | `{"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
+| `device.language` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[A-Za-z]{2}(?:-[A-Za-z]{2})?$"},"format_severity":"warning"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `device.screen_resolution` | optional | `{"json_type":"string","format":{"kind":"regex","pattern":"^[0-9]+x[0-9]+$"}}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `device.operating_system` | optional | `{"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `device.operating_system_version` | optional | `{"json_type":"string"}` | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
@@ -9364,7 +9365,9 @@ Context: `{"scope":"[]"}`.
 | `$token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$distinct_id` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$set` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$set_once` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set-property-once) |
+| `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$append` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
@@ -9401,7 +9404,9 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | `$token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$distinct_id` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$set` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$set_once` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set-property-once) |
+| `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$append` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
@@ -9758,7 +9763,9 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | `$token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$distinct_id` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$set` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$set_once` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set-property-once) |
+| `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `$append` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
@@ -9991,7 +9998,9 @@ Context: `{"scope":"[]"}`.
 | `$group_key` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$group_id` | required | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$set` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$set_once` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property-once) |
+| `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
@@ -10024,7 +10033,9 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | `$group_key` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$group_id` | required | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$set` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$set_once` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property-once) |
+| `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
@@ -10377,7 +10388,9 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | `$group_key` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$group_id` | required | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
 | `$set` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property) |
+| `long_property_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$set_once` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-set-property-once) |
+| `long_set_once_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$set_once","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `$add` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
 | `$union` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-union) |
 | `$remove` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/group-batch-update) |
