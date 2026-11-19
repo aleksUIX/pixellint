@@ -6000,8 +6000,8 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `vendor.google-analytics.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["ip_override"]}` | error | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `vendor.google-analytics.body.client_or_app_instance_required` | `{"kind":"require_one_of","params":["client_id","app_instance_id"]}` | error | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
-| `vendor.google-analytics.body.app_events_require_app_identifier` | `{"kind":"required_when_value","when":"events[].name","equals":["ad_impression","screen_view"],"requires":["app_instance_id"]}` | error | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events) |
-| `vendor.google-analytics.body.app_events_exclude_client_identifier` | `{"kind":"forbidden_when_value","when":"events[].name","equals":["ad_impression","screen_view"],"params":["client_id"]}` | error | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events) |
+| `vendor.google-analytics.body.app_events_require_app_identifier` | `{"kind":"required_when_value","when":"events[].name","equals":["ad_impression","in_app_purchase","screen_view"],"requires":["app_instance_id"]}` | error | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference/events) |
+| `vendor.google-analytics.body.app_events_exclude_client_identifier` | `{"kind":"forbidden_when_value","when":"events[].name","equals":["ad_impression","in_app_purchase","screen_view"],"params":["client_id"]}` | error | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference) |
 | `vendor.google-analytics.body.events_or_user_data_required` | `{"kind":"require_one_of","params":["events","user_data"]}` | error | [official_vendor](https://developers.google.com/analytics/devguides/collection/ga4/uid-data) |
 | `vendor.google-analytics.body.user_data_user_id_recommended` | `{"kind":"required_with","when":"user_data","requires":["user_id"]}` | warning | [official_vendor](https://developers.google.com/analytics/devguides/collection/ga4/uid-data) |
 | `vendor.google-analytics.body.request_size` | `{"kind":"max_body_bytes","max_bytes":129999}` | error | [official_vendor](https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events) |
@@ -9380,6 +9380,7 @@ Context: `{"scope":"[]"}`.
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
+| `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
@@ -9419,6 +9420,7 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
+| `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
@@ -9778,6 +9780,7 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | `(current scope)` | optional | `{"json_type":"object"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-set) |
 | `$unset[]` | optional | `{"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-batch-update) |
 | `increment` | optional | `{"json_type":"number","name_pattern":"(?s)^.*$","name_pattern_parent":"$add"}` | [official_vendor](https://docs.mixpanel.com/reference/profile-numerical-add) |
+| `long_add_names` | forbidden | `{"name_pattern":"(?s)^.{256,}$","name_pattern_parent":"$add","severity":"warning"}` | [official_vendor](https://docs.mixpanel.com/docs/data-structure/user-profiles) |
 | `union` | optional | `{"json_type":"array","name_pattern":"(?s)^.*$","name_pattern_parent":"$union"}` | [official_vendor](https://docs.mixpanel.com/reference/user-profile-union) |
 
 | Rule | Assertion and condition | Severity | Authority |
@@ -13767,13 +13770,17 @@ Context: `{"scope":"data[]"}`.
 | `device_info.timezone` | optional | `{"json_type":"string","max_length":40}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json) |
 | `device_info.timezone_abbr` | optional | `{"json_type":"string","max_length":5}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json) |
 | `device_info.type` | optional | `{"json_type":"string","max_length":100}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json) |
-| `event_source_url` | optional | `{"json_type":["string","null"]}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json) |
+| `event_source_url` | optional | `{"json_type":["string","null"]}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `opt_out` | optional | `{"json_type":"boolean"}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json) |
-| `partner_name` | optional | `{"json_type":["string","null"]}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json) |
+| `partner_name` | optional | `{"json_type":["string","null"]}` | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `user_data.click_id` | optional | `{"json_type":["string","null"]}` | [official_vendor](https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
+| `vendor.pinterest-conversions-api.body.event_name.charset` | `{"kind":"forbid_value_pattern","params":["event_name"],"pattern":"[^A-Za-z0-9_-]"}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
+| `vendor.pinterest-conversions-api.body.partner_name.shape` | `{"kind":"forbid_value_pattern","params":["partner_name"],"pattern":"^(?:$\|ss$\|ss-$\|ss[^-].*\|s$\|s[^s].*\|[^ds].*\|d$\|d[^i].*\|di$\|di[^r].*\|dir$\|dir[^e].*\|dire$\|dire[^c].*\|direc$\|direc[^t].*\|direct.+)$","condition":{"kind":"json_type","param":"partner_name","json_type":"string"}}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
+| `vendor.pinterest-conversions-api.body.event_source_url.not_absolute` | `{"kind":"forbid_value_pattern","params":["event_source_url"],"pattern":"^(?:$\|https?://$\|https?:$\|https?$\|http[^s:/].*\|htt[^p].*\|ht[^t].*\|h[^t].*\|[^h].*)$","condition":{"kind":"json_type","param":"event_source_url","json_type":"string"}}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
+| `vendor.pinterest-conversions-api.body.custom_data.value.zero` | `{"kind":"forbid_value_pattern","params":["custom_data.value"],"pattern":"^0+(?:\\.0+)?$","condition":{"kind":"json_type","param":"custom_data.value","json_type":"string"}}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `vendor.pinterest-conversions-api.body.checkout_requires_value_and_currency` | `{"kind":"required_when_value","when":"event_name","equals":["checkout"],"requires":["custom_data.value","custom_data.currency"]}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `vendor.pinterest-conversions-api.body.value_requires_currency` | `{"kind":"required_with","when":"custom_data.value","requires":["custom_data.currency"]}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `vendor.pinterest-conversions-api.body.user_needs_an_identifier` | `{"kind":"require_any_of","groups":[["user_data.em"],["user_data.em[]"],["user_data.hashed_maids"],["user_data.hashed_maids[]"],["user_data.client_ip_address","user_data.client_user_agent"]]}` | error | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |

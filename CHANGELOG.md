@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.59.9 (2026-11-19)
+
+- Warn when a Pinterest custom event name uses a character other than letters, digits, underscores, or hyphens. TookSurvey stays clean.
+- Warn when Pinterest partner_name is not direct and does not start with ss-.
+- Warn when a Pinterest event_source_url is not an absolute http or https URL.
+- Warn when Pinterest custom_data.value is zero.
+- Treat Google Analytics in_app_purchase as an app-only event, along with ad_impression and screen_view.
+- Warn when a Mixpanel $add property name is longer than 255 characters.
+- Align the Gamesight impression depth fixture with vendor/gamesight-click selection.
+
 ## 0.59.8 (2026-11-19)
 
 - Fix Mixpanel SDK batch preflight so the 2000-record track limit still reaches vendor validation after the unknown-fields check in 0.59.6.

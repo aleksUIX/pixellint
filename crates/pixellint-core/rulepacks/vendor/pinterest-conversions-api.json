@@ -90,7 +90,7 @@
           "format": {
             "kind": "non_empty"
           },
-          "description": "It is the conversion event name. Pinterest documents a set of standard names and also allows a custom name of up to 100 characters.",
+          "description": "It is the conversion event name. Standard names are documented, and a custom name may use letters, digits, underscores, and hyphens, up to 100 characters. The published custom example is TookSurvey.",
           "fix_hint": "Send a documented name such as `checkout`, or a custom name mapped to a standard event in Ads Manager.",
           "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
           "json_type": "string",
@@ -258,7 +258,7 @@
             "kind": "regex",
             "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
           },
-          "description": "It is the total monetary value of purchased items. Pinterest documents a string parsed as a double, with no negatives, and currency whenever it is sent.",
+          "description": "It is the total monetary value of purchased items. Pinterest documents a string parsed as a double, with no negatives. Zero warns. Send currency whenever value is sent.",
           "fix_hint": "Send the pre-tax, pre-shipping total in `custom_data.value` as a number, such as `66.95`.",
           "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
           "json_type": [
@@ -1109,8 +1109,9 @@
         },
         {
           "name": "event_source_url",
-          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
-          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "description": "Pinterest documents the full page URL, such as https://www.myshop.org/. A value that is not an absolute http or https URL warns.",
+          "fix_hint": "Send the full page URL, including https://.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
           "json_type": [
             "string",
             "null"
@@ -1124,8 +1125,9 @@
         },
         {
           "name": "partner_name",
-          "doc": "https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.json",
-          "description": "Pinterest OpenAPI declares this field in its conversion request model.",
+          "description": "Pinterest documents partner_name as direct for a direct integration, or ss- followed by the partner name.",
+          "fix_hint": "Send direct, or ss- plus the partner name, such as ss-acme.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/",
           "json_type": [
             "string",
             "null"
@@ -1142,6 +1144,69 @@
         }
       ],
       "rules": [
+        {
+          "code": "vendor.pinterest-conversions-api.body.event_name.charset",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "event_name"
+          ],
+          "pattern": "[^A-Za-z0-9_-]",
+          "severity": "warning",
+          "message": "The event name uses a character other than letters, digits, underscores, or hyphens. Pinterest documents that alphabet for custom names, up to 100 characters.",
+          "fix_hint": "Use letters, digits, underscores, or hyphens, such as TookSurvey or checkout.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.partner_name.shape",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "partner_name"
+          ],
+          "pattern": "^(?:$|ss$|ss-$|ss[^-].*|s$|s[^s].*|[^ds].*|d$|d[^i].*|di$|di[^r].*|dir$|dir[^e].*|dire$|dire[^c].*|direc$|direc[^t].*|direct.+)$",
+          "condition": {
+            "kind": "json_type",
+            "param": "partner_name",
+            "json_type": "string"
+          },
+          "severity": "warning",
+          "message": "partner_name is not direct and does not start with ss-. Pinterest documents direct for a direct integration, and ss- followed by the partner name otherwise.",
+          "fix_hint": "Send direct, or ss- plus the partner name, such as ss-acme.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.event_source_url.not_absolute",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "event_source_url"
+          ],
+          "pattern": "^(?:$|https?://$|https?:$|https?$|http[^s:/].*|htt[^p].*|ht[^t].*|h[^t].*|[^h].*)$",
+          "condition": {
+            "kind": "json_type",
+            "param": "event_source_url",
+            "json_type": "string"
+          },
+          "severity": "warning",
+          "message": "event_source_url is not an absolute http or https URL. Pinterest documents the full page URL, such as https://www.myshop.org/.",
+          "fix_hint": "Send the full page URL, including https://.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
+        {
+          "code": "vendor.pinterest-conversions-api.body.custom_data.value.zero",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "custom_data.value"
+          ],
+          "pattern": "^0+(?:\\.0+)?$",
+          "condition": {
+            "kind": "json_type",
+            "param": "custom_data.value",
+            "json_type": "string"
+          },
+          "severity": "warning",
+          "message": "custom_data.value is zero. Pinterest documents zero as an invalid monetary value. Negatives are already rejected.",
+          "fix_hint": "Send the pre-tax, pre-shipping total, such as 66.95, or omit value.",
+          "doc": "https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/"
+        },
         {
           "code": "vendor.pinterest-conversions-api.body.checkout_requires_value_and_currency",
           "kind": "required_when_value",
