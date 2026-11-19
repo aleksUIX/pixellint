@@ -126,6 +126,24 @@
   ],
   "rules": [
     {
+      "code": "vendor.amazon-ad-tag.param.timestamp.milliseconds",
+      "kind": "forbid_value_pattern",
+      "params": [
+        "ts"
+      ],
+      "pattern": "^(?:[0-9]{1,12}|[0-9]{14,})$",
+      "condition": {
+        "kind": "value_in",
+        "param": "eventSource",
+        "values": [
+          "amzn.js"
+        ]
+      },
+      "severity": "warning",
+      "message": "The Amazon browser SDK stamps ts as epoch milliseconds. A value that is not 13 digits is a different unit.",
+      "doc": "https://c.amazon-adsystem.com/aat/amzn.js"
+    },
+    {
       "code": "vendor.amazon-ad-tag.browser.tag_id",
       "kind": "forbid_value_pattern",
       "params": [

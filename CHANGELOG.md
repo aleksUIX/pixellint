@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.59.17 (2026-11-19)
+
+- Reject a Branch event that reports revenue without an ISO currency. Revenue with USD stays clean.
+- Warn when a Comscore `ns__t` value is not 13 digits, because the SDK stamps epoch milliseconds. A 13-digit value stays clean.
+- Warn when a configured Comscore SDK beacon `ns__t` value is not 13 digits. A 13-digit value stays clean, and a non-integer stays the existing type warning.
+- Warn when a Pinterest `event_time` has 13 or more digits, because the Conversions API uses Unix seconds. A 10-digit value stays clean, and a millisecond value still errors as a future time.
+- Warn when an Adobe Analytics page URL in `g` is longer than 255 bytes. A 255-byte URL stays clean, and a non-URL `g` stays the existing error.
+- Warn when an Amazon Ad Tag browser event `ts` is not 13 digits, because the SDK stamps epoch milliseconds. A 13-digit value stays clean. The warning applies only when `eventSource` is `amzn.js`.
+
 ## 0.59.16 (2026-11-19)
 
 - Reject an mParticle bulk batch that contains more than 100 events. A batch of exactly 100 stays clean.

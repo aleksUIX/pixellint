@@ -426,6 +426,7 @@ Path captures: `/b/ss/(?<report_suite>[^/?]*)`. Captured values take precedence 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.adobe-analytics.truncated_request` | `{"kind":"required_with","when":"AQB","requires":["AQE"]}` | error | [official_vendor](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters) |
+| `vendor.adobe-analytics.param.page_url_length` | `{"kind":"forbid_value_pattern","params":["g"],"pattern":"^.{256,}$"}` | warning | [official_vendor](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters) |
 | `vendor.adobe-analytics.page_identity_required` | `{"kind":"require_one_of","params":["pageName","g"]}` | warning | [official_vendor](https://experienceleague.adobe.com/en/docs/analytics/implementation/validate/query-parameters) |
 | `vendor.adobe-analytics.overflow_requires_page_url` | `{"kind":"required_with","when":"-g","requires":["g"]}` | error | [official_vendor](https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference) |
 | `vendor.adobe-analytics.location_hint_requires_ecid` | `{"kind":"required_with","when":"aamlh","requires":["mid"]}` | error | [official_vendor](https://developer.adobe.com/analytics-collection-apis/methods/data-insertion/variable-reference) |
@@ -1707,6 +1708,7 @@ Matcher: `{"hosts":["s.amazon-adsystem.com"],"paths":["/iu3"],"artifact_kinds":[
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
+| `vendor.amazon-ad-tag.param.timestamp.milliseconds` | `{"kind":"forbid_value_pattern","params":["ts"],"pattern":"^(?:[0-9]{1,12}\|[0-9]{14,})$","condition":{"kind":"value_in","param":"eventSource","values":["amzn.js"]}}` | warning | [official_template](https://c.amazon-adsystem.com/aat/amzn.js) |
 | `vendor.amazon-ad-tag.browser.tag_id` | `{"kind":"forbid_value_pattern","params":["pid"],"pattern":"(?s).*","condition":{"kind":"all","conditions":[{"kind":"value_in","param":"eventSource","values":["amzn.js"]},{"kind":"present","param":"pid"},{"kind":"not","condition":{"kind":"value_pattern","param":"pid","pattern":"(?i)^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\|00000000-0000-0000-0000-000000000000\|ffffffff-ffff-ffff-ffff-ffffffffffff)$"}}]}}` | warning | [official_template](https://c.amazon-adsystem.com/aat/amzn.js) |
 
 ### JSON contract 1
@@ -3632,6 +3634,7 @@ Context: `{}`.
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
+| `vendor.branch.body.revenue_requires_currency` | `{"kind":"required_with","when":"event_data.revenue","requires":["event_data.currency"]}` | error | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
 | `vendor.branch.body.user_needs_an_identifier` | `{"kind":"require_one_of","params":["user_data.developer_identity","user_data.browser_fingerprint_id","user_data.idfa","user_data.idfv","user_data.android_id","user_data.aaid"]}` | error | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
 | `vendor.branch.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user_data.ip","user_data.user_agent"]}` | error | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
 | `vendor.branch.body.dma_consent_required` | `{"kind":"required_when_value","when":"user_data.dma_eea","equals":["true"],"requires":["user_data.dma_ad_personalization","user_data.dma_ad_user_data"]}` | error | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
@@ -4506,6 +4509,10 @@ Matcher: `{"hosts":["sb.scorecardresearch.com"],"paths":["/b","/b2"],"query_para
 | `cs_it` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
 | `cs_fpcu` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
 
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.comscore-modern.param.timestamp.milliseconds` | `{"kind":"forbid_value_pattern","params":["ns__t"],"pattern":"^(?:[0-9]{1,12}\|[0-9]{14,})$"}` | warning | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+
 ### Complete HTTP contract 1
 
 Context: `{}`.
@@ -4540,6 +4547,10 @@ Matcher: `{"hosts":["b.scorecardresearch.com","sb.scorecardresearch.com"],"paths
 | `cv` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
 | `cs_it` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
 | `cs_fpcu` | optional | `{"allow_empty":true}` | [official_template](https://sb.scorecardresearch.com/beacon.js) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.comscore.param.timestamp.milliseconds` | `{"kind":"forbid_value_pattern","params":["ns__t"],"pattern":"^(?:[0-9]{1,12}\|[0-9]{14,})$"}` | warning | [official_vendor](https://sb.scorecardresearch.com/beacon.js) |
 
 ## `vendor/cookiebot-declaration`
 
@@ -13858,6 +13869,7 @@ Context: `{"scope":"data[]"}`.
 | `vendor.pinterest-conversions-api.body.hashed_plaintext_field` | `{"kind":"forbid_value_pattern","pattern":"^[A-Fa-f0-9]{64}$","params":["user_data.client_ip_address","user_data.client_user_agent"]}` | error | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `vendor.pinterest-conversions-api.body.zero_ip` | `{"kind":"forbid_value_pattern","params":["user_data.client_ip_address"],"pattern":"^0\\.0\\.0\\.0$"}` | error | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `vendor.pinterest-conversions-api.body.placeholder_user_agent` | `{"kind":"forbid_value_pattern","params":["user_data.client_user_agent"],"pattern":"^(?:Other\|null)$"}` | error | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
+| `vendor.pinterest-conversions-api.body.event_time.milliseconds` | `{"kind":"forbid_value_pattern","params":["event_time"],"pattern":"^[0-9]{13,}$","condition":{"kind":"json_type","param":"event_time","json_type":"integer"}}` | warning | [official_vendor](https://developers.pinterest.com/docs/track-conversions/track-conversions-in-the-api/) |
 | `vendor.pinterest-conversions-api.body.event_time_time_window` | `{"kind":"time_window","param":"event_time","unit":"seconds","max_future_seconds":0}` | error | [official_vendor](https://developers.pinterest.com/docs/track-conversions/integrate-third-party-tracking-tools/) |
 
 ### Complete HTTP contract 1
