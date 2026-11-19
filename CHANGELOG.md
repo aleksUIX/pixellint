@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.59.12 (2026-11-19)
+
+- Warn when a Mixpanel user profile property written with $set or $set_once is an integer above 2^53. The exact bound and the same digits in a string stay clean.
+- Warn when a Mixpanel group profile property written with $set or $set_once is an integer above 2^53. The exact bound and the same digits in a string stay clean.
+- Warn when a Mixpanel user or group $add integer is above 2^53. The exact bound and a smaller increment stay clean.
+
 ## 0.59.11 (2026-11-19)
 
 - Warn when a Mixpanel event property name is longer than 255 characters. The same limit applies to imported events.
