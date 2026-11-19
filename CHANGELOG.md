@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.59.14 (2026-11-19)
+
+- Reject a LinkedIn conversion time that is not from the past 90 days. A time at the check clock stays clean. A 10-digit second value stays the existing digit error.
+- Accept SHA256_PHONE as a LinkedIn user id and require a 64-character hex digest.
+- Warn when LinkedIn externalIds has more than one value, because only the first is used. A non-array value remains a type error.
+- Reject a LinkedIn event object that has no user identifier. An empty userIds list stays valid when a name pair, externalId, or lead URN is present. A non-object batch element does not get this check.
+- Warn when a Customer.io track timestamp has 13 or more digits, because the documented unit is Unix seconds. A 10-digit second value stays clean.
+- Warn when a Customer.io track timestamp is older than 72 hours, because only events from that window trigger automations. A timestamp exactly 72 hours old stays clean, and the event is still stored.
+
 ## 0.59.13 (2026-11-19)
 
 - Warn when a Mixpanel /track event time is older than 5 days or in the future. A time at the check clock stays clean.

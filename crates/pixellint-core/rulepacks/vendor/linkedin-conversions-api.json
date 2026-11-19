@@ -90,11 +90,12 @@
               "ACXIOM_ID",
               "PLAINTEXT_IP_ADDRESS",
               "SHA256_IP_ADDRESS",
+              "SHA256_PHONE",
               "GOOGLE_AID"
             ]
           },
           "format_severity": "warning",
-          "description": "It names the kind of identifier carried in `idValue`. LinkedIn documents `SHA256_EMAIL`, `LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID`, `ACXIOM_ID`, `PLAINTEXT_IP_ADDRESS`, `SHA256_IP_ADDRESS`, and `GOOGLE_AID`.",
+          "description": "It names the kind of identifier carried in `idValue`. LinkedIn documents `SHA256_EMAIL`, `LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID`, `ACXIOM_ID`, `PLAINTEXT_IP_ADDRESS`, `SHA256_IP_ADDRESS`, `SHA256_PHONE`, and `GOOGLE_AID`. `SHA256_PHONE` starts with the 202611 API version.",
           "fix_hint": "Use one of the documented identifier types.",
           "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
           "json_type": "string"
@@ -264,8 +265,9 @@
         },
         {
           "name": "user.externalIds",
-          "description": "The vendor documents the JSON shape or value type of this field.",
-          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api",
+          "description": "LinkedIn documents at most one externalId. If the list contains more values, only the first is used.",
+          "fix_hint": "Send a single externalId. Extra values are ignored.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
           "json_type": "array"
         }
       ],
@@ -293,6 +295,67 @@
           "message": "An identifier carries what looks like a raw email address. LinkedIn matches on `SHA256_EMAIL`, which is the SHA-256 digest rather than the address.",
           "fix_hint": "Lowercase and trim the address, hash it with SHA-256, and send the hex digest with `idType` set to `SHA256_EMAIL`.",
           "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+        },
+        {
+          "code": "vendor.linkedin-conversions-api.body.conversion_time_window",
+          "kind": "time_window",
+          "param": "conversionHappenedAt",
+          "unit": "milliseconds",
+          "max_age_seconds": 7776000,
+          "max_future_seconds": 0,
+          "severity": "error",
+          "condition": {
+            "kind": "value_pattern",
+            "param": "conversionHappenedAt",
+            "pattern": "^[0-9]{13}$"
+          },
+          "message": "LinkedIn rejects a conversion time that is not from the past 90 days.",
+          "fix_hint": "Send conversionHappenedAt in milliseconds from the past 90 days.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api"
+        },
+        {
+          "code": "vendor.linkedin-conversions-api.body.external_id_list_truncated",
+          "kind": "max_total_array_items",
+          "params": [
+            "user.externalIds"
+          ],
+          "max_items": 1,
+          "severity": "warning",
+          "message": "LinkedIn uses only the first externalId. Extra values in the list are ignored.",
+          "fix_hint": "Send a single externalId.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema"
+        },
+        {
+          "code": "vendor.linkedin-conversions-api.body.user_identifier_required",
+          "kind": "require_any_of",
+          "severity": "error",
+          "message": "LinkedIn requires a user identifier: a supported userId, a first and last name, an externalId, or a lead URN.",
+          "fix_hint": "Send a userId, a name pair, an externalId, or a lead URN. userIds can be an empty list when another identifier is present.",
+          "doc": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema",
+          "condition": {
+            "kind": "json_type",
+            "param": "",
+            "json_type": "object"
+          },
+          "groups": [
+            [
+              "user.userIds[].idValue"
+            ],
+            [
+              "user.userInfo.firstName",
+              "user.userInfo.lastName"
+            ],
+            [
+              "user.userInfo.hashedFirstName",
+              "user.userInfo.hashedLastName"
+            ],
+            [
+              "user.externalIds[]"
+            ],
+            [
+              "user.lead"
+            ]
+          ]
         }
       ]
     },
@@ -378,7 +441,8 @@
           "when": "idType",
           "equals": [
             "SHA256_EMAIL",
-            "SHA256_IP_ADDRESS"
+            "SHA256_IP_ADDRESS",
+            "SHA256_PHONE"
           ],
           "param": "idValue",
           "format": {

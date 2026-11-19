@@ -4698,6 +4698,8 @@ Context: `{}`.
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.customerio-track.body.id.invalid` | `{"kind":"format","param":"id","format":{"kind":"regex","pattern":"^[0-7][0-9A-HJKMNP-TV-Z]{25}$"},"condition":{"kind":"json_type","param":"id","json_type":"string"}}` | warning | [official_vendor](https://docs.customer.io/messaging/people/events/) |
+| `vendor.customerio-track.body.timestamp.milliseconds` | `{"kind":"forbid_value_pattern","params":["timestamp"],"pattern":"^[0-9]{13,}$","condition":{"kind":"json_type","param":"timestamp","json_type":"integer"}}` | warning | [official_vendor](https://docs.customer.io/messaging/people/events/) |
+| `vendor.customerio-track.body.timestamp.automation_window` | `{"kind":"time_window","param":"timestamp","unit":"seconds","max_age_seconds":259200,"condition":{"kind":"json_type","param":"timestamp","json_type":"integer"}}` | warning | [official_vendor](https://docs.customer.io/integrations/api/track/tag/track-events/track/) |
 
 ### Complete HTTP contract 1
 
@@ -7840,7 +7842,7 @@ Context: `{"scope":["elements[]",""]}`.
 | `conversion` | required | `{"format":{"kind":"regex","pattern":"^urn:lla:llaPartnerConversion:[0-9]+$"}}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
 | `conversionHappenedAt` | required | `{"format":{"kind":"integer","min_digits":13,"max_digits":13},"json_type":"integer"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
 | `user.userIds` | required | `{"severity":"error","json_type":"array"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
-| `user.userIds[].idType` | required | `{"format":{"kind":"enum","values":["SHA256_EMAIL","LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID","ACXIOM_ID","PLAINTEXT_IP_ADDRESS","SHA256_IP_ADDRESS","GOOGLE_AID"]},"format_severity":"warning","json_type":"string"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
+| `user.userIds[].idType` | required | `{"format":{"kind":"enum","values":["SHA256_EMAIL","LINKEDIN_FIRST_PARTY_ADS_TRACKING_UUID","ACXIOM_ID","PLAINTEXT_IP_ADDRESS","SHA256_IP_ADDRESS","SHA256_PHONE","GOOGLE_AID"]},"format_severity":"warning","json_type":"string"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
 | `user.userIds[].idValue` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
 | `user.lead` | optional | `{"format":{"kind":"regex","pattern":"^urn:li:leadGenFormResponse:.+$"}}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
 | `user.externalIds[]` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema) |
@@ -7859,12 +7861,15 @@ Context: `{"scope":["elements[]",""]}`.
 | `user.userInfo` | optional | `{"json_type":"object"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
 | `conversionValue` | optional | `{"json_type":"object"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
 | `user.userIds[]` | optional | `{"json_type":"object"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
-| `user.externalIds` | optional | `{"json_type":"array"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
+| `user.externalIds` | optional | `{"json_type":"array"}` | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema) |
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
 | `vendor.linkedin-conversions-api.body.value_needs_both_fields` | `{"kind":"required_with","when":"conversionValue.amount","requires":["conversionValue.currencyCode"]}` | error | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
 | `vendor.linkedin-conversions-api.body.unhashed_email` | `{"kind":"forbid_value_pattern","pattern":"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}","params":["user.userIds[].idValue"]}` | error | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
+| `vendor.linkedin-conversions-api.body.conversion_time_window` | `{"kind":"time_window","param":"conversionHappenedAt","unit":"milliseconds","max_age_seconds":7776000,"max_future_seconds":0,"condition":{"kind":"value_pattern","param":"conversionHappenedAt","pattern":"^[0-9]{13}$"}}` | error | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api) |
+| `vendor.linkedin-conversions-api.body.external_id_list_truncated` | `{"kind":"max_total_array_items","params":["user.externalIds"],"max_items":1}` | warning | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema) |
+| `vendor.linkedin-conversions-api.body.user_identifier_required` | `{"kind":"require_any_of","condition":{"kind":"json_type","param":"","json_type":"object"},"groups":[["user.userIds[].idValue"],["user.userInfo.firstName","user.userInfo.lastName"],["user.userInfo.hashedFirstName","user.userInfo.hashedLastName"],["user.externalIds[]"],["user.lead"]]}` | error | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema) |
 
 ### JSON contract 3
 
@@ -7892,7 +7897,7 @@ Context: `{"scope":["elements[].user.userIds[]","user.userIds[]"]}`.
 
 | Rule | Assertion and condition | Severity | Authority |
 | --- | --- | --- | --- |
-| `vendor.linkedin-conversions-api.body.sha256_identifiers_require_hash` | `{"kind":"format_when","when":"idType","equals":["SHA256_EMAIL","SHA256_IP_ADDRESS"],"param":"idValue","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | error | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema) |
+| `vendor.linkedin-conversions-api.body.sha256_identifiers_require_hash` | `{"kind":"format_when","when":"idType","equals":["SHA256_EMAIL","SHA256_IP_ADDRESS","SHA256_PHONE"],"param":"idValue","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | error | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema) |
 | `vendor.linkedin-conversions-api.body.plaintext_ip_requires_ipv4` | `{"kind":"format_when","when":"idType","equals":["PLAINTEXT_IP_ADDRESS"],"param":"idValue","format":{"kind":"ip","version":"v4"}}` | error | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema) |
 | `vendor.linkedin-conversions-api.body.google_aid_requires_uuid` | `{"kind":"format_when","when":"idType","equals":["GOOGLE_AID"],"param":"idValue","format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$"}}` | error | [official_vendor](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads-reporting/conversions-api-schema) |
 

@@ -127,6 +127,37 @@
           "severity": "warning",
           "doc": "https://docs.customer.io/messaging/people/events/",
           "message": "Use an uppercase ULID to preserve event deduplication. Customer.io replaces other string values with a new ID and can no longer identify a retry of this event. Event acceptance and deduplication are distinct."
+        },
+        {
+          "code": "vendor.customerio-track.body.timestamp.milliseconds",
+          "kind": "forbid_value_pattern",
+          "params": [
+            "timestamp"
+          ],
+          "pattern": "^[0-9]{13,}$",
+          "condition": {
+            "kind": "json_type",
+            "param": "timestamp",
+            "json_type": "integer"
+          },
+          "severity": "warning",
+          "doc": "https://docs.customer.io/messaging/people/events/",
+          "message": "Customer.io documents timestamp as Unix seconds. A value with 13 or more digits is milliseconds and will be stored as a far-future second count."
+        },
+        {
+          "code": "vendor.customerio-track.body.timestamp.automation_window",
+          "kind": "time_window",
+          "param": "timestamp",
+          "unit": "seconds",
+          "max_age_seconds": 259200,
+          "condition": {
+            "kind": "json_type",
+            "param": "timestamp",
+            "json_type": "integer"
+          },
+          "severity": "warning",
+          "doc": "https://docs.customer.io/integrations/api/track/tag/track-events/track/",
+          "message": "Customer.io only lets an event from the past 72 hours trigger automations. An older timestamp is still stored."
         }
       ]
     }
