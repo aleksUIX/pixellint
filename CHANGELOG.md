@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.59.6 (2026-11-18)
+
+- Reject an Intercom workspace ID that is not numbers and letters. The published example is ecahpwf5.
+- Accept a Branch user_data.os_version that is a string or a number. The published commerce example sends 25.
+- Accept an AppsFlyer eventValue that is a JSON object or a stringified JSON string. An empty string still means the event has no value.
+- Warn when a TikTok Events API currency is outside the SDK's current list. Letter case does not matter.
+- Reject a Mixpanel track event that carries a field other than event and properties. Keys inside properties stay open.
+- Reject a Mixpanel import event that carries a field other than event and properties. Keys inside properties stay open.
+
 ## 0.59.5 (2026-11-18)
 
 - Add Rakuten click links on click.linksynergy.com/fs-bin/click. The affiliate id is 11 characters, offerid includes the link id, and type is a documented link type. A missing subid is accepted.

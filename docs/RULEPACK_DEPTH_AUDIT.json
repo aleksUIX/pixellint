@@ -2,7 +2,7 @@
   "schema_version": 1,
   "review_date": "2026-10-26",
   "status": "release_prepared",
-  "coverage_claim": "Singular warns when andi is not 16 hex characters. The EVENT reference calls the Android ID a 64-bit value and shows that example. No receiver completeness claim.",
+  "coverage_claim": "Mixpanel's import schema allows only event and properties on each event object. An extra sibling such as campaign is an error. Keys inside properties stay open. No receiver completeness claim.",
   "source_policy": "Primary vendor documentation, official vendor SDK/schema sources and official protocol registries. A source-access attempt is recorded separately from a successful read. Source-backed boundary targets, primary-schema mutations and manifest-derived mutations are distinct evidence.",
   "baseline": {
     "version": "0.34.0",
@@ -36080,7 +36080,7 @@
       "reviewed_at": "2026-10-08",
       "status": "deepened_with_gaps",
       "spec_complete": false,
-      "manifest_sha256": "201f7e7589320081be2a9001db9515fa187c65b5bfc5196d27313d7c9db0090b",
+      "manifest_sha256": "4dc2f8beb69a3f516163a9a851c3edc1d9e856505a4e63f0739a47f21eaedcf8",
       "fixture_corpus_sha256": "a9a80164c59d4017ee196f6cb1f5b77d5c1fbad4f3d766069ce66fb2f7887713",
       "protocol_scope": "Server-to-server in-app events posted to api3.appsflyer.com/inappevent, including the JSON event payload.",
       "source_level": "official_vendor",
@@ -36179,10 +36179,10 @@
           "name": "eventValue",
           "requirement": "required",
           "allow_empty": true,
-          "description": "AppsFlyer documents `eventValue` as required. Send an empty string when the event has no value.",
-          "fix_hint": "Send a JSON object string, or `\"\"` when there is no value.",
+          "description": "AppsFlyer documents eventValue as a JSON object, and also accepts a stringified JSON string. Send an empty string when the event has no value.",
+          "fix_hint": "Send a JSON object, a JSON object string, or \"\" when there is no value.",
           "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
-          "json_type": "string"
+          "json_type": ["string", "object"]
         },
         {
           "transport": "body",
@@ -38318,8 +38318,9 @@
             "name": "eventValue",
             "requirement": "required",
             "allow_empty": true,
+            "description": "AppsFlyer documents eventValue as a JSON object, and also accepts a stringified JSON string. Send an empty string when the event has no value.",
             "doc": "https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview",
-            "json_type": "string"
+            "json_type": ["string", "object"]
           }
         },
         {
@@ -40935,8 +40936,9 @@
         "source_targets": 133
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/appsflyer.json": "201f7e7589320081be2a9001db9515fa187c65b5bfc5196d27313d7c9db0090b",
-        "fixtures/vendor-appsflyer/manifest.json": "3e9616121096186e9dededd1d274860add964273edd98fddaa3411da351f773b",
+        "crates/pixellint-core/rulepacks/vendor/appsflyer.json": "4dc2f8beb69a3f516163a9a851c3edc1d9e856505a4e63f0739a47f21eaedcf8",
+        "fixtures/vendor-appsflyer/manifest.json": "e112bb2bf9230580ad70cd742f822c72c9ad059e34f3446bf7dc1a5b8d190915",
+        "fixtures/vendor-appsflyer/event-value-object.txt": "c2db38fdc1a6dad8e3d8055237d51782eb0aecbe24719b409a217055b663ee7e",
         "fixtures/vendor-appsflyer/source-targets.json": "0087ed1e2579e3db5dd83492569bec9a9a4c76da861beee78af606f7a65b5fea",
         "fixtures/vendor-appsflyer/clean-ios-url.txt": "f1a8d9f374027dcaf376f676a111ec2ee638706c3cc4602ec13b9d968fcac8c0",
         "fixtures/vendor-appsflyer/clean-android-url.txt": "0aa4b48514c22e79adb99ac899c46892875dae45eccd168e2a41ad773284ea47",
@@ -48396,7 +48398,7 @@
         "fixtures/vendor-appsflyer-onelink-impression/depth-link-custom-android-http.txt": "04c2fb4498d79a5e440b9ef937d50e7cd2de7a642ffdea5d22282f1d4ec9dce1",
         "fixtures/vendor-appsflyer-onelink-impression/depth-link-custom-android-fragment.txt": "5fd22a42d9ccfc645cbaf330333c9c26ead593c7809158fd9c8e1b9c49a87135",
         "fixtures/vendor-appsflyer-onelink-impression/depth-link-inactivity-template.txt": "f0414933547fa98ab721f56d50664baf33bdb7143615bb62d0e1977d9f4e1ac4",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "npm/profile-auto-selection.json": "7e5c5be5cadd0f789761afd9b40fda96fb58e9263844dafe3d5e9bbd40bedc07",
         "fixtures/vendor-appsflyer-onelink-impression/depthr12-percent-space.json": "6e6cdad65324820e9bcd23b64538b824d547e2b3fbbaf364152458ab4ab26732",
         "fixtures/vendor-appsflyer-onelink-impression/depthr12-review.md": "11ca6af6ecd55e54cb47311d5226ac7191633a539168688d721da5f410173c62",
@@ -49760,7 +49762,7 @@
       "reviewed_at": "2026-10-08",
       "status": "deepened_with_gaps",
       "spec_complete": false,
-      "manifest_sha256": "457b8cbdb7c3a838c0a58455c7fc335915e7222dab1c0839a79eda007ac0ed55",
+      "manifest_sha256": "f992c4e5a7041b43268343380e6fa71a6d4487bf1441fbb654f90d4ea5d65fdb",
       "fixture_corpus_sha256": "13f3ce4665ae9dea33bae1c3976a47f5e15eb5943f5450eea61f680b6d82bb7a",
       "protocol_scope": "Standard and custom events posted to the Branch Events API on api2.branch.io.",
       "source_level": "official_vendor",
@@ -50214,9 +50216,9 @@
           "scope": "",
           "context": {},
           "name": "user_data.os_version",
-          "description": "The vendor documents the JSON shape or value type of this field.",
+          "description": "Branch's parameter table calls this a string. The published commerce example sends the Android API level as a number, so a string or a number is accepted.",
           "doc": "https://help.branch.io/developers-hub/reference/events-api",
-          "json_type": "string"
+          "json_type": ["string", "number"]
         },
         {
           "transport": "body",
@@ -52232,7 +52234,8 @@
             "source_condition": null,
             "name": "user_data.os_version",
             "doc": "https://help.branch.io/developers-hub/reference/events-api",
-            "json_type": "string"
+            "description": "Branch's parameter table calls this a string. The published commerce example sends the Android API level as a number, so a string or a number is accepted.",
+            "json_type": ["string", "number"]
           }
         },
         {
@@ -53518,8 +53521,9 @@
         "source_targets": 106
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/branch.json": "457b8cbdb7c3a838c0a58455c7fc335915e7222dab1c0839a79eda007ac0ed55",
-        "fixtures/vendor-branch/manifest.json": "6c5f015259004fc562f60cb2a981e6e3f3aa3566daece266a1217584b86e9660",
+        "crates/pixellint-core/rulepacks/vendor/branch.json": "f992c4e5a7041b43268343380e6fa71a6d4487bf1441fbb654f90d4ea5d65fdb",
+        "fixtures/vendor-branch/manifest.json": "9c1206c034192991b744c041fde242c0210111924235061349a15881c443db85",
+        "fixtures/vendor-branch/os-version-number.txt": "5af7391978fcb5c1b58eede65e9d649027f82b3afa373642d1c752f09f374304",
         "fixtures/vendor-branch/source-targets.json": "7c982cc346b44e248b46fd4d20c0aebc9de023c82eda2c734639179ccfc96453",
         "fixtures/vendor-branch/clean-standard-url.txt": "823843cfcc03acf7d81b58c777bc6539766d7b0a33b08676744e70b0f056fbbb",
         "fixtures/vendor-branch/clean-standard.txt": "f748eb4ac0ee1e44791dbb11950284f9d1c8d83f56c63b8163623ed3e35fb55b",
@@ -62286,7 +62290,7 @@
         "fixtures/vendor-braze/depthr10-budget-100-0-0-request.json": "3e014b34a7146d091b8ca42a7eb10cec27d458154c76f92c6ba1c853d0799167",
         "fixtures/vendor-braze/depthr10-budget-38-38-0-request.json": "bbca898d3ec0f033a6531546c70e4af5056388da228115ecb40decca0b806161",
         "fixtures/vendor-braze/depthr10-budget-0-76-0-json.json": "e53babaa6f65e005a44703086699b032f5f4dfaeb42bca85eaaa36bcbea95458",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "crates/pixellint-core/src/manifest.rs": "cbda134ce58132aee89ddf1759b86f38309da0983c732c4b30efa1c8dd3775d1",
         "crates/pixellint-core/tests/manifest_array_budget.rs": "06b56abb52f28b2ea6518628b7427c8dce2eefbcd29565d628a747f6fd6fac9a",
         "docs/RULEPACK_SCHEMA.md": "aeb303b0dbe5bb92bcec3bb96cb1668d41019263f47288419fb2521e724ba857"
@@ -64247,7 +64251,7 @@
         "crates/pixellint-core/src/manifest.rs": "cbda134ce58132aee89ddf1759b86f38309da0983c732c4b30efa1c8dd3775d1",
         "crates/pixellint-core/src/indexed_params.rs": "59479dd7ec10895effcefec4c735bf1c873ef4d47dc938b7fe6e4b111b3c81ae",
         "docs/RULEPACK_SCHEMA.md": "aeb303b0dbe5bb92bcec3bb96cb1668d41019263f47288419fb2521e724ba857",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "docs/reviews/pixel-collectors-053.json": "c0c473af1c6741b43edebe4a57c335ecc71d4cb88792e1b9cde26b98a9b09f8d",
         "crates/pixellint-core/tests/pixel_collectors_053.rs": "1bf151254194d7b7488ebeefaa1316f8704252071e3f6c44c8d59f5df708f28d",
         "fixtures/vendor-cj/depth053-000-empty-coupon.txt": "195e642fde30aad8fc5a83cfa99c9e9640134b2f68e30b0ec173bc1328427da2",
@@ -85827,7 +85831,7 @@
         "fixtures/vendor-google-ads-call-conversions/depthr9-unsupported-adPersonalization-true.json": "2d5e60e0324e770e81c70b7f79bf96a576f5289596ee6142d6d695de74590897",
         "fixtures/vendor-google-ads-click-conversions/depthr9-currency-source-oracle.json": "8eeffd58c8173be2d131dfd2d366b2cb026e559f8789b1ade517582366df1468",
         "crates/pixellint-core/src/currency.rs": "dcd6eeb8d61cddac44823ebc4eae1694d9cc3fdad7848a86ed53ba5520ec603c",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-adPersonalization-negative-zero.json": "23788810a11868092d93865051403a7dfd575de11fe414c9315cfc2e888b2aed",
         "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-plus-zero-string.json": "ec4603f0f1cdc79aadf9cf6eccf9f229271e2b35dcaa6a81d0e11eda23309e37",
         "fixtures/vendor-google-ads-call-conversions/depthr9-proto-default-ad_personalization-leading-zero-string.json": "c50440bd395a449c6ff7d6d5adf875ba5533e783c63f12a5d98fa79ecf13dfb0",
@@ -89842,7 +89846,7 @@
         "fixtures/vendor-google-ads-click-conversions/depthr9-resource-snake-trailing-slash.json": "593b0082de54daec425da8b759b1b65297063a065b6307b9233dae0ac01fb9ae",
         "fixtures/vendor-google-ads-click-conversions/depthr9-unsupported-adPersonalization-true.json": "2c645b17dae1bf335fbbea5039d4ca401f49ff74de21594f1b99ab312ad797f3",
         "crates/pixellint-core/src/currency.rs": "dcd6eeb8d61cddac44823ebc4eae1694d9cc3fdad7848a86ed53ba5520ec603c",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-adPersonalization-negative-zero.json": "c12fa15ea19a0501167ff6e4476633da1d257291366149a48e2f24e37cdf601c",
         "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-plus-zero-string.json": "41355c3bd21d456bcde6e66cec612a6b432708ffcb09645852af1f0f1f63cc03",
         "fixtures/vendor-google-ads-click-conversions/depthr9-proto-default-ad_personalization-leading-zero-string.json": "211ea18cbf7c7c5e129eccaaec520043556e51e0fd425bd664fc0b6001b46589",
@@ -100495,7 +100499,7 @@
         "fixtures/vendor-google-analytics/session-depth-cases.json": "315eb958d6c3e335ca2c148f299848d8eedb8dc064aa090fb720f775df38a957",
         "fixtures/vendor-google-analytics/spec-cases.json": "04a100cbbc444d25b7e0860d72d7cd8cf4e3cee37579ac04fd96156fb45bd417",
         "fixtures/vendor-google-analytics/universal-analytics-id.txt": "f1bca41d0052cb3683841e1e126417786ad7a4c6cdf2ad790d3e0ba5ca745fe5",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0"
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -109760,7 +109764,7 @@
         "npm/index.mjs": "ed8d6582cf6a81b2f10490a8f998d215116a18b463367c60fd580745fd60196b",
         "npm/index.cjs": "e814973e6d7ca46d098f19bfc902a988229a9a9a0331e4767a10276e678e8373",
         "npm/index.d.ts": "ed971b90b0680acd0e2c231bcd74223e07f2b7236932bf49354863b3fce0a1a4",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "npm/sessions.test.mjs": "2934e636468d6a2549a34b886f351ccc3c1fd819a5069b93dacde1ad58c06483",
         "docs/SESSION_SCHEMA.md": "0b1cea0b2e76d0310f7823d0cc239cbe9b17c56d53b731f3c5c504c564c56dc5",
         "docs/reviews/explicit-ad-sessions.json": "fea3dde54f37824d6e6d3cfead737e27c127fa9be9a85d1be849cd15553683c3",
@@ -123943,18 +123947,19 @@
         "command": "CARGO_INCREMENTAL=0 cargo test -p pixellint-core --test analytics_depth_session --test analytics_depth -- --nocapture",
         "status": "passing",
         "restamped_existing_fixtures": false,
-        "manifest_sha256": "00d930c6f52a621dd9830aa7a9557d18dd6d41a6dfdb82dddc28adc28eee49cc",
+        "manifest_sha256": "ea4f3a64f28d4b8d48492062aedd9ed1cd34c2bee1b2857e6cb846a883446274",
         "session_harness_clippy": {
           "command": "CARGO_INCREMENTAL=0 cargo clippy -p pixellint-core --test analytics_depth_session -- -D warnings",
           "status": "passing"
         }
       },
-      "manifest_sha256": "00d930c6f52a621dd9830aa7a9557d18dd6d41a6dfdb82dddc28adc28eee49cc",
+      "manifest_sha256": "ea4f3a64f28d4b8d48492062aedd9ed1cd34c2bee1b2857e6cb846a883446274",
       "fixture_sha256": {
         "fixtures/vendor-intercom/clean-widget-alt.txt": "cca27d08b033fe5306b71a8efd843df11afcb9a036b7548734a8be50980431c9",
         "fixtures/vendor-intercom/clean-widget.txt": "2bfe7685e817e5293e7f819e51207f32d178236e0e38f8b44c4cbd895bf6f2e4",
-        "fixtures/vendor-intercom/manifest.json": "4954569d67efd44e88cf7dbd003dc84dc5af19d7e8ef8ef9f12e3c8e3fb76038",
-        "fixtures/vendor-intercom/missing-app-id.txt": "32414fe3d22bb8f396822eaf3c87db113addf4c9c90f22c869fda60e89fde4bb"
+        "fixtures/vendor-intercom/manifest.json": "9a18cc01755a09f1a0fc63d86013f73d6be5a48ffb8da61a8429ef94708aaa02",
+        "fixtures/vendor-intercom/missing-app-id.txt": "32414fe3d22bb8f396822eaf3c87db113addf4c9c90f22c869fda60e89fde4bb",
+        "fixtures/vendor-intercom/app-id-not-alphanumeric.txt": "81a29bd2b9b51a46b2670ce6a98d2672eb24f67501309057206bf731f42e776d"
       },
       "selection_contract": {
         "hosts": [
@@ -123995,11 +124000,12 @@
         "automatic_http_routing_examples": 0
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/intercom.json": "00d930c6f52a621dd9830aa7a9557d18dd6d41a6dfdb82dddc28adc28eee49cc",
+        "crates/pixellint-core/rulepacks/vendor/intercom.json": "ea4f3a64f28d4b8d48492062aedd9ed1cd34c2bee1b2857e6cb846a883446274",
         "fixtures/vendor-intercom/clean-widget-alt.txt": "cca27d08b033fe5306b71a8efd843df11afcb9a036b7548734a8be50980431c9",
         "fixtures/vendor-intercom/clean-widget.txt": "2bfe7685e817e5293e7f819e51207f32d178236e0e38f8b44c4cbd895bf6f2e4",
-        "fixtures/vendor-intercom/manifest.json": "4954569d67efd44e88cf7dbd003dc84dc5af19d7e8ef8ef9f12e3c8e3fb76038",
-        "fixtures/vendor-intercom/missing-app-id.txt": "32414fe3d22bb8f396822eaf3c87db113addf4c9c90f22c869fda60e89fde4bb"
+        "fixtures/vendor-intercom/manifest.json": "9a18cc01755a09f1a0fc63d86013f73d6be5a48ffb8da61a8429ef94708aaa02",
+        "fixtures/vendor-intercom/missing-app-id.txt": "32414fe3d22bb8f396822eaf3c87db113addf4c9c90f22c869fda60e89fde4bb",
+        "fixtures/vendor-intercom/app-id-not-alphanumeric.txt": "81a29bd2b9b51a46b2670ce6a98d2672eb24f67501309057206bf731f42e776d"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -191979,7 +191985,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "7d515a1dbe99ba5d01e2128214b165505186cd28478aefaf32b4400bf54c4bd3",
+      "manifest_sha256": "e84f04ee26bdbd56637352f06c6d92f7fab43a2faef440e9f6e692d0ba6bcbf6",
       "fixture_sha256": {
         "fixtures/vendor-mixpanel/batch-reports-every-event.txt": "d7a69fa30064274bc77c0feb3e85ae249cc5527f11203f01240abc2e711f994f",
         "fixtures/vendor-mixpanel/clean-track.txt": "724344f6d6afc348c6e17cc6cd2dcd73a7532c17e3cd6978f57e86fc6f6630af",
@@ -191992,7 +191998,8 @@
         "fixtures/vendor-mixpanel/invalid-referrer.txt": "15122586fcda12d5b4fa34fc015b962dc0a98aadf9e17d152e9cb5edc319b1c7",
         "fixtures/vendor-mixpanel/invalid-screen-height.txt": "0381fdb8bb2f19e9f218d1493bb303e4cdc1a23da31439fb05479fd92f888773",
         "fixtures/vendor-mixpanel/invalid-time.txt": "f983391546bde1d8715e043ff0ea592ba25a320abd8054853f4d7949a8884bfe",
-        "fixtures/vendor-mixpanel/manifest.json": "5c1fb4d33aa64bdbc5e4ffde4e232a2d3d700b557ab45f118f0262a12dc26b78",
+        "fixtures/vendor-mixpanel/manifest.json": "d46b1f18615139eb1d4eef95353b0faf3c24259c9d4186560d01a510ac62e71a",
+        "fixtures/vendor-mixpanel/extra-event-field.txt": "8c875b46332e3e3a9171cf6e2e8916e108f0cee407c0a970f4459a98c37bd60d",
         "fixtures/vendor-mixpanel/missing-distinct-id.txt": "c756aef8d6ea3bc134c9823bdf5893b3478ffe142f2b3a4259ce2bfecde2364f",
         "fixtures/vendor-mixpanel/missing-event-name.txt": "3d627c3b88519747324adacdb7203a82499e006dc681f43e2877d10ce694b889",
         "fixtures/vendor-mixpanel/missing-token.txt": "a271cdde3c15e661a09257d11dc7999f65b568b31f918b555f27498548f51aa0",
@@ -192044,7 +192051,7 @@
         "automatic_http_routing_examples": 3
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/mixpanel.json": "7d515a1dbe99ba5d01e2128214b165505186cd28478aefaf32b4400bf54c4bd3",
+        "crates/pixellint-core/rulepacks/vendor/mixpanel.json": "e84f04ee26bdbd56637352f06c6d92f7fab43a2faef440e9f6e692d0ba6bcbf6",
         "fixtures/vendor-mixpanel/batch-reports-every-event.txt": "d7a69fa30064274bc77c0feb3e85ae249cc5527f11203f01240abc2e711f994f",
         "fixtures/vendor-mixpanel/clean-track.txt": "724344f6d6afc348c6e17cc6cd2dcd73a7532c17e3cd6978f57e86fc6f6630af",
         "fixtures/vendor-mixpanel/clean-web.txt": "1c764d459c66429176a5e1eaa441566351d53971bdcacd355927051299400bae",
@@ -192056,7 +192063,8 @@
         "fixtures/vendor-mixpanel/invalid-referrer.txt": "15122586fcda12d5b4fa34fc015b962dc0a98aadf9e17d152e9cb5edc319b1c7",
         "fixtures/vendor-mixpanel/invalid-screen-height.txt": "0381fdb8bb2f19e9f218d1493bb303e4cdc1a23da31439fb05479fd92f888773",
         "fixtures/vendor-mixpanel/invalid-time.txt": "f983391546bde1d8715e043ff0ea592ba25a320abd8054853f4d7949a8884bfe",
-        "fixtures/vendor-mixpanel/manifest.json": "5c1fb4d33aa64bdbc5e4ffde4e232a2d3d700b557ab45f118f0262a12dc26b78",
+        "fixtures/vendor-mixpanel/manifest.json": "d46b1f18615139eb1d4eef95353b0faf3c24259c9d4186560d01a510ac62e71a",
+        "fixtures/vendor-mixpanel/extra-event-field.txt": "8c875b46332e3e3a9171cf6e2e8916e108f0cee407c0a970f4459a98c37bd60d",
         "fixtures/vendor-mixpanel/missing-distinct-id.txt": "c756aef8d6ea3bc134c9823bdf5893b3478ffe142f2b3a4259ce2bfecde2364f",
         "fixtures/vendor-mixpanel/missing-event-name.txt": "3d627c3b88519747324adacdb7203a82499e006dc681f43e2877d10ce694b889",
         "fixtures/vendor-mixpanel/missing-token.txt": "a271cdde3c15e661a09257d11dc7999f65b568b31f918b555f27498548f51aa0",
@@ -206560,7 +206568,7 @@
           "status": "passing"
         }
       },
-      "manifest_sha256": "7626ec4508099d0683056dd15610777c268a5fc6a296a28f9e731faf2cc77a62",
+      "manifest_sha256": "0b86c1e79119441540a624136d256297753897dcbf2f50db478ee53224ccb170",
       "fixture_sha256": {
         "fixtures/vendor-mixpanel-import/clean-defaults.txt": "45ed6cd4088273c19b73527f0dc2d25625a93c9fd4891cb4c6e7bc22f62e2a6d",
         "fixtures/vendor-mixpanel-import/clean-import.txt": "92114ba92a89e8ed400cca6171566fd03c411614fa39d0ca67db8873235320c9",
@@ -206574,7 +206582,8 @@
         "fixtures/vendor-mixpanel-import/invalid-current-url.txt": "cbf023d1f867f6e25c945d4392a51c1478cdc6ca3753c1afbdb5a6037a33e1c5",
         "fixtures/vendor-mixpanel-import/invalid-insert-id.txt": "fa2da7f255fdcddfe27dfdd41ec493cd131e9c72ccca93c742ab4d19351671c4",
         "fixtures/vendor-mixpanel-import/invalid-screen-height.txt": "06f4c18d0c5e1cf89358ae148d891329395da3049654b19c219891d7782a809e",
-        "fixtures/vendor-mixpanel-import/manifest.json": "a7fa3ffc6e2509ea49ad7441c6bb78adb4428fb310abda0bdb6f7c4d11446af4",
+        "fixtures/vendor-mixpanel-import/manifest.json": "e2ba1b8c814de128963598f878479d803a9f9fcd5af90ddb89eb1669534cb6c0",
+        "fixtures/vendor-mixpanel-import/extra-event-field.txt": "e2c0d4c7cddbca29128fb9c160d096c3ae63f99c52cab26b6a97a911f31ce869",
         "fixtures/vendor-mixpanel-import/missing-distinct-id.txt": "6d97a5ed2697c6b72d29cd4fec6d2c5e30e7abf7f0927b0bb5893933926be89d",
         "fixtures/vendor-mixpanel-import/missing-insert-id.txt": "52cb3f794c19e44079f5e5ef58675c61b2e3109063d0d4732a74426c093ee88d",
         "fixtures/vendor-mixpanel-import/missing-time.txt": "f9c06ae499c074a26c3c99cf4a0551a65e930b661aaa18f29dea27585ebb589f",
@@ -206631,7 +206640,7 @@
         "automatic_http_routing_examples": 3
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/mixpanel-import.json": "7626ec4508099d0683056dd15610777c268a5fc6a296a28f9e731faf2cc77a62",
+        "crates/pixellint-core/rulepacks/vendor/mixpanel-import.json": "0b86c1e79119441540a624136d256297753897dcbf2f50db478ee53224ccb170",
         "fixtures/vendor-mixpanel-import/clean-defaults.txt": "45ed6cd4088273c19b73527f0dc2d25625a93c9fd4891cb4c6e7bc22f62e2a6d",
         "fixtures/vendor-mixpanel-import/clean-import.txt": "92114ba92a89e8ed400cca6171566fd03c411614fa39d0ca67db8873235320c9",
         "fixtures/vendor-mixpanel-import/clean-url.txt": "27568f295c544ad6a79d516933266a4eaf28e1d084b82fec3dfa69e3ef08a4e5",
@@ -206644,7 +206653,8 @@
         "fixtures/vendor-mixpanel-import/invalid-current-url.txt": "cbf023d1f867f6e25c945d4392a51c1478cdc6ca3753c1afbdb5a6037a33e1c5",
         "fixtures/vendor-mixpanel-import/invalid-insert-id.txt": "fa2da7f255fdcddfe27dfdd41ec493cd131e9c72ccca93c742ab4d19351671c4",
         "fixtures/vendor-mixpanel-import/invalid-screen-height.txt": "06f4c18d0c5e1cf89358ae148d891329395da3049654b19c219891d7782a809e",
-        "fixtures/vendor-mixpanel-import/manifest.json": "a7fa3ffc6e2509ea49ad7441c6bb78adb4428fb310abda0bdb6f7c4d11446af4",
+        "fixtures/vendor-mixpanel-import/manifest.json": "e2ba1b8c814de128963598f878479d803a9f9fcd5af90ddb89eb1669534cb6c0",
+        "fixtures/vendor-mixpanel-import/extra-event-field.txt": "e2c0d4c7cddbca29128fb9c160d096c3ae63f99c52cab26b6a97a911f31ce869",
         "fixtures/vendor-mixpanel-import/missing-distinct-id.txt": "6d97a5ed2697c6b72d29cd4fec6d2c5e30e7abf7f0927b0bb5893933926be89d",
         "fixtures/vendor-mixpanel-import/missing-insert-id.txt": "52cb3f794c19e44079f5e5ef58675c61b2e3109063d0d4732a74426c093ee88d",
         "fixtures/vendor-mixpanel-import/missing-time.txt": "f9c06ae499c074a26c3c99cf4a0551a65e930b661aaa18f29dea27585ebb589f",
@@ -211663,7 +211673,7 @@
         "fixtures/vendor-nextdoor-conversions-api/depth-quantity-custom-semantic-integer.txt": "b85a3a49491067d769bda168713098b3aef93a7bc989507113c0b3f59ad71311",
         "fixtures/vendor-nextdoor-conversions-api/depth-quantity-custom_data-signed.txt": "7fb4eb1ee12531741f7a21597a349f730079e93e1de6ec986a7dd9a38e6a5fe0",
         "fixtures/vendor-nextdoor-conversions-api/depth-quantity-custom_data-semantic-integer.txt": "73d817be792be78fef801e33ea943e9871b40f9cafa1f819e64e60152978f79c",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "npm/profile-auto-selection.json": "7e5c5be5cadd0f789761afd9b40fda96fb58e9263844dafe3d5e9bbd40bedc07",
         "fixtures/vendor-nextdoor-conversions-api/depthr13-header-list.json": "10bd2f196a6c2d58acf95775069982ef0eb7438a8fee6f36a4fcd033bd1b1831",
         "fixtures/vendor-nextdoor-conversions-api/depthr13-unsupported-body.json": "9825a843246f0cd5c748beab7902ae28d54a37f4963aef3f81b55614660ef52b",
@@ -261154,7 +261164,7 @@
         "crates/pixellint-core/src/manifest.rs": "cbda134ce58132aee89ddf1759b86f38309da0983c732c4b30efa1c8dd3775d1",
         "crates/pixellint-core/src/indexed_params.rs": "59479dd7ec10895effcefec4c735bf1c873ef4d47dc938b7fe6e4b111b3c81ae",
         "docs/RULEPACK_SCHEMA.md": "aeb303b0dbe5bb92bcec3bb96cb1668d41019263f47288419fb2521e724ba857",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "docs/reviews/pixel-collectors-053.json": "c0c473af1c6741b43edebe4a57c335ecc71d4cb88792e1b9cde26b98a9b09f8d",
         "crates/pixellint-core/tests/pixel_collectors_053.rs": "1bf151254194d7b7488ebeefaa1316f8704252071e3f6c44c8d59f5df708f28d",
         "fixtures/vendor-rakuten/depth053-000-producer-rakuten-sale-0.txt": "633f57d5bc45c1dbe82bd979959d2630adf41d664408dc3e79cea970aec357ea",
@@ -264840,7 +264850,7 @@
         "fixtures/vendor-reddit-conversions-api/depth-iso4217-00-current.txt": "07b17af6ea0811e0758fbba0bece8c8830ba59cd847eefee5dcf3b3984b3f91f",
         "fixtures/vendor-reddit-conversions-api/depth-iso4217-00-unassigned.txt": "9672b9ffe94594429cbbd84b98c03040513e63dc6681def30052ee3edc59149e",
         "fixtures/vendor-reddit-conversions-api/depth-iso4217-00-retired.txt": "3f7997d801a74f92071e1fda7941c778757e725154977f1ce2f2bd0e0f7f0bf5",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "npm/profile-auto-selection.json": "7e5c5be5cadd0f789761afd9b40fda96fb58e9263844dafe3d5e9bbd40bedc07",
         "fixtures/vendor-reddit-conversions-api/depthr12-referrer-relative.json": "2c6ed2a75b6bf3303b1a0bf6c6ade9a613214fb8c60d0078390cae790951519e",
         "fixtures/vendor-reddit-conversions-api/depthr12-test-id-boolean.json": "540c4841e8379043800a867629a6efe57cbe462bbb6f2cd0babe45d6ced1c734",
@@ -269396,7 +269406,7 @@
         "fixtures/vendor-rudderstack/missing-write-key.txt": "30c92fa0a7ade3d8c47f314088c5b636a939eae2772ec3442b348e58f40e7c85",
         "fixtures/vendor-rudderstack/session-depth-cases.json": "7eed9a66331ca51203615201800ebe03d1b5a8f11d42b39f3c4dd79f73f9946c",
         "fixtures/vendor-rudderstack/spec-cases.json": "ee80be79b113d7d2ba3cc93ca10a308760b3f7d764978b5c28500d27697bd69f",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0"
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -274466,7 +274476,7 @@
         "fixtures/vendor-segment/session-depth-cases.json": "07941b2e6d3d9f0bc768cac4fd259bb3c81555e56cb9b9b6b6c7084b89715a37",
         "fixtures/vendor-segment/spec-cases.json": "2e6c1e938ff8335f641bc9dacbe802cae1b462f2c2e3f2f99e5a7b4d38a099af",
         "fixtures/vendor-segment/tester-followup-cases.json": "4e7a45911fe92d26d5db1f8f59bf7c53f9ef5bbbbc40ab29db29a8a4fbc364c7",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0"
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3"
       },
       "session": "pixellint-depth-session-2026-10-08",
       "baseline_release": "v0.32.0",
@@ -284821,7 +284831,7 @@
         "fixtures/vendor-snapchat/depth-extinfo-ios-nonnumeric-app-id.txt": "af176c79fc04cc84fcaa4ce358d637795ef3c9defdbf4b6324481df4ccac6e25",
         "fixtures/vendor-snapchat/depth-app-id-required.txt": "ca161f199faa12158fc15950f0b8e523f94e751b2db3b06c7feed8f290547477",
         "fixtures/vendor-snapchat/depth-app-id-empty.txt": "efa552bf8a7c14183f6d5c7a27272d57452184605365c98e66fa0fa016eb4f57",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "npm/profile-auto-selection.json": "7e5c5be5cadd0f789761afd9b40fda96fb58e9263844dafe3d5e9bbd40bedc07",
         "fixtures/vendor-snapchat/depthr13-header-list.json": "5c15943355fb56f7cec2a04e7fd8aebb2f78f9c73c05a67e73ad6c165efdfe26",
         "fixtures/vendor-snapchat/depthr13-unsupported-body.json": "ddf53a0ce1779a6a12ff96b87b772766484c5a6b2e2448a6fd39edd5da646058",
@@ -291355,7 +291365,7 @@
       "reviewed_at": "2026-10-08",
       "status": "deepened_with_gaps",
       "spec_complete": false,
-      "manifest_sha256": "1c476821ef2128175be23356372f90fe4a58b9c92edb7b7a391abda0fd2a44f7",
+      "manifest_sha256": "ea19db7c382a8f4e019dc1b35fdf747b97850686b81ac99678e9fdecc6b5d30f",
       "fixture_corpus_sha256": "4e449fa37f4ef686a66de3f054d0678f09962c2031b4f0e3303287e1aa529e27",
       "protocol_scope": "Server-to-server pixel track and batch requests to the TikTok Events API on business-api.tiktok.com. Events API 2.0 /event/track/ is vendor/tiktok-events-2.",
       "source_level": "official_vendor",
@@ -293670,8 +293680,9 @@
         "source_targets": 31
       },
       "reviewed_artifacts": {
-        "crates/pixellint-core/rulepacks/vendor/tiktok-events-api.json": "1c476821ef2128175be23356372f90fe4a58b9c92edb7b7a391abda0fd2a44f7",
-        "fixtures/vendor-tiktok-events-api/manifest.json": "6ef0ae7ca9fba48961497bb42c65d34e276c85fd493d66776a48fb01910a94f4",
+        "crates/pixellint-core/rulepacks/vendor/tiktok-events-api.json": "ea19db7c382a8f4e019dc1b35fdf747b97850686b81ac99678e9fdecc6b5d30f",
+        "fixtures/vendor-tiktok-events-api/manifest.json": "49a04caf9042f1b972f80d01225590983f714537a3529ac01091680513bfed13",
+        "fixtures/vendor-tiktok-events-api/currency-not-supported.txt": "9dcf966b72ab8a01482bc206accd7daf1ee300278282f3ffb744cd2d8f53a8a3",
         "fixtures/vendor-tiktok-events-api/source-targets.json": "c8095f810b7b5593a79803f87e09fcbf17efd85dfaf123cdf7b6613a278f8d8c",
         "fixtures/vendor-tiktok-events-api/clean-track-url.txt": "2ebf6dea27cbf43d1bc046d76c593fe487f6b726c89e656ac894fdbc91c2d423",
         "fixtures/vendor-tiktok-events-api/clean-track.txt": "6d479cac59f11a1dd20c2d758e2cc46983619299308d5b364d632e3bfc718807",
@@ -293805,7 +293816,7 @@
         "fixtures/vendor-tiktok-events-api/depthr11-token-macro.json": "ca527b30adca0fc67041582bbcb54901e71ded81e572a653b649fa6567eca083",
         "fixtures/vendor-tiktok-events-api/depthr11-sdk-pixel_track-omitted-body.json": "5b6e2fb0932b0ff65b7ca2411f344e78febe8abbc975e8c390d62b7209897a22",
         "fixtures/vendor-tiktok-events-api/depthr11-capture-credential-unavailable.json": "93c20fa1ded964bf2e64c1aeebdf733a69b4e75a75880954e6cf3c2b8a0b72de",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "npm/profile-auto-selection.json": "7e5c5be5cadd0f789761afd9b40fda96fb58e9263844dafe3d5e9bbd40bedc07"
       },
       "session_date": "2026-10-08",
@@ -297183,7 +297194,7 @@
         "fixtures/vendor-x-conversions-api/depthr8-mixed-legacy-and-sender-batch.json": "54f069486544872e63f0a2c8c983d6e66a9080563fc71d414d0571bd1bd5db1f",
         "fixtures/vendor-x-conversions-api/invalid-num-items.txt": "87ddbef144cf3873f5a50e35c72fd3b1aaf38f9698e35aeef1e7f209f190cb12",
         "fixtures/vendor-x-conversions-api/depthr8-conversion_timestamp-zero.json": "767d4a1d10b2e71650175f968690f9f20cf3bd454ba0994a981a831ac55e4c24",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0"
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3"
       },
       "session_date": "2026-10-08",
       "session_baseline": "released_v0.32.0",
@@ -302562,7 +302573,7 @@
         "fixtures/vendor-yahoo-conversions-api/depthr11-token-macro.json": "a53318b7ab3bac086dc6f93942d1333581ab608c1a6964b7ca3c5366895f53f1",
         "fixtures/vendor-yahoo-conversions-api/depthr11-capture-credential-unavailable.json": "5c364a3b1cbe11f73be454b7f5ae18b2d46c62d42774b48b8ed6ccb9b5245f85",
         "fixtures/vendor-yahoo-conversions-api/depthr11-token-spaced-token.json": "b91cfd8d699ce24e847af450ac404dc6ea00151cea594902f5dc1271e4831a13",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "npm/profile-auto-selection.json": "7e5c5be5cadd0f789761afd9b40fda96fb58e9263844dafe3d5e9bbd40bedc07"
       },
       "session_date": "2026-10-08",
@@ -309615,7 +309626,7 @@
         "crates/pixellint-core/src/manifest.rs": "cbda134ce58132aee89ddf1759b86f38309da0983c732c4b30efa1c8dd3775d1",
         "crates/pixellint-core/src/indexed_params.rs": "59479dd7ec10895effcefec4c735bf1c873ef4d47dc938b7fe6e4b111b3c81ae",
         "docs/RULEPACK_SCHEMA.md": "aeb303b0dbe5bb92bcec3bb96cb1668d41019263f47288419fb2521e724ba857",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "docs/reviews/pixel-collectors-053.json": "c0c473af1c6741b43edebe4a57c335ecc71d4cb88792e1b9cde26b98a9b09f8d",
         "crates/pixellint-core/tests/pixel_collectors_053.rs": "1bf151254194d7b7488ebeefaa1316f8704252071e3f6c44c8d59f5df708f28d",
         "fixtures/vendor-mntn-image/depth053-000-producer-mntn-page-0.txt": "befcd30df84fa82540b854598b3e485e4fef8fc3f1d1987e5bc1da24949fcb5b",
@@ -331293,7 +331304,7 @@
         "fixtures/vendor-tealium-collect/depthr8-cookie-json-empty-true.json": "4ac0ab167fd84f822276141008d56c536d41acd6a7006d12b328749d18a254c6",
         "fixtures/vendor-tealium-collect/depthr8-nested-key-two-dotted.json": "b1486c282d0a5a3cb15fa0853e693767e55689a044ba4e62db4da48f555bfc00",
         "fixtures/vendor-tealium-collect/depthr8-nested-key-literal-brackets.json": "49926450a5399318aa21a5ddb291a4c7e9ac3a9c8e022b2f5faf08c857bf4795",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0"
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3"
       },
       "implemented_scope": "Warn about literal periods in nested JSON member names and the documented override that prevents TAPID cookie deletion.",
       "missing_requirements": [
@@ -331958,7 +331969,7 @@
         "fixtures/vendor-customerio-track/depthr10-dedup-native-null.json": "5efbe6eb009a812dd38de86e5d71bbf0953164af1cbf92d418686e55ae34b8b2",
         "fixtures/vendor-customerio-track/depthr10-anonymous-integer.json": "c93cbd1c809eb4dcf3299f4cd7186ef24cb852373f3d0b0852aa6552ad286f35",
         "fixtures/vendor-customerio-track/depthr10-dedup-eu-overflow.json": "4398256d806b68552d506bd07ab8106803ae1b3cc7efd194015a52a647fc6825",
-        "npm/test.mjs": "0d90c8111e666aa5f05b6fb05d22f2748a1014e903683094a9c489c74e268dd0",
+        "npm/test.mjs": "5491ebeccd3c854d952c37e7ff12de9a7bcab253c614155146eb27b7a3b622c3",
         "crates/pixellint-core/src/manifest.rs": "cbda134ce58132aee89ddf1759b86f38309da0983c732c4b30efa1c8dd3775d1",
         "crates/pixellint-core/tests/manifest_array_budget.rs": "06b56abb52f28b2ea6518628b7427c8dce2eefbcd29565d628a747f6fd6fac9a",
         "docs/RULEPACK_SCHEMA.md": "aeb303b0dbe5bb92bcec3bb96cb1668d41019263f47288419fb2521e724ba857"

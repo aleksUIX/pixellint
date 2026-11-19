@@ -3246,7 +3246,7 @@ Context: `{}`.
 | --- | --- | --- | --- |
 | `appsflyer_id` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
 | `eventName` | required | `{"format":{"kind":"regex","pattern":"^[^\"=+\\-\\s][^\\s]*$"},"json_type":"string"}` | [official_vendor](https://support.appsflyer.com/hc/en-us/articles/115005544169-In-app-events-Overview) |
-| `eventValue` | required | `{"allow_empty":true,"json_type":"string"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
+| `eventValue` | required | `{"allow_empty":true,"json_type":["string","object"]}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
 | `att` | optional | `{"format":{"kind":"enum","values":["0","1","2","3"]},"json_type":"integer"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
 | `advertising_id` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"},"json_type":"string"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
 | `idfa` | optional | `{"format":{"kind":"regex","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"},"json_type":"string"}` | [official_vendor](https://dev.appsflyer.com/hc/reference/s2s-events-api3-overview) |
@@ -3575,7 +3575,7 @@ Context: `{}`.
 | `content_items[]` | optional | `{"json_type":"object"}` | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
 | `customer_event_alias` | optional | `{"json_type":"string"}` | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
 | `user_data.os` | optional | `{"json_type":"string"}` | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
-| `user_data.os_version` | optional | `{"json_type":"string"}` | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
+| `user_data.os_version` | optional | `{"json_type":["string","number"]}` | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
 | `user_data.language` | optional | `{"json_type":"string"}` | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
 | `user_data.local_ip` | optional | `{"json_type":"string","format":{"kind":"ip"}}` | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
 | `user_data.brand` | optional | `{"json_type":"string"}` | [official_vendor](https://help.branch.io/developers-hub/reference/events-api) |
@@ -7311,7 +7311,7 @@ Path captures: `/widget/(?<app_id>[^/]+)`. Captured values take precedence over 
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `app_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://developers.intercom.com/installing-intercom/web/installation) |
+| `app_id` | required | `{"format":{"kind":"regex","pattern":"^[A-Za-z0-9]+$"}}` | [official_vendor](https://developers.intercom.com/installing-intercom/web/installation) |
 
 ## `vendor/iqm-segment-open`
 
@@ -10601,6 +10601,7 @@ Context: `{"scope":"[]"}`.
 | --- | --- | --- | --- |
 | `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `properties` | required | `{"json_type":"object","max_properties":254}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
+| `unknown_fields` | forbidden | `{"name_pattern":".*","name_pattern_parent":""}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `properties.time` | required | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `properties.distinct_id` | required | `{"allow_empty":true,"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
 | `properties.$insert_id` | required | `{"format":{"kind":"regex","pattern":"^[A-Za-z0-9-]{1,36}$"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/import-events) |
@@ -10707,6 +10708,7 @@ Context: `{"scope":"[]"}`.
 | --- | --- | --- | --- |
 | `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties` | required | `{"json_type":"object","max_properties":254}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `unknown_fields` | forbidden | `{"name_pattern":".*","name_pattern_parent":""}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.distinct_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.time` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
@@ -10742,6 +10744,7 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"base64_json","con
 | --- | --- | --- | --- |
 | `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties` | required | `{"json_type":"object","max_properties":254}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `unknown_fields` | forbidden | `{"name_pattern":".*","name_pattern_parent":""}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.distinct_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.time` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
@@ -10841,6 +10844,7 @@ Context: `{"scope":["[]",""],"source_param":"data","encoding":"json","condition"
 | --- | --- | --- | --- |
 | `event` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties` | required | `{"json_type":"object","max_properties":254}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
+| `unknown_fields` | forbidden | `{"name_pattern":".*","name_pattern_parent":""}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.token` | required | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.distinct_id` | recommended | `{"format":{"kind":"non_empty"},"json_type":["string","integer"]}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
 | `properties.time` | optional | `{"format":{"kind":"integer"},"json_type":"integer"}` | [official_vendor](https://docs.mixpanel.com/reference/track-event) |
@@ -17385,7 +17389,7 @@ Context: `{"scope":["batch[]",""]}`.
 | `context.user.phone_number` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929) |
 | `context.user.external_id` | optional | `{"format":{"kind":"regex","pattern":"^[A-Fa-f0-9]{64}$"}}` | [official_vendor](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929) |
 | `context.user.ttp` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://ads.tiktok.com/marketing_api/docs?id=1739584860883969) |
-| `properties.currency` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{3}$"}}` | [official_vendor](https://ads.tiktok.com/marketing_api/docs?id=1739584855420929) |
+| `properties.currency` | optional | `{"format":{"kind":"enum","case_insensitive":true,"values":["AED","ARS","AUD","BDT","BHD","BIF","BOB","BRL","CAD","CHF","CLP","CNY","COP","CRC","CZK","DKK","DZD","EGP","EUR","GBP","GTQ","HKD","HNL","HUF","IDR","ILS","INR","ISK","JPY","KES","KHR","KRW","KWD","KZT","MAD","MOP","MXN","MYR","NGN","NIO","NOK","NZD","OMR","PEN","PHP","PKR","PLN","PYG","QAR","RON","RUB","SAR","SEK","SGD","THB","TRY","TWD","UAH","USD","VES","VND","ZAR"]},"format_severity":"warning"}` | [official_vendor](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelProperties.md) |
 | `properties.value` | optional | `{"json_type":"number"}` | [official_template](https://raw.githubusercontent.com/tiktok/tiktok-business-api-sdk/main/python_sdk/docs/PixelProperties.md) |
 | `properties.contents[].content_id` | optional | `{"format":{"kind":"non_empty"},"json_type":"string"}` | [official_vendor](https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md) |
 | `properties.contents[].content_type` | optional | `{"format":{"kind":"enum","values":["product","product_group"]},"json_type":"string"}` | [official_vendor](https://github.com/tiktok/tiktok-business-api-sdk/blob/main/js_sdk/docs/PixelContent.md) |
