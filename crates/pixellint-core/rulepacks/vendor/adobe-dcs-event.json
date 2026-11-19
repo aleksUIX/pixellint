@@ -2,7 +2,7 @@
   "id": "vendor/adobe-dcs-event",
   "display_name": "Adobe Audience Manager DCS event",
   "vendor": "adobe_dcs",
-  "description": "Published DCS request attributes and identity pairs. Every generic DCS field is optional; d_rtbd=json requests a JSON response. Visitor ID-specific version andorganization requirements are handled by the ECID pack.",
+  "description": "Published DCS request attributes and identity pairs. Every generic DCS field is optional; d_rtbd=json requests a JSON response. A click call with d_event=click must include d_rd. Visitor ID-specific version and organization requirements are handled by the ECID pack.",
   "source_level": "official_vendor",
   "docs": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
   "match": {
@@ -29,7 +29,7 @@
         "kind": "regex",
         "pattern": "^(?:[^\\x01]+\\x01[^\\x01]+(?:\\x01[012])?|[^\\x01]+\\x01[^\\x01]+(?:\\x01[^\\x01]+\\x01[^\\x01]+)+)$"
       },
-      "description": "Provider ID or integration code with user ID separated by %01. Single pairs may include0/1/2authentication state. The generic DCS table permits multiple provider/user pairs in one parameter; the CID guide also permits repeated keys.",
+      "description": "Provider ID or integration code with user ID separated by %01. Single pairs may include 0/1/2 authentication state. The impression guide uses 20914 for an Android GAID and 20915 for an iOS IDFA. The generic DCS table permits multiple provider/user pairs in one parameter; the CID guide also permits repeated keys.",
       "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys"
     },
     {
@@ -246,7 +246,122 @@
       "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys",
       "name_pattern": "^p_.+$",
       "allow_empty": true
+    },
+    {
+      "name": "d_event",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "description": "Click tracking calls use d_event=click. Impression calls use d_event=imp. Other event names are not published, so only a nonempty value is checked.",
+      "fix_hint": "Set d_event=click on a click tracking call, or omit d_event when this is not a click.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    },
+    {
+      "name": "d_rd",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "description": "Click tracking calls require d_rd as the redirect URL and say to encode it twice. After one query decode a correct value is still percent-encoded, so this check only requires a nonempty value.",
+      "fix_hint": "Set d_rd to the redirect URL, encoded twice.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    },
+    {
+      "name": "d_creative",
+      "requirement": "optional",
+      "format": { "kind": "integer" },
+      "format_severity": "warning",
+      "description": "The click macro table says d_creative is the numeric creative ID from the ad server. No digit length is published.",
+      "fix_hint": "Set d_creative to the numeric creative ID, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    },
+    {
+      "name": "d_adgroup",
+      "requirement": "optional",
+      "format": { "kind": "integer" },
+      "format_severity": "warning",
+      "description": "The click macro table says d_adgroup is the numeric ad group ID from the ad server and marks it optional. No digit length is published.",
+      "fix_hint": "Set d_adgroup to the numeric ad group ID, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    },
+    {
+      "name": "d_bu",
+      "requirement": "optional",
+      "format": { "kind": "integer" },
+      "format_severity": "warning",
+      "description": "The click macro table says d_bu is the numeric business unit ID. It is required for Audience Optimization reports, not for every click call. No digit length is published.",
+      "fix_hint": "Set d_bu to the numeric business unit ID, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    },
+    {
+      "name": "d_campaign",
+      "requirement": "optional",
+      "format": { "kind": "integer" },
+      "format_severity": "warning",
+      "description": "The click macro table says d_campaign is the numeric campaign ID from the ad server. It is required for Audience Optimization reports, not for every click call. No digit length is published.",
+      "fix_hint": "Set d_campaign to the numeric campaign ID, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    },
+    {
+      "name": "d_placement",
+      "requirement": "optional",
+      "format": { "kind": "integer" },
+      "format_severity": "warning",
+      "description": "The click macro table says d_placement is the numeric placement ID from the ad server. No digit length is published.",
+      "fix_hint": "Set d_placement to the numeric placement ID, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    },
+    {
+      "name": "d_site",
+      "requirement": "optional",
+      "format": { "kind": "integer" },
+      "format_severity": "warning",
+      "description": "The click macro table says d_site is the numeric site ID from the ad server and marks it optional. No digit length is published.",
+      "fix_hint": "Set d_site to the numeric site ID, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    },
+    {
+      "name": "d_src",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "description": "The impression guide says d_src is the data source ID or integration code of the platform providing the metadata. The click example is numeric. No character grammar is published, so only a nonempty value is checked.",
+      "fix_hint": "Set d_src to the data source ID or integration code, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/impression-data-pixels"
+    },
+    {
+      "name": "d_adsrc",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "description": "The impression guide says d_adsrc is the advertiser data source ID or integration code. It is required for Audience Optimization reports and optional on the call. No character grammar is published.",
+      "fix_hint": "Set d_adsrc to the advertiser data source ID or integration code, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/impression-data-pixels"
+    },
+    {
+      "name": "d_bust",
+      "requirement": "optional",
+      "format": { "kind": "non_empty" },
+      "description": "The impression guide says d_bust is an optional cache-busting value, followed by a random string. It does not require digits.",
+      "fix_hint": "Set d_bust to a random string, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/impression-data-pixels"
+    },
+    {
+      "name": "r_rand",
+      "requirement": "optional",
+      "format": { "kind": "integer" },
+      "format_severity": "warning",
+      "description": "The click macro table says r_rand is a random number used for cache busting. No digit length is published.",
+      "fix_hint": "Set r_rand to a random whole number, or omit it.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
     }
   ],
-  "rules": []
+  "rules": [
+    {
+      "code": "vendor.adobe-dcs-event.click_redirect_missing",
+      "kind": "required_when_value",
+      "when": "d_event",
+      "equals": ["click"],
+      "requires": ["d_rd"],
+      "severity": "error",
+      "message": "A click tracking call must include d_rd, the redirect URL.",
+      "fix_hint": "Add d_rd set to the redirect URL, encoded twice.",
+      "doc": "https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels"
+    }
+  ]
 }

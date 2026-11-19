@@ -1,0 +1,78 @@
+{
+  "id": "vendor/beeswax-conversion",
+  "display_name": "Beeswax conversion tag",
+  "description": "Checks the published Buzz conversion image tag on cnv.event.prod.bidr.io/log/cnv. Impression and click event routes, cookie sync, and /log/pbk postbacks stay outside this pack.",
+  "vendor": "beeswax",
+  "source_level": "official_vendor",
+  "docs": "https://api-docs.freewheel.tv/advertiser/docs/conversion-tags-1",
+  "match": {
+    "hosts": [
+      "cnv.event.prod.bidr.io"
+    ],
+    "paths": [
+      "/log/cnv"
+    ]
+  },
+  "params": [
+    {
+      "name": "tag_id",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "Buzz generates the tag identifier and the conversion tag guide says not to edit it. The sample is numeric, and the page does not publish a character grammar, so only presence is checked.",
+      "fix_hint": "Keep the tag_id from the conversion tag Buzz generated."
+    },
+    {
+      "name": "buzz_key",
+      "requirement": "required",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z0-9]+$"
+      },
+      "description": "Buzz generates the account instance key and the conversion tag guide says not to edit it. The Buzz Key page says that value uses only alphanumeric characters.",
+      "fix_hint": "Keep the alphanumeric buzz_key from the conversion tag Buzz generated.",
+      "doc": "https://api-docs.freewheel.tv/advertiser/docs/buzz-key"
+    },
+    {
+      "name": "value",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "format_severity": "warning",
+      "description": "When present, the conversion tag guide says to set value to a number, and the published example is 30. Omitted values use the number stored on the Buzz event. This check accepts a non-negative integer or decimal and warns on anything else, because the page does not publish a sign, exponent, or separator grammar.",
+      "fix_hint": "Set value to a non-negative number, or omit it to use the Buzz event value."
+    },
+    {
+      "name": "segment_key",
+      "requirement": "optional",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The conversion tag guide says a segment id is generally set when the event is created and should not be edited. It does not require the parameter on every tag, and it does not publish a character grammar.",
+      "fix_hint": "Keep the segment_key Buzz generated, or omit it."
+    },
+    {
+      "name": "order",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[0-9]+(?:\\.[0-9]+)?$"
+      },
+      "format_severity": "warning",
+      "description": "When present, the conversion tag guide says to set order to a number of items, and the published example is 2. Omitted values use the number stored on the Buzz event. This check accepts a non-negative integer or decimal and warns on anything else, because the page does not publish a sign, exponent, or separator grammar.",
+      "fix_hint": "Set order to a non-negative number, or omit it to use the Buzz event order."
+    },
+    {
+      "name": "ord",
+      "requirement": "required",
+      "format": {
+        "kind": "integer"
+      },
+      "description": "The conversion tag guide says the implementation requirement is to replace [CACHEBUSTER] with a random number generated at runtime. The published script uses Math.floor, so this check expects a non-negative integer of digits. The page does not publish a maximum length.",
+      "fix_hint": "Set ord to a random whole number generated when the tag fires."
+    }
+  ]
+}

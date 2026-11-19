@@ -339,6 +339,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/baidu.json"),
     ),
     (
+        "vendor/beeswax-conversion",
+        include_str!("../rulepacks/vendor/beeswax-conversion.json"),
+    ),
+    (
         "vendor/branch",
         include_str!("../rulepacks/vendor/branch.json"),
     ),
@@ -757,6 +761,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         "vendor/trustarc-notice",
         include_str!("../rulepacks/vendor/trustarc-notice.json"),
     ),
+    (
+        "vendor/usercentrics-widget",
+        include_str!("../rulepacks/vendor/usercentrics-widget.json"),
+    ),
     ("vendor/x", include_str!("../rulepacks/vendor/x.json")),
     (
         "vendor/x-conversions-api",
@@ -913,6 +921,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/gamesight-impression",
         include_str!("../rulepacks/vendor/gamesight-impression.json"),
+    ),
+    (
+        "vendor/gamesight-click",
+        include_str!("../rulepacks/vendor/gamesight-click.json"),
     ),
     (
         "vendor/top-mail-counter",

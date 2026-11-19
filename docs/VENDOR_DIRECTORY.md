@@ -169,6 +169,9 @@ are inferred from frequency, paths or VAST event names. FreeWheel's
 [Beeswax cookie-sync documentation](https://api-docs.freewheel.tv/advertiser/docs/cookie-syncing)
 independently identifies Beeswax's `prod.bidr.io` infrastructure, but does not
 define contracts for the reported `/log/act/svr` and `/log/imp/svr` endpoints.
+The [conversion tag guide](https://api-docs.freewheel.tv/advertiser/docs/conversion-tags-1)
+does publish `cnv.event.prod.bidr.io/log/cnv`, and `vendor/beeswax-conversion`
+checks that tag. Postbacks on `/log/pbk` stay out of that pack.
 
 ### Additional hosts confirmed in the Pixellint corpus
 

@@ -1,0 +1,43 @@
+{
+  "id": "vendor/usercentrics-widget",
+  "display_name": "Usercentrics preference widget",
+  "description": "Checks the published Preference Manager widget read on preference-api.preference-management.usercentrics.eu/public/widgets/{widgetUuid}. Authentication, preference writes, and the CMP script hosts stay outside this pack.",
+  "vendor": "usercentrics",
+  "source_level": "official_vendor",
+  "docs": "https://docs.usercentrics.com/#/preference-manager-api",
+  "path_pattern": "^/public/widgets/(?<widget_uuid>[^/]*)$",
+  "match": {
+    "hosts": [
+      "preference-api.preference-management.usercentrics.eu"
+    ],
+    "paths": [
+      "/public/widgets",
+      "/public/widgets/"
+    ],
+    "path_prefixes": [
+      "/public/widgets/"
+    ]
+  },
+  "params": [
+    {
+      "name": "widget_uuid",
+      "requirement": "required",
+      "format": {
+        "kind": "non_empty"
+      },
+      "description": "The Preference Manager guide says widgetUuid is the unique identifier of the widget. The example is a UUID, and the page does not publish a character grammar, so only presence is checked.",
+      "fix_hint": "Put the widget id from the Admin UI in the path so it reads /public/widgets/{widgetUuid}."
+    },
+    {
+      "name": "language",
+      "requirement": "optional",
+      "format": {
+        "kind": "regex",
+        "pattern": "^[A-Za-z]{2}$"
+      },
+      "format_severity": "warning",
+      "description": "The guide says language is an optional list of ISO 639-1 codes, and the examples are en and de. This check warns unless a value is two letters. It does not check membership in the ISO catalog.",
+      "fix_hint": "Set language to a two-letter code such as en, or omit it to receive the English widget."
+    }
+  ]
+}

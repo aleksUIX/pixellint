@@ -66,7 +66,7 @@ VENDORS = {
     # Exact pixel hosts attributed in the 2026-10-09 tester findings.
     "adxspace": ("Adxspace", "video", ["00px.net"], "vendor/adxspace-pixel"),
     "stredeo": ("Stredeo", "video", ["t.stredeo.com"], None),
-    "beeswax": ("Beeswax", "programmatic", ["segment.prod.bidr.io", "us-east-1.event.prod.bidr.io"], None),
+    "beeswax": ("Beeswax", "programmatic", ["cnv.event.prod.bidr.io", "segment.prod.bidr.io", "us-east-1.event.prod.bidr.io"], "vendor/beeswax-conversion"),
     "aarki": ("Aarki", "mobile", ["rm.aarki.net"], None),
     "adwrap": ("AdWrap", "video", ["track.adwrap.io"], None),
     "krushmedia": ("Krush Media", "video", ["ads106.krushmedia.com", "ads133.krushmedia.com", "ads161.krushmedia.com"], None),
@@ -180,7 +180,7 @@ VENDORS = {
     "trustarc": ("TrustArc", "consent", ["consent.trustarc.com", "consent-st.trustarc.com"], "vendor/trustarc"),
     "sourcepoint": ("Sourcepoint", "consent", ["cdn.privacy-mgmt.com"], "vendor/sourcepoint-gdpr-choice"),
     "didomi": ("Didomi", "consent", ["sdk.privacy-center.org", "api.privacy-center.org"], "vendor/didomi"),
-    "usercentrics": ("Usercentrics", "consent", ["app.usercentrics.eu", "web.cmp.usercentrics.eu"], None),
+    "usercentrics": ("Usercentrics", "consent", ["app.usercentrics.eu", "preference-api.preference-management.usercentrics.eu", "web.cmp.usercentrics.eu"], "vendor/usercentrics-widget"),
     "cookiebot": ("Cookiebot", "consent", ["consent.cookiebot.com", "consentcdn.cookiebot.com"], None),
     "audiostack": ("AudioStack", "video", ["vast.audiostack.ai", "track.audiostack.ai"], None),
     "nativo": ("Nativo", "native", ["jadserve.postrelease.com"], None),

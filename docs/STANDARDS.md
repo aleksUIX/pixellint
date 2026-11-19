@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 233 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 236 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -188,7 +188,7 @@ Matcher: `{"host_suffixes":["adform.net"],"path_prefixes":["/videoad","/C/","/ad
 | `bn` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners) |
 | `C` | optional | `{"format":{"kind":"integer"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners) |
 | `cpdir` | optional | `{"format":{"kind":"url"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/10893850708241-Code-HTML5-Banners) |
-| `urlappend` | optional | `{"format":{"kind":"regex","pattern":"^[?&].+"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/9739143043345-Overview-of-Supported-Ad-Serving-Macros) |
+| `urlappend` | optional | `{"format":{"kind":"regex","pattern":"^(?:[?&]\|__ADFSEP__).+"}}` | [official_vendor](https://www.adformhelp.com/hc/en-us/articles/9739143043345-Overview-of-Supported-Ad-Serving-Macros) |
 
 ## `vendor/adglare-native-events`
 
@@ -429,7 +429,7 @@ Path captures: `/b/ss/(?<report_suite>[^/?]*)`. Captured values take precedence 
 
 ## `vendor/adobe-dcs-event`
 
-Published DCS request attributes and identity pairs. Every generic DCS field is optional; d_rtbd=json requests a JSON response. Visitor ID-specific version andorganization requirements are handled by the ECID pack.
+Published DCS request attributes and identity pairs. Every generic DCS field is optional; d_rtbd=json requests a JSON response. A click call with d_event=click must include d_rd. Visitor ID-specific version and organization requirements are handled by the ECID pack.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/adobe-dcs-event.json).
 
@@ -467,6 +467,22 @@ Matcher: `{"paths":["/event"],"host_suffixes":["demdex.net"]}`.
 | `h_date` | optional | `{"allow_empty":true}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys) |
 | `c_*` | optional | `{"name_pattern":"^c_.+$","allow_empty":true}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys) |
 | `p_*` | optional | `{"name_pattern":"^p_.+$","allow_empty":true}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/api-and-sdk-code/dcs/dcs-api-reference/dcs-keys) |
+| `d_event` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+| `d_rd` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+| `d_creative` | optional | `{"format":{"kind":"integer"},"format_severity":"warning"}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+| `d_adgroup` | optional | `{"format":{"kind":"integer"},"format_severity":"warning"}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+| `d_bu` | optional | `{"format":{"kind":"integer"},"format_severity":"warning"}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+| `d_campaign` | optional | `{"format":{"kind":"integer"},"format_severity":"warning"}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+| `d_placement` | optional | `{"format":{"kind":"integer"},"format_severity":"warning"}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+| `d_site` | optional | `{"format":{"kind":"integer"},"format_severity":"warning"}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+| `d_src` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/impression-data-pixels) |
+| `d_adsrc` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/impression-data-pixels) |
+| `d_bust` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/impression-data-pixels) |
+| `r_rand` | optional | `{"format":{"kind":"integer"},"format_severity":"warning"}` | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.adobe-dcs-event.click_redirect_missing` | `{"kind":"required_when_value","when":"d_event","equals":["click"],"requires":["d_rd"]}` | error | [official_vendor](https://experienceleague.adobe.com/en/docs/audience-manager/user-guide/implementation-integration-guides/media-data-integration/click-data-pixels) |
 
 ## `vendor/adobe-dcs-id`
 
@@ -3494,6 +3510,25 @@ Matcher: `{"hosts":["hm.baidu.com"],"paths":["/hm.gif"]}`.
 | --- | --- | --- | --- |
 | `si` | required | `{"format":{"kind":"regex","pattern":"^[a-fA-F0-9]{32}$"}}` | [ecosystem_reference](https://tongji.baidu.com/web/help/article?id=174) |
 
+## `vendor/beeswax-conversion`
+
+Checks the published Buzz conversion image tag on cnv.event.prod.bidr.io/log/cnv. Impression and click event routes, cookie sync, and /log/pbk postbacks stay outside this pack.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/beeswax-conversion.json).
+
+Matcher: `{"hosts":["cnv.event.prod.bidr.io"],"paths":["/log/cnv"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `tag_id` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://api-docs.freewheel.tv/advertiser/docs/conversion-tags-1) |
+| `buzz_key` | required | `{"format":{"kind":"regex","pattern":"^[A-Za-z0-9]+$"}}` | [official_vendor](https://api-docs.freewheel.tv/advertiser/docs/buzz-key) |
+| `value` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"},"format_severity":"warning"}` | [official_vendor](https://api-docs.freewheel.tv/advertiser/docs/conversion-tags-1) |
+| `segment_key` | optional | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://api-docs.freewheel.tv/advertiser/docs/conversion-tags-1) |
+| `order` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"},"format_severity":"warning"}` | [official_vendor](https://api-docs.freewheel.tv/advertiser/docs/conversion-tags-1) |
+| `ord` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://api-docs.freewheel.tv/advertiser/docs/conversion-tags-1) |
+
 ## `vendor/branch`
 
 Standard and custom events posted to the Branch Events API on api2.branch.io.
@@ -5188,6 +5223,58 @@ Context: `{}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `method` | recommended | `{"severity":"warning","format_severity":"warning","format":{"kind":"enum","values":["GET"]}}` | [official_template](https://edge.fullstory.com/s/fs.js) |
+
+## `vendor/gamesight-click`
+
+Checks the published Gamesight click tracker on gsght.com/c/{tracker}. View-through windows stay on the impression tracker. Custom domains, account state, and receiver acceptance stay outside this pack.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/gamesight-click.json).
+
+Matcher: `{"hosts":["gsght.com"],"paths":["/c","/c/"],"path_patterns":["/c/[^/]+"],"artifact_kinds":["url","vast","postback","request"]}`.
+
+Path captures: `^/c/(?<tracker_id>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `tracker_id` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `cost_model` | optional | `{"format":{"kind":"enum","values":["CPM","CPC"]},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `external_hash_mode` | optional | `{"name_pattern":"^xid\\[[0-9]*\\]\\[sha256\\]$","format":{"kind":"enum","values":["client","server"]},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `external_scope_type` | optional | `{"name_pattern":"^xid\\[[0-9]*\\]\\[scope_type\\]$","format":{"kind":"enum","values":["game","org"]},"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `attribution_window` | optional | `{"format":{"kind":"integer"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `destination_url` | optional | `{"format":{"kind":"url"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `impression_attribution_window` | forbidden | `{"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `cost_amount` | optional | `{"format":{"kind":"regex","pattern":"^[0-9]+(?:\\.[0-9]+)?$"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `cost_currency` | optional | `{"format":{"kind":"currency"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `campaign` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `campaign_name` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad_group` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad_group_name` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad_name` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `ad_type` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `placement` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `keyword` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `creative` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `site_id` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `sub_site_id` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `reporting_sub` | optional | `{"name_pattern":"^sub(?:10\|[1-9])$","format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_campaign` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_ad_group` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_ad` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_placement` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_creative` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `adsrv_site_id` | optional | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+
+### Query group contract 1
+
+Context: `{"source":"indexed_query","key_prefix":"xid"}`.
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `scope_type` | optional | `{"allow_empty":true,"severity":"warning"}` | [official_vendor](https://docs.gamesight.io/docs/tracker-url-parameters) |
+| `scope_id` | recommended | `{"severity":"warning","format":{"kind":"non_empty"},"condition":{"kind":"all_values_in","params":["scope_type"],"values":["org"]}}` | [official_vendor](https://docs.gamesight.io/reference/measurement-api-console-identifiers#cross-game-ids) |
 
 ## `vendor/gamesight-impression`
 
@@ -13275,7 +13362,7 @@ Context: `{}`.
 
 ## `vendor/pardot`
 
-Account Engagement Tracking and Consent loader on pi.pardot.com/pdt.js and pi.demand.salesforce.com/pdt.js. Salesforce documents aid on the query. Legacy pd.js puts piAId in JavaScript and is not contracted.
+Account Engagement Tracking and Consent loader on pi.pardot.com/pdt.js and pi.demand.salesforce.com/pdt.js. The generated snippet puts the integer account ID on aid. The published SPA example loads pdt.js without that query, so a missing aid is a warning. Legacy pd.js puts piAId in JavaScript and is not contracted.
 
 Manifest: [source](../crates/pixellint-core/rulepacks/vendor/pardot.json).
 
@@ -13285,7 +13372,7 @@ Matcher: `{"hosts":["pi.pardot.com","pi.demand.salesforce.com"],"path_contains":
 
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
-| `aid` | required | `{"format":{"kind":"integer"}}` | [official_vendor](https://developer.salesforce.com/blogs/2022/02/how-to-work-with-pardots-new-tracking-consent-javascript-api) |
+| `aid` | recommended | `{"format":{"kind":"integer"}}` | [official_vendor](https://developer.salesforce.com/blogs/2022/02/how-to-work-with-pardots-new-tracking-consent-javascript-api) |
 
 ## `vendor/parsely-collect`
 
@@ -17485,6 +17572,23 @@ Path captures: `/v2/notice/(?<notice_id>[^/]*)`. Captured values take precedence
 | --- | --- | --- | --- |
 | `notice_id` | required | `{"format":{"kind":"non_empty"}}` | [official_template](https://github.com/trustarc/trustarc-segment-wrapper) |
 
+## `vendor/usercentrics-widget`
+
+Checks the published Preference Manager widget read on preference-api.preference-management.usercentrics.eu/public/widgets/{widgetUuid}. Authentication, preference writes, and the CMP script hosts stay outside this pack.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/usercentrics-widget.json).
+
+Matcher: `{"hosts":["preference-api.preference-management.usercentrics.eu"],"paths":["/public/widgets","/public/widgets/"],"path_prefixes":["/public/widgets/"]}`.
+
+Path captures: `^/public/widgets/(?<widget_uuid>[^/]*)$`. Captured values take precedence over query keys with the same name.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `widget_uuid` | required | `{"format":{"kind":"non_empty"}}` | [official_vendor](https://docs.usercentrics.com/#/preference-manager-api) |
+| `language` | optional | `{"format":{"kind":"regex","pattern":"^[A-Za-z]{2}$"},"format_severity":"warning"}` | [official_vendor](https://docs.usercentrics.com/#/preference-manager-api) |
+
 ## `vendor/videoamp-impression`
 
 Partial warning-only advice for the exact impression route shown by MetaRouter and PRX. Common template slots and supplied IP syntax are checked. MetaRouter mappings do not define universal receiver requiredness; opaque IDs, cachebuster values, custom fields, transport and duplicate selection remain open.
@@ -18236,6 +18340,7 @@ Matcher: `{"hosts":["mc.yandex.ru"],"path_prefixes":["/collect"]}`.
 | `vendor.yandex-metrica.purchase_coupon_documentation_conflict` | `{"kind":"required_when_value","when":"pa","equals":["purchase"],"requires":["tcc"]}` | warning | [official_vendor](https://yandex.com/dev/metrika/en/data-import/measurement-upload) |
 | `vendor.yandex-metrica.event_needs_action` | `{"kind":"require_any_of","groups":[["ea"],["pa"]],"condition":{"kind":"value_in","param":"t","values":["event"]}}` | error | [official_vendor](https://yandex.com/dev/metrika/en/data-import/measurement-upload) |
 | `vendor.yandex-metrica.event_time_window` | `{"kind":"time_window","param":"et","unit":"seconds","max_age_seconds":43200}` | error | [official_vendor](https://yandex.com/dev/metrika/en/data-import/measurement-upload) |
+| `vendor.yandex-metrica.ecommerce_requires_product_id` | `{"kind":"required_when_value","when":"pa","equals":["detail","add","remove","purchase"],"requires":["pr1id"]}` | warning | [official_vendor](https://yandex.com/dev/metrika/en/data-import/measurement-upload) |
 
 ### JSON contract 1
 

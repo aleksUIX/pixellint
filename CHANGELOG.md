@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.59.4 (2026-11-18)
+
+- Add Beeswax conversion tags on cnv.event.prod.bidr.io/log/cnv. buzz_key is alphanumeric.
+- Add Gamesight click trackers on gsght.com/c/{tracker}.
+- Add Usercentrics preference widgets on preference-api.preference-management.usercentrics.eu/public/widgets/{widgetUuid}. language is a two-letter code when it is present.
+- Require d_rd on Adobe Audience Manager clicks, and accept impression calls with d_event=imp.
+- Warn when a Yandex Metrica ecommerce action omits pr1id.
+- Warn when Account Engagement pdt.js omits aid. The published SPA example loads the script without that query.
+- Accept a leading __ADFSEP__ macro on Adform click urlappend.
+
 ## 0.59.3 (2026-11-17)
 
 - Check supplied Gamesight hierarchy and reporting tags as nonempty. Campaign, ad, placement, sub1 through sub10, and ad-server ids stay opaque.
