@@ -1,0 +1,60 @@
+{
+  "id": "vendor/nativo-event-pixel",
+  "vendor": "nativo",
+  "display_name": "Nativo event pixel",
+  "source_level": "official_template",
+  "docs": "https://support.nativo.com/en/articles/11995686-ad-serving-response",
+  "description": "Template advisories for jadserve.postrelease.com/trk.gif with Nativo event-pixel fields. Checks blank generated values and the completeness of the published native response shape when ntv_fl is present. The VAST variant can omit ntv_fl. Generated values remain opaque.",
+  "match": {
+    "hosts": ["jadserve.postrelease.com"],
+    "paths": ["/trk.gif"],
+    "query_params_any": ["ntv_at", "ntv_a", "ntv_fl", "ntv_ht"]
+  },
+  "params": [
+    {
+      "name": "ntv_at",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The published event pixel carries a generated ntv_at value. Preserve the value from the original tag.",
+      "fix_hint": "Restore the original ntv_at value from the Nativo event pixel."
+    },
+    {
+      "name": "ntv_a",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The published event pixel carries an opaque ntv_a value.",
+      "fix_hint": "Restore the original ntv_a value from the Nativo event pixel."
+    },
+    {
+      "name": "ntv_fl",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The published native response includes an opaque ntv_fl value. Observed VAST URLs can omit the field.",
+      "fix_hint": "If the original Nativo event pixel includes ntv_fl, preserve its value."
+    },
+    {
+      "name": "ntv_ht",
+      "requirement": "optional",
+      "severity": "warning",
+      "description": "The published event pixel carries an opaque ntv_ht value.",
+      "fix_hint": "Restore the original ntv_ht value from the Nativo event pixel."
+    },
+    {
+      "name": "ord",
+      "requirement": "optional",
+      "allow_empty": true,
+      "description": "The published native response includes ord with both positive and negative examples. Accept other supplied values and macros."
+    }
+  ],
+  "rules": [
+    {
+      "code": "vendor.nativo-event-pixel.native_template_incomplete",
+      "kind": "required_with",
+      "when": "ntv_fl",
+      "requires": ["ntv_at", "ntv_a", "ntv_ht", "ord"],
+      "severity": "warning",
+      "message": "The published native event pixel includes ntv_at, ntv_a, ntv_ht and ord alongside ntv_fl.",
+      "fix_hint": "Compare the URL with the original Nativo ad-serving response."
+    }
+  ]
+}

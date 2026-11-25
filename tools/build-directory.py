@@ -183,13 +183,15 @@ VENDORS = {
     "usercentrics": ("Usercentrics", "consent", ["app.usercentrics.eu", "preference-api.preference-management.usercentrics.eu", "web.cmp.usercentrics.eu"], "vendor/usercentrics-widget"),
     "cookiebot": ("Cookiebot", "consent", ["consent.cookiebot.com", "consentcdn.cookiebot.com"], None),
     "audiostack": ("AudioStack", "video", ["vast.audiostack.ai", "track.audiostack.ai"], None),
-    "nativo": ("Nativo", "native", ["jadserve.postrelease.com"], None),
+    "nativo": ("Nativo", "native", ["jadserve.postrelease.com"], "vendor/nativo-event-pixel"),
     "clipflip": ("Clipflip", "video", ["app.clipflip.video"], "vendor/clipflip-vast-tracking"),
     "lemonpi": ("LemonPI", "video", ["content.lemonpi.io"], "vendor/lemonpi-events"),
     "podscribe": ("Podscribe", "measurement", ["verifi.podscribe.com"], "vendor/podscribe-prx-impression"),
     "weborama": ("Weborama", "measurement", ["wcmvideotutorials.solution.weborama.fr"], "vendor/weborama-wcm-js-impression"),
     "adriver": ("AdRiver", "measurement", ["ad.adriver.ru", "ev.adriver.ru"], "vendor/adriver-vast-counter"),
-    "aniview": ("Aniview", "video", ["track1.aniview.com"], "vendor/aniview-default-track"),
+    "aniview": ("Aniview", "video", ["track1.aniview.com", "track4.aniview.com"], "vendor/aniview-default-track"),
+    "aryel": ("Aryel", "video", ["staging.video.adv.aryel.io"], None),
+    "gruuv": ("Gruuv Interactive", "video", ["tracking-staging.adtags.mobi"], None),
     "adglare": ("AdGlare", "programmatic", ["try.engine.adglare.net"], "vendor/adglare-native-events"),
 }
 
