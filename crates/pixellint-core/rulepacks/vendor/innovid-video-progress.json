@@ -1,0 +1,29 @@
+{
+  "id": "vendor/innovid-video-progress",
+  "display_name": "Innovid video progress pixel",
+  "description": "Advisory validation for percentage progress events on the Innovid tracking image. The source reporter sends video quartiles as percentages. Numeric values from zero through 100 can represent progress. Other event kinds, opaque identifiers and receiver acceptance remain open.",
+  "vendor": "innovid",
+  "source_level": "official_template",
+  "docs": "https://static.innovid.com/mobileapps/js/vpaid/1h41kg",
+  "match": {
+    "hosts": ["s.innovid.com"],
+    "paths": ["/1x1.gif"],
+    "query_params_values": [
+      {"name": "action", "values": ["vpoint"]},
+      {"name": "event_id", "values": ["percent"]}
+    ]
+  },
+  "params": [
+    {
+      "name": "event_value",
+      "requirement": "recommended",
+      "severity": "warning",
+      "format": {
+        "kind": "numeric_ranges",
+        "ranges": [{"minimum": 0, "maximum": 100}]
+      },
+      "description": "The published Innovid video progress reporter submits the percentage as event_value. This advice checks for a populated number from zero through 100.",
+      "fix_hint": "Compare the value with the provisioned tracker for this video progress event."
+    }
+  ]
+}

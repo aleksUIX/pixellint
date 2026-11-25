@@ -618,6 +618,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
         include_str!("../rulepacks/vendor/mouseflow.json"),
     ),
     (
+        "vendor/nativo-event-pixel",
+        include_str!("../rulepacks/vendor/nativo-event-pixel.json"),
+    ),
+    (
         "vendor/nextdoor-conversions-api",
         include_str!("../rulepacks/vendor/nextdoor-conversions-api.json"),
     ),
@@ -889,6 +893,10 @@ pub const BUILTIN_VENDOR_MANIFESTS: &[(&str, &str)] = &[
     (
         "vendor/innovid-legacy-state",
         include_str!("../rulepacks/vendor/innovid-legacy-state.json"),
+    ),
+    (
+        "vendor/innovid-video-progress",
+        include_str!("../rulepacks/vendor/innovid-video-progress.json"),
     ),
     (
         "vendor/cloudflare-rum",

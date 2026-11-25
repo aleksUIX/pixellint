@@ -7,6 +7,15 @@ use pixellint_core::{
 
 const ATTRIBUTED: &[(&str, &str)] = &[
     ("https://ams.creativecdn.com/ad/imp-tags", "rtbhouse"),
+    ("https://track4.aniview.com/track", "aniview"),
+    (
+        "https://staging.video.adv.aryel.io/api/count/sample/vast/start.gif",
+        "aryel",
+    ),
+    (
+        "https://tracking-staging.adtags.mobi/track/simid/start",
+        "gruuv",
+    ),
     (
         "https://kimberlite.io/rtb/pix/synthetic-event/opaque-token",
         "kimberlite",
@@ -137,6 +146,12 @@ fn attribution_rejects_lookalike_hosts_and_unreviewed_sibling_domains() {
     for url in [
         "https://ams.creativecdn.com.attacker.test/ad/imp-tags",
         "https://fake-ams.creativecdn.com/ad/imp-tags",
+        "https://track4.aniview.com.attacker.test/track",
+        "https://fake-track4.aniview.com/track",
+        "https://staging.video.adv.aryel.io.attacker.test/api/count/sample/vast/start.gif",
+        "https://tracking-staging.adtags.mobi.attacker.test/track/simid/start",
+        "http://localhost:8080/track",
+        "https://example.com/track",
         "https://kimberlite.io.attacker.test/rtb/pix/event",
         "https://fake-kimberlite.io/rtb/pix/event",
         "https://yandex.ru.attacker.test/adfox/999999/event",

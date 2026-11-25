@@ -1,0 +1,206 @@
+{
+  "reviewed_at": "2026-11-25",
+  "baseline_engine": "0.59.19",
+  "baseline_artifacts": 16133,
+  "evidence": "Read-only counts from the stored snapshot through row 18031. Host and path groups contain public names and static route patterns.",
+  "pack_additions": [
+    {
+      "id": "vendor/innovid-video-progress",
+      "host": "s.innovid.com",
+      "route": "/1x1.gif",
+      "observed_selector_matches": 132,
+      "source": "https://static.innovid.com/mobileapps/js/vpaid/1h41kg"
+    },
+    {
+      "id": "vendor/nativo-event-pixel",
+      "host": "jadserve.postrelease.com",
+      "route": "/trk.gif",
+      "observed_selector_matches": 23,
+      "source": "https://support.nativo.com/en/articles/11995686-ad-serving-response"
+    }
+  ],
+  "historical_replay": {
+    "snapshot_date": "2026-10-25",
+    "scope": "Stored artifacts on the five changed hosts, replayed against local 0.59.19 WASM and the candidate native CLI.",
+    "rows": 330,
+    "new_pack_selection": 67,
+    "new_attribution": 227,
+    "rows_with_changed_error_counts": 0,
+    "rows_with_changed_warning_counts": 0
+  },
+  "directory_additions": [
+    {
+      "host": "staging.video.adv.aryel.io",
+      "vendor": "aryel",
+      "rows": 95,
+      "evidence": "The observed staging host resolves in DNS under the vendor namespace documented for VAST serving.",
+      "source": "https://help.aryel.io/en/articles/36733-what-are-the-available-outputs-for-my-advertising",
+      "open_question": "Request and field requirements for /api/count/."
+    },
+    {
+      "host": "track4.aniview.com",
+      "vendor": "aniview",
+      "rows": 92,
+      "evidence": "Observed DNS links the documented SDK host track1.aniview.com to track4.aniview.com.",
+      "source": "https://urlscan.io/domain/track1.aniview.com",
+      "open_question": "Accepted /track event fields and the scope of the avh producer."
+    },
+    {
+      "host": "tracking-staging.adtags.mobi",
+      "vendor": "gruuv",
+      "rows": 82,
+      "evidence": "The host resolves in DNS. The parent domain returned HTTP 301 to the Gruuv Interactive company site.",
+      "source": "http://adtags.mobi/",
+      "open_question": "Request and field requirements for /track/vast/ and /track/simid/."
+    }
+  ],
+  "pending_contracts": [
+    {
+      "host": "ams.creativecdn.com",
+      "routes": ["/ad/imp-tags", "/ad/win-notify"],
+      "rows": 841,
+      "sources_read": [
+        {
+          "url": "https://statics.creativecdn.com/PTsIrQRcjyGz7kstPiwb/rtbh_viewability.js",
+          "sha256": "9e8cb7978c82aa29678ed2a7fbaf6410a046ee931a8109ceb984a406c0841f09",
+          "scope": "The viewability SDK sends caller-provided URLs through multiple browser transports."
+        },
+        {
+          "url": "https://statics.creativecdn.com/yGEjBgtROs5zSXvAZcxLuB7WL3s7fzd5/fluid-full/total.js",
+          "sha256": "f87668bd9ef248eedefa9c6fd7c4339966e6f0b796bc8f08522812700f7acf1d",
+          "scope": "The published creative SDK was inspected for both route constructors."
+        }
+      ],
+      "open_question": "An exact route producer or contract for the opaque token and auxiliary fields."
+    },
+    {
+      "host": "ad-events.flashtalking.com",
+      "routes": ["/ft.stat"],
+      "rows": 469,
+      "sources_read": [
+        {
+          "url": "https://cdn.flashtalking.com/frameworks/js/api/2/10/html5API.js",
+          "sha256": "97fc5230d5cb8391cb09df4345a494801c20ca27ae5b75deb632acba3b28a774",
+          "scope": "The creative SDK uses parent-frame messages for event reporting."
+        },
+        {
+          "url": "https://support.flashtalking.com/hc/en-us/articles/115015852788-Description-of-Methodology-DOM",
+          "scope": "The methodology documents VAST impression timing and event pixel collection."
+        }
+      ],
+      "open_question": "The exact collector syntax for the positional semicolon payload."
+    },
+    {
+      "host": "unified.adsafeprotected.com",
+      "routes": ["/pixel.png"],
+      "rows": 226,
+      "observed_keys": ["a", "advEntityId", "pubEntityId"],
+      "open_question": "A producer or contract for the named payload profile. IAS's public VPAID code constructs a bare Base64 payload on this path."
+    },
+    {
+      "host": "s.amazon-adsystem.com",
+      "routes": ["/iui3"],
+      "rows": 61,
+      "sources_read": [
+        {
+          "url": "https://c.amazon-adsystem.com/aat/amzn.js",
+          "sha256": "5901fa112274e480a9b46fbcad018c04dd33a3cca718dbf681ca9d03fb65c322",
+          "scope": "The trackPixel SDK command consumes id/type from ex-fargs or c/p from ex-hargs."
+        }
+      ],
+      "replay": "All 61 historical direct-beacon samples selected the experimental check and received the SDK migration diagnostic. Executing the original SDK functions with dispatch stubbed produced the same diagnostic for all 61 samples.",
+      "open_question": "A producer or receiver contract for the direct-beacon arguments."
+    },
+    {
+      "hosts": ["pagead2.googlesyndication.com", "googleads.g.doubleclick.net"],
+      "routes": ["/pcs/view", "/pagead/live/interaction/", "/pagead/interaction/"],
+      "rows": 244,
+      "sources_read": [
+        {
+          "url": "https://imasdk.googleapis.com/js/sdkloader/ima3.js",
+          "sha256": "1a10b6f35e8fbc96870997d0df6cbd6704ad38effe36f50855441110ab82d4df",
+          "scope": "The SDK uses both hostnames for several ad and telemetry functions."
+        },
+        {
+          "url": "https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags",
+          "scope": "The tested IMA sample ad tags emit interaction and PCS callbacks on pubads hostnames."
+        }
+      ],
+      "open_question": "An exact producer for the observed Google Ads hostname and route combinations."
+    },
+    {
+      "hosts": ["stats.sxp.smartclip.net", "stats.smartclip.net"],
+      "routes": ["/count", "/stats/beacon"],
+      "rows": 129,
+      "sources_read": [
+        {
+          "url": "https://www.rainews.it/common/assets/js/smartclip/smartclientdisplay.js",
+          "sha256": "d22393ea32d0f500360f7de09bfbf88f541a3ecfa4bc3faf782a918608d99fc0",
+          "scope": "The Smartclip client constructs the ad request and dispatches tracker URLs supplied by the ad response."
+        },
+        {
+          "url": "https://sdk.smartclip.net/smartclientcore/6.1.4/docs/basic-usage.html",
+          "scope": "The guide describes installation of the web player SDK."
+        }
+      ],
+      "open_question": "A Smartclip ad-response example or collector parameter table for each stats host."
+    },
+    {
+      "host": "t.stredeo.com",
+      "routes": ["/v1/event/", "/v1/info/", "/v1/error/"],
+      "reported_rows": 60,
+      "sources_read": [
+        {
+          "url": "https://www.stredeo.com/js/main.js",
+          "sha256": "6216b1dd5a467d9656f01c0cf1758f1511e474f4900a0cc47b21fdb010aa637c",
+          "scope": "The public site script handles the contact form."
+        }
+      ],
+      "open_question": "An attributable request producer or parameter table for the collector."
+    },
+    {
+      "host": "vast.audiostack.ai",
+      "routes": ["/tracking/"],
+      "reported_rows": 44,
+      "sources_read": [
+        {
+          "url": "https://help.audiostack.ai/en/articles/11847803-create-a-vast-tag",
+          "scope": "The guide explains how to generate and export the tag from the campaign workflow."
+        },
+        {
+          "url": "https://docs.audiostack.ai/openapi/audiostack-api.json",
+          "scope": "The OpenAPI description covers the public AudioStack API."
+        }
+      ],
+      "open_question": "A generated synthetic VAST export or collector table showing the path and event slots."
+    },
+    {
+      "host": "us-east-1.event.prod.bidr.io",
+      "routes": ["/log/act/", "/log/imp/"],
+      "reported_rows": 41,
+      "sources_read": [
+        {
+          "url": "https://api-docs.freewheel.tv/advertiser/docs/macros",
+          "scope": "The macro guide describes full-URL substitutions."
+        },
+        {
+          "url": "https://api-docs.freewheel.tv/advertiser/reference/creatives-1",
+          "scope": "The creative API points to authenticated preview of generated tags."
+        }
+      ],
+      "open_question": "A synthetic tag preview or exact field table for the event-server variants."
+    },
+    {
+      "host": "beacons.extremereach.io",
+      "reported_rows": 79,
+      "sources_read": [
+        {
+          "url": "https://anpl.snow.com/js/prod2/northstar/northstar.js",
+          "sha256": "329dfb240de1a0ddd8be1ec23a79df2b47d0c49657d2fbe433b00398a2f5586b",
+          "scope": "The publisher integration produces a /cp-conversion URL outside the observed video routes."
+        }
+      ],
+      "open_question": "Public generated templates for duration, skip, error and safety video beacons."
+    }
+  ]
+}

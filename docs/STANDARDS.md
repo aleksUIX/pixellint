@@ -116,7 +116,7 @@ before an ad server populates them.
 
 ## The vendor inventory records implemented contracts.
 
-This generated inventory covers 237 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
+This generated inventory covers 239 shipped vendor packs. It does not certify complete vendor specification coverage. The per-pack source review and remaining requirements are recorded in [RULEPACK_DEPTH_AUDIT.json](RULEPACK_DEPTH_AUDIT.json).
 
 Regenerate with `python3 tools/update-rulepack-reference.py`. Use `--check` to detect stale inventory.
 
@@ -7258,6 +7258,20 @@ Path captures: `^/state/(?<placement_id>[^;/?]*);(?<creative_id>[^;/?]*);(?<vers
 | `event_id` | recommended | `{"format":{"kind":"regex","pattern":"^[0-9]+$"},"severity":"warning"}` | [official_template](https://help.innovid.com/hc/en-us/articles/28042598512284-Innovid-Tag-Assistant-User-Guide) |
 | `impression_id` | recommended | `{"format":{"kind":"non_empty"},"severity":"warning"}` | [official_template](https://help.innovid.com/hc/en-us/articles/28042598512284-Innovid-Tag-Assistant-User-Guide) |
 
+## `vendor/innovid-video-progress`
+
+Advisory validation for percentage progress events on the Innovid tracking image. The source reporter sends video quartiles as percentages. Numeric values from zero through 100 can represent progress. Other event kinds, opaque identifiers and receiver acceptance remain open.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/innovid-video-progress.json).
+
+Matcher: `{"hosts":["s.innovid.com"],"paths":["/1x1.gif"],"query_params_values":[{"name":"action","values":["vpoint"]},{"name":"event_id","values":["percent"]}]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `event_value` | recommended | `{"severity":"warning","format":{"kind":"numeric_ranges","ranges":[{"minimum":0,"maximum":100}]}}` | [official_template](https://static.innovid.com/mobileapps/js/vpaid/1h41kg) |
+
 ## `vendor/intercom-events`
 
 Data events posted to api.intercom.io/events. The Messenger loader is vendor/intercom.
@@ -12762,6 +12776,28 @@ Context: `{}`.
 | Field | Requirement | Implemented checks | Authority |
 | --- | --- | --- | --- |
 | `body` | optional | `{"json_type":"array","severity":"info"}` | [official_vendor](https://docs.mparticle.com/developers/apis/json-reference/) |
+
+## `vendor/nativo-event-pixel`
+
+Template advisories for jadserve.postrelease.com/trk.gif with Nativo event-pixel fields. Checks blank generated values and the completeness of the published native response shape when ntv_fl is present. The VAST variant can omit ntv_fl. Generated values remain opaque.
+
+Manifest: [source](../crates/pixellint-core/rulepacks/vendor/nativo-event-pixel.json).
+
+Matcher: `{"hosts":["jadserve.postrelease.com"],"paths":["/trk.gif"],"query_params_any":["ntv_at","ntv_a","ntv_fl","ntv_ht"]}`.
+
+### URL parameters
+
+| Field | Requirement | Implemented checks | Authority |
+| --- | --- | --- | --- |
+| `ntv_at` | optional | `{"severity":"warning"}` | [official_template](https://support.nativo.com/en/articles/11995686-ad-serving-response) |
+| `ntv_a` | optional | `{"severity":"warning"}` | [official_template](https://support.nativo.com/en/articles/11995686-ad-serving-response) |
+| `ntv_fl` | optional | `{"severity":"warning"}` | [official_template](https://support.nativo.com/en/articles/11995686-ad-serving-response) |
+| `ntv_ht` | optional | `{"severity":"warning"}` | [official_template](https://support.nativo.com/en/articles/11995686-ad-serving-response) |
+| `ord` | optional | `{"allow_empty":true}` | [official_template](https://support.nativo.com/en/articles/11995686-ad-serving-response) |
+
+| Rule | Assertion and condition | Severity | Authority |
+| --- | --- | --- | --- |
+| `vendor.nativo-event-pixel.native_template_incomplete` | `{"kind":"required_with","when":"ntv_fl","requires":["ntv_at","ntv_a","ntv_ht","ord"]}` | warning | [official_template](https://support.nativo.com/en/articles/11995686-ad-serving-response) |
 
 ## `vendor/naver-wcs-query`
 

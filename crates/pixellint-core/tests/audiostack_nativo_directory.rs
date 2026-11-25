@@ -20,14 +20,18 @@ fn validate(kind: ArtifactKind, artifact: String) -> pixellint_core::ValidationS
 #[test]
 fn published_service_roots_have_attribution_and_core_only_coverage() {
     let engine = Engine::default();
-    for (host, vendor) in [
-        ("vast.audiostack.ai", "audiostack"),
-        ("track.audiostack.ai", "audiostack"),
-        ("jadserve.postrelease.com", "nativo"),
+    for (host, vendor, pack) in [
+        ("vast.audiostack.ai", "audiostack", None),
+        ("track.audiostack.ai", "audiostack", None),
+        (
+            "jadserve.postrelease.com",
+            "nativo",
+            Some("vendor/nativo-event-pixel"),
+        ),
     ] {
         let entry = engine.directory().lookup_host(host).unwrap();
         assert_eq!(entry.vendor, vendor);
-        assert!(entry.rulepack.is_none());
+        assert_eq!(entry.rulepack.as_deref(), pack);
         for kind in [ArtifactKind::Url, ArtifactKind::VastTracker] {
             let summary = validate(kind, format!("https://{host}/synthetic/route?opaque=test"));
             assert!(summary.is_ok());
@@ -48,6 +52,35 @@ fn published_service_roots_have_attribution_and_core_only_coverage() {
                 "directory.no_rulepack_coverage"
             );
         }
+    }
+}
+
+#[test]
+fn nativo_pixel_selects_only_the_exact_host_route_and_query_profile() {
+    const PACK: &str = "vendor/nativo-event-pixel";
+    for kind in [ArtifactKind::Url, ArtifactKind::VastTracker] {
+        let summary = validate(
+            kind,
+            "https://jadserve.postrelease.com/trk.gif?ntv_at=sample-event&ntv_a=sample-ad&ntv_ht=sample-token"
+                .to_owned(),
+        );
+        assert_eq!(summary.coverage().vendor_rulepacks, [PACK]);
+        assert!(
+            summary
+                .reports
+                .iter()
+                .all(|report| report.violations.is_empty())
+        );
+    }
+    for url in [
+        "https://jadserve.postrelease.com/trk?ntv_at=sample-event",
+        "https://jadserve.postrelease.com/trk.gif/extra?ntv_at=sample-event",
+        "https://jadserve.postrelease.com/trk.gif?other=sample-event",
+        "https://child.jadserve.postrelease.com/trk.gif?ntv_at=sample-event",
+        "https://jadserve.postrelease.com.evil.test/trk.gif?ntv_at=sample-event",
+    ] {
+        let summary = validate(ArtifactKind::Url, url.to_owned());
+        assert!(summary.coverage().vendor_rulepacks.is_empty(), "{url}");
     }
 }
 
