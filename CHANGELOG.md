@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.59.19 - 2026-11-25
+
+- Check that Innovid video progress pixels provide a percentage from 0 to 100.
+- Warn when Nativo event pixels carry blank generated fields or omit fields from the published native template.
+- Recognize the observed Aryel, Aniview, and Gruuv tracking hosts in the vendor directory.
+- Update `regex` to 1.13.2 and `url` to 2.5.9 (RUSTSEC-2026-0592).
+
 ## 0.59.18 (2026-11-19)
 
 - A Mixpanel batch of 2001 events reaches the vendor contract again. In-range numeric properties no longer fill the SDK body inspection budget.

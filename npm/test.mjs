@@ -80,7 +80,7 @@ assert.ok(invalidMethod.reports.flatMap(report => report.violations).some(findin
 const malformedCapture = validate(JSON.stringify({ url: captured.url, method: "POST" }), { kind: "request" });
 assert.deepEqual(malformedCapture.reports.flatMap(report => report.violations.map(finding => finding.code)), ["core.request.invalid_envelope"]);
 
-assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 237, "every shipped vendor pack should be listed");
+assert.equal(rulepacks().filter((pack) => pack.id.startsWith("vendor/")).length, 239, "every shipped vendor pack should be listed");
 assert.ok(vendors().length >= 80, "the vendor directory should be present");
 assert.equal(vendorForHost("pixel.mathtag.com")?.vendor, "mediamath");
 assert.equal(vendorForHost("nobody.example"), null);
@@ -102,6 +102,8 @@ for (const entry of [{ validate, validateMany, vendorForHost }, cjs]) {
 
   // SDK aliases, initialization and fallback retain separate transport contracts.
   for (const [artifact, pack, code] of [
+    ["https://s.innovid.com/1x1.gif?action=vpoint&event_id=percent&event_value=101", "vendor/innovid-video-progress", "vendor.innovid-video-progress.param.event_value.invalid"],
+    ["https://jadserve.postrelease.com/trk.gif?ntv_at=sample-event&ntv_a=", "vendor/nativo-event-pixel", "vendor.nativo-event-pixel.param.ntv_a.empty"],
     ["https://prreqcroab.icu/pixel;a=p-synthetic;r=-1", "vendor/quantcast", "vendor.quantcast.param.r.invalid"],
     ["https://trc.taboola.com/1234567/log/3/unip?en=Custom&tim=clock", "vendor/taboola-unip", "vendor.taboola-unip.param.tim.invalid"],
     ["https://insight.adsrvr.org/track/cei?merchant_id=synthetic&ref=https%3A%2F%2Fexample.test&upv=3.0.0&cookie_sync=2", "vendor/the-trade-desk", "vendor.the-trade-desk.param.cookie_sync.invalid"],
